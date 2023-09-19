@@ -1,1 +1,1 @@
-# INGESOFT-LosDibujitos
+Main project documentation
