@@ -1,46 +1,74 @@
-'use client'
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { useState } from 'react';
-import Placeholder from '@/components/Placeholder';
-import Button from '@/components/Button';
-import '@/styles/login.css';
+import React from "react";
+import Link from "next/link";
+import { useState } from "react";
+import Placeholder from "@/components/Placeholder";
+import Button from "@/components/Button";
+import "@/styles/login.css";
+import axios from "axios";
 
 function Login() {
-  const [password,setPassword] = useState("");
-  const [usuario,setUsuario] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
+    const [password, setPassword] = useState("");
+    const [usuario, setUsuario] = useState("");
+    const [passwordError, setPasswordError] = useState(false);
 
-  function handleChange(name,value){
-      if(name==='correo'){
+    const axiosOptions = {
+        method: "post", // El método de solicitud puede variar según tus necesidades
+        url: "http://localhost:8080/api/login",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
+    };
 
-          setUsuario(value)
-
-      }else{
-        if(value.length<6){
-          setPasswordError(true)
-          
-        }else{
-          setPasswordError(false)
-          setpassword(value)
+    function handleChange(name, value) {
+        if (name === "correo") {
+            setUsuario(value);
+        } else {
+            if (value.length < 3) {
+                setPasswordError(true);
+            } else {
+                setPasswordError(false);
+                setPassword(value);
+            }
         }
-      }
     }
 
+    function handleLogin() {
+        console.log(usuario);
+        console.log(password);
 
-  return (
-    <>
-    <div className="Fondo">
-      
-      <div>
-        <img src="/images/LogoPUCPwhite.png" className="logoPucp"></img>
-      </div>
+        axios
+            .post("http://localhost:8080/api/login", {
+                username: usuario,
+                password: password,
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
-      <div>
-        <img src="/images/LogoProyePUCPwhite.png" className="logoProyePucp"></img>
-      </div>
+    return (
+        <>
+            <div className="Fondo">
+                <div>
+                    <img
+                        src="/images/LogoPUCPwhite.png"
+                        className="logoPucp"
+                    ></img>
+                </div>
 
+                <div>
+                    <img
+                        src="/images/LogoProyePUCPwhite.png"
+                        className="logoProyePucp"
+                    ></img>
+                </div>
 
       <div className="CuadroLogin">
       
@@ -76,21 +104,33 @@ function Login() {
 
 
 
-        <div className="divInicioSesion">
-          <Link href='/login/resetPassword' className="txtOlvido">
-            <span href='#IniciarSesion' className="txtOlvido" >¿Olvidó la contraseña?</span>
-          </Link>
-        </div>
+                        <div className="divInicioSesion">
+                            <Link
+                                href="/login/recoverPassword"
+                                className="txtOlvido"
+                            >
+                                <span
+                                    href="#IniciarSesion"
+                                    className="txtOlvido"
+                                >
+                                    ¿Olvidó la contraseña?
+                                </span>
+                            </Link>
+                        </div>
 
-        <div className='boton2'>
-          <Button text="Iniciar Sesión" href={'#'}/>
-        </div>   
+                        <div className="boton2">
+                            <Button
+                                text="Iniciar Sesión"
+                                href={"#"}
+                                onClick={handleLogin}
+                            />
+                        </div>
 
-        <div className="container">
-            <div className="line"></div>
-            <div className="greeting">O inicia sesión con</div>
-            <div className="line"></div>
-        </div>
+                        <div className="container">
+                            <div className="line"></div>
+                            <div className="greeting">O inicia sesión con</div>
+                            <div className="line"></div>
+                        </div>
 
         <div className='boton2'>
           <Button text="Google" href={'#'}/>
