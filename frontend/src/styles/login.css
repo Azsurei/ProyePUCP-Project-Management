@@ -11,35 +11,39 @@
 }
 
 
-.logoProyePucp{
+.logoProyePucp {
 
     position: fixed;
-    height: auto; /* Mantener la proporción original */
-    top: 10px; /* Distancia desde la parte superior */
-    left: 10px; /* Distancia desde la parte derecha */
+    height: auto;
+    /* Mantener la proporción original */
+    top: 10px;
+    /* Distancia desde la parte superior */
+    left: 10px;
+    /* Distancia desde la parte derecha */
 }
 
 
 .logoPucp {
     position: fixed;
-    height: auto; /* Mantener la proporción original */
+    height: auto;
+    /* Mantener la proporción original */
     width: auto;
-    right: 20px; /* Distancia desde la parte derecha */
+    right: 20px;
+    /* Distancia desde la parte derecha */
 }
 
-.CuadroLogin{
+.CuadroLogin {
 
     position: fixed;
     width: 27%;
     height: 70%;
-    top:50%;
-    left:50%;
+    top: 50%;
+    left: 50%;
     z-index: -1;
     background-color: white;
     transform: translate(-50%, -50%);
     border-radius: 20px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1)
-
 }
 
 .txtInicio {
@@ -51,12 +55,12 @@
     color: #172B4D;
     padding-top: 8%;
     padding-bottom: 8%;
-    
+
 }
 
 .txtInicio span {
     display: block;
-  }
+}
 
 .inputField {
     position: relative;
@@ -77,28 +81,35 @@
 }
 
 #correo::placeholder {
-    font-size: 16px; /* Tamaño de la fuente */
-    font-family: Montserrat; /* Fuente */
+    font-size: 16px;
+    /* Tamaño de la fuente */
+    font-family: Montserrat;
+    /* Fuente */
     font-weight: 600;
-    color: #626F86; /* Color del placeholder */
+    color: #626F86;
+    /* Color del placeholder */
 }
 
 #contrasena::placeholder {
-    font-size: 16px; /* Tamaño de la fuente */
-    font-family: Montserrat; /* Fuente */
+    font-size: 16px;
+    /* Tamaño de la fuente */
+    font-family: Montserrat;
+    /* Fuente */
     font-weight: 600;
-    color: #626F86; /* Color del placeholder */
+    color: #626F86;
+    /* Color del placeholder */
 }
 
-  .password-container {
+.password-container {
     position: relative;
-  }
-  
-  #contrasena {
-    padding-right: 10px; /* Espacio para el ícono a la derecha */
-  }
-  
-  #togglePassword {
+}
+
+#contrasena {
+    padding-right: 10px;
+    /* Espacio para el ícono a la derecha */
+}
+
+#togglePassword {
     position: absolute;
     top: 50%;
     right: 0;
@@ -106,41 +117,46 @@
     border: none;
     background-color: transparent;
     cursor: pointer;
-  }
-  
+}
+
 #eyeIcon {
-    width: 20px; /* Ajusta el tamaño según sea necesario */
-    height: 20px; /* Ajusta el tamaño según sea necesario */
-  }
+    width: 20px;
+    /* Ajusta el tamaño según sea necesario */
+    height: 20px;
+    /* Ajusta el tamaño según sea necesario */
+}
 
 
-.divInicioSesion{
+.divInicioSesion {
 
     text-align: center;
 }
 
 a:hover {
-    color:  #A9D562; /* Cambia el color del texto cuando el mouse está encima */
-    text-decoration: none; /* Agrega subrayado al pasar el mouse */
+    color: #A9D562;
+    /* Cambia el color del texto cuando el mouse está encima */
+    text-decoration: none;
+    /* Agrega subrayado al pasar el mouse */
 }
 
 a:active {
-    color: green; /* Cambia el color del texto cuando se hace clic */
+    color: green;
+    /* Cambia el color del texto cuando se hace clic */
     text-decoration: none;
 }
 
-.txtOlvido{
+.txtOlvido {
 
     font-family: 'Roboto', sans-serif;
     font-size: 20px;
-    
+
     line-height: 50px;
     font-weight: bold;
     color: #A9D562;
     text-decoration: none;
-  }
+}
 
-.boton2{
+.boton2 {
     display: flex;
     flex-grow: 3;
     margin-top: auto;
@@ -149,64 +165,64 @@ a:active {
 }
 
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
 }
 
 
 .greeting {
-  font-size: 21px;
-  margin-bottom: 10px;
-  text-align: center;
+    font-size: 21px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .line {
-  width: 100px;
-  height: 2px;
-  background-color: #BABABA;
-  margin: 5px auto;
+    width: 100px;
+    height: 2px;
+    background-color: #BABABA;
+    margin: 5px auto;
 }
 
 .divRegistrate {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  margin: 40px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 40px;
 }
 
 .txtRegistrate {
-  font-family: 'Roboto', sans-serif;
-  font-size: 20px;
-  line-height: 50px;
-  font-weight: bold;
-  color: #A9D562;
-  text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    line-height: 50px;
+    font-weight: bold;
+    color: #A9D562;
+    text-decoration: none;
 
 }
 
 
-.sinCuenta{
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  margin: 40px;
-  margin-left: 45px;
+.sinCuenta {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 40px;
+    margin-left: 45px;
 
 }
 
-.txtsinCuenta{
-  font-family: 'Roboto', sans-serif;
-  font-size: 20px;
-  line-height: 50px;
-  font-weight: lighter;
-  color: #000000;
-  text-decoration: none;
+.txtsinCuenta {
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    line-height: 50px;
+    font-weight: lighter;
+    color: #000000;
+    text-decoration: none;
 }
 
 .contenedorPrincipal {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 }

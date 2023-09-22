@@ -1,4 +1,4 @@
-.input{
+.input {
     font-family: Montserrat;
     font-size: 16px;
     width: 17vw;
@@ -19,7 +19,7 @@
     background: var(--color-background-input-default, #FFF);
 }
 
-.input-error{
+.input-error {
     color: red;
     font-family: Montserrat;
     font-size: 16px;
@@ -42,6 +42,6 @@
     border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
 }
 
-.input-error::placeholder{
+.input-error::placeholder {
     color: red;
 }
