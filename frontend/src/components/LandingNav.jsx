@@ -10,7 +10,7 @@ function LandingNav() {
                 <li><a href="#">Servicios</a></li>
                 <li><a href="#">Contáctanos</a></li>
             </ul>
-            <img src="/images/logoPUCP.png" alt="Logo PUCP" />
+            <img src="/images/logoPUCPstandard.png" alt="Logo PUCP" />
         </nav>
     );
 }
