@@ -4,7 +4,7 @@ import styles from '@/styles/landing.module.css';
 function LandingNav() {
     return (
         <nav className={styles.landingNav}>
-            <img src="/images/LogoProyePUCP.png" alt="Logo ProyePUCP" />
+            <img src="/images/LogoProyePUCPstandard.png" alt="Logo ProyePUCP" />
             <ul>
                 <li><a href="#">¿Qué es ProyePUCP?</a></li>
                 <li><a href="#">Servicios</a></li>

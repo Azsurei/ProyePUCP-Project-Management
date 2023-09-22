@@ -1,93 +1,124 @@
 'use client'
 
 import React from 'react';
+import Link from 'next/link';
 import { useState } from 'react';
 import Placeholder from '@/components/Placeholder';
 import Button from '@/components/Button';
-import styles from '@/styles/login.css';
+import '@/styles/login.css';
 
 function Login() {
   const [password,setPassword] = useState("");
-  const [passwordRepe,setpasswordRepe] = useState("");
+  const [usuario,setUsuario] = useState("");
   const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorRepe, setPasswordErrorRepe] = useState(false);
-  const [tocoSegundoPassword,setTocoSegundoPassword] = useState(false);
-  let passwordIguales=false;
 
   function handleChange(name,value){
-    if(name==='contraseña'){
-      setPassword(value)
-      if(value.length<6){
-        setPasswordError(true)
+      if(name==='correo'){
+
+          setUsuario(value)
+
       }else{
-        setPasswordError(false)
-      }
-    }else{
-      setTocoSegundoPassword(true)
-      setpasswordRepe(value)
-      if(value.length<6){
-        setPasswordErrorRepe(true)
-        
-      }else{
-        setPasswordErrorRepe(false)
+        if(value.length<6){
+          setPasswordError(true)
+          
+        }else{
+          setPasswordError(false)
+          setpassword(value)
+        }
       }
     }
-  }
+
+
   return (
-    <div className="App">
+    <>
+    <div className="Fondo">
       
       <div>
         <img src="/images/LogoPUCPwhite.png" className="logoPucp"></img>
-        <img src="/images/LogoProyePUCP.png" className="logoProyePucp"></img>
-        
       </div>
-      <div className="contenedor-principal">
-        <div className='cabecera'>
-          <div className='contenedor-nueva-contraseña'><span>Nueva</span>contraseña</div>
-          <div className='contenedor-ingresar-contraseña'>Ingrese una contraseña, como mínimo con 6 caracteres</div>
-        </div>
-        <div className='cuerpo'>
-          <div className='placeholders'>
-            <Placeholder 
-            attribute={{
-              id: "contraseña",
-              name: "contraseña",
-              type: "password",
-              placeholder: "Nueva contraseña"
-              }}
-              handleChange={handleChange}
-              param={passwordError}
-              />
+
+      <div>
+        <img src="/images/LogoProyePUCPwhite.png" className="logoProyePucp"></img>
+      </div>
+
+
+      <div className="CuadroLogin">
+      
+
+      <div>
+        <p className="txtInicio"><span>Inicio de</span>sesión</p>
+
+        <div className='placeholders'>
+          <Placeholder 
+          attribute={{
+            id: "correo",
+            name: "correo",
+            type: "text",
+            placeholder: "Correo electrónico"
+            }}
+            handleChange={handleChange}
+            />
+      
+          <Placeholder 
+          attribute={{
+            id: "contrasena",
+            name: "contrasena",
+            type: "password",
+            placeholder: "Contraseña"
+            }}
+            handleChange={handleChange}
+            param={passwordError}
+            />
             {passwordError && <label className='label-error'>
-              Contraseña inválida o incompleta
-            </label>}
-            <Placeholder 
-            attribute={{
-              id: "contraseñaConfimar",
-              name: "contraseñaConfimar",
-              type: "password",
-              placeholder: "Confirmar contraseña"
-              }}
-              handleChange={handleChange}
-              param={passwordErrorRepe}
-              />
-              {passwordErrorRepe && <label className='label-error'>
-              Contraseña inválida o incompleta
-            </label>}
-            {(password!==passwordRepe) && !passwordErrorRepe && tocoSegundoPassword && <label className='label-error'>
-              Las contraseñas no son iguales
-            </label>}
-          </div>
-          <div className='boton'>
-            <Button text="Guardar" href={'#'}/>
-          </div>
-          <div className='otros-login'>
-              <div className='roboto'>¿Tienes un cuenta?</div>
-              <div><a href='#IniciarSesion' className='iniciar-sesion roboto'>Iniciar sesión</a></div>
-          </div>
+            Contraseña inválida o incompleta
+          </label>}
         </div>
+
+
+
+        <div className="divInicioSesion">
+          <Link href='/login/resetPassword'>
+            <span href='#IniciarSesion' className="txtOlvido" >¿Olvidó la contraseña?</span>
+          </Link>
+        </div>
+
+        <div className='boton2'>
+          <Button text="Iniciar Sesión" href={'#'}/>
+        </div>   
+
+        <div className="container">
+            <div className="line"></div>
+            <div className="greeting">O inicia sesión con</div>
+            <div className="line"></div>
+        </div>
+
+        <div className='boton2'>
+          <Button text="Google" href={'#'}/>
+        </div>      
+        
+
+        <div className="sinCuenta">
+          <p className="txtsinCuenta" >¿No tienes Cuenta?</p>
+        </div>
+
+        <div className="divRegistrate">
+          <Link href='/resetPassword'>
+            <span className="txtRegistrate" >Registrate</span>
+          </Link> 
+        </div>
+
+
       </div>
+
+
+      </div>
+
+
     </div>
+
+  
+
+    </>
   );
 }
 

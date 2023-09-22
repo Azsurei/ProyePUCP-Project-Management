@@ -4,9 +4,9 @@ import React from 'react';
 import { useState } from 'react';
 import Placeholder from '@/components/Placeholder';
 import Button from '@/components/Button';
-import styles from '@/styles/login.css';
+import styles from '@/styles/resetPassword.css';
 
-function Login() {
+function resetPassword() {
   const [password,setPassword] = useState("");
   const [passwordRepe,setpasswordRepe] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -38,7 +38,7 @@ function Login() {
       
       <div>
         <img src="/images/LogoPUCPwhite.png" className="logoPucp"></img>
-        <img src="/images/LogoProyePUCP.png" className="logoProyePucp"></img>
+        <img src="/images/LogoProyePUCPwhite.png" className="logoProyePucp"></img>
         
       </div>
       <div className="contenedor-principal">
@@ -91,4 +91,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default resetPassword;
