@@ -65,11 +65,29 @@
     padding: 2rem;
     flex: 1;
     width: 100%;
+    height: 100%;
 }
 
 .landingMain h1 {
     color: #042354;
+    font-size: 3rem; /* Tamaño de fuente de 3 rem */
+  }
+
+.landingText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem;
+    padding: 2rem;
+    flex: 1;
+    width: 100%;
+    height: 100%;
 }
+
+.landingText p {
+    font-size: 1.5rem; /* Tamaño de fuente de 1.5 rem */
+  }
 
 /* Estilos para el pie de página */
 .landingFooter {
@@ -93,6 +111,41 @@
 
 @media screen and (max-width: 768px) {
     .landingContainer {
-        flex-direction: column;
+      flex-direction: column;
     }
-}
+  
+    .landingNav {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1rem;
+    }
+  
+    .landingNav ul {
+      flex-direction: column;
+      margin-top: 1rem;
+    }
+  
+    .landingNav li {
+      padding: 0.5rem 0;
+    }
+  
+    .landingMain {
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+  
+    .landingMain img {
+      margin-top: 1rem;
+    }
+  
+    .landingFooter {
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+  
+    .landingFooter a {
+      margin-top: 0.5rem;
+    }
+  }

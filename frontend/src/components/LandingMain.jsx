@@ -5,7 +5,7 @@ import styles from "@/styles/landing.module.css";
 function LandingMain() {
     return (
         <main className={styles.landingMain}>
-            <div>
+            <div className={styles.landingText}>
                 <h1>La manera más fácil de gestionar tus proyectos</h1>
                 <p>
                     ProyePUCP es la mejor plataforma educativa que te proveerá
