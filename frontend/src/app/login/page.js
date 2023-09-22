@@ -6,23 +6,51 @@ import { useState } from "react";
 import Placeholder from "@/components/Placeholder";
 import Button from "@/components/Button";
 import "@/styles/login.css";
+import axios from "axios";
 
 function Login() {
     const [password, setPassword] = useState("");
     const [usuario, setUsuario] = useState("");
     const [passwordError, setPasswordError] = useState(false);
 
+    const axiosOptions = {
+        method: "post", // El método de solicitud puede variar según tus necesidades
+        url: "http://localhost:8080/api/login",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
+    };
+
     function handleChange(name, value) {
         if (name === "correo") {
             setUsuario(value);
         } else {
-            if (value.length < 6) {
+            if (value.length < 3) {
                 setPasswordError(true);
             } else {
                 setPasswordError(false);
-                setpassword(value);
+                setPassword(value);
             }
         }
+    }
+
+    function handleLogin() {
+        console.log(usuario);
+        console.log(password);
+
+        axios
+            .post("http://localhost:8080/api/login", {
+                username: usuario,
+                password: password,
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     return (
@@ -91,7 +119,11 @@ function Login() {
                         </div>
 
                         <div className="boton2">
-                            <Button text="Iniciar Sesión" href={"#"} />
+                            <Button
+                                text="Iniciar Sesión"
+                                href={"#"}
+                                onClick={handleLogin}
+                            />
                         </div>
 
                         <div className="container">

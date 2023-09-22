@@ -6,8 +6,12 @@ import "@/styles/resetPassword.css";
 
 import { useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 function register() {
+    const [nombre, setNombre] = useState("");
+    const [apellido, setApellido] = useState("");
+    const [correoElectronico, setCorreoElectronico] = useState("");
     const [password, setPassword] = useState("");
     const [passwordRepe, setpasswordRepe] = useState("");
     const [passwordError, setPasswordError] = useState(false);
@@ -15,10 +19,22 @@ function register() {
     const [tocoSegundoPassword, setTocoSegundoPassword] = useState(false);
     let passwordIguales = false;
 
+    const axiosOptions = {
+        method: "post", // El método de solicitud puede variar según tus necesidades
+        url: "http://localhost:8080/api/register",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
+    };
+
     function handleChange(name, value) {
+        if (name === "nombre") setNombre(value);
+        else if (name === "apellido") setApellido(value);
+        else if (name === "correoElectronico") setCorreoElectronico(value);
         if (name === "contraseña") {
             setPassword(value);
-            if (value.length < 6) {
+            if (value.length < 3) {
                 setPasswordError(true);
             } else {
                 setPasswordError(false);
@@ -26,12 +42,34 @@ function register() {
         } else {
             setTocoSegundoPassword(true);
             setpasswordRepe(value);
-            if (value.length < 6) {
+            if (value.length < 3) {
                 setPasswordErrorRepe(true);
             } else {
                 setPasswordErrorRepe(false);
             }
         }
+    }
+
+    function handleRegister() {
+        console.log(nombre);
+        console.log(apellido);
+        console.log(correoElectronico);
+        console.log(password);
+
+        axios
+            .post("http://localhost:8080/api/register", {
+                nombres: nombre,
+                apellidos: apellido,
+                correoElectronico: correoElectronico,
+                password: password,
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log("Registro correcto");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     return (
@@ -56,11 +94,21 @@ function register() {
                     <div className="placeholders">
                         <Placeholder
                             attribute={{
-                                id: "nombreCompleto",
-                                name: "nombreCompleto",
+                                id: "nombre",
+                                name: "nombre",
                                 type: "text",
-                                placeholder: "Nombre completo",
+                                placeholder: "Nombre",
                             }}
+                            handleChange={handleChange}
+                        />
+                        <Placeholder
+                            attribute={{
+                                id: "apellido",
+                                name: "apellido",
+                                type: "text",
+                                placeholder: "Apellido",
+                            }}
+                            handleChange={handleChange}
                         />
                         <Placeholder
                             attribute={{
@@ -69,6 +117,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Correo Electrónico",
                             }}
+                            handleChange={handleChange}
                         />
                         <Placeholder
                             attribute={{
@@ -109,7 +158,11 @@ function register() {
                             )}
                     </div>
                     <div className="boton">
-                        <Button text="Registrarse" href={"/login"} />
+                        <Button
+                            text="Registrarse"
+                            href={"#"}
+                            onClick={handleRegister}
+                        />
                     </div>
                     <div className="otros-login">
                         <div className="roboto">¿Tienes un cuenta?</div>
