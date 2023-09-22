@@ -49,6 +49,8 @@
     line-height: 50px;
     font-weight: 500;
     color: #172B4D;
+    padding-top: 8%;
+    padding-bottom: 8%;
     
 }
 
@@ -140,7 +142,7 @@ a:active {
 
 .boton2{
     display: flex;
-    flex-grow: 4;
+    flex-grow: 3;
     margin-top: auto;
     justify-content: center;
 
@@ -189,7 +191,7 @@ a:active {
   position: absolute;
   bottom: 0;
   left: 0;
-  margin: 20px;
+  margin: 40px;
   margin-left: 45px;
 
 }
@@ -201,4 +203,10 @@ a:active {
   font-weight: lighter;
   color: #000000;
   text-decoration: none;
+}
+
+.contenedorPrincipal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }

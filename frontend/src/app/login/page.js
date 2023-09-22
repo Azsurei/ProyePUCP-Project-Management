@@ -77,7 +77,7 @@ function Login() {
 
 
         <div className="divInicioSesion">
-          <Link href='/login/resetPassword'>
+          <Link href='/login/resetPassword' className="txtOlvido">
             <span href='#IniciarSesion' className="txtOlvido" >¿Olvidó la contraseña?</span>
           </Link>
         </div>
@@ -97,14 +97,15 @@ function Login() {
         </div>      
         
 
-        <div className="sinCuenta">
-          <p className="txtsinCuenta" >¿No tienes Cuenta?</p>
-        </div>
-
-        <div className="divRegistrate">
-          <Link href='/resetPassword'>
-            <span className="txtRegistrate" >Registrate</span>
-          </Link> 
+        <div className="contenedorPrincipal">
+          <div className="sinCuenta">
+            <p className="txtsinCuenta">¿No tienes Cuenta?</p>
+          </div>
+          <div className="divRegistrate">
+            <Link href='/resetPassword' className="txtOlvido">
+              <span className="txtRegistrate">Registrate</span>
+            </Link> 
+          </div>
         </div>
 
 

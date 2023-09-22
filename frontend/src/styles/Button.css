@@ -6,9 +6,15 @@
     outline: none;  
     border: none;
     font-weight: 500;
+    align-items: center;
+
+    
+    font-size: 18px;
 }
 
 .button:hover{
     background-color: #172B4D;
     color: white;
 }
+
+
