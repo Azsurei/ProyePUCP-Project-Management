@@ -1,15 +1,16 @@
 import React from 'react';
+import styles from '@/styles/landing.module.css';
 
 function LandingNav() {
     return (
-        <nav>
-            <img src="/src/assets/logoProyePUCP.png" alt="Logo ProyePUCP" />
+        <nav className={styles.landingNav}>
+            <img src="/images/LogoProyePUCP.png" alt="Logo ProyePUCP" />
             <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Acerca de</a></li>
-                <li><a href="#">Contacto</a></li>
+                <li><a href="#">¿Qué es ProyePUCP?</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Contáctanos</a></li>
             </ul>
-            <img src="/src/assets/logoPUCP.png" alt="Logo PUCP" />
+            <img src="/images/logoPUCP.png" alt="Logo PUCP" />
         </nav>
     );
 }

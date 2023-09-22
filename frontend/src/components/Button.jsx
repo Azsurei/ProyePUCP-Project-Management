@@ -1,24 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import Link from 'next/link';
 
-const Button = ({ type, text, onClick }) => (
-  <button
-    type={type}
-    onClick={onClick}
-    style={{ backgroundColor: 'white', fontSize: '1.2rem', color: 'black' }}
-  >
-    {text}
-  </button>
+const Button = ({ type, text, href }) => (
+  <Link href={href}>
+    <button
+      type={type}
+      style={{ 
+        backgroundColor: 'white', 
+        fontSize: '1.2rem', 
+        color: 'black' 
+      }}
+    >
+      {text}
+    </button>
+  </Link>
 );
-
-Button.propTypes = {
-  type: PropTypes.string,
-  text: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-};
-
-Button.defaultProps = {
-  type: 'button',
-};
 
 export default Button;

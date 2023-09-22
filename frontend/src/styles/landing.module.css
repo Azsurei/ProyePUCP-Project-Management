@@ -1,0 +1,97 @@
+.body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilos para el logo de ProyePUCP */
+.logo-proyepucp {
+    width: 100px;
+    height: 100px;
+}
+
+/* Estilos para el logo de la PUCP */
+.logo-pucp {
+    width: 50px;
+    height: 50px;
+}
+
+.landingContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-height: 1200px;
+    margin: auto; /* Centra horizontalmente */
+    width: 100%;
+}
+
+/* Estilos para la barra de navegación */
+.landingNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.landingNav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.landingNav li {
+    padding: 0 2rem;
+} 
+
+.landingNav li a {
+    color: #042354;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.landingNav li a:hover {
+    color: #0070f3;
+}
+
+/* Estilos para el contenido principal */
+.landingMain {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    flex: 1;
+    width: 100%;
+}
+
+.landingMain h1 {
+    color: #042354;
+}
+
+/* Estilos para el pie de página */
+.landingFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    width: 100%;
+    background-color: #f2f2f2;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.landingFooter a {
+    color: #042354;
+    text-decoration: none;
+}
+
+.landingFooter a:hover {
+    color: #0070f3;
+}
+
+@media screen and (max-width: 768px) {
+    .landingContainer {
+        flex-direction: column;
+    }
+}
