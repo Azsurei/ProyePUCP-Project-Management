@@ -1,0 +1,14 @@
+.button{
+    font-family: Montserrat;
+    width: 220px;
+    height: 40px;
+    cursor: pointer;
+    outline: none;  
+    border: none;
+    font-weight: 500;
+}
+
+.button:hover{
+    background-color: #172B4D;
+    color: white;
+}

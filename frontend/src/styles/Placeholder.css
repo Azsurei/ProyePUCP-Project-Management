@@ -1,0 +1,28 @@
+.input{
+    font-family: Montserrat;
+    font-weight: 600;
+    font-size: 16px;
+    width: 220px;
+    height: 30px;
+    color: #626F86; 
+    border-radius: 3.375px;
+    border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
+    background: var(--color-background-input-default, #FFF);
+}
+
+.input-error{
+    color: red;
+    font-family: Montserrat;
+    font-size: 16px;
+    width: 220px;
+    height: 30px;
+    border: 1px solid red;
+    background-color: rgb(236, 167, 167);
+    border-radius: 3.375px;
+    border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
+    background: var(--color-background-input-default, #FFF);
+}
+
+.input-error::placeholder{
+    color: red;
+}
