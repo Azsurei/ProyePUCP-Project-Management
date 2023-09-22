@@ -70,39 +70,39 @@ function Login() {
                     ></img>
                 </div>
 
-      <div className="CuadroLogin">
-      
+                <div className="CuadroLogin">
+                    <div>
+                        <p className="txtInicio">
+                            <span>Inicio de</span>sesión
+                        </p>
 
-      <div>
-        <p className="txtInicio"><span>Inicio de</span>sesión</p>
+                        <div className="placeholders">
+                            <Placeholder
+                                attribute={{
+                                    id: "correo",
+                                    name: "correo",
+                                    type: "text",
+                                    placeholder: "Correo electrónico",
+                                }}
+                                handleChange={handleChange}
+                            />
 
-        <div className='placeholders'>
-          <Placeholder 
-          attribute={{
-            id: "correo",
-            name: "correo",
-            type: "text",
-            placeholder: "Correo electrónico"
-            }}
-            handleChange={handleChange}
-            />
-      
-          <Placeholder 
-          attribute={{
-            id: "contrasena",
-            name: "contrasena",
-            type: "password",
-            placeholder: "Contraseña"
-            }}
-            handleChange={handleChange}
-            param={passwordError}
-            />
-            {passwordError && <label className='label-error'>
-            Contraseña inválida o incompleta
-          </label>}
-        </div>
-
-
+                            <Placeholder
+                                attribute={{
+                                    id: "contrasena",
+                                    name: "contrasena",
+                                    type: "password",
+                                    placeholder: "Contraseña",
+                                }}
+                                handleChange={handleChange}
+                                param={passwordError}
+                            />
+                            {passwordError && (
+                                <label className="label-error">
+                                    Contraseña inválida o incompleta
+                                </label>
+                            )}
+                        </div>
 
                         <div className="divInicioSesion">
                             <Link
@@ -132,35 +132,32 @@ function Login() {
                             <div className="line"></div>
                         </div>
 
-        <div className='boton2'>
-          <Button text="Google" href={'#'}/>
-        </div>      
-        
+                        <div className="boton2">
+                            <Button text="Google" href={"#"} />
+                        </div>
 
-        <div className="contenedorPrincipal">
-          <div className="sinCuenta">
-            <p className="txtsinCuenta">¿No tienes Cuenta?</p>
-          </div>
-          <div className="divRegistrate">
-            <Link href='/resetPassword' className="txtOlvido">
-              <span className="txtRegistrate">Registrate</span>
-            </Link> 
-          </div>
-        </div>
-
-
-      </div>
-
-
-      </div>
-
-
-    </div>
-
-  
-
-    </>
-  );
+                        <div className="contenedorPrincipal">
+                            <div className="sinCuenta">
+                                <p className="txtsinCuenta">
+                                    ¿No tienes Cuenta?
+                                </p>
+                            </div>
+                            <div className="divRegistrate">
+                                <Link
+                                    href="/login/register"
+                                    className="txtOlvido"
+                                >
+                                    <span className="txtRegistrate">
+                                        Registrate
+                                    </span>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }
 
 export default Login;
