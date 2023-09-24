@@ -15,7 +15,7 @@ function Login() {
 
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
-        url: "http://localhost:8080/api/login",
+        url: "http://localhost:8080/api/auth/login",
         headers: {
             "Content-Type": "application/json",
         },
@@ -40,7 +40,7 @@ function Login() {
         console.log(password);
 
         axios
-            .post("http://localhost:8080/api/login", {
+            .post("http://localhost:8080/api/auth/login", {
                 username: usuario,
                 password: password,
             })
