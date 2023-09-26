@@ -23,3 +23,6 @@ El campo codigo de grupo curso no se usa.
 **BD**
 El campo fecha de nacimiento y telefono no se usan, ademas hay un campo extra llamado usuario.(ambos son para que sea escalable)
 }
+
+
+Cambio txt prueba
