@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap);
+
 html {
     box-sizing: border-box;
     font-size: 16px;
@@ -11,6 +13,8 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-y: auto;
+    overflow-x: none;
 }
 
 code {
@@ -25,4 +29,10 @@ code {
     box-sizing: inherit;
     margin: 0;
     padding: 0;
+}
+
+
+.dashboardGeneralContainer{
+    display: flex;
+    flex-direction: column;
 }
