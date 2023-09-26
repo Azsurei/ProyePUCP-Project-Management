@@ -7,4 +7,30 @@
     height: calc(100vh - 117px);
     overflow: auto;
     background-color: #F5F5F5;
+
+    font-size: 1.3rem;
+    padding: 1.5rem 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.ProjectSidebar .header{
+    font-size: 2rem;
+}
+
+.ProjectSidebar .teamContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ProjectSidebar .teamContainer .teamName{
+    background-color: #8DFFA6;
+    border-radius: 10px;
+    padding: 0 2.6rem;
+}
+
+.ProjectSidebar .members{
+    list-style: none;
 }
