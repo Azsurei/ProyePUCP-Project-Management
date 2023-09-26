@@ -1,4 +1,4 @@
-.DashboardSidebar {
+.DashboardSecondNav {
     margin: 0;
     padding: 0 0;
     list-style: none;
@@ -17,7 +17,7 @@
 
 }
 
-.DashboardSidebar li{
+.DashboardSecondNav li{
     color: white;
     display: flex;
     flex-direction: row;
@@ -28,18 +28,18 @@
     margin: 0 0;
 }
 
-.DashboardSidebar li:hover{
+.DashboardSecondNav li:hover{
     background-color: #1f3965;
 }
 
-.DashboardSidebar li p{
+.DashboardSecondNav li p{
     width: 100%;
     text-align: center;
     margin: 0 0;
 }
 
 
-.DashboardSidebar li .sideIcon{
+.DashboardSecondNav li .sideIcon{
     width: 25px;
     height: 25px;
 
@@ -52,7 +52,7 @@
 
 
 @media (width <= 517px){
-    .DashboardSidebar {
+    .DashboardSecondNav {
         justify-content: left;
         padding: 0 .8rem;
     }

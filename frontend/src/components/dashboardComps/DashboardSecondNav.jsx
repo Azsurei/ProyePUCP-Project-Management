@@ -1,9 +1,9 @@
 import React from "react";
-import "@/styles/dashboardStyles/DashboardSidebar.css";
+import "@/styles/dashboardStyles/DashboardSecondNav.css";
 
-function DashboardSidebar() {
+function DashboardSecondNav() {
     return (
-        <ul className="DashboardSidebar">
+        <ul className="DashboardSecondNav">
             <li>
                 <img src="/icons/sidebarIcon1.svg" className='sideIcon'></img>
                 <p>Principal</p>
@@ -24,4 +24,4 @@ function DashboardSidebar() {
     );
 }
 
-export default DashboardSidebar;
+export default DashboardSecondNav;

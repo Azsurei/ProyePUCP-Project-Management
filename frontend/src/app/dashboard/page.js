@@ -1,11 +1,12 @@
-import DashboardNav from "@/components/dashboardComps/DashboardNav";
-import LandingMain from "@/components/LandingMain";
-import LandingNav from "@/components/LandingNav";
-import styles from "@/styles/landing.module.css";
+import Link from "next/link";
 
 export default function Dashboard() {
     return (
         //Aqui va el codigo del contenido del dashboard
-        <p>pepepe</p>
+        <Link href={'/dashboard/project'}>
+            <button>
+                hola
+            </button>
+        </Link>
     );
 }
