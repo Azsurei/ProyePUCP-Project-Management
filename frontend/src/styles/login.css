@@ -36,7 +36,7 @@
 
     position: fixed;
     width: 27%;
-    height: 70%;
+    height: 80%;
     top: 50%;
     left: 50%;
     z-index: -1;
@@ -137,6 +137,7 @@ a:hover {
     /* Cambia el color del texto cuando el mouse está encima */
     text-decoration: none;
     /* Agrega subrayado al pasar el mouse */
+    
 }
 
 a:active {
