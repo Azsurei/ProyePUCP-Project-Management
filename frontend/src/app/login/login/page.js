@@ -56,6 +56,8 @@ function Login() {
     return (
         <>
             <div className="Fondo">
+
+                
                 <div>
                     <img
                         src="/images/LogoPUCPwhite.png"

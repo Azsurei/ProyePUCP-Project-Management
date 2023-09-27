@@ -99,7 +99,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Nombre",
                             }}
-                            handleChange={handleChange}
+                            handleChange={handleRegister}
                         />
                         <Placeholder
                             attribute={{
@@ -108,7 +108,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Apellido",
                             }}
-                            handleChange={handleChange}
+                            handleChange={handleRegister}
                         />
                         <Placeholder
                             attribute={{
@@ -117,7 +117,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Correo Electrónico",
                             }}
-                            handleChange={handleChange}
+                            handleChange={handleRegister}
                         />
                         <Placeholder
                             attribute={{
@@ -167,7 +167,7 @@ function register() {
                     <div className="otros-login">
                         <div className="roboto">¿Tienes un cuenta?</div>
                         <div>
-                            <Link href="/login">
+                            <Link href="/login/login">
                                 <span className="iniciar-sesion roboto">
                                     Iniciar sesión
                                 </span>

@@ -8,6 +8,10 @@
     background-image: url('/images/LoginBackground.png');
     background-size: cover;
     background-position: center center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 
@@ -16,7 +20,7 @@
     position: fixed;
     height: auto;
     /* Mantener la proporción original */
-    top: 10px;
+    top: 0px;
     /* Distancia desde la parte superior */
     left: 10px;
     /* Distancia desde la parte derecha */
@@ -28,22 +32,22 @@
     height: auto;
     /* Mantener la proporción original */
     width: auto;
-    right: 20px;
+    right: 5px;
     /* Distancia desde la parte derecha */
+    top: 0px;
 }
 
 .CuadroLogin {
 
     position: fixed;
-    width: 27%;
-    height: 80%;
     top: 50%;
     left: 50%;
     z-index: -1;
     background-color: white;
     transform: translate(-50%, -50%);
     border-radius: 20px;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1)
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+    
 }
 
 .txtInicio {
@@ -79,6 +83,17 @@
     border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
     background: var(--color-background-input-default, #FFF);
 }
+
+
+.placeholders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-grow: 1.5;
+}
+
 
 #correo::placeholder {
     font-size: 16px;
@@ -118,14 +133,6 @@
     background-color: transparent;
     cursor: pointer;
 }
-
-#eyeIcon {
-    width: 20px;
-    /* Ajusta el tamaño según sea necesario */
-    height: 20px;
-    /* Ajusta el tamaño según sea necesario */
-}
-
 
 .divInicioSesion {
 
@@ -225,5 +232,36 @@ a:active {
 .contenedorPrincipal {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items:flex-end;
 }
+
+@media (min-width: 768px) {
+    .CuadroLogin {
+      width: 28rem;
+      height: 43rem;
+      overflow-y: auto; 
+
+    }
+  }
+  
+  /* Estilos para pantallas medianas */
+  @media (max-width: 767px) {
+    .CuadroLogin {
+      width: 25rem;
+    }
+  
+  
+    .divRegistrate,
+    .sinCuenta {
+      position: static;
+      margin: 20px auto;
+      text-align: center;
+    }
+  }
+  
+  /* Estilos para pantallas pequeñas */
+  @media (max-width: 480px) {
+    .CuadroLogin {
+      width: 90%;
+    }
+  }
