@@ -6,19 +6,19 @@ import { useState } from "react";
 
 
 function CardEDT(props){
-    console.log(props.levelName);
     let hasChilds;
     props.childList === null ? hasChilds=false : hasChilds=true;
 
     const [openChilds, setOpenChilds] = useState(false);
     const handleClick = ()=>{
-        setOpenChilds(!openChilds);
+        if(hasChilds === true)
+            setOpenChilds(!openChilds);
     }
 
 
     return(
-        <>
-            <li className="CardEDT" onClick={handleClick}>
+        <div>
+            <li className={openChilds === true ? "CardEDT active" : "CardEDT"} onClick={handleClick}>
                 <div className="leftContainer">
                     <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p>
                     <div className="titleContainer">
@@ -28,12 +28,12 @@ function CardEDT(props){
                 </div>
                 
                 <div className="buttonsContainer">
-                    <button>Mas detalles</button>
+                    <button>Ver detalles</button>
                 </div>
 
             </li>
-            {openChilds && hasChilds && <ListElementsEDT listData={props.childList}></ListElementsEDT>}
-        </>
+            {hasChilds && openChilds && <ListElementsEDT listData={props.childList} initialMargin={30}></ListElementsEDT>}
+        </div>
     )
 }
 
@@ -44,13 +44,9 @@ function CardEDT(props){
 export default function ListElementsEDT(props){
     const ListComps = props.listData;
 
-    function handleOnClick(){
-        //deberiamos mover todo a la izquierda (o borrar todo)
-        //y mostrar la nueva lista
-    }
 
     return(
-        <ul className="ListElementsEDT">
+        <ul className="ListElementsEDT" style={{marginLeft : props.initialMargin}}>
             {ListComps.map((component)=>{
                 return (
                     <CardEDT key={component.id} 
@@ -59,7 +55,7 @@ export default function ListElementsEDT(props){
                                 levelName={component.levelName}
                                 levelColor={component.levelColor}
                                 childList={component.childsList}
-                                initialPadding={component.initialPadding}>
+                                initialMargin={component.initialMargin}>
                 </CardEDT>
                 );
             })} 
