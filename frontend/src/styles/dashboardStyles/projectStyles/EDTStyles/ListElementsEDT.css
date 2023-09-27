@@ -17,7 +17,7 @@
     width: 1fr;
     padding: 1.2rem 2rem;
 
-    background: white;
+    background-color: white;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     border-color: #DFDFDF;
@@ -60,6 +60,8 @@
 
 .CardEDT .buttonsContainer{
     gap: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .CardEDT .leftContainer .titleContainer{
@@ -92,3 +94,12 @@
 
 /*En menos width (450) ya no puede bajar mas, convertir boton mas detalles en un ojo o algo asi
 con media query*/
+.CardEDT.active{
+    padding: .6rem 2rem; 
+    transition: padding 0.25s ease-in;
+}
+.CardEDT.active .buttonsContainer button{
+    display: none;
+    transition: display 0.25s ease-out;
+    
+}

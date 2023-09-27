@@ -2,3 +2,35 @@
     padding: 2.5rem 2.5rem;
     flex: 1;
 }
+
+.EDTNew .NewEDTSection{
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 1rem;
+    margin-top: .5rem;
+
+    gap: .1rem;
+}
+
+.EDTNew .NewEDTSection .Header{
+    font-family: 'Montserrat';
+    color: #172B4D;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.EDTNew .NewEDTSection .FirstCardContainer,.EDTNew .NewEDTSection .SecondCardContainer{
+    border-style: solid;
+    border-color: green;
+    flex: 1;
+    background-color: white;
+    
+    background-color: white;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    border-color: #DFDFDF;
+    border-style: solid;
+    border-width: 1px;
+}

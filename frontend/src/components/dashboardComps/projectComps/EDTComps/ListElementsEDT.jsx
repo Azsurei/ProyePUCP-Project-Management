@@ -11,13 +11,14 @@ function CardEDT(props){
 
     const [openChilds, setOpenChilds] = useState(false);
     const handleClick = ()=>{
-        setOpenChilds(!openChilds);
+        if(hasChilds === true)
+            setOpenChilds(!openChilds);
     }
 
 
     return(
         <div>
-            <li className="CardEDT" onClick={handleClick}>
+            <li className={openChilds === true ? "CardEDT active" : "CardEDT"} onClick={handleClick}>
                 <div className="leftContainer">
                     <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p>
                     <div className="titleContainer">
@@ -27,11 +28,11 @@ function CardEDT(props){
                 </div>
                 
                 <div className="buttonsContainer">
-                    <button>Mas detalles</button>
+                    <button>Ver detalles</button>
                 </div>
 
             </li>
-            {hasChilds && openChilds && <ListElementsEDT listData={props.childList} initialMargin={20}></ListElementsEDT>}
+            {hasChilds && openChilds && <ListElementsEDT listData={props.childList} initialMargin={30}></ListElementsEDT>}
         </div>
     )
 }
