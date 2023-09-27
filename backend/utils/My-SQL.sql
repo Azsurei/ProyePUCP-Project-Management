@@ -2,7 +2,23 @@
 DROP TABLE IF EXISTS ProyectoXGrupoProyecto;
 DROP TABLE IF EXISTS GrupoProyecto;
 DROP TABLE IF EXISTS Proyecto;
-
+DROP TABLE IF EXISTS Herramienta;
+DROP TABLE IF EXISTS Cronograma;
+DROP TABLE IF EXISTS EDT;
+DROP TABLE IF EXISTS ComponenteEDT;
+DROP TABLE IF EXISTS ComponenteCriterioDeAceptacion;
+DROP TABLE IF EXISTS ActaConstitucion;
+DROP TABLE IF EXISTS HitoAC;
+DROP TABLE IF EXISTS InteresadoAC;
+DROP TABLE IF EXISTS TipoDatoAC;
+DROP TABLE IF EXISTS DetalleAC;
+DROP TABLE IF EXISTS Presupuesto;
+DROP TABLE IF EXISTS Ingreso;
+DROP TABLE IF EXISTS Moneda;
+DROP TABLE IF EXISTS Egreso;
+DROP TABLE IF EXISTS EstimacionCosto;
+DROP TABLE IF EXISTS LineaEgreso;
+DROP TABLE IF EXISTS LineaEstimacionCosto;
 -- -----------------------------------------------------
 -- CREACION DE TABLAS
 -- -----------------------------------------------------
@@ -88,6 +104,13 @@ CREATE TABLE IF NOT EXISTS Usuario (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE TABLE Rol(
+    idRol INT AUTO_INCREMENT PRIMARY KEY,
+    nombreRol VARCHAR(255),
+    descripcion VARCHAR(500),
+    activo TINYINT
+)
+ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Grupo Proyecto
 -- -----------------------------------------------------
@@ -95,7 +118,8 @@ CREATE TABLE GrupoProyecto (
     idGrupoProyecto INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(200) NOT NULL,
     activo tinyint NOT NULL
-);
+)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Proyecto
@@ -108,7 +132,8 @@ CREATE TABLE Proyecto(
     fechaFin DATE,
     fechaUltimaModificacion DATE ,
     activo tinyint NOT NULL
-);
+)
+ENGINE = InnoDB;
 
 --------------------------------------------------------
 -- Tabla intermedia
@@ -120,7 +145,220 @@ CREATE TABLE ProyectoXGrupoProyecto(
     PRIMARY KEY (idGrupoProyecto, idProyecto),
     FOREIGN KEY (idGrupoProyecto) REFERENCES GrupoProyecto(idGrupoProyecto),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
-);
+)
+ENGINE = InnoDB;
+
+CREATE TABLE UsuarioXProyecto(
+    idUsuario INT,
+    idProyecto INT,
+    PRIMARY KEY (idUsuario, idProyecto),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+--------------------------------------------------------
+-- Herramientas
+--------------------------------------------------------
+
+CREATE TABLE Herramienta(
+	idHerramienta INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    nombre VARCHAR(200) NOT NULL,
+    descripcion VARCHAR(255) NOT NULL,
+    imageURL VARCHAR(400) NOT NULL,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE Cronograma(
+	idCronograma INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    fechaInicio DATE,
+    fechaFin DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+)
+ENGINE = InnoDB;
+------------
+-- EDT
+------------
+CREATE TABLE EDT(
+	idEDT INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    nombreEDT VARCHAR(255),
+    descripcionEDT VARCHAR(255),
+    idUsuarioCreacion INT,
+    fechaCreacion DATE,
+    hayResponsable TINYINT ,
+    activo tinyint ,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ComponenteEDT(
+	idComponente INT AUTO_INCREMENT PRIMARY KEY,
+    idElementoPadre INT,
+    idEDT INT,
+    descripcion VARCHAR(255),
+    codigo VARCHAR(255),
+    nombreEntregable VARCHAR(255),
+    observaciones VARCHAR(255),
+    activo tinyint ,
+    FOREIGN KEY (idElementoPadre) REFERENCES ComponenteEDT(idComponente),
+    FOREIGN KEY (idEDT) REFERENCES EDT(idEDT)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ComponenteCriterioDeAceptacion(
+	idComponenteCriterioDeAceptacion INT PRIMARY KEY,
+    idComponenteEDT INT,
+    descripcion VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idComponenteEDT) REFERENCES ComponenteEDT(idComponente)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Acta de Constitucion
+-----------------------
+CREATE TABLE ActaConstitucion(
+	idActa INT PRIMARY KEY,
+    idHerramienta INT,
+    activo TINYINT,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE HitoAC(
+	idHito INT PRIMARY KEY,
+    idActa INT,
+    descripcion VARCHAR(255),
+    fechaLimite DATE,
+    activo TINYINT,
+    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE InteresadoAC(
+	idInteresado INT PRIMARY KEY,
+    idActa INT,
+    nombre VARCHAR(255),
+    cargo VARCHAR(255),
+    organizacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE DetalleAC(
+	idDetalle INT PRIMARY KEY,
+    idActa INT,
+    idTipoDatoAC INT,
+    detalle VARCHAR(500),
+    activo TINYINT,
+    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa),
+    FOREIGN KEY (idTipoDatoAC) REFERENCES TipoDatoAC(idTipoDato)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE TipoDatoAC(
+	idTipoDato INT PRIMARY KEY,
+    idActa INT,
+    nombre VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Presupuesto
+-----------------------
+
+CREATE TABLE Presupuesto(
+	idPresupuesto INT PRIMARY KEY,
+    idHerramienta INT,
+    presupuestoInicial  DECIMAL(10,2),
+    activo TINYINT,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE Ingreso(
+	idIngreso INT PRIMARY KEY,
+    idPresupuesto INT,
+    subtotal  DECIMAL(10,2),
+    activo TINYINT,
+    FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE TransaccionTipo(
+	idTransaccion INT PRIMARY KEY,
+    descripcion VARCHAR(255),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+CREATE TABLE Egreso(
+	idEgreso INT PRIMARY KEY,
+    idPresupuesto INT,
+    subtotal  DECIMAL(10,2),
+    activo TINYINT,
+    FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE LineaEgreso(
+	idLineaEgreso INT PRIMARY KEY,
+    idEgreso INT,
+    idMoneda INT,
+    costoReal  DECIMAL(10,2),
+    cantidad INT,
+    activo TINYINT,
+    FOREIGN KEY (idEgreso) REFERENCES Egreso(idEgreso),
+    FOREIGN KEY (idMoneda) REFERENCES Moneda(idMoneda)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE LineaEstimacionCosto(
+	idLineaEstimacion INT PRIMARY KEY,
+    idLineaEgreso INT,
+    idMoneda INT,
+    idEstimacion INT,
+    descripcion VARCHAR(255),
+    tarifaUnitaria  DECIMAL(10,2),
+    cantidadRecurso INT,
+    subtotal  DECIMAL(10,2),
+    fechaInicio DATE,
+    activo TINYINT,
+    FOREIGN KEY (idMoneda) REFERENCES Moneda(idMoneda),
+    FOREIGN KEY (idLineaEgreso) REFERENCES LineaEgreso(idLineaEgreso),
+    FOREIGN KEY (idEstimacion) REFERENCES EstimacionCosto(idEstimacion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE EstimacionCosto(
+	idEstimacion INT PRIMARY KEY,
+    idPresupuesto INT,
+    subtotal  DECIMAL(10,2),
+    reservaContigencia  DECIMAL(10,2),
+    lineaBase  DECIMAL(10,2),
+    ganancia  DECIMAL(10,2),
+	IGV DECIMAL(10,2),
+    activo TINYINT,
+    FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE Moneda(
+	idMoneda INT PRIMARY KEY,
+    tipoCambio DECIMAL(10,2),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- PROCEDURES
