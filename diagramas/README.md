@@ -2,7 +2,11 @@
 ---
 # Cambios 21/09/2023
 
+## Proyecto:
 
+Se elimina curso y se reemplaza por grupo proyecto.
+
+**Falta actualizar esto en las pantallas**.
 
 ## EDT:
 Se hace la creacion del componente EDT con caracteristica de recursividad para el manejo de un arbol de componentes.
@@ -47,6 +51,12 @@ Done
 ## Product Backlog
 
 Preguntar si el estado del product backlog es un estado global, dado que para las tareas manejamos un estado configurable por el usuario, mientras que tambien usamos estados en el product backlog.
+
+**En el sprint backlog van tareas, por lo que falta esta correccion**
+
+## Sprint Backlog
+
+Se agrega relacion sprint con tareas. Se justifica Tareas-Sprint debido a que dentro de cada sprint backlog hay tareas, no product backlog items
 
 ## Auto Evaluacion
 

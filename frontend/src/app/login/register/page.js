@@ -21,7 +21,7 @@ function register() {
 
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
-        url: "http://localhost:8080/api/register",
+        url: "http://localhost:8080/api/auth/register",
         headers: {
             "Content-Type": "application/json",
         },
@@ -57,7 +57,7 @@ function register() {
         console.log(password);
 
         axios
-            .post("http://localhost:8080/api/register", {
+            .post("http://localhost:8080/api/auth/register", {
                 nombres: nombre,
                 apellidos: apellido,
                 correoElectronico: correoElectronico,

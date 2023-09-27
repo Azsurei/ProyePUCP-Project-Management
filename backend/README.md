@@ -26,3 +26,9 @@ mi-proyecto/
 │   └── README.md             # Documentación específica del frontend
 │
 └── README.md                 # Documentación principal del proyecto
+
+# Falta revisar
+
+Estilo de programacion
+Cohesion con el DC
+Organizacion de carpetas
