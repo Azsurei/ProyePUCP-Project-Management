@@ -1,7 +1,9 @@
 
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
+import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListElementsEDT from "@/components/dashboardComps/projectComps/EDTComps/ListElementsEDT";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
+import Link from "next/link";
 
 const childOfFirst=[
     {
@@ -10,7 +12,21 @@ const childOfFirst=[
         levelCounter: '1',
         levelName: 'SUBPROYECTO',
         levelColor: 'gray',
-        childsList: null
+        childsList: [{
+            id: 6,
+            componentName: 'swafnaiooifn',
+            levelCounter: '1',
+            levelName: 'ENTREGABLE',
+            levelColor: 'red',
+            childsList: [{
+                id: 7,
+                componentName: 'OMGGG',
+                levelCounter: '1',
+                levelName: 'TAREA',
+                levelColor: 'black',
+                childsList: null
+            }]
+        }]
     },
     {
         id: 2,
@@ -24,6 +40,7 @@ const childOfFirst=[
             levelCounter: '1',
             levelName: 'ENTREGABLE',
             levelColor: 'red',
+            childsList: null
         }]
     }
 ];
@@ -48,28 +65,15 @@ const componentsDataFirstNode=[
 ];
 
 
-function recursive(list){
-    list.map((item)=>{
-        console.log('mostrando ' + item.componentName + ' de tipo ' + item.levelName);
-        if(item.childsList != null){
-            recursive(item.childsList);
-            return;
-        }
-
-        return <ListElementsEDT listData={item}></ListElementsEDT>;
-    });
-};
-
-
 export default function EDT() {
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <div className="EDT">
-            <p>Inicio / Proyectos / Proyecto X / EDT y Diccionario EDT</p>
-            <div className="headerContainer">
-                <p className="headerTitle">EDT y diccionario EDT</p>
-                <ButtonAddNew></ButtonAddNew>
-            </div>
+            <HeaderWithButtons haveReturn={false} 
+                               haveAddNew={true}
+                               hrefToReturn={''}
+                               breadcrump={'Inicio / Proyectos / Proyect X'}
+                               btnText={'Agregar elemento'}>EDT y diccionario EDT</HeaderWithButtons>
             <div className="componentSearchContainer">
                 <input type="text" /> 
                 <button>
@@ -77,7 +81,7 @@ export default function EDT() {
                 </button>
             </div>
 
-            <ListElementsEDT listData={componentsDataFirstNode} initialPadding={0}></ListElementsEDT>
+            <ListElementsEDT listData={componentsDataFirstNode} initialMargin={0}></ListElementsEDT>
         </div>
     );
 }
