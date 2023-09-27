@@ -72,6 +72,7 @@ export default function EDT() {
             <HeaderWithButtons haveReturn={false} 
                                haveAddNew={true}
                                hrefToReturn={''}
+                               hrefForButton={'/dashboard/project/EDT/EDTNew'}
                                breadcrump={'Inicio / Proyectos / Proyect X'}
                                btnText={'Agregar elemento'}>EDT y diccionario EDT</HeaderWithButtons>
             <div className="componentSearchContainer">

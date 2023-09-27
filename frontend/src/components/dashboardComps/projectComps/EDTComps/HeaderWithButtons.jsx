@@ -16,7 +16,11 @@ export default function HeaderWithButtons(props,){
                         </Link>
                     }
                 </div>
-                {props.haveAddNew && <ButtonAddNew>{props.btnText}</ButtonAddNew>}
+                {props.haveAddNew && props.hrefForButton &&
+                    <Link href={props.hrefForButton}>
+                        <ButtonAddNew hrenToGo={props.hrefForButton}>{props.btnText}</ButtonAddNew>
+                    </Link>
+                }
             </div>
         </div>
     );
