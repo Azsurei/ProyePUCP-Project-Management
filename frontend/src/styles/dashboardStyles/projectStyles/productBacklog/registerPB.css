@@ -20,7 +20,7 @@
 .backlog{
     display: grid;
     /* grid-template-rows: 0.5fr 2fr 3fr 3fr 2fr 1fr; */
-    grid-template-rows: repeat(6,auto);
+    grid-template-rows: repeat(7,auto);
     gap: 3%;
 }
 
@@ -35,8 +35,9 @@
 
 .combo{
     display: grid;
-    grid-template-columns: repeat(2,1fr);
-    grid-template-rows: repeat(3, auto); 
+    /* grid-template-columns: repeat(2,1fr);
+    grid-template-rows: repeat(3, auto);  */
+    grid-template-columns: repeat(auto-fit,minmax(432px,1fr));
     row-gap: 2rem;
 }
 
