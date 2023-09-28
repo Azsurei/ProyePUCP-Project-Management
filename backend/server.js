@@ -1,4 +1,5 @@
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -21,9 +22,12 @@ const port = 8080;
 });*/
 
 
+// Middleware para cookies
+app.use(cookieParser());
+
 // Middleware para parsear las peticiones con contenido JSON
 app.use(bodyParser.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 const routerAuth = require('./routes/auth').routerAuth;
 const routerProyecto = require('./routes/proyecto').routerProyecto;

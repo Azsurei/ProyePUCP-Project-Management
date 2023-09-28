@@ -10,6 +10,8 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useRouter } from "next/navigation";
 
+axios.defaults.withCredentials = true;
+
 function Login() {
     const router = useRouter();
 
@@ -58,7 +60,7 @@ function Login() {
                 // }
 
                 //tenemos que mandarlo a su dashboard
-                router.push('/dashboard');
+                //router.push('/dashboard');
 
             })
             .catch(function (error) {
