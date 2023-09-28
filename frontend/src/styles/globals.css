@@ -29,6 +29,10 @@ code {
         monospace;
 }
 
+.montserrat {
+    font-family: 'Montserrat', sans-serif;
+}
+
 
 *,
 *::before,
