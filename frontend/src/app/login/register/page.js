@@ -167,7 +167,7 @@ function register() {
                     <div className="otros-login">
                         <div className="roboto">¿Tienes un cuenta?</div>
                         <div>
-                            <Link href="/login">
+                            <Link href="/login/login">
                                 <span className="iniciar-sesion roboto">
                                     Iniciar sesión
                                 </span>

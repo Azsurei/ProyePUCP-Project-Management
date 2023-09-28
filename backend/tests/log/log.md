@@ -24,5 +24,11 @@ El campo codigo de grupo curso no se usa.
 El campo fecha de nacimiento y telefono no se usan, ademas hay un campo extra llamado usuario.(ambos son para que sea escalable)
 }
 
+## 09/26/2023
 
-Cambio txt prueba
+### POR HACER:
+Revisar la relacion de entregables y agregarla a la base de datos
+
+### OBSERVACIONES
+Preguntar sobre el uso de token para solicitudes a la base de datos.
+Preguntar sobre el sequelize    

@@ -1,24 +1,83 @@
 import React from "react";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 
+const memberData = [
+    {
+        id: '1',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    },
+    
+    {
+        id: '5',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    },
+    {
+        id: '6',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    }  ,
+    {
+        id: '6',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    } ,
+    {
+        id: '6',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    } ,
+    {
+        id: '6',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    }
+];
+
+function MemberIcon(props){
+    return(
+        <li className="memberContainer">
+            <img 
+                // src={props.profilePicture} 
+                src="/images/ronaldo_user.png"
+                alt="/icons/userDefaultIcon.png" 
+                className="memberIcon"/>
+        </li>
+    );
+}
+
 function ProjectSidebar() {
     return (
         <nav className='ProjectSidebar'>
-            <p>Header</p>
-            <p>Fecha Inicio - Fecha Fin (duracion en dias)</p>
-            <p>Equipo: [Los dibujitos]</p>
+            <div>
+                <p className="header">Los Dibujitos</p>
+                <p className="dates">13/09/2023  -  20/10/2023 (50 dias)</p>
+                <div className="teamContainer">
+                    <p className="teamHeader">Equipo:</p>
+                    <p className="teamName">Los dibujitos</p>
+                </div>
+            </div>
+
+            <div className="btnOpenSidebar"></div>
+
             <ul className='members'>
-                <li>
-                    <p>USR</p>
-                </li>
-                <li>
-                    <p>USR</p>
-                </li>
-                <li>
-                    <p>USR</p>
-                </li>
+                {memberData.map((member)=>{
+                    return <MemberIcon 
+                            name={member.name}
+                            lastName={member.lastName}
+                            profilePicture={member.profilePicture}
+                            key={member.id}>
+                    </MemberIcon>;
+                })}
             </ul>
-            <ul>
+            <ul className="dropdown-menus">
                 Desplegable 1
             </ul>
             <ul>

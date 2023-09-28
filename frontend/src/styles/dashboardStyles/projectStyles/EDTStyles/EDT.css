@@ -1,0 +1,32 @@
+.EDT{
+    flex: 1;
+    padding: 2.5rem 2.5rem;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+
+.EDT .headerContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.EDT .headerContainer .headerTitle{
+    font-size: 35px;
+    font-weight: 700;
+    color: #172B4D;
+}
+
+.EDT .componentSearchContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+
+.EDT .componentSearchContainer input{
+    flex: 1;
+}

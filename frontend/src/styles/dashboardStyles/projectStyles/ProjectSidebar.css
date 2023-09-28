@@ -3,8 +3,120 @@
 }
 
 .ProjectSidebar{
+<<<<<<< HEAD
     /* Ponemos 117 porque es la suma entre heights de Navbar y SecondNavbar */
     height: auto;
+=======
+    /* Ponemos 123 porque es la suma entre heights de Navbar y SecondNavbar */
+    height: calc(100vh - 123px);
+    width: 310px;
+    min-width: 0px;
+>>>>>>> 2423af5d9260788e97a411d75fd01bdc6a031577
     overflow: auto;
     background-color: #F5F5F5;
+
+    font-size: 1.3rem;
+    padding: 1.5rem 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+
+    font-family: 'Montserrat', sans-serif;
+
+    overflow: visible;
 }
+
+.ProjectSidebar .headerContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-style: solid;
+}
+
+.ProjectSidebar .header{
+    font-size: 2rem;
+    font-weight: 600;
+    color: #172B4D;
+}
+
+.ProjectSidebar .dates{
+    font-size: 1rem;
+    color: #767676;
+}
+
+.ProjectSidebar .teamContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ProjectSidebar .teamContainer .teamHeader{
+    font-size: 1.2rem;
+    color: #767676;
+}
+
+.ProjectSidebar .teamContainer .teamName{
+    font-size: 1.2rem;
+    color: #000000;
+
+    background-color: #8DFFA6;
+    border-radius: 10px;
+    padding: 0 1.3rem;
+}
+
+
+.ProjectSidebar .btnOpenSidebar{
+    background-color: #F0AE19;
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    position: absolute;
+    left: 297px;
+    top: 155px;
+}
+
+
+.ProjectSidebar .members{
+    list-style: none;
+
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(50px,1fr));
+}
+
+
+/*=============== STYLES OF MemberIcon ===============*/
+.memberContainer{
+    display: flex;
+}
+
+.memberContainer .memberIcon{
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}
+
+
+ @media (max-width : 768px){
+
+    .ProjectSidebar{
+        position: absolute;
+    }
+
+    .ProjectSidebar .btnOpenSidebar{
+        background-color: #F0AE19;
+        width: 25px;
+        height: 25px;
+        border-radius: 100%;
+        position: absolute;
+        left: 297px;
+        top: 32px;
+
+        z-index: 30;
+    }
+    
+
+} 

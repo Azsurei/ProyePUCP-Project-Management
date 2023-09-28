@@ -1,0 +1,112 @@
+.ListElementsEDT{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+
+
+    font-weight: 600;
+    font-family: 'Montserrat';
+
+    margin-top: 1rem;
+
+}
+
+
+.CardEDT{
+    width: 1fr;
+    padding: 1.2rem 2rem;
+
+    background-color: white;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    border-color: #DFDFDF;
+    border-style: solid;
+    border-width: 1px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    transition: background-color 0.15s ease-in;
+
+    &:hover{
+        background-color: rgb(218, 218, 218);
+        border-color: rgb(218, 218, 218);
+        transition: background-color 0.15s ease;
+    }
+}
+
+.CardEDT div{
+    display: flex;
+    align-items: center;
+}
+
+.CardEDT .cardTag{
+    margin-right: 1rem;
+    background-color: rgb(51, 172, 51);
+    color: white;
+
+    padding: 0 .4rem;
+    border-radius: 3px;
+    
+    height: 24px;
+}
+
+.CardEDT .cardNum{
+    padding-right: .5rem;
+}
+
+.CardEDT .buttonsContainer{
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.CardEDT .buttonsContainer .addSubcomp{
+    display: none;
+}
+
+.CardEDT .leftContainer .titleContainer{
+    align-items: flex-start;
+}
+
+.CardEDT .buttonsContainer button{
+    background-color: #172B4D;
+    color: white;
+    padding: .1rem .6rem;
+    border-radius: 5px;
+    border-style: none;
+
+    font-family: 'Montserrat';
+    font-weight: 500;
+    font-size: 1rem;
+
+    height: 23px;
+    min-width: 119px;
+}
+
+
+@media (max-width : 520px){
+    .CardEDT .leftContainer{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .4rem;
+    }    
+}
+
+/*En menos width (450) ya no puede bajar mas, convertir boton mas detalles en un ojo o algo asi
+con media query*/
+.CardEDT.active{
+    padding: .6rem 2rem; 
+    transition: padding 0.25s ease-in;
+}
+.CardEDT.active .buttonsContainer button{
+    display: none;
+    
+}
+
+.CardEDT.active .buttonsContainer .addSubcomp{
+    display: flex;
+}
