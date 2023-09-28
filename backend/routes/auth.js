@@ -53,12 +53,15 @@ routerAuth.post("/login", async(req, res) => {
 
 //ENDPOINT: Registro de usuario
 routerAuth.post("/register", async (req, res) => {
+
     const { nombres, apellidos, correoElectronico, password } = req.body;
     console.log("Se recibio solicitud post en register");
-    const query = `CALL INSERTAR_CUENTA_USUARIO('${nombres}', '${apellidos}', '${correoElectronico}', '${password}');`;
 
+    let dummy;
+    
+    const query = `CALL INSERTAR_CUENTA_USUARIO(?, ?, ?, ?, ?);`;
     try {
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query,[dummy,nombres, apellidos, correoElectronico, password] );
         const idUsuario = results[0][0].idUsuario;
         res.status(200).json({
             idUsuario,
