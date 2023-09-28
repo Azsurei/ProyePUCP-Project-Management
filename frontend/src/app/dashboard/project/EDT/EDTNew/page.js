@@ -1,8 +1,35 @@
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
+import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 
+let conteoEntregables = 1;
+const newEntregables=[
+    {
+        number: 1,
+        data: ''
+    }
+];
+
+let conteoCriterios = 1;
+const newCriteriosAceptacion=[
+    {
+        number: 1,
+        data: ''
+    }
+];
+
+
 export default function EDTNew() {
+
+    const handleAddEntregable = ()=>{
+        newEntregables.push({
+            number: conteoEntregables + 1,
+            data: ''
+        })
+        //falta implementarlo al onClick del boton (configurar el componente)
+    }
+
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <div className="EDTNew">
@@ -55,16 +82,24 @@ export default function EDTNew() {
             </div>
 
             <div className="NewEDTSection">
-                <p className="Header">Entregables</p>
-                <div className="ThirdCardContainer">
+                <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
+                    <p className="Header">Entregables</p>
+                    <ButtonAddNew>Añadir entregable</ButtonAddNew>
+                </div>
 
+                <div className="ThirdCardContainer">
+                    <ListEditableInput ListInputs={newEntregables} typeName="Entregable"></ListEditableInput>
                 </div>
             </div>
 
             <div className="NewEDTSection">
-                <p className="Header">Criterios de aceptación</p>
-                <div className="FourthCardContainer">
+                <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
+                    <p className="Header">Criterios de aceptacion</p>
+                    <ButtonAddNew>Añadir criterio</ButtonAddNew>
+                </div>
 
+                <div className="FourthCardContainer">
+                <ListEditableInput ListInputs={newCriteriosAceptacion} typeName="Criterio"></ListEditableInput>
                 </div>
             </div>
             <div className="ButtonsContainer">
