@@ -99,7 +99,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Nombre",
                             }}
-                            handleChange={handleRegister}
+                            handleChange={handleChange}
                         />
                         <Placeholder
                             attribute={{
@@ -108,7 +108,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Apellido",
                             }}
-                            handleChange={handleRegister}
+                            handleChange={handleChange}
                         />
                         <Placeholder
                             attribute={{
@@ -117,7 +117,7 @@ function register() {
                                 type: "text",
                                 placeholder: "Correo Electrónico",
                             }}
-                            handleChange={handleRegister}
+                            handleChange={handleChange}
                         />
                         <Placeholder
                             attribute={{

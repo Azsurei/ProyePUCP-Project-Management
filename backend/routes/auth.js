@@ -12,7 +12,7 @@ routerAuth.post("/login", async(req, res) => {
     console.log("llegue a loggin");
     //Verificamos si usuario se encuentra en la base de datos
     const query = `
-        CALL LOGIN('${username}', '${password}');
+        CALL VERIFICAR_CUENTA_USUARIO('${username}', '${password}');
     `;
 
     connection.query(query, (error, results) => {
@@ -55,7 +55,7 @@ routerAuth.post("/login", async(req, res) => {
 routerAuth.post("/register", async (req, res) => {
     const { nombres, apellidos, correoElectronico, password } = req.body;
     console.log("Se recibio solicitud post en register");
-    const query = `CALL REGISTRAR('${nombres}', '${apellidos}', '${correoElectronico}', '${password}');`;
+    const query = `CALL INSERTAR_CUENTA_USUARIO('${nombres}', '${apellidos}', '${correoElectronico}', '${password}');`;
 
     try {
         const [results] = await connection.query(query);
@@ -64,6 +64,7 @@ routerAuth.post("/register", async (req, res) => {
             idUsuario,
             message: "Usuario registrado exitosamente",
         });
+        console.log(`Usuario ${idUsuario} agregado a la base de datos`);
     } catch (error) {
         console.error("Error en el registro:", error);
         res.status(500).send("Error en el registro: " + error.message);
