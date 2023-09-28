@@ -1,9 +1,33 @@
+"use client"
+
 import Link from "next/link";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListProject from "@/components/dashboardComps/projectComps/ListProject";
+import axios from "axios";
+
+
+axios.defaults.withCredentials = true;
+
+function showProjects(req,res) {
+    const stringURL = "http://localhost:8080/api/proyecto/listarProyectos";
+    axios
+        .get(stringURL)
+        .then(function (response) {
+            console.log(response);
+            console.log("recibi una respuesta de listar proyectos");
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
+showProjects();
 
 export default function Dashboard() {
+
+    
 
     const componenteProject=[
         {

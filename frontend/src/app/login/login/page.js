@@ -60,7 +60,7 @@ function Login() {
                 // }
 
                 //tenemos que mandarlo a su dashboard
-                //router.push('/dashboard');
+                router.push('/dashboard');
 
             })
             .catch(function (error) {
