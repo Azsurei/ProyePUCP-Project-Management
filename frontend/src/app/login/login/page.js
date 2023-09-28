@@ -7,8 +7,12 @@ import Placeholder from "@/components/Placeholder";
 import Button from "@/components/Button";
 import "@/styles/login.css";
 import axios from "axios";
+import jwt from "jsonwebtoken";
+import { useRouter } from "next/navigation";
 
 function Login() {
+    const router = useRouter();
+
     const [password, setPassword] = useState("");
     const [usuario, setUsuario] = useState("");
     const [passwordError, setPasswordError] = useState(false);
@@ -47,6 +51,15 @@ function Login() {
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
+
+                // const token = response.token;
+                // if(token){
+                //     //const json = jwt.decode(token) as {}; DEBEMOS SACAR EL ID A PARTIR DE EL TOKEN
+                // }
+
+                //tenemos que mandarlo a su dashboard
+                router.push('/dashboard');
+
             })
             .catch(function (error) {
                 console.log(error);

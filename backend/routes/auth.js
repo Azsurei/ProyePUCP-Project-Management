@@ -2,53 +2,94 @@ const express = require('express');
 const connection = require('../config/db');
 const routerAuth = express.Router();
 
+//de jsonwebtokens
+const jwt = require("jsonwebtoken");
+const secret = "oaiscmawiocnaoiwncioawniodnawoinda"; //es un tipo de password que se necesita, en futuro se movera
+
+
 routerAuth.get('/',(req,res)=>{
     console.log("Llegue a autenticacion");
     res.send(JSON.stringify("LLEGUE A LOGGIN"));
 });
 
+
 routerAuth.post("/login", async(req, res) => {
     const { username, password } = req.body;
     console.log("llegue a loggin");
     //Verificamos si usuario se encuentra en la base de datos
+    
     const query = `
         CALL VERIFICAR_CUENTA_USUARIO('${username}', '${password}');
     `;
 
-    connection.query(query, (error, results) => {
-        if (error) {
-            //Error en query
-            res.status(402).send("Error en la autenticación");
+    // connection.query(query, (error, results) => {
+    //     if (error) {
+    //         //Error en query
+    //         res.status(402).send("Error en la autenticación");
+    //     } else {
+    //         //Query exitoso
+    //         const user = {
+    //             username: username,
+    //             password: password,
+    //         };
+    //         console.log(`${username} y ${password}`);
+    //         const autenticado = results[0][0].Autenticado;
+
+    //         if (autenticado === 1) {
+    //             //Usuario existe
+
+    //             //procesamos token
+    //             const token = jwt.sign(
+    //                 {
+    //                     user,
+    //                     exp: Date.now() + 60 * 1000,
+    //                 },
+    //                 secret
+    //             );
+
+    //             res.status(200).send(token);
+    //             //res.status(200).send('Autenticación exitosa');
+    //         } else {
+    //             res.status(401).send(
+    //                 "Nombre de usuario o contraseña incorrectos"
+    //             );
+    //         }
+    //     }
+    // });
+
+
+    try{
+        const [results] = await connection.query(query);
+        const user = {
+            username: username,
+            password: password,
+        };
+        console.log(`${username} y ${password}`);
+        const autenticado = results[0][0].Autenticado;
+        if(autenticado === 1){
+            //procesamos token
+            const token = jwt.sign(
+                {
+                    user,
+                    exp: Date.now() + 60 * 1000,
+                },
+                secret
+            );
+
+            //NOTA: TOKEN DEBERIA SER SERIALIZADO!!!
+            res.setHeader('Set-Cookie',token);  //se setea el token como header
+            res.status(200).send('login success');
+            
+            //res.status(200).send('Autenticación exitosa');
         } else {
-            //Query exitoso
-            const user = {
-                username: username,
-                password: password,
-            };
-            console.log(`${username} y ${password}`);
-            const autenticado = results[0][0].Autenticado;
-
-            if (autenticado === 1) {
-                //Usuario existe
-
-                //procesamos token
-                const token = jwt.sign(
-                    {
-                        user,
-                        exp: Date.now() + 60 * 1000,
-                    },
-                    secret
-                );
-
-                res.status(200).send(token);
-                //res.status(200).send('Autenticación exitosa');
-            } else {
-                res.status(401).send(
-                    "Nombre de usuario o contraseña incorrectos"
-                );
-            }
+            res.status(401).send("Nombre de usuario o contraseña incorrectos");
         }
-    });
+
+    }catch(error){
+        console.error("Error en el loggeo:", error);
+        res.status(500).send("Error en el loggeo: " + error.message);
+    }
+
 });
 
 //ENDPOINT: Registro de usuario
