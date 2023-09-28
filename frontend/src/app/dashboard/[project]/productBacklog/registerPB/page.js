@@ -3,6 +3,7 @@ import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
 import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
 import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
 import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
+import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useState, useRef } from "react";
 import MyCombobox from "@/components/ComboBox";
@@ -52,6 +53,10 @@ export default function Project() {
                         <IconLabel icon="/icons/assignedToPB.svg" label="Asignado a" className="iconLabel"/>
                         <IconLabel icon="/images/ronaldo_user.png" label="Ronaldo" className="iconLabel2"/>
                     </div>
+                </div>
+                <div className="description">
+                    <h4>Nombre de historia de usuario</h4>
+                    <DescriptionRequeriment/>
                 </div>
                 <div className="userDescription">
                     <h4>Descripción de usuario</h4>
