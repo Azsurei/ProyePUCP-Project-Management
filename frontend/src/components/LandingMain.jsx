@@ -12,7 +12,7 @@ function LandingMain() {
                     de todas las herramientas que necesites para gestionar tus
                     proyectos.
                 </p>
-                <Button text="¡Inicia ya!" href={"/login/login"} />
+                <Button text="¡Inicia ya!" href={"/login"} />
             </div>
             <img src="/images/LogoStart.png" alt="StartImage" />
         </main>

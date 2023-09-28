@@ -92,12 +92,12 @@ function resetPassword() {
                             )}
                     </div>
                     <div className="boton">
-                        <Button text="Guardar" href={"/login/login"} />
+                        <Button text="Guardar" href={"/login"} />
                     </div>
                     <div className="otros-login">
                         <div className="roboto">¿Tienes un cuenta?</div>
                         <div>
-                            <Link href="/login/login">
+                            <Link href="/login">
                                 <span className="iniciar-sesion roboto">
                                     Iniciar sesión
                                 </span>
