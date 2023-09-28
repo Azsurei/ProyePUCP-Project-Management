@@ -9,21 +9,8 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-function showProjects(req,res) {
-    const stringURL = "http://localhost:8080/api/proyecto/listarProyectos";
-    axios
-        .get(stringURL)
-        .then(function (response) {
-            console.log(response);
-            console.log("recibi una respuesta de listar proyectos");
 
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-}
 
-showProjects();
 
 export default function Dashboard() {
 
