@@ -50,6 +50,7 @@ function register() {
         }
     }
 
+    
     function handleRegister() {
         console.log(nombre);
         console.log(apellido);

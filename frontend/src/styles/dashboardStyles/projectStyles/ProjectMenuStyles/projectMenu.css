@@ -1,0 +1,71 @@
+.mainDiv{
+
+    background-color: #F5F5F5;
+    height: 100%; /* Cubre toda la altura disponible */
+    width: 100% ; /* Cubre solo el área adicional debajo de contentDiv */
+    
+}
+
+.headerDiv{
+
+    margin: 0% 2% 0% 2%;
+    padding: 1%;
+}
+
+.divSearch{
+    
+        display: flex;
+        
+        padding-left: 3%;
+}
+
+.searchProject{
+    font-family: Montserrat;
+    font-size: 16px;
+    width: 34rem;
+    height: 3rem;
+    font-weight: 200;
+    position: relative;
+    margin: 0 ;
+    margin-bottom: 13.5px;
+    text-align: left;
+    display: flex;
+    padding: 10px;
+    align-items: left;
+    gap: 10px;
+    flex-shrink: 0;
+
+    border-radius: 3.375px;
+    border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
+    background: var(--color-background-input-default, #FFF);
+}
+
+.searchButton {
+    background: none;
+    border: none;
+}
+
+button {
+    all: unset;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+  }
+  
+form {
+  background-color: #4654e1;
+  width: 300px;
+  height: 44px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+svg {
+    color: #fff;
+    fill: currentColor;
+    width: 24px;
+    height: 24px;
+    padding: 10px;
+  }

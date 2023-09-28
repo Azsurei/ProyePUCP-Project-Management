@@ -1,5 +1,5 @@
 # Eliminacion de Tablas
-DROP TABLE IF EXISTS ProyectoXGrupoProyecto;
+DROP TABLE IF EXISTS UsuarioXRolXProyecto;
 DROP TABLE IF EXISTS GrupoProyecto;
 DROP TABLE IF EXISTS Proyecto;
 DROP TABLE IF EXISTS Herramienta;
@@ -106,7 +106,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE Rol(
     idRol INT AUTO_INCREMENT PRIMARY KEY,
-    nombreRol VARCHAR(255),
+    nombre VARCHAR(255),
     descripcion VARCHAR(500),
     activo TINYINT
 )
@@ -148,14 +148,33 @@ CREATE TABLE ProyectoXGrupoProyecto(
 )
 ENGINE = InnoDB;
 
+
 CREATE TABLE UsuarioXProyecto(
     idUsuario INT,
     idProyecto INT,
+    activo TINYINT,
     PRIMARY KEY (idUsuario, idProyecto),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+CREATE TABLE UsuarioXRolXProyecto (
+    idUsuarioRolProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT ,
+    idProyecto INT ,
+    idRol INT,
+    fechaAsignacion DATE,
+    activo TINYINT NOT NULL DEFAULT 1,
+    UNIQUE KEY (idUsuario, idProyecto, idRol),
+    FOREIGN KEY (idRol) REFERENCES Rol (idRol) ,
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto (idProyecto),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario (idUsuario) 
+)
+ENGINE = InnoDB;
+
+
+
 
 --------------------------------------------------------
 -- Herramientas
@@ -211,8 +230,10 @@ CREATE TABLE ComponenteEDT(
 )
 ENGINE = InnoDB;
 
+
+
 CREATE TABLE ComponenteCriterioDeAceptacion(
-	idComponenteCriterioDeAceptacion INT PRIMARY KEY,
+	idComponenteCriterioDeAceptacion INT AUTO_INCREMENT PRIMARY KEY,
     idComponenteEDT INT,
     descripcion VARCHAR(255),
     activo TINYINT,
@@ -220,11 +241,13 @@ CREATE TABLE ComponenteCriterioDeAceptacion(
 )
 ENGINE = InnoDB;
 
+
+
 -----------------------
 -- Acta de Constitucion
 -----------------------
 CREATE TABLE ActaConstitucion(
-	idActa INT PRIMARY KEY,
+	idActa INT AUTO_INCREMENT PRIMARY KEY,
     idHerramienta INT,
     activo TINYINT,
     FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
@@ -232,7 +255,7 @@ CREATE TABLE ActaConstitucion(
 ENGINE = InnoDB;
 
 CREATE TABLE HitoAC(
-	idHito INT PRIMARY KEY,
+	idHito INT AUTO_INCREMENT PRIMARY KEY,
     idActa INT,
     descripcion VARCHAR(255),
     fechaLimite DATE,
@@ -242,7 +265,7 @@ CREATE TABLE HitoAC(
 ENGINE = InnoDB;
 
 CREATE TABLE InteresadoAC(
-	idInteresado INT PRIMARY KEY,
+	idInteresado INT AUTO_INCREMENT PRIMARY KEY,
     idActa INT,
     nombre VARCHAR(255),
     cargo VARCHAR(255),
@@ -253,7 +276,7 @@ CREATE TABLE InteresadoAC(
 ENGINE = InnoDB;
 
 CREATE TABLE DetalleAC(
-	idDetalle INT PRIMARY KEY,
+	idDetalle INT AUTO_INCREMENT PRIMARY KEY,
     idActa INT,
     idTipoDatoAC INT,
     detalle VARCHAR(500),
@@ -264,7 +287,7 @@ CREATE TABLE DetalleAC(
 ENGINE = InnoDB;
 
 CREATE TABLE TipoDatoAC(
-	idTipoDato INT PRIMARY KEY,
+	idTipoDato INT AUTO_INCREMENT PRIMARY KEY,
     idActa INT,
     nombre VARCHAR(255),
     activo TINYINT,
@@ -276,8 +299,15 @@ ENGINE = InnoDB;
 -- Presupuesto
 -----------------------
 
+CREATE TABLE Moneda(
+	idMoneda INT AUTO_INCREMENT PRIMARY KEY,
+    tipoCambio DECIMAL(10,2),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
 CREATE TABLE Presupuesto(
-	idPresupuesto INT PRIMARY KEY,
+	idPresupuesto INT AUTO_INCREMENT PRIMARY KEY,
     idHerramienta INT,
     presupuestoInicial  DECIMAL(10,2),
     activo TINYINT,
@@ -286,7 +316,7 @@ CREATE TABLE Presupuesto(
 ENGINE = InnoDB;
 
 CREATE TABLE Ingreso(
-	idIngreso INT PRIMARY KEY,
+	idIngreso INT AUTO_INCREMENT PRIMARY KEY,
     idPresupuesto INT,
     subtotal  DECIMAL(10,2),
     activo TINYINT,
@@ -294,15 +324,8 @@ CREATE TABLE Ingreso(
 )
 ENGINE = InnoDB;
 
-CREATE TABLE TransaccionTipo(
-	idTransaccion INT PRIMARY KEY,
-    descripcion VARCHAR(255),
-    activo TINYINT
-)
-ENGINE = InnoDB;
-
 CREATE TABLE Egreso(
-	idEgreso INT PRIMARY KEY,
+	idEgreso INT AUTO_INCREMENT PRIMARY KEY,
     idPresupuesto INT,
     subtotal  DECIMAL(10,2),
     activo TINYINT,
@@ -311,7 +334,7 @@ CREATE TABLE Egreso(
 ENGINE = InnoDB;
 
 CREATE TABLE LineaEgreso(
-	idLineaEgreso INT PRIMARY KEY,
+	idLineaEgreso INT AUTO_INCREMENT PRIMARY KEY,
     idEgreso INT,
     idMoneda INT,
     costoReal  DECIMAL(10,2),
@@ -322,8 +345,21 @@ CREATE TABLE LineaEgreso(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE EstimacionCosto(
+	idEstimacion INT AUTO_INCREMENT PRIMARY KEY,
+    idPresupuesto INT,
+    subtotal  DECIMAL(10,2),
+    reservaContigencia  DECIMAL(10,2),
+    lineaBase  DECIMAL(10,2),
+    ganancia  DECIMAL(10,2),
+	IGV DECIMAL(10,2),
+    activo TINYINT,
+    FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto)
+)
+ENGINE = InnoDB;
+
 CREATE TABLE LineaEstimacionCosto(
-	idLineaEstimacion INT PRIMARY KEY,
+	idLineaEstimacion INT AUTO_INCREMENT PRIMARY KEY,
     idLineaEgreso INT,
     idMoneda INT,
     idEstimacion INT,
@@ -339,67 +375,150 @@ CREATE TABLE LineaEstimacionCosto(
 )
 ENGINE = InnoDB;
 
-CREATE TABLE EstimacionCosto(
-	idEstimacion INT PRIMARY KEY,
-    idPresupuesto INT,
-    subtotal  DECIMAL(10,2),
-    reservaContigencia  DECIMAL(10,2),
-    lineaBase  DECIMAL(10,2),
-    ganancia  DECIMAL(10,2),
-	IGV DECIMAL(10,2),
+-----------------------
+-- Plantillas
+-----------------------
+
+CREATE TABLE Plantilla(
+	idPlantilla INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idUsuario INT,
+    nombre VARCHAR(255),
+    descripcion VARCHAR(255),
+    tamano_bytes   DECIMAL(12,2),
+    documentoURL  VARCHAR(400),
+	fechaCreacion  DATE,
+    fechaUltimaActualizacion  DATE,
     activo TINYINT,
-    FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto)
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 )
 ENGINE = InnoDB;
 
-CREATE TABLE Moneda(
-	idMoneda INT PRIMARY KEY,
-    tipoCambio DECIMAL(10,2),
-    activo TINYINT
+CREATE TABLE PlantillaActaConstitucion(
+	idPlantillaAC INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    activo TINYINT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 )
 ENGINE = InnoDB;
 
+CREATE TABLE PlantillaACTipoDato(
+	idPlantillaACTipoDato INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaAC INT,
+    nombre VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idPlantillaAC) REFERENCES PlantillaActaConstitucion(idPlantillaAC)
+)
+ENGINE = InnoDB;
 
+CREATE TABLE PlantillaEstadoTarea(
+	idPlantillaEstadoTarea INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    activo TINYINT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaEstadoTareaEstado(
+	idPlantillaEstadoTareaEstado INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaEstadoTarea INT,
+    nombre VARCHAR(255),
+    colorEstado INT,
+    activo TINYINT,
+    FOREIGN KEY (idPlantillaEstadoTarea) REFERENCES PlantillaEstadoTarea(idPlantillaEstadoTarea)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaMatrizComunicacion(
+	idPlantillaMComunicacion INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    activo TINYINT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaMComunicacionRol(
+	idMComunicacionRol INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaMComunicacion INT,
+    letra VARCHAR(1),
+    nombre VARCHAR(255),
+    color INT,
+    activo TINYINT,
+    FOREIGN KEY (idPlantillaMComunicacion) REFERENCES PlantillaMatrizComunicacion(idPlantillaMComunicacion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaAutoevaluacion(
+	idPlantillaAutoevaluacion INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    activo TINYINT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaValorEvaluacion(
+	idValorEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaAutoevaluacion INT,
+    nombre VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idPlantillaAutoevaluacion) REFERENCES PlantillaAutoevaluacion(idPlantillaAutoevaluacion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaCampoAutoevaluacion(
+	idCampoAutoevaluacion INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaAutoevaluacion INT,
+    descripcion VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idPlantillaAutoevaluacion) REFERENCES PlantillaAutoevaluacion(idPlantillaAutoevaluacion)
+)
+ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- PROCEDURES
 -- -----------------------------------------------------
-
+DROP PROCEDURE IF EXISTS VERIFICAR_CUENTA_USUARIO;
+DROP PROCEDURE IF EXISTS INSERTAR_CUENTA_USUARIO;
+DROP PROCEDURE IF EXISTS INSERTAR_PROYECTO;
+DROP PROCEDURE IF EXISTS LISTAR_PROYECTOS_X_ID_USUARIO;
 /*Registrar*/
 DELIMITER $
-CREATE PROCEDURE REGISTRAR(
-	OUT _idUsuario INT,
+CREATE PROCEDURE INSERTAR_CUENTA_USUARIO(
     IN _nombres VARCHAR(200),
     IN _apellidos VARCHAR(200),
     IN _correoElectronico VARCHAR(200),
     IN _password VARCHAR(200)
 )
 BEGIN
-	INSERT INTO Usuario(nombres,apellidos,correoElectronico,password,activo,Privilegios_idPrivilegios) VALUES(_nombres, _apellidos, _correoElectronico, _password, true, 1);
-    SET _idUsuario =  @@last_insert_id;
+	INSERT INTO Usuario(nombres,apellidos,correoElectronico,password,activo,Privilegios_idPrivilegios) VALUES(_nombres, _apellidos, _correoElectronico, md5(_password), true, 1);
+    SELECT @@last_insert_id AS idUsuario;
 END$
 
 /*LOGIN*/
 DELIMITER $
-CREATE PROCEDURE LOGIN(
+CREATE PROCEDURE VERIFICAR_CUENTA_USUARIO(
     IN _correoElectronico VARCHAR(200),
     IN _password VARCHAR(200)
 )
 BEGIN
-  DECLARE usuarioExiste INT;
-  SELECT COUNT(*) INTO usuarioExiste
+  DECLARE _idUsuario INT;
+  SELECT idUsuario INTO _idUsuario
   FROM Usuario
-  WHERE correoElectronico = _correoElectronico AND password = _password;
+  WHERE correoElectronico = _correoElectronico AND password = md5(_password);
   -- Devolver un valor para indicar el resultado de la autenticación
-  IF usuarioExiste > 0 THEN
-    SELECT 1 AS 'Autenticado'; -- Usuario autenticado
+  IF _idUsuario > 0 THEN
+    SELECT _idUsuario AS 'idUsuario'; -- Usuario autenticado
   ELSE
-    SELECT 0 AS 'Autenticado'; -- Usuario no autenticado
+    SELECT 0 AS 'idUsuario'; -- Usuario no autenticado
   END IF;
 END$
 
+------------
+-- Proyecto
+------------
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PROYECTO(
-	OUT _id_proyecto INT,
+	IN _idUsuario INT,
 	IN _nombre VARCHAR(200),
     IN _maxCantParticipantes INT,
     IN _fechaInicio DATE,
@@ -407,6 +526,17 @@ CREATE PROCEDURE INSERTAR_PROYECTO(
     IN _fechaUltimaModificacion DATE
 )
 BEGIN
-	INSERT INTO Proyecto(nombre,maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion) VALUES(_nombre,_maxCantParticipantes,_fechaInicio,_fechaFin,_fechaUltimaModificacion,1);
+	DECLARE _id_proyecto INT;
+	INSERT INTO Proyecto(nombre,maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion,activo) VALUES(_nombre,_maxCantParticipantes,_fechaInicio,_fechaFin,_fechaUltimaModificacion,1);
     SET _id_proyecto = @@last_insert_id;
+    INSERT INTO UsuarioXProyecto(idUsuario,idProyecto,activo)VALUES(_idUsuario,_id_proyecto,1);
+    SELECT _id_proyecto AS idProyecto;
 END$
+DROP PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO(IN _idUsuario INT)
+BEGIN
+	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion ,r.nombre
+    FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol WHERE p.idProyecto = urp.idProyecto AND urp.idUsuario = _idUsuario;
+END$
+DELIMITER $

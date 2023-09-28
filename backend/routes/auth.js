@@ -1,64 +1,87 @@
 const express = require('express');
 const connection = require('../config/db');
 const routerAuth = express.Router();
+const cookie = require('cookie');
+
+//de jsonwebtokens
+const jwt = require("jsonwebtoken");
+const secret = "oaiscmawiocnaoiwncioawniodnawoinda"; //es un tipo de password que se necesita, en futuro se movera
+
 
 routerAuth.get('/',(req,res)=>{
     console.log("Llegue a autenticacion");
     res.send(JSON.stringify("LLEGUE A LOGGIN"));
 });
 
+
 routerAuth.post("/login", async(req, res) => {
     const { username, password } = req.body;
     console.log("llegue a loggin");
     //Verificamos si usuario se encuentra en la base de datos
+    
     const query = `
         CALL VERIFICAR_CUENTA_USUARIO('${username}', '${password}');
     `;
 
-    connection.query(query, (error, results) => {
-        if (error) {
-            //Error en query
-            res.status(402).send("Error en la autenticación");
-        } else {
-            //Query exitoso
+
+    try{
+        const [results] = await connection.query(query);
+        const idUsuario = results[0][0].idUsuario;
+        if(idUsuario != 0){
+
             const user = {
-                username: username,
-                password: password,
+                id: idUsuario,
+                mail: username,
             };
-            console.log(`${username} y ${password}`);
-            const autenticado = results[0][0].Autenticado;
 
-            if (autenticado === 1) {
-                //Usuario existe
+            //procesamos token
+            const token = jwt.sign(
+                {
+                    user
+                    
+                },
+                secret,{expiresIn: "1h"}
+            );
 
-                //procesamos token
-                const token = jwt.sign(
-                    {
-                        user,
-                        exp: Date.now() + 60 * 1000,
-                    },
-                    secret
-                );
+            const serialized = cookie.serialize('tokenProyePUCP',token,{
+                httpOnly: true,
+                secure: false,
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                path: '/'
+            })
 
-                res.status(200).send(token);
-                //res.status(200).send('Autenticación exitosa');
-            } else {
-                res.status(401).send(
-                    "Nombre de usuario o contraseña incorrectos"
-                );
-            }
+            res.setHeader('Set-Cookie', serialized);
+
+            // res.cookie('TokenProyePUCP', token,{
+            //     httpOnly: true
+            // });
+
+            res.status(200).send('Autentificacion exitosa');
+            
+        } else {
+            console.log(`No se ha loggeado el usuario ${idUsuario}`);
+            res.status(401).send("Nombre de usuario o contraseña incorrectos");
         }
-    });
+
+    }catch(error){
+        console.error("Error en el loggeo:", error);
+        res.status(500).send("Error en el loggeo: " + error.message);
+    }
+
 });
 
 //ENDPOINT: Registro de usuario
 routerAuth.post("/register", async (req, res) => {
+
     const { nombres, apellidos, correoElectronico, password } = req.body;
     console.log("Se recibio solicitud post en register");
-    const query = `CALL INSERTAR_CUENTA_USUARIO('${nombres}', '${apellidos}', '${correoElectronico}', '${password}');`;
 
+    let dummy;
+    
+    const query = `CALL INSERTAR_CUENTA_USUARIO(?, ?, ?, ?)`;
     try {
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query,[nombres, apellidos, correoElectronico, password] );
         const idUsuario = results[0][0].idUsuario;
         res.status(200).json({
             idUsuario,
