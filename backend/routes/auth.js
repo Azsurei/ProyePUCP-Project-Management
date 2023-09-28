@@ -22,41 +22,6 @@ routerAuth.post("/login", async(req, res) => {
         CALL VERIFICAR_CUENTA_USUARIO('${username}', '${password}');
     `;
 
-    // connection.query(query, (error, results) => {
-    //     if (error) {
-    //         //Error en query
-    //         res.status(402).send("Error en la autenticación");
-    //     } else {
-    //         //Query exitoso
-    //         const user = {
-    //             username: username,
-    //             password: password,
-    //         };
-    //         console.log(`${username} y ${password}`);
-    //         const autenticado = results[0][0].Autenticado;
-
-    //         if (autenticado === 1) {
-    //             //Usuario existe
-
-    //             //procesamos token
-    //             const token = jwt.sign(
-    //                 {
-    //                     user,
-    //                     exp: Date.now() + 60 * 1000,
-    //                 },
-    //                 secret
-    //             );
-
-    //             res.status(200).send(token);
-    //             //res.status(200).send('Autenticación exitosa');
-    //         } else {
-    //             res.status(401).send(
-    //                 "Nombre de usuario o contraseña incorrectos"
-    //             );
-    //         }
-    //     }
-    // });
-
 
     try{
         const [results] = await connection.query(query);
@@ -65,8 +30,8 @@ routerAuth.post("/login", async(req, res) => {
             password: password,
         };
         console.log(`${username} y ${password}`);
-        const autenticado = results[0][0].Autenticado;
-        if(autenticado === 1){
+        const idUsuario = results[0][0].idUsuario;
+        if(idUsuario > 0){
             //procesamos token
             const token = jwt.sign(
                 {
@@ -79,9 +44,10 @@ routerAuth.post("/login", async(req, res) => {
             //NOTA: TOKEN DEBERIA SER SERIALIZADO!!!
             res.setHeader('Set-Cookie',token);  //se setea el token como header
             res.status(200).send('login success');
-            
+            console.log(`Se ha loggeado el usuario ${idUsuario}`);
             //res.status(200).send('Autenticación exitosa');
         } else {
+            console.log(`No se ha loggeado el usuario ${idUsuario}`);
             res.status(401).send("Nombre de usuario o contraseña incorrectos");
         }
 

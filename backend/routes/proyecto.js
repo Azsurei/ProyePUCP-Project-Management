@@ -1,8 +1,8 @@
 const express = require('express');
 const connection = require('../config/db');
-const routherProyecto = express.Router();
+const routerProyecto = express.Router();
 
-routherProyecto.post("/",async(req,res)=>{
+routerProyecto.post("/",async(req,res)=>{
     const { nombre, maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion } = req.body;
     console.log("Llegue a recibir solicitud creacion proyecto");
     const query = `
@@ -20,6 +20,26 @@ routherProyecto.post("/",async(req,res)=>{
     } catch (error) {
         console.error("Error en el registro:", error);
         res.status(500).send("Error en el registro: " + error.message);
+    }
+})
+
+routerProyecto.get("/:idUsuario",async(req,res)=>{
+    const { idUsuario} = req.params;
+    console.log("Llegue a recibir solicitud listar proyecto");
+    const query = `
+        CALL LISTAR_PROYECTOS_X_ID_USUARIO(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idUsuario]);
+        res.status(200).json({
+            proyectos: results[0],
+            message: "Proyectos obtenidos exitosamente"
+            
+        });
+        console.log(`Se han listado los proyectos para el usuario ${idUsuario}!`);
+    } catch (error) {
+        console.error("Error al obtener los proyectos:", error);
+        res.status(500).send("Error al obtener los proyectos: " + error.message);
     }
 })
 
