@@ -64,6 +64,10 @@
     flex-direction: column;
 }
 
+.CardEDT .buttonsContainer .addSubcomp{
+    display: none;
+}
+
 .CardEDT .leftContainer .titleContainer{
     align-items: flex-start;
 }
@@ -100,6 +104,9 @@ con media query*/
 }
 .CardEDT.active .buttonsContainer button{
     display: none;
-    transition: display 0.25s ease-out;
     
+}
+
+.CardEDT.active .buttonsContainer .addSubcomp{
+    display: flex;
 }
