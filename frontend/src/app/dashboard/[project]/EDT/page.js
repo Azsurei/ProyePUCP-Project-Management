@@ -65,14 +65,16 @@ const componentsDataFirstNode=[
 ];
 
 
-export default function EDT() {
+export default function EDT(props) {
+    const projectName = props.params.project;
+
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <div className="EDT">
             <HeaderWithButtons haveReturn={false} 
                                haveAddNew={true}
                                hrefToReturn={''}
-                               hrefForButton={'/dashboard/project/EDT/EDTNew'}
+                               hrefForButton={'/dashboard/' + projectName + '/EDT/EDTNew'}
                                breadcrump={'Inicio / Proyectos / Proyect X'}
                                btnText={'Agregar nueva fase'}>EDT y diccionario EDT</HeaderWithButtons>
             <div className="componentSearchContainer">

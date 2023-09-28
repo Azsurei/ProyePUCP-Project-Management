@@ -3,6 +3,7 @@
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/ListProject.css";
 import { useEffect, useState } from "react";
 import React, { Component } from 'react';
+import { useRouter } from 'next/navigation';
 
 import axios from "axios";
 
@@ -15,17 +16,10 @@ axios.defaults.withCredentials = true;
 
 function ProjectCard(props){
 
-    //const [openChilds, setOpenChilds] = useState(false);
-    const handleClick = ()=>{
-        /*if(hasChilds === true)
-            setOpenChilds(!openChilds);
-        */
-    }
-
 
     return(
         <div>
-            <li className="ProjectCard" onClick={handleClick}>
+            <li className="ProjectCard" onClick={props.onClick}>
                 <p>
                     {props.name}
                 </p>
@@ -38,8 +32,15 @@ function ProjectCard(props){
 
 
 export default function ListProject(props){
-    const [ListComps, setListComps] = useState([]);
+    const router = useRouter();
 
+    function handleClick(proy_name){
+        router.push('/dashboard/'+proy_name);
+    }
+
+
+    const [ListComps, setListComps] = useState([]);
+    
     useEffect(()=>{
         let proyectsArray;
         const stringURL = "http://localhost:8080/api/proyecto/listarProyectos";
@@ -72,6 +73,7 @@ export default function ListProject(props){
                 return (
                     <ProjectCard key={component.id} 
                                 name={component.name}
+                                onClick={()=>{handleClick(component.name)}}
                                 >
                 </ProjectCard>
                 );
