@@ -1,4 +1,5 @@
 .container{
+    flex: 1;
     font-family: Montserrat;
     display: flex;
     flex-direction: column;
@@ -34,8 +35,20 @@
 
 .combo{
     display: grid;
-    grid-template-columns: repeat(2,auto);
-    grid-template-rows: repeat(3, 1fr); 
+    grid-template-columns: repeat(2,1fr);
+    grid-template-rows: repeat(3, auto); 
+    row-gap: 2rem;
+}
+
+.containerCombo{
+    display: flex;
+    gap: 15%;
+}
+
+.dateOfCreation{
+    display: flex;
+    align-items: center;
+    font-weight: 400;
 }
 
 .titleButton{
