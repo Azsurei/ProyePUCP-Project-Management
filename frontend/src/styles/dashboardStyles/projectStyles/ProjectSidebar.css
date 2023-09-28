@@ -3,15 +3,10 @@
 }
 
 .ProjectSidebar{
-<<<<<<< HEAD
-    /* Ponemos 117 porque es la suma entre heights de Navbar y SecondNavbar */
-    height: auto;
-=======
     /* Ponemos 123 porque es la suma entre heights de Navbar y SecondNavbar */
     height: calc(100vh - 123px);
     width: 310px;
     min-width: 0px;
->>>>>>> 2423af5d9260788e97a411d75fd01bdc6a031577
     overflow: auto;
     background-color: #F5F5F5;
 
