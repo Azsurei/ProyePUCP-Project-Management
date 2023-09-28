@@ -59,9 +59,9 @@ routerAuth.post("/register", async (req, res) => {
 
     let dummy;
     
-    const query = `CALL INSERTAR_CUENTA_USUARIO(?, ?, ?, ?, ?);`;
+    const query = `CALL INSERTAR_CUENTA_USUARIO(?, ?, ?, ?)`;
     try {
-        const [results] = await connection.query(query,[dummy,nombres, apellidos, correoElectronico, password] );
+        const [results] = await connection.query(query,[nombres, apellidos, correoElectronico, password] );
         const idUsuario = results[0][0].idUsuario;
         res.status(200).json({
             idUsuario,
