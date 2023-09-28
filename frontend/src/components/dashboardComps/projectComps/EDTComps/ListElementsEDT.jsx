@@ -29,6 +29,7 @@ function CardEDT(props){
                 
                 <div className="buttonsContainer">
                     <button>Ver detalles</button>
+                    <button className="addSubcomp">+ Subcomponente</button>
                 </div>
 
             </li>

@@ -4,7 +4,6 @@
 }
 
 .EDTNew .NewEDTSection{
-    height: 300px;
     display: flex;
     flex-direction: column;
 
@@ -21,7 +20,10 @@
     font-weight: 600;
 }
 
-.EDTNew .NewEDTSection .FirstCardContainer,.EDTNew .NewEDTSection .SecondCardContainer{
+.EDTNew .NewEDTSection .FirstCardContainer,
+.EDTNew .NewEDTSection .SecondCardContainer,
+.EDTNew .NewEDTSection .ThirdCardContainer,
+.EDTNew .NewEDTSection .FourthCardContainer{
     border-style: solid;
     border-color: green;
     flex: 1;
@@ -33,4 +35,25 @@
     border-color: #DFDFDF;
     border-style: solid;
     border-width: 1px;
+}
+
+.EDTNew .NewEDTSection .FirstCardContainer{
+    display: flex;
+    flex-direction: row;
+
+    
+}
+
+.EDTNew .NewEDTSection .FirstCardContainer .FirstLeftCont{
+    flex: 1;
+    padding: 1rem 1rem;
+}
+
+.EDTNew .NewEDTSection .FirstCardContainer .FirstRightCont{
+    flex: 1;
+    padding: 1rem 1rem;   
+}
+
+.EDTNew .NewEDTSection .SecondCardContainer{
+    padding: 1rem 1rem;
 }
