@@ -1,0 +1,8 @@
+.iconLabel{
+    display: flex;
+    gap: 3%;
+}
+
+.label{
+    font-weight: 600;
+}

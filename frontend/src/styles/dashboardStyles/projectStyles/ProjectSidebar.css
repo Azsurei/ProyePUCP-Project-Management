@@ -4,7 +4,7 @@
 
 .ProjectSidebar{
     /* Ponemos 117 porque es la suma entre heights de Navbar y SecondNavbar */
-    height: calc(100vh - 117px);
+    height: auto;
     overflow: auto;
     background-color: #F5F5F5;
 }

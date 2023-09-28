@@ -25,8 +25,8 @@ const port = 8080;
 app.use(bodyParser.json());
 app.use(cors({ origin: "http://localhost:3000" }));
 
-const routerAuth = require('../../../../../backend/routes/auth').routerAuth;
-app.use('/api/',routerAuth);
+const routerAuth = require('./routes/auth').routerAuth;
+app.use('/api',routerAuth);
 
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.PORT || 8080;
