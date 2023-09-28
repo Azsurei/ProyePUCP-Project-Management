@@ -10,6 +10,8 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useRouter } from "next/navigation";
 
+axios.defaults.withCredentials = true;
+
 function Login() {
     const router = useRouter();
 

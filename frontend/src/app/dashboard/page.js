@@ -1,9 +1,20 @@
+"use client"
+
 import Link from "next/link";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListProject from "@/components/dashboardComps/projectComps/ListProject";
+import axios from "axios";
+
+
+axios.defaults.withCredentials = true;
+
+
+
 
 export default function Dashboard() {
+
+    
 
     const componenteProject=[
         {
