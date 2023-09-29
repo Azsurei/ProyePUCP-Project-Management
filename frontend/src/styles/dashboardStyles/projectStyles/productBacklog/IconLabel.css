@@ -1,0 +1,19 @@
+.iconLabel{
+    display: flex;
+    align-items: center;
+    width: 25%;
+    gap: 10%;
+    font-weight: 600;
+}
+
+.iconLabel2{
+    display: flex;
+    align-items: center;
+    width: 50%;
+    gap: 10%;
+    font-weight: 400;
+}
+
+.icono{
+    width: 25px;
+}
