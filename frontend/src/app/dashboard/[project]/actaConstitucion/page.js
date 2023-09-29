@@ -8,7 +8,7 @@ import Title from "@/components/dashboardComps/projectComps/appConstComps/Title"
 import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
 import React, { useState } from 'react';
 
-/// Lista de labels sobre informacion del Proyecto
+/// Lista de labels sobre info del Proyecto
 
 const projectData = [
     { label: "Proyecto", value: "Proyecto de Bajarse a PUCP Movil" },
