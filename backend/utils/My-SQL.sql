@@ -148,17 +148,6 @@ CREATE TABLE ProyectoXGrupoProyecto(
 )
 ENGINE = InnoDB;
 
-
-CREATE TABLE UsuarioXProyecto(
-    idUsuario INT,
-    idProyecto INT,
-    activo TINYINT,
-    PRIMARY KEY (idUsuario, idProyecto),
-    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
-    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
-)
-ENGINE = InnoDB;
-
 CREATE TABLE UsuarioXRolXProyecto (
     idUsuarioRolProyecto INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT ,
@@ -180,31 +169,37 @@ ENGINE = InnoDB;
 -- Herramientas
 --------------------------------------------------------
 
+
+
 CREATE TABLE Herramienta(
 	idHerramienta INT AUTO_INCREMENT PRIMARY KEY,
-    idProyecto INT,
     nombre VARCHAR(200) NOT NULL,
     descripcion VARCHAR(255) NOT NULL,
     imageURL VARCHAR(400) NOT NULL,
-    activo tinyint NOT NULL,
-    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+    activo tinyint NOT NULL
 )
 ENGINE = InnoDB;
 
+
 CREATE TABLE Cronograma(
 	idCronograma INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
     idHerramienta INT,
     fechaInicio DATE,
     fechaFin DATE,
     activo tinyint NOT NULL,
-    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+	FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+
 ------------
 -- EDT
 ------------
 CREATE TABLE EDT(
 	idEDT INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
     idHerramienta INT,
     nombreEDT VARCHAR(255),
     descripcionEDT VARCHAR(255),
@@ -212,9 +207,12 @@ CREATE TABLE EDT(
     fechaCreacion DATE,
     hayResponsable TINYINT ,
     activo tinyint ,
-    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+
 
 CREATE TABLE ComponenteEDT(
 	idComponente INT AUTO_INCREMENT PRIMARY KEY,
@@ -376,6 +374,117 @@ CREATE TABLE LineaEstimacionCosto(
 ENGINE = InnoDB;
 
 -----------------------
+-- Product Backlog
+-----------------------
+DROP TABLE IF EXISTS HistoriaRequisito;
+DROP TABLE IF EXISTS HistoriaCriterioDeAceptacion;
+DROP TABLE IF EXISTS HistoriaPrioridad;
+DROP TABLE IF EXISTS HistoriaEstado;
+DROP TABLE IF EXISTS HistoriaDeUsuario;
+DROP TABLE IF EXISTS ProductBacklog;
+DROP TABLE IF EXISTS Epica;
+DROP TABLE IF EXISTS Sprint;
+
+CREATE TABLE Sprint(
+	idSprint INT AUTO_INCREMENT PRIMARY KEY,
+    idProductBacklog INT,
+    descripcion VARCHAR(255),
+    fechaInicio DATE,
+    fechaFin DATE,
+    estaCompletado TINYINT,
+    activo TINYINT,
+	FOREIGN KEY (idProductBacklog) REFERENCES ProductBacklog(idProductBacklog)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE HistoriaEstado(
+	idHistoriaEstado INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(255),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+CREATE TABLE HistoriaPrioridad(
+	idHistoriaPrioridad INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    descripcion VARCHAR(255),
+    RGB INT,
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+CREATE TABLE HistoriaDeUsuario(
+	idHistoriaDeUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    idEpica INT,
+    descripcion VARCHAR(400),
+    como VARCHAR(255),
+    quiero VARCHAR(255),
+    para VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idEpica) REFERENCES Epica(idEpica)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE Epica(
+	idEpica INT AUTO_INCREMENT PRIMARY KEY,
+    idProductBacklog INT,
+    nombre VARCHAR(255),
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idProductBacklog) REFERENCES ProductBacklog(idProductBacklog)
+)
+ENGINE = InnoDB;
+
+
+CREATE TABLE HistoriaDeUsuario(
+    idHistoriaDeUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    idEpica INT,
+	idHistoriaPrioridad INT,
+    idHistoriaEstado INT,
+    descripcion VARCHAR(400),
+    como VARCHAR(255),
+    quiero VARCHAR(255),
+    para VARCHAR(255),
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idEpica) REFERENCES Epica(idEpica),
+    FOREIGN KEY (idHistoriaPrioridad) REFERENCES HistoriaPrioridad(idHistoriaPrioridad),
+    FOREIGN KEY (idHistoriaEstado) REFERENCES HistoriaEstado(idHistoriaEstado)
+)
+ENGINE = InnoDB;
+
+
+
+CREATE TABLE HistoriaRequisito(
+	idHistoriaRequisito INT AUTO_INCREMENT PRIMARY KEY,
+    idHistoriaDeUsuario INT,
+    descripcion VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idHistoriaDeUsuario) REFERENCES HistoriaDeUsuario(idHistoriaDeUsuario)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE HistoriaCriterioDeAceptacion(
+	idHistoriaCriterioDeAceptacion INT AUTO_INCREMENT PRIMARY KEY,
+	idHistoriaDeUsuario INT,
+    descripcion VARCHAR(255),
+    activo TINYINT,
+	FOREIGN KEY (idHistoriaDeUsuario) REFERENCES HistoriaDeUsuario(idHistoriaDeUsuario)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ProductBacklog(
+	idProductBacklog INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+	idHerramienta INT,
+    fechaCreacion DATE,
+    activo TINYINT,
+	FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)ENGINE = InnoDB;
+
+
+-----------------------
 -- Plantillas
 -----------------------
 
@@ -512,27 +621,29 @@ BEGIN
     SELECT 0 AS 'idUsuario'; -- Usuario no autenticado
   END IF;
 END$
-
+DROP PROCEDURE INSERTAR_PROYECTO;
 ------------
 -- Proyecto
 ------------
+
+-- Insertar proyecto hace referencia a crear un proyecto por parte de un jefe
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PROYECTO(
 	IN _idUsuario INT,
 	IN _nombre VARCHAR(200),
     IN _maxCantParticipantes INT,
     IN _fechaInicio DATE,
-    IN _fechaFin DATE,
-    IN _fechaUltimaModificacion DATE
+    IN _fechaFin DATE
 )
 BEGIN
 	DECLARE _id_proyecto INT;
-	INSERT INTO Proyecto(nombre,maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion,activo) VALUES(_nombre,_maxCantParticipantes,_fechaInicio,_fechaFin,_fechaUltimaModificacion,1);
+	INSERT INTO Proyecto(nombre,maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion,activo) VALUES(_nombre,_maxCantParticipantes,_fechaInicio,_fechaFin,NOW(),1);
     SET _id_proyecto = @@last_insert_id;
-    INSERT INTO UsuarioXProyecto(idUsuario,idProyecto,activo)VALUES(_idUsuario,_id_proyecto,1);
+    INSERT INTO UsuarioXRolXProyecto(idUsuario,idProyecto,idRol,fechaAsignacion,activo)VALUES(_idUsuario,_id_proyecto,1,NOW(),1);
     SELECT _id_proyecto AS idProyecto;
 END$
-DROP PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO;
+
+
 DELIMITER $
 CREATE PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO(IN _idUsuario INT)
 BEGIN
@@ -540,3 +651,51 @@ BEGIN
     FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol WHERE p.idProyecto = urp.idProyecto AND urp.idUsuario = _idUsuario;
 END$
 DELIMITER $
+
+-- ---------------------
+-- PROCEDURES HERRAMIENTAS
+-- ---------------------
+DROP PROCEDURE INSERTAR_PRODUCT_BACKLOG;
+DROP PROCEDURE LISTAR_PRODUCT_BACKLOG_X_ID_PROYECTO;
+DROP PROCEDURE INSERTAR_EPICA;
+DROP PROCEDURE LISTAR_EPICAS_X_ID_BACKLOG;
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PRODUCT_BACKLOG(
+	IN  _id_Proyecto INT
+)
+BEGIN
+	DECLARE _id_backlog INT;
+	INSERT INTO ProductBacklog(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(1,_id_Proyecto,NOW(),1);
+    SET _id_backlog = @@last_insert_id;
+    SELECT _id_backlog AS idProductBacklog;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_PRODUCT_BACKLOG_X_ID_PROYECTO(
+	IN _idProyecto INT
+)
+BEGIN
+	SELECT *FROM ProductBacklog pb WHERE _idProyecto = pb.idProyecto AND pb.activo =1;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_EPICA(
+	IN  _idProductBacklog INT,
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+	DECLARE _id_Epica INT;
+	INSERT INTO Epica(idProductBacklog,nombre,fechaCreacion,activo) VALUES(_idProductBacklog,_nombre,NOW(),1);
+    SET _id_Epica = @@last_insert_id;
+    SELECT _id_Epica AS idEpica;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_EPICAS_X_ID_BACKLOG(
+	IN _idBacklog INT
+)
+BEGIN
+	SELECT *FROM Epica p WHERE _idBacklog = p.idProductBacklog AND p.activo =1;
+END$
+
