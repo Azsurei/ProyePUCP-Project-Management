@@ -1,0 +1,22 @@
+.header {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+}
+
+.header span {
+    margin: 0 5px;
+}
+
+.header a {
+    text-decoration: none;
+    color: #0070f3; /* Sample color, you can choose your own */
+    transition: color 0.3s;
+}
+
+.header a:hover {
+    color: #0050a2; /* Darken color for hover effect */
+}

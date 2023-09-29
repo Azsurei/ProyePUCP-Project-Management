@@ -13,7 +13,11 @@
 /* Ensuring that the title takes up the full width */
 .project-card__title {
     width: 100%;
-    text-align: center;
-    font-weight: bold;
+    text-align: left;
     margin-bottom: 1rem;
+    display: flex;
+    font-size: 1.3rem;
+    color: #172B4D;
+    font-weight: bolder;
+    font-family: Montserrat, serif;
 }

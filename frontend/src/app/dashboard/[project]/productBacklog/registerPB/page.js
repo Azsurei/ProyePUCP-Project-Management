@@ -21,6 +21,14 @@ export default function Project() {
         setQuantity1(quantity1+1);
     }
 
+    function removeContainer(){
+        setQuantity(quantity-1);
+    }
+
+    function removeContainer1(){
+        setQuantity1(quantity1-1);
+    }
+
     return(
         <div className="container">
             <div className="header">
@@ -66,7 +74,10 @@ export default function Project() {
                         <ContainerScenario key={index} indice={index+1}/>
                     ))}
                     <div className="twoButtons">
-                        <button onClick={addContainer} className="buttonTitle">Agregar</button>
+                        <div className="buttonContainer">
+                            <button onClick={addContainer} className="buttonTitle">Agregar</button>
+                            <button onClick={removeContainer} className="buttonTitle">Eliminar</button>
+                        </div>
                     </div>
                 </div>
                 <div className="requirements">
@@ -77,7 +88,10 @@ export default function Project() {
                         <ContainerRequirement key={index} indice={index+1}/>
                     ))}
                     <div className="twoButtons">
-                        <button onClick={addContainer1} className="buttonTitle">Agregar</button>
+                        <div className="buttonContainer">
+                            <button onClick={addContainer1} className="buttonTitle">Agregar</button>
+                            <button onClick={removeContainer1} className="buttonTitle">Eliminar</button>
+                        </div>
                     </div>
                 </div>
 

@@ -1,0 +1,4 @@
+.buttonPanel {
+    display: flex;
+    gap: 10px;
+}
