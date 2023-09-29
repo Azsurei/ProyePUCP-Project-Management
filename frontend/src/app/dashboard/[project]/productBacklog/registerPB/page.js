@@ -39,7 +39,7 @@ export default function Project() {
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="descripcion"/>
+                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="descripcion" hasColor={true} colorProperty="RGB"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>

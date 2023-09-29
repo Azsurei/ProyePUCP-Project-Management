@@ -106,7 +106,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import axios from "axios";
 import { useEffect } from "react";
 
-export default function Example({urlApi,property,nameDisplay}) {
+export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty}) {
   const [selected, setSelected] = useState('')
   const [query, setQuery] = useState('')
   const [data, setData] = useState([]);
@@ -133,17 +133,19 @@ export default function Example({urlApi,property,nameDisplay}) {
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
-
+        
   return (
     <div>
-      <Combobox value={selected} onChange={setSelected}>
+      <Combobox value={selected} onChange={setSelected}> 
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             <Combobox.Input
-              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+              className={`w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
+              style={{backgroundColor: selected[colorProperty]}}
               displayValue={(object) => object[nameDisplay]}
               onChange={(event) => setQuery(event.target.value)}
             />
+            {console.log(selected[colorProperty]+" XD")}
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
                 className="h-5 w-5 text-gray-400"
@@ -164,9 +166,9 @@ export default function Example({urlApi,property,nameDisplay}) {
                   Nada encontrado.
                 </div>
               ) : (
-                filteredData.map((object) => (
+                filteredData.map((object,index) => (
                   <Combobox.Option
-                    key={object.id}
+                    key={index}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
                         active ? 'bg-teal-600 text-white' : 'text-gray-900'
