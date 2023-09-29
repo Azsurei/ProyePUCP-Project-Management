@@ -58,8 +58,8 @@ function MemberIcon(props){
 function DropDownItem(props){
     return(
         <li className="DropDownItem">
-            <img src="/icons/epicPB.svg" alt="icon" className="" />
-            <p>Herramienta</p>
+            <img src={props.icon} alt="icon" className="" />
+            <p>{props.name}</p>
         </li>
     );
 }
@@ -80,19 +80,60 @@ function DropDownMenu(props){
     return(
         <div className={open === true ? "DropDownMenu active" : "DropDownMenu" } onClick={toggleDropdown}>
             <div className="DropTitleContainer">
-                <img src="/icons/epicPB.svg" alt="" className="DropIconLeft" />
-                <p className="DropTitle">Gestion del proyecto</p>
+                <div className="DropTitleLeft">
+                    <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
+                    <p className="DropTitle"> {props.info.tittleTitle} </p>
+                </div>
                 <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
             </div>
+
             <ul className="ItemsContainer">
-                <DropDownItem></DropDownItem>
-                <DropDownItem></DropDownItem>
-                <DropDownItem></DropDownItem>
+                {props.info.dataItems.map((item)=>{
+                    return <DropDownItem icon={item.optIcon} name={item.optName}></DropDownItem>
+                })}
             </ul>
         </div>
     );
 }
 
+
+const sideBar1Array = [
+    {
+        optIcon : '/icons/icon-goBack.svg',
+        optName : 'Pendiente' 
+    }
+];
+
+const sidebar1Data = {
+    tittleIcon : '/icons/info-circle.svg',
+    tittleTitle : 'Sobre proyecto',
+    dataItems : sideBar1Array
+};
+
+const sideBar2Array = [
+    {
+        optIcon : '/icons/icon-notif.svg',
+        optName : 'Gestion de backlog' 
+    },
+    {
+        optIcon : '/icons/datePB.svg',
+        optName : 'Acta de constitución' 
+    },
+    {
+        optIcon : '/icons/icon-cross.svg',
+        optName : 'EDT y diccionario EDT' 
+    },
+    {
+        optIcon : '/icons/icon-help.svg',
+        optName : 'Registro de equipos' 
+    }
+];
+
+const sidebar2Data = {
+    tittleIcon : '/icons/icon-settings.svg',
+    tittleTitle : 'Herramientas',
+    dataItems : sideBar2Array
+};
 
 
 function ProjectSidebar(props) {
@@ -120,8 +161,8 @@ function ProjectSidebar(props) {
                 })}
             </ul>
 
-            <DropDownMenu></DropDownMenu>
-            <DropDownMenu></DropDownMenu>
+            <DropDownMenu info={sidebar1Data}></DropDownMenu>
+            <DropDownMenu info={sidebar2Data}></DropDownMenu>
         </nav>
     );
 }
