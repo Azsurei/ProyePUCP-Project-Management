@@ -4,6 +4,8 @@ import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/ActaCon
 
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import Breadcrumb from "@/components/dashboardComps/projectComps/appConstComps/BreadCrumb";
+import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
+import Button from  "@/components/dashboardComps/projectComps/appConstComps/Button";
 
 /// Lista de labels sobre informacion del Proyecto
 
@@ -97,17 +99,10 @@ export default function actaConstitucion() {
                 {cardDataArray.map((card, index) => (
                     <TextInfoCard key={index} title={card.title} data={card.data} />
                 ))}
-                <div className="cancelarAceptar">
-                    <div className="buttonContainer">
-                        {/* Probablemente necesite usar router luego en vez de link */}
-                        <Link href="#cancelar">
-                            <button className="btnCancel" type="button">Cancelar</button>
-                        </Link>
-                        <Link href="#aceptar">
-                            <button className="btnSave" type="button">Guardar</button>
-                        </Link>
-                    </div>
-                </div>
+                <ButtonPanel>
+                    <Button text="Cancelar" type="secondary" size="medium" onClick={() => {}} />
+                    <Button text="Guardar" type="primary" size="medium" onClick={() => {}} />
+                </ButtonPanel>
             </div>
         </div>
     );
