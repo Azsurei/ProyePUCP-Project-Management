@@ -51,11 +51,11 @@ export default function ListElementsEDT(props){
             {ListComps.map((component)=>{
                 return (
                     <CardEDT key={component.id} 
-                                name={component.componentName}
-                                levelCounter={component.levelCounter}
-                                levelName={component.levelName}
-                                levelColor={component.levelColor}
-                                childList={component.childsList}
+                                name={component.descripcion}
+                                levelCounter={component.codigo}
+                                levelName="FASE"
+                                levelColor="purple"
+                                childList={component.componentesHijos}
                                 initialMargin={component.initialMargin}>
                 </CardEDT>
                 );
