@@ -21,7 +21,9 @@ export default function Project() {
                         <Button href="/dashboard/project/productBacklog/registerPB" text="Añadir elemento" className="btnBacklogPrimary"></Button>
                     </div>
                 </div>
-                <div className="tableBacklog">Tabla</div>
+                <div className="tableBacklog">
+                    
+                </div>
             </div>  
         </div>
     );

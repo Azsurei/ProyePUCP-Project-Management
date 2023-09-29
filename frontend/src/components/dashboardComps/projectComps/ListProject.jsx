@@ -4,28 +4,63 @@ import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/ListProject.css
 import { useEffect, useState } from "react";
 import React, { Component } from 'react';
 import { useRouter } from 'next/navigation';
-
 import axios from "axios";
-
 
 axios.defaults.withCredentials = true;
 
 
+const memberData = [
+    {
+        id: '1',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    },
+    
+    {
+        id: '2',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    },
+    {
+        id: '3',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    }  ,
+    {
+        id: '4',
+        name: 'Renzo',
+        lastName: 'Pinto',
+        profilePicture: '/images/ronald_user.png'
+    } 
+
+];
 
 
 
 function ProjectCard(props){
 
-
     return(
-        <div>
-            <li className="ProjectCard" onClick={props.onClick}>
-                <p>
-                    {props.name}
-                </p>
-            </li>
-        </div>
-    )
+        
+        <li className="ProjectCard" onClick={props.onClick}>
+            <p className="cardTitleProject">
+                {props.name}
+            </p>
+
+            <div className="divPictures">
+            {memberData.map((member)=>{
+                return (
+                    <img className="memberProfilePicture"
+                        key={member.id}
+                        src='images/ronaldo_user.png'
+                        />
+                );
+             })} 
+            </div>
+        </li>
+    );
 }
 //Aqui es la lista de Proyectos
 
