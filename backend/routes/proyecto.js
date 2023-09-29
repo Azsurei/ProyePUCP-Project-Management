@@ -101,23 +101,23 @@ routerProyecto.get("/:idUsuario/:idProyecto/:idBacklog/epica",async(req,res)=>{
 })
 
 routerProyecto.get("/:idUsuario/:idProyecto/:idEDT",async(req,res)=>{
-    const { idEDT} = req.params;
+    const {idEDT} = req.params;
     console.log(`Llegue a recibir solicitud listar EDT de Proyecto${idEDT}`);
     //AGREGAR ACA EL LISTADO
     const query = `
-        CALL LISTAR_EPICAS_X_ID_BACKLOG(?);
+        CALL LISTAR_COMPONENTES_EDT_X_ID_EDT(?);
     `;
     try {
-        const [results] = await connection.query(query,[idBacklog]);
+        const [results] = await connection.query(query,[idEDT]);
         res.status(200).json({
-            proyectos: results[0],
-            message: "Epicas obtenidas exitosamente"
+            EDT: results[0],
+            message: "EDT obtenido exitosamente"
         });
-        console.log(`Se han listado las epicas para el Backlog ${idBacklog}!`);
+        console.log(`Se han listado los componentes del EDT exitosamente${idEDT}!`);
         console.log(results);
     } catch (error) {
-        console.error("Error al obtener los proyectos:", error);
-        res.status(500).send("Error al obtener los proyectos: " + error.message);
+        console.error("Error al obtener los componentesEDT:", error);
+        res.status(500).send("Error al obtener los componentesEDT: " + error.message);
     }
 })
 
