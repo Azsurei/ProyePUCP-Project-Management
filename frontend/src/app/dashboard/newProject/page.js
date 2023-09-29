@@ -23,11 +23,7 @@ export default function newProject() {
             </div>
 
             <div className="divSearch">
-
-
             </div>
-
-
 
         </div>
         
