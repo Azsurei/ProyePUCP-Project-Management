@@ -23,18 +23,22 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
 }
 
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer{
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: .7rem;
+
+
 }
 
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #MainHeader{
     font-weight: 700;
     font-size: 30px;
     color: #172B4D;
+
 }
 
 
@@ -46,11 +50,12 @@
     background-color: transparent;
     transition: background-color 0.15s ease;
 
-    margin-bottom: .15rem;
+    margin-top: .12rem;
 
-    &:hover{
-        background-color: rgb(206, 214, 221);
-        transition: background-color 0.15s ease;
-    }
     
+}
+
+#HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #HeaderIconGoBack:hover{
+    background-color: rgb(206, 214, 221);
+    transition: background-color 0.15s ease;
 }

@@ -41,7 +41,6 @@
     display: flex;
     flex-direction: row;
 
-    
 }
 
 .EDTNew .NewEDTSection .FirstCardContainer .FirstLeftCont{
@@ -54,6 +53,15 @@
     padding: 1rem 1rem;   
 }
 
+
 .EDTNew .NewEDTSection .SecondCardContainer{
+    padding: 1rem 1rem;
+}
+
+.EDTNew .NewEDTSection .ThirdCardContainer{
+    padding: 1rem 1rem;
+}
+
+.EDTNew .NewEDTSection .FourthCardContainer{
     padding: 1rem 1rem;
 }
