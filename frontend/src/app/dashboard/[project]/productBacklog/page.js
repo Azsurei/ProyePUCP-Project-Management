@@ -59,7 +59,7 @@ export default function Project() {
                         <Button href="/dashboard/project/productBacklog/registerPB" text="Añadir elemento" className="btnBacklogPrimary"></Button>
                     </div>
                 </div>
-<<<<<<< HEAD
+
                 <div className="tableBacklog overflow-x-auto overflow-y-auto rounded-lg shadow w-100">
                     <table className="table table-hover min-w-full">
                     <thead className="bg-blue-300 border-b-2 border-gray-200">
@@ -104,12 +104,6 @@ export default function Project() {
                 modal = {modal} 
                 toggle = {toggleModal}
             />
-=======
-                <div className="tableBacklog">
-                    
-                </div>
-            </div>  
->>>>>>> 42ae5c478cf7018e130fab25b4b5259fa1e6e94c
         </div>
     );
 }
