@@ -10,6 +10,12 @@
     margin: 1rem 3rem;
 }
 
+.ProjectCard:hover{
+
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
 .ListProject .ProjectCard .cardTitleProject{
     font-size: 16px;
     font-family: 'Montserrat';
