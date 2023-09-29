@@ -5,7 +5,24 @@ import '../../../../components/dashboardComps/projectComps/appConstComps/Atribut
 import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/ActaConstitucion.css';
 import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/AtributoCard.css';
 import AtributoCard from "@/components/dashboardComps/projectComps/appConstComps/AtributoCard";
-import '../../../../components/dashboardComps/projectComps/appConstComps/CardComplex'
+
+
+import '../../../../components/dashboardComps/projectComps/appConstComps/TextInfoCard';
+import '../../../../components/dashboardComps/projectComps/appConstComps/CardItem';
+import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
+
+
+// Lista de labels sobre informacion del Proyecto
+
+const projectData = [
+    { label: "Proyecto", value: "Proyecto de Bajarse a PUCP Movil" },
+    { label: "Nombre del equipo", value: "Los Dibujitos" },
+    { label: "Fecha", value: "25/12/2023" },
+    { label: "Cliente", value: "Sindicato de Catolica" },
+    { label: "Patrocinador principal", value: "Luis Flores" },
+    { label: "Gerente de proyecto", value: "Diego Iwasaki" },
+];
+
 
 export default function actaConstitucion() {
 
@@ -16,23 +33,11 @@ export default function actaConstitucion() {
             </div>
             <div className="ActaConst">
                 <div className="subtitle">Acta de Constitucion</div>
-
                 <div className="subtitle">Informacion del Proyecto</div>
-                <div className="ArregloAtributos">
-                    <AtributoCard atributo={"Projecto"} valor={"Proyecto de Bajarse a PUCP Movil"}>
-                    </AtributoCard><br/>
-                    <AtributoCard atributo={"Nombre del equipo"} valor={"Los Dibujitos"}>
-                    </AtributoCard><br/>
-                    <AtributoCard atributo={"Fecha"} valor={"25/12/2023"}>
-                    </AtributoCard><br/>
-                    <AtributoCard atributo={"Cliente"} valor={"Sindicato de Catolica"}>
-                    </AtributoCard><br/>
-                    <AtributoCard atributo={"Patrocinador principal"} valor={"Luis Flores"}>
-                    </AtributoCard><br/>
-                    <AtributoCard atributo={"Gerente de proyecto"} valor={"Diego Iwasaki"}>
-                    </AtributoCard><br/>
-                    <br/><br/>
-                </div>
+
+                <TextInfoCard title={"Informacion del Proyecto"} data={projectData} />
+
+
                 <br/>
                 <div className="subtitle">Propósito y Justificación del Proyecto</div>
                 <div className="ArregloAtributos">

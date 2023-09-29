@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "@/components/Card";
-import CardEquipo from "@/components/equipoComps/CardEquipo";
+import CardParticipantes from "@/components/equipoComps/CardParticipantes";
 import TextField from "@/components/TextField";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 
@@ -47,7 +47,7 @@ export default function crear_equipo(){
                 {miembros.map((miembros) => (
                     <div className="flex flex-col items-start justify-between w-full" key={miembros.id}>
                         <Card>
-                            <CardEquipo
+                            <CardParticipantes
                                 iconSrc={miembros.iconSrc}
                                 nombre={miembros.nombre}
                                 correo={miembros.correo}
