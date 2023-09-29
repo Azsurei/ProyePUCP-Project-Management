@@ -95,6 +95,102 @@
 }
 
 
+
+/*=============== STYLES OF DropDownMenu ===============*/
+.DropDownMenu{
+    display: flex;
+    flex-direction: column;
+
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(212, 212, 212);
+
+    border-radius: 10px;
+
+}
+
+.DropDownMenu .DropTitleContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: white;
+
+    border-style: solid;
+    border-color: rgb(212, 212, 212);
+    border-width: 1px;
+    border-radius: 8px;
+
+    cursor:pointer
+}
+
+
+.DropDownMenu .DropTitleContainer .DropTitleLeft{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.DropDownMenu .DropTitle{
+    font-size: 1.2rem;  
+}
+
+.DropDownMenu .DropIconLeft{
+    width: 22px;
+    height: 22px;
+    margin: 0 .5rem; 
+}
+
+.DropDownMenu .DropIconRight{
+    width: 22px;
+    height: 22px;
+    margin: 0 .3rem;
+}
+
+.DropDownMenu .ItemsContainer{
+    display: none;
+    
+}
+
+.DropDownMenu .ItemsContainer .DropDownItem{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    padding-left: 1.2rem;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+
+    border-radius: 7px;
+
+    &:hover{
+        background-color: #dad9d8;
+    }    
+}
+
+.DropDownMenu .ItemsContainer .DropDownItem img{
+    width: 18px;
+    height: 18px;
+
+    margin: 0 .3rem;
+}
+
+.DropDownMenu .ItemsContainer .DropDownItem p{
+    font-size: 1rem;
+}
+
+
+
+.DropDownMenu.active .ItemsContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+
  @media (max-width : 768px){
 
     .ProjectSidebar{

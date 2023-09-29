@@ -1,12 +1,13 @@
 import React from "react";
 import "@/styles/dashboardStyles/DashboardSecondNav.css";
+import Link from "next/link";
 
 function DashboardSecondNav() {
     return (
         <ul className="DashboardSecondNav">
             <li>
                 <img src="/icons/sidebarIcon1.svg" className='sideIcon'></img>
-                <p>Principal</p>
+                <Link href='/dashboard'><p>Principal</p></Link>
             </li>
             <li>
                 <img src="/icons/sidebarIcon2.svg" className='sideIcon'></img>

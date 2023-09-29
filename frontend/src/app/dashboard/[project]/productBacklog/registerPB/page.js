@@ -3,8 +3,10 @@ import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
 import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
 import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
 import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
+import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useState, useRef } from "react";
+import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
 
 export default function Project() {
@@ -27,24 +29,34 @@ export default function Project() {
             <div className="backlog">
                 <div className="titleBacklog">Registrar nuevo elemento en el Backlog</div>
                 <div className="combo">
-                    <div className="epic">
-                        <IconLabel icon="/icons/epicPB.svg" label="Épica"/>
+                    <div className="epic containerCombo">
+                        <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
+                        <MyCombobox/>
                     </div>
-                    <div className="date">
-                        <IconLabel icon="/icons/datePB.svg" label="Fecha de creación"/>
+                    <div className="date containerCombo">
+                        <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
+                        <div className="dateOfCreation">28/09/2023</div>
                     </div>
-                    <div className="priority">
-                        <IconLabel icon="/icons/priorityPB.svg" label="Prioridad"/>
+                    <div className="priority containerCombo">
+                        <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
+                        <MyCombobox/>
                     </div>
-                    <div className="createdBy">
-                        <IconLabel icon="/icons/createdByPB.svg" label="Creado por"/>
+                    <div className="createdBy containerCombo">
+                        <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
+                        <IconLabel icon="/icons/icon-usr.svg" label="Kana Arima" className="iconLabel2"/>
                     </div>
-                    <div className="state">
-                        <IconLabel icon="/icons/statePB.svg" label="Estado"/>
+                    <div className="state containerCombo">
+                        <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
+                        <MyCombobox/>
                     </div>
-                    <div className="assignedTo">
-                        <IconLabel icon="/icons/assignedToPB.svg" label="Asignado a"/>
+                    <div className="assignedTo containerCombo">
+                        <IconLabel icon="/icons/assignedToPB.svg" label="Asignado a" className="iconLabel"/>
+                        <IconLabel icon="/images/ronaldo_user.png" label="Ronaldo" className="iconLabel2"/>
                     </div>
+                </div>
+                <div className="description">
+                    <h4>Nombre de historia de usuario</h4>
+                    <DescriptionRequeriment/>
                 </div>
                 <div className="userDescription">
                     <h4>Descripción de usuario</h4>

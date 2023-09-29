@@ -2,6 +2,12 @@ const express = require('express');
 const connection = require('../config/db');
 const routerProyecto = express.Router();
 
+const jwt = require("jsonwebtoken");
+const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
+
+
+
+
 routerProyecto.post("/",async(req,res)=>{
     const { nombre, maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion } = req.body;
     console.log("Llegue a recibir solicitud creacion proyecto");
@@ -23,23 +29,34 @@ routerProyecto.post("/",async(req,res)=>{
     }
 })
 
-routerProyecto.get("/:idUsuario",async(req,res)=>{
-    const { idUsuario} = req.params;
+routerProyecto.get("/listarProyectos",async(req,res)=>{
     console.log("Llegue a recibir solicitud listar proyecto");
-    const query = `
-        CALL LISTAR_PROYECTOS_X_ID_USUARIO(?);
-    `;
-    try {
-        const [results] = await connection.query(query,[idUsuario]);
-        res.status(200).json({
-            proyectos: results[0],
-            message: "Proyectos obtenidos exitosamente"
-        });
-        console.log(`Se han listado los proyectos para el usuario ${idUsuario}!`);
-        console.log(results);
-    } catch (error) {
-        console.error("Error al obtener los proyectos:", error);
-        res.status(500).send("Error al obtener los proyectos: " + error.message);
+    const { tokenProyePUCP } = req.cookies;
+
+    try{
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+
+        
+        const query = `
+            CALL LISTAR_PROYECTOS_X_ID_USUARIO(?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idUsuario]);
+            res.status(200).json({
+                proyectos: results[0],
+                message: "Proyectos obtenidos exitosamente"
+                
+            });
+            console.log(`Se han listado los proyectos para el usuario ${idUsuario}!`);
+        } catch (error) {
+            console.error("Error al obtener los proyectos:", error);
+            res.status(500).send("Error al obtener los proyectos: " + error.message);
+        }
+
+    }catch(error){
+        return res.status(401).send(error.message + "invalid tokenProyePUCP token");
     }
 })
 
@@ -81,6 +98,11 @@ routerProyecto.get("/:idUsuario/:idProyecto/:idBacklog/epica",async(req,res)=>{
         console.error("Error al obtener los proyectos:", error);
         res.status(500).send("Error al obtener los proyectos: " + error.message);
     }
+
+
+    
+
+    
 })
 
 module.exports.routerProyecto = routerProyecto;

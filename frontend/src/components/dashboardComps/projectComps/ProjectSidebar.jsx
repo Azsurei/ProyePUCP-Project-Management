@@ -1,4 +1,6 @@
-import React from "react";
+"use client"
+
+import React, { useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 
 const memberData = [
@@ -53,11 +55,92 @@ function MemberIcon(props){
     );
 }
 
-function ProjectSidebar() {
+function DropDownItem(props){
+    return(
+        <li className="DropDownItem">
+            <img src={props.icon} alt="icon" className="" />
+            <p>{props.name}</p>
+        </li>
+    );
+}
+
+
+function DropDownMenu(props){
+    //PARAMETROS QUE DEBE RECIBIR:
+    //title-icon
+    //title-tittle
+    //array de items con estructura {optIcon, optName}
+    const [open, setOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setOpen(!open);
+    }
+
+
+    return(
+        <div className={open === true ? "DropDownMenu active" : "DropDownMenu" } onClick={toggleDropdown}>
+            <div className="DropTitleContainer">
+                <div className="DropTitleLeft">
+                    <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
+                    <p className="DropTitle"> {props.info.tittleTitle} </p>
+                </div>
+                <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
+            </div>
+
+            <ul className="ItemsContainer">
+                {props.info.dataItems.map((item)=>{
+                    return <DropDownItem icon={item.optIcon} name={item.optName}></DropDownItem>
+                })}
+            </ul>
+        </div>
+    );
+}
+
+
+const sideBar1Array = [
+    {
+        optIcon : '/icons/icon-goBack.svg',
+        optName : 'Pendiente' 
+    }
+];
+
+const sidebar1Data = {
+    tittleIcon : '/icons/info-circle.svg',
+    tittleTitle : 'Sobre proyecto',
+    dataItems : sideBar1Array
+};
+
+const sideBar2Array = [
+    {
+        optIcon : '/icons/icon-notif.svg',
+        optName : 'Gestion de backlog' 
+    },
+    {
+        optIcon : '/icons/datePB.svg',
+        optName : 'Acta de constitución' 
+    },
+    {
+        optIcon : '/icons/icon-cross.svg',
+        optName : 'EDT y diccionario EDT' 
+    },
+    {
+        optIcon : '/icons/icon-help.svg',
+        optName : 'Registro de equipos' 
+    }
+];
+
+const sidebar2Data = {
+    tittleIcon : '/icons/icon-settings.svg',
+    tittleTitle : 'Herramientas',
+    dataItems : sideBar2Array
+};
+
+
+function ProjectSidebar(props) {
     return (
         <nav className='ProjectSidebar'>
             <div>
-                <p className="header">Los Dibujitos</p>
+                <p className="header">{props.projectName}</p>
                 <p className="dates">13/09/2023  -  20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
                     <p className="teamHeader">Equipo:</p>
@@ -77,12 +160,9 @@ function ProjectSidebar() {
                     </MemberIcon>;
                 })}
             </ul>
-            <ul className="dropdown-menus">
-                Desplegable 1
-            </ul>
-            <ul>
-                Desplegable 2
-            </ul>
+
+            <DropDownMenu info={sidebar1Data}></DropDownMenu>
+            <DropDownMenu info={sidebar2Data}></DropDownMenu>
         </nav>
     );
 }
