@@ -6,6 +6,7 @@ import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/
 import Button from  "@/components/dashboardComps/projectComps/appConstComps/Button";
 import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
 import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
+import React, { useState } from 'react';
 
 /// Lista de labels sobre informacion del Proyecto
 
@@ -92,20 +93,48 @@ const cardDataArray = [
 const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
 
 export default function actaConstitucion() {
+    const [isEditing, setIsEditing] = useState(false); // State to track if user is in "editing" mode
+    const [showSaveCancel, setShowSaveCancel] = useState(false); // State to track visibility of "Guardar" and "Cancelar" buttons
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+        setShowSaveCancel(true);
+    };
+
+    const handleCancelClick = () => {
+        setIsEditing(false);
+        setShowSaveCancel(false);
+        // Optionally, reset any form/data changes here
+    };
+
+    const handleSaveClick = () => {
+        // Here you can add logic to save the changes
+        // For demonstration purposes, we just reset the buttons
+        setIsEditing(false);
+        setShowSaveCancel(false);
+    };
+
     return (
         <Page margin={"20px 20px 20px"}>
             <Breadcrumb items={itemsBreadCrumb} />
             <Title>{"Acta de Constitución"}</Title>
             <ButtonPanel margin="20px 20px 20px" align="left">
-                <Button text="Editar" type="primary" size="large" onClick={() => {}} />
+                <Button
+                    text="Editar"
+                    type="primary"
+                    size="large"
+                    onClick={handleEditClick}
+                    isDisabled={isEditing}
+                />
             </ButtonPanel>
             {cardDataArray.map((card, index) => (
                 <TextInfoCard key={index} title={card.title} data={card.data} />
             ))}
-            <ButtonPanel margin="20px 20px 20px" align="center">
-                <Button text="Cancelar" type="secondary" size="large" onClick={() => {}} />
-                <Button text="Guardar" type="primary" size="large" onClick={() => {}} />
+            <ButtonPanel margin="20px 20px 20px" align="center" style={{ display: showSaveCancel ? 'flex' : 'none' }}>
+                <Button text="Cancelar" type="secondary" size="large" onClick={handleCancelClick} isDisabled={!isEditing} />
+                <Button text="Guardar" type="primary" size="large" onClick={handleSaveClick} isDisabled={!isEditing} />
             </ButtonPanel>
         </Page>
     );
 }
+
