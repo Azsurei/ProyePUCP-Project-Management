@@ -24,3 +24,8 @@ CALL INSERTAR_EDT(6,'EDT 2','Es el segundo EDT de la BD',77,1);
 
 -- COMPONENTE EDT RAIZ
 CALL INSERTAR_COMPONENTE_EDT(1,1,'Componente EDT raiz de la BD','0','Raiz','Este componente es de uso interno para creacion correcta de componentes');
+
+CALL INSERTAR_COMPONENTE_EDT(1,2,'Componente1','1','Raiz1 ','Sample');
+CALL INSERTAR_COMPONENTE_EDT(2,2,'Componente1.1','1.1','Prueba ','Sample');
+CALL INSERTAR_COMPONENTE_EDT(2,2,'Componente1.2','1.2','Prueba ','Sample');
+CALL INSERTAR_COMPONENTE_EDT(3,2,'Componente1.1.1','1.1.1','Prueba ','Sample');
