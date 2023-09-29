@@ -50,7 +50,7 @@
 .btnBacklog{
     border-radius: 10px;
     background-color: white;
-    border: #172B4D 1px solid;
+    border: 1px solid #172B4D;
     font-size: 0.8rem;
     font-weight: 600;
     height: 36px;

@@ -10,6 +10,7 @@ export default function RootLayout({ children, params }) {
         <div className="DashboardProjectContainer">   
             <ProjectSidebar projectName={decodedName}></ProjectSidebar>
             {children}
+            
         </div>
     );
 }
