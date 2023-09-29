@@ -27,18 +27,32 @@ export default function Dashboard() {
             <div className="headerDiv">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
-                    <BreadcrumbsItem href="/dashboard/projects" text="Proyectos" />
+                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
                 </Breadcrumbs>
+                <p className="textProject2">
+                    Proyecto
+                </p>
             </div>
 
             <div className="divSearch">
+                
                 <SearchBar placeholder="Buscar Proyecto"></SearchBar>
-
+                
+            <div className="contentDer">
                 <div className="divtextProject">
-                    <p className="textProject">¿Tienes ya la idea ganadora?</p>
+                        <p className="textProject">¿Tienes ya la idea ganadora?</p>
                 </div>
 
-                <button className="addProjectbtn">Crear Proyecto</button>
+                <div className="butonAddProject">
+                    <a href="/dashboard/newProject">
+                        <button className="addProjectbtn">Crear Proyecto</button>
+                    </a>
+
+                </div>
+
+
+            </div>
+
             </div>
 
             <ListProject listData={componenteProject}></ListProject>

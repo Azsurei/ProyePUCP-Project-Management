@@ -15,9 +15,10 @@
 .divSearch{
     
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  
   align-items: center;
-  padding-left: 3%;
+  
 }
 
 .searchProject{
@@ -35,7 +36,7 @@
     align-items: left;
     gap: 10px;
     flex-shrink: 0;
-
+    
     border-radius: 3.375px;
     border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
     background: var(--color-background-input-default, #FFF);
@@ -62,7 +63,7 @@
     height: 36px;
     width: 160px;
     color: white;
-    margin-right: 2%;
+    /*margin-right: 2%;*/
     transition: background-color 0.15s ease-in;
     
     
@@ -75,8 +76,7 @@
   
   .divtextProject{
     margin-left: 0; /* Resetear el margen izquierdo a 0 */
-    margin-right: 4rem; /* Añadir margen a la derecha del texto */
-    margin-left: 5rem;
+    margin-right: 4rem; 
     
   }
   .textProject{
@@ -85,4 +85,26 @@
     font-size: 1rem;
     font-weight: 450;
     font-family: Montserrat;
+    line-height: 2rem;
   }
+
+  .textProject2{
+    font-weight: 700;
+    font-size: 30px;
+    color: #172B4D;
+  }
+
+  .contentDer{
+
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    
+    position: relative;
+    z-index: 99;
+  }
+  .butonAddProject{
+    margin-right: 4rem; 
+  }
+
+  
