@@ -129,15 +129,18 @@ export default function newProject() {
       </div>
 
       <div className="trackerBar">
-        <TracerNewProject items={items}></TracerNewProject>
+        <TracerNewProject items={items3}></TracerNewProject>
       </div>
+    
+
+
 
       <div className="containerInfoBox">
 
         
       <div className="infoBox">
 
-        <CardCreateProject></CardCreateProject>
+        
       </div>
         <div className="buttonContainer">
           
