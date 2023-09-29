@@ -14,9 +14,10 @@
 
 .divSearch{
     
-        display: flex;
-        
-        padding-left: 3%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 3%;
 }
 
 .searchProject{
@@ -43,29 +44,45 @@
 .searchButton {
     background: none;
     border: none;
-}
-
-button {
     all: unset;
     cursor: pointer;
-    width: 44px;
-    height: 44px;
-  }
-  
-form {
-  background-color: #4654e1;
-  width: 300px;
-  height: 44px;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 }
 
-svg {
-    color: #fff;
-    fill: currentColor;
-    width: 24px;
-    height: 24px;
-    padding: 10px;
+
+
+
+/*Boton añadir nuevo Project*/
+.addProjectbtn{
+    border-radius: 5px;
+    background-color: #F0AE19;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 36px;
+    width: 160px;
+    color: white;
+    margin-right: 2%;
+    transition: background-color 0.15s ease-in;
+    
+    
+    
+    &:hover{
+        background-color: #ca9415;
+        transition: background-color 0.15s ease-in;
+    }
+  }
+  
+  .divtextProject{
+    margin-left: 0; /* Resetear el margen izquierdo a 0 */
+    margin-right: 4rem; /* Añadir margen a la derecha del texto */
+    margin-left: 5rem;
+    
+  }
+  .textProject{
+    text-decoration: none;
+    color: #626F86;
+    font-size: 1rem;
+    font-weight: 450;
+    font-family: Montserrat;
   }

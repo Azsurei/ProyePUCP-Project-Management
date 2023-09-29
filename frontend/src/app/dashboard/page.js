@@ -5,6 +5,7 @@ import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListProject from "@/components/dashboardComps/projectComps/ListProject";
 import axios from "axios";
+import SearchBar from "@/components/SearchBar";
 
 
 axios.defaults.withCredentials = true;
@@ -37,7 +38,7 @@ export default function Dashboard() {
 
             <div className="headerDiv">
             <HeaderWithButtons haveReturn={false} 
-                               haveAddNew={true}
+                               haveAddNew={false}
                                hrefToReturn={''}
                                hrefForButton={'/dashboard/project/newProject'}
                                breadcrump={'Inicio / Proyectos '}
@@ -45,16 +46,22 @@ export default function Dashboard() {
             </div>
 
             <div className="divSearch">
-                <form role="searchContainer">
-                    <input
-                        type="search" id="query" name="q"
-                        className="searchProject"
-                        placeholder="Buscar proyecto"
-                        />
-                    <button className="searchButton">
-                    <svg viewBox="0 0 1024 1024"><path className="path1" d="M848.471 928l-263.059-263.059c-48.941 36.706-110.118 55.059-177.412 55.059-171.294 0-312-140.706-312-312s140.706-312 312-312c171.294 0 312 140.706 312 312 0 67.294-24.471 128.471-55.059 177.412l263.059 263.059-79.529 79.529zM189.623 408.078c0 121.364 97.091 218.455 218.455 218.455s218.455-97.091 218.455-218.455c0-121.364-103.159-218.455-218.455-218.455-121.364 0-218.455 97.091-218.455 218.455z"></path></svg>
-                    </button>
-                </form>
+
+                <SearchBar placeholder='Buscar Proyecto'>
+
+                </SearchBar>
+
+                <div className="divtextProject">
+                    <p className="textProject">
+                        ¿Tienes ya la idea ganadora?
+                    </p>
+                </div>
+
+
+                <button className="addProjectbtn">
+                    Crear Proyecto
+                </button>
+
             </div>
 
 
