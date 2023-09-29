@@ -3,7 +3,7 @@ import DashboardSecondNav from "@/components/dashboardComps/DashboardSecondNav";
 
 export default function RootLayout({ children }) {
     return (
-        <div>
+        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
             <DashboardNav />
             <DashboardSecondNav />
             {children}

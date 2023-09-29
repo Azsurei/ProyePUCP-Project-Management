@@ -6,14 +6,18 @@
     border-radius: 8px;
     padding: 1rem;
     max-width: 1200px; /* Increased to accommodate three items */
-    margin: 0 auto;
+    margin: 20px 20px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Ensuring that the title takes up the full width */
 .project-card__title {
     width: 100%;
-    text-align: center;
-    font-weight: bold;
+    text-align: left;
     margin-bottom: 1rem;
+    display: flex;
+    font-size: 1.3rem;
+    color: #172B4D;
+    font-weight: bolder;
+    font-family: Montserrat, serif;
 }

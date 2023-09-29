@@ -23,3 +23,8 @@
         margin-bottom: 0.25rem;
     }
 }
+
+/* Cuando hay un solo item 100%*/
+.card-item.full-width {
+    width: 100%;
+}
