@@ -155,4 +155,24 @@ routerProyecto.get("/historiasPrioridad",async(req,res)=>{
     }
 })
 
+routerProyecto.get("/:idUsuario/:idProyecto/backlog/epica/hu",async(req,res)=>{
+    const { idProyecto} = req.params;
+    console.log("Llegue a recibir solicitud listar hu");
+    const query = `
+        CALL LISTAR_HISTORIAS_DE_USUARIO_X_ID_PROYECTO(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idProyecto]);
+        res.status(200).json({
+            HUs: results[0],
+            message: "Historias de usuario obtenidas exitosamente"
+        });
+        console.log(`Se han listado las historias de usuario para el proyecto ${idProyecto}!`);
+        console.log(results);
+    } catch (error) {
+        console.error("Error al obtener las historias de usuario:", error);
+        res.status(500).send("Error al obtener las historias de usuario: " + error.message);
+    }
+})
+
 module.exports.routerProyecto = routerProyecto;
