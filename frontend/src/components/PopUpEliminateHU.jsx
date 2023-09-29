@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/PopUpEliminateHU.css";
 
 
-function PopUpEliminate ({ modal,toggle}) {
+function PopUpEliminate ({ modal,toggle, taskName}) {
     
 
   return (
@@ -18,7 +18,7 @@ function PopUpEliminate ({ modal,toggle}) {
             <label for="TextBoxEliminate" className="label-Eliminate">
               <strong>Nombre del elemento: </strong>
             </label>
-            <input type="text" className="input-field" readonly value="Asignar participantes" ></input>
+            <input type="text" className="input-field" readonly value={taskName}></input>
             
             <div className="buttonSection">
             <button className="close-modal" onClick={toggle}>

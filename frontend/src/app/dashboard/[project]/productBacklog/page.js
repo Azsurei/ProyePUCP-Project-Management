@@ -1,16 +1,18 @@
 "use client"
 import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css";
 
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+//import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useState, useEffect } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
-
+import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
 export default function Project() {
     
     const [modal, setModal] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
 
-    const toggleModal = () => {
+    const toggleModal = (task) => {
+        setSelectedTask(task);
         setModal(!modal);
     };
 
@@ -23,6 +25,36 @@ export default function Project() {
     }, [modal])
 
     
+    
+    const columns1 = {
+        name: 'Nombre',
+        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+    }
+
+    const columns2 = {
+        name: 'Epica',
+        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+    }
+
+    const columns3 = {
+        name: 'Prioridad',
+        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+    }
+
+    const columns4 = {
+        name: 'Estado',
+        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+    }
+    const columns5 = {
+        name: ' ',
+        className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left ',
+    }
+    const columns6 = {
+        name: ' ',
+        className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left ',
+    }
+
+    const columns = [columns1, columns2, columns3, columns4, columns5, columns6];
 
     const data1 = {
         name: 'Historia 1', 
@@ -38,7 +70,14 @@ export default function Project() {
         state: 'En progreso'
     }
 
-    const data = [data1, data2];
+    const data3 = {
+        name: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data = [data1, data2, data3];
 
     //const [datas, setDatas] = useState([]);
 
@@ -68,51 +107,19 @@ export default function Project() {
                         </Link>
                     </div>
                 </div>
-
-                <div className="tableBacklog overflow-x-auto overflow-y-auto rounded-lg shadow w-100">
-                    <table className="table table-hover min-w-full">
-                    <thead className="bg-blue-300 border-b-2 border-gray-200">
-                        <tr>
-                            <th scope="col" className="px-4  py-2 text-xl font-semibold tracking-wide text-left ">Historia de usuario</th>
-                            <th scope="col" className="px-4 py-2 text-xl font-semibold tracking-wide text-left ">Epica</th>
-                            <th scope="col" className="w-36 px-4 py-2 text-xl font-semibold tracking-wide text-left ">Prioridad</th>
-                            <th scope="col" className="w-36 px-4 py-2 text-xl font-semibold tracking-wide text-left ">Estado</th>
-                            <th scope="col" className="w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left "></th>
-                            <th scope="col" className="w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left "></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((value, index) => (
-                        <tr key={index} className="bg-gray-50 border-t">
-                            <td className="px-4 py-2 text-xl text-gray-700 whitespace-nowrap ">{value.name}</td>
-                            <td className="px-4 py-2 text-xl text-gray-700 whitespace-nowrap ">{value.epic}</td>
-                            <td className=" px-4 py-2 text-lg text-gray-700 whitespace-nowrap ">
-                                <span className="p-1.5 text-sm font-sm uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">{value.priority}</span>
-                            </td>
-                            <td className=" px-4 py-2 text-lg text-gray-700 whitespace-nowrap ">
-                                <span className="p-1.5 text-sm font-medium uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">{value.state}</span>
-                            </td>
-                            <td className=" items-center whitespace-nowrap " style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                <IconLabel icon="/icons/editar.svg" className="iconEdition"/>
-                            </td>
-                            <td className=" items-center whitespace-nowrap " style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                <button onClick={toggleModal}>
-                                <IconLabel icon="/icons/eliminar.svg" className="iconElimination"/>
-                                </button>
-
-                               
-                            </td>
-                            
-                        </tr>
-                        ))}
-                    </tbody>
-                    </table>
+                <div className="overflow-x-auto overflow-y-auto">
+                <TableComponent data={data} columns={columns} toggleModal={toggleModal} /> {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
+                
             </div>
-            <PopUpEliminateHU
-                modal = {modal} 
-                toggle = {toggleModal}
-            />
+            {modal && selectedTask && (
+                <PopUpEliminateHU
+                    modal = {modal} 
+                    toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
+                    taskName={selectedTask.name}
+                />
+            )}
+            
         </div>
     );
 }
