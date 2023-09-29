@@ -246,28 +246,3 @@
     flex-direction: column;
 }
 
-
-
-
-
- @media (max-width : 768px){
-
-    .ProjectSidebar{
-        position: absolute;
-    }
-
-    .ProjectSidebar .btnOpenSidebar{
-        background-color: #F0AE19;
-        width: 25px;
-        height: 25px;
-        border-radius: 100%;
-        position: absolute;
-        left: 297px;
-        top: 32px;
-
-        z-index: 30;
-    }
-    
-
-}
-
