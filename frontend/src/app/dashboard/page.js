@@ -57,12 +57,11 @@ export default function Dashboard() {
                     </p>
                 </div>
 
-
-                    <button className="addProjectbtn">
+                <a href="/dashboard/newProject">
+                <button className="addProjectbtn">
                         Crear Proyecto
-                    </button>
-                
-
+                </button>
+                </a>
             </div>
 
 
