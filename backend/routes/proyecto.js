@@ -56,7 +56,7 @@ routerProyecto.get("/listarProyectos",async(req,res)=>{
         }
 
     }catch(error){
-        return res.status(401).send(error.message + "invalid tokenProyePUCP token");
+        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
     }
 })
 

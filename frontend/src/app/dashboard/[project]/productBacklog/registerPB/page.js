@@ -31,7 +31,7 @@ export default function Project() {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox/>
+                        <MyCombobox />
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
@@ -39,7 +39,7 @@ export default function Project() {
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox/>
+                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="descripcion" hasColor={true} colorProperty="RGB"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
@@ -47,7 +47,7 @@ export default function Project() {
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
-                        <MyCombobox/>
+                        <MyCombobox urlApi="/api/proyecto/historiasEstado" property="historiasEstado" nameDisplay="descripcion"/>
                     </div>
                 </div>
                 <div className="description">

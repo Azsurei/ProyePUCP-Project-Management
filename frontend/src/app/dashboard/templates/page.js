@@ -4,6 +4,7 @@ import CardTemplate from "@/components/templatesComps/CardTemplate";
 import TextField from "@/components/TextField";
 import Button from "@/components/Button";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 
 const templates = [
     {

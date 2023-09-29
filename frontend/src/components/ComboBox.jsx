@@ -1,41 +1,151 @@
+// "use client"
+// import { Fragment, useState } from 'react'
+// import { Combobox, Transition } from '@headlessui/react'
+// import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+
+// const people = [
+//   { id: 1, name: 'Wade Cooper' },
+//   { id: 2, name: 'Arlene Mccoy' },
+//   { id: 3, name: 'Devon Webb' },
+//   { id: 4, name: 'Tom Cook' },
+//   { id: 5, name: 'Tanya Fox' },
+//   { id: 6, name: 'Hellen Schmidt' },
+// ]
+
+// export default function Example() {
+//   const [selected, setSelected] = useState(people[0])
+//   const [query, setQuery] = useState('')
+
+//   const filteredPeople =
+//     query === ''
+//       ? people
+//       : people.filter((person) =>
+//           person.name
+//             .toLowerCase()
+//             .replace(/\s+/g, '')
+//             .includes(query.toLowerCase().replace(/\s+/g, ''))
+//         )
+
+//   return (
+//     <div>
+//       <Combobox value={selected} onChange={setSelected}>
+//         <div className="relative mt-1">
+//           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+//             <Combobox.Input
+//               className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+//               displayValue={(person) => person.name}
+//               onChange={(event) => setQuery(event.target.value)}
+//             />
+//             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+//               <ChevronUpDownIcon
+//                 className="h-5 w-5 text-gray-400"
+//                 aria-hidden="true"
+//               />
+//             </Combobox.Button>
+//           </div>
+//           <Transition
+//             as={Fragment}
+//             leave="transition ease-in duration-100"
+//             leaveFrom="opacity-100"
+//             leaveTo="opacity-0"
+//             afterLeave={() => setQuery('')}
+//           >
+//             <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-30">
+//               {filteredPeople.length === 0 && query !== '' ? (
+//                 <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+//                   Nada encontrado.
+//                 </div>
+//               ) : (
+//                 filteredPeople.map((person) => (
+//                   <Combobox.Option
+//                     key={person.id}
+//                     className={({ active }) =>
+//                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
+//                         active ? 'bg-teal-600 text-white' : 'text-gray-900'
+//                       }`
+//                     }
+//                     value={person}
+//                   >
+//                     {({ selected, active }) => (
+//                       <>
+//                         <span
+//                           className={`block truncate ${
+//                             selected ? 'font-medium' : 'font-normal'
+//                           }`}
+//                         >
+//                           {person.name}
+//                         </span>
+//                         {selected ? (
+//                           <span
+//                             className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+//                               active ? 'text-white' : 'text-teal-600'
+//                             }`}
+//                           >
+//                             <CheckIcon className="h-5 w-5" aria-hidden="true" />
+//                           </span>
+//                         ) : null}
+//                       </>
+//                     )}
+//                   </Combobox.Option>
+//                 ))
+//               )}
+//             </Combobox.Options>
+//           </Transition>
+//         </div>
+//       </Combobox>
+//     </div>
+//   )
+// }
+
+
+
 "use client"
 import { Fragment, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import axios from "axios";
+import { useEffect } from "react";
 
-const people = [
-  { id: 1, name: 'Wade Cooper' },
-  { id: 2, name: 'Arlene Mccoy' },
-  { id: 3, name: 'Devon Webb' },
-  { id: 4, name: 'Tom Cook' },
-  { id: 5, name: 'Tanya Fox' },
-  { id: 6, name: 'Hellen Schmidt' },
-]
-
-export default function Example() {
-  const [selected, setSelected] = useState(people[0])
+export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty}) {
+  const [selected, setSelected] = useState('')
   const [query, setQuery] = useState('')
+  const [data, setData] = useState([]);
 
-  const filteredPeople =
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(urlApi);
+        setData(response.data[property]); 
+      } catch (error) {
+        console.error('Error al obtener datos:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
+  const filteredData =
     query === ''
-      ? people
-      : people.filter((person) =>
-          person.name
+      ? data
+      : data.filter((object) =>
+          object[nameDisplay]
             .toLowerCase()
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
-
+        
   return (
     <div>
-      <Combobox value={selected} onChange={setSelected}>
+      <Combobox value={selected} onChange={setSelected}> 
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             <Combobox.Input
-              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-              displayValue={(person) => person.name}
+              className={`w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
+              style={{backgroundColor: selected[colorProperty]}}
+              displayValue={(object) => object[nameDisplay]}
               onChange={(event) => setQuery(event.target.value)}
             />
+            {console.log(selected[colorProperty]+" XD")}
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
                 className="h-5 w-5 text-gray-400"
@@ -51,20 +161,20 @@ export default function Example() {
             afterLeave={() => setQuery('')}
           >
             <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-30">
-              {filteredPeople.length === 0 && query !== '' ? (
+              {filteredData.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                   Nada encontrado.
                 </div>
               ) : (
-                filteredPeople.map((person) => (
+                filteredData.map((object,index) => (
                   <Combobox.Option
-                    key={person.id}
+                    key={index}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
                         active ? 'bg-teal-600 text-white' : 'text-gray-900'
                       }`
                     }
-                    value={person}
+                    value={object}
                   >
                     {({ selected, active }) => (
                       <>
@@ -73,7 +183,7 @@ export default function Example() {
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
-                          {person.name}
+                          {object[nameDisplay]}
                         </span>
                         {selected ? (
                           <span

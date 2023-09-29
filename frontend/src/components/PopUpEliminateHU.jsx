@@ -18,7 +18,7 @@ function PopUpEliminate ({ modal,toggle}) {
             <label for="TextBoxEliminate" className="label-Eliminate">
               <strong>Nombre del elemento: </strong>
             </label>
-            <input type="text" class="input-field" readonly value="Asignar participantes" ></input>
+            <input type="text" className="input-field" readonly value="Asignar participantes" ></input>
             
             <div className="buttonSection">
             <button className="close-modal" onClick={toggle}>

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 
 export default function Project(props) {
 
-    const projectName = props.params.project;
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
@@ -15,7 +17,7 @@ export default function Project(props) {
             </p>
 
             
-            <Link href={'/dashboard/' + projectName + '/EDT'}>
+            <Link href={'/dashboard/' + projectName+'='+projectId + '/EDT'}>
                 <button>ir a edt</button>
             </Link>
         </div>

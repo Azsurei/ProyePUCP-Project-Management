@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import React, { Component } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
-
 axios.defaults.withCredentials = true;
 
 
@@ -69,8 +68,8 @@ function ProjectCard(props){
 export default function ListProject(props){
     const router = useRouter();
 
-    function handleClick(proy_name){
-        router.push('/dashboard/'+proy_name);
+    function handleClick(proy_id,proy_name){
+        router.push('/dashboard/'+proy_name+'='+proy_id);
     }
 
 
@@ -108,7 +107,7 @@ export default function ListProject(props){
                 return (
                     <ProjectCard key={component.id} 
                                 name={component.name}
-                                onClick={()=>{handleClick(component.name)}}
+                                onClick={()=>{handleClick(component.id,component.name)}}
                                 >
                 </ProjectCard>
                 );

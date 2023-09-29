@@ -1,44 +1,41 @@
 .mainDiv{
-
+    display: flex;
+    flex-direction: column;
     background-color: #F5F5F5;
     height: 100%; /* Cubre toda la altura disponible */
-    width: 100% ; /* Cubre solo el área adicional debajo de contentDiv */
-    
+    width: 100%; /* Cubre solo el área adicional debajo de contentDiv */
 }
 
-.headerDiv{
-
+.headerDiv {
     margin: 0% 2% 0% 2%;
     padding: 1%;
 }
 
-.divSearch{
-    
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding-left: 3%;
+.divSearch {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.searchProject{
+.searchProject {
     font-family: Montserrat;
     font-size: 16px;
     width: 34rem;
     height: 3rem;
     font-weight: 200;
     position: relative;
-    margin: 0 ;
+    margin: 0;
     margin-bottom: 13.5px;
     text-align: left;
     display: flex;
     padding: 10px;
-    align-items: left;
+    align-items: flex-start;
     gap: 10px;
     flex-shrink: 0;
 
     border-radius: 3.375px;
     border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
-    background: var(--color-background-input-default, #FFF);
+    background: var(--color-background-input-default, #fff);
 }
 
 .searchButton {
@@ -50,11 +47,10 @@
 
 
 
-
 /*Boton añadir nuevo Project*/
-.addProjectbtn{
+.addProjectbtn {
     border-radius: 5px;
-    background-color: #F0AE19;
+    background-color: #f0ae19;
     /* border: #F0AE19 1px solid; */
     border-style: none;
     font-size: 0.9rem;
@@ -62,27 +58,41 @@
     height: 36px;
     width: 160px;
     color: white;
-    margin-right: 2%;
     transition: background-color 0.15s ease-in;
-    
-    
-    
-    &:hover{
-        background-color: #ca9415;
-        transition: background-color 0.15s ease-in;
-    }
-  }
-  
-  .divtextProject{
+}
+
+.addProjectbtn:hover {
+    background-color: #ca9415;
+    transition: background-color 0.15s ease-in;
+}
+
+.divtextProject {
     margin-left: 0; /* Resetear el margen izquierdo a 0 */
-    margin-right: 4rem; /* Añadir margen a la derecha del texto */
-    margin-left: 5rem;
-    
-  }
-  .textProject{
+    margin-right: 4rem;
+}
+.textProject {
     text-decoration: none;
-    color: #626F86;
+    color: #626f86;
     font-size: 1rem;
     font-weight: 450;
-    font-family: Montserrat;
-  }
+    font-family: Montserrat, serif;
+    line-height: 2rem;
+}
+
+.textProject2 {
+    font-weight: 700;
+    font-size: 30px;
+    color: #172b4d;
+}
+
+.contentDer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+
+    position: relative;
+    z-index: 99;
+}
+.butonAddProject {
+    margin-right: 4rem;
+}

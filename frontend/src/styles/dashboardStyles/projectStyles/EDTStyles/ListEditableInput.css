@@ -1,0 +1,33 @@
+.ListEditableInput{
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.EditableInput{
+    display: flex;
+    flex-direction: column;
+}
+
+.EditableInput .newInputEntrName{
+    color: rgb(150, 150, 150);
+}
+
+
+.EditableInput .inputXdeleteContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+.EditableInput .inputXdeleteContainer .inputBox{
+    flex: 1;
+    overflow-y: auto;
+
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+}

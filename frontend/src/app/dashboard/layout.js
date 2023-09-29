@@ -3,10 +3,10 @@ import DashboardSecondNav from "@/components/dashboardComps/DashboardSecondNav";
 
 export default function RootLayout({ children }) {
     return (
-        <body className="global-styles">
+        <div>
             <DashboardNav />
             <DashboardSecondNav />
             {children}
-        </body>
+        </div>
     );
 }

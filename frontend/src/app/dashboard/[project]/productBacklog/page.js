@@ -1,9 +1,10 @@
 "use client"
 import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css";
-import Button from "@/components/Button";
+
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useState, useEffect } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
+import Link from "next/link";
 
 export default function Project() {
     
@@ -51,12 +52,20 @@ export default function Project() {
                 <div className="titleBacklog">BACKLOG</div>
                 <div className="navigationBacklog">
                     <div className="navigationBacklogIzquierda">
-                        <Button href="#tableroKanban" text="Tablero Kanban" className="btnBacklog"></Button>
-                        <Button href="#sprintBacklog" text="Sprint Backlog" className="btnBacklog"></Button>
-                        <Button href="#productBacklog" text="Product Backlog" className="btnBacklogPrimary"></Button>
+                        <Link href="#tableroKanban">
+                            <button className="btnBacklog" type="button">Tablero Kanban</button>
+                        </Link>
+                        <Link href="#sprintBacklog">
+                            <button className="btnBacklog" type="button">Sprint Backlog</button>
+                        </Link>
+                        <Link href="#productBacklog">
+                            <button className="btnBacklogPrimary" type="button">Product Backlog</button>
+                        </Link>
                     </div>
                     <div className="navigationBacklogDerecha">
-                        <Button href="/dashboard/project/productBacklog/registerPB" text="Añadir elemento" className="btnBacklogPrimary"></Button>
+                        <Link href="/dashboard/project/productBacklog/registerPB">
+                            <button className="btnBacklogPrimary" type="button">Añadir elemento</button>
+                        </Link>
                     </div>
                 </div>
 
