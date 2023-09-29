@@ -141,11 +141,10 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             <Combobox.Input
               className={`w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
-              style={{backgroundColor: selected[colorProperty]}}
+              style={hasColor ? { backgroundColor: selected[colorProperty] } : {}}
               displayValue={(object) => object[nameDisplay]}
               onChange={(event) => setQuery(event.target.value)}
             />
-            {console.log(selected[colorProperty]+" XD")}
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
                 className="h-5 w-5 text-gray-400"

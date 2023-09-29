@@ -5,11 +5,14 @@ import ContainerScenario from "@/components/dashboardComps/projectComps/productB
 import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
 import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
 
-export default function Project() {
+export default function Project(props) {
+    const decodedUrl= decodeURIComponent(props.params.project);
+    const projectId= decodedUrl.charAt(decodedUrl.length-1);
+    const stringURLEpics= "http://localhost:8080/api/proyecto/77/6/1/epica";
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
 
@@ -39,7 +42,7 @@ export default function Project() {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox />
+                        <MyCombobox urlApi={stringURLEpics} property="proyectos" nameDisplay="nombre" hasColor={false}/>
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
@@ -47,7 +50,7 @@ export default function Project() {
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="descripcion" hasColor={true} colorProperty="RGB"/>
+                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
