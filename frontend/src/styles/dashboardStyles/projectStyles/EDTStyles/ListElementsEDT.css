@@ -30,13 +30,15 @@
     align-items: center;
 
     transition: background-color 0.15s ease-in;
-
-    &:hover{
-        background-color: rgb(218, 218, 218);
-        border-color: rgb(218, 218, 218);
-        transition: background-color 0.15s ease;
-    }
 }
+
+
+.CardEDT:hover{
+    background-color: rgb(218, 218, 218);
+    border-color: rgb(218, 218, 218);
+    transition: background-color 0.15s ease;
+}
+
 
 .CardEDT div{
     display: flex;

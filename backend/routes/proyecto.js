@@ -6,8 +6,6 @@ const jwt = require("jsonwebtoken");
 const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
 
 
-
-
 routerProyecto.post("/",async(req,res)=>{
     const { nombre, maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion } = req.body;
     console.log("Llegue a recibir solicitud creacion proyecto");
