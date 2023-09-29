@@ -49,10 +49,6 @@ export default function Project() {
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
                         <MyCombobox/>
                     </div>
-                    <div className="assignedTo containerCombo">
-                        <IconLabel icon="/icons/assignedToPB.svg" label="Asignado a" className="iconLabel"/>
-                        <IconLabel icon="/images/ronaldo_user.png" label="Ronaldo" className="iconLabel2"/>
-                    </div>
                 </div>
                 <div className="description">
                     <h4>Nombre de historia de usuario</h4>
