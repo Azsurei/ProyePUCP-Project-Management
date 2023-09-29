@@ -2,8 +2,9 @@ import React from "react";
 import Card from "@/components/Card";
 import CardEquipo from "@/components/equipoComps/CardEquipo";
 import TextField from "@/components/TextField";
+import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 
-const templates = [
+const miembros = [
     {
         id: 1,
         iconSrc: "/icons/usr-img.svg",
@@ -43,18 +44,19 @@ export default function crear_equipo(){
                     width={600}
                 />
                 <h3>Participantes:</h3>
-                {templates.map((template) => (
-                    <div key={template.id}>
+                {miembros.map((miembros) => (
+                    <div className="flex flex-col items-start justify-between w-full" key={miembros.id}>
                         <Card>
                             <CardEquipo
-                                iconSrc={template.iconSrc}
-                                nombre={template.nombre}
-                                correo={template.correo}
+                                iconSrc={miembros.iconSrc}
+                                nombre={miembros.nombre}
+                                correo={miembros.correo}
                             />
                         </Card>
                     </div>
                 ))}
             </div>
+            <button className="addProjectbtn">Crear Equipo</button>
         </div>
     )
 }
