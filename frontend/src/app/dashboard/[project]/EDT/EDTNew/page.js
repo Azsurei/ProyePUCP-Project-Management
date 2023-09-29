@@ -111,7 +111,7 @@ export default function EDTNew(props) {
             <div className="NewEDTSection">
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
                     <p className="Header">Entregables</p>
-                    <button onClick={handleAddEntregable} style={{backgroundColor:'green'}}>Anadir entregable</button>
+                    <button onClick={handleAddEntregable} className="btnEDTAnadir">Anadir entregable</button>
                 </div>
 
                 <div className="ThirdCardContainer">
@@ -123,7 +123,7 @@ export default function EDTNew(props) {
             <div className="NewEDTSection">
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
                     <p className="Header">Criterios de aceptacion</p>
-                    <button onClick={handleAddCriterio} style={{backgroundColor:'green'}}>Anadir criterio</button>
+                    <button onClick={handleAddCriterio} className="btnEDTAnadir">Anadir criterio</button>
                 </div>
 
                 <div className="FourthCardContainer">

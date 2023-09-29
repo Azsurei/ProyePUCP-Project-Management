@@ -65,3 +65,12 @@
 .EDTNew .NewEDTSection .FourthCardContainer{
     padding: 1rem 1rem;
 }
+
+.EDTNew .NewEDTSection .btnEDTAnadir{
+    background-color: #F0AE19;
+    border-radius: 5px;
+    padding: 0 .5rem;
+    color: white;
+    font-weight: 600;
+    font-size: .8rem;
+}
