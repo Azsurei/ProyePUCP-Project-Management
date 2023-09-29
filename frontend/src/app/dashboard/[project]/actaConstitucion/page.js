@@ -1,12 +1,11 @@
 "use client"
 import Link from "next/link";
-import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/ActaConstitucion.css';
-
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import Breadcrumb from "@/components/dashboardComps/projectComps/appConstComps/BreadCrumb";
 import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
 import Button from  "@/components/dashboardComps/projectComps/appConstComps/Button";
 import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
+import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
 
 /// Lista de labels sobre informacion del Proyecto
 
@@ -14,14 +13,14 @@ const projectData = [
     { label: "Proyecto", value: "Proyecto de Bajarse a PUCP Movil" },
     { label: "Nombre del equipo", value: "Los Dibujitos" },
     { label: "Fecha", value: "25/12/2023" },
-    { label: "Cliente", value: "Sindicato de Catolica" },
+    { label: "Cliente", value: "Sindicato de Católica" },
     { label: "Patrocinador principal", value: "Luis Flores" },
     { label: "Gerente de proyecto", value: "Diego Iwasaki" },
 ];
 
 const purpouseData = [
-    {label: "", value: "Dado que la aplicación PUCP Movil tiene muchos problemas"
-                    + "(no sé cuales) hemos decidido tumbar PUCP Movil."},
+    {label: "", value: "Dado que la aplicación PUCP Móvil tiene muchos problemas"
+                    + "(no sé cuales) hemos decidido tumbar PUCP Móvil."},
 ]
 
 const descriptionData = [
@@ -77,9 +76,9 @@ const elaboratedByData = [
 ];
 
 const cardDataArray = [
-    { title: "Informacion del Proyecto", data: projectData },
+    { title: "Información del Proyecto", data: projectData },
     { title: "Propósito y Justificación del Proyecto", data: purpouseData },
-    { title: "Descripcion del Proyecto y Entregables", data: descriptionData },
+    { title: "Descripción del Proyecto y Entregables", data: descriptionData },
     { title: "Presupuesto Estimado", data: budgetData },
     { title: "Premisas y Restricciones", data: restrictionData },
     { title: "Riesgos Iniciales de Alto Nivel", data: highLevelRisksData },
@@ -90,25 +89,23 @@ const cardDataArray = [
     { title: "Elaborado por", data: elaboratedByData },
 ];
 /// Fin de Lista
-const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitucion'];
+const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
 
 export default function actaConstitucion() {
     return (
-        <div className="container">
+        <Page margin={"20px 20px 20px"}>
             <Breadcrumb items={itemsBreadCrumb} />
-            <div className="ActaConst">
-                <Title>{"Acta de Constitucion"}</Title>
-                <ButtonPanel margin="20px 20px 20px" align="left">
-                    <Button text="Editar" type="primary" size="large" onClick={() => {}} />
-                </ButtonPanel>
-                {cardDataArray.map((card, index) => (
-                    <TextInfoCard key={index} title={card.title} data={card.data} />
-                ))}
-                <ButtonPanel margin="20px 20px 20px" align="center">
-                    <Button text="Cancelar" type="secondary" size="large" onClick={() => {}} />
-                    <Button text="Guardar" type="primary" size="large" onClick={() => {}} />
-                </ButtonPanel>
-            </div>
-        </div>
+            <Title>{"Acta de Constitución"}</Title>
+            <ButtonPanel margin="20px 20px 20px" align="left">
+                <Button text="Editar" type="primary" size="large" onClick={() => {}} />
+            </ButtonPanel>
+            {cardDataArray.map((card, index) => (
+                <TextInfoCard key={index} title={card.title} data={card.data} />
+            ))}
+            <ButtonPanel margin="20px 20px 20px" align="center">
+                <Button text="Cancelar" type="secondary" size="large" onClick={() => {}} />
+                <Button text="Guardar" type="primary" size="large" onClick={() => {}} />
+            </ButtonPanel>
+        </Page>
     );
 }
