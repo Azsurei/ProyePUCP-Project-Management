@@ -201,8 +201,8 @@ CREATE TABLE EDT(
 	idEDT INT AUTO_INCREMENT PRIMARY KEY,
     idProyecto INT,
     idHerramienta INT,
-    nombreEDT VARCHAR(255),
-    descripcionEDT VARCHAR(255),
+    nombre VARCHAR(255),
+    descripcion VARCHAR(255),
     idUsuarioCreacion INT,
     fechaCreacion DATE,
     hayResponsable TINYINT ,
@@ -211,6 +211,8 @@ CREATE TABLE EDT(
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+
 
 
 
@@ -655,10 +657,15 @@ DELIMITER $
 -- ---------------------
 -- PROCEDURES HERRAMIENTAS
 -- ---------------------
-DROP PROCEDURE INSERTAR_PRODUCT_BACKLOG;
-DROP PROCEDURE LISTAR_PRODUCT_BACKLOG_X_ID_PROYECTO;
-DROP PROCEDURE INSERTAR_EPICA;
-DROP PROCEDURE LISTAR_EPICAS_X_ID_BACKLOG;
+DROP PROCEDURE IF EXISTS INSERTAR_PRODUCT_BACKLOG;
+DROP PROCEDURE IF EXISTS LISTAR_PRODUCT_BACKLOG_X_ID_PROYECTO;
+DROP PROCEDURE IF EXISTS INSERTAR_EPICA;
+DROP PROCEDURE IF EXISTS LISTAR_EPICAS_X_ID_BACKLOG;
+DROP PROCEDURE IF EXISTS INSERTAR_EDT;
+DROP PROCEDURE IF EXISTS LISTAR_EDT_X_ID_PROYECTO;
+DROP PROCEDURE IF EXISTS INSERTAR_COMPONENTE_EDT;
+DROP PROCEDURE IF EXISTS LISTAR_HISTORIAS_PRIORIDAD;
+DROP PROCEDURE IF EXISTS LISTAR_HISTORIAS_ESTADO;
 
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRODUCT_BACKLOG(
@@ -699,3 +706,87 @@ BEGIN
 	SELECT *FROM Epica p WHERE _idBacklog = p.idProductBacklog AND p.activo =1;
 END$
 
+## VERIFICAR INSERTAR_HISTORIA_DE_USUARIO
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HISTORIA_DE_USUARIO(
+	IN  _idEpica INT,
+    IN _idHistoriaPrioridad INT,
+    IN _idHistoriaEstado INT,
+	IN descripcion VARCHAR(255),
+    IN como VARCHAR(255),
+    IN quiero VARCHAR(255),
+    IN para VARCHAR(255)
+)
+BEGIN
+	DECLARE _id_HU INT;
+	INSERT INTO HistoriaDeUsuario(idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,fechaCreacion,activo) 
+    VALUES(_idEpica,_idHistoriaPrioridad,_idHistoriaEstado,descripcion,como,quiero,para,NOW(),1);
+    SET _id_HU = @@last_insert_id;
+    SELECT _id_HU AS idHistoriaDeUsuario;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_HISTORIAS_PRIORIDAD()
+BEGIN
+	SELECT *FROM HistoriaPrioridad WHERE activo =1;
+END$
+
+DROP PROCEDURE LISTAR_HISTORIAS_ESTADO;
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_HISTORIAS_ESTADO()
+BEGIN
+	SELECT * FROM HistoriaEstado WHERE activo =1;
+END$
+
+------------------------------
+DELIMITER $
+CREATE PROCEDURE INSERTAR_EDT(
+	IN  _idProyecto INT,
+    IN _nombre VARCHAR(255),
+    IN _descripcion	VARCHAR(255),
+    IN _idUsuarioCreacion INT,
+    IN _hayResponsable TINYINT
+)
+BEGIN
+	DECLARE _id_EDT INT;
+	INSERT INTO EDT(idHerramienta,idProyecto,nombre,descripcion,idUsuarioCreacion,fechaCreacion,hayResponsable,activo) 
+    VALUES(2,_idProyecto,_nombre,_descripcion,_idUsuarioCreacion,NOW(),_hayResponsable,1);
+    SET _id_EDT = @@last_insert_id;
+    SELECT _id_EDT AS idEDT;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_EDT_X_ID_PROYECTO(
+	IN _idProyecto INT
+)
+BEGIN
+	SELECT *FROM EDT edt WHERE _idProyecto = edt.idProyecto AND edt.activo =1;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
+	IN  _idElementoPadre INT,
+    IN _idEDT INT,
+    IN _descripcion	VARCHAR(255),
+    IN _codigo	VARCHAR(255),
+    IN _nombreEntregable VARCHAR(255),
+    IN _observaciones VARCHAR(255)
+)
+BEGIN
+	DECLARE _idComponenteEDT INT;
+	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,nombreEntregable,observaciones,activo) 
+    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_nombreEntregable,_observaciones,1);
+    SET _idComponenteEDT = @@last_insert_id;
+    SELECT _idComponenteEDT AS idComponenteEDT;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_COMPONENTES_EDT_X_ID_EDT;
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMPONENTES_EDT_X_ID_EDT(
+	IN _idEDT INT
+)
+BEGIN
+	SELECT *FROM ComponenteEDT ce WHERE _idEDT = ce.idEDT AND ce.activo =1
+    ORDER BY ce.codigo;
+END$

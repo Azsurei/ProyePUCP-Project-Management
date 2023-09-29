@@ -104,6 +104,18 @@ function DropDownMenu(props){
 
 
 function ProjectSidebar(props) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isTriangleBlue, setIsTriangleBlue] = useState(false);
+
+    const handleButtonClick = () => {
+        setIsOpen(prevState => !prevState);
+        setIsTriangleBlue(true);
+        setTimeout(() => {
+            setIsTriangleBlue(false);
+        }, 300);
+    };
+
+
     const stringBase = '/dashboard/' + props.currentUrl;
 
     const sideBar1Array = [
@@ -146,8 +158,11 @@ function ProjectSidebar(props) {
 
     
     return (
-        <nav className='ProjectSidebar'>
+        <nav className={`ProjectSidebar ${isOpen ? 'openSidebar' : 'closedSidebar'}`}>
             <div>
+                <div className="btnOpenSidebar" onClick={handleButtonClick}>
+                    <div className={`triangle ${isTriangleBlue ? 'triangle-blue' : ''}`}></div>
+                </div>
                 <p className="header">{props.projectName}</p>
                 <p className="dates">13/09/2023  -  20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
@@ -155,8 +170,6 @@ function ProjectSidebar(props) {
                     <p className="teamName">Los dibujitos</p>
                 </div>
             </div>
-
-            <div className="btnOpenSidebar"></div>
 
             <ul className='members'>
                 {memberData.map((member)=>{

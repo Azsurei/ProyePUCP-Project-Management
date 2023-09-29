@@ -25,6 +25,8 @@ El campo fecha de nacimiento y telefono no se usan, ademas hay un campo extra ll
 }
 
 ## 09/26/2023
+### HECHO:
+Avance de varias tablas de la base de datos
 
 ### POR HACER:
 Revisar la relacion de entregables y agregarla a la base de datos
@@ -32,3 +34,13 @@ Revisar la relacion de entregables y agregarla a la base de datos
 ### OBSERVACIONES
 Preguntar sobre el uso de token para solicitudes a la base de datos.
 Preguntar sobre el sequelize    
+
+## 09/27/2023
+
+### HECHO:
+Avance de varias tablas de la base de datos y organizacion de carpetas
+
+## 09/28/2023
+
+### HECHO:
+Avance de varias tablas de la base de datos, procedures e implementacion de funciones get y post de proyecto, get de epica  y backlog.
