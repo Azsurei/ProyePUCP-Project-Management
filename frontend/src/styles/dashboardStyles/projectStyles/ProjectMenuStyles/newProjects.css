@@ -1,0 +1,79 @@
+.trackerBar .css-3xo77k-Text{
+
+    font-size: 18px;
+}
+
+.trackerBar .css-xrd6pn-Text{
+
+    font-size: 18px;
+}
+
+.trackerBar{
+    margin-left: -24rem;
+}
+
+.css-3cw6uz{
+    gap: 20% !important;
+}
+.css-3cw6uz.css-3cw6uz{
+    margin-top: 20px !important;
+}
+.css-1momdgt {
+    width: 15rem !important;
+}
+
+
+.infoBox{
+    flex-shrink: 0;
+    margin-top: 3vw;
+
+    width: 62vw;
+    margin-left:14vw;
+    height: auto;
+    border-radius: 15px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    padding: 1vh 6vh 5vh 6vh;
+    
+}
+
+.containerInfoBox{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+
+.divProjectNameDiv{
+    display: flex;
+    
+    justify-content: flex-start; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin-top: 3vh;
+    margin-bottom: 2vh;
+
+}
+
+.divProjectNameDiv .projectNametxt{
+
+    color: #172B4D;
+    font-family: Montserrat;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 16px; /* 106.667% */
+
+}
+
+.css-1p0odz5-Label{
+    display: none !important;
+}
+.buttonContainer {
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 0;
+  }
+  

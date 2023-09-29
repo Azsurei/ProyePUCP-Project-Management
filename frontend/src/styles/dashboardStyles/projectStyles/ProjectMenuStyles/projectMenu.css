@@ -1,5 +1,7 @@
-.mainDiv {
-    background-color: #f5f5f5;
+.mainDiv{
+    display: flex;
+    flex-direction: column;
+    background-color: #F5F5F5;
     height: 100%; /* Cubre toda la altura disponible */
     width: 100%; /* Cubre solo el área adicional debajo de contentDiv */
 }
