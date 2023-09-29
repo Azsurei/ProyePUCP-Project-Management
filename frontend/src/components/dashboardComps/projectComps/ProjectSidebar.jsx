@@ -13,25 +13,25 @@ const memberData = [
     },
     
     {
-        id: '5',
+        id: '2',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
     },
     {
-        id: '6',
+        id: '3',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
     }  ,
     {
-        id: '6',
+        id: '4',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
     } ,
     {
-        id: '6',
+        id: '5',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
@@ -93,6 +93,7 @@ function DropDownMenu(props){
         {props.info.dataItems.map((item) => {
           return (
             <DropDownItem
+              key={item.id}
               icon={item.optIcon}
               name={item.optName}
             ></DropDownItem>
@@ -124,6 +125,7 @@ function ProjectSidebar(props) {
 
     const sideBar1Array = [
         {
+            id: 1,
             optIcon : '/icons/icon-goBack.svg',
             optName : 'Pendiente' 
         }
@@ -137,18 +139,22 @@ function ProjectSidebar(props) {
     
     const sideBar2Array = [
         {
+            id: 1,
             optIcon : '/icons/icon-notif.svg',
             optName : 'Gestion de backlog' 
         },
         {
+            id: 2,
             optIcon : '/icons/datePB.svg',
             optName : 'Acta de constitución' 
         },
         {
+            id: 3,
             optIcon : '/icons/icon-cross.svg',
             optName : 'EDT y diccionario EDT' 
         },
         {
+            id: 4,
             optIcon : '/icons/icon-help.svg',
             optName : 'Registro de equipos' 
         }
