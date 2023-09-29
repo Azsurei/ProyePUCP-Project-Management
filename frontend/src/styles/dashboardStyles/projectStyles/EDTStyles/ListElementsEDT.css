@@ -72,19 +72,11 @@
     align-items: flex-start;
 }
 
-.CardEDT .buttonsContainer button{
-    background-color: #172B4D;
-    color: white;
-    padding: .1rem .6rem;
+.CardEDT .buttonsContainer .iconSeeMore{
+    border-style: solid;
+    border-width: 2px;
+    border-color: #172B4D;
     border-radius: 5px;
-    border-style: none;
-
-    font-family: 'Montserrat';
-    font-weight: 500;
-    font-size: 1rem;
-
-    height: 23px;
-    min-width: 119px;
 }
 
 
@@ -101,12 +93,4 @@ con media query*/
 .CardEDT.active{
     padding: .6rem 2rem; 
     transition: padding 0.25s ease-in;
-}
-.CardEDT.active .buttonsContainer button{
-    display: none;
-    
-}
-
-.CardEDT.active .buttonsContainer .addSubcomp{
-    display: flex;
 }

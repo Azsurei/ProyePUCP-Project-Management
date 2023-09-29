@@ -27,8 +27,20 @@ export default function EDTNew(props) {
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
     const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
 
+
+
+    //Variables para input
+    const [inComponentName,setInComponentName] = useState('');
+    const [inDescripcion  ,setInDescripcion] = useState('');
+    const [inRecursos, setInRecursos] = useState('');
+    const [inHito, setInHito] = useState('');
+    const [inObservaciones, setObservaciones] = useState('');
+    
     const [listEntregables, setListEntregables] = useState([{index: 1, data: ''}]);
     const [listCriterios, setListCriterios] = useState([{index: 1, data: ''}]);
+
+
+
 
 
     const handleAddEntregable = ()=>{
