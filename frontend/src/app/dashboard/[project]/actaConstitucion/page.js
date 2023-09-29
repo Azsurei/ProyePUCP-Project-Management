@@ -6,6 +6,7 @@ import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps
 import Breadcrumb from "@/components/dashboardComps/projectComps/appConstComps/BreadCrumb";
 import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
 import Button from  "@/components/dashboardComps/projectComps/appConstComps/Button";
+import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
 
 /// Lista de labels sobre informacion del Proyecto
 
@@ -96,12 +97,16 @@ export default function actaConstitucion() {
         <div className="container">
             <Breadcrumb items={itemsBreadCrumb} />
             <div className="ActaConst">
+                <Title>{"Acta de Constitucion"}</Title>
+                <ButtonPanel margin="20px 20px 20px" align="left">
+                    <Button text="Editar" type="primary" size="large" onClick={() => {}} />
+                </ButtonPanel>
                 {cardDataArray.map((card, index) => (
                     <TextInfoCard key={index} title={card.title} data={card.data} />
                 ))}
-                <ButtonPanel>
-                    <Button text="Cancelar" type="secondary" size="medium" onClick={() => {}} />
-                    <Button text="Guardar" type="primary" size="medium" onClick={() => {}} />
+                <ButtonPanel margin="20px 20px 20px" align="center">
+                    <Button text="Cancelar" type="secondary" size="large" onClick={() => {}} />
+                    <Button text="Guardar" type="primary" size="large" onClick={() => {}} />
                 </ButtonPanel>
             </div>
         </div>

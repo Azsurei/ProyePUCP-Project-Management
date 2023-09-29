@@ -2,3 +2,15 @@
     display: flex;
     gap: 10px;
 }
+
+.buttonPanel.left {
+    justify-content: flex-start;
+}
+
+.buttonPanel.right {
+    justify-content: flex-end;
+}
+
+.buttonPanel.center {
+    justify-content: center;
+}
