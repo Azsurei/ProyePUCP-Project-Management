@@ -45,7 +45,7 @@ function ProjectCard(props){
     return(
         
         <li className="ProjectCard" onClick={props.onClick}>
-            <p classname="cardTitleProject">
+            <p className="cardTitleProject">
                 {props.name}
             </p>
 
@@ -60,7 +60,7 @@ function ProjectCard(props){
              })} 
             </div>
         </li>
-    )
+    );
 }
 //Aqui es la lista de Proyectos
 

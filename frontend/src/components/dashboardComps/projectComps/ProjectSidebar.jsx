@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
+import Link from "next/link";
 
 const memberData = [
     {
@@ -58,8 +59,10 @@ function MemberIcon(props){
 function DropDownItem(props){
     return(
         <li className="DropDownItem">
-            <img src={props.icon} alt="icon" className="" />
-            <p>{props.name}</p>
+            <Link href={'/dashboard/xsd'} style={{display:'flex', alignItems:"center"}}>
+                <img src={props.icon} alt="icon" className="" />
+                <p>{props.name}</p>
+            </Link>
         </li>
     );
 }
@@ -78,8 +81,8 @@ function DropDownMenu(props){
 
 
     return(
-        <div className={open === true ? "DropDownMenu active" : "DropDownMenu" } onClick={toggleDropdown}>
-            <div className="DropTitleContainer">
+        <div className={open === true ? "DropDownMenu active" : "DropDownMenu" }>
+            <div className="DropTitleContainer" onClick={toggleDropdown}>
                 <div className="DropTitleLeft">
                     <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
                     <p className="DropTitle"> {props.info.tittleTitle} </p>
@@ -97,46 +100,51 @@ function DropDownMenu(props){
 }
 
 
-const sideBar1Array = [
-    {
-        optIcon : '/icons/icon-goBack.svg',
-        optName : 'Pendiente' 
-    }
-];
 
-const sidebar1Data = {
-    tittleIcon : '/icons/info-circle.svg',
-    tittleTitle : 'Sobre proyecto',
-    dataItems : sideBar1Array
-};
-
-const sideBar2Array = [
-    {
-        optIcon : '/icons/icon-notif.svg',
-        optName : 'Gestion de backlog' 
-    },
-    {
-        optIcon : '/icons/datePB.svg',
-        optName : 'Acta de constitución' 
-    },
-    {
-        optIcon : '/icons/icon-cross.svg',
-        optName : 'EDT y diccionario EDT' 
-    },
-    {
-        optIcon : '/icons/icon-help.svg',
-        optName : 'Registro de equipos' 
-    }
-];
-
-const sidebar2Data = {
-    tittleIcon : '/icons/icon-settings.svg',
-    tittleTitle : 'Herramientas',
-    dataItems : sideBar2Array
-};
 
 
 function ProjectSidebar(props) {
+    const stringBase = '/dashboard/' + props.currentUrl;
+
+    const sideBar1Array = [
+        {
+            optIcon : '/icons/icon-goBack.svg',
+            optName : 'Pendiente' 
+        }
+    ];
+    
+    const sidebar1Data = {
+        tittleIcon : '/icons/info-circle.svg',
+        tittleTitle : 'Sobre proyecto',
+        dataItems : sideBar1Array
+    };
+    
+    const sideBar2Array = [
+        {
+            optIcon : '/icons/icon-notif.svg',
+            optName : 'Gestion de backlog' 
+        },
+        {
+            optIcon : '/icons/datePB.svg',
+            optName : 'Acta de constitución' 
+        },
+        {
+            optIcon : '/icons/icon-cross.svg',
+            optName : 'EDT y diccionario EDT' 
+        },
+        {
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Registro de equipos' 
+        }
+    ];
+    
+    const sidebar2Data = {
+        tittleIcon : '/icons/icon-settings.svg',
+        tittleTitle : 'Herramientas',
+        dataItems : sideBar2Array
+    };
+
+    
     return (
         <nav className='ProjectSidebar'>
             <div>

@@ -9,7 +9,7 @@ export default function Project(props) {
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
-        <div>
+        <div style={{flex:1}}>
             <p>
             aqui iria el dashboard principal (lo que se ve al iniciar sesion) 
             </p>

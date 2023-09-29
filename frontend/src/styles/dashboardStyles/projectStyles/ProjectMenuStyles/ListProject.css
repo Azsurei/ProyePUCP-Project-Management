@@ -1,4 +1,4 @@
-.ProjectCard{
+.ListProject .ProjectCard{
 
     border-radius: 10px;
     background: #FFF;
@@ -9,7 +9,8 @@
     flex-shrink: 0;
     margin: 1rem 3rem;
 }
-.cardTitleProject{
+
+.ListProject .ProjectCard .cardTitleProject{
     font-size: 16px;
     font-family: 'Montserrat';
     padding: 10px 10px 5px 30px;
