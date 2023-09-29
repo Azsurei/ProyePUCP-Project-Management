@@ -69,34 +69,38 @@ function DropDownItem(props){
 
 
 function DropDownMenu(props){
-    //PARAMETROS QUE DEBE RECIBIR:
-    //title-icon
-    //title-tittle
-    //array de items con estructura {optIcon, optName}
-    const [open, setOpen] = useState(false);
+  //PARAMETROS QUE DEBE RECIBIR:
+  //title-icon
+  //title-tittle
+  //array de items con estructura {optIcon, optName}
+  const [open, setOpen] = useState(false);
 
-    const toggleDropdown = () => {
-        setOpen(!open);
-    }
+  const toggleDropdown = () => {
+    setOpen(!open);
+  };
 
-
-    return(
-        <div className={open === true ? "DropDownMenu active" : "DropDownMenu" }>
-            <div className="DropTitleContainer" onClick={toggleDropdown}>
-                <div className="DropTitleLeft">
-                    <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
-                    <p className="DropTitle"> {props.info.tittleTitle} </p>
-                </div>
-                <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
-            </div>
-
-            <ul className="ItemsContainer">
-                {props.info.dataItems.map((item)=>{
-                    return <DropDownItem icon={item.optIcon} name={item.optName}></DropDownItem>
-                })}
-            </ul>
+  return (
+    <div className={open === true ? "DropDownMenu active" : "DropDownMenu"}>
+      <div className="DropTitleContainer" onClick={toggleDropdown}>
+        <div className="DropTitleLeft">
+          <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
+          <p className="DropTitle"> {props.info.tittleTitle} </p>
         </div>
-    );
+        <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
+      </div>
+
+      <ul className="ItemsContainer">
+        {props.info.dataItems.map((item) => {
+          return (
+            <DropDownItem
+              icon={item.optIcon}
+              name={item.optName}
+            ></DropDownItem>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
 
 
