@@ -7,7 +7,7 @@ const CardEquipo = ({
     correo,
 }) => {
     return (
-        <div className="flex flex-col items-start justify-between w-500">
+        <div className="flex flex-col items-center justify-between w-full">
             <div className="flex flex-row items-center w-full h-full">
                 <img src={iconSrc} alt="Icon" className="w-6 h-6 mr-4" />
                 <div className="flex flex-col items-start w-full overflow-hidden whitespace-nowrap">
@@ -21,6 +21,7 @@ const CardEquipo = ({
                 <div className="items-left">
                     <MyCombobox />
                 </div>
+                <img src="/icons/icon-trash.svg" alt="Icon" className="w-6 h-6 mr-4" />
             </div>
         </div>
     );
