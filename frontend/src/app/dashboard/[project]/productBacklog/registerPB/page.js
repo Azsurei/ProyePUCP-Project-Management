@@ -61,23 +61,27 @@ export default function Project() {
                 <div className="acceptanceCriteria">
                     <div className="titleButton">
                         <h4>Criterios de aceptación</h4>
-                        <button onClick={addContainer} className="buttonTitle">Agregar</button>
                     </div>
                     {Array.from({ length: quantity }, (_, index) => (
                         <ContainerScenario key={index} indice={index+1}/>
                     ))}
+                    <div className="twoButtons">
+                        <button onClick={addContainer} className="buttonTitle">Agregar</button>
+                    </div>
                 </div>
                 <div className="requirements">
                     <div className="titleButton">
                         <h4>Requerimientos funcionales</h4>
-                        <button onClick={addContainer1} className="buttonTitle">Agregar</button>
                     </div>
                     {Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1}/>
                     ))}
+                    <div className="twoButtons">
+                        <button onClick={addContainer1} className="buttonTitle">Agregar</button>
+                    </div>
                 </div>
 
-                <div className="cancelarAceptar">
+                <div className="twoButtons">
                     <div className="buttonContainer">
                         {/* Probablemente necesite usar router luego en vez de link */}
                         <Link href="#cancelar">
