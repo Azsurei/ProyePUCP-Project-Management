@@ -1,4 +1,3 @@
-import React from 'react';
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/newProjects.css";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/ListProject.css";
@@ -8,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-const memberData = [
+const tools = [
     {
         id: '1',
         name: 'Acta de Constitución',
@@ -60,14 +59,14 @@ function ToolCard(props){
 }
 
 
-export default function CardSelectTools(props) {
+function CardSelectTools(props) {
     return (
 
         
         <div>
 
             <div className="divProjectNameDiv">
-                    <p className="projectNametxt">Seleccione las herramientas</p>
+                    {props.name}
             </div>
             
 
@@ -79,34 +78,35 @@ export default function CardSelectTools(props) {
 export default function ListTools(props){
     const router = useRouter();
 
-    const [ListComps, setListComps] = useState([]);
-    
-    /*useEffect(()=>{
-        let proyectsArray;
-        const stringURL = "http://localhost:8080/api/proyecto/listarProyectos";
+    const [listTools, setListTools] = useState([]); ;
+
+    useEffect(()=>{
+        let toolsArray;
+        const stringURL = "http://localhost:8080/api/herramientas/listarHerramientas";
         axios
             .get(stringURL)
             .then(function (response) {
                 console.log(response);
-                proyectsArray = response.data.proyectos;
+                toolsArray = response.data.herramientas;
                 
-                proyectsArray = proyectsArray.map(proyect => {
+                toolsArray = toolsArray.map(tool => {
                     return {
-                        id: proyect.idProyecto,
-                        name: proyect.nombre
+                        id: tool.idHerramienta,
+                        name: tool.nombre,
+                        description: tool.descripcion
                     };
                 });
 
-                setListComps(proyectsArray);
+                setListTools(toolsArray);
 
-                console.log(proyectsArray);
+                console.log(toolsArray);
 
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
-    */
+
 
     return(
 
@@ -115,7 +115,7 @@ export default function ListTools(props){
         <h2 className="projectNametxt">Seleccione las herramientas</h2>
 
             <ul>
-            {ListComps.map((component)=>{
+            {listTools.map((component)=>{
                 return (
                     <CardSelectTools key={component.id} 
                                 name={component.name}
