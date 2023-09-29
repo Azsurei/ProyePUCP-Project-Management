@@ -1,90 +1,73 @@
-
-import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
-import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
-import ListElementsEDT from "@/components/dashboardComps/projectComps/EDTComps/ListElementsEDT";
-import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
+"use client"
+import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
+import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
+import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
+import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
+import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import { useState, useRef } from "react";
+import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
 
-const childOfFirst=[
-    {
-        id: 1,
-        componentName: 'hola soy hijo de gestion de proyecto',
-        levelCounter: '1',
-        levelName: 'SUBPROYECTO',
-        levelColor: 'gray',
-        childsList: [{
-            id: 6,
-            componentName: 'swafnaiooifn',
-            levelCounter: '1',
-            levelName: 'ENTREGABLE',
-            levelColor: 'red',
-            childsList: [{
-                id: 7,
-                componentName: 'OMGGG',
-                levelCounter: '1',
-                levelName: 'TAREA',
-                levelColor: 'black',
-                childsList: null
-            }]
-        }]
-    },
-    {
-        id: 2,
-        componentName: 'hola soy el otro hijo de gestion de proyecto',
-        levelCounter: '2',
-        levelName: 'SUBPROYECTO',
-        levelColor: 'gray',
-        childsList: [{
-            id: 5,
-            componentName: 'soy tu ultimo hijo hazme un hermano',
-            levelCounter: '1',
-            levelName: 'ENTREGABLE',
-            levelColor: 'red',
-            childsList: null
-        }]
+export default function actaConstitucion() {
+    const [quantity, setQuantity] = useState(1);
+    const [quantity1, setQuantity1] = useState(1);
+
+    function addContainer(){
+        setQuantity(quantity+1);
     }
-];
 
-const componentsDataFirstNode=[
-    {
-        id: 3,
-        componentName: 'Gestion de proyecto',
-        levelCounter: '1',
-        levelName: 'FASE',
-        levelColor: 'purple',
-        childsList: childOfFirst
-    },
-    {
-        id: 4,
-        componentName: 'API de acceso a la base de datos de RENIEC',
-        levelCounter: '2',
-        levelName: 'FASE',
-        levelColor: 'purple',
-        childsList: null
+    function addContainer1(){
+        setQuantity1(quantity1+1);
     }
-];
 
-
-export default function EDT(props) {
-    const projectName = props.params.project;
-
-    return (
-        //aqui va el contenido dentro de la pagina de ruta /project
-        <div className="EDT">
-            <HeaderWithButtons haveReturn={false}
-                               haveAddNew={true}
-                               hrefToReturn={''}
-                               hrefForButton={'/dashboard/' + projectName + '/EDT/EDTNew'}
-                               breadcrump={'Inicio / Proyectos / Proyect X'}
-                               btnText={'Agregar nueva fase'}>EDT y diccionario EDT</HeaderWithButtons>
-            <div className="componentSearchContainer">
-                <input type="text" />
-                <button>
-                    Buscar
-                </button>
+    return(
+        <div className="container">
+            <div className="header">
+                Inicio / Proyectos / Nombre del proyecto / Acta de Constitucion
             </div>
+            <div className="ActaConst">
+                <div className="titleActaConst">Acta de Constitucion</div>
 
-            <ListElementsEDT listData={componentsDataFirstNode} initialMargin={0}></ListElementsEDT>
+                <div className="description">
+                    <h4>Nombre de historia de usuario</h4>
+                    <DescriptionRequeriment/>
+                </div>
+                <div className="userDescription">
+                    <h4>Descripción de usuario</h4>
+                    <ContainerAsWantFor/>
+                </div>
+                <div className="acceptanceCriteria">
+                    <div className="titleButton">
+                        <h4>Criterios de aceptación</h4>
+                        <button onClick={addContainer} className="buttonTitle">Agregar</button>
+                    </div>
+                    {Array.from({ length: quantity }, (_, index) => (
+                        <ContainerScenario key={index} indice={index+1}/>
+                    ))}
+                </div>
+                <div className="requirements">
+                    <div className="titleButton">
+                        <h4>Requerimientos funcionales</h4>
+                        <button onClick={addContainer1} className="buttonTitle">Agregar</button>
+                    </div>
+                    {Array.from({ length: quantity1 }, (_, index) => (
+                        <ContainerRequirement key={index} indice={index+1}/>
+                    ))}
+                </div>
+
+                <div className="cancelarAceptar">
+                    <div className="buttonContainer">
+                        {/* Probablemente necesite usar router luego en vez de link */}
+                        <Link href="#cancelar">
+                            <button className="btnBacklogCancel" type="button">Cancelar</button>
+                        </Link>
+                        <Link href="#aceptar">
+                            <button className="btnBacklogContinue" type="button">Aceptar</button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
