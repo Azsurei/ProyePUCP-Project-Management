@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@atlaskit/datetime-picker": "^12.10.1",
+    "@atlaskit/form": "^8.11.12",
+    "@atlaskit/progress-tracker": "^8.5.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.17",
