@@ -44,3 +44,19 @@
     width: 20px;
     height: 20px;
 }
+
+.btn.contained {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.link-btn {
+    text-decoration: underline;
+    background-color: transparent;
+    color: #0070f3;
+}
