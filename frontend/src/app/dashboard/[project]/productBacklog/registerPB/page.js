@@ -21,6 +21,14 @@ export default function Project() {
         setQuantity1(quantity1+1);
     }
 
+    function removeContainer(){
+        setQuantity(quantity-1);
+    }
+
+    function removeContainer1(){
+        setQuantity1(quantity1-1);
+    }
+
     return(
         <div className="container">
             <div className="header">
@@ -31,7 +39,7 @@ export default function Project() {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox/>
+                        <MyCombobox />
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
@@ -39,7 +47,7 @@ export default function Project() {
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox/>
+                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="descripcion" hasColor={true} colorProperty="RGB"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
@@ -47,7 +55,7 @@ export default function Project() {
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
-                        <MyCombobox/>
+                        <MyCombobox urlApi="/api/proyecto/historiasEstado" property="historiasEstado" nameDisplay="descripcion"/>
                     </div>
                 </div>
                 <div className="description">
@@ -61,23 +69,33 @@ export default function Project() {
                 <div className="acceptanceCriteria">
                     <div className="titleButton">
                         <h4>Criterios de aceptación</h4>
-                        <button onClick={addContainer} className="buttonTitle">Agregar</button>
                     </div>
                     {Array.from({ length: quantity }, (_, index) => (
                         <ContainerScenario key={index} indice={index+1}/>
                     ))}
+                    <div className="twoButtons">
+                        <div className="buttonContainer">
+                            <button onClick={addContainer} className="buttonTitle">Agregar</button>
+                            <button onClick={removeContainer} className="buttonTitle">Eliminar</button>
+                        </div>
+                    </div>
                 </div>
                 <div className="requirements">
                     <div className="titleButton">
                         <h4>Requerimientos funcionales</h4>
-                        <button onClick={addContainer1} className="buttonTitle">Agregar</button>
                     </div>
                     {Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1}/>
                     ))}
+                    <div className="twoButtons">
+                        <div className="buttonContainer">
+                            <button onClick={addContainer1} className="buttonTitle">Agregar</button>
+                            <button onClick={removeContainer1} className="buttonTitle">Eliminar</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="cancelarAceptar">
+                <div className="twoButtons">
                     <div className="buttonContainer">
                         {/* Probablemente necesite usar router luego en vez de link */}
                         <Link href="#cancelar">

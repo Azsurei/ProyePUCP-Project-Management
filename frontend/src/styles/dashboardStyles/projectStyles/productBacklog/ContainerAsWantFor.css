@@ -22,3 +22,7 @@
     background-color: #fffdfd;
     width: 100%;
 }
+
+textArea{
+    resize: none;
+}

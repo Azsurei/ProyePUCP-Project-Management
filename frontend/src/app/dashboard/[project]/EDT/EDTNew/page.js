@@ -1,7 +1,9 @@
+"use client"
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
+import { useState } from "react";
 
 let conteoEntregables = 1;
 const newEntregables=[
@@ -21,23 +23,57 @@ const newCriteriosAceptacion=[
 
 
 export default function EDTNew(props) {
-    const projectName = props.params.project;
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
+
+
+
+    //Variables para input
+    const [inComponentName,setInComponentName] = useState('');
+    const [inDescripcion  ,setInDescripcion] = useState('');
+    const [inRecursos, setInRecursos] = useState('');
+    const [inHito, setInHito] = useState('');
+    const [inObservaciones, setObservaciones] = useState('');
+    
+    const [listEntregables, setListEntregables] = useState([{index: 1, data: ''}]);
+    const [listCriterios, setListCriterios] = useState([{index: 1, data: ''}]);
+
+
+
 
 
     const handleAddEntregable = ()=>{
-        newEntregables.push({
-            number: conteoEntregables + 1,
+        const newList = [
+            ...listEntregables, 
+            {
+            index: listEntregables.length + 1,
             data: ''
-        })
-        //falta implementarlo al onClick del boton (configurar el componente)
+            }
+        ];
+        setListEntregables(newList);
     }
+
+    const handleAddCriterio = ()=>{
+        const newLista = [
+            ...listCriterios, 
+            {
+            index: listCriterios.length + 1,
+            data: ''
+            }
+        ];
+        setListCriterios(newLista);
+    }
+
+
+
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <div className="EDTNew">
             <HeaderWithButtons haveReturn={true} 
                                haveAddNew={true}
-                               hrefToReturn={'/dashboard/' + projectName + '/EDT'}
+                               hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/EDT'}
                                hrefForButton={''}
                                breadcrump={'Inicio / Proyectos / Proyect X / EDT y Diccionario EDT'}
                                btnText={'Agregar elemento'}>Crear nuevo componente</HeaderWithButtons>
@@ -83,25 +119,27 @@ export default function EDTNew(props) {
                 </div>
             </div>
 
+
             <div className="NewEDTSection">
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
                     <p className="Header">Entregables</p>
-                    <ButtonAddNew>Añadir entregable</ButtonAddNew>
+                    <button onClick={handleAddEntregable} className="btnEDTAnadir">Anadir entregable</button>
                 </div>
 
                 <div className="ThirdCardContainer">
-                    <ListEditableInput ListInputs={newEntregables} typeName="Entregable"></ListEditableInput>
+                    <ListEditableInput ListInputs={listEntregables} typeName="Entregable"></ListEditableInput>
                 </div>
             </div>
+
 
             <div className="NewEDTSection">
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
                     <p className="Header">Criterios de aceptacion</p>
-                    <ButtonAddNew>Añadir criterio</ButtonAddNew>
+                    <button onClick={handleAddCriterio} className="btnEDTAnadir">Anadir criterio</button>
                 </div>
 
                 <div className="FourthCardContainer">
-                <ListEditableInput ListInputs={newCriteriosAceptacion} typeName="Criterio"></ListEditableInput>
+                    <ListEditableInput ListInputs={listCriterios} typeName="Criterio"></ListEditableInput>
                 </div>
             </div>
             <div className="ButtonsContainer">

@@ -4,7 +4,7 @@
     height: 100%;
     top: 0;
     left: 0;
-    z-index: -1;
+
     background-image: url('/images/LoginBackground.png');
     background-size: cover;
     background-position: center center;
@@ -224,7 +224,7 @@ a:active {
     font-family: 'Roboto', sans-serif;
     font-size: 20px;
     line-height: 50px;
-    font-weight: lighter;
+    font-weight: 300;
     color: #000000;
     text-decoration: none;
 }

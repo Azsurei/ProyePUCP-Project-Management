@@ -61,6 +61,7 @@
     border-radius: 10px;
     background-color: #F0AE19;
     border: #F0AE19 1px solid;
+    height: 2rem;
     font-size: 0.8rem;
     font-weight: 600;
     width: 100px;
@@ -68,28 +69,18 @@
     cursor: pointer;
     outline: none;
     border: none;
+    margin: 1rem 0;
 }
 
-.cancelarAceptar{
+.twoButtons{
     display: flex;
     justify-content: flex-end;
-}
-
-.btnBacklogPrimary{
-    border-radius: 10px;
-    background-color: #F0AE19;
-    border: #F0AE19 1px solid;
-    font-size: 0.8rem;
-    font-weight: 600;
-    height: 36px;
-    width: 150px;
-    color: white;
 }
 
 .buttonContainer{
     display: flex;
     gap: 10px;
-    padding: 1rem 0;
+    padding: 1rem;
 }
 
 .btnBacklogCancel{

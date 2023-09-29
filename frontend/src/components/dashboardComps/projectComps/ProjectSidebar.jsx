@@ -13,25 +13,25 @@ const memberData = [
     },
     
     {
-        id: '5',
+        id: '2',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
     },
     {
-        id: '6',
+        id: '3',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
     }  ,
     {
-        id: '6',
+        id: '4',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
     } ,
     {
-        id: '6',
+        id: '5',
         name: 'Renzo',
         lastName: 'Pinto',
         profilePicture: '/images/ronald_user.png'
@@ -59,7 +59,7 @@ function MemberIcon(props){
 function DropDownItem(props){
     return(
         <li className="DropDownItem">
-            <Link href={'/dashboard/xsd'} style={{display:'flex', alignItems:"center"}}>
+            <Link href={props.goTo} style={{display:'flex', alignItems:"center"}}>
                 <img src={props.icon} alt="icon" className="" />
                 <p>{props.name}</p>
             </Link>
@@ -69,34 +69,40 @@ function DropDownItem(props){
 
 
 function DropDownMenu(props){
-    //PARAMETROS QUE DEBE RECIBIR:
-    //title-icon
-    //title-tittle
-    //array de items con estructura {optIcon, optName}
-    const [open, setOpen] = useState(false);
+  //PARAMETROS QUE DEBE RECIBIR:
+  //title-icon
+  //title-tittle
+  //array de items con estructura {optIcon, optName}
+  const [open, setOpen] = useState(false);
 
-    const toggleDropdown = () => {
-        setOpen(!open);
-    }
+  const toggleDropdown = () => {
+    setOpen(!open);
+  };
 
-
-    return(
-        <div className={open === true ? "DropDownMenu active" : "DropDownMenu" }>
-            <div className="DropTitleContainer" onClick={toggleDropdown}>
-                <div className="DropTitleLeft">
-                    <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
-                    <p className="DropTitle"> {props.info.tittleTitle} </p>
-                </div>
-                <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
-            </div>
-
-            <ul className="ItemsContainer">
-                {props.info.dataItems.map((item)=>{
-                    return <DropDownItem icon={item.optIcon} name={item.optName}></DropDownItem>
-                })}
-            </ul>
+  return (
+    <div className="DropDownMenu">
+      <div className="DropTitleContainer" onClick={toggleDropdown}>
+        <div className="DropTitleLeft">
+          <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
+          <p className="DropTitle"> {props.info.tittleTitle} </p>
         </div>
-    );
+        <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
+      </div>
+
+      <ul className={open === true ? "ItemsContainer show" : "ItemsContainer"}>
+        {props.info.dataItems.map((item) => {
+          return (
+            <DropDownItem
+              key={item.id}
+              icon={item.optIcon}
+              name={item.optName}
+              goTo={item.goTo}
+            ></DropDownItem>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
 
 
@@ -104,7 +110,7 @@ function DropDownMenu(props){
 
 
 function ProjectSidebar(props) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     const [isTriangleBlue, setIsTriangleBlue] = useState(false);
 
     const handleButtonClick = () => {
@@ -116,12 +122,14 @@ function ProjectSidebar(props) {
     };
 
 
-    const stringBase = '/dashboard/' + props.currentUrl;
+    const stringBase = '/dashboard/' + props.projectName+"="+props.projectId;
 
     const sideBar1Array = [
         {
+            id: 1,
             optIcon : '/icons/icon-goBack.svg',
-            optName : 'Pendiente' 
+            optName : 'Pendiente',
+            goTo    : `${stringBase}`
         }
     ];
     
@@ -133,20 +141,28 @@ function ProjectSidebar(props) {
     
     const sideBar2Array = [
         {
+            id: 1,
             optIcon : '/icons/icon-notif.svg',
-            optName : 'Gestion de backlog' 
+            optName : 'Gestion de backlog',
+            goTo    : `${stringBase}/productBacklog`
         },
         {
+            id: 2,
             optIcon : '/icons/datePB.svg',
-            optName : 'Acta de constitución' 
+            optName : 'Acta de constitución',
+            goTo    : `${stringBase}/actaConstitucion`
         },
         {
+            id: 3,
             optIcon : '/icons/icon-cross.svg',
-            optName : 'EDT y diccionario EDT' 
+            optName : 'EDT y diccionario EDT',
+            goTo    : `${stringBase}/EDT`
         },
         {
+            id: 4,
             optIcon : '/icons/icon-help.svg',
-            optName : 'Registro de equipos' 
+            optName : 'Registro de equipos',
+            goTo    : `${stringBase}/registroEquipos`
         }
     ];
     
@@ -159,7 +175,7 @@ function ProjectSidebar(props) {
     
     return (
         <nav className={`ProjectSidebar ${isOpen ? 'openSidebar' : 'closedSidebar'}`}>
-            <div>
+            <div className="contenedorTodo">
                 <div className="btnOpenSidebar" onClick={handleButtonClick}>
                     <div className={`triangle ${isTriangleBlue ? 'triangle-blue' : ''}`}></div>
                 </div>
