@@ -5,6 +5,7 @@ import '../../../../components/dashboardComps/projectComps/appConstComps/Atribut
 import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/ActaConstitucion.css';
 import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/AtributoCard.css';
 import AtributoCard from "@/components/dashboardComps/projectComps/appConstComps/AtributoCard";
+import '../../../../components/dashboardComps/projectComps/appConstComps/CardComplex'
 
 export default function actaConstitucion() {
 

@@ -21,7 +21,9 @@ const newCriteriosAceptacion=[
 
 
 export default function EDTNew(props) {
-    const projectName = props.params.project;
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
 
 
     const handleAddEntregable = ()=>{
@@ -37,7 +39,7 @@ export default function EDTNew(props) {
         <div className="EDTNew">
             <HeaderWithButtons haveReturn={true} 
                                haveAddNew={true}
-                               hrefToReturn={'/dashboard/' + projectName + '/EDT'}
+                               hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/EDT'}
                                hrefForButton={''}
                                breadcrump={'Inicio / Proyectos / Proyect X / EDT y Diccionario EDT'}
                                btnText={'Agregar elemento'}>Crear nuevo componente</HeaderWithButtons>
