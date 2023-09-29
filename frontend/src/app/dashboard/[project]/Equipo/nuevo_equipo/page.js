@@ -2,7 +2,7 @@ import React from "react";
 import Card from "@/components/Card";
 import CardParticipantes from "@/components/equipoComps/CardParticipantes";
 import TextField from "@/components/TextField";
-import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
+import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
 
 const miembros = [
     {

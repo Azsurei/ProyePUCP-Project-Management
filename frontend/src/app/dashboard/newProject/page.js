@@ -3,8 +3,9 @@ import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/newProjects.css";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
-import CardCreateProject from "@/components/CardCreateProject";
-import TimePicker1 from "@/components/TimePicker1";
+
+
+import ListTools from "@/components/dashboardComps/projectComps/ListTools";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -16,7 +17,44 @@ import TextField from "@/components/TextField";
 axios.defaults.withCredentials = true;
 
 export default function newProject() {
-  const items = [
+
+    
+    const tools = [
+        {
+            id: '1',
+            name: 'Acta de Constitución',
+            description: 'Documento que autoriza formalmente el inicio de un proyecto y le da al director del proyecto la autoridad para asignar recursos a las actividades del proyecto.',
+    
+        },
+        
+        {
+            id: '2',
+            name: 'EDT y Diccionario del EDT',
+            description:'Desglose estructurado del proyecto y un glosario que define los elementos clave.'
+    
+        },
+        {
+            id: '3',
+            name: 'Cronograma',
+            description:'Representación temporal de tareas y actividades del proyecto.'
+    
+        }  ,
+        {
+            id: '4',
+            name: 'Presupuesto',
+            description:'Estimación de costos y recursos financieros necesarios para ejecutar el proyecto.'
+    
+        } ,   
+        {
+            id: '5',
+            name: 'Plan de Calidad',
+            description:'Estrategia para garantizar la calidad del trabajo y los entregables del proyecto.'
+    
+        } ,
+    
+    ];
+
+    const items = [
     {
       id: "1",
       label: "Informacion General",
@@ -129,15 +167,18 @@ export default function newProject() {
       </div>
 
       <div className="trackerBar">
-        <TracerNewProject items={items}></TracerNewProject>
+        <TracerNewProject items={items3}></TracerNewProject>
       </div>
+
 
       <div className="containerInfoBox">
 
         
       <div className="infoBox">
 
-        <CardCreateProject></CardCreateProject>
+      <ListTools></ListTools>
+
+
       </div>
         <div className="buttonContainer">
           

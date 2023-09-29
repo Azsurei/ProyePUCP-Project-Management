@@ -218,7 +218,16 @@
 }
 
 .DropDownMenu .ItemsContainer{
-    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.1s ease;
+    
+}
+
+.DropDownMenu .ItemsContainer.show{
+    height: auto;
+    max-height: 9999px;
+    transition: all 0.1s ease;
     
 }
 

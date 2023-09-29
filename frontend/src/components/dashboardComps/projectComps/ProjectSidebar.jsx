@@ -80,7 +80,7 @@ function DropDownMenu(props){
   };
 
   return (
-    <div className={open === true ? "DropDownMenu active" : "DropDownMenu"}>
+    <div className="DropDownMenu">
       <div className="DropTitleContainer" onClick={toggleDropdown}>
         <div className="DropTitleLeft">
           <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
@@ -89,7 +89,7 @@ function DropDownMenu(props){
         <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
       </div>
 
-      <ul className="ItemsContainer">
+      <ul className={open === true ? "ItemsContainer show" : "ItemsContainer"}>
         {props.info.dataItems.map((item) => {
           return (
             <DropDownItem
