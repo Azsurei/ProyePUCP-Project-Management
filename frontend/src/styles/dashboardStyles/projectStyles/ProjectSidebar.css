@@ -19,7 +19,7 @@
 
     font-family: 'Montserrat', sans-serif;
 
-    overflow: visible;
+    transition: width 0.3s ease-in-out;
 }
 
 .ProjectSidebar .headerContainer{
@@ -67,8 +67,9 @@
     height: 25px;
     border-radius: 100%;
     position: absolute;
-    left: 297px;
+    left: 14px;
     top: 155px;
+    transition: left 0.3s ease-in-out;
 }
 
 
@@ -93,8 +94,66 @@
     object-position: center;
     border-radius: 50%;
 }
+/*=============== STYLES OF FoldButton ===============*/
 
+.closedSidebar {
+    left: 0;
+    width: 25px; /* width of the button */
+    overflow: hidden;
+}
 
+.openSidebar {
+    width: 310px; /* original width of the sidebar */
+}
+
+.openSidebar .btnOpenSidebar {
+    left: 255px; /* move the button next to the text when open */
+}
+
+.closedSidebar .header,
+.closedSidebar .dates,
+.closedSidebar .teamContainer,
+.closedSidebar .members,
+.closedSidebar .DropDownMenu{
+    display: none;
+}
+
+.ProjectSidebar .btnOpenSidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #fff; /* Change this to any color you prefer for the < character */
+}
+
+.customArrow {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: block;
+    border-width: 6px 9px 6px 0;
+    border-color: transparent #fff transparent transparent;
+    margin-right: 2px;
+}
+
+.triangle-blue {
+
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: block;
+    border-width: 6px 9px 6px 0;
+    border-color: transparent #172B4D transparent transparent;
+    margin-right: 2px;
+}
 
 /*=============== STYLES OF DropDownMenu ===============*/
 .DropDownMenu{
@@ -103,7 +162,7 @@
 
     border-style: solid;
     border-width: 1px;
-    border-color: black;
+    border-color: rgb(212, 212, 212);
 
     border-radius: 10px;
 
@@ -113,13 +172,23 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
 
     background-color: white;
 
     border-style: solid;
-    border-color: black;
+    border-color: rgb(212, 212, 212);
     border-width: 1px;
     border-radius: 8px;
+
+    cursor:pointer
+}
+
+
+.DropDownMenu .DropTitleContainer .DropTitleLeft{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .DropDownMenu .DropTitle{
@@ -150,7 +219,7 @@
 
     padding-left: 1.2rem;
     padding-top: .2rem;
-    padding-top: .2rem;
+    padding-bottom: .2rem;
 
     border-radius: 7px;
 
@@ -200,4 +269,5 @@
     }
     
 
-} 
+}
+

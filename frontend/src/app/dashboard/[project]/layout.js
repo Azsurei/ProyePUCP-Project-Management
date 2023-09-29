@@ -8,7 +8,7 @@ export default function RootLayout({ children, params }) {
 
     return ( //AQUI CAMBIE BODY POR DIV, YA QUE AL TENER BODY QUITA EL LAYOUT DEL DASHBOARD
         <div className="DashboardProjectContainer">   
-            <ProjectSidebar projectName={decodedName}></ProjectSidebar>
+            <ProjectSidebar projectName={decodedName} currentUrl={projectName}></ProjectSidebar>
             {children}
             
         </div>

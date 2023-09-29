@@ -1,8 +1,10 @@
 .container{
     flex: 1;
+    font-family: Montserrat;
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: auto;
     padding-left: 2rem;
     padding-right: 2rem;
 }

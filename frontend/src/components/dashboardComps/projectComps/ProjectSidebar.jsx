@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
+import Link from "next/link";
 
 const memberData = [
     {
@@ -58,47 +59,114 @@ function MemberIcon(props){
 function DropDownItem(props){
     return(
         <li className="DropDownItem">
-            <img src="/icons/epicPB.svg" alt="icon" className="" />
-            <p>Herramienta</p>
+            <Link href={'/dashboard/xsd'} style={{display:'flex', alignItems:"center"}}>
+                <img src={props.icon} alt="icon" className="" />
+                <p>{props.name}</p>
+            </Link>
         </li>
     );
 }
 
 
 function DropDownMenu(props){
-    //PARAMETROS QUE DEBE RECIBIR:
-    //title-icon
-    //title-tittle
-    //array de items con estructura {optIcon, optName}
-    const [open, setOpen] = useState(false);
+  //PARAMETROS QUE DEBE RECIBIR:
+  //title-icon
+  //title-tittle
+  //array de items con estructura {optIcon, optName}
+  const [open, setOpen] = useState(false);
 
-    const toggleDropdown = () => {
-        setOpen(!open);
-    }
+  const toggleDropdown = () => {
+    setOpen(!open);
+  };
 
-
-    return(
-        <div className={open === true ? "DropDownMenu active" : "DropDownMenu" } onClick={toggleDropdown}>
-            <div className="DropTitleContainer">
-                <img src="/icons/epicPB.svg" alt="" className="DropIconLeft" />
-                <p className="DropTitle">Gestion del proyecto</p>
-                <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
-            </div>
-            <ul className="ItemsContainer">
-                <DropDownItem></DropDownItem>
-                <DropDownItem></DropDownItem>
-                <DropDownItem></DropDownItem>
-            </ul>
+  return (
+    <div className={open === true ? "DropDownMenu active" : "DropDownMenu"}>
+      <div className="DropTitleContainer" onClick={toggleDropdown}>
+        <div className="DropTitleLeft">
+          <img src={props.info.tittleIcon} alt="" className="DropIconLeft" />
+          <p className="DropTitle"> {props.info.tittleTitle} </p>
         </div>
-    );
+        <img src="/icons/epicPB.svg" alt="" className="DropIconRight" />
+      </div>
+
+      <ul className="ItemsContainer">
+        {props.info.dataItems.map((item) => {
+          return (
+            <DropDownItem
+              icon={item.optIcon}
+              name={item.optName}
+            ></DropDownItem>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
 
 
 
+
+
 function ProjectSidebar(props) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isTriangleBlue, setIsTriangleBlue] = useState(false);
+
+    const handleButtonClick = () => {
+        setIsOpen(prevState => !prevState);
+        setIsTriangleBlue(true);
+        setTimeout(() => {
+            setIsTriangleBlue(false);
+        }, 300);
+    };
+
+
+    const stringBase = '/dashboard/' + props.currentUrl;
+
+    const sideBar1Array = [
+        {
+            optIcon : '/icons/icon-goBack.svg',
+            optName : 'Pendiente' 
+        }
+    ];
+    
+    const sidebar1Data = {
+        tittleIcon : '/icons/info-circle.svg',
+        tittleTitle : 'Sobre proyecto',
+        dataItems : sideBar1Array
+    };
+    
+    const sideBar2Array = [
+        {
+            optIcon : '/icons/icon-notif.svg',
+            optName : 'Gestion de backlog' 
+        },
+        {
+            optIcon : '/icons/datePB.svg',
+            optName : 'Acta de constitución' 
+        },
+        {
+            optIcon : '/icons/icon-cross.svg',
+            optName : 'EDT y diccionario EDT' 
+        },
+        {
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Registro de equipos' 
+        }
+    ];
+    
+    const sidebar2Data = {
+        tittleIcon : '/icons/icon-settings.svg',
+        tittleTitle : 'Herramientas',
+        dataItems : sideBar2Array
+    };
+
+    
     return (
-        <nav className='ProjectSidebar'>
+        <nav className={`ProjectSidebar ${isOpen ? 'openSidebar' : 'closedSidebar'}`}>
             <div>
+                <div className="btnOpenSidebar" onClick={handleButtonClick}>
+                    <div className={`triangle ${isTriangleBlue ? 'triangle-blue' : ''}`}></div>
+                </div>
                 <p className="header">{props.projectName}</p>
                 <p className="dates">13/09/2023  -  20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
@@ -106,8 +174,6 @@ function ProjectSidebar(props) {
                     <p className="teamName">Los dibujitos</p>
                 </div>
             </div>
-
-            <div className="btnOpenSidebar"></div>
 
             <ul className='members'>
                 {memberData.map((member)=>{
@@ -120,8 +186,8 @@ function ProjectSidebar(props) {
                 })}
             </ul>
 
-            <DropDownMenu></DropDownMenu>
-            <DropDownMenu></DropDownMenu>
+            <DropDownMenu info={sidebar1Data}></DropDownMenu>
+            <DropDownMenu info={sidebar2Data}></DropDownMenu>
         </nav>
     );
 }
