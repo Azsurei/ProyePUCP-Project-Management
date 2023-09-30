@@ -6,15 +6,15 @@ const jwt = require("jsonwebtoken");
 const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
 
 
-routerProyecto.post("/",async(req,res)=>{
-    const { nombre, maxCantParticipantes,fechaInicio,fechaFin,fechaUltimaModificacion } = req.body;
+routerProyecto.post("/insertarProyecto",async(req,res)=>{
+    const { idUsuario,nombre, maxCantParticipantes,fechaInicio,fechaFin } = req.body;
     console.log("Llegue a recibir solicitud creacion proyecto");
     const query = `
-        CALL INSERTAR_PROYECTO('${nombre}', '${maxCantParticipantes}, '${fechaInicio}, '${fechaFin}', '${fechaUltimaModificacion}');
+        CALL INSERTAR_PROYECTO(?,?,?,?,?);
     `;
     try {
-        const [results] = await connection.query(query);
-        const idProyecto = results[0][0].idUsuario;
+        const [results] = await connection.query(query,[idUsuario,nombre,maxCantParticipantes,fechaInicio,fechaFin]);
+        const idProyecto = results[0][0].idProyecto;
         res.status(200).json({
             idProyecto,
             message: "Proyecto registrado exitosamente",
@@ -47,7 +47,7 @@ routerProyecto.get("/listarProyectos",async(req,res)=>{
                 message: "Proyectos obtenidos exitosamente"
                 
             });
-            console.log(`Se han listado los proyectos para el usuario ${idUsuario}!`);
+            console.log(results[0]);
         } catch (error) {
             console.error("Error al obtener los proyectos:", error);
             res.status(500).send("Error al obtener los proyectos: " + error.message);
@@ -185,7 +185,5 @@ routerProyecto.get("/:idUsuario/:idProyecto/backlog/epica/hu",async(req,res)=>{
             .send(error.message + " invalid tokenProyePUCP token");
     }
 })
-
-
 
 module.exports.routerProyecto = routerProyecto;
