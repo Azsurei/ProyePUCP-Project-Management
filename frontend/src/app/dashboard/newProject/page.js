@@ -123,7 +123,7 @@ export default function newProject() {
 
 
     return (
-        <div className="mainDiv">
+        <div className="mainDivNewProject">
             <div className="headerDiv">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -142,7 +142,9 @@ export default function newProject() {
 
             <div className="containerInfoBox">
                 <div className="infoBox">
+                
 
+                
 				<ListTools></ListTools>
 
                 </div>
@@ -164,6 +166,11 @@ export default function newProject() {
                         </svg>
                     </button>
                 </div>
+            </div>
+
+            <div className="buttonContainerCreate">
+                <button className="createProjectButtonEnd">Crear Proyecto
+                    </button>
             </div>
         </div>
     );

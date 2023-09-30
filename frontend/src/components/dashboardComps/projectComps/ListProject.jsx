@@ -8,32 +8,18 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 
-const memberData = [
+const memberDataProject = [
     {
-        id: '1',
-        name: 'Renzo',
-        lastName: 'Pinto',
-        profilePicture: '/images/ronald_user.png'
+        id: "1",
     },
-    
+
     {
-        id: '2',
-        name: 'Renzo',
-        lastName: 'Pinto',
-        profilePicture: '/images/ronald_user.png'
+        id: "2",
     },
+
     {
-        id: '3',
-        name: 'Renzo',
-        lastName: 'Pinto',
-        profilePicture: '/images/ronald_user.png'
-    }  ,
-    {
-        id: '4',
-        name: 'Renzo',
-        lastName: 'Pinto',
-        profilePicture: '/images/ronald_user.png'
-    } 
+        id: "3",
+    }
 
 ];
 
@@ -63,7 +49,7 @@ function ProjectCard(props) {
 
   
         <div className="divPictures">
-          {memberData.map((member) => {
+          {memberDataProject.map((member) => {
             return (
               <img
                 className="memberProfilePicture"
