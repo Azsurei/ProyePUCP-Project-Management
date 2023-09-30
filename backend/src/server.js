@@ -34,19 +34,11 @@ const routerAuth = require('./routes/auth').routerAuth;
 const routerProyecto = require('./routes/proyecto').routerProyecto;
 const routerEDT = require('./routes/EDT').routerEDT;
 const routerHerramientas = require('./routes/herramientas').routerHerramientas;
-<<<<<<< HEAD
-=======
-
->>>>>>> 50f3bdc05e211f3e144478880b5c3d0ce790f2b4
 
 app.use('/api/auth',routerAuth);
 app.use('/api/proyecto',routerProyecto);
 app.use('/api/EDT',routerEDT);
 app.use('/api/herramientas',routerHerramientas);
-<<<<<<< HEAD
-
-=======
->>>>>>> 50f3bdc05e211f3e144478880b5c3d0ce790f2b4
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
