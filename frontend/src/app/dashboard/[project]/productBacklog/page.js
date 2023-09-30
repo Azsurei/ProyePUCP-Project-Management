@@ -11,10 +11,8 @@ export default function Project(props) {
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
+    const stringURL = "http://localhost:8080/api/proyecto/77/6/backlog/epica/hu";
 
-
-
-    
     const [modal, setModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
 
@@ -115,7 +113,7 @@ export default function Project(props) {
                     </div>
                 </div>
                 <div className="overflow-x-auto overflow-y-auto">
-                <TableComponent data={data} columns={columns} toggleModal={toggleModal} /> {/* Pasa toggleModal como prop al componente TableComponent */}
+                <TableComponent /*data={data}*/ urlApi = {stringURL} columns={columns} toggleModal={toggleModal} /> {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
                 
             </div>
