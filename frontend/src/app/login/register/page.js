@@ -50,7 +50,6 @@ function register() {
         }
     }
 
-    
     function handleRegister() {
         console.log(nombre);
         console.log(apellido);
@@ -74,110 +73,101 @@ function register() {
     }
 
     return (
-        <div className="App">
-            <div className="logos">
-                <img src="/images/LogoPUCPwhite.png" className="logoPucp" />
-                <img
-                    src="/images/LogoProyePUCPwhite.png"
-                    className="logoProyePucp"
-                />
-            </div>
-            <div className="contenedor-principal">
-                <div className="cabecera">
-                    <div className="contenedor-nueva-contraseña">
-                        <span>Regístrate</span>
-                    </div>
-                    <div className="contenedor-ingresar-contraseña">
-                        ¡Crea tu cuenta!
-                    </div>
+        <>
+            <div className="cabecera">
+                <div className="contenedor-nueva-contraseña">
+                    <span>Regístrate</span>
                 </div>
-                <div className="cuerpo">
-                    <div className="placeholders">
-                        <Placeholder
-                            attribute={{
-                                id: "nombre",
-                                name: "nombre",
-                                type: "text",
-                                placeholder: "Nombre",
-                            }}
-                            handleChange={handleChange}
-                        />
-                        <Placeholder
-                            attribute={{
-                                id: "apellido",
-                                name: "apellido",
-                                type: "text",
-                                placeholder: "Apellido",
-                            }}
-                            handleChange={handleChange}
-                        />
-                        <Placeholder
-                            attribute={{
-                                id: "correoElectronico",
-                                name: "correoElectronico",
-                                type: "text",
-                                placeholder: "Correo Electrónico",
-                            }}
-                            handleChange={handleChange}
-                        />
-                        <Placeholder
-                            attribute={{
-                                id: "contraseña",
-                                name: "contraseña",
-                                type: "password",
-                                placeholder: "Nueva contraseña",
-                            }}
-                            handleChange={handleChange}
-                            param={passwordError}
-                        />
-                        {passwordError && (
+                <div className="contenedor-ingresar-contraseña">
+                    ¡Crea tu cuenta!
+                </div>
+            </div>
+            <div className="cuerpo">
+                <div className="placeholders">
+                    <Placeholder
+                        attribute={{
+                            id: "nombre",
+                            name: "nombre",
+                            type: "text",
+                            placeholder: "Nombre",
+                        }}
+                        handleChange={handleChange}
+                    />
+                    <Placeholder
+                        attribute={{
+                            id: "apellido",
+                            name: "apellido",
+                            type: "text",
+                            placeholder: "Apellido",
+                        }}
+                        handleChange={handleChange}
+                    />
+                    <Placeholder
+                        attribute={{
+                            id: "correoElectronico",
+                            name: "correoElectronico",
+                            type: "text",
+                            placeholder: "Correo Electrónico",
+                        }}
+                        handleChange={handleChange}
+                    />
+                    <Placeholder
+                        attribute={{
+                            id: "contraseña",
+                            name: "contraseña",
+                            type: "password",
+                            placeholder: "Nueva contraseña",
+                        }}
+                        handleChange={handleChange}
+                        param={passwordError}
+                    />
+                    {passwordError && (
+                        <label className="label-error">
+                            Contraseña inválida o incompleta
+                        </label>
+                    )}
+                    <Placeholder
+                        attribute={{
+                            id: "contraseñaConfimar",
+                            name: "contraseñaConfimar",
+                            type: "password",
+                            placeholder: "Confirmar contraseña",
+                        }}
+                        handleChange={handleChange}
+                        param={passwordErrorRepe}
+                    />
+                    {passwordErrorRepe && (
+                        <label className="label-error">
+                            Contraseña inválida o incompleta
+                        </label>
+                    )}
+                    {password !== passwordRepe &&
+                        !passwordErrorRepe &&
+                        tocoSegundoPassword && (
                             <label className="label-error">
-                                Contraseña inválida o incompleta
+                                Las contraseñas no son iguales
                             </label>
                         )}
-                        <Placeholder
-                            attribute={{
-                                id: "contraseñaConfimar",
-                                name: "contraseñaConfimar",
-                                type: "password",
-                                placeholder: "Confirmar contraseña",
-                            }}
-                            handleChange={handleChange}
-                            param={passwordErrorRepe}
-                        />
-                        {passwordErrorRepe && (
-                            <label className="label-error">
-                                Contraseña inválida o incompleta
-                            </label>
-                        )}
-                        {password !== passwordRepe &&
-                            !passwordErrorRepe &&
-                            tocoSegundoPassword && (
-                                <label className="label-error">
-                                    Las contraseñas no son iguales
-                                </label>
-                            )}
-                    </div>
-                    <div className="boton">
-                        <Button
-                            text="Registrarse"
-                            href={"#"}
-                            onClick={handleRegister}
-                        />
-                    </div>
-                    <div className="otros-login">
-                        <div className="roboto">¿Tienes un cuenta?</div>
-                        <div>
-                            <Link href="/login/login">
-                                <span className="iniciar-sesion roboto">
-                                    Iniciar sesión
-                                </span>
-                            </Link>
-                        </div>
+                </div>
+                <div className="boton">
+                    <Button
+                        text="Registrarse"
+                        href={"#"}
+                        onClick={handleRegister}
+                    />
+                </div>
+                <div className="otros-login">
+                    <div className="roboto">¿Tienes un cuenta?</div>
+                    <div>
+                        <Link href="/login/login">
+                            <span className="iniciar-sesion roboto">
+                                Iniciar sesión
+                            </span>
+                        </Link>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
