@@ -18,7 +18,7 @@ function TextField({
 
     return (
         <div
-            className={`montserrat flex flex-row border border-gray-300 rounded-md py-2 px-4 ${containerWidth}`}
+            className={`montserrat bg-white flex flex-row border border-gray-300 rounded-md py-2 px-4 ${containerWidth}`}
             style={inputStyle}
         >
             {iconBefore && (
