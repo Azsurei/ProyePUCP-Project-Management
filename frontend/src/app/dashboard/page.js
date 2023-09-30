@@ -10,17 +10,6 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 
 export default function Dashboard() {
-    const componenteProject = [
-        {
-            id: 1,
-            name: "Gestion de proyecto",
-        },
-        {
-            id: 2,
-            name: "xd",
-        },
-    ];
-
     return (
         <div className="mainDiv">
             <div className="headerDiv">
@@ -29,7 +18,7 @@ export default function Dashboard() {
                     <BreadcrumbsItem href="/dashboard" text="Proyectos" />
                 </Breadcrumbs>
                 <p className="textProject2">
-                    Proyecto
+                    Proyectos
                 </p>
             </div>
 
@@ -54,7 +43,7 @@ export default function Dashboard() {
 
             </div>
 
-            <ListProject listData={componenteProject}></ListProject>
+            <ListProject ></ListProject>
         </div>
     );
 }
