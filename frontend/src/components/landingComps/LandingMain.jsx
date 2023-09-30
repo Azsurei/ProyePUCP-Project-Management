@@ -13,6 +13,7 @@ function LandingMain() {
                     proyectos.
                 </p>
                 <Button 
+                    appearance="default"
                     text="¡Inicia ya!" 
                     href={"/login/login"} 
                     className={'w-52'}/>
