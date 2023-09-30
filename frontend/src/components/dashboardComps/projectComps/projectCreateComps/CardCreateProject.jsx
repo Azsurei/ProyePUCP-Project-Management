@@ -1,6 +1,6 @@
 import React from 'react';
-import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
-import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/newProjects.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/newProjects.css";
 import DatePicker1 from "@/components/DatePicker1";
 import TextField from "@/components/TextField";
 

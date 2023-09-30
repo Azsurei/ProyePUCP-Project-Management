@@ -20,7 +20,6 @@ const DatePicker1 = () => (
     <DatePicker
       locale={'es-PE'}
       dateFormat="DD-MM-YYYY"
-      /*defaultValue={getCurrentDateFormatted()}*/
       placeholder={getCurrentDateFormatted()}
       
       selectProps={{
