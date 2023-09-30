@@ -1,11 +1,11 @@
 "use client";
 import axios from "axios";
-import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
-import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/newProjects.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/newProjects.css";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 
-import ListTools from "@/components/dashboardComps/projectComps/ListTools";
+import ListTools from "@/components/dashboardComps/projectComps/projectCreateComps/ListTools";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -13,7 +13,7 @@ import * as React from "react";
 import TracerNewProject from "@/components/TracerNewProject";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/TextField";
-import CardCreateProject from "@/components/CardCreateProject";
+import CardCreateProject from "@/components/dashboardComps/projectComps/projectCreateComps/CardCreateProject";
 
 axios.defaults.withCredentials = true;
 
@@ -145,7 +145,7 @@ export default function newProject() {
                 
 
                 
-				<CardCreateProject></CardCreateProject>
+				<ListTools></ListTools>
 
                 </div>
                 <div className="buttonContainer" onClick={handleNextLevel}>
