@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
 
 function DashboardNav() {
@@ -21,7 +22,7 @@ function DashboardNav() {
                         <p>Notificaciones</p>
                     </li>
                     <li>
-                        <img src="/icons/icon-usr.svg" alt="" className="icon" id='icnUser'/>
+                        <Link href='/dashboard/templates'><img src="/icons/icon-usr.svg" alt="" className="icon" id='icnUser'/></Link>
                         <p>Mi perfil</p>
                     </li>
                 </ul>

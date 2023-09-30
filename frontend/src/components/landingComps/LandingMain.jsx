@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "./Button";
+import Button from "@/components/Button";
 import styles from "@/styles/landing.module.css";
 
 function LandingMain() {
@@ -12,7 +12,10 @@ function LandingMain() {
                     de todas las herramientas que necesites para gestionar tus
                     proyectos.
                 </p>
-                <Button text="¡Inicia ya!" href={"/login/login"} />
+                <Button 
+                    text="¡Inicia ya!" 
+                    href={"/login/login"} 
+                    className={'w-52'}/>
             </div>
             <img src="/images/LogoStart.png" alt="StartImage" />
         </main>

@@ -162,7 +162,7 @@ function ProjectSidebar(props) {
             id: 4,
             optIcon : '/icons/icon-help.svg',
             optName : 'Registro de equipos',
-            goTo    : `${stringBase}/registroEquipos`
+            goTo    : `${stringBase}/Equipo`
         }
     ];
     

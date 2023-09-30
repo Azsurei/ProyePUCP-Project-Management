@@ -15,9 +15,12 @@ axios.defaults.withCredentials = true;
 function Login() {
     const router = useRouter();
 
-    const [password, setPassword] = useState("");
-    const [usuario, setUsuario] = useState("");
-    const [passwordError, setPasswordError] = useState(false);
+    const [formData, setFormData] = useState({
+        usuario: "",
+        password: "",
+        passwordError: false,
+        loading: false,
+    });
 
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
@@ -29,21 +32,19 @@ function Login() {
     };
 
     function handleChange(name, value) {
-        if (name === "correo") {
-            setUsuario(value);
-        } else {
-            if (value.length < 3) {
-                setPasswordError(true);
-            } else {
-                setPasswordError(false);
-                setPassword(value);
-            }
-        }
+        setFormData({
+            ...formData,
+            [name]: value,
+            passwordError: name === "contrasena" && value.length < 3,
+        });
     }
 
     function handleLogin() {
-        console.log(usuario);
-        console.log(password);
+        const { usuario, password } = formData;
+
+        // Activar el estado de carga antes de realizar la solicitud Axios
+        setFormData({ ...formData, loading: true });
+        console.log(formData);
 
         axios
             .post("http://localhost:8080/api/auth/login", {
@@ -60,19 +61,20 @@ function Login() {
                 // }
 
                 //tenemos que mandarlo a su dashboard
-                router.push('/dashboard');
-
+                router.push("/dashboard");
             })
             .catch(function (error) {
                 console.log(error);
+            })
+            .finally(() => {
+                // Desactivar el estado de carga después de que la solicitud se complete (ya sea con éxito o error)
+                setFormData({ ...formData, loading: false });
             });
     }
 
     return (
         <>
             <div className="Fondo">
-
-                
                 <div>
                     <img
                         src="/images/LogoPUCPwhite.png"
@@ -96,8 +98,8 @@ function Login() {
                         <div className="placeholders">
                             <Placeholder
                                 attribute={{
-                                    id: "correo",
-                                    name: "correo",
+                                    id: "usuario",
+                                    name: "usuario",
                                     type: "text",
                                     placeholder: "Correo electrónico",
                                 }}
@@ -106,15 +108,15 @@ function Login() {
 
                             <Placeholder
                                 attribute={{
-                                    id: "contrasena",
-                                    name: "contrasena",
+                                    id: "password",
+                                    name: "password",
                                     type: "password",
                                     placeholder: "Contraseña",
                                 }}
                                 handleChange={handleChange}
-                                param={passwordError}
+                                param={formData.passwordError}
                             />
-                            {passwordError && (
+                            {formData.passwordError && (
                                 <label className="label-error">
                                     Contraseña inválida o incompleta
                                 </label>
@@ -140,6 +142,8 @@ function Login() {
                                 text="Iniciar Sesión"
                                 href={"#"}
                                 onClick={handleLogin}
+                                isLoading={formData.loading}
+                                className={"w-48"}
                             />
                         </div>
 
@@ -150,7 +154,14 @@ function Login() {
                         </div>
 
                         <div className="boton2">
-                            <Button text="Google" href={"#"} />
+                            <Button
+                                text="Google"
+                                href={"#"}
+                                iconBefore={
+                                    <img src="/icons/icon-google.svg" />
+                                }
+                                className={"w-48"}
+                            />
                         </div>
 
                         <div className="contenedorPrincipal">
