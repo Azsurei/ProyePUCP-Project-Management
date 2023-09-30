@@ -28,7 +28,13 @@ const grupos = [
     },
 ];
 
-export default function Equipo() {
+export default function Equipo(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+
+
+
     return (
         <div className="container">
             <div className="header">
@@ -36,7 +42,7 @@ export default function Equipo() {
             </div>
             <div className="title">Equipos</div>
             <div className="butonAddProject">
-                    <a href="/dashboard/[project]/Equipo/nuevo_equipo">
+                    <a href={"/dashboard/"+projectName+"="+projectId+"/Equipo/nuevo_equipo"}>
                         <button className="addProjectbtn">Crear Equipo</button>
                     </a>
                 </div>

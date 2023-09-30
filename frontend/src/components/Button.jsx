@@ -5,17 +5,19 @@ import Link from "next/link";
 
 function Button({
     buttonType = "button",
-    text = "Button",
+    text,
     id,
     name,
     value,
     href,
     tabIndex,
-    appearance,
-    onClick,
-    isDisabled = false,
+    appearance = "default",
     iconBefore,
     iconAfter,
+    fullWidth = false,
+    onClick,
+    isDisabled = false,
+    isLoading = false,
     dataAttributes,
     className,
 }) {
@@ -25,18 +27,23 @@ function Button({
         }
     };
 
-    const button = (
-        <button
-            className={`bg-slate-200 font-medium py-2 px-2 rounded-md ${className}`}
-            type={buttonType}
-            onClick={handleClick}
-            disabled={isDisabled}
-            id={id}
-            name={name}
-            value={value}
-            tabIndex={tabIndex}
-            {...dataAttributes}
-        >
+    const appearances = {
+        default:
+            "bg-[#091E420F] text-[#172B4D] hover:bg-[#091E4224] active:bg-[#091E424F]",
+        primary: "bg-blue-500 text-white",
+        secondary: "bg-gray-300 text-gray-800",
+    };
+
+    const widthContainer = `inline-flex justify-center ${
+        fullWidth ? "w-full" : ""
+    }`;
+
+    const buttonContent = isLoading ? (
+        <div className="flex justify-center items-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+        </div>
+    ) : (
+        <>
             {iconBefore && (
                 <div className="inset-y-0 left-0 mr-2 flex items-center pointer-events-none">
                     {iconBefore}
@@ -48,6 +55,22 @@ function Button({
                     {iconAfter}
                 </div>
             )}
+        </>
+    );
+
+    const button = (
+        <button
+            className={`${appearances[appearance]} font-medium py-2 px-2 rounded-md ${widthContainer} ${className}`}
+            type={buttonType}
+            onClick={handleClick}
+            disabled={isDisabled}
+            id={id}
+            name={name}
+            value={value}
+            tabIndex={tabIndex}
+            {...dataAttributes}
+        >
+            {buttonContent}
         </button>
     );
 

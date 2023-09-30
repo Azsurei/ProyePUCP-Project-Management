@@ -6,7 +6,14 @@ import { useState, useEffect } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
 import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
-export default function Project() {
+export default function Project(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+
+
+
+
     
     const [modal, setModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
@@ -102,7 +109,7 @@ export default function Project() {
                         </Link>
                     </div>
                     <div className="navigationBacklogDerecha">
-                        <Link href="/dashboard/project/productBacklog/registerPB">
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/registerPB"}>
                             <button className="btnBacklogPrimary" type="button">Añadir elemento</button>
                         </Link>
                     </div>
