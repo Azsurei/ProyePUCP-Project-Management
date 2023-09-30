@@ -12,7 +12,7 @@ function CardSelectTools(props) {
         
         <div>
 
-            <div className="divProjectNameDiv">
+            <div className="divToolName">
                 <p className="titleTool">
                 {props.name}
                 </p>
