@@ -469,11 +469,17 @@ ENGINE = InnoDB;
 CREATE TABLE HistoriaCriterioDeAceptacion(
 	idHistoriaCriterioDeAceptacion INT AUTO_INCREMENT PRIMARY KEY,
 	idHistoriaDeUsuario INT,
-    descripcion VARCHAR(255),
+    escenario VARCHAR(255),
+    dadoQue VARCHAR(255),
+	cuando VARCHAR(255),
+	entonces VARCHAR(255),
     activo TINYINT,
 	FOREIGN KEY (idHistoriaDeUsuario) REFERENCES HistoriaDeUsuario(idHistoriaDeUsuario)
 )
 ENGINE = InnoDB;
+
+ALTER TABLE HistoriaCriterioDeAceptacion
+ADD COLUMN escenario VARCHAR(255);
 
 CREATE TABLE ProductBacklog(
 	idProductBacklog INT AUTO_INCREMENT PRIMARY KEY,
@@ -635,7 +641,7 @@ CREATE PROCEDURE INSERTAR_PROYECTO(
 	IN _nombre VARCHAR(200),
     IN _maxCantParticipantes INT,
     IN _fechaInicio DATE,
-    IN _fechaFin DATE
+    IN _fechaFinINSERTAR_PROYECTO DATE
 )
 BEGIN
 	DECLARE _id_proyecto INT;
