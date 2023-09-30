@@ -1,7 +1,7 @@
 import React from 'react';
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/projectMenu.css";
 import "@/styles/dashboardStyles/projectStyles/ProjectMenuStyles/newProjects.css";
-import TimePicker1 from "@/components/TimePicker1";
+import DatePicker1 from "@/components/DatePicker1";
 import TextField from "@/components/TextField";
 
 export default function CardCreateProject(props) {
@@ -26,12 +26,12 @@ export default function CardCreateProject(props) {
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Fecha Inicio</p>
             </div>
-            <TimePicker1></TimePicker1>
+            <DatePicker1></DatePicker1>
 
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Fecha Fin</p>
             </div>
-            <TimePicker1></TimePicker1>
+            <DatePicker1></DatePicker1>
 
             
 

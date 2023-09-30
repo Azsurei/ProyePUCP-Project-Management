@@ -39,7 +39,7 @@
     background: #FFF;
     
     
-    width: 15rem;
+    width: 16rem;
     height: 10rem;
     flex-shrink: 0;
     margin: 2px 2px;
@@ -70,3 +70,28 @@
     font-weight: 500;
     line-height: 16px; /* 160% */
 }
+
+
+
+.buttonOneTool {
+    border-radius: 5px;
+    background-color: #172B4D;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 30px;
+    width: 5rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+}
+
+.buttonOneTool:hover {
+    background-color: #132b56;
+    transition: background-color 0.15s ease-in;
+    transform: scale(1.04);
+    cursor: pointer;
+}
+

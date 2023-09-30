@@ -14,13 +14,13 @@ const getCurrentDateFormatted = () => {
   return `${year}-${month}-${day}`;
 };
 
-const TimePicker = () => (
+const DatePicker1 = () => (
   <>
     
     <DatePicker
       locale={'es-PE'}
       dateFormat="DD-MM-YYYY"
-      defaultValue={getCurrentDateFormatted()}
+      /*defaultValue={getCurrentDateFormatted()}*/
       placeholder={getCurrentDateFormatted()}
       
       selectProps={{
@@ -30,4 +30,4 @@ const TimePicker = () => (
   </>
 );
 
-export default TimePicker;
+export default DatePicker1;
