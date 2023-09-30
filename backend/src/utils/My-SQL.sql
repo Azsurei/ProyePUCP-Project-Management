@@ -220,13 +220,15 @@ CREATE TABLE ComponenteEDT(
 	idComponente INT AUTO_INCREMENT PRIMARY KEY,
     idElementoPadre INT,
     idEDT INT,
+    idComponenteTags INT,
     descripcion VARCHAR(255),
     codigo VARCHAR(255),
     nombreEntregable VARCHAR(255),
     observaciones VARCHAR(255),
     activo tinyint ,
     FOREIGN KEY (idElementoPadre) REFERENCES ComponenteEDT(idComponente),
-    FOREIGN KEY (idEDT) REFERENCES EDT(idEDT)
+    FOREIGN KEY (idEDT) REFERENCES EDT(idEDT),
+    FOREIGN KEY (idComponenteTags) REFERENCES ComponenteTags(idComponenteTags)
 )
 ENGINE = InnoDB;
 
@@ -241,7 +243,12 @@ CREATE TABLE ComponenteCriterioDeAceptacion(
 )
 ENGINE = InnoDB;
 
-
+CREATE TABLE ComponenteTags (
+  idComponenteTags INT NOT NULL,
+  nombre VARCHAR(200) NULL,
+  colorRGB VARCHAR(45) NULL,
+  PRIMARY KEY (idComponenteTags))
+ENGINE = InnoDB;
 
 -----------------------
 -- Acta de Constitucion
