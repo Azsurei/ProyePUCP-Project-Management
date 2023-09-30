@@ -156,6 +156,7 @@ routerProyecto.get("/historiasPrioridad",async(req,res)=>{
 })
 
 routerProyecto.get("/:idUsuario/:idProyecto/backlog/epica/hu",async(req,res)=>{
+    console.log("Llegue a recibir historias de usuario");
     const { tokenProyePUCP } = req.cookies;
 
     try {

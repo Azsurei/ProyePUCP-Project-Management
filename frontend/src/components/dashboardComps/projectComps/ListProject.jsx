@@ -39,28 +39,49 @@ const memberData = [
 
 
 
-function ProjectCard(props){
+function ProjectCard(props) {
+    const startDate = new Date(props.fechaInicio);
+    const endDate = new Date(props.fechaFin);
+  
+    // Calcula la diferencia en días
+    const diffInDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+  
+    // Formatea las fechas
+    const formattedStartDate = startDate.toLocaleDateString();
+    const formattedEndDate = endDate.toLocaleDateString();
+  
+    return (
+      <li className="ProjectCard" onClick={props.onClick}>
+        <p className="cardTitleProject">
+          {props.name}
+        </p>
+  
+        <p className="cardDates">
+          {`${formattedStartDate} - ${formattedEndDate} (${diffInDays} días)`}
+        </p>
 
-    return(
+
+  
+        <div className="divPictures">
+          {memberData.map((member) => {
+            return (
+              <img
+                className="memberProfilePicture"
+                key={member.id}
+                src="images/DefaultUser.png"
+              />
+            );
+          })}
+        </div>
+        <div className="teamTag">
+            <p >Los Dibujitos</p>
+        </div>
         
-        <li className="ProjectCard" onClick={props.onClick}>
-            <p className="cardTitleProject">
-                {props.name}
-            </p>
 
-            <div className="divPictures">
-            {memberData.map((member)=>{
-                return (
-                    <img className="memberProfilePicture"
-                        key={member.id}
-                        src='images/ronaldo_user.png'
-                        />
-                );
-             })} 
-            </div>
-        </li>
+      </li>
     );
-}
+  }
+  
 //Aqui es la lista de Proyectos
 
 
@@ -87,7 +108,9 @@ export default function ListProject(props){
                 proyectsArray = proyectsArray.map(proyect => {
                     return {
                         id: proyect.idProyecto,
-                        name: proyect.nombre
+                        name: proyect.nombre,
+                        dateStart: proyect.fechaInicio,
+                        dateEnd: proyect.fechaFin,
                     };
                 });
 
@@ -107,6 +130,8 @@ export default function ListProject(props){
                 return (
                     <ProjectCard key={component.id} 
                                 name={component.name}
+                                fechaInicio={component.dateStart}
+                                fechaFin={component.dateEnd}
                                 onClick={()=>{handleClick(component.id,component.name)}}
                                 >
                 </ProjectCard>

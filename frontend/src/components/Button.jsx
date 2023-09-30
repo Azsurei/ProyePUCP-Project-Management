@@ -28,15 +28,59 @@ function Button({
     };
 
     const appearances = {
-        default:
-            "bg-[#091E420F] text-[#172B4D] hover:bg-[#091E4224] active:bg-[#091E424F]",
-        primary: "bg-blue-500 text-white",
-        secondary: "bg-gray-300 text-gray-800",
+        default: {
+            default: "bg-[#091E420F] text-[#172B4D]",
+            hover: "hover:bg-[#091E4224]",
+            active: "active:bg-[#091E424F]",
+            disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
+        },
+        primary: {
+            default: "bg-[#172B4D] text-[#FFFFFF]",
+            hover: "hover:bg-[#09326C]",
+            active: "active:bg-[#101E35]",
+            disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
+        },
+        secondary: {
+            default: "bg-[#F0AE19] text-[#FFFFFF]",
+            hover: "hover:bg-[#FFC644]",
+            active: "active:bg-[#DEA420]",
+            disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
+        },
+        subtle: {
+            default: "bg-transparent text-[#172B4D]",
+            hover: "hover:bg-[#091E4224]",
+            active: "active:bg-[#091E424F]",
+            disabled: "bg-transparent text-[#9CA3AF] cursor-not-allowed",
+        },
+        link: {
+            default: "bg-transparent text-[#0C66E4] no-underline",
+            hover: "hover:text-[#0055CC] hover:underline",
+            active: "active:text-[#004BB3] active:underline",
+            disabled: "bg-transparent text-[#091E424F] cursor-not-allowed",
+        },
+        danger: {
+            default: "bg-[#CA3521] text-[#FFFFFF]",
+            hover: "hover:bg-[#AE2A19]",
+            active: "active:bg-[#601E16]",
+            disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
+        },
     };
 
-    const widthContainer = `inline-flex justify-center ${
-        fullWidth ? "w-full" : ""
-    }`;
+    // Inserción de estilos
+    const buttonStyles = [
+        "font-medium",
+        "py-2",
+        "px-2",
+        "rounded-md",
+        "inline-flex justify-center",
+        fullWidth ? "w-full" : "",
+        !isDisabled
+            ? appearances[appearance].default
+            : appearances[appearance].disabled,
+        !isDisabled && `${appearances[appearance].hover}`,
+        !isDisabled && `${appearances[appearance].active}`,
+        className,
+    ];
 
     const buttonContent = isLoading ? (
         <div className="flex justify-center items-center">
@@ -60,7 +104,7 @@ function Button({
 
     const button = (
         <button
-            className={`${appearances[appearance]} font-medium py-2 px-2 rounded-md ${widthContainer} ${className}`}
+            className={buttonStyles.join(" ")}
             type={buttonType}
             onClick={handleClick}
             disabled={isDisabled}
@@ -74,7 +118,13 @@ function Button({
         </button>
     );
 
-    return href && !isDisabled ? <Link href={href}>{button}</Link> : button;
+    return href && !isDisabled ? (
+        <Link className={fullWidth ? "w-full" : ""} href={href}>
+            {button}
+        </Link>
+    ) : (
+        button
+    );
 }
 
 export default Button;

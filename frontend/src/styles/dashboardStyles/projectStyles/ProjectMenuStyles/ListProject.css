@@ -2,17 +2,28 @@
 
     border-radius: 10px;
     background: #FFF;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     
-    width: 25rem;
-    height: 12rem;
+    
+    width: 23rem;
+    height: 15rem;
     flex-shrink: 0;
     margin: 1rem 3rem;
+
+    
+    border-radius: 16px;
+    overflow: hidden;
+	
+}
+
+.ProjectCard{
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
 }
 
 .ProjectCard:hover{
 
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
+    background: #aef3f8d9;
+    transform: scale(1.05);
     cursor: pointer;
 }
 
@@ -22,6 +33,7 @@
     padding: 10px 10px 5px 30px;
     font-weight: 600;
     font-style: normal;
+    margin-top: 1rem;
 }
 
 .divPictures{
@@ -29,7 +41,7 @@
     display: grid;
     gap: 8px;
     grid-template-columns: repeat(auto-fill, minmax(50px,1fr));
-    margin: 1rem 2rem;
+    margin: 0.5rem 2rem;
 
 }
 
@@ -37,4 +49,47 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3rem;
+    margin: 2vh auto;
+    
 }
+.cardDates{
+    margin-left: 2rem;
+    color: #767676;
+    font-family: Montserrat;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 2rem; /* 177.778% */
+}
+
+.memberProfilePicture{
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 5px;
+
+
+}
+
+.teamTag{
+    margin-top: 1rem;
+    margin-left: 2rem;
+
+    border-radius: 5px;
+    background-color:#8DFFA6;
+    width: 14rem;
+    height: 2.2rem;
+    display: inline-block;
+    padding: 5px 5px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.teamTag p {
+    font-size: 14px;
+    margin: 0;
+    color: black;
+  }
