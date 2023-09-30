@@ -39,7 +39,7 @@
 .divPictures{
     list-style: none;
     display: grid;
-    gap: 8px;
+    gap: 0px;
     grid-template-columns: repeat(auto-fill, minmax(50px,1fr));
     margin: 0.5rem 2rem;
 
@@ -80,8 +80,8 @@
 
     border-radius: 5px;
     background-color:#8DFFA6;
-    width: 14rem;
-    height: 2.2rem;
+    width: 12rem;
+    height: 2rem;
     display: inline-block;
     padding: 5px 5px;
     border-radius: 4px;
@@ -92,4 +92,8 @@
     font-size: 14px;
     margin: 0;
     color: black;
+    font-style: normal;
+    font-weight: 600;
+    text-align: center;
+    font-family: Montserrat;
   }

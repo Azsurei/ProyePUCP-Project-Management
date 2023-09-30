@@ -137,13 +137,13 @@ export default function newProject() {
             </div>
 
             <div className="trackerBar">
-                <TracerNewProject items={items3}></TracerNewProject>
+                <TracerNewProject items={items}></TracerNewProject>
             </div>
 
             <div className="containerInfoBox">
                 <div className="infoBox">
 
-				<CardCreateProject></CardCreateProject>
+				<ListTools></ListTools>
 
                 </div>
                 <div className="buttonContainer" onClick={handleNextLevel}>
