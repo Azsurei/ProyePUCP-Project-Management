@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
 import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
-export default function Project(props) {
+export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
