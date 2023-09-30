@@ -10,9 +10,9 @@ function CardSelectTools(props) {
     return (
 
         
-        <div>
+        <li className="ToolCard" onClick={props.onClick}>
 
-            <div className="divToolName">
+            
                 <p className="titleTool">
                 {props.name}
                 </p>
@@ -22,10 +22,10 @@ function CardSelectTools(props) {
                     {props.description}
                     </p>    
                 </div>    
-            </div>
+
             
 
-        </div>
+        </li>
     
     )
 }
@@ -64,12 +64,10 @@ export default function ListTools(props){
 
 
     return(
-
-        <div className="ListTools">
-
-        <h2 className="projectNametxt">Seleccione las herramientas</h2>
-
-            <ul>
+        
+        <ul className="ListToolsUl">
+            
+            
             {listTools.map((component)=>{
                 return (
                     <CardSelectTools key={component.id} 
@@ -79,10 +77,10 @@ export default function ListTools(props){
                 </CardSelectTools>
                 );
             })} 
-            </ul>
+            
 
 
-        </div>
+        </ul>
 
     );
 }
