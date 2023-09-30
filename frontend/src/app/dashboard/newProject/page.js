@@ -145,7 +145,7 @@ export default function newProject() {
                 
 
                 
-				<ListTools></ListTools>
+				<CardCreateProject></CardCreateProject>
 
                 </div>
                 <div className="buttonContainer" onClick={handleNextLevel}>
