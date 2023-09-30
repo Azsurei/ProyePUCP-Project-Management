@@ -14,7 +14,7 @@ const getCurrentDateFormatted = () => {
   return `${year}-${month}-${day}`;
 };
 
-const TimePicker = () => (
+const DatePicker1 = () => (
   <>
     
     <DatePicker
@@ -30,4 +30,4 @@ const TimePicker = () => (
   </>
 );
 
-export default TimePicker;
+export default DatePicker1;
