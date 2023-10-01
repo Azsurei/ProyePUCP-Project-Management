@@ -43,8 +43,8 @@
 
 
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #HeaderIconGoBack{
-    width: 100%;
-    height: 100%;
+    width: 25px;
+    height: 25px;
     object-fit: contain;
     border-radius: 100%;
     background-color: transparent;

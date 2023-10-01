@@ -179,7 +179,7 @@ function ProjectSidebar(props) {
                 <div className="btnOpenSidebar" onClick={handleButtonClick}>
                     <div className={`triangle ${isTriangleBlue ? 'triangle-blue' : ''}`}></div>
                 </div>
-                <p className="header">{props.projectName}</p>
+                <p className="SidebarHeader">{props.projectName}</p>
                 <p className="dates">13/09/2023  -  20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
                     <p className="teamHeader">Equipo:</p>
