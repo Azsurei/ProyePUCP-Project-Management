@@ -37,7 +37,7 @@ function fullyRestructureArray(arregloOriginal){
 }
 
 
-routerEDT.get("/:idProyecto/listarEDT", async (req, res) => {
+routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
     console.log("Llegue a recibir solicitud listar componentes EDT");
 
     const { tokenProyePUCP } = req.cookies;
