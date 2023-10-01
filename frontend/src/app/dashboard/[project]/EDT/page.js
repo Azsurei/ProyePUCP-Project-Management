@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -7,8 +7,8 @@ import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 axios.defaults.withCredentials = true;
-
 
 const componentsDataFirstNode = [
     {
@@ -78,35 +78,42 @@ export default function EDT(props) {
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    
+    const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
-    
-    useEffect(()=>{
-        const stringURL = "http://localhost:8080/api/EDT/" + projectId + "/listarEDT";
+
+    useEffect(() => {
+        const stringURL =
+            "http://localhost:8080/api/EDT/" + projectId + "/listarEDT";
 
         axios
             .get(stringURL)
             .then(function (response) {
                 let componentsArray = response.data.componentes;
-                
+
                 console.log(componentsArray);
                 setListComps(componentsArray);
-
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
 
+    const handleScreenChange = () => {
+        if (screenState === 1) {
+            setScreenState(2);
+        } else {
+            setScreenState(1);
+        }
+    };
 
     //#######################################################
-
-
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <div className="EDT">
-            <HeaderWithButtons
+            {/*Encerrar todo esto en un componente, y tambien el EDTNew, de tal manera que pueda compartir la info en una misma pagina*/}
+
+            {/* <HeaderWithButtons
                 haveReturn={false}
                 haveAddNew={true}
                 hrefToReturn={""}
@@ -130,14 +137,16 @@ export default function EDT(props) {
             <ListElementsEDT
                 listData={ListComps}
                 initialMargin={0}
-            ></ListElementsEDT>
+            ></ListElementsEDT> */}
+
+            {screenState===1 && <EDTVisualization
+                projectName={projectName}
+                projectId={projectId}
+                ListComps={ListComps}
+                handlerAddNew={handleScreenChange}
+            ></EDTVisualization>}
+
+            {screenState===2 && <div>hola funciona porfavor</div>}
         </div>
     );
 }
-
-
-
-
-
-
-
