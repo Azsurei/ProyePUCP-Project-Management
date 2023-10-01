@@ -32,13 +32,9 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 const routerAuth = require('./routes/auth').routerAuth;
 const routerProyecto = require('./routes/proyecto').routerProyecto;
-const routerEDT = require('./routes/EDT').routerEDT;
-const routerHerramientas = require('./routes/herramientas').routerHerramientas;
 
 app.use('/api/auth',routerAuth);
 app.use('/api/proyecto',routerProyecto);
-app.use('/api/EDT',routerEDT);
-app.use('/api/herramientas',routerHerramientas);
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
