@@ -4,9 +4,9 @@ import ListElementsEDT from "./ListElementsEDT";
 export default function EDTVisualization({projectName,projectId, ListComps, handlerAddNew}) {
 
     return (
-        <>
+        <div className="EDT">
             <HeaderWithButtonsSamePage
-                haveReturn={false}
+                haveReturn={true}
                 haveAddNew={true}
                 handlerAddNew={handlerAddNew}
                 breadcrump={"Inicio / Proyectos / Proyect X"}
@@ -23,6 +23,6 @@ export default function EDTVisualization({projectName,projectId, ListComps, hand
                 listData={ListComps}
                 initialMargin={0}
             ></ListElementsEDT>
-        </>
+        </div>
     );
 }

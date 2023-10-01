@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
+import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 axios.defaults.withCredentials = true;
 
 const componentsDataFirstNode = [
@@ -110,43 +111,23 @@ export default function EDT(props) {
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
-        <div className="EDT">
-            {/*Encerrar todo esto en un componente, y tambien el EDTNew, de tal manera que pueda compartir la info en una misma pagina*/}
+        <>
+            {screenState === 2 && (
+                <EDTVisualization
+                    projectName={projectName}
+                    projectId={projectId}
+                    ListComps={ListComps}
+                    handlerAddNew={handleScreenChange}
+                ></EDTVisualization>
+            )}
 
-            {/* <HeaderWithButtons
-                haveReturn={false}
-                haveAddNew={true}
-                hrefToReturn={""}
-                hrefForButton={
-                    "/dashboard/" +
-                    projectName +
-                    "=" +
-                    projectId +
-                    "/EDT/EDTNew"
-                }
-                breadcrump={"Inicio / Proyectos / Proyect X"}
-                btnText={"Agregar nueva fase"}
-            >
-                EDT y diccionario EDT
-            </HeaderWithButtons>
-            <div className="componentSearchContainer">
-                <input type="text" />
-                <button>Buscar</button>
-            </div>
-
-            <ListElementsEDT
-                listData={ListComps}
-                initialMargin={0}
-            ></ListElementsEDT> */}
-
-            {screenState===1 && <EDTVisualization
-                projectName={projectName}
-                projectId={projectId}
-                ListComps={ListComps}
-                handlerAddNew={handleScreenChange}
-            ></EDTVisualization>}
-
-            {screenState===2 && <div>hola funciona porfavor</div>}
-        </div>
+            {screenState === 1 && (
+                <EDTNewVisualization
+                    projectName={projectName}
+                    projectId={projectId}
+                    handlerReturn={handleScreenChange}
+                ></EDTNewVisualization>
+            )}
+        </>
     );
 }
