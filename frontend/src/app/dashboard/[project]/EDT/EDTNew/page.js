@@ -2,6 +2,8 @@
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
+import DatePicker1 from "@/components/DatePicker1";
+import { DatePicker } from '@atlaskit/datetime-picker';
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 import { useState } from "react";
 
@@ -31,6 +33,11 @@ export default function EDTNew(props) {
 
     //Variables para input
     const [inComponentName,setInComponentName] = useState('');
+    const [inTipoComponente,setInTipoComponente] = useState('');
+    //const [inPosicionComponente, setInPosicionComponente] = useState(''); QUEDA PENDIENTE A FUTURO QUE SEA EDITABLE
+    const [inFechaInicio, setInFechaInicio] = useState('');
+    const [inFechaFin, setInFechaFin] = useState('');
+    
     const [inDescripcion  ,setInDescripcion] = useState('');
     const [inRecursos, setInRecursos] = useState('');
     const [inHito, setInHito] = useState('');
@@ -44,7 +51,7 @@ export default function EDTNew(props) {
 
 
     const handleAddEntregable = ()=>{
-        const newList = [
+        const newList =  [
             ...listEntregables, 
             {
             index: listEntregables.length + 1,
@@ -63,6 +70,11 @@ export default function EDTNew(props) {
             }
         ];
         setListCriterios(newLista);
+    }
+
+    const handleChangeFechaInicio = (date) => {
+        console.log(date);
+        setInFechaInicio(date);
     }
 
 
@@ -96,9 +108,16 @@ export default function EDTNew(props) {
                     </div>
                     <div className="FirstRightCont">
                         <p>Fecha de inicio</p>
-                        <input></input>
+                        <DatePicker
+                            locale={'es-PE'}
+                            dateFormat="DD-MM-YYYY"
+                            /*defaultValue={getCurrentDateFormatted()}*/
+                            //placeholder={getCurrentDateFormatted()}
+                            onChange={handleChangeFechaInicio}
+                            selectProps={{inputId: 'default-date-picker-example',}}
+                        />
                         <p>Fecha de fin</p>
-                        <input></input>
+                        <DatePicker1></DatePicker1>
                         <p>Responsables</p>
                         <input></input>
                     </div>

@@ -4,14 +4,15 @@
     background: #FFF;
     
     
-    width: 23rem;
-    height: 15rem;
+    width: 300px; /* Ajusta el ancho según tus necesidades */
+    height: 250px;
+    margin: 10px; /* Ajusta el margen entre los cards */
     flex-shrink: 0;
     margin: 1rem 3rem;
 
     
     border-radius: 16px;
-    overflow: hidden;
+    overflow: right;
 	
 }
 
@@ -39,7 +40,7 @@
 .divPictures{
     list-style: none;
     display: grid;
-    gap: 8px;
+    gap: 0px;
     grid-template-columns: repeat(auto-fill, minmax(50px,1fr));
     margin: 0.5rem 2rem;
 
@@ -47,12 +48,10 @@
 
 .ListProject{
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
-    align-items: flex-start;
     justify-content: center;
-    gap: 3rem;
-    margin: 2vh auto;
+    gap: 20px; /* Ajusta el espacio entre los elementos */
+    padding: 20px; /* Añade un relleno para separar del borde */
     
 }
 .cardDates{
@@ -77,11 +76,11 @@
 .teamTag{
     margin-top: 1rem;
     margin-left: 2rem;
-
+    margin-bottom: 1.3rem;
     border-radius: 5px;
     background-color:#8DFFA6;
-    width: 14rem;
-    height: 2.2rem;
+    width: 12rem;
+    height: 2rem;
     display: inline-block;
     padding: 5px 5px;
     border-radius: 4px;
@@ -92,4 +91,8 @@
     font-size: 14px;
     margin: 0;
     color: black;
+    font-style: normal;
+    font-weight: 600;
+    text-align: center;
+    font-family: Montserrat;
   }

@@ -9,7 +9,7 @@ import { useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
 
-export default function Project(props) {
+export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId= decodedUrl.charAt(decodedUrl.length-1);
     const stringURLEpics= "http://localhost:8080/api/proyecto/77/6/1/epica";

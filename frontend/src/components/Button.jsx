@@ -29,37 +29,37 @@ function Button({
 
     const appearances = {
         default: {
-            default: "bg-[#091E420F] text-[#172B4D]",
+            default: "bg-[#091E420F] text-[#172B4D] border-transparent",
             hover: "hover:bg-[#091E4224]",
             active: "active:bg-[#091E424F]",
             disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
         },
         primary: {
-            default: "bg-[#172B4D] text-[#FFFFFF]",
+            default: "bg-[#172B4D] text-[#FFFFFF] border-transparent",
             hover: "hover:bg-[#09326C]",
             active: "active:bg-[#101E35]",
             disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
         },
         secondary: {
-            default: "bg-[#F0AE19] text-[#FFFFFF]",
+            default: "bg-[#F0AE19] text-[#FFFFFF] border-transparent",
             hover: "hover:bg-[#FFC644]",
             active: "active:bg-[#DEA420]",
             disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
         },
         subtle: {
-            default: "bg-transparent text-[#172B4D]",
+            default: "bg-transparent text-[#172B4D] border-transparent",
             hover: "hover:bg-[#091E4224]",
             active: "active:bg-[#091E424F]",
             disabled: "bg-transparent text-[#9CA3AF] cursor-not-allowed",
         },
         link: {
-            default: "bg-transparent text-[#0C66E4] no-underline",
+            default: "bg-transparent text-[#0C66E4] border-transparent no-underline",
             hover: "hover:text-[#0055CC] hover:underline",
             active: "active:text-[#004BB3] active:underline",
             disabled: "bg-transparent text-[#091E424F] cursor-not-allowed",
         },
         danger: {
-            default: "bg-[#CA3521] text-[#FFFFFF]",
+            default: "bg-[#CA3521] text-[#FFFFFF] border-transparent",
             hover: "hover:bg-[#AE2A19]",
             active: "active:bg-[#601E16]",
             disabled: "bg-[#091E4208] text-[#091E424F] cursor-not-allowed",
