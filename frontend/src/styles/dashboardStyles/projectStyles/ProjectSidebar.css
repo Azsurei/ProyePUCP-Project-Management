@@ -1,5 +1,4 @@
 .DashboardProjectContainer{
-    padding-top: 123px;
     display: flex;
     height: max(auto,100%);
 }
