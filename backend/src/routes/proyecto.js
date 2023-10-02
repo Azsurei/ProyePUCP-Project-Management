@@ -7,11 +7,11 @@ const jwt = require("jsonwebtoken");
 const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
 
 
-//const routerEDT = require('./EDT').routerEDT;
+const routerEDT = require('./EDT').routerEDT;
 const routerBacklog = require('./backlog').routerBacklog;
-routerProyecto.use("/backlog",routerBacklog);
 
-//routerProyecto.use("/:idProyecto/EDT",routerEDT);
+routerProyecto.use("/backlog",routerBacklog);
+routerProyecto.use("/EDT",routerEDT);
 
 routerProyecto.post("/insertarProyecto",async(req,res)=>{
     const { tokenProyePUCP } = req.cookies;

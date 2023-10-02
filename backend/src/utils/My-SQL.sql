@@ -135,6 +135,14 @@ CREATE TABLE Proyecto(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE GrupoDeProyecto(
+	idGrupoDeProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(200),
+    codigo VARCHAR(50),
+    activo tinyint
+)
+ENGINE = InnoDB;
+
 --------------------------------------------------------
 -- Tabla intermedia
 --------------------------------------------------------
@@ -223,7 +231,6 @@ CREATE TABLE ComponenteEDT(
     idComponenteTags INT,
     descripcion VARCHAR(255),
     codigo VARCHAR(255),
-    nombreEntregable VARCHAR(255),
     observaciones VARCHAR(255),
     activo tinyint ,
     FOREIGN KEY (idElementoPadre) REFERENCES ComponenteEDT(idComponente),
@@ -231,7 +238,6 @@ CREATE TABLE ComponenteEDT(
     FOREIGN KEY (idComponenteTags) REFERENCES ComponenteTags(idComponenteTags)
 )
 ENGINE = InnoDB;
-
 
 
 CREATE TABLE ComponenteCriterioDeAceptacion(
@@ -599,6 +605,17 @@ CREATE TABLE PlantillaCampoAutoevaluacion(
 )
 ENGINE = InnoDB;
 -- -----------------------------------------------------
+-- ENTREGABLE
+-- -----------------------------------------------------
+
+CREATE TABLE Entregable(
+	idEntregable INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
 -- PROCEDURES
 -- -----------------------------------------------------
 DROP PROCEDURE IF EXISTS VERIFICAR_CUENTA_USUARIO;
@@ -794,13 +811,12 @@ CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
     IN _idEDT INT,
     IN _descripcion	VARCHAR(255),
     IN _codigo	VARCHAR(255),
-    IN _nombreEntregable VARCHAR(255),
     IN _observaciones VARCHAR(255)
 )
 BEGIN
 	DECLARE _idComponenteEDT INT;
-	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,nombreEntregable,observaciones,activo) 
-    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_nombreEntregable,_observaciones,1);
+	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,observaciones,activo) 
+    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_observaciones,1);
     SET _idComponenteEDT = @@last_insert_id;
     SELECT _idComponenteEDT AS idComponenteEDT;
 END$
@@ -844,5 +860,30 @@ WHERE hu.idEpica IN (SELECT e.idEpica FROM Epica e WHERE e.idProductBacklog =
 AND activo=1
 ORDER BY hu.idEpica;
 END$
+
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HISTORIA_DE_USUARIO(IN _idHistoriaDeUsuario INT)
+BEGIN
+	UPDATE HistoriaDeUsuario SET activo = 0 WHERE _idHistoriaDeUsuario;
+END$
+
+
+DROP PROCEDURE LISTAR_PROYECTO_Y_GRUPO_DE_PROYECTO;
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_PROYECTO_Y_GRUPO_DE_PROYECTO(IN _idProyecto INT)
+BEGIN
+	SELECT p.idProyecto, p.nombre as nombreProyecto, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, p.idGrupoDeProyecto, gp.nombre as nombreGrupoDeProyecto 
+    FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
+END$
+
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES(IN _idProyecto INT)
+BEGIN
+	SELECT p.idProyecto, p.nombre as nombreProyecto, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, p.idGrupoDeProyecto, gp.nombre as nombreGrupoDeProyecto 
+    FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
+END$
+
 
 
