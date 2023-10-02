@@ -18,26 +18,56 @@ function restructureArray(array, parentId) {
     if (children.length === 0) {
         return null;
     }
-    return children.map((child) => ({
-        ...child,
-        componentesHijos: restructureArray(array, child.idComponente),
-    }));
+    return children.map((child) => {
+        const componentesHijos = restructureArray(array, child.idComponente);
+        
+        let nextSon;
+        if (componentesHijos != null) {
+            let stringCodigo = componentesHijos[componentesHijos.length - 1].codigo;
+            const lastDigit = parseInt(stringCodigo[stringCodigo.length - 1]) + 1;
+            stringCodigo = stringCodigo.slice(0, -1) + lastDigit;
+            nextSon = stringCodigo;
+        } else {
+            nextSon = child.codigo + '.1';
+        }
+        
+        return {
+            ...child,
+            componentesHijos,
+            nextSon,
+        };
+    });
 }
-
 function fullyRestructureArray(arregloOriginal){
     const topLevelParents = arregloOriginal.filter(
         (component) => component.idElementoPadre === 1
     );
-    const restructuredArray = topLevelParents.map((parent) => ({
-        ...parent,
-        componentesHijos: restructureArray(arregloOriginal, parent.idComponente),
-    }));
+    const restructuredArray = topLevelParents.map((parent) => {
+        const componentesHijos = restructureArray(arregloOriginal, parent.idComponente);
+
+        let nextSon;
+        if (componentesHijos != null) {
+            let stringCodigo = componentesHijos[componentesHijos.length - 1].codigo;
+            const lastDigit = parseInt(stringCodigo[stringCodigo.length - 1]) + 1;
+            stringCodigo = stringCodigo.slice(0, -1) + lastDigit;
+            nextSon = stringCodigo;
+        } else {
+            nextSon = parent.codigo + '.1';
+        }
+
+        return {
+            ...parent,
+            componentesHijos,
+            nextSon,
+        };
+    });
+    
 
     return restructuredArray;
 }
 
 
-routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
+routerEDT.get("/:idEDT/listarComponentesEDT", async (req, res) => {
     console.log("Llegue a recibir solicitud listar componentes EDT");
 
     const { tokenProyePUCP } = req.cookies;
@@ -47,13 +77,13 @@ routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
         console.log(payload);
         const idUsuario = payload.user.id;
 
-        const idProyecto = req.params.idEDT;
+        const idEDT = req.params.idEDT;
 
         const query = `
-            CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);
+            CALL LISTAR_COMPONENTES_EDT_X_ID_EDT(?);
         `;
         try {
-            const [results] = await connection.query(query, [idProyecto]);
+            const [results] = await connection.query(query, [idEDT]);
             console.log(results[0]);
             const arraySent = fullyRestructureArray(results[0]);
 
@@ -72,6 +102,45 @@ routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
             console.error("Error al obtener los componentesEDT:", error);
             res.status(500).send(
                 "Error al obtener los componentesEDT: " + error.message
+            );
+        }
+    } catch (error) {
+        return res
+            .status(401)
+            .send(error.message + " invalid tokenProyePUCP token");
+    }
+});
+
+routerEDT.get("/:idProyecto/listarEDT", async (req, res) => {
+    console.log("Llegue a recibir solicitud listar EDT por proyecto");
+
+    const { tokenProyePUCP } = req.cookies;
+
+    try {
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+
+        const idProyecto = req.params.idProyecto;
+
+        const query = `
+            CALL LISTAR_EDT_X_ID_PROYECTO(?);
+        `;
+        try {
+            const [results] = await connection.query(query, [idProyecto]);
+            console.log(results[0]);
+
+            res.status(200).json({
+                EDT: results[0],
+                message: "EDT obtenido exitosamente",
+            });
+            console.log(
+                `Se han listado el EDT para el proyecto ${idProyecto}!`
+            );
+        } catch (error) {
+            console.error("Error al obtener el EDT:", error);
+            res.status(500).send(
+                "Error al obtener el EDT: " + error.message
             );
         }
     } catch (error) {
