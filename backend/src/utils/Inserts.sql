@@ -1,4 +1,4 @@
-
+INSERT INTO GrupoDeProyecto(nombre,codigo,activo) VALUES("Ingesoft","INF245",1);
 -- INSERTS ROLES
 INSERT INTO Rol(nombre,descripcion,activo) VALUES ('Jefe de Proyecto','Es el jefe de proyecto',1);
 INSERT INTO Rol(nombre,descripcion,activo) VALUES ('Supervisor','Es el supervisor',1);

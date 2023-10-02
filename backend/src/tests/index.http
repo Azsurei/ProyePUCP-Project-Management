@@ -8,3 +8,12 @@ Content-Type:  application/json
     "fechaInicio": null,
     "fechaFin": null
 }
+
+###
+
+POST http://localhost:3000/api/proyecto/backlog/hu/eliminarHistoria HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idHistoriaDeUsuario" : 1
+}

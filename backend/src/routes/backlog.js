@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 
 const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
 const routerBacklog = express.Router();
+const routerHistoriaDeUsuario = require('./historiaDeUsuario').routerHistoriaDeUsuario;
+
+routerBacklog.use("/hu",routerHistoriaDeUsuario);
 
 routerBacklog.get("/:idProyecto/listarBacklog",async(req,res)=>{
     const { tokenProyePUCP } = req.cookies;
