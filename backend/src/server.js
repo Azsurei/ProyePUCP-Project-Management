@@ -36,7 +36,6 @@ const routerEDT = require('./routes/EDT').routerEDT;
 
 app.use('/api/auth',routerAuth);
 app.use('/api/proyecto',routerProyecto);
-app.use('/api/EDT',routerEDT);
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

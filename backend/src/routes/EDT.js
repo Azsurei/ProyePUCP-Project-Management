@@ -67,7 +67,7 @@ function fullyRestructureArray(arregloOriginal){
 }
 
 
-routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
+routerEDT.get("/:idEDT/listarComponentesEDT", async (req, res) => {
     console.log("Llegue a recibir solicitud listar componentes EDT");
 
     const { tokenProyePUCP } = req.cookies;
@@ -102,6 +102,45 @@ routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
             console.error("Error al obtener los componentesEDT:", error);
             res.status(500).send(
                 "Error al obtener los componentesEDT: " + error.message
+            );
+        }
+    } catch (error) {
+        return res
+            .status(401)
+            .send(error.message + " invalid tokenProyePUCP token");
+    }
+});
+
+routerEDT.get("/:idProyecto/listarEDT", async (req, res) => {
+    console.log("Llegue a recibir solicitud listar EDT por proyecto");
+
+    const { tokenProyePUCP } = req.cookies;
+
+    try {
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+
+        const idProyecto = req.params.idProyecto;
+
+        const query = `
+            CALL LISTAR_EDT_X_ID_PROYECTO(?);
+        `;
+        try {
+            const [results] = await connection.query(query, [idProyecto]);
+            console.log(results[0]);
+
+            res.status(200).json({
+                EDT: results[0],
+                message: "EDT obtenido exitosamente",
+            });
+            console.log(
+                `Se han listado el EDT para el proyecto ${idProyecto}!`
+            );
+        } catch (error) {
+            console.error("Error al obtener el EDT:", error);
+            res.status(500).send(
+                "Error al obtener el EDT: " + error.message
             );
         }
     } catch (error) {
