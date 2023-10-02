@@ -1,14 +1,31 @@
+"use client"
+import { createContext, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListElementsEDT from "./ListElementsEDT";
 
-export default function EDTVisualization({projectName,projectId, ListComps, handlerAddNew}) {
+export const OpenMenuContext = createContext();
+
+export default function EDTVisualization({projectName,projectId, ListComps, handlerGoToNew}) {
+
+    const [openMenuId, setOpenMenuId] = useState(null);
+
+    const toggleMenu = (id) => {
+        if(openMenuId === id){
+            setOpenMenuId(null);
+            console.log('CERRANDO MENU DE ID = '+id);
+        }else{
+            setOpenMenuId(id);
+            console.log('abriendo menu de id = '+id);
+        }
+    }
 
     return (
         <div className="EDT">
             <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={true}
-                handlerAddNew={handlerAddNew}
+                handlerAddNew={handlerGoToNew}
+                newPrimarySon={ListComps.length+1}
                 breadcrump={"Inicio / Proyectos / Proyect X"}
                 btnText={"Agregar nueva fase"}
             >
@@ -19,10 +36,15 @@ export default function EDTVisualization({projectName,projectId, ListComps, hand
                 <button>Buscar</button>
             </div>
 
-            <ListElementsEDT
-                listData={ListComps}
-                initialMargin={0}
-            ></ListElementsEDT>
+
+
+            <OpenMenuContext.Provider value={{openMenuId, toggleMenu, handlerGoToNew}}>
+                <ListElementsEDT
+                    listData={ListComps}
+                    initialMargin={0}
+                ></ListElementsEDT>
+            </OpenMenuContext.Provider>
+            
         </div>
     );
 }

@@ -8,6 +8,7 @@ export default function EDTNewVisualization({
     projectName,
     projectId,
     handlerReturn,
+    codeNewComponent
 }) {
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
@@ -153,7 +154,7 @@ export default function EDTNewVisualization({
                                     alt="help"
                                 ></img>
                             </div>
-                            <input type="text"></input>
+                            <input type="text" value={codeNewComponent}></input>
                         </div>
                         <div className="FirstRightCont">
                             <p>Fecha de inicio</p>

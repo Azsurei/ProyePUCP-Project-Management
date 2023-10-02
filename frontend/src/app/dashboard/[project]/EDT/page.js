@@ -125,7 +125,7 @@ export default function EDT(props) {
                     projectName={projectName}
                     projectId={projectId}
                     ListComps={ListComps}
-                    handlerAddNew={handleScreenChange}
+                    handlerGoToNew={handleSetCompCode}
                     // setCompCode={handleSetCompCode}
                 ></EDTVisualization>
             )}
@@ -135,7 +135,7 @@ export default function EDT(props) {
                     projectName={projectName}
                     projectId={projectId}
                     handlerReturn={handleScreenChange}
-                    
+                    codeNewComponent={codeNewComponent}
                 ></EDTNewVisualization>
             )}
         </>
