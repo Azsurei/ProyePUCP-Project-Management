@@ -22,6 +22,7 @@ import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
 
 const columns = [
     { name: "Nombre", uid: "name", sortable: true},
@@ -230,6 +231,7 @@ export default function MyTemplates() {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
+                        variant='faded'
                     />
                     <div className="flex gap-3">
                         <Dropdown>
@@ -337,6 +339,15 @@ export default function MyTemplates() {
 
     return (
         <>
+            <div className="space-x-4 mb-2">
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem text={"Mis plantillas"}></BreadcrumbsItem>
+                </Breadcrumbs>
+            </div>
             <div className="flex flex-row space-x-4 mb-4">
                 <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
                     Mis plantillas
@@ -372,7 +383,10 @@ export default function MyTemplates() {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={"Sin plantillas registradas"} items={sortedItems}>
+                <TableBody
+                    emptyContent={"Sin plantillas registradas"}
+                    items={sortedItems}
+                >
                     {(item) => (
                         <TableRow key={item.id}>
                             {(columnKey) => (
