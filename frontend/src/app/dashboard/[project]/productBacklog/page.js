@@ -5,6 +5,7 @@ import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css
 import { useState, useEffect } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
+import BacklogRow from "@/components/dashboardComps/projectComps/productBacklog/BacklogRow";
 import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -62,21 +63,21 @@ export default function ProductBacklog(props) {
     const columns = [columns1, columns2, columns3, columns4, columns5, columns6];
 
     const data1 = {
-        name: 'Historia 1', 
+        descripcion: 'Historia 1', 
         epic: 'Epic 1',
         priority: 'Must',
         state: 'No iniciado'
     }
 
     const data2 = {
-        name: 'Historia 2', 
+        descripcion: 'Historia 2', 
         epic: 'Epic 2',
         priority: 'Could',
         state: 'En progreso'
     }
 
     const data3 = {
-        name: 'Historia 3', 
+        descripcion: 'Historia 3', 
         epic: 'Epic 3',
         priority: 'Could',
         state: 'En progreso'
@@ -113,7 +114,7 @@ export default function ProductBacklog(props) {
                     </div>
                 </div>
                 <div className="overflow-x-auto overflow-y-auto">
-                <TableComponent /*data={data}*/ urlApi = {stringURL} columns={columns} toggleModal={toggleModal} /> {/* Pasa toggleModal como prop al componente TableComponent */}
+                <TableComponent data={data} /*urlApi = {stringURL}*/ columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/> {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
                 
             </div>
@@ -121,7 +122,7 @@ export default function ProductBacklog(props) {
                 <PopUpEliminateHU
                     modal = {modal} 
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
-                    taskName={selectedTask.name}
+                    taskName={selectedTask.descripcion}
                 />
             )}
             

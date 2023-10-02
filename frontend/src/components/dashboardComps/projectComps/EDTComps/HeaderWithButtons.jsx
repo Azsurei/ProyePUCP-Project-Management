@@ -3,7 +3,7 @@ import ButtonAddNew from "./ButtonAddNew";
 import Link from "next/link";
 
 
-export default function HeaderWithButtons(props,){
+export default function HeaderWithButtons(props){
     return(
         <div id="HeaderWithButtons">
             <p id="HeaderBreadcrumb">{props.breadcrump}</p>

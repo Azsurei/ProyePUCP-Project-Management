@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation';
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
-function TableComponent({ urlApi , columns, toggleModal}) {
+function TableComponent({ /*urlApi*/ data , columns, toggleModal, rowComponent}) {
 
-    const [data, setData] = useState([]);
+    //const [data, setData] = useState([]);
 
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchData = async () => {
           try {
             // Realiza la solicitud HTTP al endpoint del router
@@ -25,7 +25,7 @@ function TableComponent({ urlApi , columns, toggleModal}) {
         };
     
         fetchData();
-      }, []);
+      }, []);*/
   return (
     <div className="tableBacklog overflow-x-auto  rounded-lg shadow w-100">
                     <table className="table table-hover min-w-full">
@@ -47,7 +47,7 @@ function TableComponent({ urlApi , columns, toggleModal}) {
                     </thead>
                     <tbody>
                         {data.map((hu, index) => (
-                        <tr key={index} className="bg-gray-50 border-t">
+                        /*<tr key={index} className="bg-gray-50 border-t">
                             <td className="px-4 py-2 text-xl text-gray-700 whitespace-nowrap ">{hu.descripcion}</td>
                             <td className="px-4 py-2 text-xl text-gray-700 whitespace-nowrap ">{hu.epic}</td>
                             <td className=" px-4 py-2 text-lg text-gray-700 whitespace-nowrap ">
@@ -67,7 +67,8 @@ function TableComponent({ urlApi , columns, toggleModal}) {
                                
                             </td>
                             
-                        </tr>
+                        </tr>*/
+                        React.createElement(rowComponent, { key: index, hu, toggleModal })
                         ))}
                     </tbody>
                     </table>
