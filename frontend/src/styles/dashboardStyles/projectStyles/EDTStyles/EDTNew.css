@@ -5,6 +5,12 @@
 
 }
 
+.EDTNew .EDTNewResponsiveContainer{
+    display: grid;
+    column-gap: 60px;
+    grid-template-columns: repeat(auto-fit, minmax(400px,1fr));
+}
+
 .EDTNew .NewEDTSection{
     display: flex;
     flex-direction: column;
@@ -50,9 +56,24 @@
     padding: 1rem 1rem;
 }
 
+.EDTNew .NewEDTSection .FirstCardContainer .FirstLeftCont p{
+    font-family: 'Montserrat';
+    color: #172B4D;
+    font-weight: 500;
+}
+
+
+
+
 .EDTNew .NewEDTSection .FirstCardContainer .FirstRightCont{
     flex: 1;
     padding: 1rem 1rem;   
+}
+
+.EDTNew .NewEDTSection .FirstCardContainer .FirstRightCont p{
+    font-family: 'Montserrat';
+    color: #172B4D;
+    font-weight: 500;
 }
 
 
@@ -75,4 +96,16 @@
     color: white;
     font-weight: 600;
     font-size: .8rem;
+}
+
+#inputBoxGeneric{
+    width: 100%;
+    overflow-y: auto;
+
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+
+    resize: none;
 }

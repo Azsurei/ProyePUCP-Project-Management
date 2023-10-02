@@ -1,7 +1,6 @@
 .DashboardProjectContainer{
-    padding-top: 123px;
     display: flex;
-    height: max(auto,100%);
+    height: 100%;
 }
 
 .ProjectSidebar{

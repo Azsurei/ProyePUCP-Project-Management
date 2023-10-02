@@ -47,7 +47,7 @@ routerEDT.get("/:idEDT/listarEDT", async (req, res) => {
         console.log(payload);
         const idUsuario = payload.user.id;
 
-        const idProyecto = req.params.idProyecto;
+        const idProyecto = req.params.idEDT;
 
         const query = `
             CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);

@@ -6,7 +6,7 @@ export default function EDTVisualization({projectName,projectId, ListComps, hand
     return (
         <div className="EDT">
             <HeaderWithButtonsSamePage
-                haveReturn={true}
+                haveReturn={false}
                 haveAddNew={true}
                 handlerAddNew={handlerAddNew}
                 breadcrump={"Inicio / Proyectos / Proyect X"}

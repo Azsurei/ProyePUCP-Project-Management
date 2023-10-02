@@ -81,6 +81,7 @@ export default function EDT(props) {
 
     const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
+    const [codeNewComponent, setCodeNewComponent] = useState('');
 
     useEffect(() => {
         const stringURL =
@@ -107,25 +108,34 @@ export default function EDT(props) {
         }
     };
 
+    const handleSetCompCode = (newCode) => {
+        setCodeNewComponent(newCode);
+        setScreenState(2);
+        console.log(newCode)
+    }
+
+
     //#######################################################
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <>
-            {screenState === 2 && (
+            {screenState === 1 && (
                 <EDTVisualization
                     projectName={projectName}
                     projectId={projectId}
                     ListComps={ListComps}
                     handlerAddNew={handleScreenChange}
+                    // setCompCode={handleSetCompCode}
                 ></EDTVisualization>
             )}
 
-            {screenState === 1 && (
+            {screenState === 2 && (
                 <EDTNewVisualization
                     projectName={projectName}
                     projectId={projectId}
                     handlerReturn={handleScreenChange}
+                    
                 ></EDTNewVisualization>
             )}
         </>
