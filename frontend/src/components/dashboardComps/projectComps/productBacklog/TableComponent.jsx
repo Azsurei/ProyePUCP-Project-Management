@@ -27,7 +27,7 @@ function TableComponent({ /*urlApi*/ data , columns, toggleModal, rowComponent})
         fetchData();
       }, []);*/
   return (
-    <div className="tableBacklog overflow-x-auto  rounded-lg shadow w-100">
+    <div className="tableBacklog overflow-x-auto  overflow-y-auto rounded-lg shadow w-100 sm:max-h-[300px] md:max-h-[400px] lg:max-h-[600px]">
                     <table className="table table-hover min-w-full">
                     
                     <thead className="bg-blue-300 border-b-2 border-gray-200">

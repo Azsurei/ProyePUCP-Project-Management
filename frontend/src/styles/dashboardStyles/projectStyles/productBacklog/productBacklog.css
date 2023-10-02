@@ -21,7 +21,7 @@
     width: 100%;
     height: 95%;
     display: grid;
-    grid-template-rows: 1fr 1fr 7fr;
+    grid-template-rows: 0.4fr 0.4fr 4fr;
 }
 
 .titleBacklog{
@@ -50,6 +50,7 @@
     width: 20%;
     display: flex;
     justify-content: flex-end;
+    gap: 7.5%
 }
 
 .btnBacklog{

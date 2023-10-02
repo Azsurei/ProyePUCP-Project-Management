@@ -7,6 +7,7 @@ import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
 import BacklogRow from "@/components/dashboardComps/projectComps/productBacklog/BacklogRow";
 import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
+import { data } from "autoprefixer";
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
@@ -60,6 +61,7 @@ export default function ProductBacklog(props) {
         className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left ',
     }
 
+
     const columns = [columns1, columns2, columns3, columns4, columns5, columns6];
 
     const data1 = {
@@ -83,7 +85,89 @@ export default function ProductBacklog(props) {
         state: 'En progreso'
     }
 
-    const data = [data1, data2, data3];
+    const data4 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data5 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data6 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+    const data7 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+    const data8 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+    const data9 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data10 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data11 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data12 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data13 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data14 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+    const data15 = {
+        descripcion: 'Historia 3', 
+        epic: 'Epic 3',
+        priority: 'Could',
+        state: 'En progreso'
+    }
+
+
+    const data = [data1, data2, data3,data4,data5,data6,data7,data8, data9, data10, data11, data12, data13, data14, data15];
 
     //const [datas, setDatas] = useState([]);
 
@@ -98,22 +182,22 @@ export default function ProductBacklog(props) {
                 <div className="navigationBacklog">
                     <div className="navigationBacklogIzquierda">
                         <Link href="#tableroKanban">
-                            <button className="btnBacklog" type="button">Tablero Kanban</button>
+                            <button className="btnBacklog sm:w-1 sm:h-1" type="button">Tablero Kanban</button>
                         </Link>
                         <Link href="#sprintBacklog">
-                            <button className="btnBacklog" type="button">Sprint Backlog</button>
+                            <button className="btnBacklog sm:w-1 sm:h-1" type="button">Sprint Backlog</button>
                         </Link>
                         <Link href="#productBacklog">
-                            <button className="btnBacklogPrimary" type="button">Product Backlog</button>
+                            <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Product Backlog</button>
                         </Link>
                     </div>
                     <div className="navigationBacklogDerecha">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/registerPB"}>
-                            <button className="btnBacklogPrimary" type="button">Añadir elemento</button>
+                            <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Añadir elemento</button>
                         </Link>
                     </div>
                 </div>
-                <div className="overflow-x-auto overflow-y-auto">
+                <div>
                 <TableComponent data={data} /*urlApi = {stringURL}*/ columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/> {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
                 
