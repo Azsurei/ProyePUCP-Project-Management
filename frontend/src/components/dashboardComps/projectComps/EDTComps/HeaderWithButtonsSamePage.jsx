@@ -16,7 +16,7 @@ export default function HeaderWithButtonsSamePage(props){
                     }
                 </div>
                 {props.haveAddNew &&
-                    <button onClick={props.handlerAddNew} className="ButtonAddNew">{props.btnText}</button>
+                    <button onClick={()=>props.handlerAddNew(props.newPrimarySon)} className="ButtonAddNew">{props.btnText}</button>
                 }
             </div>
         </div>
