@@ -81,6 +81,7 @@ export default function EDT(props) {
 
     const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
+    const [codeNewComponent, setCodeNewComponent] = useState('');
 
     useEffect(() => {
         const stringURL =
@@ -107,6 +108,13 @@ export default function EDT(props) {
         }
     };
 
+    const handleSetCompCode = (newCode) => {
+        setCodeNewComponent(newCode);
+        setScreenState(2);
+        console.log(newCode)
+    }
+
+
     //#######################################################
 
     return (
@@ -118,6 +126,7 @@ export default function EDT(props) {
                     projectId={projectId}
                     ListComps={ListComps}
                     handlerAddNew={handleScreenChange}
+                    // setCompCode={handleSetCompCode}
                 ></EDTVisualization>
             )}
 
@@ -126,6 +135,7 @@ export default function EDT(props) {
                     projectName={projectName}
                     projectId={projectId}
                     handlerReturn={handleScreenChange}
+                    
                 ></EDTNewVisualization>
             )}
         </>
