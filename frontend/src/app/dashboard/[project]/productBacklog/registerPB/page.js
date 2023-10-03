@@ -9,48 +9,145 @@ import { useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
 
+function getCurrentDate() {
+    const fecha = new Date();
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+}
+
 export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId= decodedUrl.charAt(decodedUrl.length-1);
     const stringURLEpics= "http://localhost:3000/api/proyecto/backlog/1/listarEpicas";
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
+    const [selectedValueEpic, setSelectedValueEpic] = useState(null);
+    const [selectedValuePriority, setSelectedValuePriority] = useState(null);
+    const [selectedValueState, setSelectedValueState] = useState(null);
+    const currentDate=getCurrentDate();
+    const [scenarioFields, setScenarioFields] = useState([{ scenario: '', dadoQue: '', cuando: '', entonces: '' }]);
+    const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
+
 
     function addContainer(){
         setQuantity(quantity+1);
+        setScenarioFields((prevFields) => [
+            ...prevFields,
+            {
+              scenario: '',
+              dadoQue: '',
+              cuando: '',
+              entonces: '',
+            }
+          ]);
     }
 
     function addContainer1(){
         setQuantity1(quantity1+1);
+        setRequirementFields([...requirementFields, { requirement: '' }]);
     }
 
-    function removeContainer(){
-        setQuantity(quantity-1);
-    }
+    function removeContainer() {
+        setQuantity(quantity - 1);
+        setScenarioFields((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields.pop(); // Eliminar el último elemento del arreglo
+            return updatedFields;
+        });
+      }
 
     function removeContainer1(){
         setQuantity1(quantity1-1);
+        setRequirementFields((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields.pop(); // Eliminar el último elemento del arreglo
+            return updatedFields;
+        });
     }
+    const handleSelectedValueChangeEpic = (value) => {
+        setSelectedValueEpic(value);
+    };
+
+    const handleSelectedValueChangePriority = (value) => {
+        setSelectedValuePriority(value);
+    };
+
+    const handleSelectedValueChangeState = (value) => {
+        setSelectedValueState(value);
+    };
+
+    const onUpdateScenario = (index, field, value) => {
+        setScenarioFields((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index-1][field] = value;
+            return updatedFields;
+        });
+      };
+    
+    const updateRequirementField = (index, value) => {
+        setRequirementFields((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index-1].requirement = value;
+            return updatedFields;
+        });
+    };
+
+    const onSubmit=(e)=>{
+        e.preventDefault();
+        const idEpic=selectedValueEpic;
+        const idPriority=selectedValuePriority;
+        const idState=selectedValueState;
+        const name=e.target.customPlaceholderInput9.value;
+        const como=e.target.customPlaceholderInput1.value;
+        const quiero=e.target.customPlaceholderInput2.value;
+        const para=e.target.customPlaceholderInput3.value;
+        const postData = {
+            idEpic,
+            idPriority,
+            idState,
+            name,
+            como,
+            quiero,
+            para,
+            currentDate,
+            scenarioData,
+            requirementData,
+        };
+
+        axios.post("URL_DE_TU_API", postData)
+        .then((response) => {
+          // Manejar la respuesta de la solicitud POST
+          console.log("Respuesta del servidor:", response.data);
+          console.log("Registro correcto")
+          // Realizar acciones adicionales si es necesario
+        })
+        .catch((error) => {
+          // Manejar errores si la solicitud POST falla
+          console.error("Error al realizar la solicitud POST:", error);
+        });
+    };
 
     return(
-        <div className="container">
-            <div className="header">
+        <form onSubmit={onSubmit}  className="containerRegisterPB">
+            <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog / Registrar elemento
             </div>
-            <div className="backlog">
-                <div className="titleBacklog">Registrar nuevo elemento en el Backlog</div>
+            <div className="backlogRegisterPB">
+                <div className="titleBacklogRegisterPB">Registrar nuevo elemento en el Backlog</div>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false}/>
+                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica"/>
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
-                        <div className="dateOfCreation">28/09/2023</div>
+                        <div className="dateOfCreation">{currentDate}</div>
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB"/>
+                        <MyCombobox urlApi="/api/proyecto/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB" onSelect={handleSelectedValueChangePriority} idParam="idHistoriaPrioridad"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
@@ -58,7 +155,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion"/>
+                        <MyCombobox urlApi="/api/proyecto/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
                     </div>
                 </div>
                 <div className="description">
@@ -74,12 +171,12 @@ export default function ProductBacklogRegister(props) {
                         <h4>Criterios de aceptación</h4>
                     </div>
                     {Array.from({ length: quantity }, (_, index) => (
-                        <ContainerScenario key={index} indice={index+1}/>
+                        <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
                     ))}
                     <div className="twoButtons">
                         <div className="buttonContainer">
-                            <button onClick={addContainer} className="buttonTitle">Agregar</button>
-                            <button onClick={removeContainer} className="buttonTitle">Eliminar</button>
+                            <button onClick={addContainer} className="buttonTitle" type="button">Agregar</button>
+                            <button onClick={removeContainer} className="buttonTitle" type="button">Eliminar</button>
                         </div>
                     </div>
                 </div>
@@ -88,12 +185,12 @@ export default function ProductBacklogRegister(props) {
                         <h4>Requerimientos funcionales</h4>
                     </div>
                     {Array.from({ length: quantity1 }, (_, index) => (
-                        <ContainerRequirement key={index} indice={index+1}/>
+                        <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
                     ))}
                     <div className="twoButtons">
                         <div className="buttonContainer">
-                            <button onClick={addContainer1} className="buttonTitle">Agregar</button>
-                            <button onClick={removeContainer1} className="buttonTitle">Eliminar</button>
+                            <button onClick={addContainer1} className="buttonTitle" type="button">Agregar</button>
+                            <button onClick={removeContainer1} className="buttonTitle" type="button">Eliminar</button>
                         </div>
                     </div>
                 </div>
@@ -104,12 +201,12 @@ export default function ProductBacklogRegister(props) {
                         <Link href="#cancelar">
                             <button className="btnBacklogCancel" type="button">Cancelar</button>
                         </Link>
-                        <Link href="#aceptar">
-                            <button className="btnBacklogContinue" type="button">Aceptar</button>
-                        </Link>
+                        
+                            <button className="btnBacklogContinue" type="submit">Aceptar</button>
+                        
                     </div>
                 </div>
-            </div>  
-        </div>
+            </div> 
+        </form>
     );
 }
