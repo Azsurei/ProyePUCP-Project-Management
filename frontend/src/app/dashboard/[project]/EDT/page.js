@@ -81,19 +81,19 @@ export default function EDT(props) {
 
     const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
-    const [codeNewComponent, setCodeNewComponent] = useState('');
+    const [codeNewComponent, setCodeNewComponent] = useState("");
 
     useEffect(() => {
         const stringURL =
-            "http://localhost:8080/api/EDT/" + projectId + "/listarEDT";
+            "http://localhost:8080/api/proyecto/EDT/" + projectId + "/listarComponentesEDTXIdProyecto";
 
         axios
             .get(stringURL)
             .then(function (response) {
-                let componentsArray = response.data.componentes;
-
+                const componentsArray = response.data.componentesEDT;
                 console.log(componentsArray);
                 setListComps(componentsArray);
+                
             })
             .catch(function (error) {
                 console.log(error);
@@ -111,9 +111,8 @@ export default function EDT(props) {
     const handleSetCompCode = (newCode) => {
         setCodeNewComponent(newCode);
         setScreenState(2);
-        console.log(newCode)
-    }
-
+        console.log(newCode);
+    };
 
     //#######################################################
 

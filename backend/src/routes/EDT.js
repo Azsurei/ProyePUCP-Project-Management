@@ -92,7 +92,7 @@ routerEDT.get("/:idEDT/listarComponentesEDT", async (req, res) => {
 
             
             res.status(200).json({
-                componentes: arraySent,
+                componentesEDT: arraySent,
                 message: "ComponentesEDT obtenidos exitosamente",
             });
             console.log(
@@ -168,9 +168,10 @@ routerEDT.get("/:idProyecto/listarComponentesEDTXIdProyecto", async (req, res) =
         try {
             const [results] = await connection.query(query, [idProyecto]);
             console.log(results[0]);
+            const arraySent = fullyRestructureArray(results[0]);
 
             res.status(200).json({
-                componentesEDT: results[0],
+                componentesEDT: arraySent,
                 message: "Componentes EDT obtenido exitosamente",
             });
             console.log(
