@@ -72,7 +72,7 @@ function CardEDT(props){
                         }}
                     >
                         {/* Menu content */}
-                        <button style={{backgroundColor:'gray'}} onClick={()=>handlerGoToNew(props.nextSon)}>Agregar hijo</button>
+                        <button style={{backgroundColor:'gray'}} onClick={()=>handlerGoToNew(props.nextSon,props.id)}>Agregar hijo</button>
                         <button>Editar</button>
                         <button>Eliminar</button>
                     </div>

@@ -191,20 +191,21 @@ routerEDT.get("/:idProyecto/listarComponentesEDTXIdProyecto", async (req, res) =
 });
 
 routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
+    console.log("Llegue a recibir solicitud de crear un componenteEDT");
     const { tokenProyePUCP } = req.cookies;
     try{
         const payload = jwt.verify(tokenProyePUCP, secret);
         console.log(payload);
         const idUsuario = payload.user.id;
         //Insertar query aca
-        const {idElementoPadre, idEDT, descripcion, codigo, observaciones, nombre, responsables, 
+        const {idElementoPadre, idProyecto, descripcion, codigo, observaciones, nombre, responsables, 
             fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
         console.log("Llegue a recibir solicitud insertar componente edt");
         const query = `
             CALL INSERTAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?);
         `;
         try {
-            const [results] = await connection.query(query,[idElementoPadre, idEDT, descripcion, codigo, observaciones, 
+            const [results] = await connection.query(query,[idElementoPadre, idProyecto, descripcion, codigo, observaciones, 
                 nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
             const idComponenteEDT = results[0][0].idComponenteEDT;
             console.log(`Se creo el componente EDT ${idComponenteEDT}!`);
@@ -213,7 +214,7 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
                 const [criterioAceptacionRows] = await connection.execute(`
                 CALL INSERTAR_CRITERIOS_ACEPTACION(
                     ${idComponenteEDT},
-                    '${criterio}'
+                    '${criterio.data}'
                 );
                 `);
                 const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
@@ -222,7 +223,7 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
             for (const entregable of entregables) {
                 const [entregableRows] = await connection.execute(`
                 CALL INSERTAR_ENTREGABLE(
-                    '${entregable}',
+                    '${entregable.data}',
                     ${idComponenteEDT}
                 );
                 `);
