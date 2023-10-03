@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import ButtonEliminateIcon from './ButtonEliminateIcon';
 function TableComponent({ urlApi , columns, toggleModal}) {
 
     const [data, setData] = useState([]);
@@ -64,7 +65,7 @@ function TableComponent({ urlApi , columns, toggleModal}) {
                                 <IconLabel icon="/icons/eliminar.svg" className="iconElimination"/>
                                 </button>
 
-                               
+                                
                             </td>
                             
                         </tr>

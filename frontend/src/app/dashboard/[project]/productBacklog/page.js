@@ -121,7 +121,7 @@ export default function ProductBacklog(props) {
                 <PopUpEliminateHU
                     modal = {modal} 
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
-                    taskName={selectedTask.name}
+                    taskName={selectedTask.descripcion}
                 />
             )}
             
