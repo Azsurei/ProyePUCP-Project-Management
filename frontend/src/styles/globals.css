@@ -35,6 +35,10 @@ body {
     overflow-x: none;
 }
 
+body > div {
+    height: 100%;
+}
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
         monospace;
