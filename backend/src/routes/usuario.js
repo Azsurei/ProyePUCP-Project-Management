@@ -2,6 +2,9 @@ const express = require('express');
 const connection = require('../config/db');
 const routerUsuario = express.Router();
 
+const jwt = require("jsonwebtoken");
+const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
+
 routerUsuario.post("/listarUsuarios",async(req,res)=>{
     //const { tokenProyePUCP } = req.cookies;
     try{
@@ -23,6 +26,33 @@ routerUsuario.post("/listarUsuarios",async(req,res)=>{
         } catch (error) {
             console.error("Error al obtener los usuarios:", error);
             res.status(500).send("Error al obtener los usuarios: " + error.message);
+        }
+    }catch(error){
+        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+    }
+})
+
+routerUsuario.get("/verInfoUsuario",async(req,res)=>{
+    const { tokenProyePUCP } = req.cookies;
+    try{
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+
+        //Insertar query aca
+        console.log("Llegue a recibir solicitud ver informacion de tu usuario");
+        const query = `
+            CALL LISTAR_USUARIO_X_ID_USUARIO(?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idUsuario]);
+            res.status(200).json({
+                usuario: results[0],
+                message: "Info de usuario obtenida exitosamente"
+            });
+        } catch (error) {
+            console.error("Error al obtener info del usuario:", error);
+            res.status(500).send("Error al obtener info del usuario: " + error.message);
         }
     }catch(error){
         return res.status(401).send(error.message + " invalid tokenProyePUCP token");
