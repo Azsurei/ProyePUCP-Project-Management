@@ -10,6 +10,8 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 
 export default function Dashboard() {
+
+    
     return (
         <div className="mainDiv">
             <div className="headerDiv">
