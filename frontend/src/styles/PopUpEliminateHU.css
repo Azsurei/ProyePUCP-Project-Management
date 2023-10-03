@@ -94,7 +94,7 @@ body.active-modal {
     gap: 10px;
     flex-shrink: 0;
     margin-bottom: 25px;
-    
+    pointer-events: none;
 }
 
 .input-field::placeholder {
@@ -138,4 +138,5 @@ input[type="text"][readonly] {
     user-select: none;
     -webkit-user-select: none; /* Para navegadores basados en WebKit (como Safari) */
     -moz-user-select: none; /* Para navegadores basados en Mozilla (como Firefox) */
+    pointer-events: none;
   }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -7,8 +7,9 @@ import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
+import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 axios.defaults.withCredentials = true;
-
 
 const componentsDataFirstNode = [
     {
@@ -78,66 +79,65 @@ export default function EDT(props) {
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    
+    const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
-    
-    useEffect(()=>{
-        const stringURL = "http://localhost:8080/api/EDT/" + projectId + "/listarEDT";
+    const [codeNewComponent, setCodeNewComponent] = useState('');
+
+    useEffect(() => {
+        const stringURL =
+            "http://localhost:8080/api/EDT/" + projectId + "/listarEDT";
 
         axios
             .get(stringURL)
             .then(function (response) {
                 let componentsArray = response.data.componentes;
-                
+
                 console.log(componentsArray);
                 setListComps(componentsArray);
-
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
 
+    const handleScreenChange = () => {
+        if (screenState === 1) {
+            setScreenState(2);
+        } else {
+            setScreenState(1);
+        }
+    };
+
+    const handleSetCompCode = (newCode) => {
+        setCodeNewComponent(newCode);
+        setScreenState(2);
+        console.log(newCode)
+    }
+
 
     //#######################################################
 
-
-
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
-        <div className="EDT">
-            <HeaderWithButtons
-                haveReturn={false}
-                haveAddNew={true}
-                hrefToReturn={""}
-                hrefForButton={
-                    "/dashboard/" +
-                    projectName +
-                    "=" +
-                    projectId +
-                    "/EDT/EDTNew"
-                }
-                breadcrump={"Inicio / Proyectos / Proyect X"}
-                btnText={"Agregar nueva fase"}
-            >
-                EDT y diccionario EDT
-            </HeaderWithButtons>
-            <div className="componentSearchContainer">
-                <input type="text" />
-                <button>Buscar</button>
-            </div>
+        <>
+            {screenState === 1 && (
+                <EDTVisualization
+                    projectName={projectName}
+                    projectId={projectId}
+                    ListComps={ListComps}
+                    handlerGoToNew={handleSetCompCode}
+                    // setCompCode={handleSetCompCode}
+                ></EDTVisualization>
+            )}
 
-            <ListElementsEDT
-                listData={ListComps}
-                initialMargin={0}
-            ></ListElementsEDT>
-        </div>
+            {screenState === 2 && (
+                <EDTNewVisualization
+                    projectName={projectName}
+                    projectId={projectId}
+                    handlerReturn={handleScreenChange}
+                    codeNewComponent={codeNewComponent}
+                ></EDTNewVisualization>
+            )}
+        </>
     );
 }
-
-
-
-
-
-
-

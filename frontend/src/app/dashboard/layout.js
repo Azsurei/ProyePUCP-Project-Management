@@ -6,7 +6,9 @@ export default function RootLayout({ children }) {
         <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
             <DashboardNav />
             <DashboardSecondNav />
-            {children}
+            <div style={{paddingTop:'123px', height: '100%'}}>
+                {children}
+            </div>
         </div>
     );
 }

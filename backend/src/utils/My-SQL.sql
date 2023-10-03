@@ -135,6 +135,14 @@ CREATE TABLE Proyecto(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE GrupoDeProyecto(
+	idGrupoDeProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(200),
+    codigo VARCHAR(50),
+    activo tinyint
+)
+ENGINE = InnoDB;
+
 --------------------------------------------------------
 -- Tabla intermedia
 --------------------------------------------------------
@@ -222,14 +230,20 @@ CREATE TABLE ComponenteEDT(
     idEDT INT,
     descripcion VARCHAR(255),
     codigo VARCHAR(255),
-    nombreEntregable VARCHAR(255),
     observaciones VARCHAR(255),
-    activo tinyint ,
+    activo tinyint,
+    idComponenteTags INT,
+    nombre VARCHAR(100),
+    responsables VARCHAR(100),
+    fechaInicio DATE,
+    fechaFin DATE,
+    recursos VARCHAR(500),
+    hito VARCHAR(500),
     FOREIGN KEY (idElementoPadre) REFERENCES ComponenteEDT(idComponente),
-    FOREIGN KEY (idEDT) REFERENCES EDT(idEDT)
+    FOREIGN KEY (idEDT) REFERENCES EDT(idEDT),
+    FOREIGN KEY (idComponenteTags) REFERENCES ComponenteTags(idComponenteTags)
 )
 ENGINE = InnoDB;
-
 
 
 CREATE TABLE ComponenteCriterioDeAceptacion(
@@ -241,7 +255,12 @@ CREATE TABLE ComponenteCriterioDeAceptacion(
 )
 ENGINE = InnoDB;
 
-
+CREATE TABLE ComponenteTags (
+  idComponenteTags INT NOT NULL,
+  nombre VARCHAR(200) NULL,
+  colorRGB VARCHAR(45) NULL,
+  PRIMARY KEY (idComponenteTags))
+ENGINE = InnoDB;
 
 -----------------------
 -- Acta de Constitucion
@@ -592,6 +611,22 @@ CREATE TABLE PlantillaCampoAutoevaluacion(
 )
 ENGINE = InnoDB;
 -- -----------------------------------------------------
+-- ENTREGABLE
+-- -----------------------------------------------------
+CREATE TABLE Entregable (
+  idEntregable INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(500) NULL,
+  activo TINYINT NULL,
+  ComponenteEDT_idComponente INT NOT NULL,
+  INDEX fk_Entregable_ComponenteEDT1_idx (ComponenteEDT_idComponente ASC) VISIBLE,
+  CONSTRAINT fk_Entregable_ComponenteEDT1
+    FOREIGN KEY (ComponenteEDT_idComponente)
+    REFERENCES ComponenteEDT (idComponente)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
 -- PROCEDURES
 -- -----------------------------------------------------
 DROP PROCEDURE IF EXISTS VERIFICAR_CUENTA_USUARIO;
@@ -716,6 +751,13 @@ BEGIN
 	SELECT *FROM Epica p WHERE _idBacklog = p.idProductBacklog AND p.activo =1;
 END$
 
+CREATE PROCEDURE LISTAR_HISTORIAS_DE_USUARIO_X_ID_EPICA(
+	IN _idEpica INT
+)
+BEGIN
+	SELECT *FROM HistoriaDeUsuario hu WHERE _idEpica = hu.idEpica AND hu.activo =1;
+END
+
 ## VERIFICAR INSERTAR_HISTORIA_DE_USUARIO
 DELIMITER $
 CREATE PROCEDURE INSERTAR_HISTORIA_DE_USUARIO(
@@ -780,13 +822,12 @@ CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
     IN _idEDT INT,
     IN _descripcion	VARCHAR(255),
     IN _codigo	VARCHAR(255),
-    IN _nombreEntregable VARCHAR(255),
     IN _observaciones VARCHAR(255)
 )
 BEGIN
 	DECLARE _idComponenteEDT INT;
-	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,nombreEntregable,observaciones,activo) 
-    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_nombreEntregable,_observaciones,1);
+	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,observaciones,activo) 
+    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_observaciones,1);
     SET _idComponenteEDT = @@last_insert_id;
     SELECT _idComponenteEDT AS idComponenteEDT;
 END$
@@ -831,4 +872,79 @@ AND activo=1
 ORDER BY hu.idEpica;
 END$
 
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HISTORIA_DE_USUARIO(IN _idHistoriaDeUsuario INT)
+BEGIN
+	UPDATE HistoriaDeUsuario SET activo = 0 WHERE _idHistoriaDeUsuario;
+END$
+
+
+DROP PROCEDURE LISTAR_PROYECTO_Y_GRUPO_DE_PROYECTO;
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_PROYECTO_Y_GRUPO_DE_PROYECTO(IN _idProyecto INT)
+BEGIN
+	SELECT p.idProyecto, p.nombre as nombreProyecto, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, p.idGrupoDeProyecto, gp.nombre as nombreGrupoDeProyecto 
+    FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
+END$
+
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES(IN _idProyecto INT)
+BEGIN
+	SELECT p.idProyecto, p.nombre as nombreProyecto, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, p.idGrupoDeProyecto, gp.nombre as nombreGrupoDeProyecto 
+    FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
+END$
+
+-- ---------------------
+-- COMPONENTE EDT
+-- ---------------------
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
+	IN  _idElementoPadre INT,
+    IN _idEDT INT,
+    IN _descripcion	VARCHAR(255),
+    IN _codigo	VARCHAR(255),
+    IN _observaciones VARCHAR(255),
+    IN _nombre VARCHAR(100),
+    IN _responsables VARCHAR(100),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _recursos VARCHAR(500),
+    IN _hito VARCHAR(500)
+)
+BEGIN
+	DECLARE _idComponenteEDT INT;
+	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,observaciones,activo,nombre,responsables,fechaInicio,fechaFin,recursos,hito) 
+    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_observaciones,1,_nombre,_responsables,_fechaInicio,_fechaFin,_recursos,_hito);
+    SET _idComponenteEDT = @@last_insert_id;
+    SELECT _idComponenteEDT AS idComponenteEDT;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CRITERIOS_ACEPTACION(
+    IN _idComponenteEDT INT,
+    IN _descripcion	VARCHAR(255)
+)
+BEGIN
+	DECLARE _idComponenteCriterioDeAceptacion INT;
+	INSERT INTO ComponenteCriterioDeAceptacion(idComponenteEDT,descripcion,activo) 
+    VALUES(_idComponenteEDT,_descripcion,1);
+    SET _idComponenteCriterioDeAceptacion = @@last_insert_id;
+    SELECT _idComponenteCriterioDeAceptacion AS idComponenteCriterioDeAceptacion;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ENTREGABLE(
+    IN _nombre INT,
+    IN _ComponenteEDT_idComponente	VARCHAR(255)
+)
+BEGIN
+	DECLARE _idEntregable INT;
+	INSERT INTO Entregable(nombre,activo,ComponenteEDT_idComponente) 
+    VALUES(_nombre,1,_ComponenteEDT_idComponente);
+    SET _idEntregable = @@last_insert_id;
+    SELECT _idEntregable AS idEntregable;
+END$
 

@@ -2,6 +2,8 @@
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
+import DatePicker1 from "@/components/DatePicker1";
+import { DatePicker } from '@atlaskit/datetime-picker';
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 import { useState } from "react";
 
@@ -31,20 +33,62 @@ export default function EDTNew(props) {
 
     //Variables para input
     const [inComponentName,setInComponentName] = useState('');
+    const [inTipoComponente,setInTipoComponente] = useState('');
+    //const [inPosicionComponente, setInPosicionComponente] = useState(''); QUEDA PENDIENTE A FUTURO QUE SEA EDITABLE
+    const [inFechaInicio, setInFechaInicio] = useState('');
+    const [inFechaFin, setInFechaFin] = useState('');
+    
     const [inDescripcion  ,setInDescripcion] = useState('');
     const [inRecursos, setInRecursos] = useState('');
     const [inHito, setInHito] = useState('');
-    const [inObservaciones, setObservaciones] = useState('');
+    const [inObservaciones, setInObservaciones] = useState('');
     
     const [listEntregables, setListEntregables] = useState([{index: 1, data: ''}]);
     const [listCriterios, setListCriterios] = useState([{index: 1, data: ''}]);
 
 
 
+    const handleChangeComponentName = (e) => {
+        setInComponentName(e.target.value);
+    }
+
+    const handleChangeTipoComponente = (e) => {
+        //tengo que investigar como se hace en un combo box
+    }
+
+    const handleChangeFechaInicio = () => {
+        const datepickerInput = document.getElementById("datepickerInicio");
+        const selectedDate = datepickerInput.value;
+        console.log(selectedDate);
+        setInFechaInicio(selectedDate);
+    }
+
+    const handleChangeFechaFin = () => {
+        const datepickerInputF = document.getElementById("datepickerFin");
+        const selectedDateF = datepickerInputF.value;
+        console.log(selectedDateF);
+        setInFechaFin(selectedDateF);
+    }
+
+    const handleChangeDescripcion = (e) => {
+        setInDescripcion(e.target.value);
+    }
+
+    const handleChangeRecursos = (e) => {
+        setInRecursos(e.target.value);
+    }
+
+    const handleChangeHito = (e) => {
+        setInHito(e.target.value);
+    }
+
+    const handleChangeObservacines = (e) => {
+        setInObservaciones(e.target.value);
+    }
 
 
     const handleAddEntregable = ()=>{
-        const newList = [
+        const newList =  [
             ...listEntregables, 
             {
             index: listEntregables.length + 1,
@@ -84,21 +128,21 @@ export default function EDTNew(props) {
                     <div className="FirstLeftCont">
 
                         <p>Nombre del componente</p>
-                        <input type='text'></input>
+                        <input type='text' onChange={handleChangeComponentName}></input>
                         <p>Tipo de componente</p>
                         <p>FASE</p>
                         <div style={{display:'flex',flexDirection:'row'}}> 
                             <p>Posicion</p> 
                             <img src='/icons/icon-info.svg' alt='help'></img>
                         </div>
-                        <input></input>
+                        <input tpye='text' onChange={{/*</div>hand*/}}></input>
 
                     </div>
                     <div className="FirstRightCont">
                         <p>Fecha de inicio</p>
-                        <input></input>
+                        <input type="date" id="datepickerInicio" name="datepicker" onChange={handleChangeFechaInicio}></input>
                         <p>Fecha de fin</p>
-                        <input></input>
+                        <input type="date" id="datepickerFin" name="datepicker" onChange={handleChangeFechaFin}></input>
                         <p>Responsables</p>
                         <input></input>
                     </div>

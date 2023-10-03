@@ -1,10 +1,11 @@
 .DashboardProjectContainer{
     display: flex;
+    height: 100%;
 }
 
 .ProjectSidebar{
     /* Ponemos 123 porque es la suma entre heights de Navbar y SecondNavbar */
-    height: calc(100vh - 123px);
+    height: 100%;
     width: 310px;
     min-width: 0px;
     overflow: auto;
@@ -20,6 +21,7 @@
     font-family: 'Montserrat', sans-serif;
 
     transition: width 0.3s ease-in-out;
+
 }
 
 .ProjectSidebar .headerContainer{
@@ -29,7 +31,7 @@
     border-style: solid;
 }
 
-.ProjectSidebar .header{
+.ProjectSidebar .SidebarHeader{
     font-size: 2rem;
     font-weight: 600;
     color: #172B4D;

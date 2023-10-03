@@ -1,0 +1,138 @@
+.trackerBar .css-3xo77k-Text{
+
+    font-size: 18px;
+}
+
+.trackerBar .css-xrd6pn-Text{
+
+    font-size: 18px;
+}
+
+.trackerBar{
+    margin-left: -24rem;
+}
+
+.css-3cw6uz{
+    gap: 9% !important;
+}
+.css-3cw6uz.css-3cw6uz{
+    margin-top: 20px !important;
+}
+.css-1momdgt {
+    width: 15rem !important;
+}
+.css-yjqlcd-Link{
+    font-size: 18px;
+}
+
+.mainDivNewProject{
+    display: flex;
+    flex-direction: column;
+    background-color: #F5F5F5;
+    width: 100%;
+    height: 100%;
+}
+
+.infoBox{
+    flex-shrink: 0;
+    margin-top: 3vw;
+
+    width: 60vw;
+    height: 29vw;
+    border-radius: 15px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    padding: 1vh 6vh 5vh 6vh;
+    overflow: auto
+}
+
+.infoBox::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+  }
+  
+  .infoBox::-webkit-scrollbar-thumb {
+    background-color: #7a7a7a; /* Color of the scrollbar thumb */
+    border-radius: 10px; /* Rounded corners for the thumb */
+  }
+  
+  .infoBox::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Color of the scrollbar track */
+    border-radius: 10px; /* Rounded corners for the track */
+  }
+  
+
+.containerInfoBox{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+
+.divProjectNameDiv{
+    display: flex;
+    
+    justify-content: flex-start; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin-top: 3vh;
+    margin-bottom: 2vh;
+
+}
+
+.divProjectNameDiv .projectNametxt{
+
+    color: #172B4D;
+    font-family: Montserrat;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 16px; /* 106.667% */
+
+}
+
+.css-1p0odz5-Label{
+    display: none !important;
+}
+
+.myButton:hover{
+    transition: background-color 0.15s ease-in;
+    transform: scale(1.08);
+    cursor: pointer;
+}
+.buttonContainer {
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 2vw;
+  }
+
+.createProjectButtonEnd {
+    border-radius: 5px;
+    background-color: #f0ae19;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 40px;
+    width: 320px;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 21px;
+}
+
+.createProjectButtonEnd:hover {
+    background-color: #ca9415;
+    transition: background-color 0.15s ease-in;
+    transform: scale(1.04);
+    cursor: pointer;
+}
+
+.buttonContainerCreate{
+
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;
+    margin-top: 2vw;
+
+}

@@ -8,3 +8,49 @@ Content-Type:  application/json
     "fechaInicio": null,
     "fechaFin": null
 }
+
+###
+
+POST http://localhost:3000/api/proyecto/backlog/hu/eliminarHistoria HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idHistoriaDeUsuario" : 1
+}
+
+###
+
+
+POST http://localhost:3000/api/herramientas/listarHerramientas HTTP/1.1
+Content-Type:  application/json
+
+{
+}
+
+###
+
+POST http://localhost:3000/api/proyecto/EDT/3/insertarComponenteEDT HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idElementoPadre": 1,
+  "idEDT": 2,
+  "descripcion": "Component EDT description",
+  "codigo": "EDT001",
+  "observaciones": "Some observations",
+  "nombre": "EDT Example",
+  "responsables": "John Doe, Jane Smith",
+  "fechaInicio": "2023-10-10",
+  "fechaFin": "2023-11-10",
+  "recursos": "Resource 1, Resource 2",
+  "hito": "Project milestone",
+  "criterioAceptacion": [
+    "Criterio 1",
+    "Criterio 2",
+    "Criterio 3"
+  ],
+  "entregables": [
+    "Entregable 1",
+    "Entregable 2"
+  ]
+}

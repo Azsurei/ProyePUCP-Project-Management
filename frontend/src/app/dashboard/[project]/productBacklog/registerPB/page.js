@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId= decodedUrl.charAt(decodedUrl.length-1);
-    const stringURLEpics= "http://localhost:8080/api/proyecto/77/6/1/epica";
+    const stringURLEpics= "http://localhost:3000/api/proyecto/backlog/1/listarEpicas";
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
 
@@ -42,7 +42,7 @@ export default function ProductBacklogRegister(props) {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox urlApi={stringURLEpics} property="proyectos" nameDisplay="nombre" hasColor={false}/>
+                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false}/>
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
@@ -50,7 +50,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/historiasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB"/>
+                        <MyCombobox urlApi="/api/proyecto/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
@@ -58,7 +58,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/historiasEstado" property="historiasEstado" nameDisplay="descripcion"/>
+                        <MyCombobox urlApi="/api/proyecto/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion"/>
                     </div>
                 </div>
                 <div className="description">
