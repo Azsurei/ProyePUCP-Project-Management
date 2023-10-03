@@ -1,5 +1,6 @@
 const express = require('express');
 const connection = require('../config/db');
+const {verifyToken} = require('../middleware/middlewares');
 const routerUsuario = express.Router();
 
 const jwt = require("jsonwebtoken");
@@ -10,7 +11,7 @@ routerUsuario.post("/listarUsuarios",async(req,res)=>{
     try{
         //const payload = jwt.verify(tokenProyePUCP, secret);
         //console.log(payload);
-        const { nombreCorreo} = req.body;
+        const {nombreCorreo} = req.body;
         //Insertar query aca
         console.log("Llegue a recibir solicitud listar usuariosXnombreCorreo");
         const query = `
