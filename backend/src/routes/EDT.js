@@ -150,6 +150,45 @@ routerEDT.get("/:idProyecto/listarEDT", async (req, res) => {
     }
 });
 
+routerEDT.get("/:idProyecto/listarComponentesEDTXIdProyecto", async (req, res) => {
+    console.log("Llegue a recibir solicitud listar EDT por proyecto");
+
+    const { tokenProyePUCP } = req.cookies;
+
+    try {
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+
+        const idProyecto = req.params.idProyecto;
+
+        const query = `
+            CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);
+        `;
+        try {
+            const [results] = await connection.query(query, [idProyecto]);
+            console.log(results[0]);
+
+            res.status(200).json({
+                componentesEDT: results[0],
+                message: "Componentes EDT obtenido exitosamente",
+            });
+            console.log(
+                `Se han listado los componentes EDT para el proyecto ${idProyecto}!`
+            );
+        } catch (error) {
+            console.error("Error al obtener los componentes EDT:", error);
+            res.status(500).send(
+                "Error al obtener los componentes EDT: " + error.message
+            );
+        }
+    } catch (error) {
+        return res
+            .status(401)
+            .send(error.message + " invalid tokenProyePUCP token");
+    }
+});
+
 routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
     const { tokenProyePUCP } = req.cookies;
     try{
