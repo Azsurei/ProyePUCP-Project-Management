@@ -31,15 +31,15 @@
     background-color: #F5F5F5;
     width: 100%;
     height: 100%;
+
+    padding: 2.5rem 2.5rem;
 }
 
 .infoBox{
     flex-shrink: 0;
-    margin-top: 3vw;
 
     width: 60vw;
-    margin-left:14vw;
-    height: 29vw;
+    height: 100%;
     border-radius: 15px;
     background: #FFF;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -67,6 +67,8 @@
     flex-direction: row;
     justify-content: space-around; /* Center horizontally */
     align-items: center; /* Center vertically */
+    
+    padding: 1.5rem 0;
 }
 
 
@@ -134,6 +136,5 @@
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center;
-    margin-top: 2vw;
 
 }

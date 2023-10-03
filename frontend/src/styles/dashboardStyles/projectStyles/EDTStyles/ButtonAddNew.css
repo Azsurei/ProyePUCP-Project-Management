@@ -10,8 +10,10 @@
     color: white;
     transition: background-color 0.15s ease-in;
 
-    &:hover{
-        background-color: #ca9415;
-        transition: background-color 0.15s ease-in;
-    }
+    
+}
+
+.ButtonAddNew:hover{
+    background-color: #ca9415;
+    transition: background-color 0.15s ease-in;
 }

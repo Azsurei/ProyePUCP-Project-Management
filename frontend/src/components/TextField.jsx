@@ -5,6 +5,7 @@ function TextField({
     iconAfter,
     width,
     fullWidth = false,
+    handleChange,
     ...props
 }) {
     const inputWidth = width ? `${width}px` : "auto";
@@ -30,6 +31,7 @@ function TextField({
                 type="text"
                 {...props}
                 className="w-full flex-grow truncate focus:outline-none"
+                onChange={handleChange}
             />
             {iconAfter && (
                 <div className="inset-y-0 right-0 ml-2 flex items-center pointer-events-none">

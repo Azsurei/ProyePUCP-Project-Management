@@ -4,11 +4,8 @@
     background: #FFF;
     
     
-    width: 300px; /* Ajusta el ancho según tus necesidades */
+    width: 100%; /* Ajusta el ancho según tus necesidades */
     height: 250px;
-    margin: 10px; /* Ajusta el margen entre los cards */
-    flex-shrink: 0;
-    margin: 1rem 3rem;
 
     
     border-radius: 16px;
@@ -49,9 +46,13 @@
 .ListProject{
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px; /* Ajusta el espacio entre los elementos */
-    padding: 20px; /* Añade un relleno para separar del borde */
+    justify-content: flex-start;
+    margin-top: 1.8rem;
+
+    display: grid;
+    row-gap: 1.5rem;
+    column-gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit,minmax(350px,1fr));
     
 }
 .cardDates{
