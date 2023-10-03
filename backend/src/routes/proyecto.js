@@ -105,10 +105,37 @@ routerProyecto.get("/listarHistoriasPrioridad",async(req,res)=>{
             historiasPrioridad: results[0],
             message: "Historias prioridad obtenidos exitosamente"
         });
-        console.log('Si se listarion las prioridades de las historias');
+        console.log('Si se listaron las prioridades de las historias');
     } catch (error) {
         console.error("Error al obtener las historias prioridad:", error);
         res.status(500).send("Error al obtener las historias prioridad: " + error.message);
+    }
+})
+
+routerProyecto.get("/:idProyecto/listarProyectoYGrupoDeProyecto",async(req,res)=>{
+    const { tokenProyePUCP } = req.cookies;
+    try{
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        //Insertar query aca
+        const {idProyecto} = req.params;
+        console.log("Llegue a recibir solicitud listar Historias Prioridad");
+        const query = `
+            CALL LISTAR_PROYECTO_Y_GRUPO_DE_PROYECTO(?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idProyecto]);
+            res.status(200).json({
+                historiasPrioridad: results[0],
+                message: "Historias prioridad obtenidos exitosamente"
+            });
+            console.log('Si se listarion las prioridades de las historias');
+        } catch (error) {
+            console.error("Error al obtener las historias prioridad:", error);
+            res.status(500).send("Error al obtener las historias prioridad: " + error.message);
+        }
+    }catch(error){
+        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
     }
 })
 
