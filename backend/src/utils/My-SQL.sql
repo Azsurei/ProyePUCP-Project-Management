@@ -889,13 +889,21 @@ BEGIN
 END$
 
 
+DROP PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES;
+
 DELIMITER $
-CREATE PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES(IN _idProyecto INT)
+CREATE PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES(IN _idHistoriaDeUsuario INT)
 BEGIN
-	SELECT p.idProyecto, p.nombre as nombreProyecto, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, p.idGrupoDeProyecto, gp.nombre as nombreGrupoDeProyecto 
-    FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
+		SELECT hu.idHistoriaDeUsuario, hu.descripcion as descripcionHistoria, ep.idEpica, ep.nombre as nombreEpica, hp.idHistoriaPrioridad, hp.nombre, hp.RGB, he.idHistoriaEstado, he.descripcion as descripcionEstado
+        FROM HistoriaDeUsuario hu 	INNER JOIN Epica ep ON hu.idEpica = ep.idEpica	
+											INNER JOIN HistoriaPrioridad hp ON hp.idHistoriaPrioridad = hu.idHistoriaPrioridad
+                                            INNER JOIN HistoriaEstado he ON hu.idHistoriaEstado = he.idHistoriaEstado WHERE hu.activo=1;
 END$
 
+CALL LISTAR_HISTORIA_DE_USUARIO_DETALLES(1);
+
+
+CALL LISTAR_HISTORIA_DE_USUARIO_DETALLES(4);
 -- ---------------------
 -- COMPONENTE EDT
 -- ---------------------
