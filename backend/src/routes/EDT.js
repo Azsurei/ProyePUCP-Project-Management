@@ -150,4 +150,56 @@ routerEDT.get("/:idProyecto/listarEDT", async (req, res) => {
     }
 });
 
+routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
+    const { tokenProyePUCP } = req.cookies;
+    try{
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+        //Insertar query aca
+        const {idElementoPadre, idEDT, descripcion, codigo, observaciones, nombre, responsables, 
+            fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
+        console.log("Llegue a recibir solicitud insertar componente edt");
+        const query = `
+            CALL INSERTAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idElementoPadre, idEDT, descripcion, codigo, observaciones, 
+                nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
+            const idComponente = results[0][0].idComponente;
+            console.log(`Se creo el componente EDT ${idComponente}!`);
+            // Iteracion
+            for (const criterio of criterioAceptacion) {
+                await connection.execute(`
+                CALL INSERTAR_CRITERIOS_ACEPTACION(
+                    ${idComponente},
+                    '${criterio}'
+                );
+                `);
+                const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
+                console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
+            }
+            for (const entregable of entregables) {
+                await connection.execute(`
+                CALL INSERTAR_ENTREGABLE(
+                    '${entregableNombre}',
+                    ${idComponenteEDT}
+                );
+                `);
+                const idEntregable  = entregableRows[0][0].idEntregable;
+                console.log(`Se insertó el entregable: ${idEntregable}`);
+            }
+            res.status(200).json({
+                idComponente,
+                message: "Componente EDT insertado exitosamente",
+                
+            });
+        } catch (error) {
+            console.error("Error en el registro:", error);
+            res.status(500).send("Error en el registro: " + error.message);
+        }
+    }catch(error){
+        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+    }
+})
 module.exports.routerEDT = routerEDT;

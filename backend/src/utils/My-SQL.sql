@@ -228,11 +228,17 @@ CREATE TABLE ComponenteEDT(
 	idComponente INT AUTO_INCREMENT PRIMARY KEY,
     idElementoPadre INT,
     idEDT INT,
-    idComponenteTags INT,
     descripcion VARCHAR(255),
     codigo VARCHAR(255),
     observaciones VARCHAR(255),
-    activo tinyint ,
+    activo tinyint,
+    idComponenteTags INT,
+    nombre VARCHAR(100),
+    responsables VARCHAR(100),
+    fechaInicio DATE,
+    fechaFin DATE,
+    recursos VARCHAR(500),
+    hito VARCHAR(500),
     FOREIGN KEY (idElementoPadre) REFERENCES ComponenteEDT(idComponente),
     FOREIGN KEY (idEDT) REFERENCES EDT(idEDT),
     FOREIGN KEY (idComponenteTags) REFERENCES ComponenteTags(idComponenteTags)
@@ -607,12 +613,18 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- ENTREGABLE
 -- -----------------------------------------------------
-
-CREATE TABLE Entregable(
-	idEntregable INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(255),
-    activo TINYINT
-)
+CREATE TABLE Entregable (
+  idEntregable INT NOT NULL,
+  nombre VARCHAR(500) NULL,
+  activo TINYINT NULL,
+  ComponenteEDT_idComponente INT NOT NULL,
+  PRIMARY KEY (idEntregable),
+  INDEX fk_Entregable_ComponenteEDT1_idx (ComponenteEDT_idComponente ASC) VISIBLE,
+  CONSTRAINT fk_Entregable_ComponenteEDT1
+    FOREIGN KEY (ComponenteEDT_idComponente)
+    REFERENCES ComponenteEDT (idComponente)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -885,5 +897,55 @@ BEGIN
     FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
 END$
 
+-- ---------------------
+-- COMPONENTE EDT
+-- ---------------------
 
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
+	IN  _idElementoPadre INT,
+    IN _idEDT INT,
+    IN _descripcion	VARCHAR(255),
+    IN _codigo	VARCHAR(255),
+    IN _observaciones VARCHAR(255),
+    IN _nombre VARCHAR(100),
+    IN _responsables VARCHAR(100),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _recursos VARCHAR(500),
+    IN _hito VARCHAR(500)
+)
+BEGIN
+	DECLARE _idComponenteEDT INT;
+	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,observaciones,activo,nombre,responsables,fechaInicio,fechaFin,recursos,hito) 
+    VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_observaciones,1,_nombre,_responsables,_fechaInicio,_fechaFin,_recursos,_hito);
+    SET _idComponenteEDT = @@last_insert_id;
+    SELECT _idComponenteEDT AS idComponenteEDT;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CRITERIOS_ACEPTACION(
+    IN _idComponenteEDT INT,
+    IN _descripcion	VARCHAR(255)
+)
+BEGIN
+	DECLARE _idComponenteCriterioDeAceptacion INT;
+	INSERT INTO ComponenteCriterioDeAceptacion(idComponenteEDT,descripcion,activo) 
+    VALUES(_idComponenteEDT,_descripcion,1);
+    SET _idComponenteCriterioDeAceptacion = @@last_insert_id;
+    SELECT _idComponenteCriterioDeAceptacion AS idComponenteCriterioDeAceptacion;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ENTREGABLE(
+    IN _nombre INT,
+    IN _ComponenteEDT_idComponente	VARCHAR(255)
+)
+BEGIN
+	DECLARE _idEntregable INT;
+	INSERT INTO Entregable(nombre,activo,ComponenteEDT_idComponente) 
+    VALUES(_nombre,1,_ComponenteEDT_idComponente);
+    SET _idEntregable = @@last_insert_id;
+    SELECT _idEntregable AS idEntregable;
+END$
 
