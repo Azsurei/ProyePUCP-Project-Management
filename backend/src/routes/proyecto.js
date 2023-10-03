@@ -43,6 +43,35 @@ routerProyecto.post("/insertarProyecto",async(req,res)=>{
     }
 })
 
+routerProyecto.post("/insertarUsuarioXRolXProyecto",async(req,res)=>{
+    const { tokenProyePUCP } = req.cookies;
+    try{
+        const payload = jwt.verify(tokenProyePUCP, secret);
+        console.log(payload);
+        const idUsuario = payload.user.id;
+        //Insertar query aca
+        const { idRol, idProyecto} = req.body;
+        console.log("Llegue a recibir insertar usuario por rol en proyecto ");
+        const query = `
+            CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idUsuario,idRol,idProyecto]);
+            const idUsuarioXRolProyecto = results[0][0].idUsuarioXRolProyecto;
+            res.status(200).json({
+                idUsuarioXRolProyecto,
+                message: "Usuario registrado en proyecto por rol",
+            });
+            console.log(`Se creo el proyecto ${idProyecto}!`);
+        } catch (error) {
+            console.error("Error en el registro de usuario por rol en proyecto:", error);
+            res.status(500).send("Error en el registro de usuario por rol en proyecto:" + error.message);
+        }
+    }catch(error){
+        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+    }
+})
+
 routerProyecto.get("/listarProyectos",async(req,res)=>{
     console.log("Llegue a recibir solicitud listar proyecto");
     const { tokenProyePUCP } = req.cookies;
@@ -74,6 +103,36 @@ routerProyecto.get("/listarProyectos",async(req,res)=>{
     }
 })
 
+routerProyecto.post("/listarProyectosPorNombre",async(req,res)=>{
+    console.log("Llegue a recibir solicitud listar proyecto por nombre");
+    //const { tokenProyePUCP } = req.cookies;
+
+    try{
+        //const payload = jwt.verify(tokenProyePUCP, secret);
+        //console.log(payload);
+        //const idUsuario = payload.user.id;
+        const {nombre} = req.body;
+        
+        const query = `
+            CALL LISTAR_PROYECTOS_X_NOMBRE(?);
+        `;
+        try {
+            const [results] = await connection.query(query,[nombre]);
+            res.status(200).json({
+                proyectos: results[0],
+                message: "Proyectos obtenidos exitosamente"
+                
+            });
+            console.log(results[0]);
+        } catch (error) {
+            console.error("Error al obtener los proyectos:", error);
+            res.status(500).send("Error al obtener los proyectos: " + error.message);
+        }
+
+    }catch(error){
+        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+    }
+})
 
 
 routerProyecto.get("/listarHistoriasEstado",async(req,res)=>{
@@ -138,6 +197,7 @@ routerProyecto.get("/:idProyecto/listarProyectoYGrupoDeProyecto",async(req,res)=
         return res.status(401).send(error.message + " invalid tokenProyePUCP token");
     }
 })
+
 
 
 
