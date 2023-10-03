@@ -1,23 +1,32 @@
 import "@/styles/dashboardStyles/projectStyles/productBacklog/ContainerAsWantFor.css";
 
-export default function containerScenario({indice}){
+export default function ContainerScenario({indice,onUpdateScenario}){
+    const inputId1 = `customPlaceholderScenarioInput1-${indice}`;
+    const inputId2 = `customPlaceholderScenarioInput2-${indice}`;
+    const inputId3 = `customPlaceholderScenarioInput3-${indice}`;
+    const inputId4 = `customPlaceholderScenarioInput4-${indice}`;
+
+    const handleInputChange = (field, value) => {
+        onUpdateScenario(indice, field, value);
+    };
+
     return (
         <div className="containerDescription" >
             <div className="customInput">
-                <label for="customPlaceholderInput1" className="placeholderLabel">{`Escenario ${indice}:`}</label>
-                <input type="text" id="customPlaceholderInput1" className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="50"/>
+                <label htmlFor={inputId1} className="placeholderLabel">{`Escenario ${indice}:`}</label>
+                <input type="text" id={inputId1}  className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="50" onChange={(e)=>handleInputChange('scenario',e.target.value)}/>
             </div>
             <div className="customInput">
-                <label for="customPlaceholderInput3" className="placeholderLabel">Dado que...</label>
-                <textarea rows="2" id="customPlaceholderInput3" className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="150"/>
+                <label htmlFor={inputId2}  className="placeholderLabel">Dado que...</label>
+                <textarea rows="2" id={inputId2}  className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="150" onChange={(e)=>handleInputChange('dadoQue',e.target.value)}/>
             </div>
             <div className="customInput">
-                <label for="customPlaceholderInput3" className="placeholderLabel">Cuando...</label>
-                <textarea rows="2" id="customPlaceholderInput3" className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="150"/>
+                <label htmlFor={inputId3} className="placeholderLabel">Cuando...</label>
+                <textarea rows="2" id={inputId3} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="150" onChange={(e)=>handleInputChange('cuando',e.target.value)}/>
             </div>
             <div className="customInput">
-                <label for="customPlaceholderInput3" className="placeholderLabel">Entonces...</label>
-                <textarea rows="3" id="customPlaceholderInput3" className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200"/>
+                <label htmlFor={inputId4} className="placeholderLabel">Entonces...</label>
+                <textarea rows="3" id={inputId4} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200" onChange={(e)=>handleInputChange('entonces',e.target.value)}/>
             </div>
         </div>    
     );

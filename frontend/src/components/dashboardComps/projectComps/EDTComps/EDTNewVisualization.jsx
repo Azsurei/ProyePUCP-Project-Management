@@ -4,16 +4,20 @@ import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 export default function EDTNewVisualization({
     projectName,
     projectId,
     handlerReturn,
-    codeNewComponent
+    codeNewComponent,
+    idElementoPadre,
 }) {
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
     const [inTipoComponente, setInTipoComponente] = useState("");
-    //const [inPosicionComponente, setInPosicionComponente] = useState(''); QUEDA PENDIENTE A FUTURO QUE SEA EDITABLE
+    const [inCodigoComponente, setInCodigoComponente] = useState(codeNewComponent);
     const [inFechaInicio, setInFechaInicio] = useState("");
     const [inFechaFin, setInFechaFin] = useState("");
     const [inResponsables, setInResponsables] = useState("");
@@ -29,18 +33,24 @@ export default function EDTNewVisualization({
         { index: 1, data: "" },
     ]);
 
+    const [datosComponente, setDatosComponente] = useState(null);
+
     const handleChangeTipoComponente = (e) => {
         //tengo que investigar como se hace en un combo box
     };
 
     const handleChangeFechaInicio = () => {
-        const datepickerInput = document.getElementsByClassName("EDTNewDatepickerInicio");
+        const datepickerInput = document.getElementsByClassName(
+            "EDTNewDatepickerInicio"
+        );
         const selectedDate = datepickerInput.value;
         setInFechaInicio(selectedDate);
     };
 
     const handleChangeFechaFin = () => {
-        const datepickerInputF = document.getElementsByClassName("EDTNewDatepickerFin");
+        const datepickerInputF = document.getElementsByClassName(
+            "EDTNewDatepickerFin"
+        );
         const selectedDateF = datepickerInputF.value;
         setInFechaFin(selectedDateF);
     };
@@ -111,6 +121,53 @@ export default function EDTNewVisualization({
         setListCriterios(updatedCriterios);
     };
 
+
+
+    const axiosOptions = {
+        method: "post", // El método de solicitud puede variar según tus necesidades
+        url: "http://localhost:8080/api/proyecto/" + projectId +"/insertarComponenteEDT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
+    };
+
+
+    const handleComponentRegister = () => {
+        console.log("Procediendo con insertar el componente");
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/EDT/" + projectId +"/insertarComponenteEDT",
+                {
+                    idElementoPadre: idElementoPadre,
+                    idProyecto: projectId,
+                    descripcion: inDescripcion,
+                    codigo: inCodigoComponente,
+                    observaciones: inObservaciones,
+                    nombre: inComponentName,
+                    responsables: inResponsables,
+                    fechaInicio: inFechaInicio,
+                    fechaFin: inFechaFin,
+                    recursos: inRecursos,
+                    hito: inHito,
+                    criterioAceptacion: listCriterios,
+                    entregables: listEntregables,
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                console.log(
+                    "creo que se inserto tu componente, reza para que todo este en laa bd"
+                );
+
+                //cambiamos a la otra paginaa
+                handlerReturn();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     return (
         <div className="EDTNew">
             <HeaderWithButtonsSamePage
@@ -154,7 +211,7 @@ export default function EDTNewVisualization({
                                     alt="help"
                                 ></img>
                             </div>
-                            <input type="text" value={codeNewComponent}></input>
+                            <input type="text" value={codeNewComponent} readOnly={true}></input>
                         </div>
                         <div className="FirstRightCont">
                             <p>Fecha de inicio</p>
@@ -192,43 +249,43 @@ export default function EDTNewVisualization({
                     <div className="SecondCardContainer">
                         <p>Descripcion detallada</p>
                         <textarea
-                                rows="1"
-                                id="inputBoxGeneric"
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInDescripcion(e.target.value);
-                                }}
+                            rows="1"
+                            id="inputBoxGeneric"
+                            placeholder="Escribe aquí"
+                            maxLength="70"
+                            onChange={(e) => {
+                                setInDescripcion(e.target.value);
+                            }}
                         />
                         <p>Recursos</p>
                         <textarea
-                                rows="1"
-                                id="inputBoxGeneric"
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInRecursos(e.target.value);
-                                }}
+                            rows="1"
+                            id="inputBoxGeneric"
+                            placeholder="Escribe aquí"
+                            maxLength="70"
+                            onChange={(e) => {
+                                setInRecursos(e.target.value);
+                            }}
                         />
                         <p>Hito asociado</p>
                         <textarea
-                                rows="1"
-                                id="inputBoxGeneric"
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInHito(e.target.value);
-                                }}
+                            rows="1"
+                            id="inputBoxGeneric"
+                            placeholder="Escribe aquí"
+                            maxLength="70"
+                            onChange={(e) => {
+                                setInHito(e.target.value);
+                            }}
                         />
                         <p>Observaciones</p>
                         <textarea
-                                rows="1"
-                                id="inputBoxGeneric"
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInObservaciones(e.target.value);
-                                }}
+                            rows="1"
+                            id="inputBoxGeneric"
+                            placeholder="Escribe aquí"
+                            maxLength="70"
+                            onChange={(e) => {
+                                setInObservaciones(e.target.value);
+                            }}
                         />
                     </div>
                 </div>
@@ -292,7 +349,7 @@ export default function EDTNewVisualization({
 
             <div className="ButtonsContainer">
                 <button>Cancelar</button>
-                <button onClick={printAllVariables}>Guardar</button>
+                <button onClick={handleComponentRegister}>Guardar</button>
             </div>
         </div>
     );
