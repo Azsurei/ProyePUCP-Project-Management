@@ -1,13 +1,14 @@
 const express = require('express');
 const connection = require('../config/db');
+const {verifyToken} = require('../middleware/middlewares');
 const routerUsuario = express.Router();
 
-routerUsuario.post("/listarUsuarios",async(req,res)=>{
+routerUsuario.post("/listarUsuarios",verifyToken,async(req,res)=>{
     //const { tokenProyePUCP } = req.cookies;
     try{
         //const payload = jwt.verify(tokenProyePUCP, secret);
         //console.log(payload);
-        const { nombreCorreo} = req.body;
+        const {nombreCorreo} = req.body;
         //Insertar query aca
         console.log("Llegue a recibir solicitud listar usuariosXnombreCorreo");
         const query = `
