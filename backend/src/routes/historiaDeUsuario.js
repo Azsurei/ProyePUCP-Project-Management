@@ -73,5 +73,40 @@ routerHistoriaDeUsuario.get("/test/:testId", (req, res) => {
     res.send(req.params);
 });
 
+routerHistoriaDeUsuario.get("/listarHistoriasEstado",async(req,res)=>{
+    console.log("Llegue a recibir solicitud listar Historias Estado");
+    const query = `
+        CALL LISTAR_HISTORIAS_ESTADO;
+    `;
+    try {
+        const [results] = await connection.query(query);
+        res.status(200).json({
+            historiasEstado: results[0],
+            message: "Historias estado obtenidos exitosamente"
+        });
+        console.log('Si se listarion los estados de las historias');
+    } catch (error) {
+        console.error("Error al obtener las historias estado:", error);
+        res.status(500).send("Error al obtener las historias estado: " + error.message);
+    }
+})
+
+routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",async(req,res)=>{
+    console.log("Llegue a recibir solicitud listar Historias Prioridad");
+    const query = `
+        CALL LISTAR_HISTORIAS_PRIORIDAD;
+    `;
+    try {
+        const [results] = await connection.query(query);
+        res.status(200).json({
+            historiasPrioridad: results[0],
+            message: "Historias prioridad obtenidos exitosamente"
+        });
+        console.log('Si se listaron las prioridades de las historias');
+    } catch (error) {
+        console.error("Error al obtener las historias prioridad:", error);
+        res.status(500).send("Error al obtener las historias prioridad: " + error.message);
+    }
+})
 
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;
