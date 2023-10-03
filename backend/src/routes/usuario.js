@@ -3,14 +3,10 @@ const connection = require('../config/db');
 const {verifyToken} = require('../middleware/middlewares');
 const routerUsuario = express.Router();
 
-<<<<<<< HEAD
-routerUsuario.post("/listarUsuarios",verifyToken,async(req,res)=>{
-=======
 const jwt = require("jsonwebtoken");
 const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
 
 routerUsuario.post("/listarUsuarios",async(req,res)=>{
->>>>>>> fb8eedd52063e87fe498a1f0967c8b3d0e83fedc
     //const { tokenProyePUCP } = req.cookies;
     try{
         //const payload = jwt.verify(tokenProyePUCP, secret);
