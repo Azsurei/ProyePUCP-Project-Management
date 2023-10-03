@@ -614,11 +614,10 @@ ENGINE = InnoDB;
 -- ENTREGABLE
 -- -----------------------------------------------------
 CREATE TABLE Entregable (
-  idEntregable INT NOT NULL,
+  idEntregable INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(500) NULL,
   activo TINYINT NULL,
   ComponenteEDT_idComponente INT NOT NULL,
-  PRIMARY KEY (idEntregable),
   INDEX fk_Entregable_ComponenteEDT1_idx (ComponenteEDT_idComponente ASC) VISIBLE,
   CONSTRAINT fk_Entregable_ComponenteEDT1
     FOREIGN KEY (ComponenteEDT_idComponente)

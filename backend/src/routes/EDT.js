@@ -166,13 +166,13 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
         try {
             const [results] = await connection.query(query,[idElementoPadre, idEDT, descripcion, codigo, observaciones, 
                 nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
-            const idComponente = results[0][0].idComponente;
-            console.log(`Se creo el componente EDT ${idComponente}!`);
+            const idComponenteEDT = results[0][0].idComponenteEDT;
+            console.log(`Se creo el componente EDT ${idComponenteEDT}!`);
             // Iteracion
             for (const criterio of criterioAceptacion) {
-                await connection.execute(`
+                const [criterioAceptacionRows] = await connection.execute(`
                 CALL INSERTAR_CRITERIOS_ACEPTACION(
-                    ${idComponente},
+                    ${idComponenteEDT},
                     '${criterio}'
                 );
                 `);
@@ -180,9 +180,9 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
                 console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
             }
             for (const entregable of entregables) {
-                await connection.execute(`
+                const [entregableRows] = await connection.execute(`
                 CALL INSERTAR_ENTREGABLE(
-                    '${entregableNombre}',
+                    '${entregable}',
                     ${idComponenteEDT}
                 );
                 `);
@@ -190,7 +190,7 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
                 console.log(`Se insertó el entregable: ${idEntregable}`);
             }
             res.status(200).json({
-                idComponente,
+                idComponenteEDT,
                 message: "Componente EDT insertado exitosamente",
                 
             });
