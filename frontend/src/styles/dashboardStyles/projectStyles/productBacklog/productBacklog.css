@@ -73,3 +73,25 @@
     width: 150px;
     color: white;
 }
+
+.btnBacklogExport{
+    border-radius: 10px;
+    background-color: #29C85F;
+    border: #29C85F 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
+
+.btnBacklogEliminar{
+    border-radius: 10px;
+    background-color: #CE3B3B;
+    border: #CE3B3B 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
