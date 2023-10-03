@@ -11,68 +11,7 @@ import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/
 import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 axios.defaults.withCredentials = true;
 
-const componentsDataFirstNode = [
-    {
-        id: 3,
-        componentName: "Gestion de proyecto",
-        levelCounter: "1",
-        levelName: "FASE",
-        levelColor: "purple",
-        childsList: [
-            {
-                id: 1,
-                componentName: "hola soy hijo de gestion de proyecto",
-                levelCounter: "1",
-                levelName: "SUBPROYECTO",
-                levelColor: "gray",
-                childsList: [
-                    {
-                        id: 6,
-                        componentName: "swafnaiooifn",
-                        levelCounter: "1",
-                        levelName: "ENTREGABLE",
-                        levelColor: "red",
-                        childsList: [
-                            {
-                                id: 7,
-                                componentName: "OMGGG",
-                                levelCounter: "1",
-                                levelName: "TAREA",
-                                levelColor: "black",
-                                childsList: null,
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                id: 2,
-                componentName: "hola soy el otro hijo de gestion de proyecto",
-                levelCounter: "2",
-                levelName: "SUBPROYECTO",
-                levelColor: "gray",
-                childsList: [
-                    {
-                        id: 5,
-                        componentName: "soy tu ultimo hijo hazme un hermano",
-                        levelCounter: "1",
-                        levelName: "ENTREGABLE",
-                        levelColor: "red",
-                        childsList: null,
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        id: 4,
-        componentName: "API de acceso a la base de datos de RENIEC",
-        levelCounter: "2",
-        levelName: "FASE",
-        levelColor: "purple",
-        childsList: null,
-    },
-];
+
 
 export default function EDT(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -81,39 +20,47 @@ export default function EDT(props) {
 
     const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
-    const [codeNewComponent, setCodeNewComponent] = useState('');
+    const [codeNewComponent, setCodeNewComponent] = useState("");
+    const [idElementoPadre, setIdElementoPadre] = useState(null);
 
-    useEffect(() => {
+    function refreshComponentsEDT() {
+        console.log("rerendering ListComps");
         const stringURL =
-            "http://localhost:8080/api/EDT/" + projectId + "/listarEDT";
-
+            "http://localhost:8080/api/proyecto/EDT/" +
+            projectId +
+            "/listarComponentesEDTXIdProyecto";
+    
         axios
             .get(stringURL)
             .then(function (response) {
-                let componentsArray = response.data.componentes;
-
+                const componentsArray = response.data.componentesEDT;
                 console.log(componentsArray);
                 setListComps(componentsArray);
             })
             .catch(function (error) {
                 console.log(error);
             });
-    }, []);
+    }
+
+    useEffect(refreshComponentsEDT, []);
 
     const handleScreenChange = () => {
         if (screenState === 1) {
             setScreenState(2);
         } else {
+            setListComps([]);
+            //Refrescamos lista antes de  continuar
+            refreshComponentsEDT();
             setScreenState(1);
         }
     };
 
-    const handleSetCompCode = (newCode) => {
+    const handleSetCompCode = (newCode, idCompActual) => {
         setCodeNewComponent(newCode);
         setScreenState(2);
-        console.log(newCode)
-    }
-
+        setIdElementoPadre(idCompActual);
+        console.log(newCode);
+    };
 
     //#######################################################
 
@@ -126,7 +73,6 @@ export default function EDT(props) {
                     projectId={projectId}
                     ListComps={ListComps}
                     handlerGoToNew={handleSetCompCode}
-                    // setCompCode={handleSetCompCode}
                 ></EDTVisualization>
             )}
 
@@ -136,6 +82,7 @@ export default function EDT(props) {
                     projectId={projectId}
                     handlerReturn={handleScreenChange}
                     codeNewComponent={codeNewComponent}
+                    idElementoPadre={idElementoPadre}
                 ></EDTNewVisualization>
             )}
         </>

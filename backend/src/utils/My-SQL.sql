@@ -231,7 +231,6 @@ CREATE TABLE ComponenteEDT(
     descripcion VARCHAR(255),
     codigo VARCHAR(255),
     observaciones VARCHAR(255),
-    activo tinyint,
     idComponenteTags INT,
     nombre VARCHAR(100),
     responsables VARCHAR(100),
@@ -239,6 +238,7 @@ CREATE TABLE ComponenteEDT(
     fechaFin DATE,
     recursos VARCHAR(500),
     hito VARCHAR(500),
+	activo tinyint,
     FOREIGN KEY (idElementoPadre) REFERENCES ComponenteEDT(idComponente),
     FOREIGN KEY (idEDT) REFERENCES EDT(idEDT),
     FOREIGN KEY (idComponenteTags) REFERENCES ComponenteTags(idComponenteTags)
@@ -847,15 +847,32 @@ END
 
 DELIMITER $
 CREATE PROCEDURE LISTAR_USUARIOS_X_NOMBRE_CORREO(
-    IN _nombre VARCHAR(255),
-    IN _correo VARCHAR(255))
+    IN _nombreCorreo VARCHAR(255)
+)
 BEGIN
     SELECT * 
-    FROM Usuario WHERE ( _nombre IS NULL OR (CONCAT(nombres,' ', apellidos) LIKE CONCAT('%', _nombre, '%')) )
-	AND (_correo IS NULL OR correoElectronico LIKE CONCAT('%', _correo, '%')) AND activo = 1;
+    FROM Usuario 
+    WHERE ( _nombreCorreo IS NULL OR (CONCAT(nombres, ' ', apellidos) LIKE CONCAT('%', _nombreCorreo, '%')) OR
+    correoElectronico LIKE CONCAT('%', _nombreCorreo, '%')) 
+    AND activo = 1;
 END$
 
+SELECT * FROM UsuarioXRolXProyecto;
+
+DROP PROCEDURE INSERTAR_USUARIO_X_ROL_X_PROYECTO;
 DELIMITER $
+CREATE PROCEDURE INSERTAR_USUARIO_X_ROL_X_PROYECTO(
+    IN _idUsuario INT,
+    IN _idRol INT,
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idUsuarioXRolXProyecto INT;
+	INSERT INTO UsuarioXRolXProyecto (idUsuario,idProyecto,idRol,fechaAsignacion,activo)VALUES(_idUsuario,_idProyecto,_idRol,CURDATE(),1);
+    SET _idUsuarioXRolXProyecto = @@last_insert_id;
+    SELECT _idUsuarioXRolXProyecto AS idUsuarioXRolXProyecto;
+END$
+
 CREATE PROCEDURE LISTAR_HERRAMIENTAS()
 BEGIN
 	SELECT * FROM Herramienta WHERE activo =1;
@@ -889,13 +906,21 @@ BEGIN
 END$
 
 
+DROP PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES;
+
 DELIMITER $
-CREATE PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES(IN _idProyecto INT)
+CREATE PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES(IN _idHistoriaDeUsuario INT)
 BEGIN
-	SELECT p.idProyecto, p.nombre as nombreProyecto, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, p.idGrupoDeProyecto, gp.nombre as nombreGrupoDeProyecto 
-    FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
+		SELECT hu.idHistoriaDeUsuario, hu.descripcion as descripcionHistoria, ep.idEpica, ep.nombre as nombreEpica, hp.idHistoriaPrioridad, hp.nombre, hp.RGB, he.idHistoriaEstado, he.descripcion as descripcionEstado
+        FROM HistoriaDeUsuario hu 	INNER JOIN Epica ep ON hu.idEpica = ep.idEpica	
+											INNER JOIN HistoriaPrioridad hp ON hp.idHistoriaPrioridad = hu.idHistoriaPrioridad
+                                            INNER JOIN HistoriaEstado he ON hu.idHistoriaEstado = he.idHistoriaEstado WHERE hu.activo=1;
 END$
 
+CALL LISTAR_HISTORIA_DE_USUARIO_DETALLES(1);
+
+
+CALL LISTAR_HISTORIA_DE_USUARIO_DETALLES(4);
 -- ---------------------
 -- COMPONENTE EDT
 -- ---------------------
@@ -903,7 +928,7 @@ END$
 DELIMITER $
 CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
 	IN  _idElementoPadre INT,
-    IN _idEDT INT,
+    IN _idProyecto INT,
     IN _descripcion	VARCHAR(255),
     IN _codigo	VARCHAR(255),
     IN _observaciones VARCHAR(255),
@@ -916,6 +941,10 @@ CREATE PROCEDURE INSERTAR_COMPONENTE_EDT(
 )
 BEGIN
 	DECLARE _idComponenteEDT INT;
+    DECLARE _idEDT INT;
+    
+    SELECT idEDT INTO _idEDT FROM EDT edt WHERE _idProyecto = edt.idProyecto and edt.activo=1;
+    
 	INSERT INTO ComponenteEDT(idElementoPadre,idEDT,descripcion,codigo,observaciones,activo,nombre,responsables,fechaInicio,fechaFin,recursos,hito) 
     VALUES(_idElementoPadre,_idEDT,_descripcion,_codigo,_observaciones,1,_nombre,_responsables,_fechaInicio,_fechaFin,_recursos,_hito);
     SET _idComponenteEDT = @@last_insert_id;
@@ -947,4 +976,15 @@ BEGIN
     SET _idEntregable = @@last_insert_id;
     SELECT _idEntregable AS idEntregable;
 END$
+
+DROP PROCEDURE LISTAR_PROYECTOS_X_NOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PROYECTOS_X_NOMBRE(
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+	SELECT *FROM Proyecto WHERE nombre LIKE CONCAT('%',_nombre,'%')AND activo =1;
+END$
+
+
 
