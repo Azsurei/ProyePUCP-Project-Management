@@ -541,3 +541,18 @@ BEGIN
     WHERE codigo LIKE CONCAT(_codigo, '%');
 END$
 DELIMITER ;
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HISTORIA_CRITERIO
+(   IN _idHistoriaDeUsuario INT,
+	IN _dadoQue VARCHAR(255),
+    IN _cuando VARCHAR(255),
+    IN _entonces VARCHAR(255),
+    IN _escenario VARCHAR(255)
+)
+BEGIN
+	DECLARE _idHistoriaCriterioDeAceptacion INT;
+	INSERT INTO HistoriaCriterioDeAceptacion(idHistoriaDeUsuario,activo,dadoQue,cuando,entonces,escenario) VALUES(_idHistoriaDeUsuario,1,_dadoQue,_cuando,_entonces,_escenario);		
+    SET _idHistoriaCriterioDeAceptacion = @@last_insert_id;
+    SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
+END$

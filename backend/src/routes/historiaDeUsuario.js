@@ -46,26 +46,6 @@ routerHistoriaDeUsuario.post("/insertarRequisitoFuncional",verifyToken,async(req
     }
 })
 
-routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,res)=>{
-
-    const {idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,requirementData,scenarioData} = req.body;
-        //Insertar query aca
-    const query = `
-        CALL INSERTAR_HISTORIA_REQUISITO(?,?,?,?,?,?,?);
-    `;
-    try {
-        const [results] = await connection.query(query,[idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para]);
-        res.status(200).json({
-            idHistoriaDeUsuario: results[0],
-            message: "Historia agregada correctamente"
-        });
-        console.log(`Se ha agregado la historia de usuario ${idHistoriaDeUsuario}!`);
-        console.log(results);
-    } catch (error) {
-        console.error("Error al agregar la historia de usuario:", error);
-        res.status(500).send("Error al agregar la historia de usuario: " + error.message);
-    }
-})
 
 
 routerHistoriaDeUsuario.get("/:idHistoriaDeUsuario/detallesHistoria",verifyToken, async (req, res) => {
@@ -130,5 +110,52 @@ routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",verifyToken,async(req,re
     }
 })
 
+routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",async(req,res)=>{
+    console.log("Llegue a recibir solicitud de insertar una historia de usuario");
+    //Insertar query aca
+    const {idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
+    console.log("Llegue a recibir solicitud de insertar una historia de usuario");
+    const query = `
+        CALL INSERTAR_HISTORIA_DE_USUARIO(?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idEpic, idPriority, idState, name, como, 
+            quiero, para]);
+        const idHU = results[0][0].idHistoriaDeUsuario;
+        console.log(`Se inserto la HU ${idHU}!`);
+        // Iteracion Escenario
+        for (const scenario of scenarioData) {
+            const [scenarioRows] = await connection.execute(`
+            CALL INSERTAR_HISTORIA_CRITERIO(
+                ${idHU},
+                '${scenario.dadoQue}',
+                '${scenario.cuando}',
+                '${scenario.entonces}',
+                '${scenario.scenario}'
 
+            );
+            `);
+            const idHistoriaCriterioDeAceptacion = scenarioRows[0][0].idHistoriaCriterioDeAceptacion;
+            console.log(`Se insertó el criterio de aceptacion: ${idHistoriaCriterioDeAceptacion}`);
+        }
+        for (const requerimiento of requirementData) {
+            const [requerimientoRows] = await connection.execute(`
+            CALL INSERTAR_HISTORIA_REQUISITO(
+                ${idHU},
+                '${requerimiento.requirement}'
+            );
+            `);
+            const idHistoriaRequisito  = requerimientoRows[0][0].idHistoriaRequisito;
+            console.log(`Se insertó el requisito: ${idHistoriaRequisito}`);
+        }
+        res.status(200).json({
+            idHU,
+            message: "HU insertado exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).send("Error en el registro: " + error.message);
+    }
+})
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;
