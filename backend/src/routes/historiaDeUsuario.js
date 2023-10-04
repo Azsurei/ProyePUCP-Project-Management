@@ -25,6 +25,49 @@ routerHistoriaDeUsuario.post("/eliminarHistoria",verifyToken,async(req,res)=>{
     }
 })
 
+routerHistoriaDeUsuario.post("/insertarRequisitoFuncional",verifyToken,async(req,res)=>{
+
+    const {idHistoriaDeUsuario,descripcion} = req.body;
+        //Insertar query aca
+    const query = `
+        CALL INSERTAR_HISTORIA_REQUISITO(?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario,descripcion]);
+        res.status(200).json({
+            idRequisitoFuncional: results[0],
+            message: "Requisito agregado correctamente"
+        });
+        console.log(`Se ha agregado el requisito funcional ${idRequisitoFuncional}!`);
+        console.log(results);
+    } catch (error) {
+        console.error("Error al agregar el requisito funcional:", error);
+        res.status(500).send("Error al agregar el requisito funcional: " + error.message);
+    }
+})
+
+routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,res)=>{
+
+    const {idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,requirementData,scenarioData} = req.body;
+        //Insertar query aca
+    const query = `
+        CALL INSERTAR_HISTORIA_REQUISITO(?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para]);
+        res.status(200).json({
+            idHistoriaDeUsuario: results[0],
+            message: "Historia agregada correctamente"
+        });
+        console.log(`Se ha agregado la historia de usuario ${idHistoriaDeUsuario}!`);
+        console.log(results);
+    } catch (error) {
+        console.error("Error al agregar la historia de usuario:", error);
+        res.status(500).send("Error al agregar la historia de usuario: " + error.message);
+    }
+})
+
+
 routerHistoriaDeUsuario.get("/:idHistoriaDeUsuario/detallesHistoria",verifyToken, async (req, res) => {
 
     const { idHistoriaDeUsuario} = req.params;
@@ -86,5 +129,6 @@ routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",verifyToken,async(req,re
         res.status(500).send("Error al obtener las historias prioridad: " + error.message);
     }
 })
+
 
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;
