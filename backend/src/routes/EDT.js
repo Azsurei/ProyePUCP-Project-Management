@@ -1,12 +1,7 @@
 const express = require("express");
 const connection = require("../config/db");
 const routerEDT = express.Router();
-
-const jwt = require("jsonwebtoken");
-const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
-
-
-
+const {verifyToken} = require('../middleware/middlewares');
 
 
 
@@ -67,180 +62,136 @@ function fullyRestructureArray(arregloOriginal){
 }
 
 
-routerEDT.get("/:idEDT/listarComponentesEDT", async (req, res) => {
+routerEDT.get("/:idEDT/listarComponentesEDT",verifyToken, async (req, res) => {
     console.log("Llegue a recibir solicitud listar componentes EDT");
 
-    const { tokenProyePUCP } = req.cookies;
-
+    const idEDT = req.params.idEDT;
+    const query = `
+        CALL LISTAR_COMPONENTES_EDT_X_ID_EDT(?);
+    `;
     try {
-        const payload = jwt.verify(tokenProyePUCP, secret);
-        console.log(payload);
-        const idUsuario = payload.user.id;
+        const [results] = await connection.query(query, [idEDT]);
+        console.log(results[0]);
+        const arraySent = fullyRestructureArray(results[0]);
 
-        const idEDT = req.params.idEDT;
+        //const newArray = fullyRestructureArray(results[0]);
+        //console.log(newArray);
 
-        const query = `
-            CALL LISTAR_COMPONENTES_EDT_X_ID_EDT(?);
-        `;
-        try {
-            const [results] = await connection.query(query, [idEDT]);
-            console.log(results[0]);
-            const arraySent = fullyRestructureArray(results[0]);
-
-            //const newArray = fullyRestructureArray(results[0]);
-            //console.log(newArray);
-
-            
-            res.status(200).json({
-                componentesEDT: arraySent,
-                message: "ComponentesEDT obtenidos exitosamente",
-            });
-            console.log(
-                `Se han listado los componentesEDT para el usuario ${idUsuario} en su proyecto ${idProyecto}!`
-            );
-        } catch (error) {
-            console.error("Error al obtener los componentesEDT:", error);
-            res.status(500).send(
-                "Error al obtener los componentesEDT: " + error.message
-            );
-        }
+        
+        res.status(200).json({
+            componentesEDT: arraySent,
+            message: "ComponentesEDT obtenidos exitosamente",
+        });
+        console.log(
+            `Se han listado los componentesEDT para el usuario ${idUsuario} en su proyecto ${idProyecto}!`
+        );
     } catch (error) {
-        return res
-            .status(401)
-            .send(error.message + " invalid tokenProyePUCP token");
+        console.error("Error al obtener los componentesEDT:", error);
+        res.status(500).send(
+            "Error al obtener los componentesEDT: " + error.message
+        );
     }
 });
 
-routerEDT.get("/:idProyecto/listarEDT", async (req, res) => {
+routerEDT.get("/:idProyecto/listarEDT",verifyToken, async (req, res) => {
     console.log("Llegue a recibir solicitud listar EDT por proyecto");
 
-    const { tokenProyePUCP } = req.cookies;
+    const idProyecto = req.params.idProyecto;
 
+    const query = `
+        CALL LISTAR_EDT_X_ID_PROYECTO(?);
+    `;
     try {
-        const payload = jwt.verify(tokenProyePUCP, secret);
-        console.log(payload);
-        const idUsuario = payload.user.id;
+        const [results] = await connection.query(query, [idProyecto]);
+        console.log(results[0]);
 
-        const idProyecto = req.params.idProyecto;
-
-        const query = `
-            CALL LISTAR_EDT_X_ID_PROYECTO(?);
-        `;
-        try {
-            const [results] = await connection.query(query, [idProyecto]);
-            console.log(results[0]);
-
-            res.status(200).json({
-                EDT: results[0],
-                message: "EDT obtenido exitosamente",
-            });
-            console.log(
-                `Se han listado el EDT para el proyecto ${idProyecto}!`
-            );
-        } catch (error) {
-            console.error("Error al obtener el EDT:", error);
-            res.status(500).send(
-                "Error al obtener el EDT: " + error.message
-            );
-        }
+        res.status(200).json({
+            EDT: results[0],
+            message: "EDT obtenido exitosamente",
+        });
+        console.log(
+            `Se han listado el EDT para el proyecto ${idProyecto}!`
+        );
     } catch (error) {
-        return res
-            .status(401)
-            .send(error.message + " invalid tokenProyePUCP token");
+        console.error("Error al obtener el EDT:", error);
+        res.status(500).send(
+            "Error al obtener el EDT: " + error.message
+        );
     }
 });
 
-routerEDT.get("/:idProyecto/listarComponentesEDTXIdProyecto", async (req, res) => {
+routerEDT.get("/:idProyecto/listarComponentesEDTXIdProyecto",verifyToken, async (req, res) => {
     console.log("Llegue a recibir solicitud listar EDT por proyecto");
 
-    const { tokenProyePUCP } = req.cookies;
+    const idProyecto = req.params.idProyecto;
 
+    const query = `
+        CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);
+    `;
     try {
-        const payload = jwt.verify(tokenProyePUCP, secret);
-        console.log(payload);
-        const idUsuario = payload.user.id;
+        const [results] = await connection.query(query, [idProyecto]);
+        console.log(results[0]);
+        const arraySent = fullyRestructureArray(results[0]);
 
-        const idProyecto = req.params.idProyecto;
-
-        const query = `
-            CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);
-        `;
-        try {
-            const [results] = await connection.query(query, [idProyecto]);
-            console.log(results[0]);
-            const arraySent = fullyRestructureArray(results[0]);
-
-            res.status(200).json({
-                componentesEDT: arraySent,
-                message: "Componentes EDT obtenido exitosamente",
-            });
-            console.log(
-                `Se han listado los componentes EDT para el proyecto ${idProyecto}!`
-            );
-        } catch (error) {
-            console.error("Error al obtener los componentes EDT:", error);
-            res.status(500).send(
-                "Error al obtener los componentes EDT: " + error.message
-            );
-        }
+        res.status(200).json({
+            componentesEDT: arraySent,
+            message: "Componentes EDT obtenido exitosamente",
+        });
+        console.log(
+            `Se han listado los componentes EDT para el proyecto ${idProyecto}!`
+        );
     } catch (error) {
-        return res
-            .status(401)
-            .send(error.message + " invalid tokenProyePUCP token");
+        console.error("Error al obtener los componentes EDT:", error);
+        res.status(500).send(
+            "Error al obtener los componentes EDT: " + error.message
+        );
     }
+
 });
 
-routerEDT.post("/:idProyecto/insertarComponenteEDT",async(req,res)=>{
+routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de crear un componenteEDT");
-    const { tokenProyePUCP } = req.cookies;
-    try{
-        const payload = jwt.verify(tokenProyePUCP, secret);
-        console.log(payload);
-        const idUsuario = payload.user.id;
-        //Insertar query aca
-        const {idElementoPadre, idProyecto, descripcion, codigo, observaciones, nombre, responsables, 
-            fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
-        console.log("Llegue a recibir solicitud insertar componente edt");
-        const query = `
-            CALL INSERTAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?);
-        `;
-        try {
-            const [results] = await connection.query(query,[idElementoPadre, idProyecto, descripcion, codigo, observaciones, 
-                nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
-            const idComponenteEDT = results[0][0].idComponenteEDT;
-            console.log(`Se creo el componente EDT ${idComponenteEDT}!`);
-            // Iteracion
-            for (const criterio of criterioAceptacion) {
-                const [criterioAceptacionRows] = await connection.execute(`
-                CALL INSERTAR_CRITERIOS_ACEPTACION(
-                    ${idComponenteEDT},
-                    '${criterio.data}'
-                );
-                `);
-                const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
-                console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
-            }
-            for (const entregable of entregables) {
-                const [entregableRows] = await connection.execute(`
-                CALL INSERTAR_ENTREGABLE(
-                    '${entregable.data}',
-                    ${idComponenteEDT}
-                );
-                `);
-                const idEntregable  = entregableRows[0][0].idEntregable;
-                console.log(`Se insertó el entregable: ${idEntregable}`);
-            }
-            res.status(200).json({
-                idComponenteEDT,
-                message: "Componente EDT insertado exitosamente",
-                
-            });
-        } catch (error) {
-            console.error("Error en el registro:", error);
-            res.status(500).send("Error en el registro: " + error.message);
+    //Insertar query aca
+    const {idElementoPadre, idProyecto, descripcion, codigo, observaciones, nombre, responsables, 
+        fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
+    console.log("Llegue a recibir solicitud insertar componente edt");
+    const query = `
+        CALL INSERTAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idElementoPadre, idProyecto, descripcion, codigo, observaciones, 
+            nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
+        const idComponenteEDT = results[0][0].idComponenteEDT;
+        console.log(`Se creo el componente EDT ${idComponenteEDT}!`);
+        // Iteracion
+        for (const criterio of criterioAceptacion) {
+            const [criterioAceptacionRows] = await connection.execute(`
+            CALL INSERTAR_CRITERIOS_ACEPTACION(
+                ${idComponenteEDT},
+                '${criterio.data}'
+            );
+            `);
+            const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
+            console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
         }
-    }catch(error){
-        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+        for (const entregable of entregables) {
+            const [entregableRows] = await connection.execute(`
+            CALL INSERTAR_ENTREGABLE(
+                '${entregable.data}',
+                ${idComponenteEDT}
+            );
+            `);
+            const idEntregable  = entregableRows[0][0].idEntregable;
+            console.log(`Se insertó el entregable: ${idEntregable}`);
+        }
+        res.status(200).json({
+            idComponenteEDT,
+            message: "Componente EDT insertado exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).send("Error en el registro: " + error.message);
     }
 })
 module.exports.routerEDT = routerEDT;

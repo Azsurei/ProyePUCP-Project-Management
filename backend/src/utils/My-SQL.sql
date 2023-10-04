@@ -193,6 +193,7 @@ CREATE TABLE HerramientaXProyecto(
     idProyecto INT,
     idHerramienta INT,
     activo tinyint NOT NULL,
+	UNIQUE(idProyecto,idHerramienta),
 	FOREIGN KEY(idProyecto) REFERENCES Proyecto(idProyecto),
     FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
 )
@@ -275,13 +276,19 @@ ENGINE = InnoDB;
 -----------------------
 -- Acta de Constitucion
 -----------------------
+DROP TABLE IF EXISTS ActaConstitucion;
 CREATE TABLE ActaConstitucion(
-	idActa INT AUTO_INCREMENT PRIMARY KEY,
+    idActa INT AUTO_INCREMENT PRIMARY KEY,
     idHerramienta INT,
-    activo TINYINT,
-    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+
 
 CREATE TABLE HitoAC(
 	idHito INT AUTO_INCREMENT PRIMARY KEY,
@@ -321,6 +328,116 @@ CREATE TABLE TipoDatoAC(
     nombre VARCHAR(255),
     activo TINYINT,
     FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Acta Reunion
+-----------------------
+
+CREATE TABLE ActaReunion(
+	idActaReunion INT AUTO_INCREMENT PRIMARY KEY,
+	idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Matriz de responsabilidad
+-----------------------
+DROP TABLE IF EXISTS MatrizResponsabilidad;
+CREATE TABLE MatrizResponsabilidad(
+    idMatrizResponsabilidad INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Matriz de comunicaciones
+-----------------------
+
+DROP TABLE IF EXISTS MatrizComunicacion;
+CREATE TABLE MatrizComunicacion(
+    idMatrizComunicacion INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+
+
+-----------------------
+-- Catalogo de riesgos
+-----------------------
+
+DROP TABLE IF EXISTS CatalogoRiesgo;
+CREATE TABLE CatalogoRiesgo(
+    idCatalogo INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+-----------------------------
+-- Catalogo de interesados
+-----------------------------
+
+DROP TABLE IF EXISTS CatalogoInteresado;
+CREATE TABLE CatalogoInteresado(
+    idCatalogoInteresado INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Autoevaluacion
+-----------------------
+
+CREATE TABLE Autoevaluacion(
+	idAutoevaluacion INT AUTO_INCREMENT PRIMARY KEY,
+	idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Retrospectiva
+-----------------------
+
+CREATE TABLE Retrospectiva(
+	idRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
+	idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
 
@@ -620,20 +737,17 @@ CREATE TABLE PlantillaCampoAutoevaluacion(
     FOREIGN KEY (idPlantillaAutoevaluacion) REFERENCES PlantillaAutoevaluacion(idPlantillaAutoevaluacion)
 )
 ENGINE = InnoDB;
+
 -- -----------------------------------------------------
 -- ENTREGABLE
 -- -----------------------------------------------------
 CREATE TABLE Entregable (
-  idEntregable INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(500) NULL,
-  activo TINYINT NULL,
-  ComponenteEDT_idComponente INT NOT NULL,
-  INDEX fk_Entregable_ComponenteEDT1_idx (ComponenteEDT_idComponente ASC) VISIBLE,
-  CONSTRAINT fk_Entregable_ComponenteEDT1
-    FOREIGN KEY (ComponenteEDT_idComponente)
-    REFERENCES ComponenteEDT (idComponente)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+	idEntregable INT AUTO_INCREMENT PRIMARY KEY,
+	nombre VARCHAR(500) NULL,
+	idComponente INT NOT NULL,
+	activo TINYINT NULL,
+    FOREIGN KEY (idComponente) REFERENCES ComponenteEDT(idComponente)
+)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -974,15 +1088,16 @@ BEGIN
     SELECT _idComponenteCriterioDeAceptacion AS idComponenteCriterioDeAceptacion;
 END$
 
+
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ENTREGABLE(
-    IN _nombre INT,
-    IN _ComponenteEDT_idComponente	VARCHAR(255)
+    IN _nombre VARCHAR(255),
+    IN _idComponente	INT
 )
 BEGIN
 	DECLARE _idEntregable INT;
-	INSERT INTO Entregable(nombre,activo,ComponenteEDT_idComponente) 
-    VALUES(_nombre,1,_ComponenteEDT_idComponente);
+	INSERT INTO Entregable(nombre,idComponente,activo) 
+    VALUES(_nombre,_idComponente,1);
     SET _idEntregable = @@last_insert_id;
     SELECT _idEntregable AS idEntregable;
 END$
@@ -996,5 +1111,128 @@ BEGIN
 	SELECT *FROM Proyecto WHERE nombre LIKE CONCAT('%',_nombre,'%')AND activo =1;
 END$
 
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ACTA_CONSTITUCION(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idActaConstitucion INT;
+	INSERT INTO ActaConstitucion(idHerramienta,idProyecto,fechaCreacion,activo) 
+    VALUES(3,_idProyecto,curdate(),1);
+    SET _idActaConstitucion = @@last_insert_id;
+    SELECT _idActaConstitucion AS idActaConstitucion;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ACTA_REUNION(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idActaReunion INT;
+	INSERT INTO ActaReunion(idHerramienta,idProyecto,fechaCreacion,activo) 
+    VALUES(11,_idProyecto,curdate(),1);
+    SET _idActaReunion = @@last_insert_id;
+    SELECT _idActaReunion AS idActaReunion;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RETROSPECTIVA(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idRetrospectiva INT;
+	INSERT INTO Retrospectiva(idHerramienta,idProyecto,fechaCreacion,activo) 
+    VALUES(10,_idProyecto,curdate(),1);
+    SET _idRetrospectiva = @@last_insert_id;
+    SELECT _idRetrospectiva AS idRetrospectiva;
+END$
 
 
+DELIMITER $
+CREATE PROCEDURE INSERTAR_AUTOEVALUACION(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idAutoevaluacion INT;
+	INSERT INTO Autoevaluacion(idHerramienta,idProyecto,fechaCreacion,activo) 
+    VALUES(9,_idProyecto,curdate(),1);
+    SET _idAutoevaluacion = @@last_insert_id;
+    SELECT _idAutoevaluacion AS idAutoevaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_HERRAMIENTA_X_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HERRAMIENTA_X_PROYECTO(
+    IN _idProyecto INT,
+    IN _idHerramienta INT
+)
+BEGIN
+	DECLARE _idHerramientaXProyecto INT;
+	INSERT INTO HerramientaXProyecto(idProyecto, idHerramienta, activo) 
+    VALUES(_idProyecto,_idHerramienta,1);
+    SET _idHerramientaXProyecto = @@last_insert_id;
+    SELECT _idHerramientaXProyecto AS idHerramientaXProyecto;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CRONOGRAMA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CRONOGRAMA(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idCronograma INT;
+	INSERT INTO Cronograma(idHerramienta,fechaInicio,fechaFin,activo,idProyecto) VALUES(4,NULL,NULL,1,_idProyecto);		#Luego, al darle click por primera vez al cronograma, se debera solicitar estos datos
+    SET _idCronograma = @@last_insert_id;
+    SELECT _idCronograma AS idCronograma;
+END$
+
+
+DROP PROCEDURE IF EXISTS INSERTAR_CATALOGO_RIESGO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CATALOGO_RIESGO(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idCatalogo INT;
+	INSERT INTO CatalogoRiesgo(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(5,_idProyecto,curdate(),1);		
+    SET _idCatalogo = @@last_insert_id;
+    SELECT _idCatalogo AS idCatalogo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CATALOGO_INTERESADO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CATALOGO_INTERESADO(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idCatalogoInteresado INT;
+	INSERT INTO CatalogoInteresado(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(6,_idProyecto,curdate(),1);		
+    SET _idCatalogoInteresado = @@last_insert_id;
+    SELECT _idCatalogoInteresado AS idCatalogoInteresado;
+END$
+
+
+DROP PROCEDURE IF EXISTS INSERTAR_MATRIZ_RESPONSABILIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MATRIZ_RESPONSABILIDAD(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idMatrizResponsabilidad INT;
+	INSERT INTO MatrizResponsabilidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(7,_idProyecto,curdate(),1);		
+    SET _idMatrizResponsabilidad = @@last_insert_id;
+    SELECT _idMatrizResponsabilidad AS idMatrizResponsabilidad;
+END$
+
+
+DROP PROCEDURE IF EXISTS INSERTAR_MATRIZ_COMUNICACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MATRIZ_COMUNICACION(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idMatrizComunicacion INT;
+	INSERT INTO MatrizResponsabilidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(8,_idProyecto,curdate(),1);		
+    SET _idMatrizComunicacion = @@last_insert_id;
+    SELECT _idMatrizComunicacion AS idMatrizComunicacion;
+END$
