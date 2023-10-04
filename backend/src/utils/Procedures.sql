@@ -519,3 +519,14 @@ BEGIN
     SELECT _idComponenteEDT AS idComponenteEDT;
 END$
 
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HISTORIA_REQUISITO
+(   IN _idHistoriaDeUsuario INT,
+	IN _descripcion VARCHAR(255)
+)
+BEGIN
+	DECLARE _idHistoriaRequisito INT;
+	INSERT INTO HistoriaRequisito(idHistoriaDeUsuario,descripcion,activo) VALUES(_idHistoriaDeUsuario,_descripcion,1);		
+    SET _idHistoriaRequisito = @@last_insert_id;
+    SELECT _idHistoriaRequisito AS idHistoriaRequisito;
+END$
