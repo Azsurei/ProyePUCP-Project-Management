@@ -330,7 +330,7 @@ export default function ProductBacklog(props) {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-10">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
@@ -409,7 +409,7 @@ export default function ProductBacklog(props) {
 
     const bottomContent = React.useMemo(() => {
         return (
-            <div className="py-2 px-2 flex justify-between items-center">
+            <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
                     {selectedKeys === "all"
                         ? "Todos los items seleccionados"
