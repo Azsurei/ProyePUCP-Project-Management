@@ -7,6 +7,7 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import ListTools from "@/components/dashboardComps/projectComps/projectCreateComps/ListTools";
 import CardCreateProject from "@/components/dashboardComps/projectComps/projectCreateComps/CardCreateProject";
 import ChoiceUser from "@/components/dashboardComps/projectComps/projectCreateComps/ChoiceUser";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -92,6 +93,20 @@ const items3 = [
 
 export default function newProject() {
     const router = useRouter();
+
+
+
+    const [modal, setModal] = useState(false);
+    const toggleModal = () => {
+      setModal(!modal);
+    };
+
+    // if(modal) {
+    //     document.body.classList.add('active-modal')
+    //   } else {
+    //     document.body.classList.remove('active-modal')
+    // }
+
 
     const [nameProject, setNameProject] = useState("");
     //const [dueñoProyecto, setOwner] = useState(""); en backend lo pueden sacar con el jwt
@@ -215,7 +230,7 @@ export default function newProject() {
                         ></CardCreateProject>
                     )}
                     {estadoProgress === 2 && <ListTools></ListTools>}
-                    {estadoProgress === 3 && <ChoiceUser></ChoiceUser>}
+                    {estadoProgress === 3 && <ModalUser></ModalUser>}
                 </div>
                 <div className="buttonContainer">
                     <button
