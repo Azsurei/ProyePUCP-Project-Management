@@ -17,6 +17,7 @@ routerUsuario.post("/listarUsuarios",verifyToken,async(req,res)=>{
             usuarios: results[0],
             message: "Usuarios obtenidos exitosamente"
         });
+        console.log(results);
         console.log('Si se listaron los usuarios');
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);

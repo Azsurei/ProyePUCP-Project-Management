@@ -30,7 +30,7 @@ routerProyecto.post("/insertarProyecto",verifyToken, async (req, res) => {
         const { nombre, maxCantParticipantes, fechaInicio, fechaFin } =
             proyecto;
 
-        const [results] = await connection.query(query, [
+        const [results] = connection.query(query, [
             idUsuario,
             nombre,
             99,
