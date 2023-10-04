@@ -533,12 +533,14 @@ END$
 
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_COMPONENTEEDT(
+    IN _idEDT INT,
     IN _codigo VARCHAR(255)
 )
 BEGIN
     UPDATE ComponenteEDT
     SET activo = 0
-    WHERE codigo LIKE CONCAT(_codigo, '%');
+    WHERE idEDT = _idEDT
+    AND codigo LIKE CONCAT(_codigo, '%');
 END$
 DELIMITER ;
 

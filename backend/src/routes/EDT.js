@@ -245,13 +245,13 @@ routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=
 routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de eliminar un componenteEDT");
     //Insertar query aca
-    const {codigo} = req.body;
+    const {idEDT, codigo} = req.body;
     console.log("Llegue a recibir solicitud eliminar componente edt");
     const query = `
-        CALL ELIMINAR_COMPONENTEEDT(?);
+        CALL ELIMINAR_COMPONENTEEDT(?,?);
     `;
     try {
-        await connection.query(query,[codigo]);
+        await connection.query(query,[idEDT,codigo]);
         console.log(`Se elimino el componente EDT ${codigo}!`);
         res.status(200).json({
             codigo,

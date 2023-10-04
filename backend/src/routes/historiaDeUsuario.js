@@ -110,7 +110,7 @@ routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",verifyToken,async(req,re
     }
 })
 
-routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",async(req,res)=>{
+routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de insertar una historia de usuario");
     //Insertar query aca
     const {idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
