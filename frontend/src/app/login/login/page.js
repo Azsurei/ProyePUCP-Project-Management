@@ -9,6 +9,7 @@ import "@/styles/login.css";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useRouter } from "next/navigation";
+import { signIn } from 'next-auth/react';
 
 axios.defaults.withCredentials = true;
 
@@ -156,11 +157,11 @@ function Login() {
                         <div className="boton2">
                             <Button
                                 text="Google"
-                                href={"#"}
                                 iconBefore={
                                     <img src="/icons/icon-google.svg" />
                                 }
                                 className={"w-48"}
+                                onClick={() => signIn()}
                             />
                         </div>
 
