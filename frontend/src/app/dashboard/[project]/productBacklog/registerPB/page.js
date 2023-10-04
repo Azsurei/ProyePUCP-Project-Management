@@ -10,6 +10,7 @@ import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
 import axios from "axios";
 import { Spinner } from "@nextui-org/react";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 axios.defaults.withCredentials = true;
 
@@ -227,12 +228,8 @@ export default function ProductBacklogRegister(props) {
                 <div className="twoButtons">
                     <div className="buttonContainer">
                         {/* Probablemente necesite usar router luego en vez de link */}
-                        <Link href="#cancelar">
-                            <button className="btnBacklogCancel" type="button">Cancelar</button>
-                        </Link>
-                        
-                            <button className="btnBacklogContinue" type="submit">Aceptar</button>
-                        
+                        <Modal/>
+                        <button className="btnBacklogContinue" type="submit">Aceptar</button>
                     </div>
                 </div>
             </div> 
