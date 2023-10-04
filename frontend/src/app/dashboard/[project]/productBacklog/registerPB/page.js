@@ -5,9 +5,13 @@ import ContainerScenario from "@/components/dashboardComps/projectComps/productB
 import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
 import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import Link from "next/link";
+import axios from "axios";
+import { Spinner } from "@nextui-org/react";
+
+axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
     const fecha = new Date();
@@ -29,7 +33,22 @@ export default function ProductBacklogRegister(props) {
     const currentDate=getCurrentDate();
     const [scenarioFields, setScenarioFields] = useState([{ scenario: '', dadoQue: '', cuando: '', entonces: '' }]);
     const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
+    const [datosUsuario, setDatosUsuario] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
+
+        axios.get(stringURLUsuario).
+            then(function(response){
+                const userData= response.data.usuario[0];
+                setDatosUsuario(userData);
+                setIsLoading(false);    
+            })
+            .catch(function(error){
+                console.log(error);
+            });
+    },[]);    
 
     function addContainer(){
         setQuantity(quantity+1);
@@ -112,11 +131,12 @@ export default function ProductBacklogRegister(props) {
             quiero,
             para,
             currentDate,
+            idUsuario: datosUsuario.idUsuario,
             scenarioData,
             requirementData,
         };
 
-        axios.post("URL_DE_TU_API", postData)
+/*         axios.post("URL_DE_TU_API", postData)
         .then((response) => {
           // Manejar la respuesta de la solicitud POST
           console.log("Respuesta del servidor:", response.data);
@@ -126,7 +146,7 @@ export default function ProductBacklogRegister(props) {
         .catch((error) => {
           // Manejar errores si la solicitud POST falla
           console.error("Error al realizar la solicitud POST:", error);
-        });
+        }); */
     };
 
     return(
@@ -151,7 +171,16 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
-                        <IconLabel icon="/icons/icon-usr.svg" label="Kana Arima" className="iconLabel2"/>
+                        {isLoading ? (
+                        <div className="flex gap-4">
+                            <Spinner size="lg" />
+                        </div>
+                        )
+                        :(
+                            <IconLabel icon="/icons/icon-usr.svg" label={`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`} className="iconLabel2"/>
+                        )
+                        }
+                        
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>

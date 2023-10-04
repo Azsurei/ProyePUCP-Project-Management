@@ -3,11 +3,13 @@ import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.c
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/newProjects.css";
 import DatePicker1 from "@/components/DatePicker1";
 import TextField from "@/components/TextField";
+import TextFieldNotEditable from "@/components/TextFieldNotEditable";
 
 export default function CardCreateProject({
     handleChangesNombre,
     handleChangesFechaInicio,
     handleChangesFechaFin,
+    projectOwnerData,
     props,
 }) {
     return (
@@ -16,14 +18,12 @@ export default function CardCreateProject({
                 <p className="projectNametxt">Nombre del Proyecto</p>
             </div>
 
-            <div>
-                <TextField handleChange={handleChangesNombre}></TextField>
-            </div>
+            <TextField handleChange={handleChangesNombre}></TextField>
 
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Dueño del Proyecto</p>
             </div>
-            <TextField></TextField>
+            <TextFieldNotEditable defaultValue={projectOwnerData.nombres + " " + projectOwnerData.apellidos}></TextFieldNotEditable>
 
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Fecha Inicio</p>

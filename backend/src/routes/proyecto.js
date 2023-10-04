@@ -7,6 +7,8 @@ const routerBacklog = require('./backlog').routerBacklog;
 
 const routerProyecto = express.Router();
 
+routerProyecto.use("/backlog", routerBacklog);
+routerProyecto.use("/EDT", routerEDT);
 
 routerProyecto.use("/backlog",routerBacklog);
 routerProyecto.use("/EDT",routerEDT);
@@ -285,7 +287,7 @@ routerProyecto.post("/insertarUsuarioXRolXProyecto",verifyToken,async(req,res)=>
         console.error("Error en el registro de usuario por rol en proyecto:", error);
         res.status(500).send("Error en el registro de usuario por rol en proyecto:" + error.message);
     }
-})
+});
 
 routerProyecto.get("/listarProyectos",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud listar proyecto");
@@ -306,7 +308,7 @@ routerProyecto.get("/listarProyectos",verifyToken,async(req,res)=>{
         console.error("Error al obtener los proyectos:", error);
         res.status(500).send("Error al obtener los proyectos: " + error.message);
     }
-})
+});
 
 routerProyecto.post("/listarProyectosPorNombre",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud listar proyecto por nombre");
@@ -327,7 +329,7 @@ routerProyecto.post("/listarProyectosPorNombre",verifyToken,async(req,res)=>{
         console.error("Error al obtener los proyectos:", error);
         res.status(500).send("Error al obtener los proyectos: " + error.message);
     }
-})
+});
 
 routerProyecto.get("/:idProyecto/listarProyectoYGrupoDeProyecto",verifyToken,async(req,res)=>{
     //Insertar query aca
@@ -347,6 +349,6 @@ routerProyecto.get("/:idProyecto/listarProyectoYGrupoDeProyecto",verifyToken,asy
         console.error("Error al obtener las historias prioridad:", error);
         res.status(500).send("Error al obtener las historias prioridad: " + error.message);
     }
-})
+});
 
 module.exports.routerProyecto = routerProyecto;

@@ -14,6 +14,7 @@ import * as React from "react";
 import TracerNewProject from "@/components/TracerNewProject";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/TextField";
+import { useEffect } from "react";
 
 axios.defaults.withCredentials = true;
 
@@ -127,6 +128,34 @@ export default function newProject() {
         console.log("FECHA FIN = " + fechaFin);
     };
 
+    //al cargar la pagina, cargaremos toda la info necesaria (datos de usuario y listado de herramientas)
+    //para evitar loading times en los cambios entre niveles
+
+	
+	const [datosUsuario, setDatosUsuario] = useState({
+		nombres: '',
+		apellidos: '',
+		correoElectronico: ''
+	});
+
+    useEffect(() => {
+        const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
+
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                const userData = response.data.usuario[0];
+                console.log(userData);
+				console.log("el nombre del usuario es ",userData.nombres);
+				console.log("el apellido del usuario es ",userData.apellidos);
+                setDatosUsuario(userData);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+	
+
     return (
         <div className="mainDivNewProject">
             <div className="headerDiv">
@@ -182,6 +211,7 @@ export default function newProject() {
                             handleChangesNombre={handleChangeProjectName}
                             handleChangesFechaInicio={handleChangesFechaInicio}
                             handleChangesFechaFin={handleChangesFechaFin}
+							projectOwnerData={datosUsuario}
                         ></CardCreateProject>
                     )}
                     {estadoProgress === 2 && <ListTools></ListTools>}
