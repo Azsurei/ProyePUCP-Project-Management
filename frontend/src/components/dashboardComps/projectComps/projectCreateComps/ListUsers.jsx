@@ -15,7 +15,7 @@ function cardUser(props) {
   );
 }
 
-export default function ListTools(props) {
+export default function ListUsers(props) {
   const router = useRouter();
 
 
@@ -26,7 +26,7 @@ export default function ListTools(props) {
           <cardUser
             key={component.id}
             name={component.name}
-            lastName={component.description}
+            lastName={component.lastName}
             email={component.email}
           ></cardUser>
         );
