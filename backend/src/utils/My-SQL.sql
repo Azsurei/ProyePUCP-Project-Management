@@ -188,6 +188,16 @@ CREATE TABLE Herramienta(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE HerramientaXProyecto(
+	idHerramientaXProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    idHerramienta INT,
+    activo tinyint NOT NULL,
+	FOREIGN KEY(idProyecto) REFERENCES Proyecto(idProyecto),
+    FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
+)
+ENGINE = InnoDB;
+
 
 CREATE TABLE Cronograma(
 	idCronograma INT AUTO_INCREMENT PRIMARY KEY,
