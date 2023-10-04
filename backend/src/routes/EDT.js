@@ -241,4 +241,26 @@ routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
+
+routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de eliminar un componenteEDT");
+    //Insertar query aca
+    const {codigo} = req.body;
+    console.log("Llegue a recibir solicitud eliminar componente edt");
+    const query = `
+        CALL ELIMINAR_COMPONENTEEDT(?);
+    `;
+    try {
+        await connection.query(query,[codigo]);
+        console.log(`Se elimino el componente EDT ${codigo}!`);
+        res.status(200).json({
+            codigo,
+            message: "Componente EDT eliminado exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).send("Error en el registro: " + error.message);
+    }
+})
 module.exports.routerEDT = routerEDT;

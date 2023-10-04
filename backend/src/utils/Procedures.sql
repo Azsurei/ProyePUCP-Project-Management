@@ -530,3 +530,14 @@ BEGIN
     SET _idHistoriaRequisito = @@last_insert_id;
     SELECT _idHistoriaRequisito AS idHistoriaRequisito;
 END$
+
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_COMPONENTEEDT(
+    IN _codigo VARCHAR(255)
+)
+BEGIN
+    UPDATE ComponenteEDT
+    SET activo = 0
+    WHERE codigo LIKE CONCAT(_codigo, '%');
+END$
+DELIMITER ;
