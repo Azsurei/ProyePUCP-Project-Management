@@ -10,16 +10,14 @@ module.exports = {
 
         jwt.verify(token, secret, (err, decoded) => {
             if (err) return res.status(500).send("Falló la autenticación de token.");
-
+            //console.log("Loggeado correctamente");
             // Si todo está bien, guardar para su uso en otras rutas
-            req.userId = decoded.id;
+            req.user = decoded.user;
             next();
         });
+        console.log(`Token usado:`);
     },
 
     // Middleware para otro propósito...
-    anotherMiddleware: (req, res, next) => {
-        // Tu lógica aquí...
-        next();
-    }
+
 }

@@ -15,7 +15,7 @@ function CardSelectTools(props) {
       </div>
 
       
-      <div className="buttonContainerCreate">
+      <div className="buttonContatinerTool">
         <button className="buttonOneTool">Ver Detalles</button>
         <button className="buttonOneTool">Agregar</button>
       </div>
