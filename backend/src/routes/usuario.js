@@ -19,10 +19,12 @@ routerUsuario.post("/listarUsuarios",verifyToken,async(req,res)=>{
         });
         console.log(results);
         console.log('Si se listaron los usuarios');
+        console.log(results[0]);
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
         res.status(500).send("Error al obtener los usuarios: " + error.message);
     }
+
 })
 
 routerUsuario.get("/verInfoUsuario",verifyToken,async(req,res)=>{
