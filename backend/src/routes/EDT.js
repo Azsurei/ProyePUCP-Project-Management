@@ -194,4 +194,51 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
+
+routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de modificar un componenteEDT");
+    //Insertar query aca
+    const {idComponenteEDT, idElementoPadre, idProyecto, descripcion, codigo, observaciones, nombre, responsables, 
+        fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
+    console.log("Llegue a recibir solicitud insertar componente edt");
+    const query = `
+        CALL MODIFICAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idComponenteEDT, idElementoPadre, idProyecto, descripcion, codigo, observaciones, 
+            nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
+        const idComponente= results[0][0].idComponenteEDT;
+        console.log(`Se modifico el componente EDT ${idComponente}!`);
+        // Pendiente (Falta preguntar)
+        // Iteracion
+        // for (const criterio of criterioAceptacion) {
+        //     const [criterioAceptacionRows] = await connection.execute(`
+        //     CALL INSERTAR_CRITERIOS_ACEPTACION(
+        //         ${idComponenteEDT},
+        //         '${criterio.data}'
+        //     );
+        //     `);
+        //     const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
+        //     console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
+        // }
+        // for (const entregable of entregables) {
+        //     const [entregableRows] = await connection.execute(`
+        //     CALL INSERTAR_ENTREGABLE(
+        //         '${entregable.data}',
+        //         ${idComponenteEDT}
+        //     );
+        //     `);
+        //     const idEntregable  = entregableRows[0][0].idEntregable;
+        //     console.log(`Se insertó el entregable: ${idEntregable}`);
+        // }
+        res.status(200).json({
+            idComponenteEDT,
+            message: "Componente EDT modificado exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).send("Error en el registro: " + error.message);
+    }
+})
 module.exports.routerEDT = routerEDT;
