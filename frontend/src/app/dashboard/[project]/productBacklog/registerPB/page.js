@@ -168,7 +168,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB" onSelect={handleSelectedValueChangePriority} idParam="idHistoriaPrioridad"/>
+                        <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB" onSelect={handleSelectedValueChangePriority} idParam="idHistoriaPrioridad"/>
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
@@ -185,7 +185,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
-                        <MyCombobox urlApi="/api/proyecto/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
+                        <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
                     </div>
                 </div>
                 <div className="description">
