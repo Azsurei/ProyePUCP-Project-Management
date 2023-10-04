@@ -13,39 +13,46 @@ export default function CardCreateProject({
     props,
 }) {
     return (
-        <div>
+        <div
+            style={{ display: "flex", flexDirection: "column", gap: "1.5rem", padding: "3vw 4vw" }}
+        >
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Nombre del Proyecto</p>
+                <TextField handleChange={handleChangesNombre}></TextField>
             </div>
-
-            <TextField handleChange={handleChangesNombre}></TextField>
 
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Dueño del Proyecto</p>
+                <TextFieldNotEditable
+                    defaultValue={
+                        projectOwnerData.nombres +
+                        " " +
+                        projectOwnerData.apellidos
+                    }
+                ></TextFieldNotEditable>
             </div>
-            <TextFieldNotEditable defaultValue={projectOwnerData.nombres + " " + projectOwnerData.apellidos}></TextFieldNotEditable>
 
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Fecha Inicio</p>
+                <input
+                    type="date"
+                    id="inputBoxGeneric"
+                    className="NewProjectDatePickerInicio"
+                    name="datepicker"
+                    onChange={handleChangesFechaInicio}
+                ></input>
             </div>
-            <input
-                type="date"
-                id="inputBoxGeneric"
-                className="NewProjectDatePickerInicio"
-                name="datepicker"
-                onChange={handleChangesFechaInicio}
-            ></input>
 
             <div className="divProjectNameDiv">
                 <p className="projectNametxt">Fecha Fin</p>
+                <input
+                    type="date"
+                    id="inputBoxGeneric"
+                    className="NewProjectDatePickerFin"
+                    name="datepicker"
+                    onChange={handleChangesFechaFin}
+                ></input>
             </div>
-            <input
-                type="date"
-                id="inputBoxGeneric"
-                className="NewProjectDatePickerFin"
-                name="datepicker"
-                onChange={handleChangesFechaFin}
-            ></input>
         </div>
     );
 }

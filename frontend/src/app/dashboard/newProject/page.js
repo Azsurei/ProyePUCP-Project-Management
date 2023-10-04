@@ -7,7 +7,7 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import ListTools from "@/components/dashboardComps/projectComps/projectCreateComps/ListTools";
 import CardCreateProject from "@/components/dashboardComps/projectComps/projectCreateComps/CardCreateProject";
 import ChoiceUser from "@/components/dashboardComps/projectComps/projectCreateComps/ChoiceUser";
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -16,6 +16,7 @@ import TracerNewProject from "@/components/TracerNewProject";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/TextField";
 import { useEffect } from "react";
+import { createContext } from "react";
 
 axios.defaults.withCredentials = true;
 
@@ -91,6 +92,8 @@ const items3 = [
     },
 ];
 
+export const ToolCardsContext = createContext();
+
 export default function newProject() {
     const router = useRouter();
 
@@ -112,6 +115,7 @@ export default function newProject() {
     //const [dueñoProyecto, setOwner] = useState(""); en backend lo pueden sacar con el jwt
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
+    const [listHerramientas, setListHerramientas] = useState([]);
 
     const [estadoProgress, setEstadoProgress] = useState(1);
     const cambiarEstadoAdelante = () => {
@@ -141,17 +145,33 @@ export default function newProject() {
         console.log("NOMBRE DE PROYECTO = " + nameProject);
         console.log("FECHA INICIO = " + fechaInicio);
         console.log("FECHA FIN = " + fechaFin);
+
+		const nombre = nameProject;
+        axios
+            .post("http://localhost:8080/api/proyecto/insertarProyecto", {
+                proyecto: {nombre, fechaInicio, fechaFin},
+                herramientas: listHerramientas
+				//,participantes: ...
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+
+                router.push("/dashboard");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
     //al cargar la pagina, cargaremos toda la info necesaria (datos de usuario y listado de herramientas)
     //para evitar loading times en los cambios entre niveles
 
-	
-	const [datosUsuario, setDatosUsuario] = useState({
-		nombres: '',
-		apellidos: '',
-		correoElectronico: ''
-	});
+    const [datosUsuario, setDatosUsuario] = useState({
+        nombres: "",
+        apellidos: "",
+        correoElectronico: "",
+    });
 
     useEffect(() => {
         const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
@@ -161,15 +181,35 @@ export default function newProject() {
             .then(function (response) {
                 const userData = response.data.usuario[0];
                 console.log(userData);
-				console.log("el nombre del usuario es ",userData.nombres);
-				console.log("el apellido del usuario es ",userData.apellidos);
+                console.log("el nombre del usuario es ", userData.nombres);
+                console.log("el apellido del usuario es ", userData.apellidos);
                 setDatosUsuario(userData);
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
-	
+
+    const addToolToList = (herramienta) => {
+        const newToolsList = [
+            ...listHerramientas,
+            {
+                idHerramienta: herramienta.idHerramienta,
+                nombre: herramienta.nombre,
+                descripcion: herramienta.descripcion,
+            },
+        ];
+        setListHerramientas(newToolsList);
+        console.log(newToolsList);
+    };
+
+    const removeToolInList = (herramienta) => {
+        const newToolsList = listHerramientas.filter(
+            (item) => item.idHerramienta !== herramienta.idHerramienta
+        );
+        setListHerramientas(newToolsList);
+        console.log(newToolsList);
+    };
 
     return (
         <div className="mainDivNewProject">
@@ -226,10 +266,16 @@ export default function newProject() {
                             handleChangesNombre={handleChangeProjectName}
                             handleChangesFechaInicio={handleChangesFechaInicio}
                             handleChangesFechaFin={handleChangesFechaFin}
-							projectOwnerData={datosUsuario}
+                            projectOwnerData={datosUsuario}
                         ></CardCreateProject>
                     )}
-                    {estadoProgress === 2 && <ListTools></ListTools>}
+                    {estadoProgress === 2 && (
+                        <ToolCardsContext.Provider
+                            value={{ addToolToList, removeToolInList }}
+                        >
+                            <ListTools></ListTools>
+                        </ToolCardsContext.Provider>
+                    )}
                     {estadoProgress === 3 && <ModalUser></ModalUser>}
                 </div>
                 <div className="buttonContainer">
