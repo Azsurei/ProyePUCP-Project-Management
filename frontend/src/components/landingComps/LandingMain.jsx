@@ -15,7 +15,7 @@ function LandingMain() {
                 <Button 
                     appearance="default"
                     text="¡Inicia ya!" 
-                    href={"/login/login"} 
+                    href={"/login"} 
                     className={'w-52'}/>
             </div>
             <img src="/images/LogoStart.png" alt="StartImage" />

@@ -126,7 +126,7 @@ function Login() {
 
                         <div className="divInicioSesion">
                             <Link
-                                href="/login/recoverPassword"
+                                href="/recoverPassword"
                                 className="txtOlvido"
                             >
                                 <span
@@ -173,7 +173,7 @@ function Login() {
                             </div>
                             <div className="divRegistrate">
                                 <Link
-                                    href="/login/register"
+                                    href="/register"
                                     className="txtOlvido"
                                 >
                                     <span className="txtRegistrate">

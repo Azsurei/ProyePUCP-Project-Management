@@ -30,12 +30,12 @@ function recoverPassword() {
                     />
                 </div>
                 <div className="boton">
-                    <Button text="Continuar" href={"/login/resetPassword"} />
+                    <Button text="Continuar" href={"/resetPassword"} />
                 </div>
                 <div className="otros-login">
                     <div className="roboto">¿Tienes un cuenta?</div>
                     <div>
-                        <Link href="/login/login">
+                        <Link href="/login">
                             <span className="iniciar-sesion roboto">
                                 Iniciar sesión
                             </span>
