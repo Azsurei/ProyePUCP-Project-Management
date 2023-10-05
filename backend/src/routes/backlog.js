@@ -35,7 +35,7 @@ routerBacklog.get("/:idProyecto/listarEpicas",verifyToken,async(req,res)=>{
         CALL LISTAR_EPICAS_X_ID_PROYECTO(?);
     `;
     try {
-        const [results] = await connection.query(query,[idBacklog]);
+        const [results] = await connection.query(query,[idProyecto]);
         res.status(200).json({
             epicas: results[0],
             message: "Epicas obtenidas exitosamente"
