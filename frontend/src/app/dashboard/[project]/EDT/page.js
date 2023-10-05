@@ -103,7 +103,7 @@ export default function EDT(props) {
                     projectName={projectName}
                     projectId={projectId}
                     handlerReturn={handleScreenChange}
-                    idElementoPadre={idElementoPadre}
+                    idComponentToSee={idComponentToSee}
                 ></EDTCompVisualization>
             )}
         </>
