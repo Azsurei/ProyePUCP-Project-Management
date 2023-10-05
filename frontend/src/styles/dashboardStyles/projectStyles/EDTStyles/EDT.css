@@ -1,6 +1,8 @@
 .EDT{
     flex: 1;
     padding: 2.5rem 2.5rem;
+    height: 100%;   
+    /* PUEDE PROVOCAR ERRRO^ */
     
     display: flex;
     flex-direction: column;
@@ -29,4 +31,48 @@
 
 .EDT .componentSearchContainer input{
     flex: 1;
+}
+
+.missingScrenContainer{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.missingScrenContainer .imgMissing{
+    height: 250px;
+    width: 250px;
+}
+
+.missingScrenContainer .msgMissing{
+    font-family: 'Montserrat';
+    font-size: 1.5rem;
+    width: 290px;
+    text-align: center;
+    padding-right: 20px;
+    color: rgba(23, 43, 77, 0.55);
+}
+
+@media (max-width: 768px){
+    .missingScrenContainer .imgMissing{
+        height: 200px;
+        width: 200px;
+    }
+
+    .missingScrenContainer .msgMissing{
+    font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 460px){
+    .missingScrenContainer .imgMissing{
+        height: 150px;
+        width: 150px;
+    }
+
+    .missingScrenContainer .msgMissing{
+        font-size: 1rem;
+        }
 }

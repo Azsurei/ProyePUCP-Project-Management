@@ -165,24 +165,28 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>
         console.log(`Se creo el componente EDT ${idComponenteEDT}!`);
         // Iteracion
         for (const criterio of criterioAceptacion) {
-            const [criterioAceptacionRows] = await connection.execute(`
-            CALL INSERTAR_CRITERIOS_ACEPTACION(
-                ${idComponenteEDT},
-                '${criterio.data}'
-            );
-            `);
-            const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
-            console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
+            if(criterio.data!==""){
+                const [criterioAceptacionRows] = await connection.execute(`
+                CALL INSERTAR_CRITERIOS_ACEPTACION(
+                    ${idComponenteEDT},
+                    '${criterio.data}'
+                );
+                `);
+                const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
+                console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
+            }
         }
         for (const entregable of entregables) {
-            const [entregableRows] = await connection.execute(`
-            CALL INSERTAR_ENTREGABLE(
-                '${entregable.data}',
-                ${idComponenteEDT}
-            );
-            `);
-            const idEntregable  = entregableRows[0][0].idEntregable;
-            console.log(`Se insertó el entregable: ${idEntregable}`);
+            if(entregable.data!==""){
+                const [entregableRows] = await connection.execute(`
+                CALL INSERTAR_ENTREGABLE(
+                    '${entregable.data}',
+                    ${idComponenteEDT}
+                );
+                `);
+                const idEntregable  = entregableRows[0][0].idEntregable;
+                console.log(`Se insertó el entregable: ${idEntregable}`);
+            }
         }
         res.status(200).json({
             idComponenteEDT,
