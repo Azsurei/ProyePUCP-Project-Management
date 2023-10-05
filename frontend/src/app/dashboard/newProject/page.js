@@ -97,11 +97,29 @@ export const ToolCardsContext = createContext();
 export default function newProject() {
     const router = useRouter();
 
+    const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
+    const [selectedSupervisoresList, setSelectedSupervisoresList] = useState(
+        []
+    );
+    const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
 
+    const toggleModal1 = () => {
+        setModal1(!modal1);
+    };
 
-    const [modal, setModal] = useState(false);
-    const toggleModal = () => {
-      setModal(!modal);
+    const returnListOfSupervisores = (selectedSupervisoresList) => {
+        setSelectedSupervisoresList(selectedSupervisoresList);
+        setModal1(!modal1);
+    };
+
+    const toggleModal2 = () => {
+        setModal2(!modal2);
+    };
+
+    const returnListOfMiembros = (selectedMiembrosList) => {
+        setSelectedMiembrosList(selectedMiembrosList);
+        setModal2(!modal2);
     };
 
     // if(modal) {
@@ -110,9 +128,7 @@ export default function newProject() {
     //     document.body.classList.remove('active-modal')
     // }
 
-
     const [nameProject, setNameProject] = useState("");
-    //const [dueñoProyecto, setOwner] = useState(""); en backend lo pueden sacar con el jwt
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
     const [listHerramientas, setListHerramientas] = useState([]);
@@ -146,12 +162,12 @@ export default function newProject() {
         console.log("FECHA INICIO = " + fechaInicio);
         console.log("FECHA FIN = " + fechaFin);
 
-		const nombre = nameProject;
+        const nombre = nameProject;
         axios
             .post("http://localhost:8080/api/proyecto/insertarProyecto", {
-                proyecto: {nombre, fechaInicio, fechaFin},
-                herramientas: listHerramientas
-				//,participantes: ...
+                proyecto: { nombre, fechaInicio, fechaFin },
+                herramientas: listHerramientas,
+                //,participantes: ...
             })
             .then(function (response) {
                 console.log(response);
@@ -210,7 +226,6 @@ export default function newProject() {
         setListHerramientas(newToolsList);
         console.log(newToolsList);
     };
-
 
     // const addToolToList = (herramienta) => {
     //     const newToolsList = [
@@ -298,7 +313,14 @@ export default function newProject() {
                             <ListTools></ListTools>
                         </ToolCardsContext.Provider>
                     )}
-                    {estadoProgress === 3 && <ModalUser></ModalUser>}
+                    {estadoProgress === 3 && (
+                        <ChoiceUser
+                            toggleModal1={toggleModal1}
+                            toggleModal2={toggleModal2}
+                            selectedSupervisoresList={selectedSupervisoresList}
+                            selectedMiembrosList={selectedMiembrosList}
+                        ></ChoiceUser>
+                    )}
                 </div>
                 <div className="buttonContainer">
                     <button
@@ -324,10 +346,36 @@ export default function newProject() {
             </div>
 
             <div className="buttonContainerCreate">
+                <button
+                    className="optionalGoMove"
+                    onClick={camibarEstadoAtras}
+                    style={{ opacity: estadoProgress != 1 ? "100" : "0" }}
+                >
+                    {"<"}
+                </button>
                 <button className="createProjectButtonEnd" onClick={checkData}>
                     Crear Proyecto
                 </button>
+                <button
+                    className="optionalGoMove"
+                    onClick={cambiarEstadoAdelante}
+                >
+                    {">"}
+                </button>
             </div>
+
+            {modal1 && (
+                <ModalUser
+                    handlerModalClose={toggleModal1}
+                    handlerModalFinished={returnListOfSupervisores}
+                ></ModalUser>
+            )}
+            {modal2 && (
+                <ModalUser
+                    handlerModalClose={toggleModal2}
+                    handlerModalFinished={returnListOfMiembros}
+                ></ModalUser>
+            )}
         </div>
     );
 }
