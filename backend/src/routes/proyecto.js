@@ -209,39 +209,40 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
                     //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
 
-                    // try {
-                    //     const query = `
-                    //     CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
-                    //     `;
-                    //     for (const participante of participantes) {
-                    //         const [results] = await connection.query(
-                    //             query,
-                    //             [
-                    //                 participante.idUsuario,
-                    //                 participante.idRol,
-                    //                 participante.idProyecto,
-                    //             ]
-                    //         );
-                    //         const idUsuarioXRolProyecto =
-                    //             results[0][0].idProyecto;
-                    //         console.log(
-                    //             `Se agrego el usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`
-                    //         );
-                    //     }
-                    // } catch (error) {
-                    //     console.error(
-                    //         `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`,
-                    //         error
-                    //     );
-                    //     res.status(500).send(
-                    //         `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}` +
-                    //             error.message
-                    //     );
-                    // }
+                    try {
+                        const query = `
+                        CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
+                        `;
+                        for (const participante of participantes) {
+                            const [results] = await connection.query(
+                                query,
+                                [
+                                    participante.idUsuario,
+                                    participante.idRol,
+                                    participante.idProyecto,
+                                ]
+                            );
+                            const idUsuarioXRolProyecto =
+                                results[0][0].idProyecto;
+                            console.log(
+                                `Se agrego el usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`
+                            );
+
+                            res.status(200).json({
+                                message: "Registro hasta los participantes correcto",
+                            });
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`,
+                            error
+                        );
+                        res.status(500).send(
+                            `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}` +
+                                error.message
+                        );
+                    }
                 }
-                res.status(200).json({
-                    message: "Registro hasta las herramientas correcto",
-                });
             } catch (error) {
                 console.error(
                     `Error de creacion de una herramienta para proyecto ${idProyecto}`,
