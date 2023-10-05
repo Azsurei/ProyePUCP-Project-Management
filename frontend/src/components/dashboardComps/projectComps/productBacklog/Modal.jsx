@@ -7,15 +7,15 @@ export default function ModalComponent() {
 
   return (
     <>
-      <Button onPress={onOpen} className="w-36">Cerrar</Button>
+      <Button onPress={onOpen} className="w-36">Descartar</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 text-red-500">Cancelar Registro</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1 text-red-500">Descartar Registro</ModalHeader>
               <ModalBody>
                 <p> 
-                    ¿Seguro que quiere cancelar el registro de la historia de usuario?
+                    ¿Seguro que quiere descartar el registro de la historia de usuario?
                 </p>
               </ModalBody>
               <ModalFooter>

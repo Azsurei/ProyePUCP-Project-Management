@@ -26,7 +26,7 @@ const newCriteriosAceptacion=[
 
 export default function EDTNew(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
 
 

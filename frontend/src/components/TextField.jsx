@@ -8,7 +8,7 @@ function TextField({
     handleChange,
     ...props
 }) {
-    const inputWidth = width ? `${width}px` : "auto";
+    const inputWidth = width ? `${width}px` : "100%";
     const containerWidth = fullWidth ? "w-full" : "";
 
     const inputStyle = {
