@@ -24,97 +24,107 @@ import {
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 
-
-export default function ModalUser({ modal,toggle}) {
-    const [filterValue, setFilterValue] = React.useState("");
-
-    const onSearchChange = React.useCallback((value) => {
-        if (value) {
-            setFilterValue(value);
-        } else {
-            setFilterValue("");
-        }
-    }, []);
-    const [listUsers, setListUsers] = useState([]);
-    
-
-    function refreshList(){
-        let usersArray;
-        const stringURL =
-          "http://localhost:8080/api/usuario/listarUsuarios";
-        axios
-          .post(stringURL, {
-            nombreCorreo: filterValue
-          })
-
-          .then(function (response) {
-            console.log(response);
-            usersArray = response.data.usuarios;
-    
-            usersArray = usersArray.map((user) => {
-              return {
-                id: user.idUsuario,
-                name: user.nombres,
-                lastName: user.apellidos,
-                email: user.correElectronico,
-              };
-            });
-    
-            setListUsers(usersArray);
-    
-            console.log(usersArray);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-
-    }
-
-    useEffect(() => {
-        refreshList();
-      }, []);
+export const UserCardsContext = React.createContext();
 
 
-    return (
-    <>    
-        
-        <div className="modalUser">
+export default function ModalUser({ handlerModalClose, handlerModalFinished }) {
+  const [filterValue, setFilterValue] = useState("");
+  const [listUsers, setListUsers] = useState([]);
+  const [noResults, setNoResults] = useState(false);
 
-        
-            <p className="buscarSup">
-            Buscar a un supervisor
-            </p>
+  const onSearchChange = (value) => {
+    setFilterValue(value);
+  };
 
-            <div className="divBuscador">
-                <Input
-                            isClearable
-                            className="w-full sm:max-w-[80%]"
-                            placeholder="Ingresa un miembro..."
-                            startContent={<SearchIcon />}
-                            value={filterValue}
-                            onClear={() => onClear()}
-                            onValueChange={onSearchChange}
-                            variant='faded'
-                        />
-                {/* <Button size="sm" variant="flat" color="primary">
-                    Buscar
-                </Button> */}
+  const [listUsersSelect,setlistUsersSelected] = useState([]);
 
-                <button className="buttonOneUser" >Buscar</button>
-            </div>
+  const addUserList = (user) => {
+    const newUserList = [
+        ...listUsersSelect,
+        {
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName,
+          email: user.email,
+        },
+    ];
+    setlistUsersSelected(newUserList);
+    console.log(newUserList);
+};
 
-            <div className="divUsers">
-                    <ListUsers lista={listUsers}></ListUsers>
-            </div>
+const removeUserInList = (user) => {
+    const newUserList = listUsersSelect.filter(
+        (item) => item.id !== user.id
+    );
+    setlistUsersSelected(newUserList);
+    console.log(newUserList);
+};
 
-            <div className="endButtons">
-                <button className="buttonTwoUser">Cancelar</button>
-                <button className="buttonOneUser">Confirmar</button>
-            </div>
+  const refreshList = () => {
+    const stringURL = "http://localhost:8080/api/usuario/listarUsuarios";
+    axios.post(stringURL, {
+      nombreCorreo: filterValue
+    })
+    .then(function (response) {
+      console.log(response);
+      const usersArray = response.data.usuarios.map((user) => {
+        return {
+          id: user.idUsuario,
+          name: user.nombres,
+          lastName: user.apellidos,
+          email: user.correoElectronico,
+        };
+      });
+      if (usersArray.length > 0) {
+        setListUsers(usersArray);
+        setNoResults(false);
+      } else {
+        setListUsers([]);
+        setNoResults(true);
+      }
+      console.log(usersArray);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  };
 
+  useEffect(() => {
+    refreshList();
+  }, [filterValue]);
+
+  return (
+    <>
+      <div className="modalUser">
+        <p className="buscarSup">
+          Buscar nuevo miembro
+        </p>
+        <div className="divBuscador">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[100%]"
+            placeholder="Ingresa un miembro..."
+            startContent={<SearchIcon />}
+            value={filterValue}
+            onValueChange={onSearchChange}
+            variant='faded'
+          />
         </div>
+        {noResults && (
+          <p className="noResultsMessage">No se encontraron resultados.</p>
+        )}
+        <div className="divUsers">
+          <UserCardsContext.Provider value={{addUserList,removeUserInList}}>
 
+            <ListUsers lista={listUsers}></ListUsers>
 
+          </UserCardsContext.Provider>
+        </div>
+        <div className="endButtons">
+          <button className="buttonTwoUser" onClick={handlerModalClose}>Cancelar</button>
+          <button className="buttonOneUser" onClick={handlerModalFinished}>Confirmar</button>
+        </div>
+      </div>
     </>
-    )
+  );
 }

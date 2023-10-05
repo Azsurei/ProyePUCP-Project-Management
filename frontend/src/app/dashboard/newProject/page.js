@@ -211,6 +211,28 @@ export default function newProject() {
         console.log(newToolsList);
     };
 
+
+    // const addToolToList = (herramienta) => {
+    //     const newToolsList = [
+    //         ...listHerramientas,
+    //         {
+    //             idHerramienta: herramienta.idHerramienta,
+    //             nombre: herramienta.nombre,
+    //             descripcion: herramienta.descripcion,
+    //         },
+    //     ];
+    //     setListHerramientas(newToolsList);
+    //     console.log(newToolsList);
+    // };
+
+    // const removeToolInList = (herramienta) => {
+    //     const newToolsList = listHerramientas.filter(
+    //         (item) => item.idHerramienta !== herramienta.idHerramienta
+    //     );
+    //     setListHerramientas(newToolsList);
+    //     console.log(newToolsList);
+    // };
+
     return (
         <div className="mainDivNewProject">
             <div className="headerDiv">
