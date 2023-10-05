@@ -274,10 +274,10 @@ routerEDT.get("/:idProyecto/listarComponenteEDT",async(req,res)=>{
         const [results] = await connection.query(query,[idComponente]);
         console.log(results[0]);
         const [criterioAceptacion] = await connection.execute(`
-            CALL LISTAR_CRITERIO_X_IDCOMPONENTE(${idComponenteEDT});
+            CALL LISTAR_CRITERIO_X_IDCOMPONENTE(${idComponente});
         `);
         const [entregables] = await connection.execute(`
-            CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(${idComponenteEDT});
+            CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(${idComponente});
         `);
         const componenteEDT = {
             component: results[0],
