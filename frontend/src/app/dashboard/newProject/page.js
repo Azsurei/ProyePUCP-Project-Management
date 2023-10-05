@@ -99,9 +99,7 @@ export default function newProject() {
 
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
-    const [selectedSupervisoresList, setSelectedSupervisoresList] = useState(
-        []
-    );
+    const [selectedSupervisoresList, setSelectedSupervisoresList] = useState([]);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
 
     const toggleModal1 = () => {
@@ -122,11 +120,6 @@ export default function newProject() {
         setModal2(!modal2);
     };
 
-    // if(modal) {
-    //     document.body.classList.add('active-modal')
-    //   } else {
-    //     document.body.classList.remove('active-modal')
-    // }
 
     const [nameProject, setNameProject] = useState("");
     const [fechaInicio, setFechaInicio] = useState("");
@@ -157,33 +150,13 @@ export default function newProject() {
         setFechaFin(e.target.value);
     };
 
-    const checkData = () => {
-        console.log("NOMBRE DE PROYECTO = " + nameProject);
-        console.log("FECHA INICIO = " + fechaInicio);
-        console.log("FECHA FIN = " + fechaFin);
-
-        const nombre = nameProject;
-        axios
-            .post("http://localhost:8080/api/proyecto/insertarProyecto", {
-                proyecto: { nombre, fechaInicio, fechaFin },
-                herramientas: listHerramientas,
-                //,participantes: ...
-            })
-            .then(function (response) {
-                console.log(response);
-                console.log("Conexion correcta");
-
-                router.push("/dashboard");
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    };
+    
 
     //al cargar la pagina, cargaremos toda la info necesaria (datos de usuario y listado de herramientas)
     //para evitar loading times en los cambios entre niveles
 
     const [datosUsuario, setDatosUsuario] = useState({
+        idUsuario: "",
         nombres: "",
         apellidos: "",
         correoElectronico: "",
@@ -225,6 +198,32 @@ export default function newProject() {
         );
         setListHerramientas(newToolsList);
         console.log(newToolsList);
+    };
+
+
+
+    const checkData = () => {
+        console.log("NOMBRE DE PROYECTO = " + nameProject);
+        console.log("FECHA INICIO = " + fechaInicio);
+        console.log("FECHA FIN = " + fechaFin);
+
+        const nombre = nameProject;
+        axios
+            .post("http://localhost:8080/api/proyecto/insertarProyecto", {
+                proyecto: { nombre, fechaInicio, fechaFin },
+                herramientas: listHerramientas,
+                participantesSupervisores: selectedSupervisoresList,
+                participantesMiembros: selectedMiembrosList
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+
+                router.push("/dashboard");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
     // const addToolToList = (herramienta) => {

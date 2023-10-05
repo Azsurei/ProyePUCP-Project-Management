@@ -1,22 +1,29 @@
-"use client"
+"use client";
 import { createContext, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListElementsEDT from "./ListElementsEDT";
 
 export const OpenMenuContext = createContext();
 
-export default function EDTVisualization({projectName,projectId, ListComps, handlerGoToNew}) {
-
+export default function EDTVisualization({
+    projectName,
+    projectId,
+    ListComps,
+    handlerGoToNew,
+}) {
     const [openMenuId, setOpenMenuId] = useState(null);
 
     const toggleMenu = (id) => {
-        if(openMenuId === id){
+        if (openMenuId === id) {
             setOpenMenuId(null);
-            console.log('CERRANDO MENU DE ID = '+id);
-        }else{
+            console.log("CERRANDO MENU DE ID = " + id);
+        } else {
             setOpenMenuId(id);
-            console.log('abriendo menu de id = '+id);
+            console.log("abriendo menu de id = " + id);
         }
+    };
+
+    if (ListComps.length === 0) {
     }
 
     return (
@@ -25,7 +32,7 @@ export default function EDTVisualization({projectName,projectId, ListComps, hand
                 haveReturn={false}
                 haveAddNew={true}
                 handlerAddNew={handlerGoToNew}
-                newPrimarySon={ListComps.length+1}
+                newPrimarySon={ListComps.length + 1}
                 breadcrump={"Inicio / Proyectos / Proyect X"}
                 btnText={"Agregar nueva fase"}
             >
@@ -36,15 +43,21 @@ export default function EDTVisualization({projectName,projectId, ListComps, hand
                 <button>Buscar</button>
             </div>
 
-
-
-            <OpenMenuContext.Provider value={{openMenuId, toggleMenu, handlerGoToNew}}>
-                <ListElementsEDT
-                    listData={ListComps}
-                    initialMargin={0}
-                ></ListElementsEDT>
-            </OpenMenuContext.Provider>
-            
+            {ListComps.length === 0 ? (
+                <div className="missingScrenContainer">
+                    <img src="/images/missing_EDTComponents.svg" alt="w" className="imgMissing"/>
+                    <p className="msgMissing"> Aún no has agregado un elemento a tu EDT!</p>
+                </div>
+            ) : (
+                <OpenMenuContext.Provider
+                    value={{ openMenuId, toggleMenu, handlerGoToNew }}
+                >
+                    <ListElementsEDT
+                        listData={ListComps}
+                        initialMargin={0}
+                    ></ListElementsEDT>
+                </OpenMenuContext.Provider>
+            )}
         </div>
     );
 }

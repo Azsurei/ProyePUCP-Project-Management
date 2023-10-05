@@ -30,7 +30,7 @@ import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const stringURL = "http://localhost:8080/api/proyecto/77/6/backlog/epica/hu";
