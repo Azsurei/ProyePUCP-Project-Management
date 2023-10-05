@@ -10,6 +10,7 @@ export default function EDTVisualization({
     projectId,
     ListComps,
     handlerGoToNew,
+    handleVerDetalle
 }) {
     const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -50,7 +51,7 @@ export default function EDTVisualization({
                 </div>
             ) : (
                 <OpenMenuContext.Provider
-                    value={{ openMenuId, toggleMenu, handlerGoToNew }}
+                    value={{ openMenuId, toggleMenu, handlerGoToNew , handleVerDetalle}}
                 >
                     <ListElementsEDT
                         listData={ListComps}

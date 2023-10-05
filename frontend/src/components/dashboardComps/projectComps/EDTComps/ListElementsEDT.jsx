@@ -15,7 +15,7 @@ function CardEDT(props){
     const [openMoreInfo, setOpenMoreInfo] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
-    const {openMenuId, toggleMenu, handlerGoToNew} = useContext(OpenMenuContext);
+    const {openMenuId, toggleMenu, handlerGoToNew, handleVerDetalle} = useContext(OpenMenuContext);
 
     const handleClick = ()=>{
         if(hasChilds === true)
@@ -40,10 +40,10 @@ function CardEDT(props){
         <div>
             <li className={openChilds === true ? "CardEDT active" : "CardEDT"} onClick={handleClick}>
                 <div className="leftContainer">
-                    <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p>
+                    {/* <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p> */}
                     <div className="titleContainer">
                         <p className="cardNum">{props.levelCounter}.</p>
-                        <p className="cardName">(ID {props.id}){props.name}</p>
+                        <p className="cardName">{props.name}</p>
                     </div>
                 </div>
                 
@@ -58,8 +58,6 @@ function CardEDT(props){
                             position: 'absolute',
                             top: `${menuPosition.top}px`, // Set the top position dynamically
                             left: `calc(${menuPosition.left}px)`, // Set the left position dynamically
-                            //top: '0px',
-                            //left: '0px',
                             background: 'white',
                             border: '1px solid #ccc',
                             paddingTop: '0px',
@@ -72,7 +70,8 @@ function CardEDT(props){
                         }}
                     >
                         {/* Menu content */}
-                        <button style={{backgroundColor:'gray'}} onClick={()=>handlerGoToNew(props.nextSon,props.id)}>Agregar hijo</button>
+                        <button onClick={()=>handlerGoToNew(props.nextSon,props.id)}>Agregar hijo</button>
+                        <button onClick={()=>{handleVerDetalle()}}>Ver detalle</button>
                         <button>Editar</button>
                         <button>Eliminar</button>
                     </div>
@@ -99,7 +98,7 @@ export default function ListElementsEDT(props){
                 return (
                     <CardEDT key={component.idComponente} 
                                 id={component.idComponente}
-                                name={component.descripcion}
+                                name={component.nombre}
                                 nextSon={component.nextSon}
                                 levelCounter={component.codigo}
                                 levelName="FASE"
