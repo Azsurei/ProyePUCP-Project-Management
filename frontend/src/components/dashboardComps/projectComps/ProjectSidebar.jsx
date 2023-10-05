@@ -126,11 +126,33 @@ function ProjectSidebar(props) {
 
     const sideBar1Array = [
         {
-            id: 1,
+            id: 9,
+            position: 1,
             optIcon : '/icons/icon-goBack.svg',
-            optName : 'Pendiente',
+            optName : 'Autoevaluacion del equipo',
             goTo    : `${stringBase}`
-        }
+        },
+        {
+            id: 10,
+            position: 2,
+            optIcon : '/icons/icon-goBack.svg',
+            optName : 'Registro de retrospectivas',
+            goTo    : `${stringBase}`
+        },
+        {
+            id: 11,
+            position: 3,
+            optIcon : '/icons/icon-goBack.svg',
+            optName : 'Actas de reunion',
+            goTo    : `${stringBase}`
+        },
+        {
+            id: 50, /*SIN ID EN BASE DE DATOS PORQUE SIEMPRE DEBE ESTAR PRESENTE*/
+            position: 4,
+            optIcon : '/icons/icon-goBack.svg',
+            optName : 'Reporte de avances',
+            goTo    : `${stringBase}`
+        },
     ];
     
     const sidebar1Data = {
@@ -142,28 +164,75 @@ function ProjectSidebar(props) {
     const sideBar2Array = [
         {
             id: 1,
+            position: 1,
             optIcon : '/icons/icon-notif.svg',
             optName : 'Gestion de backlog',
             goTo    : `${stringBase}/productBacklog`
         },
         {
-            id: 2,
+            id: 3,
+            position: 2,
             optIcon : '/icons/datePB.svg',
             optName : 'Acta de constitución',
             goTo    : `${stringBase}/actaConstitucion`
         },
         {
-            id: 3,
+            id: 2,
+            position: 3,
             optIcon : '/icons/icon-cross.svg',
             optName : 'EDT y diccionario EDT',
             goTo    : `${stringBase}/EDT`
         },
+        
         {
             id: 4,
+            position: 4,
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Cronograma',
+            goTo    : `${stringBase}/cronograma`
+        },
+        {
+            id: 12,
+            position: 5,
             optIcon : '/icons/icon-help.svg',
             optName : 'Registro de equipos',
             goTo    : `${stringBase}/Equipo`
-        }
+        },
+        {
+            id: 13,
+            position: 6,
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Presupuesto',
+            goTo    : `${stringBase}/presupuesto`
+        },
+        {
+            id: 5,
+            position: 7,
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Catalogo de riesgos',
+            goTo    : `${stringBase}/catalogoRiesgos`
+        },
+        {
+            id: 6,
+            position: 8,
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Catalogo de interesados',
+            goTo    : `${stringBase}/catalogoInteresados`
+        },
+        {
+            id: 7,
+            position: 9,
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Matriz de responsabilidades',
+            goTo    : `${stringBase}/matrizResponsabilidades`
+        },
+        {
+            id: 8,
+            position: 10,
+            optIcon : '/icons/icon-help.svg',
+            optName : 'Matriz de comunicaciones',
+            goTo    : `${stringBase}/matrizComunicaciones`
+        },
     ];
     
     const sidebar2Data = {
@@ -171,6 +240,20 @@ function ProjectSidebar(props) {
         tittleTitle : 'Herramientas',
         dataItems : sideBar2Array
     };
+
+
+    //entonces, recibes una lista de herramientas
+    let arrayFromApi;
+    function getArrayForSidebar(){
+        //por cada item en el arrayFromApi, usamos su ID para jalar el que tenga
+        //dicho ID en el arreglo de dataItems, y lo arreglamos al arreglo final
+        let newDataArray = [];
+        for(tool in arrayFromApi){
+            newDataArray.push(sideBar2Array.find(item => item.id === tool.idHerramienta));
+        }
+
+        newDataArray.sort((a, b) => a.position - b.position);
+    }
 
     
     return (

@@ -205,6 +205,10 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const idActaReunion = results[0][0].idActaReunion;
                     }
 
+                    //12 seria registro de equipos (este no se agrega de esta manera, solo se crean subequipos)
+                    //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
+                    //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
+
                     // try {
                     //     const query = `
                     //     CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
