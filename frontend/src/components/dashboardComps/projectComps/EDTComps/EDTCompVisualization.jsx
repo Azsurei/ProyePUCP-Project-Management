@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
@@ -11,7 +11,8 @@ export default function EDTCompVisualization({
     projectName,
     projectId,
     handlerReturn,
-    idElementoPadre
+    idElementoPadre,
+    idComponentToSee,
 }) {
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
@@ -120,52 +121,39 @@ export default function EDTCompVisualization({
         setListCriterios(updatedCriterios);
     };
 
-
-
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
-        url: "http://localhost:8080/api/proyecto/" + projectId +"/insertarComponenteEDT",
+        url:
+            "http://localhost:8080/api/proyecto/" +
+            projectId +
+            "/insertarComponenteEDT",
         headers: {
             "Content-Type": "application/json",
         },
         // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
     };
 
-
-    const handleComponentRegister = () => {
-        console.log("Procediendo con insertar el componente");
+    useEffect(() => {
+        console.log("Procediendo sacar informacion del componente");
         axios
             .post(
-                "http://localhost:8080/api/proyecto/EDT/" + projectId +"/insertarComponenteEDT",
+                "http://localhost:8080/api/proyecto/EDT/verInfoComponenteEDT",
                 {
-                    idElementoPadre: idElementoPadre,
-                    idProyecto: projectId,
-                    descripcion: inDescripcion,
-                    codigo: inCodigoComponente,
-                    observaciones: inObservaciones,
-                    nombre: inComponentName,
-                    responsables: inResponsables,
-                    fechaInicio: inFechaInicio,
-                    fechaFin: inFechaFin,
-                    recursos: inRecursos,
-                    hito: inHito,
-                    criterioAceptacion: listCriterios,
-                    entregables: listEntregables,
+                    idComponente: idComponentToSee
                 }
             )
             .then(function (response) {
                 console.log(response);
                 console.log(
-                    "creo que se inserto tu componente, reza para que todo este en laa bd"
+                    "haz conseguido la informacion de dicho componente con exito"
                 );
 
-                //cambiamos a la otra paginaa
-                handlerReturn();
+                
             })
             .catch(function (error) {
                 console.log(error);
             });
-    }
+    }, []);
 
     return (
         <div className="EDTNew">
@@ -348,7 +336,7 @@ export default function EDTCompVisualization({
 
             <div className="ButtonsContainer">
                 <button>Cancelar</button>
-                <button onClick={handleComponentRegister}>Guardar</button>
+                <button>Guardar</button>
             </div>
         </div>
     );
