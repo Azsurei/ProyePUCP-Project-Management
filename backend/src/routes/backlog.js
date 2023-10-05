@@ -28,11 +28,11 @@ routerBacklog.get("/:idProyecto/listarBacklog",verifyToken,async(req,res)=>{
     }
 })
 
-routerBacklog.get("/:idBacklog/listarEpicas",verifyToken,async(req,res)=>{
-    const { idBacklog} = req.params;
-    console.log(`Llegue a recibir solicitud listar epicas de Backlog${idBacklog}`);
+routerBacklog.get("/:idProyecto/listarEpicas",verifyToken,async(req,res)=>{
+    const { idProyecto} = req.params;
+    console.log(`Llegue a recibir solicitud listar epicas del proyecto${idProyecto}`);
     const query = `
-        CALL LISTAR_EPICAS_X_ID_BACKLOG(?);
+        CALL LISTAR_EPICAS_X_ID_PROYECTO(?);
     `;
     try {
         const [results] = await connection.query(query,[idBacklog]);
@@ -40,10 +40,10 @@ routerBacklog.get("/:idBacklog/listarEpicas",verifyToken,async(req,res)=>{
             epicas: results[0],
             message: "Epicas obtenidas exitosamente"
         });
-        console.log(`Se han listado las epicas para el Backlog ${idBacklog}!`);
+        console.log(`Se han listado las epicas para el proyecto ${idProyecto}!`);
     } catch (error) {
-        console.error("Error al obtener los proyectos:", error);
-        res.status(500).send("Error al obtener los proyectos: " + error.message);
+        console.error("Error al obtener las epicas:", error);
+        res.status(500).send("Error al obtener las epicas: " + error.message);
     }
 })
 

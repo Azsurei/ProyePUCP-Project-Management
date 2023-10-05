@@ -30,7 +30,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
             `Nombre de proyecto es  ${nombre}, fecha inicio es ${fechaInicio} y fecha fin es `
         );
 
-        const [results] = await connection.query(query, [
+        const [results] = connection.query(query, [
             idUsuario,
             nombre,
             99,
@@ -375,6 +375,29 @@ routerProyecto.get(
             console.error("Error al obtener las historias prioridad:", error);
             res.status(500).send(
                 "Error al obtener las historias prioridad: " + error.message
+            );
+        }
+    }
+);
+
+routerProyecto.post("/listarUsuariosXidRolXidProyecto",verifyToken,async (req, res) => {
+        //Insertar query aca
+        const { idProyecto,idRol } = req.params;
+        console.log("Llegue a recibir solicitud listar usuarios por rol en proyecto");
+        const query = `
+        CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(?,?);
+    `;
+        try {
+            const [results] = await connection.query(query, [idProyecto,idRol]);
+            res.status(200).json({
+                historiasPrioridad: results[0],
+                message: "Usuarios por rol en proyecto obtenidos exitosamente",
+            });
+            console.log("Si se listaron los usuarios por rol en proyecto");
+        } catch (error) {
+            console.error("Error al obtener los usuarios por rol en proyecto", error);
+            res.status(500).send(
+                "Error al obtener los usuarios por rol en proyecto: " + error.message
             );
         }
     }

@@ -132,7 +132,6 @@ routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,
                 '${scenario.cuando}',
                 '${scenario.entonces}',
                 '${scenario.scenario}'
-
             );
             `);
             const idHistoriaCriterioDeAceptacion = scenarioRows[0][0].idHistoriaCriterioDeAceptacion;
