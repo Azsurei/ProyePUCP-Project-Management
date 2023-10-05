@@ -26,21 +26,21 @@ const items = [
         label: "Informacion General",
         percentageComplete: 0,
         status: "current",
-        href: "#",
+
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 0,
         status: "unvisited",
-        href: "#",
+
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "unvisited",
-        href: "#",
+
     },
 ];
 
@@ -50,21 +50,21 @@ const items2 = [
         label: "Informacion General",
         percentageComplete: 100,
         status: "visited",
-        href: "#",
+
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 0,
         status: "current",
-        href: "#",
+
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "unvisited",
-        href: "#",
+        
     },
 ];
 
@@ -74,21 +74,21 @@ const items3 = [
         label: "Informacion General",
         percentageComplete: 100,
         status: "visited",
-        href: "#",
+        
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 100,
         status: "visited",
-        href: "#",
+
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "current",
-        href: "#",
+        
     },
 ];
 
