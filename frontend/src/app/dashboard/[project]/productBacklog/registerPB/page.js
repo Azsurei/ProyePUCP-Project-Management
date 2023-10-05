@@ -24,7 +24,7 @@ function getCurrentDate() {
 
 export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
-    const projectId= decodedUrl.charAt(decodedUrl.length-1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const stringURLEpics= "http://localhost:8080/api/proyecto/backlog/1/listarEpicas";
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
@@ -38,6 +38,8 @@ export default function ProductBacklogRegister(props) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        console.log("ID RECOGIDO = " + projectId);
+
         const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
 
         axios.get(stringURLUsuario).
