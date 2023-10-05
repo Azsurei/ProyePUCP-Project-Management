@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 /* Estilo para el contenedor principal */
 .container {
     padding: 0 20px; /* Aplica un padding de 20px a los lados */
@@ -6,12 +8,28 @@
   
 /* Estilo para la tarjeta de equipo */
 .CardEquipo {
-    margin: 0 50px 50px 0; /* Margen de 20px en los lados derecho e inferior de cada tarjeta */
-    box-sizing: border-box; /* Incluye el margen en el cálculo del tamaño total */
+    /*margin: 0 50px 50px 0; /* Margen de 20px en los lados derecho e inferior de cada tarjeta */
+    width: calc(33.33% - 20px);
+    margin: 0 20px 20px 0;
+    box-sizing: border-box;
+    transition: transform 0.3s, box-shadow 0.3s;
   }
-  
+
+  .card-hover:hover {
+    background-color: #5088e9; /* Cambia el color de fondo */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Agrega una sombra */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Agrega una transición suave */
+    transform: translateY(-5px);
+    cursor: pointer;
+    color: white;
+  }
+
+  .card-hover:hover .card-text-hover {
+    color: white; /* Cambia el color del texto a blanco al hacer hover */
+}
+
   /* Estilo para forzar un salto de línea después de cada tercer elemento */
-  .CardEquipo:nth-child(3n) {
+  .CardEquipo:nth-child(3n+1) {
     margin-right: 0; /* No hay margen derecho para el tercer elemento (cada tercer elemento se colocará en una nueva línea) */
   }
 
@@ -42,54 +60,35 @@
 
 .title{
     display: flex;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     align-items: center;
     color: #172B4D;
-    font-weight: 600;
+    font-weight: 700;
     font-family: Montserrat;
 }
 
-.navigationBacklog{
-    display: flex;
-    box-sizing: border-box;
+.titleAndOptions {
+    display: flex; /* Agregamos display: flex al contenedor */
+    align-items: center; /* Centra verticalmente los elementos */
+    justify-content: space-between; /* Alinea los elementos a los extremos */
+    margin-bottom: 20px; /* Añade margen inferior para separación */
 }
 
-.navigationBacklogIzquierda{
-    width: 80%;
-    display: flex;
-    gap: 2.5%;
-}
-
-.navigationBacklogDerecha{
-    width: 20%;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.btnBacklog{
-    border-radius: 10px;
-    background-color: white;
-    border: 1px solid #172B4D;
-    font-size: 0.8rem;
-    font-weight: 600;
-    height: 36px;
-    width: 150px;
-}
-
-.btnBacklogPrimary{
-    border-radius: 10px;
-    background-color: #F0AE19;
-    border: #F0AE19 1px solid;
-    font-size: 0.8rem;
-    font-weight: 600;
-    height: 36px;
-    width: 150px;
-    color: white;
-    text-align: center;
-    align-items: center;
-}
 /*Boton añadir nuevo Project*/
-.addProjectbtn {
+.buttonAddTeam {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 0px;
+}
+
+.subtitle {
+    color: #313131;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.addTeambtn {
     border-radius: 5px;
     background-color: #f0ae19;
     /* border: #F0AE19 1px solid; */
@@ -99,5 +98,84 @@
     height: 36px;
     width: 160px;
     color: white;
+    cursor: pointer;
     transition: background-color 0.15s ease-in;
+}
+
+.addTeambtn:hover {
+    opacity: 0.8;
+}
+
+.progressBarContainer {
+  width: 100%;
+}
+
+/* ////////////////////
+    Estilos de Modales
+    ///////////////////
+*/
+.modalBackground {
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(200, 200, 200, 0.7); /* Cambia el color de fondo y ajusta la opacidad si lo deseas */
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  z-index: 9999; /* Asegúrate de que el modal esté por encima de otros elementos */
+}
+
+.modalContainer {
+  width: 80%; /* Ajusta el ancho del modal según tus necesidades */
+  max-width:750px; /* Establece un ancho máximo para evitar que el modal sea demasiado grande */
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+}
+
+.modalContainer .title {
+  display: inline-block;
+  text-align: left;   
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 0;
+  padding: 0;
+}
+
+.modalTitle {   
+  text-align: left;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 0px;
+  color: #172B4D;
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+  position: relative; /* Asegura que los elementos hijos sean posicionados relativamente al contenedor */
+}
+
+.titleCloseBtn button {
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0; /* Elimina el espacio adicional alrededor del botón */
+  line-height: 1; /* Alinea verticalmente el contenido del botón */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px; /* Ajusta el tamaño del botón según tus necesidades */
+  height: 30px;
+  position: absolute;
+  top: 0; /* Ajusta la posición vertical según tus necesidades */
+  right: 0; /* Ajusta la posición horizontal según tus necesidades */
 }
