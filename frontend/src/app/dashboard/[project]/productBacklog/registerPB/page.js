@@ -25,7 +25,7 @@ function getCurrentDate() {
 export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId= decodedUrl.charAt(decodedUrl.length-1);
-    const stringURLEpics= "http://localhost:3000/api/proyecto/backlog/1/listarEpicas";
+    const stringURLEpics= "http://localhost:8080/api/proyecto/backlog/1/listarEpicas";
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -124,20 +124,20 @@ export default function ProductBacklogRegister(props) {
         const quiero=e.target.customPlaceholderInput2.value;
         const para=e.target.customPlaceholderInput3.value;
         const postData = {
-            idEpic,
-            idPriority,
-            idState,
-            name,
-            como,
-            quiero,
-            para,
-            currentDate,
+            idEpic: idEpic,
+            idPriority: idPriority,
+            idState: idState,
+            name: name,
+            como: como,
+            quiero: quiero,
+            para: para,
+            currentDate: currentDate,
             idUsuario: datosUsuario.idUsuario,
-            scenarioData,
-            requirementData,
+            scenarioData: scenarioFields,
+            requirementData: requirementFields,
         };
 
-/*         axios.post("URL_DE_TU_API", postData)
+        axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario", postData)
         .then((response) => {
           // Manejar la respuesta de la solicitud POST
           console.log("Respuesta del servidor:", response.data);
@@ -147,7 +147,7 @@ export default function ProductBacklogRegister(props) {
         .catch((error) => {
           // Manejar errores si la solicitud POST falla
           console.error("Error al realizar la solicitud POST:", error);
-        }); */
+        });
     };
 
     return(
