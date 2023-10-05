@@ -116,13 +116,16 @@ BEGIN
     SELECT _id_Epica AS idEpica;
 END$
 
+DROP PROCEDURE LISTAR_EPICAS_X_ID_PROYECTO;
 DELIMITER $
-CREATE PROCEDURE LISTAR_EPICAS_X_ID_BACKLOG(
-	IN _idBacklog INT
+CREATE PROCEDURE LISTAR_EPICAS_X_ID_PROYECTO(
+	IN _idProyecto INT
 )
 BEGIN
-	SELECT *FROM Epica p WHERE _idBacklog = p.idProductBacklog AND p.activo =1;
+	SELECT *FROM Epica p WHERE p.idProductBacklog = (SELECT idProductBacklog FROM ProductBacklog b WHERE b.idProyecto = _idProyecto AND b.activo=1) 
+    AND p.activo =1;
 END$
+CALL LISTAR_EPICAS_X_ID_PROYECTO(6);
 
 CREATE PROCEDURE LISTAR_HISTORIAS_DE_USUARIO_X_ID_EPICA(
 	IN _idEpica INT
@@ -558,3 +561,28 @@ BEGIN
     SET _idHistoriaCriterioDeAceptacion = @@last_insert_id;
     SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT idHerramienta 
+    FROM HerramientaXProyecto 
+    WHERE idProyecto = _idProyecto 
+    AND activo=1
+    ORDER BY idHerramienta;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_ROL_X_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
+    IN _idProyecto INT,
+    IN _idRol INT
+)
+BEGIN
+	SELECT u.idUsuario, u.nombres, u.apellidos FROM Usuario u, UsuarioXRolXProyecto urp WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND urp.activo = 1;
+END$
+
+CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(6,2);
