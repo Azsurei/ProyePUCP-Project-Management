@@ -1,6 +1,10 @@
+"use client"
+
 import React from "react";
 import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 function DashboardNav() {
     return (
@@ -20,6 +24,10 @@ function DashboardNav() {
                     <li>
                         <img src="/icons/icon-notif.svg" alt="" className="icon" />
                         <p>Notificaciones</p>
+                    </li>
+                    <li onClick={() => signOut()}>
+                        <img src="/icons/icon-signout.svg" alt="" className="icon" />
+                        <p>Cerrar Sesión</p>
                     </li>
                     <li>
                         <Link href='/dashboard/templates'><img src="/icons/icon-usr.svg" alt="" className="icon" id='icnUser'/></Link>

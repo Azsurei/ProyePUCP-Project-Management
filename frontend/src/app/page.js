@@ -1,7 +1,17 @@
+"use client"
+
 import Button from "@/components/Button";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 
 export default function Home() {
+    const router = useRouter();
+
+    const handleLogin = () => {
+        router.push("/login");
+    };
+
     return (
         <div className="flex flex-col max-h-screen mx-auto w-full h-full">
             <nav className="flex flex-col justify-between items-center px-8 py-8 w-full bg-white shadow-md sm:py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -50,7 +60,7 @@ export default function Home() {
                     <Button
                         appearance="default"
                         text="¡Inicia ya!"
-                        href={"/login"}
+                        onClick={() => handleLogin()}
                         className={"w-52"}
                     />
                 </div>

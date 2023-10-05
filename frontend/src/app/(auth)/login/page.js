@@ -9,28 +9,23 @@ import "@/styles/login.css";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useRouter } from "next/navigation";
-import { signIn } from 'next-auth/react';
+import { signIn } from "next-auth/react";
 
 axios.defaults.withCredentials = true;
 
 function Login() {
+    async function handleGoogleSignIn() {
+        signIn("google", { callbackUrl: "http://localhost:3000" });
+    }
+
     const router = useRouter();
 
     const [formData, setFormData] = useState({
-        usuario: "",
+        email: "",
         password: "",
         passwordError: false,
         loading: false,
     });
-
-    const axiosOptions = {
-        method: "post", // El método de solicitud puede variar según tus necesidades
-        url: "http://localhost:8080/api/auth/login",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
-    };
 
     function handleChange(name, value) {
         setFormData({
@@ -40,38 +35,27 @@ function Login() {
         });
     }
 
-    function handleLogin() {
-        const { usuario, password } = formData;
+    const handleSubmit = async () => {
+        const { email, password } = formData;
 
         // Activar el estado de carga antes de realizar la solicitud Axios
         setFormData({ ...formData, loading: true });
         console.log(formData);
 
-        axios
-            .post("http://localhost:8080/api/auth/login", {
-                username: usuario,
-                password: password,
-            })
-            .then(function (response) {
-                console.log(response);
-                console.log("Conexion correcta");
+        const responseNextAuth = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+        });
 
-                // const token = response.token;
-                // if(token){
-                //     //const json = jwt.decode(token) as {}; DEBEMOS SACAR EL ID A PARTIR DE EL TOKEN
-                // }
+        if (responseNextAuth.error) {
+            console.log(responseNextAuth.error);
+            return;
+        }
 
-                //tenemos que mandarlo a su dashboard
-                router.push("/dashboard");
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .finally(() => {
-                // Desactivar el estado de carga después de que la solicitud se complete (ya sea con éxito o error)
-                setFormData({ ...formData, loading: false });
-            });
-    }
+        setFormData({ ...formData, loading: false });
+        router.push("/dashboard");
+    };
 
     return (
         <>
@@ -99,9 +83,9 @@ function Login() {
                         <div className="placeholders">
                             <Placeholder
                                 attribute={{
-                                    id: "usuario",
-                                    name: "usuario",
-                                    type: "text",
+                                    id: "email",
+                                    name: "email",
+                                    type: "username",
                                     placeholder: "Correo electrónico",
                                 }}
                                 handleChange={handleChange}
@@ -125,10 +109,7 @@ function Login() {
                         </div>
 
                         <div className="divInicioSesion">
-                            <Link
-                                href="/recoverPassword"
-                                className="txtOlvido"
-                            >
+                            <Link href="/recoverPassword" className="txtOlvido">
                                 <span
                                     href="#IniciarSesion"
                                     className="txtOlvido"
@@ -140,9 +121,10 @@ function Login() {
 
                         <div className="boton2">
                             <Button
+                                type="submit"
                                 text="Iniciar Sesión"
                                 href={"#"}
-                                onClick={handleLogin}
+                                onClick={handleSubmit}
                                 isLoading={formData.loading}
                                 className={"w-48"}
                             />
@@ -161,7 +143,7 @@ function Login() {
                                     <img src="/icons/icon-google.svg" />
                                 }
                                 className={"w-48"}
-                                onClick={() => signIn()}
+                                onClick={() => handleGoogleSignIn()}
                             />
                         </div>
 
@@ -172,10 +154,7 @@ function Login() {
                                 </p>
                             </div>
                             <div className="divRegistrate">
-                                <Link
-                                    href="/register"
-                                    className="txtOlvido"
-                                >
+                                <Link href="/register" className="txtOlvido">
                                     <span className="txtRegistrate">
                                         Registrate
                                     </span>
