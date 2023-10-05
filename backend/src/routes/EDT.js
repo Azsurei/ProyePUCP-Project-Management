@@ -264,9 +264,9 @@ routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>
     }
 })
 
-routerEDT.get("/:idProyecto/listarComponenteEDT",async(req,res)=>{
+routerEDT.post("/listarComponenteEDT",async(req,res)=>{
     console.log("Llegue a recibir solicitud listar Componente EDT");
-    const {idComponente} = req.params.idComponente;
+    const {idComponente} = req.body;
     const query = `
         CALL LISTAR_COMPONENTE_EDT(?);
     `;
@@ -281,8 +281,8 @@ routerEDT.get("/:idProyecto/listarComponenteEDT",async(req,res)=>{
         `);
         const componenteEDT = {
             component: results[0],
-            criteriosAceptacion: criterioAceptacion,
-            entregables: entregables
+            criteriosAceptacion: criterioAceptacion[0],
+            entregables: entregables[0]
         };
         res.status(200).json({
             componenteEDT,
