@@ -14,16 +14,7 @@ export default function actaConstitucion() {
 
     return (
         <Page margin={"20px 20px 20px"}>
-            <Breadcrumb items={itemsBreadCrumb} />
-            <Title>{"Acta de Constitución"}</Title>
-            <ButtonPanel margin="20px 20px 20px" align="left">
-                <Button appearance="primary" state="default" spacing="compact">
-                    <div>
-                        <AddIcon />
-                        <Link href="/dashboard/actaConstitucion/info">Crear Nueva Acta</Link>
-                    </div>
-                </Button>
-            </ButtonPanel>
+
         </Page>
     );
 }

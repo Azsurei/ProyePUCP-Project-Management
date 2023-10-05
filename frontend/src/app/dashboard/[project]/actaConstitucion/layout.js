@@ -5,11 +5,14 @@ import Breadcrumb from "@/components/dashboardComps/projectComps/appConstComps/B
 import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
 import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
 import Button from "@/components/dashboardComps/projectComps/appConstComps/Button";
-import AddIcon from "@/components/dashboardComps/projectComps/appConstComps/Button";
+import InfoIcon from '../../../../../public/images/InfoIcon.svg';
+import CalendarIcon from '../../../../../public/images/CalendarIcon.svg';
+import PersonWithCircleIcon from '../../../../../public/images/PersonWithCircleIcon.svg';
+import TaskIcon from '../../../../../public/images/TaskIcon.svg';
 import Link from "next/link";
 import React from "react";
 
-
+const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
@@ -22,22 +25,26 @@ export default function RootLayout({ children, params }) {
             <ButtonPanel margin="20px 20px 20px" align="left">
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
-                        <Link href="/dashboard/actaConstitucion/info">Informacion</Link>
+                        <InfoIcon />
+                        <Link href="/dashboard/project/actaConstitucion/info">Informacion</Link>
                     </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
-                        <Link href="/dashboard/actaConstitucion/cronograma">Cronograma</Link>
+                        <CalendarIcon />
+                        <Link href="/dashboard/project/actaConstitucion/cronograma">Cronograma</Link>
                     </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
-                        <Link href="/dashboard/actaConstitucion/interesados">Interesados</Link>
+                        <PersonWithCircleIcon />
+                        <Link href="/dashboard/project/actaConstitucion/interesados">Interesados</Link>
                     </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
-                        <Link href="/dashboard/actaConstitucion/aprobacion">Aprobacion</Link>
+                        <TaskIcon />
+                        <Link href="/dashboard/project/actaConstitucion/aprobacion">Aprobacion</Link>
                     </div>
                 </Button>
             </ButtonPanel>

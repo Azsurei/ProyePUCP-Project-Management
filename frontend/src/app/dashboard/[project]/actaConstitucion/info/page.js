@@ -7,7 +7,10 @@ import Button from  "@/components/dashboardComps/projectComps/appConstComps/Butt
 import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
 import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
 import React, { useState } from 'react';
-import AddIcon from "@/components/dashboardComps/projectComps/appConstComps/Button";
+import AddIcon from "@/components/dashboardComps/projectComps/appConstComps/AddIcon.svg";
+import EditIcon from '../../../../../../public/images/EditIcon.svg';
+import DocumentFilledIcon from '../../../../../../public/images/DocumentFilledIcon.svg';
+import CrossIcon from '../../../../../../public/images/CrossIcon.svg';
 
 /// Lista de labels sobre info del Proyecto
 
@@ -93,15 +96,36 @@ const cardDataArray = [
 /// Fin de Lista
 const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
 
-export default function actaConstitucion() {
+export default function Info() {
     const [isEditing, setIsEditing] = useState(false); // State to track if user is in "editing" mode
     const [showSaveCancel, setShowSaveCancel] = useState(false); // State to track visibility of "Guardar" and "Cancelar" buttons
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+        setShowSaveCancel(true);
+    };
+
+    const handleCancelClick = () => {
+        setIsEditing(false);
+        setShowSaveCancel(false);
+        // Optionally, reset any form/data changes here
+    };
+
+    const handleSaveClick = () => {
+        // Here you can add logic to save the changes
+        // For demonstration purposes, we just reset the buttons
+        setIsEditing(false);
+        setShowSaveCancel(false);
+    };
 
     return (
         <div>
             <ButtonPanel margin="20px 20px 20px" align="left">
                 <Button appearance="primary" state="default" spacing="compact">
-                    Editar
+                    <div>
+                        <EditIcon />
+                        <div>Editar</div>
+                    </div>
                 </Button>
             </ButtonPanel>
             {cardDataArray.map((card, index) => (
@@ -109,10 +133,16 @@ export default function actaConstitucion() {
             ))}
             <ButtonPanel margin="20px 20px 20px" align="center" style={{ display: showSaveCancel ? 'flex' : 'none' }}>
                 <Button appearance="subtle" state="default" spacing="compact">
-                    Cancelar
+                    <div>
+                        <CrossIcon />
+                        <div>Cancelar</div>
+                    </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
-                    Guardar
+                    <div>
+                        <DocumentFilledIcon />
+                        <div>Guardar</div>
+                    </div>
                 </Button>
             </ButtonPanel>
         </div>
