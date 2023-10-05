@@ -222,7 +222,6 @@
 .DropDownMenu .ItemsContainer{
     max-height: 0;
     overflow: hidden;
-    transition: all 0.1s ease;
     
 }
 
@@ -238,12 +237,14 @@
     flex-direction: row;
     align-items: center;
 
-    padding-left: 1.2rem;
+    padding-left: .8rem;
+    padding-right: .3rem;
     padding-top: .2rem;
     padding-bottom: .2rem;
 
     border-radius: 7px;
-
+    font-weight: 500;
+    color: #414141;
      
 }
 
@@ -252,10 +253,10 @@
 }   
 
 .DropDownMenu .ItemsContainer .DropDownItem img{
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
 
-    margin: 0 .3rem;
+    margin: 0 .4rem;
 }
 
 .DropDownMenu .ItemsContainer .DropDownItem p{

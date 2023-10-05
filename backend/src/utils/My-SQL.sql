@@ -453,13 +453,21 @@ CREATE TABLE Moneda(
 ENGINE = InnoDB;
 
 CREATE TABLE Presupuesto(
-	idPresupuesto INT AUTO_INCREMENT PRIMARY KEY,
+    idPresupuesto INT AUTO_INCREMENT PRIMARY KEY,
     idHerramienta INT,
-    presupuestoInicial  DECIMAL(10,2),
-    activo TINYINT,
-    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta)
+    idProyecto INT,
+    presupuestoInicial DOUBLE,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+SELECT *FROM Presupuesto;
+ALTER TABLE Presupuesto ADD COLUMN idProyecto INT;
+ALTER TABLE Presupuesto ADD COLUMN fechaCreacion DATE;
+
+ALTER TABLE Presupuesto ADD FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto);
 
 CREATE TABLE Ingreso(
 	idIngreso INT AUTO_INCREMENT PRIMARY KEY,

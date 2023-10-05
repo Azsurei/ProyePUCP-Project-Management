@@ -58,7 +58,7 @@ Content-Type:  application/json
 ###
 
 
-POST http://localhost:3000/api/usuario/listarUsuarios HTTP/1.1
+POST http://localhost:8080/api/usuario/listarUsuarios HTTP/1.1
 Content-Type:  application/json
 
 {
@@ -109,4 +109,13 @@ Content-Type:  application/json
       "requirement": "Requerimiento 2: Generar informes de asistencia"
     }
   ]
+}
+
+###
+
+POST http://localhost:8080/api/proyecto/EDT/3/listarComponenteEDT HTTP/1.1
+Content-Type:  application/json
+
+{
+
 }

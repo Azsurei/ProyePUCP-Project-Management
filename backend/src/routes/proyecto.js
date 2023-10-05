@@ -30,7 +30,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
             `Nombre de proyecto es  ${nombre}, fecha inicio es ${fechaInicio} y fecha fin es `
         );
 
-        const [results] = await connection.query(query, [
+        const [results] = connection.query(query, [
             idUsuario,
             nombre,
             99,
@@ -205,39 +205,44 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const idActaReunion = results[0][0].idActaReunion;
                     }
 
-                    // try {
-                    //     const query = `
-                    //     CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
-                    //     `;
-                    //     for (const participante of participantes) {
-                    //         const [results] = await connection.query(
-                    //             query,
-                    //             [
-                    //                 participante.idUsuario,
-                    //                 participante.idRol,
-                    //                 participante.idProyecto,
-                    //             ]
-                    //         );
-                    //         const idUsuarioXRolProyecto =
-                    //             results[0][0].idProyecto;
-                    //         console.log(
-                    //             `Se agrego el usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`
-                    //         );
-                    //     }
-                    // } catch (error) {
-                    //     console.error(
-                    //         `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`,
-                    //         error
-                    //     );
-                    //     res.status(500).send(
-                    //         `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}` +
-                    //             error.message
-                    //     );
-                    // }
+                    //12 seria registro de equipos (este no se agrega de esta manera, solo se crean subequipos)
+                    //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
+                    //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
+
+                    try {
+                        const query = `
+                        CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
+                        `;
+                        for (const participante of participantes) {
+                            const [results] = await connection.query(
+                                query,
+                                [
+                                    participante.idUsuario,
+                                    participante.idRol,
+                                    participante.idProyecto,
+                                ]
+                            );
+                            const idUsuarioXRolProyecto =
+                                results[0][0].idProyecto;
+                            console.log(
+                                `Se agrego el usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`
+                            );
+
+                            res.status(200).json({
+                                message: "Registro hasta los participantes correcto",
+                            });
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`,
+                            error
+                        );
+                        res.status(500).send(
+                            `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}` +
+                                error.message
+                        );
+                    }
                 }
-                res.status(200).json({
-                    message: "Registro hasta las herramientas correcto",
-                });
             } catch (error) {
                 console.error(
                     `Error de creacion de una herramienta para proyecto ${idProyecto}`,
@@ -371,6 +376,29 @@ routerProyecto.get(
             console.error("Error al obtener las historias prioridad:", error);
             res.status(500).send(
                 "Error al obtener las historias prioridad: " + error.message
+            );
+        }
+    }
+);
+
+routerProyecto.post("/listarUsuariosXidRolXidProyecto",verifyToken,async (req, res) => {
+        //Insertar query aca
+        const { idProyecto,idRol } = req.params;
+        console.log("Llegue a recibir solicitud listar usuarios por rol en proyecto");
+        const query = `
+        CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(?,?);
+    `;
+        try {
+            const [results] = await connection.query(query, [idProyecto,idRol]);
+            res.status(200).json({
+                historiasPrioridad: results[0],
+                message: "Usuarios por rol en proyecto obtenidos exitosamente",
+            });
+            console.log("Si se listaron los usuarios por rol en proyecto");
+        } catch (error) {
+            console.error("Error al obtener los usuarios por rol en proyecto", error);
+            res.status(500).send(
+                "Error al obtener los usuarios por rol en proyecto: " + error.message
             );
         }
     }
