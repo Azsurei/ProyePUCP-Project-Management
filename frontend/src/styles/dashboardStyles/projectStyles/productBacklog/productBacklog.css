@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: auto;
+    height: 100%;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -21,7 +21,7 @@
     width: 100%;
     height: 95%;
     display: grid;
-    grid-template-rows: 0.4fr 0.4fr 4fr;
+    grid-template-rows: 0.5fr 0.5fr 4fr;
 }
 
 .titleBacklog{
@@ -67,6 +67,28 @@
     border-radius: 10px;
     background-color: #F0AE19;
     border: #F0AE19 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
+
+.btnBacklogExport{
+    border-radius: 10px;
+    background-color: #29C85F;
+    border: #29C85F 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
+
+.btnBacklogEliminar{
+    border-radius: 10px;
+    background-color: #CE3B3B;
+    border: #CE3B3B 1px solid;
     font-size: 0.8rem;
     font-weight: 600;
     height: 36px;

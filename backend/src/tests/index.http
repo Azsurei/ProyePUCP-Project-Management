@@ -29,7 +29,7 @@ Content-Type:  application/json
 
 ###
 
-POST http://localhost:3000/api/proyecto/EDT/3/insertarComponenteEDT HTTP/1.1
+POST http://localhost:8080/api/proyecto/EDT/3/insertarComponenteEDT HTTP/1.1
 Content-Type:  application/json
 
 {
@@ -74,3 +74,39 @@ Content-Type:  application/json
   "nombre": "#"
 }
 
+###
+
+POST http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idEpic": 1,
+  "idPriority": 1,
+  "idState": 1,
+  "name": "Registro de Asistencia",
+  "como": "Jefe del Proyecto",
+  "quiero": "marcar el registro de asistencia de mis compañeros",
+  "para": "llevar un control de su asistencia",
+  "scenarioData": [
+    {
+      "scenario": "Escenario 1",
+      "dadoQue": "Dado que llega el inicio del día laboral",
+      "cuando": "Cuando un empleado marca su entrada",
+      "entonces": "Entonces se registra la hora de entrada del empleado"
+    },
+    {
+      "scenario": "Escenario 2",
+      "dadoQue": "Dado que un empleado marca su salida",
+      "cuando": "Cuando finaliza su jornada laboral",
+      "entonces": "Entonces se registra la hora de salida del empleado"
+    }
+  ],
+  "requirementData": [
+    {
+      "requirement": "Requerimiento 1: Registrar la asistencia de los empleados"
+    },
+    {
+      "requirement": "Requerimiento 2: Generar informes de asistencia"
+    }
+  ]
+}

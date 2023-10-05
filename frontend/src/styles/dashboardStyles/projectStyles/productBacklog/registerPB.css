@@ -1,4 +1,4 @@
-.container{
+.containerRegisterPB{
     flex: 1;
     font-family: Montserrat;
     display: flex;
@@ -9,7 +9,7 @@
     padding-right: 2rem;
 }
 
-.header{
+.headerRegisterPB{
     display: flex;
     align-items: center;
     width: 100%;
@@ -17,15 +17,14 @@
     padding-bottom: 0.8rem;
 }
 
-.backlog{
+.backlogRegisterPB{
     width: 100%;
     display: grid;
-    /* grid-template-rows: 0.5fr 2fr 3fr 3fr 2fr 1fr; */
     grid-template-rows: repeat(7,auto);
     gap: 3%;
 }
 
-.titleBacklog{
+.titleBacklogRegisterPB{
     display: flex;
     font-size: 1.3rem;
     align-items: center;

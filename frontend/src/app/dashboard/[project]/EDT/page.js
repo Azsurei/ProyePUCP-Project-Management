@@ -15,7 +15,7 @@ axios.defaults.withCredentials = true;
 
 export default function EDT(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const [screenState, setScreenState] = useState(1);

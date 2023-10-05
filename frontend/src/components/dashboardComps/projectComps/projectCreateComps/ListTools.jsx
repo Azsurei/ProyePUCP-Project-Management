@@ -1,71 +1,93 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListTools.css";
+import { ToolCardsContext } from "@/app/dashboard/newProject/page";
 axios.defaults.withCredentials = true;
 
 function CardSelectTools(props) {
-  return (
-    <li className="ToolCard" onClick={props.onClick}>
-      <p className="titleTool">{props.name}</p>
+	const [isSelected, setIsSelected] = useState(false);
 
-      <div className="descriptionTool">
-        <p>{props.description}</p>
-      </div>
+	const { addToolToList, removeToolInList } = useContext(ToolCardsContext);
 
-      
-      <div className="buttonContainerCreate">
-        <button className="buttonOneTool">Ver Detalles</button>
-        <button className="buttonOneTool">Agregar</button>
-      </div>
-    </li>
-  );
+	const handleSelectedOn = () => {
+		addToolToList(props.herramientaObject);
+		setIsSelected(true)
+	}
+
+	const handleSelectedOff = () => {
+		removeToolInList(props.herramientaObject);
+		setIsSelected(false)
+	}
+
+    return (
+        <li className={isSelected ? "ToolCard active" : "ToolCard"} onClick={props.onClick}>
+            <p className="titleTool">{props.name}</p>
+
+            <div className="descriptionTool">
+                <p>{props.description}</p>
+            </div>
+
+            <div className="buttonContatinerTool">
+                <button className="buttonOneTool">Ver Detalles</button>
+                {isSelected != true && <button className="buttonOneTool" onClick={handleSelectedOn}>Agregar</button>}
+				{isSelected && <button className="buttonOneTool" onClick={handleSelectedOff}>Eliminar</button>}
+            </div>
+        </li>
+    );
 }
 
-export default function ListTools(props) {
-  const router = useRouter();
+export default function ListTools(addToolToList, removeToolInList, props) {
 
-  const [listTools, setListTools] = useState([]);
+    const router = useRouter();
 
-  useEffect(() => {
-    let toolsArray;
-    const stringURL =
-      "http://localhost:3000/api/herramientas/listarHerramientas";
-    axios
-      .get(stringURL)
-      .then(function (response) {
-        console.log(response);
-        toolsArray = response.data.herramientas;
+    const [listTools, setListTools] = useState([]);
 
-        toolsArray = toolsArray.map((tool) => {
-          return {
-            id: tool.idHerramienta,
-            name: tool.nombre,
-            description: tool.descripcion,
-          };
-        });
+    useEffect(() => {
+        let toolsArray;
+        const stringURL =
+            "http://localhost:3000/api/herramientas/listarHerramientas";
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                console.log(response);
+                toolsArray = response.data.herramientas;
 
-        setListTools(toolsArray);
+                toolsArray = toolsArray.map((tool) => {
+                    return {
+                        idHerramienta: tool.idHerramienta,
+                        nombre: tool.nombre,
+                        descripcion: tool.descripcion,
+                    };
+                });
 
-        console.log(toolsArray);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
+                setListTools(toolsArray);
 
-  return (
-    <ul className="ListToolsUl">
-      {listTools.map((component) => {
-        return (
-          <CardSelectTools
-            key={component.id}
-            name={component.name}
-            description={component.description}
-          ></CardSelectTools>
-        );
-      })}
-    </ul>
-  );
+                console.log(toolsArray);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
+	
+
+    return (
+        <ul className="ListToolsUl">
+            {listTools.map((component) => {
+                return (
+                    <CardSelectTools
+                        key={component.idHerramienta}
+						id={component.idHerramienta}
+                        name={component.nombre}
+                        description={component.descripcion}
+						herramientaObject = {component}
+                        addToolToList={addToolToList}
+                        removeToolInList={removeToolInList}
+                    ></CardSelectTools>
+                );
+            })}
+        </ul>
+    );
 }

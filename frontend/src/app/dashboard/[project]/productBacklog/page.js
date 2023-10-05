@@ -2,12 +2,32 @@
 import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css";
 
 //import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
 import BacklogRow from "@/components/dashboardComps/projectComps/productBacklog/BacklogRow";
 import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
+import MyDynamicTable from "@/components/DynamicTable";
 import { data } from "autoprefixer";
+import React from "react";
+
+import {
+    Input,
+    Button,
+    DropdownTrigger,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem,
+    Pagination,
+  } from "@nextui-org/react";
+import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
+import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
+import { SearchIcon } from "@/../public/icons/SearchIcon";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { m } from "framer-motion";
+import PopUpEliminateAll from "@/components/PopUpEliminateAll";
+
+
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.charAt(decodedUrl.length - 1);
@@ -15,161 +35,416 @@ export default function ProductBacklog(props) {
 
     const stringURL = "http://localhost:8080/api/proyecto/77/6/backlog/epica/hu";
 
-    const [modal, setModal] = useState(false);
+    const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
 
     const toggleModal = (task) => {
         setSelectedTask(task);
-        setModal(!modal);
+        setModal1(!modal1);
     };
 
+    const toggleModalAll = () => {
+        setModal2(!modal2);
+    };
+    
+
     useEffect(() => {
-        if(modal) {
+        if(modal1 || modal2) {
             document.body.style.overflow = 'hidden'
         } else {
             document.body.style.overflow = 'auto'
         }
-    }, [modal])
+    }, [modal1, modal2])
 
     
     
-    const columns1 = {
-        name: 'Nombre',
-        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-    }
+    const columns = [
+        {
+            name: 'Nombre',
+            uid: 'descripcion',
+            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: true
+        },
+        {
+            name: 'Epica',
+            uid: 'epic',
+            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: true
+        },
+        {
+            name: 'Prioridad',
+            uid: 'priority',
+            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: true
+        },
+        {
+            name: 'Estado',
+            uid: 'state',
+            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: true
+        },
+        {
+            name: ' ',
+            uid: 'actions',
+            className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left',
+        }
+    ];
 
-    const columns2 = {
-        name: 'Epica',
-        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-    }
+    const data = [
+        {
+            id: 1,
+            descripcion: 'Historia 1',
+            epic: 'Epic 1',
+            priority: 'Must',
+            state: 'No iniciado'
+        },
+        {
+            id: 2,
+            descripcion: 'Historia 2',
+            epic: 'Epic 2',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 3,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 4,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 5,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 6,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 7,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 8,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 9,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 10,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 11,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 12,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 13,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 14,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        },
+        {
+            id: 15,
+            descripcion: 'Historia 3',
+            epic: 'Epic 3',
+            priority: 'Could',
+            state: 'En progreso'
+        }
+    ];
+    
 
-    const columns3 = {
-        name: 'Prioridad',
-        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-    }
-
-    const columns4 = {
-        name: 'Estado',
-        className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-    }
-    const columns5 = {
-        name: ' ',
-        className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left ',
-    }
-    const columns6 = {
-        name: ' ',
-        className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left ',
-    }
-
-
-    const columns = [columns1, columns2, columns3, columns4, columns5, columns6];
-
-    const data1 = {
-        descripcion: 'Historia 1', 
-        epic: 'Epic 1',
-        priority: 'Must',
-        state: 'No iniciado'
-    }
-
-    const data2 = {
-        descripcion: 'Historia 2', 
-        epic: 'Epic 2',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data3 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data4 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data5 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data6 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-    const data7 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-    const data8 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-    const data9 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data10 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data11 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data12 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data13 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data14 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-    const data15 = {
-        descripcion: 'Historia 3', 
-        epic: 'Epic 3',
-        priority: 'Could',
-        state: 'En progreso'
-    }
-
-
-    const data = [data1, data2, data3,data4,data5,data6,data7,data8, data9, data10, data11, data12, data13, data14, data15];
+    const toolsOptions = [
+        { name: "Herramienta 1", uid: "active" },
+        { name: "Herramienta 2", uid: "paused" },
+        { name: "Herramienta 3", uid: "vacation" },
+    ];
 
     //const [datas, setDatas] = useState([]);
+    const [filterValue, setFilterValue] = React.useState("");
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+    const [toolsFilter, setToolsFilter] = React.useState("all");
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [sortDescriptor, setSortDescriptor] = React.useState({
+        column: "descripcion",
+        direction: "ascending",
+    });
+    const [page, setPage] = React.useState(1);
+
+    // Variables adicionales
+    const pages = Math.ceil(data.length / rowsPerPage);
+    const hasSearchFilter = Boolean(filterValue);
+
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...data];
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((data) =>
+                data.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+        if (
+            toolsFilter !== "all" &&
+            Array.from(toolsFilter).length !== toolsOptions.length
+        ) {
+            filteredTemplates = filteredTemplates.filter((data) =>
+                Array.from(toolsFilter).includes(data.priority)
+            );
+        }
+
+        return filteredTemplates;
+    }, [data, filterValue, toolsFilter]);
+
+    const items = React.useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        return filteredItems.slice(start, end);
+    }, [page, filteredItems, rowsPerPage]);
+
+    const sortedItems = React.useMemo(() => {
+        return [...items].sort((a, b) => {
+            const first = a[sortDescriptor.column];
+            const second = b[sortDescriptor.column];
+            const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+            return sortDescriptor.direction === "descending" ? -cmp : cmp;
+        });
+    }, [sortDescriptor, items]);
+
+    const onNextPage = React.useCallback(() => {
+        if (page < pages) {
+            setPage(page + 1);
+        }
+    }, [page, pages]);
+
+    const onPreviousPage = React.useCallback(() => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    }, [page]);
+
+    const onRowsPerPageChange = React.useCallback((e) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
+    }, []);
+
+    const onSearchChange = React.useCallback((value) => {
+        if (value) {
+            setFilterValue(value);
+            setPage(1);
+        } else {
+            setFilterValue("");
+        }
+    }, []);
+
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+        setPage(1);
+    }, []);
+
+    const renderCell = React.useCallback((data, columnKey) => {
+        const cellValue = data[columnKey];
+
+        switch (columnKey) {
+            case "iconSrc":
+                return <img src={cellValue} alt="Icono de plantilla"></img>;
+            case "actions":
+                return (
+                    <div className="relative flex justify-end items-center gap-2">
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button isIconOnly size="sm" variant="light">
+                                    <VerticalDotsIcon className="text-default-300" />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu>
+                                <DropdownItem>Editar</DropdownItem>
+                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                );
+            case "priority":
+                return (
+                    <span className="p-1.5 text-sm uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">
+                        {cellValue}
+                    </span>
+                );
+            case "state":
+                return (
+                    <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
+                        {cellValue}
+                    </span>
+                );
+            default:
+                return cellValue;
+        }
+    }, []);
+
+    const topContent = React.useMemo(() => {
+        return (
+            <div className="flex flex-col gap-10">
+                <div className="flex justify-between gap-3 items-end">
+                    <Input
+                        isClearable
+                        className="w-full sm:max-w-[44%]"
+                        placeholder="Buscar por nombre..."
+                        startContent={<SearchIcon />}
+                        value={filterValue}
+                        onClear={() => onClear()}
+                        onValueChange={onSearchChange}
+                        variant='faded'
+                    />
+                    <div className="flex gap-3">
+                        <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex .roboto">
+                                <Button
+                                    endContent={
+                                        <ChevronDownIcon className="text-small" />
+                                    }
+                                    variant="flat"
+                                    className="font-['Roboto'] color-['#172B4D']"
+                                >
+                                    Herramienta
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={toolsFilter}
+                                selectionMode="multiple"
+                                onSelectionChange={setToolsFilter}
+                            >
+                                {toolsOptions.map((status) => (
+                                    <DropdownItem
+                                        key={status.uid}
+                                    >
+                                        {status.name}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Button color="primary" endContent={<PlusIcon />} className="btnBacklogExport">
+                            Exportar
+                        </Button>
+                        <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnBacklogEliminar">
+                            Eliminar
+                        </Button>
+                    </div>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-default-400 text-small">
+                        Total: {data.length} historias
+                    </span>
+                    <label className="flex items-center text-default-400 text-small">
+                        Filas por página:
+                        <select
+                            className="bg-transparent outline-none text-default-400 text-small"
+                            onChange={onRowsPerPageChange}
+                        >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+        );
+    }, [
+        filterValue,
+        toolsFilter,
+        onRowsPerPageChange,
+        data.length,
+        onSearchChange,
+        hasSearchFilter,
+    ]);
+
+    const bottomContent = React.useMemo(() => {
+        return (
+            <div className="py-2 px-2 flex justify-between items-center gap-4">
+                <span className="w-[30%] text-small text-default-400">
+                    {selectedKeys === "all"
+                        ? "Todos los items seleccionados"
+                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
+                </span>
+                <Pagination
+                    isCompact
+                    showControls
+                    showShadow
+                    color="primary"
+                    page={page}
+                    total={pages}
+                    onChange={setPage}
+                />
+                <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                    <Button
+                        isDisabled={pages === 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onPreviousPage}
+                    >
+                        Ant.
+                    </Button>
+                    <Button
+                        isDisabled={pages === 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onNextPage}
+                    >
+                        Sig.
+                    </Button>
+                </div>
+            </div>
+        );
+    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     return (
         //Aqui va el codigo del contenido del dashboard
@@ -198,15 +473,33 @@ export default function ProductBacklog(props) {
                     </div>
                 </div>
                 <div>
-                <TableComponent data={data} /*urlApi = {stringURL}*/ columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/> {/* Pasa toggleModal como prop al componente TableComponent */}
+                       <MyDynamicTable 
+                            label ="Tabla Backlog" 
+                            bottomContent={bottomContent} 
+                            selectedKeys={selectedKeys}
+                            setSelectedKeys={setSelectedKeys}
+                            sortDescriptor = {sortDescriptor}
+                            setSortDescriptor={setSortDescriptor}
+                            topContent={topContent}
+                            columns={columns}
+                            sortedItems={sortedItems}
+                            renderCell={renderCell}
+                        />
+                {/*<TableComponent data={data} /*urlApi = {stringURL} columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/>*/} {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
                 
             </div>
-            {modal && selectedTask && (
+            {modal1 && selectedTask && (
                 <PopUpEliminateHU
-                    modal = {modal} 
+                    modal = {modal1} 
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.descripcion}
+                />
+            )}
+            {modal2 && (
+                <PopUpEliminateAll 
+                    modal={modal2}
+                    toggle={() => toggleModalAll()} 
                 />
             )}
             

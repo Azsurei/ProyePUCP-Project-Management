@@ -1,79 +1,80 @@
 const express = require('express');
 const connection = require('../config/db');
-const jwt = require("jsonwebtoken");
+const {verifyToken} = require('../middleware/middlewares');
 
-const secret = "oaiscmawiocnaoiwncioawniodnawoinda";
 const routerHistoriaDeUsuario = express.Router();
 
-routerHistoriaDeUsuario.post("/eliminarHistoria",async(req,res)=>{
+routerHistoriaDeUsuario.post("/eliminarHistoria",verifyToken,async(req,res)=>{
 
-    const { tokenProyePUCP } = req.cookies;
-
-    try{
-        const payload = jwt.verify(tokenProyePUCP, secret);
-        console.log(payload);
-        const idHU = req.body.idHistoriaDeUsuario;
+    const idHU = req.body.idHistoriaDeUsuario;
         //Insertar query aca
-        const query = `
-            CALL ELIMINAR_HISTORIA_DE_USUARIO(?);
-        `;
-        try {
-            const [results] = await connection.query(query,[idHU]);
-            res.status(200).json({
-                HU: results[0],
-                message: "Historia de usuario eliminada correctamente"
-            });
-            console.log(`Se ha eliminado la historia de usuario ${idHU}!`);
-            console.log(results);
-        } catch (error) {
-            console.error("Error al eliminar historia de usuario:", error);
-            res.status(500).send("Error al eliminar historia de usuario: " + error.message);
-        }
-    }catch(error){
-        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+    const query = `
+        CALL ELIMINAR_HISTORIA_DE_USUARIO(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHU]);
+        res.status(200).json({
+            HU: results[0],
+            message: "Historia de usuario eliminada correctamente"
+        });
+        console.log(`Se ha eliminado la historia de usuario ${idHU}!`);
+        console.log(results);
+    } catch (error) {
+        console.error("Error al eliminar historia de usuario:", error);
+        res.status(500).send("Error al eliminar historia de usuario: " + error.message);
     }
 })
 
-routerHistoriaDeUsuario.get("/:idHistoriaDeUsuario/detallesHistoria", async (req, res) => {
+routerHistoriaDeUsuario.post("/insertarRequisitoFuncional",verifyToken,async(req,res)=>{
 
-    const { tokenProyePUCP } = req.cookies;
-
-    try{
-        const payload = jwt.verify(tokenProyePUCP, secret);
-        //console.log(payload);
-        const idUsuario = payload.user.id;
+    const {idHistoriaDeUsuario,descripcion} = req.body;
         //Insertar query aca
+    const query = `
+        CALL INSERTAR_HISTORIA_REQUISITO(?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario,descripcion]);
+        res.status(200).json({
+            idRequisitoFuncional: results[0],
+            message: "Requisito agregado correctamente"
+        });
+        console.log(`Se ha agregado el requisito funcional ${idRequisitoFuncional}!`);
+        console.log(results);
+    } catch (error) {
+        console.error("Error al agregar el requisito funcional:", error);
+        res.status(500).send("Error al agregar el requisito funcional: " + error.message);
+    }
+})
 
-        const { idHistoriaDeUsuario} = req.params;
-        console.log(`Llegue a recibir solicitud listar HU${idHistoriaDeUsuario}`);
-        const query = `
-            CALL LISTAR_HISTORIA_DE_USUARIO_DETALLES(?);
-        `;
-        try {
-            const [results] = await connection.query(query,[idHistoriaDeUsuario]);
-            res.status(200).json({
-                historiaDeUsuario: results[0],
-                message: "Historia obtenida exitosamente"
-            });
-            console.log(`Se han listado la historia de usuario ${idHistoriaDeUsuario}!`);
-            console.log(results);
-        } catch (error) {
-            console.error("Error al obtener la historia de usuario:", error);
-            res.status(500).send("Error al obtener la historia de usuario: " + error.message);
-        }
 
-    }catch(error){
-        return res.status(401).send(error.message + " invalid tokenProyePUCP token");
+
+routerHistoriaDeUsuario.get("/:idHistoriaDeUsuario/detallesHistoria",verifyToken, async (req, res) => {
+
+    const { idHistoriaDeUsuario} = req.params;
+    console.log(`Llegue a recibir solicitud listar HU${idHistoriaDeUsuario}`);
+    const query = `
+        CALL LISTAR_HISTORIA_DE_USUARIO_DETALLES(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario]);
+        res.status(200).json({
+            historiaDeUsuario: results[0],
+            message: "Historia obtenida exitosamente"
+        });
+        console.log(`Se han listado la historia de usuario ${idHistoriaDeUsuario}!`);
+        console.log(results);
+    } catch (error) {
+        console.error("Error al obtener la historia de usuario:", error);
+        res.status(500).send("Error al obtener la historia de usuario: " + error.message);
     }
 
-    
 });
 
 routerHistoriaDeUsuario.get("/test/:testId", (req, res) => {
     res.send(req.params);
 });
 
-routerHistoriaDeUsuario.get("/listarHistoriasEstado",async(req,res)=>{
+routerHistoriaDeUsuario.get("/listarHistoriasEstado",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud listar Historias Estado");
     const query = `
         CALL LISTAR_HISTORIAS_ESTADO;
@@ -91,7 +92,7 @@ routerHistoriaDeUsuario.get("/listarHistoriasEstado",async(req,res)=>{
     }
 })
 
-routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",async(req,res)=>{
+routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud listar Historias Prioridad");
     const query = `
         CALL LISTAR_HISTORIAS_PRIORIDAD;
@@ -109,4 +110,52 @@ routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",async(req,res)=>{
     }
 })
 
+routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de insertar una historia de usuario");
+    //Insertar query aca
+    const {idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
+    console.log("Llegue a recibir solicitud de insertar una historia de usuario");
+    const query = `
+        CALL INSERTAR_HISTORIA_DE_USUARIO(?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idEpic, idPriority, idState, name, como, 
+            quiero, para]);
+        const idHU = results[0][0].idHistoriaDeUsuario;
+        console.log(`Se inserto la HU ${idHU}!`);
+        // Iteracion Escenario
+        for (const scenario of scenarioData) {
+            const [scenarioRows] = await connection.execute(`
+            CALL INSERTAR_HISTORIA_CRITERIO(
+                ${idHU},
+                '${scenario.dadoQue}',
+                '${scenario.cuando}',
+                '${scenario.entonces}',
+                '${scenario.scenario}'
+
+            );
+            `);
+            const idHistoriaCriterioDeAceptacion = scenarioRows[0][0].idHistoriaCriterioDeAceptacion;
+            console.log(`Se insertó el criterio de aceptacion: ${idHistoriaCriterioDeAceptacion}`);
+        }
+        for (const requerimiento of requirementData) {
+            const [requerimientoRows] = await connection.execute(`
+            CALL INSERTAR_HISTORIA_REQUISITO(
+                ${idHU},
+                '${requerimiento.requirement}'
+            );
+            `);
+            const idHistoriaRequisito  = requerimientoRows[0][0].idHistoriaRequisito;
+            console.log(`Se insertó el requisito: ${idHistoriaRequisito}`);
+        }
+        res.status(200).json({
+            idHU,
+            message: "HU insertado exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).send("Error en el registro: " + error.message);
+    }
+})
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;

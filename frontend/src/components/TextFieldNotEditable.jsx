@@ -1,11 +1,11 @@
 import React from "react";
 
-function TextField({
+function TextFieldNotEditable({
     iconBefore,
     iconAfter,
     width,
     fullWidth = false,
-    handleChange,
+    defaultValue,
     ...props
 }) {
     const inputWidth = width ? `${width}px` : "100%";
@@ -19,7 +19,7 @@ function TextField({
 
     return (
         <div
-            className={`montserrat bg-white flex flex-row border border-gray-300 rounded-md py-2 px-4 ${containerWidth}`}
+            className={`montserrat bg-gray-200 flex flex-row border border-gray-300 rounded-md py-2 px-4 ${containerWidth}`}
             style={inputStyle}
         >
             {iconBefore && (
@@ -30,8 +30,9 @@ function TextField({
             <input
                 type="text"
                 {...props}
-                className="w-full flex-grow truncate focus:outline-none"
-                onChange={handleChange}
+                className="w-full flex-grow truncate focus:outline-none bg-gray-200"
+                readOnly
+                value={defaultValue}
             />
             {iconAfter && (
                 <div className="inset-y-0 right-0 ml-2 flex items-center pointer-events-none">
@@ -42,4 +43,4 @@ function TextField({
     );
 }
 
-export default TextField;
+export default TextFieldNotEditable;
