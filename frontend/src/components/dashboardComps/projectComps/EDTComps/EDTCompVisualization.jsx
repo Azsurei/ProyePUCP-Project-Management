@@ -511,6 +511,7 @@ export default function EDTCompVisualization({
                         secondAction={() => {
                             handleCancelEdit();
                         }}
+                        textColor="red"
                     />
                     <Modal
                         nameButton="Actualizar"
@@ -521,6 +522,7 @@ export default function EDTCompVisualization({
                         secondAction={() => {
                             handleUpdateComp();
                         }}
+                        textColor="blue"
                     />
                 </div>
             )}
