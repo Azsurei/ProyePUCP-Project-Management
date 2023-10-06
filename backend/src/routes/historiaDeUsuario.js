@@ -157,7 +157,7 @@ routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
-routerHistoriaDeUsuario.post("/listarHistoriaDeUsuario",async(req,res)=>{
+routerHistoriaDeUsuario.post("/listarHistoriaDeUsuario",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud listar HU");
     const {idHistoriaDeUsuario} = req.body;
     const query = `
