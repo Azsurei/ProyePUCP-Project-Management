@@ -111,3 +111,15 @@
     outline: none;
     /* margin-left: 1rem; */
 }
+
+.profilePic{
+    
+    border-radius: 100%;
+    background-color: rgb(212, 212, 212);
+    height: 50px;
+    width: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -138,7 +138,7 @@ export default function ProductBacklogRegister(props) {
         };
         console.log("Registrado correctamente");
         console.log(postData);
-/*         axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario", postData)
+        axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario", postData)
         .then((response) => {
           // Manejar la respuesta de la solicitud POST
           console.log("Respuesta del servidor:", response.data);
@@ -148,7 +148,7 @@ export default function ProductBacklogRegister(props) {
         .catch((error) => {
           // Manejar errores si la solicitud POST falla
           console.error("Error al realizar la solicitud POST:", error);
-        }); */
+        });
     };
 
     return(
@@ -179,7 +179,14 @@ export default function ProductBacklogRegister(props) {
                         </div>
                         )
                         :(
-                            <IconLabel icon="/icons/icon-usr.svg" label={`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`} className="iconLabel2"/>
+                            <div className="iconLabel2"> 
+                                <p className="profilePic">
+                                    {datosUsuario?.nombres[0] + datosUsuario?.apellidos[0]}
+                                </p>
+                                <div className="label">
+                                    {`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`}
+                                </div>
+                            </div>
                         )
                         }
                         
@@ -190,11 +197,11 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="description">
-                    <h4>Nombre de historia de usuario</h4>
+                    <h4 style={{fontWeight: 600 }}>Nombre de historia de usuario</h4>
                     <DescriptionRequeriment name={name} onNameChange={setName}/>
                 </div>
                 <div className="userDescription">
-                    <h4>Descripción de usuario</h4>
+                    <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -206,7 +213,7 @@ export default function ProductBacklogRegister(props) {
                 </div>  
                 <div className="acceptanceCriteria">
                     <div className="titleButton">
-                        <h4>Criterios de aceptación</h4>
+                        <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
                     {Array.from({ length: quantity }, (_, index) => (
                         <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
@@ -220,7 +227,7 @@ export default function ProductBacklogRegister(props) {
                 </div>
                 <div className="requirements">
                     <div className="titleButton">
-                        <h4>Requerimientos funcionales</h4>
+                        <h4 style={{fontWeight: 600 }}>Requerimientos funcionales</h4>
                     </div>
                     {Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
