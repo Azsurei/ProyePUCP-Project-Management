@@ -268,7 +268,7 @@ END$
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_HISTORIA_DE_USUARIO(IN _idHistoriaDeUsuario INT)
 BEGIN
-	UPDATE HistoriaDeUsuario SET activo = 0 WHERE _idHistoriaDeUsuario;
+	UPDATE HistoriaDeUsuario SET activo = 0 WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario;
 END$
 
 
