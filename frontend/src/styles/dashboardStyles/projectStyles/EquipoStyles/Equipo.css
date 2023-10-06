@@ -162,8 +162,8 @@
 }
 
 .modalContainer {
-  width: 80%; /* Ajusta el ancho del modal según tus necesidades */
-  max-width:750px; /* Establece un ancho máximo para evitar que el modal sea demasiado grande */
+  width: 50%; 
+  max-width:600px; /* Establece un ancho máximo para evitar que el modal sea demasiado grande */
   border-radius: 12px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -212,4 +212,11 @@
   position: absolute;
   top: 0; /* Ajusta la posición vertical según tus necesidades */
   right: 0; /* Ajusta la posición horizontal según tus necesidades */
+}
+
+.coordinator {
+  font-size: 14px;
+  color: #767676;
+  font-weight: 500;
+  margin-top: 8px;
 }
