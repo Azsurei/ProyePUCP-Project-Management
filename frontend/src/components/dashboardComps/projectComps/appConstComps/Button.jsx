@@ -7,6 +7,7 @@ const Button = ({
                     spacing = 'default',
                     isDisabled = false,
                     isLoading = false,
+                    onClick,
                     children
                 }) => {
     let classNames = [styles.button, styles[appearance], styles[state], styles[spacing]];
@@ -15,7 +16,7 @@ const Button = ({
     if (isLoading) classNames.push(styles.loading);
 
     return (
-        <button className={classNames.join(' ')} disabled={isDisabled || isLoading}>
+        <button className={classNames.join(' ')} disabled={isDisabled || isLoading} onClick={isDisabled? undefined:onClick}>
             {children}
         </button>
     );
