@@ -11,6 +11,8 @@ import MyDynamicTable from "@/components/DynamicTable";
 import { data } from "autoprefixer";
 import React from "react";
 import axios from "axios";
+import { useRouter } from 'next/navigation';
+
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -42,7 +44,7 @@ export default function ProductBacklog(props) {
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     
-
+    const router= useRouter();
     
 
    //const stringURL1 = "http://localhost:8080/api/proyecto/backlog/42/listarHistorias";
@@ -90,7 +92,7 @@ export default function ProductBacklog(props) {
 
     console.log(data.idHistoriaDeUsuario);*/
     const [data, setData] = useState([]);
-    const [object, setObject] = useState(null);
+    const [object, setObject] = useState({idHistoriaDeUsuario:1});
 
     function DataTable(){
         const fetchData = async () => {
@@ -124,7 +126,7 @@ export default function ProductBacklog(props) {
     };
 
     const selectObject = (object) => {
-        setObject(object);
+        router.push(`/dashboard/${projectName}=${projectId}/productBacklog/${object?.idHistoriaDeUsuario}`);
     };
 
     const toggleModalAll = () => {
@@ -396,10 +398,12 @@ export default function ProductBacklog(props) {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onClick={() => selectObject(data)}>
-                                    <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+selectedTask?.idHistoriaDeUsuario}>
+                                <DropdownItem onClick={() => {
+                                    selectObject(data)
+                                }}>
+                                <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}>
                                         Editar 
-                                    </Link>
+                                </Link>
                                 </DropdownItem>
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
