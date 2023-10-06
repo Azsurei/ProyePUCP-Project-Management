@@ -620,3 +620,39 @@ BEGIN
     WHERE idComponente = _idComponente
     AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_HU_X_ID;
+DELIMITER $
+CREATE PROCEDURE LISTAR_HU_X_ID(
+    IN _idHistoriaDeUsuario INT
+)
+BEGIN
+	SELECT * 
+    FROM HistoriaDeUsuario 
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_X_IDHU;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRITERIO_X_IDHU(
+    IN _idHistoriaDeUsuario INT
+)
+BEGIN
+	SELECT * 
+    FROM HistoriaCriterioDeAceptacion 
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_REQUERIMIENTO_X_IDHU;
+DELIMITER $
+CREATE PROCEDURE LISTAR_REQUERIMIENTO_X_IDHU(
+    IN _idHistoriaDeUsuario INT
+)
+BEGIN
+	SELECT * 
+    FROM HistoriaRequisito 
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND activo=1;
+END$
