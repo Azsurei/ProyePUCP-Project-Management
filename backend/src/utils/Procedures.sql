@@ -658,3 +658,76 @@ BEGIN
     WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
     AND activo=1;
 END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
+    IN _idRol INT,
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT u.idUsuario, u.nombreS, u.apellidos, u.correOElectronico FROM UsuarioXRolXProyecto urp, Usuario u
+    WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
+END$
+
+--EDITAR Historia de Usuario
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_HISTORIA_CRITERIO
+(   
+    IN _idHistoriaDeUsuario INT,
+    IN _idHistoriaCriterioDeAceptacion INT,
+	IN _dadoQue VARCHAR(255),
+    IN _cuando VARCHAR(255),
+    IN _entonces VARCHAR(255),
+    IN _escenario VARCHAR(255)
+)
+BEGIN
+	UPDATE HistoriaCriterioDeAceptacion
+    SET
+        idHistoriaDeUsuario = _idHistoriaDeUsuario,
+        dadoQue = _dadoQue,
+        cuando = _cuando,
+        entonces = _entonces,
+        escenario = _escenario
+    WHERE idHistoriaCriterioDeAceptacion = _idHistoriaCriterioDeAceptacion;
+    SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
+END$
+
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_HISTORIA_REQUISITO
+(   
+    IN _idHistoriaDeUsuario INT,
+    IN _idHistoriaRequisito INT,
+	IN _descripcion VARCHAR(255)
+)
+BEGIN
+	UPDATE HistoriaCriterioDeAceptacion
+    SET
+        idHistoriaDeUsuario = _idHistoriaDeUsuario,
+        descripcion = _descripcion
+    WHERE idHistoriaRequisito = _idHistoriaRequisito;
+    SELECT _idHistoriaRequisito AS idHistoriaRequisito;
+END$
+
+CREATE PROCEDURE MODIFICAR_HISTORIA_DE_USUARIO(
+    IN _idHistoriaDeUsuario INT,
+	IN  _idEpica INT,
+    IN _idHistoriaPrioridad INT,
+    IN _idHistoriaEstado INT,
+	IN _descripcion VARCHAR(255),
+    IN _como VARCHAR(255),
+    IN _quiero VARCHAR(255),
+    IN _para VARCHAR(255)
+)
+BEGIN
+	UPDATE HistoriaDeUsuario
+    SET
+        idEpica = _idEpica,
+        idHistoriaPrioridad = _idHistoriaPrioridad,
+        idHistoriaEstado = _idHistoriaEstado,
+        descripcion = _descripcion,
+        como = _como,
+        quiero = _quiero,
+        para = _para
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario;
+    SELECT _idHistoriaDeUsuario AS idHistoriaDeUsuario;
+END$
