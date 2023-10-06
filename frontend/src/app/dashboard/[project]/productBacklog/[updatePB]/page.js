@@ -256,7 +256,7 @@ export default function ProductBacklogUpdate(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
-                    {historiaUsuario && historiaUsuario.criteriosAceptacion && scenarioFields.map((criterio, index) => (
+                    {historiaUsuario &&  scenarioFields.map((criterio, index) => (
                         <ContainerScenario
                             key={index}
                             indice={index + 1}
