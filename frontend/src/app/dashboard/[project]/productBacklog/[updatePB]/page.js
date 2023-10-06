@@ -22,7 +22,7 @@ function getCurrentDate() {
     return `${dia}/${mes}/${anio}`;
 }
 
-export default function ProductBacklogRegister(props) {
+export default function ProductBacklogUpdate(props) {
     const router=useRouter();
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
@@ -119,7 +119,7 @@ export default function ProductBacklogRegister(props) {
         });
     };
 
-    const onSubmit= ()=>{
+    /*const onSubmit= ()=>{
         const idEpic=selectedValueEpic;
         const idPriority=selectedValuePriority;
         const idState=selectedValueState;
@@ -149,15 +149,15 @@ export default function ProductBacklogRegister(props) {
           // Manejar errores si la solicitud POST falla
           console.error("Error al realizar la solicitud POST:", error);
         });
-    };
+    };*/
 
     return(
-        <form onSubmit={onSubmit} className="containerRegisterPB">
+        <form  className="containerRegisterPB">
             <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog / Registrar elemento
             </div>
             <div className="backlogRegisterPB">
-                <div className="titleBacklogRegisterPB">Registrar nuevo elemento en el Backlog</div>
+                <div className="titleBacklogRegisterPB">Editar elemento en el Backlog</div>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
@@ -257,7 +257,7 @@ export default function ProductBacklogRegister(props) {
                         colorButton="w-36 bg-blue-950 text-white"
                         oneButton={false}
                         secondAction={() => {
-                            onSubmit();
+                            //onSubmit();
                             router.back();
                         }}
                          />

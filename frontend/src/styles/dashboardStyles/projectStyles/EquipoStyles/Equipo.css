@@ -110,6 +110,40 @@
   width: 100%;
 }
 
+.noTeamsMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
+  height: 100%; 
+  margin-top: 3.5rem;
+}
+
+.noTeamsMessage h2 {
+  font-family: Montserrat;
+  font-size: 2rem; 
+  margin-bottom: 0.5rem; 
+  color: #767676;
+}
+
+.littleMessage {
+  font-size: 0.9rem; 
+  margin-bottom: 0.2rem; 
+  max-width: 600px; 
+  word-wrap: break-word;
+  text-align: center; 
+  color: #767676;
+}
+
+.wannaCreateOne {
+  font-family: Montserrat;
+  font-size: 1rem; 
+  margin-top: 0.5rem;
+  margin-bottom: 1rem; 
+  font-weight: 600;
+  color: #767676;
+}
+
 /* ////////////////////
     Estilos de Modales
     ///////////////////
