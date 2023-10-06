@@ -45,7 +45,7 @@ export default function ProductBacklogUpdate(props) {
     const [para, setPara] = useState("");
 
     useEffect(() => {
-        const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/detallesHistoria`;
+        const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         const stringURLUsuario = "http://localhost:8080/api/usuario/verInfoUsuario";
       
         Promise.all([
@@ -53,7 +53,7 @@ export default function ProductBacklogUpdate(props) {
           axios.get(stringURLUsuario),
         ])
           .then(function (responses) {
-            const huData = responses[0].data.historiaDeUsuario[0];
+            const huData = responses[0].data.historiaUsuario;
             const userData = responses[1].data.usuario[0];
             console.log("ID HU:", idHU);
             console.log("DATA:", huData);
