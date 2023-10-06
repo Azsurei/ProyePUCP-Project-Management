@@ -119,3 +119,12 @@ Content-Type:  application/json
 {
   "idComponente": "17"
 }
+
+###
+
+POST http://localhost:8080/api/proyecto/backlog/hu/listarHistoriaDeUsuario HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idHistoriaDeUsuario": "8"
+}

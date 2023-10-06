@@ -157,4 +157,34 @@ routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
+routerHistoriaDeUsuario.post("/listarHistoriaDeUsuario",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud listar HU");
+    const {idHistoriaDeUsuario} = req.body;
+    const query = `
+        CALL LISTAR_HU_X_ID(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario]);
+        console.log(results[0]);
+        const [criterioAceptacionData] = await connection.execute(`
+            CALL LISTAR_CRITERIO_X_IDHU(${idHistoriaDeUsuario});
+        `);
+        const [requirimientosData] = await connection.execute(`
+            CALL LISTAR_REQUERIMIENTO_X_IDHU(${idHistoriaDeUsuario});
+        `);
+        const historiaUsuario = {
+            hu: results[0],
+            criteriosAceptacion: criterioAceptacionData[0],
+            requirimientos: requirimientosData[0]
+        };
+        res.status(200).json({
+            historiaUsuario,
+            message: "HU obtenido exitosamente"
+        });
+        console.log('Si se listo HU');
+    } catch (error) {
+        console.error("Error al obtener HU:", error);
+        res.status(500).send("Error al obtener HU: " + error.message);
+    }
+})
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;

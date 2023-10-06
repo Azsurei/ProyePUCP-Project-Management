@@ -268,7 +268,7 @@ routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>
     }
 })
 
-routerEDT.post("/verInfoComponenteEDT",async(req,res)=>{
+routerEDT.post("/verInfoComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud ver info de  Componente EDT");
     const {idComponente} = req.body;
     console.log("EL ID DEL COMPONENTE ES = " + idComponente);
