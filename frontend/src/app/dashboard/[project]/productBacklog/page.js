@@ -90,6 +90,8 @@ export default function ProductBacklog(props) {
 
     console.log(data.idHistoriaDeUsuario);*/
     const [data, setData] = useState([]);
+    const [object, setObject] = useState(null);
+
     function DataTable(){
         const fetchData = async () => {
           try {
@@ -119,6 +121,10 @@ export default function ProductBacklog(props) {
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
+    };
+
+    const selectObject = (object) => {
+        setObject(object);
     };
 
     const toggleModalAll = () => {
@@ -390,7 +396,11 @@ export default function ProductBacklog(props) {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem>Editar</DropdownItem>
+                                <DropdownItem onClick={() => selectObject(data)}>
+                                    <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+selectedTask?.idHistoriaDeUsuario}>
+                                        Editar 
+                                    </Link>
+                                </DropdownItem>
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
