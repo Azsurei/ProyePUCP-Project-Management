@@ -188,7 +188,7 @@ routerHistoriaDeUsuario.post("/listarHistoriaDeUsuario",verifyToken,async(req,re
     }
 })
 
-routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",verifyToken,async(req,res)=>{
+routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",async(req,res)=>{
     console.log("Llegue a recibir solicitud de modificar una historia de usuario");
     //Insertar query aca
     const {idHistoriaUsuario,idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
@@ -205,7 +205,7 @@ routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",verifyToken,async(req
         for (const scenario of scenarioData) {
             const [scenarioRows] = await connection.execute(`
             CALL MODIFICAR_HISTORIA_CRITERIO(
-                ${idHistoriaDeUsuario},
+                ${idHU},
                 ${scenario.idHistoriaCriterioDeAceptacion},
                 '${scenario.dadoQue}',
                 '${scenario.cuando}',
@@ -219,7 +219,7 @@ routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",verifyToken,async(req
         for (const requerimiento of requirementData) {
             const [requerimientoRows] = await connection.execute(`
             CALL MODIFICAR_HISTORIA_REQUISITO(
-                ${idHistoriaDeUsuario},
+                ${idHU},
                 ${requerimiento.idHistoriaRequisito},
                 '${requerimiento.requirement}'
             );

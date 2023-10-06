@@ -135,6 +135,7 @@ POST http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario HT
 Content-Type:  application/json
 
 {
+  "idHistoriaUsuario": 8,
   "idEpic": 1,
   "idPriority": 1,
   "idState": 1,
@@ -144,12 +145,14 @@ Content-Type:  application/json
   "para": "llevar un control de su asistencia",
   "scenarioData": [
     {
+      "idHistoriaCriterioDeAceptacion": 10,
       "scenario": "Escenario 1",
       "dadoQue": "Dado que llega el inicio del día laboral",
       "cuando": "Cuando un empleado marca su entrada",
       "entonces": "Entonces se registra la hora de entrada del empleado"
     },
     {
+      "idHistoriaCriterioDeAceptacion": 11,
       "scenario": "Escenario 2",
       "dadoQue": "Dado que un empleado marca su salida",
       "cuando": "Cuando finaliza su jornada laboral",
@@ -158,9 +161,11 @@ Content-Type:  application/json
   ],
   "requirementData": [
     {
+      "idHistoriaRequisito": 15,
       "requirement": "Requerimiento 1: Registrar la asistencia de los empleados"
     },
     {
+      "idHistoriaRequisito": 16,
       "requirement": "Requerimiento 2: Generar informes de asistencia"
     }
   ]

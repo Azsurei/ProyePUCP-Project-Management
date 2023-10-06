@@ -700,7 +700,7 @@ CREATE PROCEDURE MODIFICAR_HISTORIA_REQUISITO
 	IN _descripcion VARCHAR(255)
 )
 BEGIN
-	UPDATE HistoriaCriterioDeAceptacion
+	UPDATE HistoriaRequisito
     SET
         idHistoriaDeUsuario = _idHistoriaDeUsuario,
         descripcion = _descripcion
