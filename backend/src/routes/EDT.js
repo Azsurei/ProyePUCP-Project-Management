@@ -268,23 +268,24 @@ routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>
     }
 })
 
-routerEDT.post("/listarComponenteEDT",async(req,res)=>{
-    console.log("Llegue a recibir solicitud listar Componente EDT");
+routerEDT.post("/verInfoComponenteEDT",async(req,res)=>{
+    console.log("Llegue a recibir solicitud ver info de  Componente EDT");
     const {idComponente} = req.body;
-    const query = `
-        CALL LISTAR_COMPONENTE_EDT(?);
-    `;
+    console.log("EL ID DEL COMPONENTE ES = " + idComponente);
+    
     try {
+        let query = "CALL LISTAR_COMPONENTE_EDT(?);";
         const [results] = await connection.query(query,[idComponente]);
         console.log(results[0]);
-        const [criterioAceptacion] = await connection.execute(`
-            CALL LISTAR_CRITERIO_X_IDCOMPONENTE(${idComponente});
-        `);
-        const [entregables] = await connection.execute(`
-            CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(${idComponente});
-        `);
+
+        query = "CALL LISTAR_CRITERIO_X_IDCOMPONENTE(?);";
+        const [criterioAceptacion] = await connection.execute(query,[idComponente]);
+
+        query = "CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(?);";
+        const [entregables] = await connection.execute(query,[idComponente]);
+
         const componenteEDT = {
-            component: results[0],
+            component: results[0][0],
             criteriosAceptacion: criterioAceptacion[0],
             entregables: entregables[0]
         };
@@ -294,8 +295,8 @@ routerEDT.post("/listarComponenteEDT",async(req,res)=>{
         });
         console.log('Si se listo Componente EDT');
     } catch (error) {
-        console.error("Error al obtener Componente EDT:", error);
-        res.status(500).send("Error al obtener Componente EDT: " + error.message);
+        console.error("Error al obtener info de  Componente EDT:", error);
+        res.status(500).send("Error al obtener info de Componente EDT: " + error.message);
     }
 })
 module.exports.routerEDT = routerEDT;
