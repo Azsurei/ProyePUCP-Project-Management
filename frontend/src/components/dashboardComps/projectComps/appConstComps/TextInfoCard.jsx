@@ -14,6 +14,7 @@ const TextInfoCard = ({title, data, isEditing, isCancel, handleDataChange, dataK
                     value={item.value}
                     fullWidth={isSingleItem}
                     isEditing={isEditing}
+                    isCancel={isCancel}
                     onChange={(newValue) => handleDataChange(newValue, item.label, dataKey)}
                 />
             ))}
