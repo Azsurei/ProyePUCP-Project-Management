@@ -37,10 +37,6 @@ export default function EDTVisualization({
             >
                 EDT y diccionario EDT
             </HeaderWithButtonsSamePage>
-            <div className="componentSearchContainer">
-                <input type="text" />
-                <button>Buscar</button>
-            </div>
 
             {ListComps.length === 0 ? (
                 <div className="missingScrenContainer">
