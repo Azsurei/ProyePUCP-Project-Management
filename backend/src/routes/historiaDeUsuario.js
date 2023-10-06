@@ -188,7 +188,7 @@ routerHistoriaDeUsuario.post("/listarHistoriaDeUsuario",verifyToken,async(req,re
     }
 })
 
-routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",async(req,res)=>{
+routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de modificar una historia de usuario");
     //Insertar query aca
     const {idHistoriaUsuario,idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
