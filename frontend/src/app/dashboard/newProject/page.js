@@ -26,21 +26,21 @@ const items = [
         label: "Informacion General",
         percentageComplete: 0,
         status: "current",
-        href: "#",
+
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 0,
         status: "unvisited",
-        href: "#",
+
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "unvisited",
-        href: "#",
+
     },
 ];
 
@@ -50,21 +50,21 @@ const items2 = [
         label: "Informacion General",
         percentageComplete: 100,
         status: "visited",
-        href: "#",
+
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 0,
         status: "current",
-        href: "#",
+
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "unvisited",
-        href: "#",
+        
     },
 ];
 
@@ -74,21 +74,21 @@ const items3 = [
         label: "Informacion General",
         percentageComplete: 100,
         status: "visited",
-        href: "#",
+        
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 100,
         status: "visited",
-        href: "#",
+
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "current",
-        href: "#",
+        
     },
 ];
 
@@ -97,22 +97,31 @@ export const ToolCardsContext = createContext();
 export default function newProject() {
     const router = useRouter();
 
+    const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
+    const [selectedSupervisoresList, setSelectedSupervisoresList] = useState([]);
+    const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
 
-
-    const [modal, setModal] = useState(false);
-    const toggleModal = () => {
-      setModal(!modal);
+    const toggleModal1 = () => {
+        setModal1(!modal1);
     };
 
-    // if(modal) {
-    //     document.body.classList.add('active-modal')
-    //   } else {
-    //     document.body.classList.remove('active-modal')
-    // }
+    const returnListOfSupervisores = (selectedSupervisoresList) => {
+        setSelectedSupervisoresList(selectedSupervisoresList);
+        setModal1(!modal1);
+    };
+
+    const toggleModal2 = () => {
+        setModal2(!modal2);
+    };
+
+    const returnListOfMiembros = (selectedMiembrosList) => {
+        setSelectedMiembrosList(selectedMiembrosList);
+        setModal2(!modal2);
+    };
 
 
     const [nameProject, setNameProject] = useState("");
-    //const [dueñoProyecto, setOwner] = useState(""); en backend lo pueden sacar con el jwt
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
     const [listHerramientas, setListHerramientas] = useState([]);
@@ -141,33 +150,13 @@ export default function newProject() {
         setFechaFin(e.target.value);
     };
 
-    const checkData = () => {
-        console.log("NOMBRE DE PROYECTO = " + nameProject);
-        console.log("FECHA INICIO = " + fechaInicio);
-        console.log("FECHA FIN = " + fechaFin);
-
-		const nombre = nameProject;
-        axios
-            .post("http://localhost:8080/api/proyecto/insertarProyecto", {
-                proyecto: {nombre, fechaInicio, fechaFin},
-                herramientas: listHerramientas
-				//,participantes: ...
-            })
-            .then(function (response) {
-                console.log(response);
-                console.log("Conexion correcta");
-
-                router.push("/dashboard");
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    };
+    
 
     //al cargar la pagina, cargaremos toda la info necesaria (datos de usuario y listado de herramientas)
     //para evitar loading times en los cambios entre niveles
 
     const [datosUsuario, setDatosUsuario] = useState({
+        idUsuario: "",
         nombres: "",
         apellidos: "",
         correoElectronico: "",
@@ -210,6 +199,53 @@ export default function newProject() {
         setListHerramientas(newToolsList);
         console.log(newToolsList);
     };
+
+
+
+    const checkData = () => {
+        console.log("NOMBRE DE PROYECTO = " + nameProject);
+        console.log("FECHA INICIO = " + fechaInicio);
+        console.log("FECHA FIN = " + fechaFin);
+
+        const nombre = nameProject;
+        axios
+            .post("http://localhost:8080/api/proyecto/insertarProyecto", {
+                proyecto: { nombre, fechaInicio, fechaFin },
+                herramientas: listHerramientas,
+                participantesSupervisores: selectedSupervisoresList,
+                participantesMiembros: selectedMiembrosList
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+
+                router.push("/dashboard");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    // const addToolToList = (herramienta) => {
+    //     const newToolsList = [
+    //         ...listHerramientas,
+    //         {
+    //             idHerramienta: herramienta.idHerramienta,
+    //             nombre: herramienta.nombre,
+    //             descripcion: herramienta.descripcion,
+    //         },
+    //     ];
+    //     setListHerramientas(newToolsList);
+    //     console.log(newToolsList);
+    // };
+
+    // const removeToolInList = (herramienta) => {
+    //     const newToolsList = listHerramientas.filter(
+    //         (item) => item.idHerramienta !== herramienta.idHerramienta
+    //     );
+    //     setListHerramientas(newToolsList);
+    //     console.log(newToolsList);
+    // };
 
     return (
         <div className="mainDivNewProject">
@@ -276,7 +312,14 @@ export default function newProject() {
                             <ListTools></ListTools>
                         </ToolCardsContext.Provider>
                     )}
-                    {estadoProgress === 3 && <ModalUser></ModalUser>}
+                    {estadoProgress === 3 && (
+                        <ChoiceUser
+                            toggleModal1={toggleModal1}
+                            toggleModal2={toggleModal2}
+                            selectedSupervisoresList={selectedSupervisoresList}
+                            selectedMiembrosList={selectedMiembrosList}
+                        ></ChoiceUser>
+                    )}
                 </div>
                 <div className="buttonContainer">
                     <button
@@ -302,10 +345,36 @@ export default function newProject() {
             </div>
 
             <div className="buttonContainerCreate">
+                <button
+                    className="optionalGoMove"
+                    onClick={camibarEstadoAtras}
+                    style={{ opacity: estadoProgress != 1 ? "100" : "0" }}
+                >
+                    {"<"}
+                </button>
                 <button className="createProjectButtonEnd" onClick={checkData}>
                     Crear Proyecto
                 </button>
+                <button
+                    className="optionalGoMove"
+                    onClick={cambiarEstadoAdelante}
+                >
+                    {">"}
+                </button>
             </div>
+
+            {modal1 && (
+                <ModalUser
+                    handlerModalClose={toggleModal1}
+                    handlerModalFinished={returnListOfSupervisores}
+                ></ModalUser>
+            )}
+            {modal2 && (
+                <ModalUser
+                    handlerModalClose={toggleModal2}
+                    handlerModalFinished={returnListOfMiembros}
+                ></ModalUser>
+            )}
         </div>
     );
 }

@@ -13,13 +13,23 @@ routerProyecto.use("/backlog", routerBacklog);
 routerProyecto.use("/EDT", routerEDT);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
-    const idUsuario = req.user.id;
+    const idUsuario = req.user.id; //del token
 
-    const { proyecto, herramientas, participantes } = req.body;
+    const {
+        proyecto,
+        herramientas,
+        participantesSupervisores,
+        participantesMiembros,
+    } = req.body;
 
     console.log("Llegue a recibir solicitud creacion proyecto");
 
+    console.log(
+        "imprimiendo participantesSupervisores: " + participantesSupervisores
+    );
+    console.log("imprimiendo participantesMiembros: " + participantesMiembros);
     let idProyecto;
+
     try {
         const query = `
         CALL INSERTAR_PROYECTO(?,?,?,?,?);
@@ -27,26 +37,28 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
 
         const { nombre, fechaInicio, fechaFin } = proyecto;
         console.log(
-            `Nombre de proyecto es  ${nombre}, fecha inicio es ${fechaInicio} y fecha fin es `
+            `Nombre de proyecto es  ${nombre}, fecha inicio es ${fechaInicio} y fecha fin es ${fechaInicio}`
         );
 
-        const [results] = connection.query(query, [
+        const [results] = await connection.query(query, [
             idUsuario,
             nombre,
             99,
             fechaInicio,
             fechaFin,
         ]); //cambie a 99 porque en front no contemplamos esto, conversar si maxCantParticipantes es un requisito con cliente
+
         idProyecto = results[0][0].idProyecto;
         console.log(`Se creo el proyecto ${idProyecto} con exito!`);
         //Recordar, este query crea el proyecto y asigna al usuario de creacion como el Jefe de proyecto en tabla UsuarioXRolXProyecto
+        console.log("==========================test=================");
 
         try {
             //sirve para registrar en la tabla HerramientaXProyecto, de esta reconoceremos facilmente que herramientas se deben mostrar listas a uso en el proyecto
             for (const herramienta of herramientas) {
                 const query = `
-                        CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?);
-                    `;
+                            CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?);
+                        `;
                 //const { idHerramienta, nombre, descripcion } = herramienta;
 
                 const [results] = await connection.query(query, [
@@ -69,8 +81,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 1) {
                         //Product Backlog
                         query = `
-                                CALL INSERTAR_PRODUCT_BACKLOG(?);
-                            `;
+                                    CALL INSERTAR_PRODUCT_BACKLOG(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -81,8 +93,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 2) {
                         //EDT
                         query = `
-                                CALL INSERTAR_EDT(?,?,?,?,?);
-                            `;
+                                    CALL INSERTAR_EDT(?,?,?,?,?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                             "",
@@ -97,8 +109,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 3) {
                         //Acta de constitucion
                         query = `
-                                CALL INSERTAR_ACTA_CONSTITUCION(?);
-                            `;
+                                    CALL INSERTAR_ACTA_CONSTITUCION(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -109,8 +121,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 4) {
                         //Cronograma
                         query = `
-                                CALL INSERTAR_CRONOGRAMA(?);
-                            `;
+                                    CALL INSERTAR_CRONOGRAMA(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -121,8 +133,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 5) {
                         //Catalogo de riesgo
                         query = `
-                                CALL INSERTAR_CATALOGO_RIESGO(?);
-                            `;
+                                    CALL INSERTAR_CATALOGO_RIESGO(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -133,8 +145,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 6) {
                         //Catalogo de interesados
                         query = `
-                                CALL INSERTAR_CATALOGO_INTERESADO(?);
-                            `;
+                                    CALL INSERTAR_CATALOGO_INTERESADO(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -146,8 +158,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 7) {
                         //Matriz de responsabilidad
                         query = `
-                                CALL INSERTAR_MATRIZ_RESPONSABILIDAD(?);
-                            `;
+                                    CALL INSERTAR_MATRIZ_RESPONSABILIDAD(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -159,8 +171,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 8) {
                         //Matriz de comunicacion
                         query = `
-                                CALL INSERTAR_MATRIZ_COMUNICACION(?);
-                            `;
+                                    CALL INSERTAR_MATRIZ_COMUNICACION(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -172,8 +184,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 9) {
                         //Autoevaluacion
                         query = `
-                                CALL INSERTAR_AUTOEVALUACION(?);
-                            `;
+                                    CALL INSERTAR_AUTOEVALUACION(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -184,8 +196,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 10) {
                         //Retrospectiva
                         query = `
-                                CALL INSERTAR_RETROSPECTIVA(?);
-                            `;
+                                    CALL INSERTAR_RETROSPECTIVA(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -196,8 +208,8 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     if (herramienta.idHerramienta === 11) {
                         //Acta de reunion
                         query = `
-                                CALL INSERTAR_ACTA_REUNION(?);
-                            `;
+                                    CALL INSERTAR_ACTA_REUNION(?);
+                                `;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
@@ -209,39 +221,80 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
                     //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
 
-                    // try {
-                    //     const query = `
-                    //     CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
-                    //     `;
-                    //     for (const participante of participantes) {
-                    //         const [results] = await connection.query(
-                    //             query,
-                    //             [
-                    //                 participante.idUsuario,
-                    //                 participante.idRol,
-                    //                 participante.idProyecto,
-                    //             ]
-                    //         );
-                    //         const idUsuarioXRolProyecto =
-                    //             results[0][0].idProyecto;
-                    //         console.log(
-                    //             `Se agrego el usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`
-                    //         );
-                    //     }
-                    // } catch (error) {
-                    //     console.error(
-                    //         `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}`,
-                    //         error
-                    //     );
-                    //     res.status(500).send(
-                    //         `Error en el registro del usuario ${participante.idUsuario} al proyecto ${participante.idProyecto} con el rol ${participante.idRol}` +
-                    //             error.message
-                    //     );
-                    // }
+                    //insertamos los supervisores
                 }
-                res.status(200).json({
-                    message: "Registro hasta las herramientas correcto",
-                });
+
+                try {
+                    const query = `
+                        CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
+                        `;
+                    for (const participante of participantesSupervisores) {
+                        const [results] = await connection.query(query, [
+                            participante.id,
+                            2,
+                            idProyecto,
+                        ]);
+                        const idUsuarioXRolProyecto =
+                            results[0][0].idUsuarioXRolProyecto;
+                        console.log(
+                            `Se agrego el usuario ${
+                                participante.id
+                            } al proyecto ${idProyecto} con el rol ${2}`
+                        );
+                    }
+
+                    //insertamos los miembros
+                    try {
+                        const query = `
+                            CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);
+                            `;
+                        for (const participante of participantesMiembros) {
+                            const [results] = await connection.query(query, [
+                                participante.id,
+                                3,
+                                idProyecto,
+                            ]);
+                            const idUsuarioXRolProyecto =
+                                results[0][0].idUsuarioXRolProyecto;
+                            console.log(
+                                `Se agrego el usuario ${
+                                    participante.id
+                                } al proyecto ${idProyecto} con el rol ${3}`
+                            );
+                        }
+
+                        res.status(200).json({
+                            message:
+                                "Registro COMPLETO de datos, herramientas y participantes de proyecto terminado con exito",
+                        });
+                    } catch (error) {
+                        console.error(
+                            `Error en el registro del usuario ${
+                                participante.id
+                            } al proyecto ${idProyecto} con el rol ${2}`,
+                            error
+                        );
+                        res.status(500).send(
+                            `Error en el registro del usuario ${
+                                participante.id
+                            } al proyecto ${idProyecto} con el rol ${2}` +
+                                error.message
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        `Error en el registro del usuario ${
+                            participante.id
+                        } al proyecto ${idProyecto} con el rol ${2}`,
+                        error
+                    );
+                    res.status(500).send(
+                        `Error en el registro del usuario ${
+                            participante.id
+                        } al proyecto ${idProyecto} con el rol ${2}` +
+                            error.message
+                    );
+                }
             } catch (error) {
                 console.error(
                     `Error de creacion de una herramienta para proyecto ${idProyecto}`,
@@ -380,24 +433,36 @@ routerProyecto.get(
     }
 );
 
-routerProyecto.post("/listarUsuariosXidRolXidProyecto",verifyToken,async (req, res) => {
+routerProyecto.post(
+    "/listarUsuariosXidRolXidProyecto",
+    verifyToken,
+    async (req, res) => {
         //Insertar query aca
-        const { idProyecto,idRol } = req.params;
-        console.log("Llegue a recibir solicitud listar usuarios por rol en proyecto");
+        const { idProyecto, idRol } = req.params;
+        console.log(
+            "Llegue a recibir solicitud listar usuarios por rol en proyecto"
+        );
         const query = `
         CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(?,?);
     `;
         try {
-            const [results] = await connection.query(query, [idProyecto,idRol]);
+            const [results] = await connection.query(query, [
+                idProyecto,
+                idRol,
+            ]);
             res.status(200).json({
                 historiasPrioridad: results[0],
                 message: "Usuarios por rol en proyecto obtenidos exitosamente",
             });
             console.log("Si se listaron los usuarios por rol en proyecto");
         } catch (error) {
-            console.error("Error al obtener los usuarios por rol en proyecto", error);
+            console.error(
+                "Error al obtener los usuarios por rol en proyecto",
+                error
+            );
             res.status(500).send(
-                "Error al obtener los usuarios por rol en proyecto: " + error.message
+                "Error al obtener los usuarios por rol en proyecto: " +
+                    error.message
             );
         }
     }

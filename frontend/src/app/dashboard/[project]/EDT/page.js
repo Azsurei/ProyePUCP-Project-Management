@@ -9,13 +9,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
+import EDTCompVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTCompVisualization";
 axios.defaults.withCredentials = true;
-
-
 
 export default function EDT(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const [screenState, setScreenState] = useState(1);
@@ -23,13 +22,16 @@ export default function EDT(props) {
     const [codeNewComponent, setCodeNewComponent] = useState("");
     const [idElementoPadre, setIdElementoPadre] = useState(null);
 
+    //Variables for EDTCompVisualization
+    const [idComponentToSee, setIdComponentToSee] = useState(null);
+
     function refreshComponentsEDT() {
         console.log("rerendering ListComps");
         const stringURL =
             "http://localhost:8080/api/proyecto/EDT/" +
             projectId +
             "/listarComponentesEDTXIdProyecto";
-    
+
         axios
             .get(stringURL)
             .then(function (response) {
@@ -43,13 +45,17 @@ export default function EDT(props) {
     }
 
     useEffect(refreshComponentsEDT, []);
-
+    
     const handleScreenChange = () => {
         if (screenState === 1) {
             setScreenState(2);
-        } else {
+        } else if (screenState === 2) {
             setListComps([]);
             //Refrescamos lista antes de  continuar
+            refreshComponentsEDT();
+            setScreenState(1);
+        } else if (screenState === 3) {
+            setListComps([]);
             refreshComponentsEDT();
             setScreenState(1);
         }
@@ -62,6 +68,11 @@ export default function EDT(props) {
         console.log(newCode);
     };
 
+    const handleVerDetalle = (idComp) => {
+        setIdComponentToSee(idComp);
+        setScreenState(3);
+    };
+    
     //#######################################################
 
     return (
@@ -73,6 +84,8 @@ export default function EDT(props) {
                     projectId={projectId}
                     ListComps={ListComps}
                     handlerGoToNew={handleSetCompCode}
+                    handleVerDetalle={handleVerDetalle}
+                    refreshComponentsEDT={refreshComponentsEDT}
                 ></EDTVisualization>
             )}
 
@@ -84,6 +97,15 @@ export default function EDT(props) {
                     codeNewComponent={codeNewComponent}
                     idElementoPadre={idElementoPadre}
                 ></EDTNewVisualization>
+            )}
+
+            {screenState === 3 && (
+                <EDTCompVisualization
+                    projectName={projectName}
+                    projectId={projectId}
+                    handlerReturn={handleScreenChange}
+                    idComponentToSee={idComponentToSee}
+                ></EDTCompVisualization>
             )}
         </>
     );

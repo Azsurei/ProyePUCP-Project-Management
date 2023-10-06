@@ -13,23 +13,26 @@ function EditableInput(props) {
             <div className="inputXdeleteContainer">
                 <textarea
                     rows="1"
-                    className="inputBox"
+                    className={props.beEditable === true ? "inputBox": "inputBox nonEditable"}
                     placeholder="Escribe aquí"
                     maxLength="70"
                     onChange={(e) => {
                         props.handleChanges(e, props.number);
                     }}
+                    readOnly={!props.beEditable}
                     value={props.data}
                 />
                 {/* <TextField className="inputBox"></TextField> */}
-                <img
-                    src="/icons/icon-cross.svg"
-                    alt="Eliminar"
-                    className="iconDeleteInput"
-                    onClick={() => {
-                        props.handleRemove(props.number)
-                    }}
-                />
+                {props.beEditable && (
+                    <img
+                        src="/icons/icon-cross.svg"
+                        alt="Eliminar"
+                        className="iconDeleteInput"
+                        onClick={() => {
+                            props.handleRemove(props.number);
+                        }}
+                    />
+                )}
             </div>
         </li>
     );
@@ -38,6 +41,9 @@ function EditableInput(props) {
 export default function ListEditableInput(props) {
     //recibe un array con los entregables
     // 'number' y 'data'
+    if (props.ListInputs.length === 0) {
+        return <div>No cuenta con {props.typeFault}</div>;
+    }
     return (
         <ul className="ListEditableInput">
             {props.ListInputs.map((item) => {
@@ -49,6 +55,7 @@ export default function ListEditableInput(props) {
                         data={item.data}
                         handleChanges={props.handleChanges}
                         handleRemove={props.handleRemove}
+                        beEditable={props.beEditable}
                     ></EditableInput>
                 );
             })}

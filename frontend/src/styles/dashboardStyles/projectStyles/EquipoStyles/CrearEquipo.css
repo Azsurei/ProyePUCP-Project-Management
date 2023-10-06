@@ -1,0 +1,51 @@
+
+.crear_equipo {
+    flex: 1;
+    font-family: Montserrat;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.title {
+    display: flex;
+    font-size: 1.5rem;
+    align-items: center;
+    color: #172B4D;
+    font-weight: 700;
+    font-family: Montserrat;
+}
+
+.nombreEquipo h3 {
+    margin-top: 1rem;
+}
+
+.participantes h3 {
+    margin-top: 1rem;
+}
+
+.bottom {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 5px;
+    margin-bottom: 2rem;
+    padding-right: 25rem;
+}
+
+.addTeamBtn {
+    border-radius: 5px;
+    background-color: #f0ae19;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 36px;
+    width: 160px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in;
+}

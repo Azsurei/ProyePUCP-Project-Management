@@ -7,10 +7,10 @@ import DescriptionRequeriment from "@/components/dashboardComps/projectComps/pro
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
-import Link from "next/link";
 import axios from "axios";
 import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import {useRouter} from "next/navigation";
 
 axios.defaults.withCredentials = true;
 
@@ -23,9 +23,10 @@ function getCurrentDate() {
 }
 
 export default function ProductBacklogRegister(props) {
+    const router=useRouter();
     const decodedUrl= decodeURIComponent(props.params.project);
-    const projectId= decodedUrl.charAt(decodedUrl.length-1);
-    const stringURLEpics= "http://localhost:8080/api/proyecto/backlog/1/listarEpicas";
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
+    const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -36,6 +37,10 @@ export default function ProductBacklogRegister(props) {
     const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
     const [datosUsuario, setDatosUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [name, setName] = useState("");
+    const [como, setComo] = useState("");
+    const [quiero, setQuiero] = useState("");
+    const [para, setPara] = useState("");
 
     useEffect(() => {
         const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
@@ -114,15 +119,10 @@ export default function ProductBacklogRegister(props) {
         });
     };
 
-    const onSubmit=(e)=>{
-        e.preventDefault();
+    const onSubmit= ()=>{
         const idEpic=selectedValueEpic;
         const idPriority=selectedValuePriority;
         const idState=selectedValueState;
-        const name=e.target.customPlaceholderInput9.value;
-        const como=e.target.customPlaceholderInput1.value;
-        const quiero=e.target.customPlaceholderInput2.value;
-        const para=e.target.customPlaceholderInput3.value;
         const postData = {
             idEpic: idEpic,
             idPriority: idPriority,
@@ -136,7 +136,8 @@ export default function ProductBacklogRegister(props) {
             scenarioData: scenarioFields,
             requirementData: requirementFields,
         };
-
+        console.log("Registrado correctamente");
+        console.log(postData);
         axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario", postData)
         .then((response) => {
           // Manejar la respuesta de la solicitud POST
@@ -151,7 +152,7 @@ export default function ProductBacklogRegister(props) {
     };
 
     return(
-        <form onSubmit={onSubmit}  className="containerRegisterPB">
+        <form onSubmit={onSubmit} className="containerRegisterPB">
             <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog / Registrar elemento
             </div>
@@ -178,7 +179,14 @@ export default function ProductBacklogRegister(props) {
                         </div>
                         )
                         :(
-                            <IconLabel icon="/icons/icon-usr.svg" label={`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`} className="iconLabel2"/>
+                            <div className="iconLabel2"> 
+                                <p className="profilePic">
+                                    {datosUsuario?.nombres[0] + datosUsuario?.apellidos[0]}
+                                </p>
+                                <div className="label">
+                                    {`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`}
+                                </div>
+                            </div>
                         )
                         }
                         
@@ -189,16 +197,23 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="description">
-                    <h4>Nombre de historia de usuario</h4>
-                    <DescriptionRequeriment/>
+                    <h4 style={{fontWeight: 600 }}>Nombre de historia de usuario</h4>
+                    <DescriptionRequeriment name={name} onNameChange={setName}/>
                 </div>
                 <div className="userDescription">
-                    <h4>Descripción de usuario</h4>
-                    <ContainerAsWantFor/>
+                    <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
+                    <ContainerAsWantFor
+                        como={como}
+                        quiero={quiero}
+                        para={para}
+                        onComoChange={setComo}
+                        onQuieroChange={setQuiero}
+                        onParaChange={setPara}
+                    />
                 </div>  
                 <div className="acceptanceCriteria">
                     <div className="titleButton">
-                        <h4>Criterios de aceptación</h4>
+                        <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
                     {Array.from({ length: quantity }, (_, index) => (
                         <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
@@ -212,7 +227,7 @@ export default function ProductBacklogRegister(props) {
                 </div>
                 <div className="requirements">
                     <div className="titleButton">
-                        <h4>Requerimientos funcionales</h4>
+                        <h4 style={{fontWeight: 600 }}>Requerimientos funcionales</h4>
                     </div>
                     {Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
@@ -228,8 +243,25 @@ export default function ProductBacklogRegister(props) {
                 <div className="twoButtons">
                     <div className="buttonContainer">
                         {/* Probablemente necesite usar router luego en vez de link */}
-                        <Modal/>
-                        <button className="btnBacklogContinue" type="submit">Aceptar</button>
+                        <Modal 
+                        nameButton="Descartar" 
+                        textHeader="Descartar Registro" 
+                        textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                        colorButton="w-36 bg-slate-100 text-black"
+                        oneButton={false}
+                        secondAction={() => router.back()}
+                         />
+                        <Modal nameButton="Aceptar" 
+                        textHeader="Registrar Historia de Usuario" 
+                        textBody="¿Seguro que quiere registrar la historia de usuario?"
+                        colorButton="w-36 bg-blue-950 text-white"
+                        oneButton={false}
+                        secondAction={() => {
+                            onSubmit();
+                            router.back();
+                        }}
+                         />
+                        {/* <button className="btnBacklogContinue" type="submit">Aceptar</button> */}
                     </div>
                 </div>
             </div> 

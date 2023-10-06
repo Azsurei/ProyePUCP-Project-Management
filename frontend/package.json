@@ -10,9 +10,6 @@
         "preinstall": "npm config set legacy-peer-deps true"
     },
     "dependencies": {
-        "@atlaskit/datetime-picker": "^12.10.1",
-        "@atlaskit/form": "^8.11.12",
-        "@atlaskit/progress-tracker": "^8.5.3",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
         "@headlessui/react": "^1.7.17",
@@ -21,6 +18,7 @@
         "@mui/icons-material": "^5.14.11",
         "@mui/material": "^5.14.11",
         "@nextui-org/react": "^2.1.13",
+        "@svgr/webpack": "^8.1.0",
         "autoprefixer": "10.4.16",
         "axios": "^1.5.0",
         "body-parser": "^1.20.2",
@@ -30,11 +28,12 @@
         "jsonwebtoken": "^9.0.2",
         "mysql": "^2.18.1",
         "mysql2": "^3.6.1",
-        "next": "13.5.2",
+        "next": "^13.5.4",
         "next-auth": "^4.23.2",
         "postcss": "8.4.30",
         "react": "^18.2.0",
         "react-dom": "18.2.0",
+        "react-modal": "^3.16.1",
         "tailwindcss": "^3.3.3"
     }
 }

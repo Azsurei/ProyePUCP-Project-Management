@@ -110,3 +110,69 @@ Content-Type:  application/json
     }
   ]
 }
+
+###
+
+POST http://localhost:8080/api/proyecto/EDT/listarComponenteEDT HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idComponente": "17"
+}
+
+###
+
+POST http://localhost:8080/api/proyecto/backlog/hu/listarHistoriaDeUsuario HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idHistoriaDeUsuario": "8"
+}
+
+###
+
+PUT http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idHistoriaUsuario": 8,
+  "idEpic": 1,
+  "idPriority": 1,
+  "idState": 1,
+  "name": "Registro de Asistencia",
+  "como": "Jefe del Proyecto",
+  "quiero": "marcar el registro de asistencia de mis compañeros",
+  "para": "llevar un control de su asistencia",
+  "scenarioData": [
+    {
+      "idHistoriaCriterioDeAceptacion": 10,
+      "scenario": "Escenario 1",
+      "dadoQue": "Holae llega el inicio del día laboral",
+      "cuando": "Holae un empleado marca su entrada",
+      "entonces": "Entonces se registra la hora de entrada del empleado"
+    },
+    {
+      "idHistoriaCriterioDeAceptacion": 11,
+      "scenario": "Escenario 2",
+      "dadoQue": "Holae que un empleado marca su salida",
+      "cuando": "Holae finaliza su jornada laboral",
+      "entonces": "Entonces se registra la hora de salida del empleado"
+    }
+  ],
+  "requirementData": [
+    {
+      "idHistoriaRequisito": 15,
+      "requirement": "Requerimiento 1: Holae la asistencia de los empleados"
+    },
+    {
+      "idHistoriaRequisito": 16,
+      "requirement": "Requerimiento 2: Holae informes de asistencia"
+    }
+  ]
+}
+
+
+###
+
+GET http://localhost:8080/api/proyecto/backlog/hu/8/listarHistoriaDeUsuario HTTP/1.1
+Content-Type:  application/json

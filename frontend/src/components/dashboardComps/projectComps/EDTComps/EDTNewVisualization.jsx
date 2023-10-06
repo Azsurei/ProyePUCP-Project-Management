@@ -220,7 +220,9 @@ export default function EDTNewVisualization({
                                 id="inputBoxGeneric"
                                 className="EDTNewDatepickerInicio"
                                 name="datepicker"
-                                onChange={handleChangeFechaInicio}
+                                onChange={(e) => {
+                                    setInFechaInicio(e.target.value);
+                                }}
                             ></input>
                             <p>Fecha de fin</p>
                             <input
@@ -228,7 +230,9 @@ export default function EDTNewVisualization({
                                 id="inputBoxGeneric"
                                 className="EDTNewDatepickerFin"
                                 name="datepicker"
-                                onChange={handleChangeFechaFin}
+                                onChange={(e) => {
+                                    setInFechaFin(e.target.value);
+                                }}
                             ></input>
                             <p>Responsables</p>
                             <textarea
@@ -313,8 +317,10 @@ export default function EDTNewVisualization({
                         <ListEditableInput
                             ListInputs={listEntregables}
                             typeName="Entregable"
+                            typeFault="entregables"
                             handleChanges={handleChangeEntregable}
                             handleRemove={handleRemoveEntregable}
+                            beEditable={true}
                         ></ListEditableInput>
                     </div>
                 </div>
@@ -340,8 +346,10 @@ export default function EDTNewVisualization({
                         <ListEditableInput
                             ListInputs={listCriterios}
                             typeName="Criterio"
+                            typeFault="criterios"
                             handleChanges={handleChangeCriterio}
                             handleRemove={handleRemoveCriterio}
+                            beEditable={true}
                         ></ListEditableInput>
                     </div>
                 </div>

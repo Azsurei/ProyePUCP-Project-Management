@@ -157,4 +157,85 @@ routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
+
+routerHistoriaDeUsuario.get("/:idHistoriaDeUsuario/listarHistoriaDeUsuario",verifyToken, async (req, res) => {
+    console.log("Llegue a recibir solicitud listar HU");
+    const { idHistoriaDeUsuario} = req.params;
+    const query = `
+        CALL LISTAR_HU_X_ID(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario]);
+        console.log(results[0]);
+        const [criterioAceptacionData] = await connection.execute(`
+            CALL LISTAR_CRITERIO_X_IDHU(${idHistoriaDeUsuario});
+        `);
+        const [requirimientosData] = await connection.execute(`
+            CALL LISTAR_REQUERIMIENTO_X_IDHU(${idHistoriaDeUsuario});
+        `);
+        const historiaUsuario = {
+            hu: results[0],
+            criteriosAceptacion: criterioAceptacionData[0],
+            requirimientos: requirimientosData[0]
+        };
+        res.status(200).json({
+            historiaUsuario,
+            message: "HU obtenido exitosamente"
+        });
+        console.log('Si se listo HU');
+    } catch (error) {
+        console.error("Error al obtener HU:", error);
+        res.status(500).send("Error al obtener HU: " + error.message);
+    }
+})
+
+routerHistoriaDeUsuario.put("/modificarHistoriaDeUsuario",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de modificar una historia de usuario");
+    //Insertar query aca
+    const {idHistoriaUsuario,idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
+    console.log("Llegue a recibir solicitud de modificar una historia de usuario");
+    const query = `
+        CALL MODIFICAR_HISTORIA_DE_USUARIO(?,?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaUsuario,idEpic, idPriority, idState, name, como, 
+            quiero, para]);
+        const idHU = results[0][0].idHistoriaDeUsuario;
+        console.log(`Se modifico la HU ${idHU}!`);
+        // Iteracion Escenario
+        for (const scenario of scenarioData) {
+            const [scenarioRows] = await connection.execute(`
+            CALL MODIFICAR_HISTORIA_CRITERIO(
+                ${idHU},
+                ${scenario.idHistoriaCriterioDeAceptacion},
+                '${scenario.dadoQue}',
+                '${scenario.cuando}',
+                '${scenario.entonces}',
+                '${scenario.scenario}'
+            );
+            `);
+            const idHistoriaCriterioDeAceptacion = scenarioRows[0][0].idHistoriaCriterioDeAceptacion;
+            console.log(`Se modificó el criterio de aceptacion: ${idHistoriaCriterioDeAceptacion}`);
+        }
+        for (const requerimiento of requirementData) {
+            const [requerimientoRows] = await connection.execute(`
+            CALL MODIFICAR_HISTORIA_REQUISITO(
+                ${idHU},
+                ${requerimiento.idHistoriaRequisito},
+                '${requerimiento.requirement}'
+            );
+            `);
+            const idHistoriaRequisito  = requerimientoRows[0][0].idHistoriaRequisito;
+            console.log(`Se modificó el requisito: ${idHistoriaRequisito}`);
+        }
+        res.status(200).json({
+            idHU,
+            message: "HU modificó exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).send("Error en el registro: " + error.message);
+    }
+})
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;

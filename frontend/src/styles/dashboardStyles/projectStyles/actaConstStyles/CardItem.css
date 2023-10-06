@@ -28,3 +28,17 @@
 .card-item.full-width {
     width: 100%;
 }
+
+/* ... your existing styles ... */
+
+.editable-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    outline: none;
+    padding: 0;
+}
