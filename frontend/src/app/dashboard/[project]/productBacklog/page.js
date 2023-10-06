@@ -319,7 +319,7 @@ export default function ProductBacklog(props) {
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                data.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+                data.DescripcionHistoria.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -327,7 +327,7 @@ export default function ProductBacklog(props) {
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                Array.from(toolsFilter).includes(data.tools)
+                Array.from(toolsFilter).includes(data.DescripcionHistoria)
             );
         }
 
