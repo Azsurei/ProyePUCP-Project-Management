@@ -19,6 +19,7 @@ import {
     coordinador,
     bgcolor,
     completed,
+    miembros,
   }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -51,7 +52,7 @@ import {
             </div>
           </CardFooter>
         </Card>
-        {modalIsOpen && <PopUpDetEquipo closeModal={closeModal} teamName={nombre} />}
+        {modalIsOpen && <PopUpDetEquipo closeModal={closeModal} teamName={nombre} coordinador={coordinador} miembros={miembros} />}
       </div>
     );
   };
