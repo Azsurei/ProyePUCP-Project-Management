@@ -13,6 +13,20 @@ const grupos = [
         coordinador: "Diego Iwasaki",
         bgcolor: "#ef6c00", 
         completed: 53, 
+        miembros: [
+            {
+              id: 1,
+              nombre: "Sebastian Chira",
+              correo: "s.chira@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            },
+            {
+              id: 2,
+              nombre: "Augusto Tong",
+              correo: "avtong@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            }
+          ],
     },
     {
         id: 2,
@@ -20,6 +34,20 @@ const grupos = [
         coordinador: "Diego Iwasaki",
         bgcolor: "#ef6c00", 
         completed: 25, 
+        miembros: [
+            {
+              id: 1,
+              nombre: "Sebastian Chira 2",
+              correo: "s.chira@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            },
+            {
+              id: 2,
+              nombre: "Augusto Tong 2",
+              correo: "avtong@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            }
+          ],
     },
     {
         id: 3,
@@ -27,6 +55,20 @@ const grupos = [
         coordinador: "Diego Iwasaki",
         bgcolor: "#ef6c00", 
         completed: 67, 
+        miembros: [
+            {
+              id: 1,
+              nombre: "Sebastian Chira 3",
+              correo: "s.chira@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            },
+            {
+              id: 2,
+              nombre: "Augusto Tong 3",
+              correo: "avtong@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            }
+          ],
     },
     
     {
@@ -35,6 +77,20 @@ const grupos = [
         coordinador: "Diego Iwasaki",
         bgcolor: "#ef6c00", 
         completed: 60, 
+        miembros: [
+            {
+              id: 1,
+              nombre: "Sebastian Chira 4",
+              correo: "s.chira@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            },
+            {
+              id: 2,
+              nombre: "Augusto Tong 4",
+              correo: "avtong@pucp.edu.pe",
+              iconSrc: "/icons/usr-img.svg",
+            }
+          ],
     },
     
 ];
@@ -77,6 +133,7 @@ export default function Equipo(props) {
                         coordinador={grupo.coordinador}
                         bgcolor={grupo.bgcolor}
                         completed={grupo.completed}
+                        miembros={grupo.miembros}
                     />
                 ))}
                 </div>

@@ -5,6 +5,7 @@ import TextField from "@/components/TextField";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/CrearEquipo.css";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import ChoiceUser from "@/components/dashboardComps/projectComps/projectCreateComps/ChoiceUser";
 
 const miembros = [
     {
