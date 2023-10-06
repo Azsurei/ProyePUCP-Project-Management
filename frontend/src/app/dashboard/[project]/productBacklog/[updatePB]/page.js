@@ -47,23 +47,28 @@ export default function ProductBacklogUpdate(props) {
 
     useEffect(() => {
         if (historiaUsuario && historiaUsuario.hu) {
-          setName(historiaUsuario.hu[0].descripcion);
-          setSelectedValueEpic(historiaUsuario.hu[0].idEpica);
-          setComo(historiaUsuario.hu[0].como);
-          setQuiero(historiaUsuario.hu[0].quiero);
-          setPara(historiaUsuario.hu[0].para);
-          const criteriosAceptacionOriginales= historiaUsuario.criteriosAceptacion;
-          const scenarioFieldsActualizados = criteriosAceptacionOriginales.map((criterio) => ({
-            scenario: criterio.escenario || '', // Puedes agregar un valor predeterminado en caso de que falte
-            dadoQue: criterio.dadoQue || '', // Puedes agregar un valor predeterminado en caso de que falte
-            cuando: criterio.cuando || '', // Puedes agregar un valor predeterminado en caso de que falte
-            entonces: criterio.entonces || '' // Puedes agregar un valor predeterminado en caso de que falte
-          }));
-          setScenarioFields(scenarioFieldsActualizados);
-          console.log("XDDDDDDDDDDDDDDDDDDDDDDDDDD");
-          console.log(scenarioFields);
+            setName(historiaUsuario.hu[0].descripcion);
+            setSelectedValueEpic(historiaUsuario.hu[0].idEpica);
+            setComo(historiaUsuario.hu[0].como);
+            setQuiero(historiaUsuario.hu[0].quiero);
+            setPara(historiaUsuario.hu[0].para);
+            const criteriosAceptacionOriginales= historiaUsuario.criteriosAceptacion;
+            const scenarioFieldsActualizados = criteriosAceptacionOriginales.map((criterio) => ({
+                scenario: criterio.escenario || '', // Puedes agregar un valor predeterminado en caso de que falte
+                dadoQue: criterio.dadoQue || '', // Puedes agregar un valor predeterminado en caso de que falte
+                cuando: criterio.cuando || '', // Puedes agregar un valor predeterminado en caso de que falte
+                entonces: criterio.entonces || '' // Puedes agregar un valor predeterminado en caso de que falte
+            }));
+            setScenarioFields(scenarioFieldsActualizados);
+            const requerimientosOriginales= historiaUsuario.requirimientos;
+            const requirementFieldsActualizados = requerimientosOriginales.map((requerimiento) => ({
+                requirement: requerimiento.descripcion || '', // Puedes agregar un valor predeterminado en caso de que falte
+            }));
+            setRequirementFields(requirementFieldsActualizados);
+            console.log("XDDDDDDDDDD");
+            console.log(requirementFields);
         }
-      }, [historiaUsuario]);
+    }, [historiaUsuario]);
 
     useEffect(() => {
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
