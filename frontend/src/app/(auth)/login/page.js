@@ -2,23 +2,22 @@
 
 import React from "react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
+
+import axios from "axios";
+import Cookies from 'js-cookie';
+
 import Placeholder from "@/components/Placeholder";
 import Button from "@/components/Button";
 import "@/styles/login.css";
-import axios from "axios";
-import jwt from "jsonwebtoken";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 
 axios.defaults.withCredentials = true;
 
 function Login() {
-    async function handleGoogleSignIn() {
-        signIn("google", { callbackUrl: "http://localhost:3000" });
-    }
-
     const router = useRouter();
+    const { data: session , status } = useSession();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -35,12 +34,26 @@ function Login() {
         });
     }
 
+    useEffect(() => {
+        if (session && status === "authenticated") {
+            console.log("Inicio de sesión exitoso.");
+            handleSuccessfulLogin();
+        }
+    }, [session, status]);
+
+    const handleSuccessfulLogin = () => {
+        Cookies.set("tokenProyePUCP", session.user.token, { expires: null });
+        router.push("/dashboard");
+    };
+
+    const handleGoogleSignIn = async () => {
+        await signIn("google");
+    };
+
     const handleSubmit = async () => {
         const { email, password } = formData;
 
-        // Activar el estado de carga antes de realizar la solicitud Axios
         setFormData({ ...formData, loading: true });
-        console.log(formData);
 
         const responseNextAuth = await signIn("credentials", {
             email,
@@ -50,13 +63,12 @@ function Login() {
 
         if (responseNextAuth.error) {
             console.log(responseNextAuth.error);
+            setFormData({ ...formData, loading: false });
             return;
         }
-
-        setFormData({ ...formData, loading: false });
-        router.push("/dashboard");
     };
 
+    // Componente general
     return (
         <>
             <div className="Fondo">

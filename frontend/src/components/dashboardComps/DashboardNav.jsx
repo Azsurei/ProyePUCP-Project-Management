@@ -5,8 +5,15 @@ import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import Cookies from "js-cookie";
 
 function DashboardNav() {
+
+    const handleSignOut = async () => {
+        Cookies.remove("tokenProyePUCP");
+        await signOut();
+    };
+
     return (
         <nav className='DashboardNav'>
             <img src="/icons/logoProyePUCP_en_svg.svg" alt="" className="proyePucpLogo" />
@@ -25,7 +32,7 @@ function DashboardNav() {
                         <img src="/icons/icon-notif.svg" alt="" className="icon" />
                         <p>Notificaciones</p>
                     </li>
-                    <li onClick={() => signOut()}>
+                    <li onClick={handleSignOut}>
                         <img src="/icons/icon-signout.svg" alt="" className="icon" />
                         <p>Cerrar Sesión</p>
                     </li>
