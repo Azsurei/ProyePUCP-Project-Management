@@ -205,7 +205,7 @@ routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",verifyToken,async(req
         for (const scenario of scenarioData) {
             const [scenarioRows] = await connection.execute(`
             CALL MODIFICAR_HISTORIA_CRITERIO(
-                ${scenario.idHistoriaDeUsuario},
+                ${idHistoriaDeUsuario},
                 ${scenario.idHistoriaCriterioDeAceptacion},
                 '${scenario.dadoQue}',
                 '${scenario.cuando}',
@@ -219,7 +219,7 @@ routerHistoriaDeUsuario.post("/modificarHistoriaDeUsuario",verifyToken,async(req
         for (const requerimiento of requirementData) {
             const [requerimientoRows] = await connection.execute(`
             CALL MODIFICAR_HISTORIA_REQUISITO(
-                ${requerimiento.idHistoriaDeUsuario},
+                ${idHistoriaDeUsuario},
                 ${requerimiento.idHistoriaRequisito},
                 '${requerimiento.requirement}'
             );
