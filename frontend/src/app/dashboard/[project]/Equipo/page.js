@@ -6,6 +6,7 @@ import ProgressBar from "@/components/equipoComps/ProgressBar";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 const grupos = [
+    
     {
         id: 1,
         nombre: "Módulo 1 - Front End",
@@ -58,14 +59,17 @@ export default function Equipo(props) {
             <div className="title">Equipos</div>
             <div className="titleAndOptions">
                 <div className="subtitle">Divide tu trabajo en los equipos que consideres necesarios</div>
-                <div className="buttonAddTeam">
+                {grupos.length > 0 && (
+                    <div className="buttonAddTeam">
                         <a href={"/dashboard/"+projectName+"="+projectId+"/Equipo/nuevo_equipo"}>
                             <button className="addTeambtn">Crear Equipo</button>
                         </a>
-                </div>
+                    </div>
+                )} 
             </div>
             {/*<div className="flex flex-row items-start justify-between w-500">*/}
-            <div className="grid grid-cols-3 gap-4 mt-2">
+            {grupos.length > 0 ? (
+                <div className="grid grid-cols-3 gap-4 mt-2">
                 {grupos.map((grupo) => (
                     <CardEquipo
                         key={grupo.id}
@@ -75,7 +79,20 @@ export default function Equipo(props) {
                         completed={grupo.completed}
                     />
                 ))}
-            </div>
+                </div>
+            ) : (
+                <div className="noTeamsMessage">
+                    <h2>¡Vaya!</h2>
+                    <p className="littleMessage">¡Parece que aún no tienes equipos en este proyecto! <br /> 
+                        Recuerda que delegar tareas es muy importante.</p>
+                    <p className="wannaCreateOne">¿Quieres crear un equipo?</p>
+                    <div className="noTeamsButtonAddTeam">
+                        <a href={"/dashboard/"+projectName+"="+projectId+"/Equipo/nuevo_equipo"}>
+                            <button className="addTeambtn">Crear Equipo</button>
+                        </a>
+                    </div>
+                </div>
+            )}  
         </div>
     );
 }
