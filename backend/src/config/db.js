@@ -4,7 +4,7 @@ const connection = mysql.createPool({
   host: "dbdibujitos.cvqtg3vqsovm.us-east-1.rds.amazonaws.com",
   port: "3306",
   user: "admin",
-  password: "LosDibujitos2023.2",
+  password: "pywxuk-baWqoh-bibvu4",
   database: "dbdibujitos",
 });
 
