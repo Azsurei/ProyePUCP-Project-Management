@@ -11,7 +11,7 @@ export default function ContainerAsWantFor({ como, quiero, para, onComoChange, o
           id="customPlaceholderInput1"
           className="customPlaceholderInput"
           placeholder="Escribe aquí"
-          maxLength="100"
+          maxLength="200"
           value={como}
           onChange={(e) => onComoChange(e.target.value)}
         />
@@ -23,7 +23,7 @@ export default function ContainerAsWantFor({ como, quiero, para, onComoChange, o
           id="customPlaceholderInput2"
           className="customPlaceholderInput"
           placeholder="Escribe aquí"
-          maxLength="100"
+          maxLength="200"
           value={quiero}
           onChange={(e) => onQuieroChange(e.target.value)}
         />
@@ -35,7 +35,7 @@ export default function ContainerAsWantFor({ como, quiero, para, onComoChange, o
           id="customPlaceholderInput3"
           className="customPlaceholderInput"
           placeholder="Escribe aquí"
-          maxLength="200"
+          maxLength="400"
           value={para}
           onChange={(e) => onParaChange(e.target.value)}
         />
