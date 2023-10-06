@@ -253,7 +253,7 @@ export default function EDTCompVisualization({
                     haveAddNew={false}
                     handlerReturn={handlerReturn}
                     breadcrump={
-                        "Inicio / Proyectos / Proyect X / EDT y Diccionario EDT"
+                        "Inicio / Proyectos / "+projectName+" / EDT y Diccionario EDT"
                     }
                     btnText={"Agregar elemento"}
                 >
@@ -511,6 +511,7 @@ export default function EDTCompVisualization({
                         secondAction={() => {
                             handleCancelEdit();
                         }}
+                        textColor="red"
                     />
                     <Modal
                         nameButton="Actualizar"
@@ -521,6 +522,7 @@ export default function EDTCompVisualization({
                         secondAction={() => {
                             handleUpdateComp();
                         }}
+                        textColor="blue"
                     />
                 </div>
             )}

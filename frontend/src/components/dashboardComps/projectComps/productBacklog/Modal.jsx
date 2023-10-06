@@ -17,6 +17,7 @@ export default function ModalComponent({
     colorButton,
     oneButton,
     secondAction,
+    textColor,
 }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -29,7 +30,7 @@ export default function ModalComponent({
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1 text-red-500">
+                            <ModalHeader className={"flex flex-col gap-1 text-"+textColor+"-500"}>
                                 {textHeader}
                             </ModalHeader>
                             <ModalBody>

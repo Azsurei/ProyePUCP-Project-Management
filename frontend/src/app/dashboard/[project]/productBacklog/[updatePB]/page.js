@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
 import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
 import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
-import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
+import ContainerRequirement2 from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement2";
 import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import axios from "axios";
 import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import {useRouter} from "next/navigation";
-
+import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/containerScenario2";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -43,11 +43,36 @@ export default function ProductBacklogUpdate(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
+    const stringURLHU1 = `http://localhost:8080/api/proyecto/backlog/hu/5/listarHistoriaDeUsuario`;
+
+    useEffect(() => {
+        if (historiaUsuario && historiaUsuario.hu) {
+            setName(historiaUsuario.hu[0].descripcion);
+            setSelectedValueEpic(historiaUsuario.hu[0].idEpica);
+            setComo(historiaUsuario.hu[0].como);
+            setQuiero(historiaUsuario.hu[0].quiero);
+            setPara(historiaUsuario.hu[0].para);
+            const criteriosAceptacionOriginales= historiaUsuario.criteriosAceptacion;
+            const scenarioFieldsActualizados = criteriosAceptacionOriginales.map((criterio) => ({
+                scenario: criterio.escenario || '', // Puedes agregar un valor predeterminado en caso de que falte
+                dadoQue: criterio.dadoQue || '', // Puedes agregar un valor predeterminado en caso de que falte
+                cuando: criterio.cuando || '', // Puedes agregar un valor predeterminado en caso de que falte
+                entonces: criterio.entonces || '' // Puedes agregar un valor predeterminado en caso de que falte
+            }));
+            setScenarioFields(scenarioFieldsActualizados);
+            const requerimientosOriginales= historiaUsuario.requirimientos;
+            const requirementFieldsActualizados = requerimientosOriginales.map((requerimiento) => ({
+                requirement: requerimiento.descripcion || '', // Puedes agregar un valor predeterminado en caso de que falte
+            }));
+            setRequirementFields(requirementFieldsActualizados);
+            console.log("XDDDDDDDDDD");
+            console.log(requirementFields);
+        }
+    }, [historiaUsuario]);
 
     useEffect(() => {
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         const stringURLUsuario = "http://localhost:8080/api/usuario/verInfoUsuario";
-      
         Promise.all([
           axios.get(stringURLHU),
           axios.get(stringURLUsuario),
@@ -68,6 +93,11 @@ export default function ProductBacklogUpdate(props) {
           });
       }, []);    
 
+
+      //const [name, setName] = useState(historiaUsuario?.descripcion || "");
+
+
+    
     function addContainer(){
         setQuantity(quantity+1);
         setScenarioFields((prevFields) => [
@@ -173,7 +203,7 @@ export default function ProductBacklogUpdate(props) {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica"/>
+                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialValue={historiaUsuario?.idEpica}/>
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
@@ -208,10 +238,14 @@ export default function ProductBacklogUpdate(props) {
                         <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
                     </div>
                 </div>
-                <div className="description">
-                    <h4 style={{fontWeight: 600 }}>Nombre de historia de usuario</h4>
-                    <DescriptionRequeriment name={name} onNameChange={setName}/>
-                </div>
+                { historiaUsuario ? (
+          <div className="description">
+            <h4 style={{ fontWeight: 600 }}>Nombre de historia de usuario</h4>
+            <DescriptionRequeriment name={name} />
+          </div>
+        ) : (
+          <div>Cargando datos...</div>
+        )}
                 <div className="userDescription">
                     <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
                     <ContainerAsWantFor
@@ -227,8 +261,13 @@ export default function ProductBacklogUpdate(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
-                    {Array.from({ length: quantity }, (_, index) => (
-                        <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
+                    {historiaUsuario &&  scenarioFields.map((criterio, index) => (
+                        <ContainerScenario2
+                            key={index}
+                            indice={index + 1}
+                            onUpdateScenario={onUpdateScenario}
+                            scenario={criterio}
+                        />
                     ))}
                     <div className="twoButtons">
                         <div className="buttonContainer">
@@ -241,8 +280,8 @@ export default function ProductBacklogUpdate(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Requerimientos funcionales</h4>
                     </div>
-                    {Array.from({ length: quantity1 }, (_, index) => (
-                        <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
+                    {historiaUsuario &&  requirementFields.map((requirement, index) => (
+                        <ContainerRequirement2 key={index} indice={index+1} updateRequirementField={updateRequirementField} requirement={requirement}/>
                     ))}
                     <div className="twoButtons">
                         <div className="buttonContainer">

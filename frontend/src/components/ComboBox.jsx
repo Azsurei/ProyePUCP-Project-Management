@@ -5,8 +5,8 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import axios from "axios";
 import { useEffect } from "react";
 
-export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam}) {
-  const [selected, setSelected] = useState('')
+export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam,initialID}) {
+  
   const [query, setQuery] = useState('')
   const [data, setData] = useState([]);
 
@@ -23,6 +23,9 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
     fetchData();
   }, []);
   
+  const initiaValue = data.find((element) => element[idParam] === initialID);
+  const [selected, setSelected] = useState(initiaValue ? initiaValue[nameDisplay] : "");
+
   const filteredData =
     query === ''
       ? data

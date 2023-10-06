@@ -11,7 +11,6 @@ import MyDynamicTable from "@/components/DynamicTable";
 import { data } from "autoprefixer";
 import React from "react";
 import axios from "axios";
-import { useRouter } from 'next/navigation';
 import RouteringBacklog from "@/components/dashboardComps/projectComps/productBacklog/RouteringBacklog";
 axios.defaults.withCredentials = true;
 import {
@@ -29,7 +28,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
-
+import { useRouter } from 'next/navigation';
 
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -44,8 +43,7 @@ export default function ProductBacklog(props) {
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    
-    const router= useRouter();
+
     
 
    //const stringURL1 = "http://localhost:8080/api/proyecto/backlog/42/listarHistorias";
@@ -129,9 +127,9 @@ export default function ProductBacklog(props) {
 
     const setRoutering = (objectID) => {
         setObjectID(objectID);
-        console.log(objectID.idHistoriaDeUsuario);
         setNavegate(!navegate);
     };
+
     const toggleModalAll = () => {
         setModal2(!modal2);
     };
@@ -387,8 +385,9 @@ export default function ProductBacklog(props) {
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
-
+        
         switch (columnKey) {
+                
             case "iconSrc":
                 return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
@@ -408,6 +407,7 @@ export default function ProductBacklog(props) {
                                         Editar 
                                 {/* </Link> */}
                                 </DropdownItem>
+
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
