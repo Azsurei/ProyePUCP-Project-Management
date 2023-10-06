@@ -179,7 +179,7 @@ export default function EDTNewVisualization({
                 haveAddNew={false}
                 handlerReturn={handlerReturn}
                 breadcrump={
-                    "Inicio / Proyectos / Proyect X / EDT y Diccionario EDT"
+                    "Inicio / Proyectos / "+projectName+" / EDT y Diccionario EDT"
                 }
                 btnText={"Agregar elemento"}
             >

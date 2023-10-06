@@ -32,8 +32,8 @@ export default function EDTVisualization({
                 haveAddNew={true}
                 handlerAddNew={handlerGoToNew}
                 newPrimarySon={ListComps.length + 1}
-                breadcrump={"Inicio / Proyectos / Proyect X"}
-                btnText={"Agregar nueva fase"}
+                breadcrump={"Inicio / Proyectos / "+projectName}
+                btnText={"Nuevo componente"}
             >
                 EDT y diccionario EDT
             </HeaderWithButtonsSamePage>
