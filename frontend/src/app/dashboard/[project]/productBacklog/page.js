@@ -10,7 +10,8 @@ import TableComponent from "@/components/dashboardComps/projectComps/productBack
 import MyDynamicTable from "@/components/DynamicTable";
 import { data } from "autoprefixer";
 import React from "react";
-
+import axios from "axios";
+axios.defaults.withCredentials = true;
 import {
     Input,
     Button,
@@ -30,14 +31,90 @@ import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    
 
-    const stringURL = "http://localhost:8080/api/proyecto/77/6/backlog/epica/hu";
+    
 
+    
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    
+
+    
+
+   //const stringURL1 = "http://localhost:8080/api/proyecto/backlog/42/listarHistorias";
+
+/*axios.get(stringURL1)
+  .then(response => {
+    console.log(response.data); // Maneja la respuesta aquí
+  })
+  .catch(error => {
+    console.error(error);
+  });*/
+  
+
+  
+
+    
+
+
+    
+
+    /*function DataTable() {
+        console.log(projectId);
+    
+        const stringURL =
+            "http://localhost:8080/api/proyecto/backlog/" +
+            projectId +
+            "/listarHistorias";
+    
+            axios
+            .get(stringURL)
+            .then(function (response) {
+                const componentsArray = response.data.historias;
+                console.log(componentsArray);
+                setData(componentsArray);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+    useEffect(() => {
+        DataTable();
+    }, []);
+
+    
+
+    console.log(data.idHistoriaDeUsuario);*/
+    const [data, setData] = useState([]);
+    function DataTable(){
+        const fetchData = async () => {
+          try {
+            // Realiza la solicitud HTTP al endpoint del router
+            const stringURL =
+            "http://localhost:8080/api/proyecto/backlog/" +
+            projectId +
+            "/listarHistorias";
+            const response = await axios.get(stringURL);
+    
+            // Actualiza el estado 'data' con los datos recibidos
+            setData(response.data.historias);
+    
+            console.log(`Datos obtenidos exitosamente:`, response.data.historias);
+          } catch (error) {
+            console.error('Error al obtener datos:', error);
+          }
+        };
+    
+        fetchData();
+      };
+    
+    useEffect(() => {
+        DataTable();
+    }, []);
 
     const toggleModal = (task) => {
         setSelectedTask(task);
@@ -62,25 +139,31 @@ export default function ProductBacklog(props) {
     const columns = [
         {
             name: 'Nombre',
-            uid: 'descripcion',
+            uid: 'DescripcionHistoria',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Epica',
-            uid: 'epic',
+            uid: 'NombreEpica',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Prioridad',
-            uid: 'priority',
+            uid: 'NombrePrioridad',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
+            name: 'Color',
+            uid: 'color',
+            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: false
+        },
+        {
             name: 'Estado',
-            uid: 'state',
+            uid: 'NombreEstado',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -88,10 +171,11 @@ export default function ProductBacklog(props) {
             name: ' ',
             uid: 'actions',
             className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: false
         }
     ];
 
-    const data = [
+    /*const data = [
         {
             id: 1,
             descripcion: 'Historia 1',
@@ -197,7 +281,7 @@ export default function ProductBacklog(props) {
             priority: 'Could',
             state: 'En progreso'
         }
-    ];
+    ];*/
     
 
     const toolsOptions = [
@@ -234,10 +318,11 @@ export default function ProductBacklog(props) {
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                Array.from(toolsFilter).includes(data.priority)
+                Array.from(toolsFilter).includes(data.tools)
             );
         }
 
+        
         return filteredTemplates;
     }, [data, filterValue, toolsFilter]);
 
@@ -311,18 +396,22 @@ export default function ProductBacklog(props) {
                         </Dropdown>
                     </div>
                 );
-            case "priority":
+            case "NombrePrioridad":
                 return (
-                    <span className="p-1.5 text-sm uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">
+                    <span className="p-1.5 text-sm uppercase tracking-wider rounded-lg bg-opacity-50"
+                        style={{ backgroundColor: data.ColorPrioridad || "transparent" }}
+                    >
                         {cellValue}
                     </span>
                 );
-            case "state":
+            case "NombreEstado":
                 return (
                     <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
                         {cellValue}
                     </span>
                 );
+            case "color":
+                    return null;
             default:
                 return cellValue;
         }
@@ -484,6 +573,7 @@ export default function ProductBacklog(props) {
                             columns={columns}
                             sortedItems={sortedItems}
                             renderCell={renderCell}
+                            idKey="idHistoriaDeUsuario"
                         />
                 {/*<TableComponent data={data} /*urlApi = {stringURL} columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/>*/} {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
@@ -493,13 +583,16 @@ export default function ProductBacklog(props) {
                 <PopUpEliminateHU
                     modal = {modal1} 
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
-                    taskName={selectedTask.descripcion}
+                    taskName={selectedTask.DescripcionHistoria}
+                    idHistoriaDeUsuario = {selectedTask.idHistoriaDeUsuario}
+                    refresh ={DataTable}
                 />
             )}
             {modal2 && (
                 <PopUpEliminateAll 
                     modal={modal2}
                     toggle={() => toggleModalAll()} 
+                    
                 />
             )}
             
