@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
 import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
 import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
-import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
+import ContainerRequirement2 from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement2";
 import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import axios from "axios";
 import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import {useRouter} from "next/navigation";
-
+import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/containerScenario2";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -262,7 +262,7 @@ export default function ProductBacklogUpdate(props) {
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
                     {historiaUsuario &&  scenarioFields.map((criterio, index) => (
-                        <ContainerScenario
+                        <ContainerScenario2
                             key={index}
                             indice={index + 1}
                             onUpdateScenario={onUpdateScenario}
@@ -280,8 +280,8 @@ export default function ProductBacklogUpdate(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Requerimientos funcionales</h4>
                     </div>
-                    {Array.from({ length: quantity1 }, (_, index) => (
-                        <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
+                    {historiaUsuario &&  requirementFields.map((requirement, index) => (
+                        <ContainerRequirement2 key={index} indice={index+1} updateRequirementField={updateRequirementField} requirement={requirement}/>
                     ))}
                     <div className="twoButtons">
                         <div className="buttonContainer">
