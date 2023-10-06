@@ -4,7 +4,6 @@ import "../../../../styles/dashboardStyles/projectStyles/actaConstStyles/TextInf
 
 const TextInfoCard = ({title, data, isEditing, isCancel, handleDataChange, dataKey }) => {
     const isSingleItem = data.length === 1;
-
     return (
         <div className="project-card">
             <h2 className="project-card__title">{title}</h2>
