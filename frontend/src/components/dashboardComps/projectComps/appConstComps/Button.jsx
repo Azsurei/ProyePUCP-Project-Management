@@ -1,27 +1,24 @@
 import React from 'react';
-import '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/Button.css';
+import styles from '../../../../styles/dashboardStyles/projectStyles/actaConstStyles/Button.module.css';
 
 const Button = ({
-                    text,
-                    size = 'medium',
-                    type = 'primary',
-                    imgSrc,
-                    imgPosition = 'before',
-                    onClick,
+                    appearance = 'default',
+                    state = 'default',
+                    spacing = 'default',
                     isDisabled = false,
-                    isContained = false,
-                    hasLink = false
+                    isLoading = false,
+                    children
                 }) => {
-    const buttonClass = `btn ${type} ${size}${isContained ? ' contained' : ''}${hasLink ? ' link-btn' : ''}`;
+    let classNames = [styles.button, styles[appearance], styles[state], styles[spacing]];
+
+    if (isDisabled) classNames.push(styles.disabled);
+    if (isLoading) classNames.push(styles.loading);
 
     return (
-        <button className={buttonClass} onClick={onClick} disabled={isDisabled}>
-            {imgSrc && imgPosition === 'before' && <img src={imgSrc} alt="icon" />}
-            {text}
-            {imgSrc && imgPosition === 'after' && <img src={imgSrc} alt="icon" />}
+        <button className={classNames.join(' ')} disabled={isDisabled || isLoading}>
+            {children}
         </button>
     );
 };
-
 
 export default Button;
