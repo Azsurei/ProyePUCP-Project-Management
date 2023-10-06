@@ -24,9 +24,10 @@ function getCurrentDate() {
 
 export default function ProductBacklogUpdate(props) {
     const router=useRouter();
-    const decodedUrl= decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
-    const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
+    const idHU= props.params.updatePB;
+    const decodedUrl= decodeURIComponent(props.params.project); //borrar
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);//borrar
+    const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;//borrar
     const [quantity, setQuantity] = useState(1);
     const [quantity1, setQuantity1] = useState(1);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -36,6 +37,7 @@ export default function ProductBacklogUpdate(props) {
     const [scenarioFields, setScenarioFields] = useState([{ scenario: '', dadoQue: '', cuando: '', entonces: '' }]);
     const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
     const [datosUsuario, setDatosUsuario] = useState(null);
+    const [historiaUsuario, setHistoriaUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState("");
     const [como, setComo] = useState("");
@@ -43,18 +45,28 @@ export default function ProductBacklogUpdate(props) {
     const [para, setPara] = useState("");
 
     useEffect(() => {
-        const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
-
-        axios.get(stringURLUsuario).
-            then(function(response){
-                const userData= response.data.usuario[0];
-                setDatosUsuario(userData);
-                setIsLoading(false);    
-            })
-            .catch(function(error){
-                console.log(error);
-            });
-    },[]);    
+        const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
+        const stringURLUsuario = "http://localhost:8080/api/usuario/verInfoUsuario";
+      
+        Promise.all([
+          axios.get(stringURLHU),
+          axios.get(stringURLUsuario),
+        ])
+          .then(function (responses) {
+            const huData = responses[0].data.historiaUsuario;
+            const userData = responses[1].data.usuario[0];
+            console.log("ID HU:", idHU);
+            console.log("DATA:", huData);
+            console.log("USUARIO:", userData);
+            
+            setHistoriaUsuario(huData);
+            setDatosUsuario(userData);
+            setIsLoading(false);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }, []);    
 
     function addContainer(){
         setQuantity(quantity+1);

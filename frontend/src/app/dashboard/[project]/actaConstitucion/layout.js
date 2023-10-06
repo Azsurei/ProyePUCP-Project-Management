@@ -11,6 +11,7 @@ import PersonWithCircleIcon from '../../../../../public/images/PersonWithCircleI
 import TaskIcon from '../../../../../public/images/TaskIcon.svg';
 import Link from "next/link";
 import React from "react";
+import {Breadcrumbs, BreadcrumbsItem} from "@/components/Breadcrumb";
 
 const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
 export default function RootLayout({ children, params }) {
@@ -20,8 +21,29 @@ export default function RootLayout({ children, params }) {
 
     return (
         <Page margin={"20px 20px 20px"}>
-            <Breadcrumb items={itemsBreadCrumb} />
-            <Title>{"Acta de Constitución"}</Title>
+            <div className="space-x-4 mb-2">
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard/project"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard/6/"
+                        text={"Nombre del proyecto"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard/project/actaConstitucion/info"
+                        text={"Acta de Constitución"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
+            </div>
+            <h1 className="montserrat text-[#172B4D] font-bold text-3xl">
+                Acta de Constitución
+            </h1>
             <ButtonPanel margin="20px 20px 20px" align="left">
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>

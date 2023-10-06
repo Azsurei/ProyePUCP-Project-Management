@@ -85,6 +85,7 @@ export default function EDT(props) {
                     ListComps={ListComps}
                     handlerGoToNew={handleSetCompCode}
                     handleVerDetalle={handleVerDetalle}
+                    refreshComponentsEDT={refreshComponentsEDT}
                 ></EDTVisualization>
             )}
 

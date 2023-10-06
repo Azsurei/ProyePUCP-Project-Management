@@ -10,7 +10,8 @@ export default function EDTVisualization({
     projectId,
     ListComps,
     handlerGoToNew,
-    handleVerDetalle
+    handleVerDetalle,
+    refreshComponentsEDT
 }) {
     const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -23,9 +24,6 @@ export default function EDTVisualization({
             console.log("abriendo menu de id = " + id);
         }
     };
-
-    if (ListComps.length === 0) {
-    }
 
     return (
         <div className="EDT">
@@ -56,6 +54,7 @@ export default function EDTVisualization({
                     <ListElementsEDT
                         listData={ListComps}
                         initialMargin={0}
+                        refreshComponentsEDT={refreshComponentsEDT}
                     ></ListElementsEDT>
                 </OpenMenuContext.Provider>
             )}

@@ -11,6 +11,8 @@ import MyDynamicTable from "@/components/DynamicTable";
 import { data } from "autoprefixer";
 import React from "react";
 import axios from "axios";
+import { useRouter } from 'next/navigation';
+import RouteringBacklog from "@/components/dashboardComps/projectComps/productBacklog/RouteringBacklog";
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -36,7 +38,8 @@ export default function ProductBacklog(props) {
     
 
     
-
+    console.log(projectId);
+    console.log(projectName);
     
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
@@ -89,9 +92,7 @@ export default function ProductBacklog(props) {
 
     console.log(data.idHistoriaDeUsuario);*/
     const [data, setData] = useState([]);
-
-
-    
+    const [object, setObject] = useState(null);
 
     function DataTable(){
         const fetchData = async () => {
@@ -121,10 +122,13 @@ export default function ProductBacklog(props) {
 
     const toggleModal = (task) => {
         setSelectedTask(task);
+        console.log(task.idHistoriaDeUsuario);
         setModal1(!modal1);
     };
 
-    
+    const selectObject = (object) => {
+        setObject(object);
+    };
 
     const toggleModalAll = () => {
         setModal2(!modal2);
@@ -396,8 +400,12 @@ export default function ProductBacklog(props) {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem>
-                                        Editar
+                                <DropdownItem onClick={() => {
+                                    setRoutering(data)
+                                }}>
+                                {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
+                                        Editar 
+                                {/* </Link> */}
                                 </DropdownItem>
 
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
@@ -604,6 +612,14 @@ export default function ProductBacklog(props) {
                     
                 />
             )}
+            {navegate && objectID.idHistoriaDeUsuario && (
+                <RouteringBacklog
+                    proy_name = {projectName}
+                    proy_id = {projectId}
+                    idHu = {objectID.idHistoriaDeUsuario}
+                />
+            )
+            }
             
         </div>
     );

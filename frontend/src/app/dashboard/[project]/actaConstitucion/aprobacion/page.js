@@ -1,140 +1,310 @@
-"use client"
-import Link from "next/link";
+"use client";
+
+import React, { useState, useEffect, useCallback } from 'react';
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
-import Breadcrumb from "@/components/dashboardComps/projectComps/appConstComps/BreadCrumb";
-import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
-import Button from  "@/components/dashboardComps/projectComps/appConstComps/Button";
-import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
-import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
-import React, { useState } from 'react';
+import {
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell,
+    Input,
+    Button,
+    DropdownTrigger,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem,
+    Chip,
+    User,
+    Pagination,
+} from "@nextui-org/react";
+import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
+import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
+import { SearchIcon } from "@/../public/icons/SearchIcon";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
 
-/// Lista de labels sobre info del Proyecto
-
-const projectData = [
-    { label: "Proyecto", value: "Proyecto de Bajarse a PUCP Movil" },
-    { label: "Nombre del equipo", value: "Los Dibujitos" },
-    { label: "Fecha", value: "25/12/2023" },
-    { label: "Cliente", value: "Sindicato de Católica" },
-    { label: "Patrocinador principal", value: "Luis Flores" },
-    { label: "Gerente de proyecto", value: "Diego Iwasaki" },
+const columns = [
+    { name: "Nombre", uid: "name", sortable: true},
+    { name: "Cargo", uid: "position", sortable:true},
+    { name: "Organizacion", uid: "organization", sortable: true },
+    { name: "Acciones", uid: "actions"},
 ];
 
-const purpouseData = [
-    {label: "", value: "Dado que la aplicación PUCP Móvil tiene muchos problemas"
-                    + "(no sé cuales) hemos decidido tumbar PUCP Móvil."},
-]
-
-const descriptionData = [
-    {label: "", value: "Descripción del Proyecto totalmente generícas y cualquier"
-                    + "otro entregable que sea necesario para el desarrollo de este proyecto. \n"
-                    + "Se espera que para este proyecto se entreguen el Producto1 completamente terminado,"
-                    + "así como los Documento 1, Documento 2 y Documento 3. Además, se requiere " +
-            "que al final del mismo todos los integrantes puedan realizar un nuevo requisito invisible."},
-]
-
-const budgetData = [
-    {label: "", value: "Las estimaciones de este proyecto se encuentran alrededor de los $10,000.00" +
-            " bajo las siguientes razones. Pago a desarrolladores: $10. Pago a sindicato: $99,990.00."},
-]
-
-const restrictionData = [
-    {label: "", value: "Este proyecto se da a cabo por la Premisa1, Premisa2, Premisa3 y Premisa4. " +
-            "Se ha detectado que se cuenta con la Restricción1, Restricción2, Restricción3 y" +
-            " Restricción4. Las medidas en contra de la Restricción4 son dejar de alimentar " +
-            "a las ardillas y bajar el costo del menú."},
-]
-const highLevelRisksData = [
-    { label: "", value: "Se calculan como Riesgos Iniciales de Alto Nivel el dejar que los " +
-            "desarrolladores se tiren una maratón de 10h viendo series. " +
-            "Se recomienda bloquear las páginas de streaming." }
+const toolsOptions = [
+    { name: "Backlog", uid: "active" },
+    { name: "Acta de constitucion", uid: "paused" },
+    { name: "EDT", uid: "vacation" },
 ];
 
-const projectApprovalData = [
-    { label: "", value: "Se tienen el Requisito1, Requisito2 y Requisito3, siendo " +
-            "el Requisito3 el más importante." }
+const extensionOptions = [
+    { name: ".docx", uid: "word" },
+    { name: ".xlsx", uid: "excel" },
+    { name: ".pptx", uid: "powerpoint" },
 ];
 
-const highLevelRequirementsData = [
-    { label: "", value: "Se calculan como Riesgos Iniciales de Alto Nivel " +
-            "el dejar que los desarrolladores se tiren una maratón de 10h viendo series." +
-            " Se recomienda bloquear las páginas de streaming." }
+const templates = [
+    {
+        id: 1,
+        name: 'Hernando Vazquez',
+        position: "Cargo",
+        organization: "UNI",
+        tool: "",
+    },
+    {
+        id: 2,
+        name: 'Alberto Quiroz',
+        position: "Cargo",
+        organization: "ULIMA",
+        tool: "",
+    },
+    {
+        id: 3,
+        name: 'Paolo Perez',
+        position: "Cargo",
+        organization: "ULIMA",
+        tool: "",
+    },
+    {
+        id: 4,
+        name: 'Enrique Torres',
+        position: "Cargo",
+        organization: "ULIMA",
+        tool: "",
+    },
+    {
+        id: 5,
+        name: 'Armando Casas',
+        position: "Cargo",
+        organization: "ULIMA",
+        tool: "",
+    },
+    {
+        id: 6,
+        name: 'Junior Aguilar',
+        position: "Cargo",
+        organization: "ULIMA",
+        tool: "",
+    },
 ];
 
-const productRequirementsData = [
-    { label: "", value: "Se calculan como Riesgos Iniciales de Alto Nivel el" +
-            " dejar que los desarrolladores se tiren una maratón de 10h viendo series. " +
-            "Se recomienda bloquear las páginas de streaming." }
-];
+export default function Aprobacion() {
+    // Estados generales
+    const [filterValue, setFilterValue] = React.useState("");
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+    const [toolsFilter, setToolsFilter] = React.useState("all");
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [sortDescriptor, setSortDescriptor] = React.useState({
+        column: "name",
+        direction: "ascending",
+    });
+    const [page, setPage] = React.useState(1);
 
-const projectRequirementsData = [
-    { label: "", value: "Se calculan como Riesgos Iniciales de Alto Nivel el dejar " +
-            "que los desarrolladores se tiren una maratón de 10h viendo series. " +
-            "Se recomienda bloquear las páginas de streaming." }
-];
+    // Variables adicionales
+    const pages = Math.ceil(templates.length / rowsPerPage);
+    const hasSearchFilter = Boolean(filterValue);
 
-const elaboratedByData = [
-    { label: "", value: "Sebastian Chira Mallqui (20171857)" }
-];
+    // Items de tabla filtrados (busqueda, tipo de herramienta)
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...templates];
 
-const cardDataArray = [
-    { title: "Información del Proyecto", data: projectData },
-    { title: "Propósito y Justificación del Proyecto", data: purpouseData },
-    { title: "Descripción del Proyecto y Entregables", data: descriptionData },
-    { title: "Presupuesto Estimado", data: budgetData },
-    { title: "Premisas y Restricciones", data: restrictionData },
-    { title: "Riesgos Iniciales de Alto Nivel", data: highLevelRisksData },
-    { title: "Requisitos de Aprobación del Proyecto", data: projectApprovalData },
-    { title: "Requerimientos de Alto Nivel", data: highLevelRequirementsData },
-    { title: "Requerimientos del Producto", data: productRequirementsData },
-    { title: "Requerimientos del Proyecto", data: projectRequirementsData },
-    { title: "Elaborado por", data: elaboratedByData },
-];
-/// Fin de Lista
-const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((template) =>
+                template.name.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+        if (
+            toolsFilter !== "all" &&
+            Array.from(toolsFilter).length !== toolsOptions.length
+        ) {
+            filteredTemplates = filteredTemplates.filter((template) =>
+                Array.from(toolsFilter).includes(template.tools)
+            );
+        }
 
-export default function actaConstitucion() {
-    const [isEditing, setIsEditing] = useState(false); // State to track if user is in "editing" mode
-    const [showSaveCancel, setShowSaveCancel] = useState(false); // State to track visibility of "Guardar" and "Cancelar" buttons
+        return filteredTemplates;
+    }, [templates, filterValue, toolsFilter]);
 
-    const handleEditClick = () => {
-        setIsEditing(true);
-        setShowSaveCancel(true);
-    };
+    // Items de tabla paginados
+    const items = React.useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
 
-    const handleCancelClick = () => {
-        setIsEditing(false);
-        setShowSaveCancel(false);
-        // Optionally, reset any form/data changes here
-    };
+        return filteredItems.slice(start, end);
+    }, [page, filteredItems, rowsPerPage]);
 
-    const handleSaveClick = () => {
-        // Here you can add logic to save the changes
-        // For demonstration purposes, we just reset the buttons
-        setIsEditing(false);
-        setShowSaveCancel(false);
-    };
+    // Items de tabla ordenados
+    const sortedItems = React.useMemo(() => {
+        return [...items].sort((a, b) => {
+            const first = a[sortDescriptor.column];
+            const second = b[sortDescriptor.column];
+            const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+            return sortDescriptor.direction === "descending" ? -cmp : cmp;
+        });
+    }, [sortDescriptor, items]);
+
+    // Acciones relacionadas a paginacion y busqueda
+    const onNextPage = React.useCallback(() => {
+        if (page < pages) {
+            setPage(page + 1);
+        }
+    }, [page, pages]);
+
+    const onPreviousPage = React.useCallback(() => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    }, [page]);
+
+    const onRowsPerPageChange = React.useCallback((e) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
+    }, []);
+
+    const onSearchChange = React.useCallback((value) => {
+        if (value) {
+            setFilterValue(value);
+            setPage(1);
+        } else {
+            setFilterValue("");
+        }
+    }, []);
+
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+        setPage(1);
+    }, []);
+
+    // Renderizado de contenidos de tabla (celdas, parte superior, y parte inferior)
+    const renderCell = React.useCallback((template, columnKey) => {
+        const cellValue = template[columnKey];
+
+        switch (columnKey) {
+            case "iconSrc":
+                return <img src={cellValue} alt="Icono de plantilla"></img>;
+            case "actions":
+                return (
+                    <div className="relative flex justify-end items-center gap-2">
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button isIconOnly size="sm" variant="light">
+                                    <VerticalDotsIcon className="text-default-300" />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu>
+                                <DropdownItem>Editar</DropdownItem>
+                                <DropdownItem>Eliminar</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                );
+            default:
+                return cellValue;
+        }
+    }, []);
+
+    const topContent = React.useMemo(() => {
+        return (
+            <div className="flex flex-col gap-4">
+                <div className="flex justify-between gap-3 items-end">
+                    <Input
+                        isClearable
+                        className="w-full sm:max-w-[44%]"
+                        placeholder="Buscar por nombre..."
+                        startContent={<SearchIcon />}
+                        value={filterValue}
+                        onClear={() => onClear()}
+                        onValueChange={onSearchChange}
+                        variant='faded'
+                    />
+                    <div className="flex gap-3">
+                        <Button color="secondary" endContent={<PlusIcon />}>
+                            Exportar
+                        </Button>
+                        <Button color="primary" endContent={<PlusIcon />}>
+                            Añadir Aprobacion
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }, [
+        filterValue,
+        toolsFilter,
+        onRowsPerPageChange,
+        templates.length,
+        onSearchChange,
+        hasSearchFilter,
+    ]);
+
+    const bottomContent = React.useMemo(() => {
+        return (
+            <div className="py-2 px-2 flex justify-between items-center">
+                <span className="w-[30%] text-small text-default-400">
+                    {selectedKeys === "all"
+                        ? "Todos los items seleccionados"
+                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
+                </span>
+                <Pagination
+                    isCompact
+                    showControls
+                    showShadow
+                    color="primary"
+                    page={page}
+                    total={pages}
+                    onChange={setPage}
+                />
+                <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                    <Button
+                        isDisabled={pages === 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onPreviousPage}
+                    >
+                        Ant.
+                    </Button>
+                    <Button
+                        isDisabled={pages === 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onNextPage}
+                    >
+                        Sig.
+                    </Button>
+                </div>
+            </div>
+        );
+    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     return (
-        <Page margin={"20px 20px 20px"}>
-            <Breadcrumb items={itemsBreadCrumb} />
-            <Title>{"Acta de Constitución"}</Title>
-            <ButtonPanel margin="20px 20px 20px" align="left">
-                <Button
-                    text="Editar"
-                    type="primary"
-                    size="large"
-                    onClick={handleEditClick}
-                    isDisabled={isEditing}
+        <>
+
+            <div className="flex flex-row space-x-4 mb-4">
+                <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
+                    Aprobaciones y firmas
+                </h2>
+                <img src="/icons/info-circle.svg" alt="Informacion"></img>
+            </div>
+            <div>
+                {topContent}
+            </div>
+            <div className="flex flex-row space-x-4 mb-4">
+                <TextInfoCard
+                    key={1}
+                    title={"Patrocinador del Proyecto"}
+                    data={[{label: "Nombre", value: "Sebastian Chira Mallqui"},
+                        {label: "Fecha de Aprobacion", value: "22/10/2023"}]}
                 />
-            </ButtonPanel>
-            {cardDataArray.map((card, index) => (
-                <TextInfoCard key={index} title={card.title} data={card.data} />
-            ))}
-            <ButtonPanel margin="20px 20px 20px" align="center" style={{ display: showSaveCancel ? 'flex' : 'none' }}>
-                <Button text="Cancelar" type="secondary" size="large" onClick={handleCancelClick} isDisabled={!isEditing} />
-                <Button text="Guardar" type="primary" size="large" onClick={handleSaveClick} isDisabled={!isEditing} />
-            </ButtonPanel>
-        </Page>
+                <TextInfoCard
+                    key={2}
+                    title={"Gerente del Proyecto"}
+                    data={[{label: "Nombre", value: "Pedro Perez Rodriguez"},
+                        {label: "Fecha de Aprobacion", value: "25/10/2023"}]}
+                />
+            </div>
+        </>
     );
 }
 

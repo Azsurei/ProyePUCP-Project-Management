@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
-import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
+import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTCompVisualization.css";
 
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -11,9 +11,10 @@ export default function EDTCompVisualization({
     projectName,
     projectId,
     handlerReturn,
-    idElementoPadre,
     idComponentToSee,
 }) {
+    const [estadoEditar, setEstadoEditar] = useState(false);
+    const [baseComponentDate, setBaseComponentData] = useState(null);
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
     const [inTipoComponente, setInTipoComponente] = useState("");
@@ -39,21 +40,6 @@ export default function EDTCompVisualization({
         //tengo que investigar como se hace en un combo box
     };
 
-    const handleChangeFechaInicio = () => {
-        const datepickerInput = document.getElementsByClassName(
-            "EDTNewDatepickerInicio"
-        );
-        const selectedDate = datepickerInput.value;
-        setInFechaInicio(selectedDate);
-    };
-
-    const handleChangeFechaFin = () => {
-        const datepickerInputF = document.getElementsByClassName(
-            "EDTNewDatepickerFin"
-        );
-        const selectedDateF = datepickerInputF.value;
-        setInFechaFin(selectedDateF);
-    };
 
     const printAllVariables = () => {
         console.log(inComponentName);
@@ -121,17 +107,57 @@ export default function EDTCompVisualization({
         setListCriterios(updatedCriterios);
     };
 
-    const axiosOptions = {
-        method: "post", // El método de solicitud puede variar según tus necesidades
-        url:
-            "http://localhost:8080/api/proyecto/" +
-            projectId +
-            "/insertarComponenteEDT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
-    };
+
+    const handleCancelEdit = () => {
+        setEstadoEditar(!estadoEditar);
+        handlerReturn();
+    }
+
+    const handleUpdateComp = () => {
+        //imprimimos las variables para testear que se guardo todo
+        console.log("NUEVAS VARIABLES =========");
+        console.log(idComponentToSee);
+        console.log(inDescripcion);
+        console.log(inCodigoComponente);
+        console.log(inObservaciones);
+        console.log(inComponentName);
+        console.log(inResponsables);
+        console.log(inFechaInicio);
+        console.log(inFechaFin);
+        console.log(inRecursos);
+        console.log(inHito);
+        
+
+        //idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables, 
+        //fechaInicio, fechaFin, recursos, hito
+
+        console.log("Procediendo a actualizar datos del componenteEDT de id = " + idComponentToSee);
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/EDT/modificarComponenteEDT",
+                {
+                    idComponenteEDT: idComponentToSee,
+                    descripcion: inDescripcion,
+                    codigo: inCodigoComponente,
+                    observaciones: inObservaciones,
+                    nombre: inComponentName,
+                    responsables: inResponsables,
+                    fechaInicio: inFechaInicio,
+                    fechaFin: inFechaFin,
+                    recursos: inRecursos,
+                    hito: inHito 
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+
+                handlerReturn();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
 
     useEffect(() => {
         console.log("Procediendo sacar informacion del componente");
@@ -139,16 +165,76 @@ export default function EDTCompVisualization({
             .post(
                 "http://localhost:8080/api/proyecto/EDT/verInfoComponenteEDT",
                 {
-                    idComponente: idComponentToSee
+                    idComponente: idComponentToSee,
                 }
             )
             .then(function (response) {
                 console.log(response);
+
+                const { component, criteriosAceptacion, entregables } =
+                    response.data.componenteEDT;
+
+                setInComponentName(component.nombre);
+                setInCodigoComponente(component.codigo);
+
+                if(component.fechaInicio !== null){
+                    const dateObject = new Date(component.fechaInicio);
+                    const dateString = dateObject.toLocaleDateString();
+                    const parts = dateString.split('/');
+                    if(parts[0].length===1){
+                        parts[0] = "0" + parts[0];
+                    }
+                    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    console.log("NUEVA FECHA INICIO:" + formattedDate);
+                    setInFechaInicio(formattedDate);
+                }
+                else{
+                    setInFechaInicio("");
+                }
+                if(component.fechaFin !== null){
+                    const dateObject1 = new Date(component.fechaFin);
+                    const dateString1 = dateObject1.toLocaleDateString();
+                    const parts1 = dateString1.split('/');
+                    if(parts1[0].length===1){
+                        parts1[0] = "0" + parts1[0];
+                    }
+                    const formattedDate1 = `${parts1[2]}-${parts1[1]}-${parts1[0]}`;
+                    console.log("NUEVA FECHA FIN:" + formattedDate1);
+                    setInFechaFin(formattedDate1);
+                }
+                else{
+                    setInFechaFin("");
+                }
+
+                setInResponsables(component.responsables);
+                setInDescripcion(component.descripcion);
+                setInRecursos(component.recursos);
+                setInHito(component.hito);
+                setInObservaciones(component.observaciones);
+
+                setBaseComponentData(component);
+
+                setListEntregables(
+                    entregables.map((component, index) => {
+                        return {
+                            index: index + 1,
+                            data: component.nombre,
+                        };
+                    })
+                );
+
+                setListCriterios(
+                    criteriosAceptacion.map((component, index) => {
+                        return {
+                            index: index + 1,
+                            data: component.descripcion,
+                        };
+                    })
+                );
+
                 console.log(
                     "haz conseguido la informacion de dicho componente con exito"
                 );
-
-                
             })
             .catch(function (error) {
                 console.log(error);
@@ -157,17 +243,20 @@ export default function EDTCompVisualization({
 
     return (
         <div className="EDTNew">
-            <HeaderWithButtonsSamePage
-                haveReturn={true}
-                haveAddNew={false}
-                handlerReturn={handlerReturn}
-                breadcrump={
-                    "Inicio / Proyectos / Proyect X / EDT y Diccionario EDT"
-                }
-                btnText={"Agregar elemento"}
-            >
-                Ver detalles de componente
-            </HeaderWithButtonsSamePage>
+            <div style={{display:'flex',flexDirection:'row'}}>
+                <HeaderWithButtonsSamePage
+                    haveReturn={true}
+                    haveAddNew={false}
+                    handlerReturn={handlerReturn}
+                    breadcrump={
+                        "Inicio / Proyectos / Proyect X / EDT y Diccionario EDT"
+                    }
+                    btnText={"Agregar elemento"}
+                >
+                    Ver detalles de componente
+                </HeaderWithButtonsSamePage>
+                {!estadoEditar && <button onClick={()=>{setEstadoEditar(!estadoEditar)}}>editar</button>}
+            </div>
 
             <div className="EDTNewResponsiveContainer">
                 <div className="NewEDTSection">
@@ -177,12 +266,14 @@ export default function EDTCompVisualization({
                             <p>Nombre del componente</p>
                             <textarea
                                 rows="1"
-                                id="inputBoxGeneric"
+                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                readOnly={!estadoEditar}
                                 placeholder="Escribe aquí"
                                 maxLength="70"
                                 onChange={(e) => {
                                     setInComponentName(e.target.value);
                                 }}
+                                value={inComponentName}
                             />
                             <p>Tipo de componente</p>
                             <p>FASE</p>
@@ -198,34 +289,47 @@ export default function EDTCompVisualization({
                                     alt="help"
                                 ></img>
                             </div>
-                            <input type="text" readOnly={true}></input>
+                            <textarea
+                                rows="1"
+                                className="inputBoxGeneric nonEditable"
+                                readOnly={true}
+                                value={inCodigoComponente}
+                            ></textarea>
                         </div>
                         <div className="FirstRightCont">
                             <p>Fecha de inicio</p>
                             <input
                                 type="date"
-                                id="inputBoxGeneric"
-                                className="EDTNewDatepickerInicio"
+                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                readOnly={!estadoEditar}
                                 name="datepicker"
-                                onChange={handleChangeFechaInicio}
+                                onChange={(e) => {
+                                    setInFechaInicio(e.target.value);
+                                }}
+                                value={inFechaInicio}
                             ></input>
                             <p>Fecha de fin</p>
                             <input
                                 type="date"
-                                id="inputBoxGeneric"
-                                className="EDTNewDatepickerFin"
+                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                readOnly={!estadoEditar}
                                 name="datepicker"
-                                onChange={handleChangeFechaFin}
+                                onChange={(e) => {
+                                    setInFechaFin(e.target.value);
+                                }}
+                                value={inFechaFin}
                             ></input>
                             <p>Responsables</p>
                             <textarea
                                 rows="1"
-                                id="inputBoxGeneric"
+                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                readOnly={!estadoEditar}
                                 placeholder="Escribe aquí"
                                 maxLength="70"
                                 onChange={(e) => {
                                     setInResponsables(e.target.value);
                                 }}
+                                value={inResponsables}
                             />
                         </div>
                     </div>
@@ -237,42 +341,50 @@ export default function EDTCompVisualization({
                         <p>Descripcion detallada</p>
                         <textarea
                             rows="1"
-                            id="inputBoxGeneric"
+                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
                             onChange={(e) => {
                                 setInDescripcion(e.target.value);
                             }}
+                            value={inDescripcion}
                         />
                         <p>Recursos</p>
                         <textarea
                             rows="1"
-                            id="inputBoxGeneric"
+                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
                             onChange={(e) => {
                                 setInRecursos(e.target.value);
                             }}
+                            value={inRecursos}
                         />
                         <p>Hito asociado</p>
                         <textarea
                             rows="1"
-                            id="inputBoxGeneric"
+                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
                             onChange={(e) => {
                                 setInHito(e.target.value);
                             }}
+                            value={inHito}
                         />
                         <p>Observaciones</p>
                         <textarea
                             rows="1"
-                            id="inputBoxGeneric"
+                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
                             onChange={(e) => {
                                 setInObservaciones(e.target.value);
                             }}
+                            value={inObservaciones}
                         />
                     </div>
                 </div>
@@ -288,20 +400,22 @@ export default function EDTCompVisualization({
                         }}
                     >
                         <p className="Header">Entregables</p>
-                        <button
+                        {/* <button
                             onClick={handleAddEntregable}
                             className="btnEDTAnadir"
                         >
                             Anadir entregable
-                        </button>
+                        </button> */}
                     </div>
 
                     <div className="ThirdCardContainer">
                         <ListEditableInput
                             ListInputs={listEntregables}
                             typeName="Entregable"
+                            typeFault="entregables"
                             handleChanges={handleChangeEntregable}
                             handleRemove={handleRemoveEntregable}
+                            beEditable={false}
                         ></ListEditableInput>
                     </div>
                 </div>
@@ -315,28 +429,30 @@ export default function EDTCompVisualization({
                         }}
                     >
                         <p className="Header">Criterios de aceptacion</p>
-                        <button
+                        {/* <button
                             onClick={handleAddCriterio}
                             className="btnEDTAnadir"
                         >
                             Anadir criterio
-                        </button>
+                        </button> */}
                     </div>
 
                     <div className="FourthCardContainer">
                         <ListEditableInput
                             ListInputs={listCriterios}
                             typeName="Criterio"
+                            typeFault="criterios"
                             handleChanges={handleChangeCriterio}
                             handleRemove={handleRemoveCriterio}
+                            beEditable={false}
                         ></ListEditableInput>
                     </div>
                 </div>
             </div>
 
             <div className="ButtonsContainer">
-                <button>Cancelar</button>
-                <button>Guardar</button>
+                {estadoEditar && <button onClick={handleCancelEdit}>Cancelar</button>}
+                {estadoEditar && <button onClick={handleUpdateComp}>Guardar</button> }
             </div>
         </div>
     );
