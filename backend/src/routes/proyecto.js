@@ -3,14 +3,13 @@ const connection = require("../config/db");
 const { verifyToken } = require("../middleware/middlewares");
 const routerEDT = require("./EDT").routerEDT;
 const routerBacklog = require("./backlog").routerBacklog;
+const routerEquipo = require("./equipo").routerEquipo;
 
 const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
 routerProyecto.use("/EDT", routerEDT);
-
-routerProyecto.use("/backlog", routerBacklog);
-routerProyecto.use("/EDT", routerEDT);
+routerProyecto.use("/equipo",routerEquipo);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token

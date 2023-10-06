@@ -612,7 +612,7 @@ BEGIN
     SET _idEquipo = @@last_insert_id;
     SELECT _idEquipo AS idEquipo;
 END$
-DROP PROCEDURE INSERTAR_USUARIO_X_EQUIPO
+DROP PROCEDURE INSERTAR_USUARIO_X_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_USUARIO_X_EQUIPO(   
 	IN _idUsuario INT,
@@ -620,7 +620,7 @@ CREATE PROCEDURE INSERTAR_USUARIO_X_EQUIPO(
 )
 BEGIN
 	DECLARE _idUsuarioXEquipo INT;
-	INSERT INTO Equipo(idUsuario,idEquipo,activo) VALUES(_idUsuario,_idEquipo,1);		
+	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo) VALUES(_idUsuario,_idEquipo,1);		
     SET _idUsuarioXEquipo = @@last_insert_id;
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
