@@ -14,19 +14,19 @@ export default function ContainerScenario({indice,onUpdateScenario}){
         <div className="containerDescription" >
             <div className="customInput">
                 <label htmlFor={inputId1} className="placeholderLabel">{`Escenario ${indice}:`}</label>
-                <input type="text" id={inputId1}  className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="50" onChange={(e)=>handleInputChange('scenario',e.target.value)}/>
+                <input type="text" id={inputId1}  className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200" onChange={(e)=>handleInputChange('scenario',e.target.value)}/>
             </div>
             <div className="customInput">
                 <label htmlFor={inputId2}  className="placeholderLabel">Dado que...</label>
-                <textarea rows="2" id={inputId2}  className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="150" onChange={(e)=>handleInputChange('dadoQue',e.target.value)}/>
+                <textarea rows="2" id={inputId2}  className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200" onChange={(e)=>handleInputChange('dadoQue',e.target.value)}/>
             </div>
             <div className="customInput">
                 <label htmlFor={inputId3} className="placeholderLabel">Cuando...</label>
-                <textarea rows="2" id={inputId3} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="150" onChange={(e)=>handleInputChange('cuando',e.target.value)}/>
+                <textarea rows="2" id={inputId3} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200" onChange={(e)=>handleInputChange('cuando',e.target.value)}/>
             </div>
             <div className="customInput">
                 <label htmlFor={inputId4} className="placeholderLabel">Entonces...</label>
-                <textarea rows="3" id={inputId4} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200" onChange={(e)=>handleInputChange('entonces',e.target.value)}/>
+                <textarea rows="3" id={inputId4} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="400" onChange={(e)=>handleInputChange('entonces',e.target.value)}/>
             </div>
         </div>    
     );

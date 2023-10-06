@@ -268,7 +268,9 @@ END$
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_HISTORIA_DE_USUARIO(IN _idHistoriaDeUsuario INT)
 BEGIN
-	UPDATE HistoriaDeUsuario SET activo = 0 WHERE _idHistoriaDeUsuario;
+	UPDATE HistoriaDeUsuario SET activo = 0 WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario;
+    UPDATE HistoriaRequisito SET activo = 0 WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario;
+    UPDATE HistoriaCriterioDeAceptacion SET activo = 0 WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario;
 END$
 
 
@@ -618,5 +620,41 @@ BEGIN
 	SELECT * 
     FROM Entregable 
     WHERE idComponente = _idComponente
+    AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_HU_X_ID;
+DELIMITER $
+CREATE PROCEDURE LISTAR_HU_X_ID(
+    IN _idHistoriaDeUsuario INT
+)
+BEGIN
+	SELECT * 
+    FROM HistoriaDeUsuario 
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_X_IDHU;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRITERIO_X_IDHU(
+    IN _idHistoriaDeUsuario INT
+)
+BEGIN
+	SELECT * 
+    FROM HistoriaCriterioDeAceptacion 
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_REQUERIMIENTO_X_IDHU;
+DELIMITER $
+CREATE PROCEDURE LISTAR_REQUERIMIENTO_X_IDHU(
+    IN _idHistoriaDeUsuario INT
+)
+BEGIN
+	SELECT * 
+    FROM HistoriaRequisito 
+    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
     AND activo=1;
 END$
