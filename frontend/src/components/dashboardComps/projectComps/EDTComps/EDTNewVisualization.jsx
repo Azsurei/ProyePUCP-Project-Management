@@ -201,19 +201,19 @@ export default function EDTNewVisualization({
                                     setInComponentName(e.target.value);
                                 }}
                             />
-                            <p>Tipo de componente</p>
-                            <p>FASE</p>
+                            {/* <p>Tipo de componente</p>
+                            <p>FASE</p> */}
                             <div
                                 style={{
                                     display: "flex",
                                     flexDirection: "row",
                                 }}
                             >
-                                <p>Posicion</p>
-                                <img
+                                <p>Codigo</p>
+                                {/* <img
                                     src="/icons/icon-info.svg"
                                     alt="help"
-                                ></img>
+                                ></img> */}
                             </div>
                             <input
                                 type="text"

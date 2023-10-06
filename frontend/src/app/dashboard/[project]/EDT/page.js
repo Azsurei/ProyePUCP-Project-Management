@@ -82,7 +82,7 @@ export default function EDT(props) {
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
-        <>
+        <div style={{height:'100%'}}>
             {isLoading ? (
                 <div style={{height: '100%', display: 'flex',justifyContent:'center',alignItems:'center'}}>
                     <Spinner size="lg" />
@@ -118,6 +118,6 @@ export default function EDT(props) {
                     idComponentToSee={idComponentToSee}
                 ></EDTCompVisualization>
             )}
-        </>
+        </div>
     );
 }

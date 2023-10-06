@@ -269,3 +269,9 @@
     display: flex;
     flex-direction: column;
 }
+
+a:-webkit-any-link{
+    color: inherit;
+    text-decoration: none;
+}
+
