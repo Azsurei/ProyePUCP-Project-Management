@@ -17,7 +17,7 @@ export default function ModalComponent({
     colorButton,
     oneButton,
     secondAction,
-    textColor,
+    textColor
 }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 

@@ -301,6 +301,7 @@ export default function ProductBacklogUpdate(props) {
                         colorButton="w-36 bg-slate-100 text-black"
                         oneButton={false}
                         secondAction={() => router.back()}
+                        textColor="red"
                          />
                         <Modal nameButton="Aceptar" 
                         textHeader="Registrar Historia de Usuario" 
@@ -311,6 +312,7 @@ export default function ProductBacklogUpdate(props) {
                             //onSubmit();
                             router.back();
                         }}
+                        textColor="blue"
                          />
                         {/* <button className="btnBacklogContinue" type="submit">Aceptar</button> */}
                     </div>
