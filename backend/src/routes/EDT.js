@@ -199,17 +199,16 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>
     }
 })
 
-routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=>{
+routerEDT.post("/modificarComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de modificar un componenteEDT");
     //Insertar query aca
-    const {idComponenteEDT, idElementoPadre, idProyecto, descripcion, codigo, observaciones, nombre, responsables, 
-        fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
-    console.log("Llegue a recibir solicitud insertar componente edt");
+    const {idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables, 
+        fechaInicio, fechaFin, recursos, hito} = req.body;
     const query = `
-        CALL MODIFICAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?,?);
+        CALL MODIFICAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?);
     `;
     try {
-        const [results] = await connection.query(query,[idComponenteEDT, idElementoPadre, idProyecto, descripcion, codigo, observaciones, 
+        const [results] = await connection.query(query,[idComponenteEDT, descripcion, codigo, observaciones, 
             nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
         const idComponente= results[0][0].idComponenteEDT;
         console.log(`Se modifico el componente EDT ${idComponente}!`);
@@ -241,30 +240,28 @@ routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=
             
         });
     } catch (error) {
-        console.error("Error en el registro:", error);
-        res.status(500).send("Error en el registro: " + error.message);
+        console.error("Error en el update del componente:", error);
+        res.status(500).send("Error en el update del componente: " + error.message);
     }
 })
 
-routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>{
+routerEDT.post("/eliminarComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de eliminar un componenteEDT");
     //Insertar query aca
-    const {idEDT, codigo} = req.body;
+    const {idComponente, codigo} = req.body;
     console.log("Llegue a recibir solicitud eliminar componente edt");
     const query = `
-        CALL ELIMINAR_COMPONENTEEDT(?,?);
+        CALL ELIMINAR_COMPONENTE_EDT(?,?);
     `;
     try {
-        await connection.query(query,[idEDT,codigo]);
+        await connection.query(query,[idComponente,codigo]);
         console.log(`Se elimino el componente EDT ${codigo}!`);
         res.status(200).json({
-            codigo,
-            message: "Componente EDT eliminado exitosamente",
-            
+            message: "Componente EDT eliminado exitosamente"
         });
     } catch (error) {
-        console.error("Error en el registro:", error);
-        res.status(500).send("Error en el registro: " + error.message);
+        console.error("Error en la eliminacion del componente EDT:", error);
+        res.status(500).send("Error en la eliminacion del componente EDT: " + error.message);
     }
 })
 

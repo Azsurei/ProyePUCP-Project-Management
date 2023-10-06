@@ -1,5 +1,6 @@
 "use client"
 
+import InConstruction from "@/common/inConstruction";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,15 +12,6 @@ export default function Project(props) {
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
-        <div style={{flex:1}}>
-            <p>
-            aqui iria el dashboard principal (lo que se ve al iniciar sesion) 
-            </p>
-
-            
-            <Link href={'/dashboard/' + projectName+'='+projectId + '/EDT'}>
-                <button>ir a edt</button>
-            </Link>
-        </div>
+        <InConstruction></InConstruction>
     );
 }
