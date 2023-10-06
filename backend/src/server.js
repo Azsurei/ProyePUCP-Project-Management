@@ -27,7 +27,7 @@ app.use(cookieParser());
 
 // Middleware para parsear las peticiones con contenido JSON
 app.use(bodyParser.json());
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: "http://localhost", credentials: true }));
 
 
 const routerAuth = require('./routes/auth').routerAuth;

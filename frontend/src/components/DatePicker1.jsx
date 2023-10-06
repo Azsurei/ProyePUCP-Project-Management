@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Label } from '@atlaskit/form';
+
 
 import { DatePicker } from '@atlaskit/datetime-picker';
 import { parseISO } from 'date-fns';
