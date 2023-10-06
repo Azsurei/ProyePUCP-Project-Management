@@ -131,7 +131,7 @@ Content-Type:  application/json
 
 ###
 
-POST http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario HTTP/1.1
+PUT http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario HTTP/1.1
 Content-Type:  application/json
 
 {
@@ -147,26 +147,26 @@ Content-Type:  application/json
     {
       "idHistoriaCriterioDeAceptacion": 10,
       "scenario": "Escenario 1",
-      "dadoQue": "Dado que llega el inicio del día laboral",
-      "cuando": "Cuando un empleado marca su entrada",
+      "dadoQue": "Holae llega el inicio del día laboral",
+      "cuando": "Holae un empleado marca su entrada",
       "entonces": "Entonces se registra la hora de entrada del empleado"
     },
     {
       "idHistoriaCriterioDeAceptacion": 11,
       "scenario": "Escenario 2",
-      "dadoQue": "Dado que un empleado marca su salida",
-      "cuando": "Cuando finaliza su jornada laboral",
+      "dadoQue": "Holae que un empleado marca su salida",
+      "cuando": "Holae finaliza su jornada laboral",
       "entonces": "Entonces se registra la hora de salida del empleado"
     }
   ],
   "requirementData": [
     {
       "idHistoriaRequisito": 15,
-      "requirement": "Requerimiento 1: Registrar la asistencia de los empleados"
+      "requirement": "Requerimiento 1: Holae la asistencia de los empleados"
     },
     {
       "idHistoriaRequisito": 16,
-      "requirement": "Requerimiento 2: Generar informes de asistencia"
+      "requirement": "Requerimiento 2: Holae informes de asistencia"
     }
   ]
 }
