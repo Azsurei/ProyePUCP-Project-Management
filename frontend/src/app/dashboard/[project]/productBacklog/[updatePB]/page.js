@@ -52,7 +52,16 @@ export default function ProductBacklogUpdate(props) {
           setComo(historiaUsuario.hu[0].como);
           setQuiero(historiaUsuario.hu[0].quiero);
           setPara(historiaUsuario.hu[0].para);
-          setScenarioFields(historiaUsuario.criteriosAceptacion);
+          const criteriosAceptacionOriginales= historiaUsuario.criteriosAceptacion;
+          const scenarioFieldsActualizados = criteriosAceptacionOriginales.map((criterio) => ({
+            scenario: criterio.escenario || '', // Puedes agregar un valor predeterminado en caso de que falte
+            dadoQue: criterio.dadoQue || '', // Puedes agregar un valor predeterminado en caso de que falte
+            cuando: criterio.cuando || '', // Puedes agregar un valor predeterminado en caso de que falte
+            entonces: criterio.entonces || '' // Puedes agregar un valor predeterminado en caso de que falte
+          }));
+          setScenarioFields(scenarioFieldsActualizados);
+          console.log("XDDDDDDDDDDDDDDDDDDDDDDDDDD");
+          console.log(scenarioFields);
         }
       }, [historiaUsuario]);
 
