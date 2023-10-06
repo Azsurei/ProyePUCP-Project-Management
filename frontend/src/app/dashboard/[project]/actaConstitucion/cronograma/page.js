@@ -25,11 +25,9 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
 
 const columns = [
-    { name: "Tarea", uid: "name", sortable: true},
-    { name: "Asignado", uid: "tool", sortable: true },
+    { name: "Hito", uid: "name", sortable: true},
     { name: "Estado", uid: "state", sortable: true },
-    { name: "Fecha de fin", uid: "dateModified", sortable: true },
-    { name: "Fecha de inicio", uid: "dateCreated", sortable: true },
+    { name: "Fecha Tope", uid: "dateModified", sortable: true },
     { name: "Acciones", uid: "actions"},
 ];
 
@@ -47,7 +45,7 @@ const extensionOptions = [
 const templates = [
     {
         id: 1,
-        name: 'Definir Estandares de Programacion',
+        name: 'Descripcion Hito 1',
         tool: "Sebastian Chira",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
@@ -55,7 +53,7 @@ const templates = [
     },
     {
         id: 2,
-        name: 'Enlazar Prototipos',
+        name: 'Descripcion Hito 2',
         tool: "Sebastian Chira",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
@@ -63,7 +61,7 @@ const templates = [
     },
     {
         id: 3,
-        name: 'Asignar Roles',
+        name: 'Descripcion Hito 3',
         tool: "Sebastian Chira",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
@@ -71,7 +69,7 @@ const templates = [
     },
     {
         id: 4,
-        name: 'Mejora de prototipos',
+        name: 'Descripcion Hito 4',
         tool: "Augusto Tong",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
@@ -79,7 +77,7 @@ const templates = [
     },
     {
         id: 5,
-        name: 'Login de sesion',
+        name: 'Descripcion Hito 5',
         tool: "5 Asignados",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
@@ -87,7 +85,7 @@ const templates = [
     },
     {
         id: 6,
-        name: 'Matriz de retrospectivas',
+        name: 'Descripcion Hito 6',
         tool: "Backlog",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
@@ -293,6 +291,7 @@ export default function CronogramaActa() {
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
+
                 <span className="w-[30%] text-small text-default-400">
                     {selectedKeys === "all"
                         ? "Todos los items seleccionados"
@@ -331,6 +330,12 @@ export default function CronogramaActa() {
 
     return (
         <>
+            <div className="flex flex-row space-x-4 mb-4">
+                <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
+                    Lista de Hitos
+                </h2>
+                <img src="/icons/info-circle.svg" alt="Informacion"></img>
+            </div>
             <Table
                 aria-label="Tabla de plantillas"
                 isHeaderSticky
