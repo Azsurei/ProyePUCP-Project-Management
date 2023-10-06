@@ -220,19 +220,20 @@ BEGIN
 END
 
 
-
+DROP PROCEDURE LISTAR_USUARIOS_X_NOMBRE_CORREO
 DELIMITER $
 CREATE PROCEDURE LISTAR_USUARIOS_X_NOMBRE_CORREO(
     IN _nombreCorreo VARCHAR(255)
 )
 BEGIN
-    SELECT * 
+    SELECT idUsuario, nombres, apellidos, correoElectronico
     FROM Usuario 
     WHERE ( _nombreCorreo IS NULL OR (CONCAT(nombres, ' ', apellidos) LIKE CONCAT('%', _nombreCorreo, '%')) OR
     correoElectronico LIKE CONCAT('%', _nombreCorreo, '%')) 
     AND activo = 1;
 END$
 
+CALL LISTAR_USUARIOS_X_NOMBRE_CORREO('Ren');
 SELECT * FROM UsuarioXRolXProyecto;
 
 DROP PROCEDURE INSERTAR_USUARIO_X_ROL_X_PROYECTO;
@@ -248,6 +249,18 @@ BEGIN
     SET _idUsuarioXRolXProyecto = @@last_insert_id;
     SELECT _idUsuarioXRolXProyecto AS idUsuarioXRolXProyecto;
 END$
+DROP PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
+    IN _idRol INT,
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT u.idUsuario, u.nombreS, u.apellidos, u.correOElectronico FROM UsuarioXRolXProyecto urp, Usuario u
+    WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
+END$
+
+CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(1,6);
 
 CREATE PROCEDURE LISTAR_HERRAMIENTAS()
 BEGIN
@@ -577,7 +590,7 @@ BEGIN
     ORDER BY idHerramienta;
 END$
 
-DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_ROL_X_PROYECTO;
+DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
     IN _idProyecto INT,
@@ -585,6 +598,31 @@ CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
 )
 BEGIN
 	SELECT u.idUsuario, u.nombres, u.apellidos FROM Usuario u, UsuarioXRolXProyecto urp WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND urp.activo = 1;
+END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_EQUIPO(   
+	IN _idProyecto INT,
+    IN _nombre VARCHAR(200),
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idEquipo INT;
+	INSERT INTO Equipo(idProyecto,nombre,descripcion,fechaCreacion,activo) VALUES(_idProyecto,_nombre,_descripcion,CURDATE(),1);		
+    SET _idEquipo = @@last_insert_id;
+    SELECT _idEquipo AS idEquipo;
+END$
+DROP PROCEDURE INSERTAR_USUARIO_X_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_USUARIO_X_EQUIPO(   
+	IN _idUsuario INT,
+    IN _idEquipo INT
+)
+BEGIN
+	DECLARE _idUsuarioXEquipo INT;
+	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo) VALUES(_idUsuario,_idEquipo,1);		
+    SET _idUsuarioXEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
 
 CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(6,2);
