@@ -20,6 +20,7 @@ export default function MyDynamicTable ({
     columns,
     sortedItems,
     renderCell,
+    idKey,
 }) {
 
     
@@ -42,7 +43,8 @@ export default function MyDynamicTable ({
                 onSelectionChange={setSelectedKeys}
                 onSortChange={setSortDescriptor}
             >
-                <TableHeader columns={columns}>
+                <TableHeader columns={columns.filter((column) => column.uid !== "color")}>
+
                     {(column) => (
                         <TableColumn
                             key={column.uid}
@@ -60,7 +62,7 @@ export default function MyDynamicTable ({
                     items={sortedItems}
                 >
                     {(item) => (
-                        <TableRow key={item.id}>
+                        <TableRow key={item[idKey]}>
                             {(columnKey) => (
                                 <TableCell>
                                     {renderCell(item, columnKey)}

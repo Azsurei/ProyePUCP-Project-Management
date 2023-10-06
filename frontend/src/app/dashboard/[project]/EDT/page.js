@@ -45,7 +45,7 @@ export default function EDT(props) {
     }
 
     useEffect(refreshComponentsEDT, []);
-
+    
     const handleScreenChange = () => {
         if (screenState === 1) {
             setScreenState(2);
@@ -72,7 +72,7 @@ export default function EDT(props) {
         setIdComponentToSee(idComp);
         setScreenState(3);
     };
-
+    
     //#######################################################
 
     return (
