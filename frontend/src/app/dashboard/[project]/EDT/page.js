@@ -10,6 +10,7 @@ import axios from "axios";
 import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 import EDTCompVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTCompVisualization";
+import { Spinner } from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 
 export default function EDT(props) {
@@ -25,6 +26,8 @@ export default function EDT(props) {
     //Variables for EDTCompVisualization
     const [idComponentToSee, setIdComponentToSee] = useState(null);
 
+    const [isLoading, setIsLoading] = useState(true);
+
     function refreshComponentsEDT() {
         console.log("rerendering ListComps");
         const stringURL =
@@ -38,6 +41,8 @@ export default function EDT(props) {
                 const componentsArray = response.data.componentesEDT;
                 console.log(componentsArray);
                 setListComps(componentsArray);
+
+                setIsLoading(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -45,7 +50,7 @@ export default function EDT(props) {
     }
 
     useEffect(refreshComponentsEDT, []);
-    
+
     const handleScreenChange = () => {
         if (screenState === 1) {
             setScreenState(2);
@@ -72,21 +77,27 @@ export default function EDT(props) {
         setIdComponentToSee(idComp);
         setScreenState(3);
     };
-    
+
     //#######################################################
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
         <>
-            {screenState === 1 && (
-                <EDTVisualization
-                    projectName={projectName}
-                    projectId={projectId}
-                    ListComps={ListComps}
-                    handlerGoToNew={handleSetCompCode}
-                    handleVerDetalle={handleVerDetalle}
-                    refreshComponentsEDT={refreshComponentsEDT}
-                ></EDTVisualization>
+            {isLoading ? (
+                <div style={{height: '100%', display: 'flex',justifyContent:'center',alignItems:'center'}}>
+                    <Spinner size="lg" />
+                </div>
+            ) : (
+                screenState === 1 && (
+                    <EDTVisualization
+                        projectName={projectName}
+                        projectId={projectId}
+                        ListComps={ListComps}
+                        handlerGoToNew={handleSetCompCode}
+                        handleVerDetalle={handleVerDetalle}
+                        refreshComponentsEDT={refreshComponentsEDT}
+                    ></EDTVisualization>
+                )
             )}
 
             {screenState === 2 && (

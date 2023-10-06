@@ -3,6 +3,7 @@ import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTCompVisualization.css";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -39,7 +40,6 @@ export default function EDTCompVisualization({
     const handleChangeTipoComponente = (e) => {
         //tengo que investigar como se hace en un combo box
     };
-
 
     const printAllVariables = () => {
         console.log(inComponentName);
@@ -107,11 +107,10 @@ export default function EDTCompVisualization({
         setListCriterios(updatedCriterios);
     };
 
-
     const handleCancelEdit = () => {
         setEstadoEditar(!estadoEditar);
         handlerReturn();
-    }
+    };
 
     const handleUpdateComp = () => {
         //imprimimos las variables para testear que se guardo todo
@@ -126,12 +125,14 @@ export default function EDTCompVisualization({
         console.log(inFechaFin);
         console.log(inRecursos);
         console.log(inHito);
-        
 
-        //idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables, 
+        //idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables,
         //fechaInicio, fechaFin, recursos, hito
 
-        console.log("Procediendo a actualizar datos del componenteEDT de id = " + idComponentToSee);
+        console.log(
+            "Procediendo a actualizar datos del componenteEDT de id = " +
+                idComponentToSee
+        );
         axios
             .post(
                 "http://localhost:8080/api/proyecto/EDT/modificarComponenteEDT",
@@ -145,7 +146,7 @@ export default function EDTCompVisualization({
                     fechaInicio: inFechaInicio,
                     fechaFin: inFechaFin,
                     recursos: inRecursos,
-                    hito: inHito 
+                    hito: inHito,
                 }
             )
             .then(function (response) {
@@ -156,8 +157,7 @@ export default function EDTCompVisualization({
             .catch(function (error) {
                 console.log(error);
             });
-    }
-
+    };
 
     useEffect(() => {
         console.log("Procediendo sacar informacion del componente");
@@ -177,32 +177,30 @@ export default function EDTCompVisualization({
                 setInComponentName(component.nombre);
                 setInCodigoComponente(component.codigo);
 
-                if(component.fechaInicio !== null){
+                if (component.fechaInicio !== null) {
                     const dateObject = new Date(component.fechaInicio);
                     const dateString = dateObject.toLocaleDateString();
-                    const parts = dateString.split('/');
-                    if(parts[0].length===1){
+                    const parts = dateString.split("/");
+                    if (parts[0].length === 1) {
                         parts[0] = "0" + parts[0];
                     }
                     const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
                     console.log("NUEVA FECHA INICIO:" + formattedDate);
                     setInFechaInicio(formattedDate);
-                }
-                else{
+                } else {
                     setInFechaInicio("");
                 }
-                if(component.fechaFin !== null){
+                if (component.fechaFin !== null) {
                     const dateObject1 = new Date(component.fechaFin);
                     const dateString1 = dateObject1.toLocaleDateString();
-                    const parts1 = dateString1.split('/');
-                    if(parts1[0].length===1){
+                    const parts1 = dateString1.split("/");
+                    if (parts1[0].length === 1) {
                         parts1[0] = "0" + parts1[0];
                     }
                     const formattedDate1 = `${parts1[2]}-${parts1[1]}-${parts1[0]}`;
                     console.log("NUEVA FECHA FIN:" + formattedDate1);
                     setInFechaFin(formattedDate1);
-                }
-                else{
+                } else {
                     setInFechaFin("");
                 }
 
@@ -243,7 +241,13 @@ export default function EDTCompVisualization({
 
     return (
         <div className="EDTNew">
-            <div style={{display:'flex',flexDirection:'row'}}>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                }}
+            >
                 <HeaderWithButtonsSamePage
                     haveReturn={true}
                     haveAddNew={false}
@@ -255,7 +259,21 @@ export default function EDTCompVisualization({
                 >
                     Ver detalles de componente
                 </HeaderWithButtonsSamePage>
-                {!estadoEditar && <button onClick={()=>{setEstadoEditar(!estadoEditar)}}>editar</button>}
+                {!estadoEditar && (
+                    <div
+                        className="btnEditarComp"
+                        onClick={() => {
+                            setEstadoEditar(!estadoEditar);
+                        }}
+                    >
+                        <img
+                            src="/icons/icon-edit.svg"
+                            alt="help"
+                            className=""
+                        />
+                        <p>Editar</p>
+                    </div>
+                )}
             </div>
 
             <div className="EDTNewResponsiveContainer">
@@ -266,7 +284,11 @@ export default function EDTCompVisualization({
                             <p>Nombre del componente</p>
                             <textarea
                                 rows="1"
-                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                className={
+                                    estadoEditar
+                                        ? "inputBoxGeneric editable"
+                                        : "inputBoxGeneric nonEditable"
+                                }
                                 readOnly={!estadoEditar}
                                 placeholder="Escribe aquí"
                                 maxLength="70"
@@ -275,19 +297,19 @@ export default function EDTCompVisualization({
                                 }}
                                 value={inComponentName}
                             />
-                            <p>Tipo de componente</p>
-                            <p>FASE</p>
+                            {/* <p>Tipo de componente</p>
+                            <p>FASE</p> */}
                             <div
                                 style={{
                                     display: "flex",
                                     flexDirection: "row",
                                 }}
                             >
-                                <p>Posicion</p>
-                                <img
+                                <p>Codigo</p>
+                                {/* <img
                                     src="/icons/icon-info.svg"
                                     alt="help"
-                                ></img>
+                                ></img> */}
                             </div>
                             <textarea
                                 rows="1"
@@ -300,7 +322,11 @@ export default function EDTCompVisualization({
                             <p>Fecha de inicio</p>
                             <input
                                 type="date"
-                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                className={
+                                    estadoEditar
+                                        ? "inputBoxGeneric editable"
+                                        : "inputBoxGeneric nonEditable"
+                                }
                                 readOnly={!estadoEditar}
                                 name="datepicker"
                                 onChange={(e) => {
@@ -311,7 +337,11 @@ export default function EDTCompVisualization({
                             <p>Fecha de fin</p>
                             <input
                                 type="date"
-                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                className={
+                                    estadoEditar
+                                        ? "inputBoxGeneric editable"
+                                        : "inputBoxGeneric nonEditable"
+                                }
                                 readOnly={!estadoEditar}
                                 name="datepicker"
                                 onChange={(e) => {
@@ -322,7 +352,11 @@ export default function EDTCompVisualization({
                             <p>Responsables</p>
                             <textarea
                                 rows="1"
-                                className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                                className={
+                                    estadoEditar
+                                        ? "inputBoxGeneric editable"
+                                        : "inputBoxGeneric nonEditable"
+                                }
                                 readOnly={!estadoEditar}
                                 placeholder="Escribe aquí"
                                 maxLength="70"
@@ -341,7 +375,11 @@ export default function EDTCompVisualization({
                         <p>Descripcion detallada</p>
                         <textarea
                             rows="1"
-                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            className={
+                                estadoEditar
+                                    ? "inputBoxGeneric editable"
+                                    : "inputBoxGeneric nonEditable"
+                            }
                             readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
@@ -353,7 +391,11 @@ export default function EDTCompVisualization({
                         <p>Recursos</p>
                         <textarea
                             rows="1"
-                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            className={
+                                estadoEditar
+                                    ? "inputBoxGeneric editable"
+                                    : "inputBoxGeneric nonEditable"
+                            }
                             readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
@@ -365,7 +407,11 @@ export default function EDTCompVisualization({
                         <p>Hito asociado</p>
                         <textarea
                             rows="1"
-                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            className={
+                                estadoEditar
+                                    ? "inputBoxGeneric editable"
+                                    : "inputBoxGeneric nonEditable"
+                            }
                             readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
@@ -377,7 +423,11 @@ export default function EDTCompVisualization({
                         <p>Observaciones</p>
                         <textarea
                             rows="1"
-                            className={estadoEditar ? "inputBoxGeneric editable" : "inputBoxGeneric nonEditable"}
+                            className={
+                                estadoEditar
+                                    ? "inputBoxGeneric editable"
+                                    : "inputBoxGeneric nonEditable"
+                            }
                             readOnly={!estadoEditar}
                             placeholder="Escribe aquí"
                             maxLength="70"
@@ -450,10 +500,30 @@ export default function EDTCompVisualization({
                 </div>
             </div>
 
-            <div className="ButtonsContainer">
-                {estadoEditar && <button onClick={handleCancelEdit}>Cancelar</button>}
-                {estadoEditar && <button onClick={handleUpdateComp}>Guardar</button> }
-            </div>
+            {estadoEditar && (
+                <div className="twoButtons">
+                    <Modal
+                        nameButton="Descartar"
+                        textHeader="Descartar Actualizacion"
+                        textBody="¿Seguro que quiere descartarla actualización de el componente EDT?"
+                        colorButton="w-36 bg-slate-100 text-black"
+                        oneButton={false}
+                        secondAction={() => {
+                            handleCancelEdit();
+                        }}
+                    />
+                    <Modal
+                        nameButton="Actualizar"
+                        textHeader="Actualizar Componente"
+                        textBody="¿Seguro que quiere desea actualizar este componente?"
+                        colorButton="w-36 bg-blue-950 text-white"
+                        oneButton={false}
+                        secondAction={() => {
+                            handleUpdateComp();
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }

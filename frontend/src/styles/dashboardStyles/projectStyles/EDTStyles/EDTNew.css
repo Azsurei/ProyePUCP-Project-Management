@@ -1,8 +1,11 @@
 .EDTNew{
-    padding: 2.5rem 2.5rem;
+    /* padding: 2.5rem 2.5rem; */
     flex: 1;
 
-
+    padding-top: 2.5rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    padding-bottom: 0px;
 }
 
 .EDTNew .EDTNewResponsiveContainer{
@@ -108,4 +111,10 @@
     padding: 0 .4rem;
 
     resize: none;
+}
+
+.EDTNew .twoButtons{
+    display: flex; 
+    justify-content: flex-end;
+    gap: 1rem;
 }

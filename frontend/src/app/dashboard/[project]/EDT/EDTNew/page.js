@@ -2,8 +2,6 @@
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
-import DatePicker1 from "@/components/DatePicker1";
-import { DatePicker } from '@atlaskit/datetime-picker';
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 import { useState } from "react";
 

@@ -119,8 +119,10 @@ import {
     Button,
     useDisclosure,
 } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 export default function ListElementsEDT(props) {
+    const router = useRouter();
     const ListComps = props.listData;
 
     const [modal, setModal] = useState(false);
@@ -151,7 +153,8 @@ export default function ListElementsEDT(props) {
             )
             .then(function (response) {
                 console.log(response);
-                props.refreshComponentsEDT;
+                //props.refreshComponentsEDT;
+                window.location.reload();
             })
             .catch(function (error) {
                 console.log(error);
@@ -207,7 +210,9 @@ export default function ListElementsEDT(props) {
 
                                 <Button
                                     className="bg-indigo-950 text-slate-50"
-                                    onPress={()=>{confirmarModalEliminacion()}}
+                                    onPress={()=>{
+                                        confirmarModalEliminacion(); 
+                                    }}
                                 >
                                     Continuar
                                 </Button>
