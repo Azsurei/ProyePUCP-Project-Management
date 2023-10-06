@@ -199,17 +199,16 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>
     }
 })
 
-routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=>{
+routerEDT.post("/modificarComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de modificar un componenteEDT");
     //Insertar query aca
-    const {idComponenteEDT, idElementoPadre, idProyecto, descripcion, codigo, observaciones, nombre, responsables, 
-        fechaInicio, fechaFin, recursos, hito, criterioAceptacion, entregables} = req.body;
-    console.log("Llegue a recibir solicitud insertar componente edt");
+    const {idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables, 
+        fechaInicio, fechaFin, recursos, hito} = req.body;
     const query = `
-        CALL MODIFICAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?,?,?);
+        CALL MODIFICAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?);
     `;
     try {
-        const [results] = await connection.query(query,[idComponenteEDT, idElementoPadre, idProyecto, descripcion, codigo, observaciones, 
+        const [results] = await connection.query(query,[idComponenteEDT, descripcion, codigo, observaciones, 
             nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
         const idComponente= results[0][0].idComponenteEDT;
         console.log(`Se modifico el componente EDT ${idComponente}!`);
@@ -241,50 +240,49 @@ routerEDT.post("/:idProyecto/modificarComponenteEDT",verifyToken,async(req,res)=
             
         });
     } catch (error) {
-        console.error("Error en el registro:", error);
-        res.status(500).send("Error en el registro: " + error.message);
+        console.error("Error en el update del componente:", error);
+        res.status(500).send("Error en el update del componente: " + error.message);
     }
 })
 
-routerEDT.post("/:idProyecto/eliminarComponenteEDT",verifyToken,async(req,res)=>{
+routerEDT.post("/eliminarComponenteEDT",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de eliminar un componenteEDT");
     //Insertar query aca
-    const {idEDT, codigo} = req.body;
+    const {idComponente, codigo} = req.body;
     console.log("Llegue a recibir solicitud eliminar componente edt");
     const query = `
-        CALL ELIMINAR_COMPONENTEEDT(?,?);
+        CALL ELIMINAR_COMPONENTE_EDT(?,?);
     `;
     try {
-        await connection.query(query,[idEDT,codigo]);
+        await connection.query(query,[idComponente,codigo]);
         console.log(`Se elimino el componente EDT ${codigo}!`);
         res.status(200).json({
-            codigo,
-            message: "Componente EDT eliminado exitosamente",
-            
+            message: "Componente EDT eliminado exitosamente"
         });
     } catch (error) {
-        console.error("Error en el registro:", error);
-        res.status(500).send("Error en el registro: " + error.message);
+        console.error("Error en la eliminacion del componente EDT:", error);
+        res.status(500).send("Error en la eliminacion del componente EDT: " + error.message);
     }
 })
 
-routerEDT.post("/listarComponenteEDT",async(req,res)=>{
-    console.log("Llegue a recibir solicitud listar Componente EDT");
+routerEDT.post("/verInfoComponenteEDT",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud ver info de  Componente EDT");
     const {idComponente} = req.body;
-    const query = `
-        CALL LISTAR_COMPONENTE_EDT(?);
-    `;
+    console.log("EL ID DEL COMPONENTE ES = " + idComponente);
+    
     try {
+        let query = "CALL LISTAR_COMPONENTE_EDT(?);";
         const [results] = await connection.query(query,[idComponente]);
         console.log(results[0]);
-        const [criterioAceptacion] = await connection.execute(`
-            CALL LISTAR_CRITERIO_X_IDCOMPONENTE(${idComponente});
-        `);
-        const [entregables] = await connection.execute(`
-            CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(${idComponente});
-        `);
+
+        query = "CALL LISTAR_CRITERIO_X_IDCOMPONENTE(?);";
+        const [criterioAceptacion] = await connection.execute(query,[idComponente]);
+
+        query = "CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(?);";
+        const [entregables] = await connection.execute(query,[idComponente]);
+
         const componenteEDT = {
-            component: results[0],
+            component: results[0][0],
             criteriosAceptacion: criterioAceptacion[0],
             entregables: entregables[0]
         };
@@ -294,8 +292,8 @@ routerEDT.post("/listarComponenteEDT",async(req,res)=>{
         });
         console.log('Si se listo Componente EDT');
     } catch (error) {
-        console.error("Error al obtener Componente EDT:", error);
-        res.status(500).send("Error al obtener Componente EDT: " + error.message);
+        console.error("Error al obtener info de  Componente EDT:", error);
+        res.status(500).send("Error al obtener info de Componente EDT: " + error.message);
     }
 })
 module.exports.routerEDT = routerEDT;

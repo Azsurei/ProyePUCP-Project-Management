@@ -11,7 +11,7 @@ export default function ContainerRequirement({indice,updateRequirementField}){
         <div className="containerDescription" >
             <div className="customInput">
                 <label htmlFor={inputId1} className="placeholderLabel">{`Requerimiento ${indice}`}</label>
-                <textarea rows="3" id={inputId1} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="200" onChange={(e)=>handleInputChange(e.target.value)}/>
+                <textarea rows="3" id={inputId1} className="customPlaceholderInput" placeholder="Escribe aquí"  maxLength="400" onChange={(e)=>handleInputChange(e.target.value)}/>
             </div>
         </div>    
     );

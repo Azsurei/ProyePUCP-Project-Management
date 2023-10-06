@@ -143,6 +143,28 @@ CREATE TABLE GrupoDeProyecto(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE Equipo(
+	idEquipo INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    nombre VARCHAR(200),
+    descripcion VARCHAR(500),
+    fechaCreacion DATE,
+    activo tinyint,
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE UsuarioXEquipo(
+	idUsuarioXEquipo INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    idEquipo INT,
+    activo tinyint,
+    UNIQUE(idUsuario,idEquipo),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+)
+ENGINE = InnoDB;
+
 --------------------------------------------------------
 -- Tabla intermedia
 --------------------------------------------------------
@@ -758,3 +780,23 @@ CREATE TABLE Entregable (
 )
 ENGINE = InnoDB;
 
+CREATE TABLE Equipo(
+	idEquipo INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    nombre VARCHAR(200),
+    fechaCreacion DATE,
+    activo tinyint,
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE UsuarioXEquipo(
+	idUsuarioXEquipo INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    idEquipo INT,
+    activo tinyint,
+    UNIQUE(idUsuario,idEquipo),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+)
+ENGINE = InnoDB;

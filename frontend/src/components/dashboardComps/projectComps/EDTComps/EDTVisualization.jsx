@@ -10,6 +10,8 @@ export default function EDTVisualization({
     projectId,
     ListComps,
     handlerGoToNew,
+    handleVerDetalle,
+    refreshComponentsEDT
 }) {
     const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -23,9 +25,6 @@ export default function EDTVisualization({
         }
     };
 
-    if (ListComps.length === 0) {
-    }
-
     return (
         <div className="EDT">
             <HeaderWithButtonsSamePage
@@ -38,10 +37,6 @@ export default function EDTVisualization({
             >
                 EDT y diccionario EDT
             </HeaderWithButtonsSamePage>
-            <div className="componentSearchContainer">
-                <input type="text" />
-                <button>Buscar</button>
-            </div>
 
             {ListComps.length === 0 ? (
                 <div className="missingScrenContainer">
@@ -50,11 +45,12 @@ export default function EDTVisualization({
                 </div>
             ) : (
                 <OpenMenuContext.Provider
-                    value={{ openMenuId, toggleMenu, handlerGoToNew }}
+                    value={{ openMenuId, toggleMenu, handlerGoToNew , handleVerDetalle}}
                 >
                     <ListElementsEDT
                         listData={ListComps}
                         initialMargin={0}
+                        refreshComponentsEDT={refreshComponentsEDT}
                     ></ListElementsEDT>
                 </OpenMenuContext.Provider>
             )}

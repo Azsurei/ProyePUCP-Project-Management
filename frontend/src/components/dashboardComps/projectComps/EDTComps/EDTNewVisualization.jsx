@@ -3,6 +3,7 @@ import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -17,7 +18,8 @@ export default function EDTNewVisualization({
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
     const [inTipoComponente, setInTipoComponente] = useState("");
-    const [inCodigoComponente, setInCodigoComponente] = useState(codeNewComponent);
+    const [inCodigoComponente, setInCodigoComponente] =
+        useState(codeNewComponent);
     const [inFechaInicio, setInFechaInicio] = useState("");
     const [inFechaFin, setInFechaFin] = useState("");
     const [inResponsables, setInResponsables] = useState("");
@@ -121,23 +123,25 @@ export default function EDTNewVisualization({
         setListCriterios(updatedCriterios);
     };
 
-
-
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
-        url: "http://localhost:8080/api/proyecto/" + projectId +"/insertarComponenteEDT",
+        url:
+            "http://localhost:8080/api/proyecto/" +
+            projectId +
+            "/insertarComponenteEDT",
         headers: {
             "Content-Type": "application/json",
         },
         // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
     };
 
-
     const handleComponentRegister = () => {
         console.log("Procediendo con insertar el componente");
         axios
             .post(
-                "http://localhost:8080/api/proyecto/EDT/" + projectId +"/insertarComponenteEDT",
+                "http://localhost:8080/api/proyecto/EDT/" +
+                    projectId +
+                    "/insertarComponenteEDT",
                 {
                     idElementoPadre: idElementoPadre,
                     idProyecto: projectId,
@@ -166,7 +170,7 @@ export default function EDTNewVisualization({
             .catch(function (error) {
                 console.log(error);
             });
-    }
+    };
 
     return (
         <div className="EDTNew">
@@ -211,7 +215,11 @@ export default function EDTNewVisualization({
                                     alt="help"
                                 ></img>
                             </div>
-                            <input type="text" value={codeNewComponent} readOnly={true}></input>
+                            <input
+                                type="text"
+                                value={codeNewComponent}
+                                readOnly={true}
+                            ></input>
                         </div>
                         <div className="FirstRightCont">
                             <p>Fecha de inicio</p>
@@ -220,7 +228,9 @@ export default function EDTNewVisualization({
                                 id="inputBoxGeneric"
                                 className="EDTNewDatepickerInicio"
                                 name="datepicker"
-                                onChange={handleChangeFechaInicio}
+                                onChange={(e) => {
+                                    setInFechaInicio(e.target.value);
+                                }}
                             ></input>
                             <p>Fecha de fin</p>
                             <input
@@ -228,7 +238,9 @@ export default function EDTNewVisualization({
                                 id="inputBoxGeneric"
                                 className="EDTNewDatepickerFin"
                                 name="datepicker"
-                                onChange={handleChangeFechaFin}
+                                onChange={(e) => {
+                                    setInFechaFin(e.target.value);
+                                }}
                             ></input>
                             <p>Responsables</p>
                             <textarea
@@ -313,8 +325,10 @@ export default function EDTNewVisualization({
                         <ListEditableInput
                             ListInputs={listEntregables}
                             typeName="Entregable"
+                            typeFault="entregables"
                             handleChanges={handleChangeEntregable}
                             handleRemove={handleRemoveEntregable}
+                            beEditable={true}
                         ></ListEditableInput>
                     </div>
                 </div>
@@ -340,16 +354,34 @@ export default function EDTNewVisualization({
                         <ListEditableInput
                             ListInputs={listCriterios}
                             typeName="Criterio"
+                            typeFault="criterios"
                             handleChanges={handleChangeCriterio}
                             handleRemove={handleRemoveCriterio}
+                            beEditable={true}
                         ></ListEditableInput>
                     </div>
                 </div>
             </div>
 
-            <div className="ButtonsContainer">
-                <button>Cancelar</button>
-                <button onClick={handleComponentRegister}>Guardar</button>
+            <div className="twoButtons">
+                <Modal
+                    nameButton="Descartar"
+                    textHeader="Descartar Registro"
+                    textBody="¿Seguro que quiere descartar el registro de el componente EDT?"
+                    colorButton="w-36 bg-slate-100 text-black"
+                    oneButton={false}
+                    secondAction={handlerReturn}
+                />
+                <Modal
+                    nameButton="Aceptar"
+                    textHeader="Registrar Componente"
+                    textBody="¿Seguro que quiere desea registrar el componente?"
+                    colorButton="w-36 bg-blue-950 text-white"
+                    oneButton={false}
+                    secondAction={() => {
+                        handleComponentRegister();
+                    }}
+                />
             </div>
         </div>
     );
