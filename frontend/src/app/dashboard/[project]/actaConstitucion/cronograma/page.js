@@ -18,11 +18,9 @@ import {
     User,
     Pagination,
 } from "@nextui-org/react";
-import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
 
 const columns = [
     { name: "Hito", uid: "name", sortable: true},
@@ -36,17 +34,10 @@ const toolsOptions = [
     { name: "Sebastian Chira", uid: "paused" },
 ];
 
-const extensionOptions = [
-    { name: ".docx", uid: "word" },
-    { name: ".xlsx", uid: "excel" },
-    { name: ".pptx", uid: "powerpoint" },
-];
-
 const templates = [
     {
         id: 1,
         name: 'Descripcion Hito 1',
-        tool: "Sebastian Chira",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
         state: "No iniciado",
@@ -54,7 +45,6 @@ const templates = [
     {
         id: 2,
         name: 'Descripcion Hito 2',
-        tool: "Sebastian Chira",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
         state: "No iniciado",
@@ -62,7 +52,6 @@ const templates = [
     {
         id: 3,
         name: 'Descripcion Hito 3',
-        tool: "Sebastian Chira",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
         state: "No iniciado",
@@ -70,7 +59,6 @@ const templates = [
     {
         id: 4,
         name: 'Descripcion Hito 4',
-        tool: "Augusto Tong",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
         state: "No iniciado",
@@ -78,7 +66,6 @@ const templates = [
     {
         id: 5,
         name: 'Descripcion Hito 5',
-        tool: "5 Asignados",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
         state: "No iniciado",
@@ -86,7 +73,6 @@ const templates = [
     {
         id: 6,
         name: 'Descripcion Hito 6',
-        tool: "Backlog",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
         state: "No iniciado",
@@ -224,46 +210,17 @@ export default function CronogramaActa() {
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex .roboto">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto']"
-                                >
-                                    Herramienta
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={toolsFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setToolsFilter}
-                            >
-                                {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />}>
+                        <Button color="secondary" endContent={<PlusIcon />}>
                             Exportar
                         </Button>
-                        <Button color="danger" endContent={<PlusIcon />}>
-                            Eliminar
+                        <Button color="primary" endContent={<PlusIcon />}>
+                            Añadir Hito
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {templates.length} plantillas
+                        Total: {templates.length} hitos
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:

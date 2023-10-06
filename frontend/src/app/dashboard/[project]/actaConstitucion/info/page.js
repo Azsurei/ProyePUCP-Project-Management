@@ -6,7 +6,7 @@ import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/
 import Button from  "@/components/dashboardComps/projectComps/appConstComps/Button";
 import Title from "@/components/dashboardComps/projectComps/appConstComps/Title";
 import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
-import React, { useState , useReducer} from 'react';
+import React, { useState , useEffect, useReducer} from 'react';
 import AddIcon from "@/components/dashboardComps/projectComps/appConstComps/AddIcon.svg";
 import EditIcon from '../../../../../../public/images/EditIcon.svg';
 import DocumentFilledIcon from '../../../../../../public/images/DocumentFilledIcon.svg';
@@ -153,6 +153,8 @@ export default function Info() {
                 return { ...state, projectRequirementsData: action.payload };
             case 'UPDATE_ELABORATED_BY_DATA':
                 return { ...state, elaboratedByData: action.payload };
+            case 'RESET_TO_INITIAL':
+                return { ...action.payload };
             default:
                 return state;
         }
@@ -189,11 +191,18 @@ export default function Info() {
 
     const handleSaveClick = () => {
         // Reset the buttons
+        saveState(dataState);
         setIsEditingHere(false);
         setShowSaveCancel(false);
         setIsCancelling(false);
     };
 
+    useEffect(() => {
+        const loadedState = loadState();
+        if (loadedState) {
+            dispatch({ type: 'RESET_TO_INITIAL', payload: loadedState });
+        }
+    }, []);
 
     return (
         <div>
