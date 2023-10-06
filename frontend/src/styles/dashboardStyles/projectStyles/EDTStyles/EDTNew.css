@@ -84,6 +84,13 @@
     padding: 1rem 1rem;
 }
 
+.EDTNew .NewEDTSection .SecondCardContainer p{
+    font-family: 'Montserrat';
+    color: #172B4D;
+    font-weight: 500;
+}
+
+
 .EDTNew .NewEDTSection .ThirdCardContainer{
     padding: 1rem 1rem;
 }

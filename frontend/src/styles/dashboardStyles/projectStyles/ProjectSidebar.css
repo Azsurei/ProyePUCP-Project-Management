@@ -112,6 +112,7 @@
     left: 255px; /* move the button next to the text when open */
 }
 
+.closedSidebar .SidebarHeader,
 .closedSidebar .header,
 .closedSidebar .dates,
 .closedSidebar .teamContainer,

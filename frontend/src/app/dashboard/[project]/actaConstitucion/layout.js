@@ -28,15 +28,15 @@ export default function RootLayout({ children, params }) {
                         text={"Inicio"}
                     ></BreadcrumbsItem>
                     <BreadcrumbsItem
-                        href="/dashboard/project"
+                        href="/dashboard"
                         text={"Proyectos"}
                     ></BreadcrumbsItem>
                     <BreadcrumbsItem
-                        href="/dashboard/6/"
+                        href={"/dashboard/" + projectName + "=" + projectId}
                         text={"Nombre del proyecto"}
                     ></BreadcrumbsItem>
                     <BreadcrumbsItem
-                        href="/dashboard/project/actaConstitucion/info"
+                        href={"/dashboard/"+ projectName + "=" + projectId+"/actaConstitucion"}
                         text={"Acta de Constitución"}
                     ></BreadcrumbsItem>
                 </Breadcrumbs>
@@ -48,25 +48,25 @@ export default function RootLayout({ children, params }) {
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
                         <InfoIcon />
-                        <Link href="/dashboard/project/actaConstitucion/info">Informacion</Link>
+                        <Link href={"/dashboard/"+ projectName + "=" + projectId+"/actaConstitucion/info"}>Informacion</Link>
                     </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
                         <CalendarIcon />
-                        <Link href="/dashboard/project/actaConstitucion/cronograma">Cronograma</Link>
+                        <Link href={"/dashboard/"+ projectName + "=" + projectId+"/actaConstitucion/cronograma"}>Cronograma</Link>
                     </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
                         <PersonWithCircleIcon />
-                        <Link href="/dashboard/project/actaConstitucion/interesados">Interesados</Link>
+                        <Link href={"/dashboard/"+ projectName + "=" + projectId+"/actaConstitucion/interesados"}>Interesados</Link>
                     </div>
                 </Button>
                 <Button appearance="primary" state="default" spacing="compact">
                     <div>
                         <TaskIcon />
-                        <Link href="/dashboard/project/actaConstitucion/aprobacion">Aprobacion</Link>
+                        <Link href={"/dashboard/"+ projectName + "=" + projectId+"/actaConstitucion/aprobacion"}>Aprobacion</Link>
                     </div>
                 </Button>
             </ButtonPanel>
