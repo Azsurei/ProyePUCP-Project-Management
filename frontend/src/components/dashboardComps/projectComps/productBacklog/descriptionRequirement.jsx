@@ -1,7 +1,7 @@
 import React from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/ContainerAsWantFor.css";
 
-export default function DescriptionRequeriment({ name, onNameChange }) {
+export default function DescriptionRequeriment({ name, onNameChange , hu}) {
   return (
     <div className="containerDescription">
       <textarea

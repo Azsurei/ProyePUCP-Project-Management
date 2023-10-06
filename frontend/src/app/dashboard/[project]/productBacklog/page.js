@@ -11,7 +11,6 @@ import MyDynamicTable from "@/components/DynamicTable";
 import { data } from "autoprefixer";
 import React from "react";
 import axios from "axios";
-import { useRouter } from 'next/navigation';
 import RouteringBacklog from "@/components/dashboardComps/projectComps/productBacklog/RouteringBacklog";
 axios.defaults.withCredentials = true;
 import {
@@ -92,8 +91,8 @@ export default function ProductBacklog(props) {
 
     console.log(data.idHistoriaDeUsuario);*/
     const [data, setData] = useState([]);
-    const [object, setObject] = useState(null);
-
+    const [objectID, setObjectID] = useState(null);
+    const [navegate, setNavegate] = useState(false);
     function DataTable(){
         const fetchData = async () => {
           try {
@@ -126,8 +125,9 @@ export default function ProductBacklog(props) {
         setModal1(!modal1);
     };
 
-    const selectObject = (object) => {
-        setObject(object);
+    const setRoutering = (objectID) => {
+        setObjectID(objectID);
+        setNavegate(!navegate);
     };
 
     const toggleModalAll = () => {

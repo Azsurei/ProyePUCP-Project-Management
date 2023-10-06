@@ -43,11 +43,22 @@ export default function ProductBacklogUpdate(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
+    const stringURLHU1 = `http://localhost:8080/api/proyecto/backlog/hu/5/listarHistoriaDeUsuario`;
+
+    useEffect(() => {
+        if (historiaUsuario && historiaUsuario.hu) {
+          setName(historiaUsuario.hu[0].descripcion);
+          setSelectedValueEpic(historiaUsuario.hu[0].idEpica);
+          setComo(historiaUsuario.hu[0].como);
+          setQuiero(historiaUsuario.hu[0].quiero);
+          setPara(historiaUsuario.hu[0].para);
+          setScenarioFields(historiaUsuario.criteriosAceptacion);
+        }
+      }, [historiaUsuario]);
 
     useEffect(() => {
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         const stringURLUsuario = "http://localhost:8080/api/usuario/verInfoUsuario";
-      
         Promise.all([
           axios.get(stringURLHU),
           axios.get(stringURLUsuario),
@@ -68,6 +79,11 @@ export default function ProductBacklogUpdate(props) {
           });
       }, []);    
 
+
+      //const [name, setName] = useState(historiaUsuario?.descripcion || "");
+
+
+    
     function addContainer(){
         setQuantity(quantity+1);
         setScenarioFields((prevFields) => [
@@ -173,7 +189,7 @@ export default function ProductBacklogUpdate(props) {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica"/>
+                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialValue={historiaUsuario?.idEpica}/>
                     </div>
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
@@ -208,10 +224,14 @@ export default function ProductBacklogUpdate(props) {
                         <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
                     </div>
                 </div>
-                <div className="description">
-                    <h4 style={{fontWeight: 600 }}>Nombre de historia de usuario</h4>
-                    <DescriptionRequeriment name={name} onNameChange={setName}/>
-                </div>
+                { historiaUsuario ? (
+          <div className="description">
+            <h4 style={{ fontWeight: 600 }}>Nombre de historia de usuario</h4>
+            <DescriptionRequeriment name={name} />
+          </div>
+        ) : (
+          <div>Cargando datos...</div>
+        )}
                 <div className="userDescription">
                     <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
                     <ContainerAsWantFor
@@ -227,8 +247,13 @@ export default function ProductBacklogUpdate(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
-                    {Array.from({ length: quantity }, (_, index) => (
-                        <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
+                    {historiaUsuario && historiaUsuario.criteriosAceptacion && scenarioFields.map((criterio, index) => (
+                        <ContainerScenario
+                            key={index}
+                            indice={index + 1}
+                            onUpdateScenario={onUpdateScenario}
+                            scenario={criterio}
+                        />
                     ))}
                     <div className="twoButtons">
                         <div className="buttonContainer">
