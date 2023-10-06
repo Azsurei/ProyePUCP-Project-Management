@@ -27,7 +27,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
-
+import { useRouter } from 'next/navigation';
 
 export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -41,7 +41,6 @@ export default function ProductBacklog(props) {
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    
 
     
 
@@ -90,7 +89,9 @@ export default function ProductBacklog(props) {
 
     console.log(data.idHistoriaDeUsuario);*/
     const [data, setData] = useState([]);
-    const [object, setObject] = useState(null);
+
+
+    
 
     function DataTable(){
         const fetchData = async () => {
@@ -123,9 +124,7 @@ export default function ProductBacklog(props) {
         setModal1(!modal1);
     };
 
-    const selectObject = (object) => {
-        setObject(object);
-    };
+    
 
     const toggleModalAll = () => {
         setModal2(!modal2);
@@ -382,8 +381,9 @@ export default function ProductBacklog(props) {
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
-
+        
         switch (columnKey) {
+                
             case "iconSrc":
                 return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
@@ -396,11 +396,10 @@ export default function ProductBacklog(props) {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onClick={() => selectObject(data)}>
-                                    <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+selectedTask?.idHistoriaDeUsuario}>
-                                        Editar 
-                                    </Link>
+                                <DropdownItem>
+                                        Editar
                                 </DropdownItem>
+
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
