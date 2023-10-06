@@ -5,23 +5,23 @@ axios.defaults.withCredentials = true;
 
 function PopUpEliminate({ modal, toggle, taskName, idHistoriaDeUsuario , refresh}) {
 
-    const Eliminate = (id) => {
-        axios.post("http://localhost:8080/api/proyecto/backlog/hu/eliminarHistoria", idHistoriaDeUsuario)
-        .then((response) => {
-          // Manejar la respuesta de la solicitud POST
-          console.log("Respuesta del servidor:", response.data);
-          console.log("Eliminado correcto")
-          // Realizar acciones adicionales si es necesario
-        })
-        .catch((error) => {
-          // Manejar errores si la solicitud POST falla
-          console.error("Error al realizar la solicitud POST:", error);
-        });
-        refresh();
-        
-    }
+    const Eliminate = (idHistoriaDeUsuario) => {
+        console.log(idHistoriaDeUsuario);
+        axios.post("http://localhost:8080/api/proyecto/backlog/hu/eliminarHistoria", { idHistoriaDeUsuario: idHistoriaDeUsuario })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Eliminado correcto");
+                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+                refresh();
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
+    };
 
-    console.log(idHistoriaDeUsuario);
+    
 
     return (
         <>
@@ -52,7 +52,7 @@ function PopUpEliminate({ modal, toggle, taskName, idHistoriaDeUsuario , refresh
                             <button className="close-modal" onClick={toggle}>
                                 Cancelar
                             </button>
-                            <button className="close-modal" onClick={Eliminate}>
+                            <button className="close-modal" onClick={() => Eliminate(idHistoriaDeUsuario)}>
                                 Aceptar
                             </button>
                         </div>
