@@ -31,12 +31,12 @@
     color: #172b4d;
 }
 .primary{
-    background-color: #172b4d;
+    background-color: #0c66e4;
     color: #ffffff;
 }
 .subtle {
-    background-color: transparent;
-    color: #172b4d;
+    background-color: red;
+    color: #ffffff;
 }
 .link {
     background-color: transparent;
