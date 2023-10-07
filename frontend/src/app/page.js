@@ -40,7 +40,7 @@ export default function Home() {
                     </li>
                 </ul>
                 <Image
-                    src="/images/logoPUCPstandard.png"
+                    src="/images/LogoPUCPstandard.png"
                     alt="Logo PUCP"
                     width={150}
                     height={150}
