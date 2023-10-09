@@ -65,9 +65,12 @@ a:-webkit-any-link{
     flex-direction: column;
     background-color: #F5F5F5;
     width: 100%;
-    height: 100%;
+
+
+    height: auto;
 
     padding: 2.5rem 2.5rem;
+
 }
 
 .infoBox{
@@ -105,6 +108,7 @@ a:-webkit-any-link{
     align-items: center; /* Center vertically */
     
     padding: 1.5rem 0;
+    
 }
 
 
