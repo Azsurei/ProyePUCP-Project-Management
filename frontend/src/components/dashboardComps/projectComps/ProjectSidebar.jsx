@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 import Link from "next/link";
 import axios from "axios";
+import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 axios.defaults.withCredentials = true;
-
 
 const memberData = [
     {
@@ -50,12 +50,7 @@ const memberData = [
 function MemberIcon(props) {
     return (
         <li className="memberContainer">
-            <img
-                // src={props.profilePicture}
-                src="/images/ronaldo_user.png"
-                alt="/icons/userDefaultIcon.png"
-                className="memberIcon"
-            />
+            <p className="memberIcon">{props.name[0]}{props.lastName[0]}</p>
         </li>
     );
 }
@@ -96,7 +91,11 @@ function DropDownMenu(props) {
                     />
                     <p className="DropTitle"> {props.info.tittleTitle} </p>
                 </div>
-                <img src="/icons/chevron-down.svg" alt="" className="DropIconRight" />
+                <img
+                    src="/icons/chevron-down.svg"
+                    alt=""
+                    className="DropIconRight"
+                />
             </div>
 
             <ul
@@ -125,7 +124,7 @@ function ProjectSidebar(props) {
     const [listTools1, setListTools1] = useState({
         tittleIcon: "/icons/info-circle.svg",
         tittleTitle: "Sobre proyecto",
-        dataItems: []
+        dataItems: [],
     });
     const [listTools2, setListTools2] = useState({
         tittleIcon: "/icons/icon-settings.svg",
@@ -140,6 +139,9 @@ function ProjectSidebar(props) {
             setIsTriangleBlue(false);
         }, 300);
     };
+
+    const [membersData, setMembersData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         let toolsArray;
@@ -193,6 +195,26 @@ function ProjectSidebar(props) {
                     tittleTitle: "Herramientas",
                     dataItems: newDataArray2,
                 });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        const stringURL_2 =
+            "http://localhost:8080/api/proyecto/listarUsuariosXidRolXidProyecto";
+
+        axios
+            .post(stringURL_2, {
+                idRol: 3,
+                idProyecto: props.projectId,
+            })
+            .then(function (response) {
+                console.log(response);
+                const members_data = response.data.usuarios;
+
+                setMembersData(members_data);
+                console.log(members_data);
+                setIsLoading(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -319,7 +341,6 @@ function ProjectSidebar(props) {
         dataItems: sideBar2Array,
     };
 
-
     return (
         <nav
             className={`ProjectSidebar ${
@@ -343,13 +364,12 @@ function ProjectSidebar(props) {
             </div>
 
             <ul className="members">
-                {memberData.map((member) => {
+                {membersData.map((member) => {
                     return (
                         <MemberIcon
-                            name={member.name}
-                            lastName={member.lastName}
-                            profilePicture={member.profilePicture}
-                            key={member.id}
+                            key={member.idUsuario}
+                            name={member.nombres}
+                            lastName={member.apellidos}
                         ></MemberIcon>
                     );
                 })}
@@ -357,6 +377,8 @@ function ProjectSidebar(props) {
 
             <DropDownMenu info={listTools1}></DropDownMenu>
             <DropDownMenu info={listTools2}></DropDownMenu>
+
+            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </nav>
     );
 }

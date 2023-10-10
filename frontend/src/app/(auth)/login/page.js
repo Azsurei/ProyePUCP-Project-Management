@@ -47,6 +47,7 @@ function Login() {
         setFormData({ ...formData, loading: true });
         console.log(formData);
 
+
         axios
             .post("http://localhost:8080/api/auth/login", {
                 username: usuario,
@@ -56,12 +57,6 @@ function Login() {
                 console.log(response);
                 console.log("Conexion correcta");
 
-                // const token = response.token;
-                // if(token){
-                //     //const json = jwt.decode(token) as {}; DEBEMOS SACAR EL ID A PARTIR DE EL TOKEN
-                // }
-
-                //tenemos que mandarlo a su dashboard
                 router.push("/dashboard");
             })
             .catch(function (error) {

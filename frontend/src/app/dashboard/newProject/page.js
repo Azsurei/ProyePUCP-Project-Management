@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import TextField from "@/components/TextField";
 import { useEffect } from "react";
 import { createContext } from "react";
+import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 
 axios.defaults.withCredentials = true;
 
@@ -162,6 +163,7 @@ export default function newProject() {
         correoElectronico: "",
     });
 
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
 
@@ -173,6 +175,8 @@ export default function newProject() {
                 console.log("el nombre del usuario es ", userData.nombres);
                 console.log("el apellido del usuario es ", userData.apellidos);
                 setDatosUsuario(userData);
+                
+                setIsLoading(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -199,7 +203,6 @@ export default function newProject() {
         setListHerramientas(newToolsList);
         console.log(newToolsList);
     };
-
 
 
     const checkData = () => {
@@ -287,8 +290,8 @@ export default function newProject() {
                             fill="none"
                         >
                             <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M6.58268 39.4993C6.58268 21.32 21.32 6.58268 39.4993 6.58268C57.6787 6.58268 72.416 21.32 72.416 39.4993C72.416 57.6787 57.6787 72.416 39.4993 72.416C21.32 72.416 6.58268 57.6787 6.58268 39.4993ZM45.8317 48.1374C45.6654 47.7399 45.4218 47.3794 45.1149 47.0768L37.4552 39.4829L45.0853 31.922C45.3921 31.6194 45.6358 31.2589 45.8021 30.8613C45.9684 30.4638 46.054 30.0372 46.054 29.6063C46.054 29.1754 45.9684 28.7487 45.8021 28.3512C45.6358 27.9537 45.3921 27.5931 45.0853 27.2906C44.463 26.6755 43.6232 26.3305 42.7482 26.3305C41.8732 26.3305 41.0335 26.6755 40.4111 27.2906L30.6843 36.9352C30.3479 37.2687 30.0809 37.6656 29.8987 38.1029C29.7164 38.5402 29.6226 39.0092 29.6226 39.4829C29.6226 39.9566 29.7164 40.4257 29.8987 40.863C30.0809 41.3002 30.3479 41.6971 30.6843 42.0307L40.4441 51.7082C41.0662 52.3223 41.9053 52.6666 42.7795 52.6666C43.6537 52.6666 44.4927 52.3223 45.1149 51.7082C45.4218 51.4056 45.6654 51.0451 45.8317 50.6476C45.998 50.25 46.0836 49.8234 46.0836 49.3925C46.0836 48.9616 45.998 48.5349 45.8317 48.1374Z"
                                 fill="#F0AE19"
                             />
@@ -375,6 +378,8 @@ export default function newProject() {
                     handlerModalFinished={returnListOfMiembros}
                 ></ModalUser>
             )}
+
+            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </div>
     );
 }

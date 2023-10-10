@@ -9,7 +9,7 @@ const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
 routerProyecto.use("/EDT", routerEDT);
-routerProyecto.use("/equipo",routerEquipo);
+routerProyecto.use("/equipo", routerEquipo);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token
@@ -362,16 +362,41 @@ routerProyecto.get("/listarProyectos", verifyToken, async (req, res) => {
     console.log("Llegue a recibir solicitud listar proyecto");
     const idUsuario = req.user.id;
 
-    const query = `
+    let query = `
         CALL LISTAR_PROYECTOS_X_ID_USUARIO(?);
     `;
     try {
         const [results] = await connection.query(query, [idUsuario]);
-        res.status(200).json({
-            proyectos: results[0],
-            message: "Proyectos obtenidos exitosamente",
-        });
-        console.log(results[0]);
+        const proyectos = results[0];
+
+        try {
+            query = "CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(?,?)";
+
+            //colocamos 3 para listar solo los miembros del equipo
+            for (const proyecto of proyectos) {
+                const [results_users] = await connection.query(query, [
+                    3,
+                    proyecto.idProyecto,
+                ]);
+                proyecto.miembros = results_users[0];
+            }
+            console.log(JSON.stringify(proyectos, null, 2));
+
+            res.status(200).json({
+                proyectos,
+                message: "Listado de proyectos con sus miembros exitoso",
+            });
+            console.log(`Se listaron los proyectos con sus uruarios!`);
+        } catch (error) {
+            console.error(
+                "Error en el listado de los usuarios del proyecto:",
+                error
+            );
+            res.status(500).send(
+                "Error en el listado de los usuarios del proyecto:" +
+                    error.message
+            );
+        }
     } catch (error) {
         console.error("Error al obtener los proyectos:", error);
         res.status(500).send(
@@ -437,22 +462,23 @@ routerProyecto.post(
     verifyToken,
     async (req, res) => {
         //Insertar query aca
-        const { idProyecto, idRol } = req.params;
+        const { idRol, idProyecto } = req.body;
         console.log(
-            "Llegue a recibir solicitud listar usuarios por rol en proyecto"
+            "Llegue a recibir solicitud listar usuarios por rol en proyecto con idRol = " + idRol + " y idProyecto = " + idProyecto
         );
         const query = `
-        CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(?,?);
+        CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(?,?);
     `;
         try {
             const [results] = await connection.query(query, [
-                idProyecto,
                 idRol,
+                idProyecto,
             ]);
             res.status(200).json({
-                historiasPrioridad: results[0],
+                usuarios: results[0],
                 message: "Usuarios por rol en proyecto obtenidos exitosamente",
             });
+            console.log(results[0]);
             console.log("Si se listaron los usuarios por rol en proyecto");
         } catch (error) {
             console.error(
