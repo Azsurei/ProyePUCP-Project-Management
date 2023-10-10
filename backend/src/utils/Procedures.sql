@@ -249,16 +249,6 @@ BEGIN
     SET _idUsuarioXRolXProyecto = @@last_insert_id;
     SELECT _idUsuarioXRolXProyecto AS idUsuarioXRolXProyecto;
 END$
-DROP PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO;
-DELIMITER $
-CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
-    IN _idRol INT,
-    IN _idProyecto INT
-)
-BEGIN
-	SELECT u.idUsuario, u.nombreS, u.apellidos, u.correOElectronico FROM UsuarioXRolXProyecto urp, Usuario u
-    WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
-END$
 
 CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(1,6);
 
