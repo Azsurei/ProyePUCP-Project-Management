@@ -703,7 +703,7 @@ CREATE PROCEDURE LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT u.idUsuario, u.nombreS, u.apellidos, u.correOElectronico FROM UsuarioXRolXProyecto urp, Usuario u
+	SELECT u.idUsuario, u.nombres, u.apellidos, u.correOElectronico FROM UsuarioXRolXProyecto urp, Usuario u
     WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
 END$
 
@@ -769,3 +769,12 @@ BEGIN
     WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario;
     SELECT _idHistoriaDeUsuario AS idHistoriaDeUsuario;
 END$
+
+CREATE PROCEDURE LISTAR_USUARIOS_X_ROL_X_PROYECTO(
+    IN _idRol INT,
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico FROM UsuarioXRolXProyecto urp, Usuario u
+    WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
+END
