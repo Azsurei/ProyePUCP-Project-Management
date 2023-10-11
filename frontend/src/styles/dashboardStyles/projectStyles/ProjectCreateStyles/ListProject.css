@@ -14,6 +14,7 @@
 
 .ProjectCard{
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
+    padding: 2rem 2rem;
 }
 
 .ProjectCard:hover{
@@ -29,26 +30,30 @@
     color: white;
     transition: background-color 0.15s ease-in;
 
-    .cardDates{
-        color: white;
-    }
+}
+
+.ProjectCard:hover .cardDates{
+    color: white;
+}
+
+.ProjectCard:hover .membersIcon{
+    background-color: gray;
+    transition: background-color 0.15s ease;
 }
 
 .ListProject .ProjectCard .cardTitleProject{
     font-size: 16px;
     font-family: 'Montserrat';
-    padding: 10px 10px 5px 30px;
     font-weight: 600;
     font-style: normal;
-    margin-top: 1rem;
 }
 
 .divPictures{
     list-style: none;
     display: grid;
     gap: 0px;
-    grid-template-columns: repeat(auto-fill, minmax(50px,1fr));
-    margin: 0.5rem 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(45px,1fr));
+    margin-top: 10px;
 
 }
 
@@ -61,11 +66,10 @@
     display: grid;
     row-gap: 1.5rem;
     column-gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit,minmax(350px,1fr));
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
     
 }
 .cardDates{
-    margin-left: 2rem;
     color: #767676;
     font-family: Montserrat;
     font-size: 12px;
@@ -74,18 +78,20 @@
     line-height: 2rem; /* 177.778% */
 }
 
-.memberProfilePicture{
+.membersIcon{
     width: 2.5rem;
     height: 2.5rem;
     flex-shrink: 0;
-    border-radius: 5px;
+    border-radius: 100%;
 
-
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .teamTag{
     margin-top: 1rem;
-    margin-left: 2rem;
     margin-bottom: 1.3rem;
     border-radius: 5px;
     background-color:#8DFFA6;
