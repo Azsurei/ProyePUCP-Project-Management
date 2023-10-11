@@ -1,3 +1,13 @@
+"use client";
+import "@/styles/recoverPassword.css";
+import "@/styles/resetPassword.css";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import axios from "axios";
+import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
+axios.defaults.withCredentials = true;
+
 export default function RootLayout({ children }) {
     return (
         <div className="w-full h-full overflow-auto bg-[url('/images/LoginBackground.png')] bg-cover bg-top-left flex flex-col justify-start items-center">
