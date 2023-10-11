@@ -29,25 +29,40 @@ export default function RootLayout({ children }) {
             });
     }, []);
 
-    return (
-        <div
-            className="dashboardLayout"
-            style={{ display: "flex", flexDirection: "column", height: "100%" }}
-        >
-            <DashboardNav userName={userData.nombres} userLastName={userData.apellidos}/>
-            <DashboardSecondNav />
+    //PROBLEMA CON LOADING SCREENS. al tratar de hacer su uso modular, puede que ocurra
+    //que esta se apage, y la del hijo en {children} se prende consecuentemente por su renderizado
+    //provocando un efecto de recarga VISIBLE en el loading screen (se nota en la barrita animada)
+
+    if (isLoading) {
+        return (
+            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+        );
+    } else {
+        return (
             <div
+                className="dashboardLayout"
                 style={{
-                    marginTop: "123px",
-                    flex: "1",
-                    overflow: "auto",
                     display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
                 }}
             >
-                {children}
+                <DashboardNav
+                    userName={userData.nombres}
+                    userLastName={userData.apellidos}
+                />
+                <DashboardSecondNav />
+                <div
+                    style={{
+                        marginTop: "123px",
+                        flex: "1",
+                        overflow: "auto",
+                        display: "flex",
+                    }}
+                >
+                    {children}
+                </div>
             </div>
-
-            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
-        </div>
-    );
+        );
+    }
 }

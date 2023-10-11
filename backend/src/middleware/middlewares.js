@@ -6,10 +6,10 @@ module.exports = {
     // Middleware para verificar JWT
     verifyToken: (req, res, next) => {
         const token = req.cookies.tokenProyePUCP;
-        if (!token) return res.status(403).send("Token no proporcionado");
+        if (!token) return res.status(411).send("Token no proporcionado");
 
         jwt.verify(token, secret, (err, decoded) => {
-            if (err) return res.status(500).send("Falló la autenticación de token.");
+            if (err) return res.status(412).send("Token no es valido / Error en validacion.");
             //console.log("Loggeado correctamente");
             // Si todo está bien, guardar para su uso en otras rutas
             req.user = decoded.user;
