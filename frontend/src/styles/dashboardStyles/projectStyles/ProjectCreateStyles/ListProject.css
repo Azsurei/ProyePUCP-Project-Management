@@ -62,11 +62,13 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     margin-top: 1.8rem;
+    padding-bottom: 2.5rem;
 
     display: grid;
     row-gap: 1.5rem;
     column-gap: 1.5rem;
     grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    height: auto;
     
 }
 .cardDates{

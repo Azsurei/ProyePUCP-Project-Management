@@ -289,7 +289,7 @@ function ProjectSidebar(props) {
             position: 4,
             optIcon: "/icons/sideBarDropDown_icons/sbdd8.svg",
             optName: "Cronograma",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/cronograma`,
         },
         {
             id: 12,
