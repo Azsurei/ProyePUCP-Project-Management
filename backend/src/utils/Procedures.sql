@@ -659,7 +659,7 @@ CREATE PROCEDURE LISTAR_HU_X_ID(
 )
 BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
-    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuario, CONCAT(U.nombres, ' ', u.apellidos) AS "NombreUsuario"
+    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario"
     FROM HistoriaDeUsuario HU
     JOIN Epica E
     ON HU.idEpica = E.idEpica
@@ -794,4 +794,52 @@ BEGIN
         fechaFin = _fechaFin
     WHERE idCronograma = _idCronograma;
     SELECT _idCronograma AS idCronograma;
+END$
+
+DROP PROCEDURE INSERTAR_DETALLEAC_CREADO;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE INSERTAR_DETALLEAC_CREADO(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Propósito y Justificación del Proyecto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Descripción del Proyecto y Entregables", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Presupuesto Estimado", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Premisas y Restricciones", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Riesgos Iniciales de Alto Nivel", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requisitos de Aprobación del Proyecto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requerimientos de Alto Nivel", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requerimientos del Producto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requerimientos del Proyecto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Elaborado por", 1);
+END$
+
+DELIMITER $
+CREATE TRIGGER TRIGGER_INSERTAR_DETALLEAC_CREADO 
+AFTER INSERT ON ActaConstitucion
+FOR EACH ROW
+BEGIN
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES 
+        (NEW.idActaConstitucion, 'Propósito y Justificación del Proyecto', 1),
+        (NEW.idActaConstitucion, 'Descripción del Proyecto y Entregables', 1),
+        (NEW.idActaConstitucion, 'Presupuesto Estimado', 1),
+        (NEW.idActaConstitucion, 'Premisas y Restricciones', 1),
+        (NEW.idActaConstitucion, 'Riesgos Iniciales de Alto Nivel', 1),
+        (NEW.idActaConstitucion, 'Requisitos de Aprobación del Proyecto', 1),
+        (NEW.idActaConstitucion, 'Requerimientos de Alto Nivel', 1),
+        (NEW.idActaConstitucion, 'Requerimientos del Producto', 1),
+        (NEW.idActaConstitucion, 'Requerimientos del Proyecto', 1),
+        (NEW.idActaConstitucion, 'Elaborado por', 1);
 END$
