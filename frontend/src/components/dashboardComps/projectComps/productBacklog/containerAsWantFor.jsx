@@ -7,6 +7,7 @@ export default function ContainerAsWantFor({ como, quiero, para, onComoChange, o
       <div className="customInput">
         <label htmlFor="customPlaceholderInput1" className="placeholderLabel">Como...</label>
         <input
+          required
           type="text"
           id="customPlaceholderInput1"
           className="customPlaceholderInput"
@@ -19,6 +20,7 @@ export default function ContainerAsWantFor({ como, quiero, para, onComoChange, o
       <div className="customInput">
         <label htmlFor="customPlaceholderInput2" className="placeholderLabel">Quiero...</label>
         <input
+          required
           type="text"
           id="customPlaceholderInput2"
           className="customPlaceholderInput"
@@ -31,6 +33,7 @@ export default function ContainerAsWantFor({ como, quiero, para, onComoChange, o
       <div className="customInput">
         <label htmlFor="customPlaceholderInput3" className="placeholderLabel">Para...</label>
         <textarea
+          required
           rows="3"
           id="customPlaceholderInput3"
           className="customPlaceholderInput"

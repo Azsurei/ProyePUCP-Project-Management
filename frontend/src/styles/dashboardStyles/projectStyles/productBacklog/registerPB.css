@@ -72,9 +72,21 @@
     margin: 1rem 0;
 }
 
+.containerBottom{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .twoButtons{
     display: flex;
     justify-content: flex-end;
+}
+
+.twoButtons1{
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
 }
 
 .buttonContainer{

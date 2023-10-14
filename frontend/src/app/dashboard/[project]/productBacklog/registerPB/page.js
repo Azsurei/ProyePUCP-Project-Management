@@ -41,6 +41,7 @@ export default function ProductBacklogRegister(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
+    const [fieldsEmpty, setFieldsEmpty] = useState(true);
 
     useEffect(() => {
         const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
@@ -217,7 +218,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     {quantity===0? 
                     <div className="flex justify-center items-center">
-                        <div>Puede agregar algunos criterios de aceptación!</div>
+                        <div>¡Puede agregar algunos criterios de aceptación!</div>
                     </div> 
                     :
                     Array.from({ length: quantity }, (_, index) => (
@@ -236,7 +237,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                     {quantity1===0? 
                     <div className="flex justify-center items-center">
-                        <div>Puede agregar algunos requerimientos!</div>
+                        <div>¡Puede agregar algunos requerimientos!</div>
                     </div> 
                     :Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
@@ -248,33 +249,43 @@ export default function ProductBacklogRegister(props) {
                         </div>
                     </div>
                 </div>
-
-                <div className="twoButtons">
-                    <div className="buttonContainer">
-                        {/* Probablemente necesite usar router luego en vez de link */}
-                        <Modal 
-                        nameButton="Descartar" 
-                        textHeader="Descartar Registro" 
-                        textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
-                        colorButton="w-36 bg-slate-100 text-black"
-                        oneButton={false}
-                        secondAction={() => router.back()}
-                        textColor="red"
-                         />
-                        <Modal nameButton="Aceptar" 
-                        textHeader="Registrar Historia de Usuario" 
-                        textBody="¿Seguro que quiere registrar la historia de usuario?"
-                        colorButton="w-36 bg-blue-950 text-white"
-                        oneButton={false}
-                        secondAction={() => {
-                            onSubmit();
-                            router.back();
-                        }}
-                        textColor="blue"
-                         />
-                        {/* <button className="btnBacklogContinue" type="submit">Aceptar</button> */}
+                <div className="containerBottom">
+                    {!fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>}
+                    <div className="twoButtons1">
+                        <div className="buttonContainer">
+                            <Modal 
+                            nameButton="Descartar" 
+                            textHeader="Descartar Registro" 
+                            textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                            colorButton="w-36 bg-slate-100 text-black"
+                            oneButton={false}
+                            secondAction={() => router.back()}
+                            textColor="red"
+                            />
+                            <Modal nameButton="Aceptar" 
+                            textHeader="Registrar Historia de Usuario" 
+                            textBody="¿Seguro que quiere registrar la historia de usuario?"
+                            colorButton="w-36 bg-blue-950 text-white"
+                            oneButton={false}
+                            secondAction={() => {
+                                onSubmit();
+                                router.back();
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if(name==="" || como==="" || quiero==="" || para===""){
+                                    setFieldsEmpty(false);
+                                    return false;
+                                }else{
+                                    setFieldsEmpty(true);
+                                    return true;
+                                }
+                            }}
+                            />
+                        </div>
                     </div>
                 </div>
+
             </div> 
         </form>
     );

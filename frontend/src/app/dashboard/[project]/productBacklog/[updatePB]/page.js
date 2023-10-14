@@ -46,6 +46,7 @@ export default function ProductBacklogUpdate(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
+    const [fieldsEmpty, setFieldsEmpty] = useState(true);
 
     useEffect(() => {
         if (historiaUsuario && historiaUsuario.hu) {
@@ -203,7 +204,7 @@ export default function ProductBacklogUpdate(props) {
         </div>
         
     ):
-        (
+    (
         <form  className="containerRegisterPB">
             <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog / Registrar elemento
@@ -252,7 +253,7 @@ export default function ProductBacklogUpdate(props) {
                 { historiaUsuario ? (
           <div className="description">
             <h4 style={{ fontWeight: 600 }}>Nombre de historia de usuario</h4>
-            <DescriptionRequeriment name={name} />
+            <DescriptionRequeriment name={name} onNameChange={setName}/>
           </div>
         ) : (
           <div>Cargando datos...</div>
@@ -274,7 +275,7 @@ export default function ProductBacklogUpdate(props) {
                     </div>
                     {scenarioFields.length===0? 
                     <div className="flex justify-center items-center">
-                        <div>Puede agregar algunos criterios de aceptación!</div>
+                        <div>¡Puede agregar algunos criterios de aceptación!</div>
                     </div> 
                     :
                     historiaUsuario &&  scenarioFields.map((criterio, index) => (
@@ -298,7 +299,7 @@ export default function ProductBacklogUpdate(props) {
                     </div>
                     {requirementFields.length===0? 
                     <div className="flex justify-center items-center">
-                        <div>Puede agregar algunos requerimientos!</div>
+                        <div>¡Puede agregar algunos requerimientos!</div>
                     </div> 
                     :
                     historiaUsuario &&  requirementFields.map((requirement, index) => (
@@ -312,30 +313,41 @@ export default function ProductBacklogUpdate(props) {
                     </div>
                 </div>
 
-                <div className="twoButtons">
-                    <div className="buttonContainer">
-                        {/* Probablemente necesite usar router luego en vez de link */}
-                        <Modal 
-                        nameButton="Descartar" 
-                        textHeader="Descartar Registro" 
-                        textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
-                        colorButton="w-36 bg-slate-100 text-black"
-                        oneButton={false}
-                        secondAction={() => router.back()}
-                        textColor="red"
-                         />
-                        <Modal nameButton="Aceptar" 
-                        textHeader="Registrar Historia de Usuario" 
-                        textBody="¿Seguro que quiere registrar la historia de usuario?"
-                        colorButton="w-36 bg-blue-950 text-white"
-                        oneButton={false}
-                        secondAction={() => {
-                            //onSubmit();
-                            router.back();
-                        }}
-                        textColor="blue"
-                         />
-                        {/* <button className="btnBacklogContinue" type="submit">Aceptar</button> */}
+                <div className="containerBottom">
+                    {!fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos" className="iconLabel3"/>}
+                    {/* {!fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>} */}
+                    <div className="twoButtons1">
+                        <div className="buttonContainer">
+                            <Modal 
+                            nameButton="Descartar" 
+                            textHeader="Descartar Registro" 
+                            textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                            colorButton="w-36 bg-slate-100 text-black"
+                            oneButton={false}
+                            secondAction={() => router.back()}
+                            textColor="red"
+                            />
+                            <Modal nameButton="Aceptar" 
+                            textHeader="Registrar Historia de Usuario" 
+                            textBody="¿Seguro que quiere registrar la historia de usuario?"
+                            colorButton="w-36 bg-blue-950 text-white"
+                            oneButton={false}
+                            secondAction={() => {
+                                onSubmit();
+                                router.back();
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if(name==="" || como==="" || quiero==="" || para===""){
+                                    setFieldsEmpty(false);
+                                    return false;
+                                }else{
+                                    setFieldsEmpty(true);
+                                    return true;
+                                }
+                            }}
+                            />
+                        </div>
                     </div>
                 </div>
             </div> 
