@@ -33,8 +33,8 @@ export default function ProductBacklogRegister(props) {
     const [selectedValuePriority, setSelectedValuePriority] = useState(null);
     const [selectedValueState, setSelectedValueState] = useState(null);
     const currentDate=getCurrentDate();
-    const [scenarioFields, setScenarioFields] = useState([{ scenario: '', dadoQue: '', cuando: '', entonces: '' }]);
-    const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
+    const [scenarioFields, setScenarioFields] = useState([]);
+    const [requirementFields, setRequirementFields] = useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState("");
@@ -132,8 +132,7 @@ export default function ProductBacklogRegister(props) {
             como: como,
             quiero: quiero,
             para: para,
-            currentDate: currentDate,
-            idUsuario: datosUsuario.idUsuario,
+            idUsuarioCreador: datosUsuario.idUsuario,
             scenarioData: scenarioFields,
             requirementData: requirementFields,
         };

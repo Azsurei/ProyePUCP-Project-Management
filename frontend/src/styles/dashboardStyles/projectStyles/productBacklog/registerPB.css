@@ -44,6 +44,7 @@
 .containerCombo{
     display: flex;
     gap: 15%;
+    margin-right: 15px;
 }
 
 .dateOfCreation{

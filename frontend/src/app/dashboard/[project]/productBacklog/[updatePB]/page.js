@@ -37,8 +37,8 @@ export default function ProductBacklogUpdate(props) {
     const [selectedNamePriority, setSelectedNamePriority] = useState("");
     const [selectedNameState, setSelectedNameState] = useState("");
     const currentDate=getCurrentDate();
-    const [scenarioFields, setScenarioFields] = useState([{ scenario: '', dadoQue: '', cuando: '', entonces: '' }]);
-    const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
+    const [scenarioFields, setScenarioFields] = useState([]);
+    const [requirementFields, setRequirementFields] = useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
     const [historiaUsuario, setHistoriaUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +57,7 @@ export default function ProductBacklogUpdate(props) {
             setComo(historiaUsuario.hu[0].como);
             setQuiero(historiaUsuario.hu[0].quiero);
             setPara(historiaUsuario.hu[0].para);
+            setDatosUsuario(historiaUsuario.hu[0].NombreUsuario)
             const criteriosAceptacionOriginales= historiaUsuario.criteriosAceptacion;
             const scenarioFieldsActualizados = criteriosAceptacionOriginales.map((criterio) => ({
                 scenario: criterio.escenario || '', // Puedes agregar un valor predeterminado en caso de que falte
@@ -75,7 +76,7 @@ export default function ProductBacklogUpdate(props) {
         }
     }, [historiaUsuario]);
 
-    useEffect(() => {
+/*     useEffect(() => {
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         const stringURLUsuario = "http://localhost:8080/api/usuario/verInfoUsuario";
         Promise.all([
@@ -96,9 +97,22 @@ export default function ProductBacklogUpdate(props) {
           .catch(function (error) {
             console.log(error);
           });
-      }, []);    
+      }, []);     */
 
-
+      useEffect(() => {
+        const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
+        axios.get(stringURLHU)
+        .then(function (response) {
+          const huData = response.data.historiaUsuario;
+          console.log("ID HU:", idHU);
+          console.log("DATA:", huData);
+          setHistoriaUsuario(huData);
+          // Puedes manejar el estado de isLoading aquí
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }, []); 
       //const [name, setName] = useState(historiaUsuario?.descripcion || "");
 
 
@@ -235,10 +249,10 @@ export default function ProductBacklogUpdate(props) {
                         :(
                             <div className="iconLabel2"> 
                                 <p className="profilePic">
-                                    {datosUsuario?.nombres[0] + datosUsuario?.apellidos[0]}
+                                    {datosUsuario.split(' ')[0][0]+datosUsuario.split(' ')[1][0]}
                                 </p>
                                 <div className="label">
-                                    {`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`}
+                                    {`${datosUsuario}`}
                                 </div>
                             </div>
                         )
