@@ -52,14 +52,18 @@ export default function ProductBacklogUpdate(props) {
         if (historiaUsuario && historiaUsuario.hu) {
             setName(historiaUsuario.hu[0].descripcion);
             setSelectedNameEpic(historiaUsuario.hu[0].NombreEpica);
+            setSelectedValueEpic(historiaUsuario.hu[0].idEpica);
             setSelectedNamePriority(historiaUsuario.hu[0].NombrePrioridad);
+            setSelectedValuePriority(historiaUsuario.hu[0].idHistoriaPrioridad);
             setSelectedNameState(historiaUsuario.hu[0].DescripcionEstado);
+            setSelectedValueState(historiaUsuario.hu[0].idHistoriaEstado);
             setComo(historiaUsuario.hu[0].como);
             setQuiero(historiaUsuario.hu[0].quiero);
             setPara(historiaUsuario.hu[0].para);
             setDatosUsuario(historiaUsuario.hu[0].NombreUsuario)
             const criteriosAceptacionOriginales= historiaUsuario.criteriosAceptacion;
             const scenarioFieldsActualizados = criteriosAceptacionOriginales.map((criterio) => ({
+                idHistoriaCriterioDeAceptacion: criterio.idHistoriaCriterioDeAceptacion || '', // Puedes agregar un valor predeterminado en caso de que falte
                 scenario: criterio.escenario || '', // Puedes agregar un valor predeterminado en caso de que falte
                 dadoQue: criterio.dadoQue || '', // Puedes agregar un valor predeterminado en caso de que falte
                 cuando: criterio.cuando || '', // Puedes agregar un valor predeterminado en caso de que falte
@@ -68,6 +72,7 @@ export default function ProductBacklogUpdate(props) {
             setScenarioFields(scenarioFieldsActualizados);
             const requerimientosOriginales= historiaUsuario.requirimientos;
             const requirementFieldsActualizados = requerimientosOriginales.map((requerimiento) => ({
+                idHistoriaRequisito: requerimiento.idHistoriaRequisito || '', // Puedes agregar un valor predeterminado en caso de que falte
                 requirement: requerimiento.descripcion || '', // Puedes agregar un valor predeterminado en caso de que falte
             }));
             setRequirementFields(requirementFieldsActualizados);
@@ -122,6 +127,7 @@ export default function ProductBacklogUpdate(props) {
         setScenarioFields((prevFields) => [
             ...prevFields,
             {
+              idHistoriaCriterioDeAceptacion: '',
               scenario: '',
               dadoQue: '',
               cuando: '',
@@ -132,7 +138,7 @@ export default function ProductBacklogUpdate(props) {
 
     function addContainer1(){
         setQuantity1(quantity1+1);
-        setRequirementFields([...requirementFields, { requirement: '' }]);
+        setRequirementFields([...requirementFields, { idHistoriaRequisito: '',requirement: '' }]);
     }
 
     function removeContainer() {
@@ -180,11 +186,12 @@ export default function ProductBacklogUpdate(props) {
         });
     };
 
-    /*const onSubmit= ()=>{
+    const onSubmit= ()=>{
         const idEpic=selectedValueEpic;
         const idPriority=selectedValuePriority;
         const idState=selectedValueState;
-        const postData = {
+        const putData = {
+            idHistoriaUsuario: parseInt(idHU),
             idEpic: idEpic,
             idPriority: idPriority,
             idState: idState,
@@ -192,25 +199,23 @@ export default function ProductBacklogUpdate(props) {
             como: como,
             quiero: quiero,
             para: para,
-            currentDate: currentDate,
-            idUsuario: datosUsuario.idUsuario,
             scenarioData: scenarioFields,
-            requirementData: requirementFields,
+            requirementData: requirementFields
         };
-        console.log("Registrado correctamente");
-        console.log(postData);
-        axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario", postData)
+        console.log("Actualizado correctamente");
+        console.log(putData);
+        axios.put("http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario", putData)
         .then((response) => {
-          // Manejar la respuesta de la solicitud POST
+          // Manejar la respuesta de la solicitud PUT
           console.log("Respuesta del servidor:", response.data);
           console.log("Registro correcto")
           // Realizar acciones adicionales si es necesario
         })
         .catch((error) => {
-          // Manejar errores si la solicitud POST falla
-          console.error("Error al realizar la solicitud POST:", error);
+          // Manejar errores si la solicitud PUT falla
+          console.error("Error al realizar la solicitud PUT:", error);
         });
-    };*/
+    }; 
 
     return isLoading?(
         <div>Cargando datos...
@@ -288,18 +293,19 @@ export default function ProductBacklogUpdate(props) {
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
                     {scenarioFields.length===0? 
-                    <div className="flex justify-center items-center">
-                        <div>¡Puede agregar algunos criterios de aceptación!</div>
-                    </div> 
-                    :
-                    historiaUsuario &&  scenarioFields.map((criterio, index) => (
-                        <ContainerScenario2
-                            key={index}
-                            indice={index + 1}
-                            onUpdateScenario={onUpdateScenario}
-                            scenario={criterio}
-                        />
-                    ))}
+                        <div className="flex justify-center items-center">
+                            <div>¡Puede agregar algunos criterios de aceptación!</div>
+                        </div> 
+                        :
+                        historiaUsuario &&  scenarioFields.map((criterio, index) => (
+                            <ContainerScenario2
+                                key={index}
+                                indice={index + 1}
+                                onUpdateScenario={onUpdateScenario}
+                                scenario={criterio}
+                            />
+                        ))
+                    }
                     <div className="twoButtons">
                         <div className="buttonContainer">
                             <button onClick={addContainer} className="buttonTitle" type="button">Agregar</button>
