@@ -143,12 +143,13 @@ CREATE PROCEDURE INSERTAR_HISTORIA_DE_USUARIO(
 	IN descripcion VARCHAR(255),
     IN como VARCHAR(255),
     IN quiero VARCHAR(255),
-    IN para VARCHAR(255)
+    IN para VARCHAR(255),
+    IN _idUsuarioCreador INT
 )
 BEGIN
 	DECLARE _id_HU INT;
-	INSERT INTO HistoriaDeUsuario(idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,fechaCreacion,activo) 
-    VALUES(_idEpica,_idHistoriaPrioridad,_idHistoriaEstado,descripcion,como,quiero,para,NOW(),1);
+	INSERT INTO HistoriaDeUsuario(idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,fechaCreacion,activo,idUsuarioCreador) 
+    VALUES(_idEpica,_idHistoriaPrioridad,_idHistoriaEstado,descripcion,como,quiero,para,NOW(),1,_idUsuarioCreador);
     SET _id_HU = @@last_insert_id;
     SELECT _id_HU AS idHistoriaDeUsuario;
 END$
@@ -658,7 +659,7 @@ CREATE PROCEDURE LISTAR_HU_X_ID(
 )
 BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
-    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion
+    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuario, CONCAT(U.nombres, ' ', u.apellidos) AS "NombreUsuario"
     FROM HistoriaDeUsuario HU
     JOIN Epica E
     ON HU.idEpica = E.idEpica
@@ -666,6 +667,8 @@ BEGIN
     ON HU.idHistoriaEstado = HE.idHistoriaEstado
     JOIN HistoriaPrioridad HP
     ON HU.idHistoriaPrioridad = HP.idHistoriaPrioridad
+    JOIN Usuario U
+    ON HU.idUsuarioCreador = U.idUsuario
     WHERE HU.idHistoriaDeUsuario = _idHistoriaDeUsuario
     AND HU.activo=1;
 END$
@@ -775,3 +778,20 @@ BEGIN
 	SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico FROM UsuarioXRolXProyecto urp, Usuario u
     WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
 END
+
+
+DROP PROCEDURE MODIFICAR_FECHA_CRONOGRAMA;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_FECHA_CRONOGRAMA(
+    IN _idCronograma INT,
+	IN  _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    UPDATE Cronograma 
+    SET fechaInicio = _fechaInicio,
+        fechaFin = _fechaFin
+    WHERE idCronograma = _idCronograma;
+    SELECT _idCronograma AS idCronograma;
+END$
