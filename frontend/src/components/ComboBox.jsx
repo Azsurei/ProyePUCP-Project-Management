@@ -24,6 +24,7 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
   }, []);
   
   const initiaValue = data.find((element) => element[idParam] === initialID);
+  console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
   const [selected, setSelected] = useState(initiaValue ? initiaValue[nameDisplay] : "");
 
   const filteredData =

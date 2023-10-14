@@ -43,7 +43,6 @@ export default function ProductBacklogUpdate(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
-    const stringURLHU1 = `http://localhost:8080/api/proyecto/backlog/hu/5/listarHistoriaDeUsuario`;
 
     useEffect(() => {
         if (historiaUsuario && historiaUsuario.hu) {
@@ -65,8 +64,8 @@ export default function ProductBacklogUpdate(props) {
                 requirement: requerimiento.descripcion || '', // Puedes agregar un valor predeterminado en caso de que falte
             }));
             setRequirementFields(requirementFieldsActualizados);
-            console.log("XDDDDDDDDDD");
-            console.log(requirementFields);
+            console.log("Terminó de cargar los datos");
+            setIsLoading(false);
         }
     }, [historiaUsuario]);
 
@@ -86,7 +85,7 @@ export default function ProductBacklogUpdate(props) {
             
             setHistoriaUsuario(huData);
             setDatosUsuario(userData);
-            setIsLoading(false);
+            //setIsLoading(false);
           })
           .catch(function (error) {
             console.log(error);
@@ -193,7 +192,13 @@ export default function ProductBacklogUpdate(props) {
         });
     };*/
 
-    return(
+    return isLoading?(
+        <div>Cargando datos...
+            {console.log("Cargando")}
+        </div>
+        
+    ):
+        (
         <form  className="containerRegisterPB">
             <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog / Registrar elemento
@@ -203,15 +208,16 @@ export default function ProductBacklogUpdate(props) {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialValue={historiaUsuario?.idEpica}/>
+                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialID={historiaUsuario.hu[0].idEpica}/>
                     </div>
+                    {console.log("uwuwu",historiaUsuario.hu[0].idEpica)}
                     <div className="date containerCombo">
                         <IconLabel icon="/icons/datePB.svg" label="Fecha de creación" className="iconLabel"/>
                         <div className="dateOfCreation">{currentDate}</div>
                     </div>
                     <div className="priority containerCombo">
                         <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB" onSelect={handleSelectedValueChangePriority} idParam="idHistoriaPrioridad"/>
+                        {/* <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB" onSelect={handleSelectedValueChangePriority} idParam="idHistoriaPrioridad" initialID={historiaUsuario.hu[0].ididHistoriaPrioridad}/> */}
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel icon="/icons/createdByPB.svg" label="Creado por" className="iconLabel"/>
@@ -235,7 +241,7 @@ export default function ProductBacklogUpdate(props) {
                     </div>
                     <div className="state containerCombo">
                         <IconLabel icon="/icons/statePB.svg" label="Estado" className="iconLabel"/>
-                        <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
+                        {/* <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado" initialID={historiaUsuario.hu[0].idHistoriaEstado}/> */}
                     </div>
                 </div>
                 { historiaUsuario ? (
