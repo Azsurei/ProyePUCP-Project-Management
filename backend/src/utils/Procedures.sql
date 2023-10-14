@@ -657,10 +657,17 @@ CREATE PROCEDURE LISTAR_HU_X_ID(
     IN _idHistoriaDeUsuario INT
 )
 BEGIN
-	SELECT * 
-    FROM HistoriaDeUsuario 
-    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
-    AND activo=1;
+    SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
+    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion
+    FROM HistoriaDeUsuario HU
+    JOIN Epica E
+    ON HU.idEpica = E.idEpica
+    JOIN HistoriaEstado HE
+    ON HU.idHistoriaEstado = HE.idHistoriaEstado
+    JOIN HistoriaPrioridad HP
+    ON HU.idHistoriaPrioridad = HP.idHistoriaPrioridad
+    WHERE HU.idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND HU.activo=1;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_X_IDHU;
