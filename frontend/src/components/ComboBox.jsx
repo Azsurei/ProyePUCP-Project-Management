@@ -6,7 +6,7 @@ import axios from "axios";
 import { useEffect } from "react";
 
 export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam,initialID}) {
-  
+  const [selected, setSelected]= useState("");
   const [query, setQuery] = useState('')
   const [data, setData] = useState([]);
 
@@ -25,7 +25,9 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
   
   const initiaValue = data.find((element) => element[idParam] === initialID);
   console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
-  const [selected, setSelected] = useState(initiaValue ? initiaValue[nameDisplay] : "");
+  const [inputBase, setInputBase] = useState(initiaValue ? initiaValue[nameDisplay] : "");
+  console.log(inputBase);  
+  console.log("fin");
 
   const filteredData =
     query === ''
@@ -50,10 +52,11 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
             <Combobox.Input
               className={`w-64 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
               style={hasColor ? { backgroundColor: selected[colorProperty] } : {}}
-              displayValue={(object) => object[nameDisplay]}
+              displayValue={(object) => object[nameDisplay]} //lo que se muestra en el input
               onChange={(event) => {
                 setQuery(event.target.value);
               }}
+              value={inputBase}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
@@ -92,7 +95,7 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
-                          {object[nameDisplay]}
+                          {object[nameDisplay]} {/* //lo que se muestra en la lista */}
                         </span>
                         {selected ? (
                           <span
