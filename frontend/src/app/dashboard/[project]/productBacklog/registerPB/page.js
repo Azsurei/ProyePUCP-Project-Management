@@ -27,8 +27,8 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
-    const [quantity, setQuantity] = useState(1);
-    const [quantity1, setQuantity1] = useState(1);
+    const [quantity, setQuantity] = useState(0);
+    const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
     const [selectedValuePriority, setSelectedValuePriority] = useState(null);
     const [selectedValueState, setSelectedValueState] = useState(null);
@@ -215,7 +215,12 @@ export default function ProductBacklogRegister(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
-                    {Array.from({ length: quantity }, (_, index) => (
+                    {quantity===0? 
+                    <div className="flex justify-center items-center">
+                        <div>Puede agregar algunos criterios de aceptación!</div>
+                    </div> 
+                    :
+                    Array.from({ length: quantity }, (_, index) => (
                         <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
                     ))}
                     <div className="twoButtons">
@@ -229,7 +234,11 @@ export default function ProductBacklogRegister(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Requerimientos funcionales</h4>
                     </div>
-                    {Array.from({ length: quantity1 }, (_, index) => (
+                    {quantity1===0? 
+                    <div className="flex justify-center items-center">
+                        <div>Puede agregar algunos requerimientos!</div>
+                    </div> 
+                    :Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
                     ))}
                     <div className="twoButtons">
