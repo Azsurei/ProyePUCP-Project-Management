@@ -113,14 +113,14 @@ routerHistoriaDeUsuario.get("/listarHistoriasPrioridad",verifyToken,async(req,re
 routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de insertar una historia de usuario");
     //Insertar query aca
-    const {idEpic,idPriority,idState,name,como,quiero,para,requirementData,scenarioData} = req.body;
+    const {idEpic,idPriority,idState,name,como,quiero,para,idUsuarioCreador,requirementData,scenarioData} = req.body;
     console.log("Llegue a recibir solicitud de insertar una historia de usuario");
     const query = `
-        CALL INSERTAR_HISTORIA_DE_USUARIO(?,?,?,?,?,?,?);
+        CALL INSERTAR_HISTORIA_DE_USUARIO(?,?,?,?,?,?,?,?);
     `;
     try {
         const [results] = await connection.query(query,[idEpic, idPriority, idState, name, como, 
-            quiero, para]);
+            quiero, para,idUsuarioCreador]);
         const idHU = results[0][0].idHistoriaDeUsuario;
         console.log(`Se inserto la HU ${idHU}!`);
         // Iteracion Escenario
