@@ -80,13 +80,14 @@ POST http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario HTT
 Content-Type:  application/json
 
 {
-  "idEpic": 1,
+  "idEpic": 5,
   "idPriority": 1,
   "idState": 1,
-  "name": "Registro de Asistencia",
-  "como": "Jefe del Proyecto",
-  "quiero": "marcar el registro de asistencia de mis compañeros",
-  "para": "llevar un control de su asistencia",
+  "name": "Prueba",
+  "como": "Prueba",
+  "quiero": "Prueba",
+  "para": "Prueba",
+  "idUsuarioCreador": 83,
   "scenarioData": [
     {
       "scenario": "Escenario 1",
@@ -126,7 +127,7 @@ POST http://localhost:8080/api/proyecto/backlog/hu/listarHistoriaDeUsuario HTTP/
 Content-Type:  application/json
 
 {
-  "idHistoriaDeUsuario": "8"
+  "idHistoriaDeUsuario": "17"
 }
 
 ###
@@ -174,7 +175,7 @@ Content-Type:  application/json
 
 ###
 
-GET http://localhost:8080/api/proyecto/backlog/hu/8/listarHistoriaDeUsuario HTTP/1.1
+GET http://localhost:8080/api/proyecto/backlog/hu/17/listarHistoriaDeUsuario HTTP/1.1
 Content-Type:  application/json
 
 ### Insertar equipo (Backend) en proyecto

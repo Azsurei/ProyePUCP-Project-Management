@@ -118,6 +118,9 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         ]);
 
                         const idActa = results[0][0].idActa;
+                        const [detalleAC] = await connection.execute(`
+                            CALL INSERTAR_DETALLEAC_CREADO(${idActa});
+                            `);
                     }
 
                     if (herramienta.idHerramienta === 4) {
