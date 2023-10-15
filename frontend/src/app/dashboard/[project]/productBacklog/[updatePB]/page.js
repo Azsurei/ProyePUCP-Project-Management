@@ -46,7 +46,7 @@ export default function ProductBacklogUpdate(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
-    const [fieldsEmpty, setFieldsEmpty] = useState(true);
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
 
     useEffect(() => {
         if (historiaUsuario && historiaUsuario.hu) {
@@ -230,6 +230,15 @@ export default function ProductBacklogUpdate(props) {
             </div>
             <div className="backlogRegisterPB">
                 <div className="titleBacklogRegisterPB">Editar elemento en el Backlog</div>
+                { historiaUsuario ? (
+                <div className="description">
+                    <h4 style={{ fontWeight: 600 }}>Nombre de la historia de usuario<span className="text-red-500"> *</span></h4>
+                    <DescriptionRequeriment name={name} onNameChange={setName}/>
+                </div>
+                ) : (
+                    <div>Cargando datos...</div>
+                )}
+                <h4 style={{ fontWeight: 600 }}>Información de la historia de usuario<span className="text-red-500"> *</span></h4>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
@@ -269,16 +278,8 @@ export default function ProductBacklogUpdate(props) {
                         <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado" initialName={selectedNameState}/>
                     </div>
                 </div>
-                { historiaUsuario ? (
-          <div className="description">
-            <h4 style={{ fontWeight: 600 }}>Nombre de historia de usuario</h4>
-            <DescriptionRequeriment name={name} onNameChange={setName}/>
-          </div>
-        ) : (
-          <div>Cargando datos...</div>
-        )}
                 <div className="userDescription">
-                    <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
+                    <h4 style={{fontWeight: 600 }}>Descripción de usuario<span className="text-red-500"> *</span></h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -334,7 +335,7 @@ export default function ProductBacklogUpdate(props) {
                 </div>
 
                 <div className="containerBottom">
-                    {!fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos" className="iconLabel3"/>}
+                    {fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos" className="iconLabel3"/>}
                     {/* {!fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>} */}
                     <div className="twoButtons1">
                         <div className="buttonContainer">
@@ -358,11 +359,11 @@ export default function ProductBacklogUpdate(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if(name==="" || como==="" || quiero==="" || para===""){
-                                    setFieldsEmpty(false);
+                                if(name==="" || como==="" || quiero==="" || para==="" || selectedValueEpic===null || selectedValuePriority===null || selectedValueState===null){
+                                    setFieldsEmpty(true);
                                     return false;
                                 }else{
-                                    setFieldsEmpty(true);
+                                    setFieldsEmpty(false);
                                     return true;
                                 }
                             }}

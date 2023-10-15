@@ -41,7 +41,7 @@ export default function ProductBacklogRegister(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
-    const [fieldsEmpty, setFieldsEmpty] = useState(true);
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
 
     useEffect(() => {
         const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
@@ -158,6 +158,11 @@ export default function ProductBacklogRegister(props) {
             </div>
             <div className="backlogRegisterPB">
                 <div className="titleBacklogRegisterPB">Registrar nuevo elemento en el Backlog</div>
+                <div className="description">
+                    <h4 style={{fontWeight: 600 }}>Nombre de la historia de usuario<span className="text-red-500"> *</span></h4>
+                    <DescriptionRequeriment name={name} onNameChange={setName}/>
+                </div>
+                <h4 style={{ fontWeight: 600 }}>Información de la historia de usuario<span className="text-red-500"> *</span></h4>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
@@ -196,12 +201,8 @@ export default function ProductBacklogRegister(props) {
                         <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
                     </div>
                 </div>
-                <div className="description">
-                    <h4 style={{fontWeight: 600 }}>Nombre de historia de usuario</h4>
-                    <DescriptionRequeriment name={name} onNameChange={setName}/>
-                </div>
                 <div className="userDescription">
-                    <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
+                    <h4 style={{fontWeight: 600 }}>Descripción de usuario<span className="text-red-500"> *</span></h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -249,7 +250,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="containerBottom">
-                    {!fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>}
+                    {fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>}
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal 
@@ -272,11 +273,11 @@ export default function ProductBacklogRegister(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if(name==="" || como==="" || quiero==="" || para===""){
-                                    setFieldsEmpty(false);
+                                if(name==="" || como==="" || quiero==="" || para==="" || selectedValueEpic===null || selectedValuePriority===null || selectedValueState===null){
+                                    setFieldsEmpty(true);
                                     return false;
                                 }else{
-                                    setFieldsEmpty(true);
+                                    setFieldsEmpty(false);
                                     return true;
                                 }
                             }}
