@@ -29,7 +29,7 @@ import { set } from "date-fns";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url}) {
+export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEliminate}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
@@ -39,6 +39,7 @@ export default function PopUpEpica({ modal, toggle, url}) {
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
+
     const handleInsertEpic = () => {
         if (newEpicName.trim() === "") {
             setAddError("El nombre de la épica no puede estar vacío.");
@@ -49,7 +50,55 @@ export default function PopUpEpica({ modal, toggle, url}) {
             // Luego, limpia el campo de entrada y el mensaje de error.
             setNewEpicName("");
             setAddError("");
+            // const fetchData = async () => {
+            //     try {
+            //       const response = await axios.get(urlAdd);
+            //       const epicas = response.data["epicas"];
+            //       const filteredEpicas = filterValue
+            //           ? epicas.filter((epica) =>
+            //               epica.nombre.toLowerCase().includes(filterValue.toLowerCase())
+            //           )
+            //           : epicas;
+      
+            //       setListEpics(filteredEpicas); 
+            //       if (filteredEpicas.length === 0) {
+            //           setNoResults(true);
+            //       } else {
+            //           setNoResults(false);
+            //       }
+            //     } catch (error) {
+            //       console.error('Error al obtener datos:', error);
+            //     }
+            //   };
+          
+            //   fetchData();
         }
+    };
+
+    const EliminateEpic = (name) => {
+        console.log(name);
+        axios.post("urlEliminate", { data: { name } })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Eliminado correcto");
+                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+                refresh();
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
+    };
+    const [selectedEpic, setSelectedEpic] = useState(null);
+
+    const selectEpic = (epic) => {
+        setSelectedEpic(epic);
+        console.log(epic);
+    };
+
+    const deselectEpic = (epic) => {
+        setSelectedEpic(null);
     };
 
     useEffect(() => {
@@ -98,7 +147,7 @@ export default function PopUpEpica({ modal, toggle, url}) {
                             <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={handleInsertEpic}>
                                 Agregar Epica
                             </Button>
-                            <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnElimanteEpic">
+                            <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnElimanteEpic" >
                                 Eliminar
                             </Button>
                             
@@ -113,7 +162,11 @@ export default function PopUpEpica({ modal, toggle, url}) {
                 )}
                 <div className="container">
                     <div className="divEpics">
-                        <ListEpic lista={listEpics}></ListEpic>
+                        <UserCardsContext.Provider
+                            value={{ selectEpic, deselectEpic }}
+                        >
+                            <ListEpic lista={listEpics}></ListEpic>
+                        </UserCardsContext.Provider>
                     </div>
                     <div className="subcontainer">
                         

@@ -35,8 +35,6 @@ export default function ProductBacklog(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     
-
-    
     console.log(projectId);
     console.log(projectName);
     

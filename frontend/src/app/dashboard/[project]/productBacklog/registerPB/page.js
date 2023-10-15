@@ -43,7 +43,24 @@ export default function ProductBacklogRegister(props) {
     const [para, setPara] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [modal, setModal] = useState(false);
+    const [backlog, setBacklog] = useState(null);
 
+    useEffect(() => {
+        async function fetchData() {
+          try {
+            const stringURL =
+            "http://localhost:8080/api/proyecto/backlog/" +
+            projectId +
+            "/listarBacklog";
+            const response = await axios.get(stringURL);
+            setBacklog(response.data.backlog);
+          } catch (error) {
+            setError('Error al obtener el backlog: ' + error.message);
+          }
+        }
+    
+        fetchData();
+      }, []);
     const toggleModal = () => {
         setModal(!modal);
     };
@@ -308,6 +325,8 @@ export default function ProductBacklogRegister(props) {
                     modal = {modal} 
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
                     url = {stringURLEpics}
+                    backlog = {backlog}
+                    urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
                 />
                 )}
             </div> 
