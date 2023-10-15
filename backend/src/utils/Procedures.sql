@@ -825,21 +825,28 @@ BEGIN
     VALUES (_idActaConstitucion, "Elaborado por", 1);
 END$
 
+DROP PROCEDURE INSERTAR_DETALLEAC_INFO;
 DELIMITER $
-CREATE TRIGGER TRIGGER_INSERTAR_DETALLEAC_CREADO 
-AFTER INSERT ON ActaConstitucion
-FOR EACH ROW
+CREATE PROCEDURE INSERTAR_DETALLEAC_INFO(   
+	IN _idUsuario INT,
+    IN _idEquipo INT
+)
 BEGIN
-    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
-    VALUES 
-        (NEW.idActaConstitucion, 'Propósito y Justificación del Proyecto', 1),
-        (NEW.idActaConstitucion, 'Descripción del Proyecto y Entregables', 1),
-        (NEW.idActaConstitucion, 'Presupuesto Estimado', 1),
-        (NEW.idActaConstitucion, 'Premisas y Restricciones', 1),
-        (NEW.idActaConstitucion, 'Riesgos Iniciales de Alto Nivel', 1),
-        (NEW.idActaConstitucion, 'Requisitos de Aprobación del Proyecto', 1),
-        (NEW.idActaConstitucion, 'Requerimientos de Alto Nivel', 1),
-        (NEW.idActaConstitucion, 'Requerimientos del Producto', 1),
-        (NEW.idActaConstitucion, 'Requerimientos del Proyecto', 1),
-        (NEW.idActaConstitucion, 'Elaborado por', 1);
+	DECLARE _idUsuarioXEquipo INT;
+	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo) VALUES(_idUsuario,_idEquipo,1);		
+    SET _idUsuarioXEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
+END$
+
+DROP PROCEDURE ELIMINAR_EPICA_NOMBRE;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_EPICA_NOMBRE(
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+    UPDATE Epica 
+    SET activo = 0
+    WHERE nombre = _nombre;
+    SELECT _nombre AS nombre;
 END$

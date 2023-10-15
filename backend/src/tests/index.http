@@ -202,3 +202,13 @@ Content-Type:  application/json
 
 
 GET http://localhost:8080/api/proyecto/equipo/test/1 HTTP/1.1
+
+
+###
+
+DELETE http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica HTTP/1.1
+Content-Type:  application/json
+
+{
+  "nombreEpica": "Epica 1"
+}

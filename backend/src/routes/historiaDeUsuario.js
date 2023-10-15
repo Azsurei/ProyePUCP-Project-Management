@@ -238,4 +238,25 @@ routerHistoriaDeUsuario.put("/modificarHistoriaDeUsuario",verifyToken,async(req,
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
+
+routerHistoriaDeUsuario.delete("/eliminarEpica",async(req,res)=>{
+    console.log("Llegue a recibir solicitud de eliminar Epica");
+    //Insertar query aca
+    const {nombreEpica} = req.body;
+    const query = `
+        CALL ELIMINAR_EPICA_NOMBRE(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[nombreEpica]);
+        const nombre = results[0][0].nombre;
+        console.log(`Se elimino la épica ${nombre}!`);
+        res.status(200).json({
+            nombre,
+            message: "Épica eliminada exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al la épica:", error);
+        res.status(500).send("Error al eliminar: " + error.message);
+    }
+})
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;
