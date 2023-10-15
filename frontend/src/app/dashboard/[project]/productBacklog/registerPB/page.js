@@ -27,20 +27,21 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
-    const [quantity, setQuantity] = useState(1);
-    const [quantity1, setQuantity1] = useState(1);
+    const [quantity, setQuantity] = useState(0);
+    const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
     const [selectedValuePriority, setSelectedValuePriority] = useState(null);
     const [selectedValueState, setSelectedValueState] = useState(null);
     const currentDate=getCurrentDate();
-    const [scenarioFields, setScenarioFields] = useState([{ scenario: '', dadoQue: '', cuando: '', entonces: '' }]);
-    const [requirementFields, setRequirementFields] = useState([{ requirement: '' }]);
+    const [scenarioFields, setScenarioFields] = useState([]);
+    const [requirementFields, setRequirementFields] = useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState("");
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [modal, setModal] = useState(false);
 
     const toggleModal = () => {
@@ -144,8 +145,7 @@ export default function ProductBacklogRegister(props) {
             como: como,
             quiero: quiero,
             para: para,
-            currentDate: currentDate,
-            idUsuario: datosUsuario.idUsuario,
+            idUsuarioCreador: datosUsuario.idUsuario,
             scenarioData: scenarioFields,
             requirementData: requirementFields,
         };
@@ -171,6 +171,11 @@ export default function ProductBacklogRegister(props) {
             </div>
             <div className="backlogRegisterPB">
                 <div className="titleBacklogRegisterPB">Registrar nuevo elemento en el Backlog</div>
+                <div className="description">
+                    <h4 style={{fontWeight: 600 }}>Nombre de la historia de usuario<span className="text-red-500"> *</span></h4>
+                    <DescriptionRequeriment name={name} onNameChange={setName}/>
+                </div>
+                <h4 style={{ fontWeight: 600 }}>Información de la historia de usuario<span className="text-red-500"> *</span></h4>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel" />
@@ -214,12 +219,8 @@ export default function ProductBacklogRegister(props) {
                         <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado" property="historiasEstado" nameDisplay="descripcion" onSelect={handleSelectedValueChangeState} idParam="idHistoriaEstado"/>
                     </div>
                 </div>
-                <div className="description">
-                    <h4 style={{fontWeight: 600 }}>Nombre de historia de usuario</h4>
-                    <DescriptionRequeriment name={name} onNameChange={setName}/>
-                </div>
                 <div className="userDescription">
-                    <h4 style={{fontWeight: 600 }}>Descripción de usuario</h4>
+                    <h4 style={{fontWeight: 600 }}>Descripción de usuario<span className="text-red-500"> *</span></h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -233,7 +234,12 @@ export default function ProductBacklogRegister(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Criterios de aceptación</h4>
                     </div>
-                    {Array.from({ length: quantity }, (_, index) => (
+                    {quantity===0? 
+                    <div className="flex justify-center items-center">
+                        <div>¡Puede agregar algunos criterios de aceptación!</div>
+                    </div> 
+                    :
+                    Array.from({ length: quantity }, (_, index) => (
                         <ContainerScenario key={index} indice={index+1} onUpdateScenario={onUpdateScenario}/>
                     ))}
                     <div className="twoButtons">
@@ -247,7 +253,11 @@ export default function ProductBacklogRegister(props) {
                     <div className="titleButton">
                         <h4 style={{fontWeight: 600 }}>Requerimientos funcionales</h4>
                     </div>
-                    {Array.from({ length: quantity1 }, (_, index) => (
+                    {quantity1===0? 
+                    <div className="flex justify-center items-center">
+                        <div>¡Puede agregar algunos requerimientos!</div>
+                    </div> 
+                    :Array.from({ length: quantity1 }, (_, index) => (
                         <ContainerRequirement key={index} indice={index+1} updateRequirementField={updateRequirementField}/>
                     ))}
                     <div className="twoButtons">
@@ -257,31 +267,40 @@ export default function ProductBacklogRegister(props) {
                         </div>
                     </div>
                 </div>
-
-                <div className="twoButtons">
-                    <div className="buttonContainer">
-                        {/* Probablemente necesite usar router luego en vez de link */}
-                        <Modal 
-                        nameButton="Descartar" 
-                        textHeader="Descartar Registro" 
-                        textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
-                        colorButton="w-36 bg-slate-100 text-black"
-                        oneButton={false}
-                        secondAction={() => router.back()}
-                        textColor="red"
-                         />
-                        <Modal nameButton="Aceptar" 
-                        textHeader="Registrar Historia de Usuario" 
-                        textBody="¿Seguro que quiere registrar la historia de usuario?"
-                        colorButton="w-36 bg-blue-950 text-white"
-                        oneButton={false}
-                        secondAction={() => {
-                            onSubmit();
-                            router.back();
-                        }}
-                        textColor="blue"
-                         />
-                        {/* <button className="btnBacklogContinue" type="submit">Aceptar</button> */}
+                <div className="containerBottom">
+                    {fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>}
+                    <div className="twoButtons1">
+                        <div className="buttonContainer">
+                            <Modal 
+                            nameButton="Descartar" 
+                            textHeader="Descartar Registro" 
+                            textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                            colorButton="w-36 bg-slate-100 text-black"
+                            oneButton={false}
+                            secondAction={() => router.back()}
+                            textColor="red"
+                            />
+                            <Modal nameButton="Aceptar" 
+                            textHeader="Registrar Historia de Usuario" 
+                            textBody="¿Seguro que quiere registrar la historia de usuario?"
+                            colorButton="w-36 bg-blue-950 text-white"
+                            oneButton={false}
+                            secondAction={() => {
+                                onSubmit();
+                                router.back();
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if(name==="" || como==="" || quiero==="" || para==="" || selectedValueEpic===null || selectedValuePriority===null || selectedValueState===null){
+                                    setFieldsEmpty(true);
+                                    return false;
+                                }else{
+                                    setFieldsEmpty(false);
+                                    return true;
+                                }
+                            }}
+                            />
+                        </div>
                     </div>
                 </div>
                 {modal && (

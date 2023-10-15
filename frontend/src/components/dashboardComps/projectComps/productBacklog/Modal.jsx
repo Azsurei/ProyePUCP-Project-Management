@@ -17,13 +17,20 @@ export default function ModalComponent({
     colorButton,
     oneButton,
     secondAction,
-    textColor
+    textColor,
+    verifyFunction
 }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+    const verifyFirst = () => {
+        if(verifyFunction()){
+            onOpen();
+        }
+    }
+
     return (
         <>
-            <Button onPress={onOpen} className={`${colorButton}`}>
+            <Button onPress={verifyFirst} className={`${colorButton}`}>
                 {nameButton}
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

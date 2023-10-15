@@ -335,12 +335,11 @@ ENGINE = InnoDB;
 
 CREATE TABLE DetalleAC(
 	idDetalle INT AUTO_INCREMENT PRIMARY KEY,
-    idActa INT,
-    idTipoDatoAC INT,
+    idActaConstitucion INT,
+    nombre VARCHAR(500),
     detalle VARCHAR(500),
     activo TINYINT,
-    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa),
-    FOREIGN KEY (idTipoDatoAC) REFERENCES TipoDatoAC(idTipoDato)
+    FOREIGN KEY (idActaConstitucion) REFERENCES ActaConstitucion(idActaConstitucion)
 )
 ENGINE = InnoDB;
 

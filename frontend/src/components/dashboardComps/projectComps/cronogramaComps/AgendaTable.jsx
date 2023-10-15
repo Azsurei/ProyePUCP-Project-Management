@@ -82,6 +82,130 @@ const users = [
         email: "kristen.cooper@example.com",
         fechaFin: "27/03/2023"
     },
+    {
+        id: 6,
+        name: "Esforzarse en ProyePUCP",
+        //subequipo: "Backend team",
+        role: "subequipo",
+        team: "5 tareas posteriores",
+        status: "finalizado",
+        age: "24",
+        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
+        email: "kristen.cooper@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 7,
+        name: "Esforzarse en ProyePUCP",
+        //subequipo: "Backend team",
+        role: "subequipo",
+        team: "5 tareas posteriores",
+        status: "finalizado",
+        age: "24",
+        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
+        email: "kristen.cooper@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 8,
+        name: "Esforzarse en ProyePUCP",
+        //subequipo: "Backend team",
+        role: "subequipo",
+        team: "5 tareas posteriores",
+        status: "finalizado",
+        age: "24",
+        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
+        email: "kristen.cooper@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 9,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 10,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 11,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 12,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 13,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 14,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 15,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    },
+    {
+        id: 16,
+        name: "Sacar 20",
+        role: "Technical Lead",
+        team: "",
+        status: "No iniciado",
+        age: "25",
+        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        email: "zoey.lang@example.com",
+        fechaFin: "27/03/2023"
+    }
 ];
 
 const statusColorMap = {
@@ -128,7 +252,12 @@ export default function AgendaTable() {
                 );
             case "role":
                 if(cellValue==="subequipo"){
-                    return <p style={{fontSize:'1rem',fontWeight:'500'}}>Equipo Backend</p>
+                    return (
+                        <div style={{display:'flex',flexDirection:'row', alignItems:'center',gap:'.5rem'}}>
+                            <img src="/icons/sideBarDropDown_icons/sbdd14.svg" alt="" className="" />
+                            <p style={{fontSize:'1rem',fontWeight:'500'}}>Equipo Backend</p>
+                        </div>
+                    );
                 }
                 return (
                     // <div className="flex flex-col">
@@ -180,7 +309,7 @@ export default function AgendaTable() {
     }, []);
 
     return (
-        <Table aria-label="Example table with custom cells">
+        <Table aria-label="Example table with custom cells" className="mt-4">
             <TableHeader columns={columns}>
                 {(column) => (
                     <TableColumn

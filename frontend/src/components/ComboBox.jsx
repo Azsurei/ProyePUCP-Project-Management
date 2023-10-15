@@ -5,7 +5,8 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import axios from "axios";
 import { useEffect } from "react";
 
-export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam,initialID}) {
+
+export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam,initialName}) {
   const [selected, setSelected]= useState("");
   const [query, setQuery] = useState('')
   const [data, setData] = useState([]);
@@ -28,6 +29,7 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
     fetchData();
   }, []);
   
+  
   // const initiaValue = data.find((element) => element[idParam] === initialID);
   // console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
   // const [inputBase, setInputBase] = useState(initiaValue ? initiaValue[nameDisplay] : "");
@@ -44,14 +46,9 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
-        const idToObjectMap = {};
-        data.forEach((object) => {
-          idToObjectMap[object.id] = object;
-        });
-        
-        // Buscar el objeto correcto en función de initialID
-        const initialValueObject = dataWithId.find((item) => item.id === initialID);
-        const initialValue = initialValueObject ? initialValueObject[nameDisplay] : "";
+    setTimeout(() => {
+        // Cambia el estado o realiza alguna operación aquí si es necesario
+    }, 10000);
   return (
     <div>
       <Combobox value={selected} onChange={(selectedItem)=>{
@@ -69,7 +66,7 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
               onChange={(event) => {
                 setQuery(event.target.value);
               }}
-              //value={initialValue}
+              {...(selected === "" ? { value: initialName } : {})}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon

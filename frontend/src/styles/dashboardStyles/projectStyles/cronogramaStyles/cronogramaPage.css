@@ -1,0 +1,47 @@
+.cronogramaDiv{
+    width: 100%;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: row;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    position: relative;
+}
+
+
+.divLeft{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 2.5rem 2.5rem;
+
+    transform: translateX(0);
+    transition: transform 0.6s ease;
+
+    overflow-y: auto;
+}
+
+.divLeft.closed{
+    transform: translateX(-100%);
+    
+}
+
+.divRight{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding: 2.5rem 2.5rem;
+    
+    transform: translateX(100%);
+    transition: transform 0.6s ease;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.divRight.open{
+    transform: translateX(0);
+}
