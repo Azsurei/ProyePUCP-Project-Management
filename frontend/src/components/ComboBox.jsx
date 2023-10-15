@@ -9,11 +9,16 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
   const [selected, setSelected]= useState("");
   const [query, setQuery] = useState('')
   const [data, setData] = useState([]);
-
+  const [dataWithId, setDataWithId] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(urlApi);
+        const dataWithId = response.data[property].map((item, index) => ({
+          ...item,
+          id: index + 1, // Puedes ajustar esta lógica según tus necesidades
+        }));
+        setDataWithId(dataWithId);
         setData(response.data[property]); 
       } catch (error) {
         console.error('Error al obtener datos:', error);
@@ -23,11 +28,12 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
     fetchData();
   }, []);
   
-  const initiaValue = data.find((element) => element[idParam] === initialID);
-  console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
-  const [inputBase, setInputBase] = useState(initiaValue ? initiaValue[nameDisplay] : "");
-  console.log(inputBase);  
-  console.log("fin");
+  // const initiaValue = data.find((element) => element[idParam] === initialID);
+  // console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
+  // const [inputBase, setInputBase] = useState(initiaValue ? initiaValue[nameDisplay] : "");
+  // console.log(inputBase);  
+  // console.log("fin");
+  
 
   const filteredData =
     query === ''
@@ -38,7 +44,14 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
+        const idToObjectMap = {};
+        data.forEach((object) => {
+          idToObjectMap[object.id] = object;
+        });
         
+        // Buscar el objeto correcto en función de initialID
+        const initialValueObject = dataWithId.find((item) => item.id === initialID);
+        const initialValue = initialValueObject ? initialValueObject[nameDisplay] : "";
   return (
     <div>
       <Combobox value={selected} onChange={(selectedItem)=>{
@@ -56,7 +69,7 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
               onChange={(event) => {
                 setQuery(event.target.value);
               }}
-              value={inputBase}
+              //value={initialValue}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon

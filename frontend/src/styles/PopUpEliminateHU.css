@@ -4,10 +4,6 @@
     /* Otras propiedades de la fuente */
 }
 
-body.active-modal {
-    overflow-y: hidden;
-    
-}
 
 .btn-modal {
     padding: 10px 20px;
