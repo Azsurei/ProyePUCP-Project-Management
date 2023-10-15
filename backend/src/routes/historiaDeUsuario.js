@@ -239,7 +239,7 @@ routerHistoriaDeUsuario.put("/modificarHistoriaDeUsuario",verifyToken,async(req,
     }
 })
 
-routerHistoriaDeUsuario.delete("/eliminarEpica",async(req,res)=>{
+routerHistoriaDeUsuario.delete("/eliminarEpica",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de eliminar Epica");
     //Insertar query aca
     const {nombreEpica} = req.body;
