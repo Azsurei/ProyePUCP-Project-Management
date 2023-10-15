@@ -228,3 +228,14 @@ Content-Type:  application/json
 {
   "idProyecto": 45
 }
+
+###
+
+POST http://localhost:8080/api/proyecto/cronograma/crearCronograma HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProyecto": 45,
+  "fechaInicio": "2021-10-10",
+  "fechaFin": "2021-11-10"
+}

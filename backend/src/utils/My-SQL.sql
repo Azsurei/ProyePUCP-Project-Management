@@ -221,6 +221,9 @@ CREATE TABLE HerramientaXProyecto(
 )
 ENGINE = InnoDB;
 
+------------
+-- Cronograma
+------------
 
 CREATE TABLE Cronograma(
 	idCronograma INT AUTO_INCREMENT PRIMARY KEY,
@@ -233,6 +236,35 @@ CREATE TABLE Cronograma(
 	FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS Tarea;
+
+CREATE TABLE Tarea(
+	idTarea INT AUTO_INCREMENT PRIMARY KEY,
+    idSubGrupo INT,
+    sumillaTarea VARCHAR(255),
+    descripcion VARCHAR (500),
+    fechaInicio DATE,
+    fechaFin DATE,
+    cantSubTareas INT,
+    cantPosteriores INT,
+    tienePrecedencia TINYINT,
+    perteneceSubgrupo TINYINT,
+    horasPlaneadas TIME,
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS TareaEstado;
+
+CREATE TABLE TareaEstado(
+	idTareaEstado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    color VARCHAR(8),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
 
 
 ------------

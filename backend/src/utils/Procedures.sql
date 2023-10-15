@@ -433,13 +433,16 @@ BEGIN
 END$
 
 DROP PROCEDURE IF EXISTS INSERTAR_CRONOGRAMA;
+
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CRONOGRAMA(
-    IN _idProyecto INT
+    IN _idProyecto INT,
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE
 )
 BEGIN
 	DECLARE _idCronograma INT;
-	INSERT INTO Cronograma(idHerramienta,fechaInicio,fechaFin,activo,idProyecto) VALUES(4,NULL,NULL,1,_idProyecto);		#Luego, al darle click por primera vez al cronograma, se debera solicitar estos datos
+	INSERT INTO Cronograma(idHerramienta,fechaInicio,fechaFin,activo,idProyecto) VALUES(4,_fechaInicio,_fechaFin,1,_idProyecto);		#Luego, al darle click por primera vez al cronograma, se debera solicitar estos datos
     SET _idCronograma = @@last_insert_id;
     SELECT _idCronograma AS idCronograma;
 END$
