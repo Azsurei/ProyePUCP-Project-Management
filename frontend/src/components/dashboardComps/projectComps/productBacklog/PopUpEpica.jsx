@@ -54,11 +54,21 @@ export default function PopUpEpica({ modal, toggle, url}) {
 
     useEffect(() => {
         const fetchData = async () => {
-            setNoResults(true);
           try {
             const response = await axios.get(url);
-            setListEpics(response.data["epicas"]); 
-            setNoResults(false);
+            const epicas = response.data["epicas"];
+            const filteredEpicas = filterValue
+                ? epicas.filter((epica) =>
+                    epica.nombre.toLowerCase().includes(filterValue.toLowerCase())
+                )
+                : epicas;
+
+            setListEpics(filteredEpicas); 
+            if (filteredEpicas.length === 0) {
+                setNoResults(true);
+            } else {
+                setNoResults(false);
+            }
           } catch (error) {
             console.error('Error al obtener datos:', error);
           }
@@ -77,7 +87,7 @@ export default function PopUpEpica({ modal, toggle, url}) {
                         <Input
                             isClearable
                             className="w-full sm:max-w-[100%]"
-                            placeholder="Ingresa un miembro..."
+                            placeholder="Ingresa una epica..."
                             startContent={<SearchIcon />}
                             value={filterValue}
                             onValueChange={onSearchChange}
