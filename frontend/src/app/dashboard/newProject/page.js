@@ -325,6 +325,8 @@ export default function newProject() {
                     )}
                 </div>
                 <div className="buttonContainer">
+                    
+                    {estadoProgress !=3 && ( 
                     <button
                         className="myButton"
                         onClick={cambiarEstadoAdelante}
@@ -343,7 +345,7 @@ export default function newProject() {
                                 fill="#F0AE19"
                             />
                         </svg>
-                    </button>
+                    </button>)}
                 </div>
             </div>
 
