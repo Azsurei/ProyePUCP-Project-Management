@@ -228,3 +228,12 @@ Content-Type:  application/json
 {
   "idProyecto": 45
 }
+
+###
+POST http://localhost:8080/api/proyecto/backlog/hu/insertarEpica HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProductBacklog": 1,
+  "nombre": "Prueba"
+}
