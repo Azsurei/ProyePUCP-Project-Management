@@ -12,7 +12,7 @@ export default function DescriptionRequeriment({ name, onNameChange }) {
                 isInvalid={isTextTooLong}
                 errorMessage={
                     isTextTooLong
-                        ? "El texto debe ser como máximo de 400 caractéres."
+                        ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
                 variant={isTextTooLong ? "bordered" : "default"}

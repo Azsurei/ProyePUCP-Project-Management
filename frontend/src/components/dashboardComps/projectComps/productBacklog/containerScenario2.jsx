@@ -47,7 +47,7 @@ export default function ContainerScenario({
                     isInvalid={isTextTooLong1}
                     errorMessage={
                         isTextTooLong1
-                            ? "El texto debe ser como máximo de 400 caractéres."
+                            ? "El texto debe ser como máximo de 400 caracteres."
                             : ""
                     }
                     variant={isTextTooLong1 ? "bordered" : "default"}
@@ -70,7 +70,7 @@ export default function ContainerScenario({
                     isInvalid={isTextTooLong2}
                     errorMessage={
                         isTextTooLong2
-                            ? "El texto debe ser como máximo de 400 caractéres."
+                            ? "El texto debe ser como máximo de 400 caracteres."
                             : ""
                     }
                     variant={isTextTooLong2 ? "bordered" : "default"}
@@ -93,7 +93,7 @@ export default function ContainerScenario({
                     isInvalid={isTextTooLong3}
                     errorMessage={
                         isTextTooLong3
-                            ? "El texto debe ser como máximo de 400 caractéres."
+                            ? "El texto debe ser como máximo de 400 caracteres."
                             : ""
                     }
                     variant={isTextTooLong3 ? "bordered" : "default"}
@@ -116,7 +116,7 @@ export default function ContainerScenario({
                     isInvalid={isTextTooLong4}
                     errorMessage={
                         isTextTooLong4
-                            ? "El texto debe ser como máximo de 400 caractéres."
+                            ? "El texto debe ser como máximo de 400 caracteres."
                             : ""
                     }
                     variant={isTextTooLong4 ? "bordered" : "default"}

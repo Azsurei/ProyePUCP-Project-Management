@@ -33,7 +33,7 @@ export default function ContainerRequirement({
                     isInvalid={isTextTooLong1}
                     errorMessage={
                         isTextTooLong1
-                            ? "El texto debe ser como máximo de 400 caractéres."
+                            ? "El texto debe ser como máximo de 400 caracteres."
                             : ""
                     }
                     variant={isTextTooLong1 ? "bordered" : "default"}
