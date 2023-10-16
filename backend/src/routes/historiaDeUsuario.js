@@ -260,7 +260,7 @@ routerHistoriaDeUsuario.delete("/eliminarEpica",verifyToken,async(req,res)=>{
     }
 })
 
-routerHistoriaDeUsuario.post("/listarProductBacklog",async(req,res)=>{
+routerHistoriaDeUsuario.post("/listarProductBacklog",verifyToken,async(req,res)=>{
     const {idProyecto} = req.body;
     console.log(`Llegue a recibir solicitud listar backlog con id de Proyecto :  ${idProyecto}`);
     const query = `
@@ -279,7 +279,7 @@ routerHistoriaDeUsuario.post("/listarProductBacklog",async(req,res)=>{
     }
 })
 
-routerHistoriaDeUsuario.post("/insertarEpica",async(req,res)=>{
+routerHistoriaDeUsuario.post("/insertarEpica",verifyToken,async(req,res)=>{
     console.log("Llegue a recibir solicitud de insertar Epica");
     //Insertar query aca
     const {idProductBacklog, nombre} = req.body;

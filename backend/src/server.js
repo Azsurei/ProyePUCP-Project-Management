@@ -11,17 +11,6 @@ const port = 8080;
 //const routerProgramacion = require('../../routes/routerLogin').routerLoggin;
 //app.use('/api/loggin',routerProgramacion);
 
-
-// Configura la conexión a la base de datos MySQL
-/*const connection = mysql.createConnection({
-    host: "dbdibujitos.cvqtg3vqsovm.us-east-1.rds.amazonaws.com",
-    port: "3306",
-    user: "admin",
-    password: "LosDibujitos2023.2",
-    database: "dbdibujitos",
-});*/
-
-
 // Middleware para cookies
 app.use(cookieParser());
 
