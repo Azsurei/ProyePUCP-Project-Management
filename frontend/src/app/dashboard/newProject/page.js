@@ -372,12 +372,14 @@ export default function newProject() {
                 <ModalUser
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfSupervisores}
+                    excludedUsers={selectedSupervisoresList}
                 ></ModalUser>
             )}
             {modal2 && (
                 <ModalUser
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
+                    excludedUsers={selectedMiembrosList}
                 ></ModalUser>
             )}
 

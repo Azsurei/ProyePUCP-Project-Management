@@ -6,6 +6,8 @@ import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.c
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useState } from "react";
 import DateInput from "@/components/DateInput";
+import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
 
 export default function Cronograma(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -20,6 +22,10 @@ export default function Cronograma(props) {
     const [tareaName, setTareaName] = useState("");
     const [tareaDescripcion, setTareaDescripcion] = useState("");
     const [fechaInicio, setFechaInicio] = useState("");
+
+    const [selected, setSelected] = useState("users");
+
+    const [modal, setModal] = useState(false);
 
     return (
         <div className="cronogramaDiv">
@@ -38,6 +44,8 @@ export default function Cronograma(props) {
                 <AgendaTable></AgendaTable>
             </div>
 
+            {/*=========================================================================================*/}
+
             <div className={toggleNew ? "divRight open" : "divRight"}>
                 <HeaderWithButtonsSamePage
                     haveReturn={true}
@@ -53,39 +61,79 @@ export default function Cronograma(props) {
                     Nueva tarea
                 </HeaderWithButtonsSamePage>
 
-                <p>Nombre de tarea</p>
-                <NormalInput
-                    className={""}
-                    onChangeHandler={setTareaName}
-                    placeHolder={"Escriba aqui"}
-                    maxLength={70}
-                    rows={1}
-                ></NormalInput>
+                <div className="contNombre">
+                    <p>Nombre de tarea</p>
+                    <NormalInput
+                        className={""}
+                        onChangeHandler={setTareaName}
+                        placeHolder={"Escriba aqui"}
+                        maxLength={70}
+                        rows={1}
+                    ></NormalInput>
+                </div>
 
-                <p>Descripcion</p>
-                <NormalInput
-                    className={""}
-                    onChangeHandler={setTareaName}
-                    placeHolder={"Escriba aqui"}
-                    maxLength={70}
-                    rows={3}
-                ></NormalInput>
+                <div className="contDescripcion">
+                    <p>Descripcion</p>
+                    <NormalInput
+                        className={""}
+                        onChangeHandler={setTareaName}
+                        placeHolder={"Escriba aqui"}
+                        maxLength={70}
+                        rows={3}
+                    ></NormalInput>
+                </div>
 
-                <p>Fecha de inicio</p>
-                <DateInput
-                    className={""}
-                    onChangeHandler={setFechaInicio}
-                ></DateInput>
+                <div className="containerFechas">
+                    <div className="contFechaInicio">
+                        <p>Fecha de inicio</p>
+                        <DateInput
+                            className={""}
+                            onChangeHandler={setFechaInicio}
+                        ></DateInput>
+                    </div>
 
-                <p>Fecha de fin</p>
-                <DateInput
-                    className={""}
-                    onChangeHandler={setFechaInicio}
-                ></DateInput>
+                    <div className="contFechaFin">
+                        <p>Fecha de fin</p>
+                        <DateInput
+                            className={""}
+                            onChangeHandler={setFechaInicio}
+                        ></DateInput>
+                    </div>
+                </div>
 
-                <p>Asigna miembros a tu tarea!</p>
+                <p style={{ paddingTop: ".7rem" }}>
+                    Asigna miembros a tu tarea!
+                </p>
+                <div className="containerTab">
+                    <TabUserSelect
+                        selectedKey={selected}
+                        onSelectionChange={setSelected}
+                    ></TabUserSelect>
+                    <div
+                        className="btnToPopUp"
+                        onClick={()=>{setModal(true)}}
+                    >
+                        <p>
+                            {selected === "users"
+                                ? "Buscar un miembro"
+                                : "Buscar un subequipo"}
+                        </p>
+                        <img
+                            src="/icons/icon-searchBar.svg"
+                            alt=""
+                            className="icnSearch"
+                        />
+                    </div>
+                </div>
+                <div className="contUsers">
+                    <p className="noUsersMsg">
+                        {selected === "users"
+                            ? "No ha seleccionado ningun usuario"
+                            : "No ha seleccionado ningun subequipo"}
+                    </p>
+                </div>
 
-                <div className="twoButtons">
+                <div className="twoButtonsEnd">
                     <Modal
                         nameButton="Descartar"
                         textHeader="Descartar Registro"
@@ -103,9 +151,27 @@ export default function Cronograma(props) {
                         secondAction={() => {
                             console.log(tareaName);
                         }}
+                        verifyFunction={() => {
+                            if(false){
+                                //setFieldsEmpty(true);
+                                return false;
+                            }else{
+                                //setFieldsEmpty(false);
+                                return true;
+                            }
+                        }}
                     />
                 </div>
             </div>
+            {console.log('valor de modal es' + modal)}
+            {modal && (
+                <ModalUser
+                    handlerModalClose={() => {
+                        setModal(false);
+                    }}
+                    //handlerModalFinished={returnListOfMiembros}
+                ></ModalUser>
+            )}
         </div>
     );
 }

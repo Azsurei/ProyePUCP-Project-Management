@@ -9,12 +9,16 @@
 
     border-radius: 15px;
 
+    /* background-color: rgb(233, 233, 233); */
 
 }
 
 .UserCard{
 
     border-radius: 10px;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 5px;
     background: #FFF;
     
     width: 96%;
@@ -27,9 +31,7 @@
     border-radius: 10px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
 
-    border-style: solid;
-    border-color: transparent;
-    border-width: 5px;
+    
 
     display:flex;
     flex-direction: row;
@@ -42,11 +44,18 @@
 
 .UserCard.active{
     border-color: #9BFFB7;
+    /* background-color: #0085FF;
+    color: white;
+
+    .titleUserName{
+        color: white;
+    }
+
+    .titleUserEmail{
+        color: white;
+    } */
 }
 
-.UserCard.active:hover{
-    background: white;
-}
 
 .titleUserName{
     color: #172B4D;

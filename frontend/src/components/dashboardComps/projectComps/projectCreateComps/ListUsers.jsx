@@ -8,52 +8,60 @@ import { UserCardsContext } from "./modalUsers";
 axios.defaults.withCredentials = true;
 
 function CardUser(props) {
+    const [isSelected, setIsSelected] = useState(false);
 
-  const [isSelected, setIsSelected] = useState(false);
+    const { addUserList, removeUserInList } = useContext(UserCardsContext);
 
-	const {addUserList, removeUserInList } = useContext(UserCardsContext);
+    const handleSelectedOn = () => {
+        addUserList(props.usuarioObject);
+        setIsSelected(true);
+    };
 
-	const handleSelectedOn = () => {
-		addUserList(props.usuarioObject);
-		setIsSelected(true)
-	}
+    const handleSelectedOff = () => {
+        removeUserInList(props.usuarioObject);
+        setIsSelected(false);
+    };
 
-	const handleSelectedOff = () => {
-		removeUserInList(props.usuarioObject);
-		setIsSelected(false)
-	}
-  
-  return (
-    <li className={isSelected ? "UserCard active" : "UserCard"} onClick={isSelected ? handleSelectedOff: handleSelectedOn}>
-
-        <img className="imgageUserDefault" src="/images/userDefaultList.png"/>
-        <div style={{ marginTop: '12px',marginLeft:'15px' }}>
-          <p className="titleUserName">{props.name + ' ' + props.lastName}</p>
-          <p className="titleUserEmail">{props.email}</p>
-        </div>
-
-        
-    </li>
-  );
+    return (
+        <li
+            className={isSelected ? "UserCard active" : "UserCard"}
+            onClick={isSelected ? handleSelectedOff : handleSelectedOn}
+        >
+            <img
+                className="imgageUserDefault"
+                src="/images/userDefaultList.png"
+            />
+            <div style={{ marginTop: "12px", marginLeft: "15px" }}>
+                <p className="titleUserName">
+                    {props.name + " " + props.lastName}
+                </p>
+                <p className="titleUserEmail">{props.email}</p>
+            </div>
+        </li>
+    );
 }
 
 export default function ListUsers(props) {
-  const router = useRouter();
+    const router = useRouter();
 
-
-  return (
-    <ul className="ListUsersProject">
-      {props.lista.map((component) => {
+    if (props.lista.length === 0) {
         return (
-          <CardUser
-            key={component.id}
-            name={component.name}
-            lastName={component.lastName}
-            usuarioObject={component}
-            email={component.email}
-          ></CardUser>
+            <p className="noResultsMessage">No se encontraron resultados.</p>
         );
-      })}
-    </ul>
-  );
+    }
+    return (
+        <ul className="ListUsersProject">
+            {props.lista.map((component) => {
+                return (
+                    <CardUser
+                        key={component.id}
+                        name={component.name}
+                        lastName={component.lastName}
+                        usuarioObject={component}
+                        email={component.email}
+                    ></CardUser>
+                );
+            })}
+        </ul>
+    );
 }
