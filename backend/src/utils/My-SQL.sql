@@ -241,17 +241,19 @@ DROP TABLE IF EXISTS Tarea;
 
 CREATE TABLE Tarea(
 	idTarea INT AUTO_INCREMENT PRIMARY KEY,
+    idCronograma INT,
     idSubGrupo INT,
-    sumillaTarea VARCHAR(255),
+    idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
+    idTareaAnterior INT,
+	sumillaTarea VARCHAR(255),
     descripcion VARCHAR (500),
     fechaInicio DATE,
     fechaFin DATE,
     cantSubTareas INT,
     cantPosteriores INT,
-    tienePrecedencia TINYINT,
-    perteneceSubgrupo TINYINT,
     horasPlaneadas TIME,
-    activo TINYINT
+    activo TINYINT,
+	FOREIGN KEY (idCronograma) REFERENCES Cronograma(idCronograma)
 )
 ENGINE = InnoDB;
 
@@ -259,9 +261,11 @@ DROP TABLE IF EXISTS TareaEstado;
 
 CREATE TABLE TareaEstado(
 	idTareaEstado INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
     nombre VARCHAR(255),
     color VARCHAR(8),
-    activo TINYINT
+    activo TINYINT,
+	FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
 

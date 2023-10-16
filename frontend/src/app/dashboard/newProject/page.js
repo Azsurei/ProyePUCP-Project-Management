@@ -103,6 +103,18 @@ export default function newProject() {
     const [selectedSupervisoresList, setSelectedSupervisoresList] = useState([]);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
 
+
+    const [isProjectNameFilled, setIsProjectNameFilled] = useState(false); //para saber si el nombre del proyecto esta lleno
+
+    const handleChangeProjectName = (e) => {
+        const projectName = e.target.value;
+        setNameProject(projectName);
+        //handleChangesNombre(projectName);  // Llama a la función prop para actualizar el nombre
+        setIsProjectNameFilled(!!projectName);  // Actualiza el estado basado en si el campo está lleno
+        
+    };
+
+    
     const toggleModal1 = () => {
         setModal1(!modal1);
     };
@@ -136,12 +148,14 @@ export default function newProject() {
     const camibarEstadoAtras = () => {
         if (estadoProgress != 1) {
             setEstadoProgress(estadoProgress - 1);
+            
         }
     };
 
-    const handleChangeProjectName = (e) => {
+    /*const handleChangeProjectName = (e) => {
         setNameProject(e.target.value);
     };
+    */
 
     const handleChangesFechaInicio = (e) => {
         setFechaInicio(e.target.value);
@@ -325,9 +339,16 @@ export default function newProject() {
                     )}
                 </div>
                 <div className="buttonContainer">
+                    
+                    
                     <button
                         className="myButton"
                         onClick={cambiarEstadoAdelante}
+
+                        style={{
+                            opacity: estadoProgress !=3 && isProjectNameFilled ? "100" : "0",
+                            pointerEvents:estadoProgress !=3 && isProjectNameFilled ? 'auto' : 'none'
+                        }}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -370,12 +391,14 @@ export default function newProject() {
                 <ModalUser
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfSupervisores}
+                    excludedUsers={selectedSupervisoresList}
                 ></ModalUser>
             )}
             {modal2 && (
                 <ModalUser
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
+                    excludedUsers={selectedMiembrosList}
                 ></ModalUser>
             )}
 
