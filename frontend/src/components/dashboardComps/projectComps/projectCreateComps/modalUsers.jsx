@@ -79,11 +79,18 @@ export default function ModalUser({
                     };
                 });
 
+                console.log("se recibio el arreglo desde db: "+ usersArray);
+                console.log("arreglo a previo ya seleccionado: "+ excludedUsers);
+
                 //quitamos los usuarios que ya fueron seleccionados
-                const filteredUsers = usersArray.filter(id => !excludedUsers.includes(id));
+                const excludedUserIds = excludedUsers.map(user => user.id);
+                const filteredUsers = usersArray.filter(user => !excludedUserIds.includes(user.id));
 
                 setListUsers(filteredUsers);
                 console.log(filteredUsers);
+
+                //setListUsers(usersArray);
+                //console.log(usersArray);
             })
             .catch(function (error) {
                 console.log(error);
