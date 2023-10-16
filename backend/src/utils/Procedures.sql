@@ -433,6 +433,7 @@ BEGIN
 END$
 
 DROP PROCEDURE IF EXISTS INSERTAR_CRONOGRAMA;
+
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CRONOGRAMA(
     IN _idProyecto INT
@@ -443,6 +444,45 @@ BEGIN
     SET _idCronograma = @@last_insert_id;
     SELECT _idCronograma AS idCronograma;
 END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_CRONOGRAMA;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_CRONOGRAMA(
+    IN _idProyecto INT,
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    UPDATE Cronograma
+    SET 
+        fechaInicio = _fechaInicio,
+        fechaFin = _fechaFin
+    WHERE idProyecto = (SELECT p.idProyecto  FROM Proyecto p WHERE p.idProyecto = _idProyecto);
+END $
+SELECT *FROM Tarea;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_TAREA(
+	IN _idCronograma INT,
+    IN _idSubGrupo INT,
+    IN _idPadre INT,
+    IN _idTareaAnterior INT,
+    IN _sumillaTarea VARCHAR(255),
+    IN _descripcion VARCHAR(500),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _cantSubtareas INT,
+    IN _cantPosteriores INT,
+    IN _horasPlaneadas TIME
+)
+BEGIN
+	DECLARE _idTarea INT;
+	INSERT INTO Tarea(idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,activo) 
+    VALUES(_idCronograma,_idSubGrupo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,1);		
+    SET _idTarea = @@last_insert_id;
+    SELECT _idTarea AS idTarea;
+END $
+
+
 
 
 DROP PROCEDURE IF EXISTS INSERTAR_CATALOGO_RIESGO;
