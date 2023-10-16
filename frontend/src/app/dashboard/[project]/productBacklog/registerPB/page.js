@@ -27,6 +27,7 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
+    const stringURLBacklog= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -46,20 +47,19 @@ export default function ProductBacklogRegister(props) {
     const [backlog, setBacklog] = useState(null);
 
     useEffect(() => {
-        async function fetchData() {
+        const fetchBacklog = async () => {
           try {
-            const stringURL =
-            "http://localhost:8080/api/proyecto/backlog/" +
-            projectId +
-            "/listarBacklog";
-            const response = await axios.get(stringURL);
-            setBacklog(response.data.backlog);
+            const response = await axios.get(stringURLBacklog);
+            if (response.status === 200) {
+              setBacklog(response.data.backlog);
+              console.log("Se obtuvo el backlog correctamente", response.data.backlog);
+            }
           } catch (error) {
             setError('Error al obtener el backlog: ' + error.message);
           }
-        }
+        };
     
-        fetchData();
+        fetchBacklog();
       }, []);
     const toggleModal = () => {
         setModal(!modal);

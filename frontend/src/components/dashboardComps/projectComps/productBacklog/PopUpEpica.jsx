@@ -35,7 +35,9 @@ export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEli
     const [noResults, setNoResults] = useState(false);
     const [newEpicName, setNewEpicName] = useState("");
     const [addError, setAddError] = useState("");
-
+    const [eliminateError, setEliminateError] = useState("");
+    const [noEpic, setNoEpic] = useState("");
+    const [isSelected, setIsSelected] = useState(false);
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
@@ -76,29 +78,32 @@ export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEli
     };
 
     const EliminateEpic = (name) => {
-        console.log(name);
-        axios.post("urlEliminate", { data: { name } })
-            .then((response) => {
-                // Manejar la respuesta de la solicitud POST
-                console.log("Respuesta del servidor:", response.data);
-                console.log("Eliminado correcto");
-                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
-                refresh();
-            })
-            .catch((error) => {
-                // Manejar errores si la solicitud POST falla
-                console.error("Error al realizar la solicitud POST:", error);
-            });
+        // console.log(name);
+        // axios.post("urlEliminate", { data: { name } })
+        //     .then((response) => {
+        //         // Manejar la respuesta de la solicitud POST
+        //         console.log("Respuesta del servidor:", response.data);
+        //         console.log("Eliminado correcto");
+        //         // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+        //         refresh();
+        //     })
+        //     .catch((error) => {
+        //         // Manejar errores si la solicitud POST falla
+        //         console.error("Error al realizar la solicitud POST:", error);
+        //     });
     };
     const [selectedEpic, setSelectedEpic] = useState(null);
 
     const selectEpic = (epic) => {
         setSelectedEpic(epic);
+        setIsSelected(true);
+        setNoEpic("");
         console.log(epic);
     };
 
     const deselectEpic = (epic) => {
         setSelectedEpic(null);
+        setIsSelected(false);
     };
 
     useEffect(() => {
@@ -147,7 +152,9 @@ export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEli
                             <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={handleInsertEpic}>
                                 Agregar Epica
                             </Button>
-                            <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnElimanteEpic" >
+                            <Button color="danger"  onClick={() => {
+                                                    isSelected ? setEliminateError("Seguro desea eliminar la epica?") : setNoEpic("Falta seleccionar una epica");
+                                                    }} endContent={<PlusIcon />} className="btnElimanteEpic" >
                                 Eliminar
                             </Button>
                             
@@ -182,9 +189,27 @@ export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEli
                             }}
                         ></input>
                         {addError && <p className="error-message">{addError}</p>}
-                    </div>
-                    
-                    
+                        {noEpic && <p className="error-message">{noEpic}</p>}
+                        {eliminateError ? (
+                            <div>
+                                <p className="error-message">{eliminateError}</p>
+                                <div className="endButtons">
+                                    <button
+                                        className="buttonTwoUser"
+                                        onClick={() => setEliminateError("")}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        className="buttonOneUser"
+                                        onClick={() => EliminateEpic(selectedEpic.nombre)}
+                                    >
+                                        Confirmar
+                                     </button>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>  
                 </div>
                 <div >
                         <button
