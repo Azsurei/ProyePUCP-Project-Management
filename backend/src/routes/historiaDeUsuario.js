@@ -288,10 +288,10 @@ routerHistoriaDeUsuario.post("/insertarEpica",verifyToken,async(req,res)=>{
     `;
     try {
         const [results] = await connection.query(query,[idProductBacklog,nombre]);
-        const nombreEpica = results[0][0].nombre;
-        console.log(`Se insertó la épica ${nombreEpica}!`);
+        const idEpica = results[0][0].idEpica;
+        console.log(`Se insertó la épica ${idEpica}!`);
         res.status(200).json({
-            nombreEpica,
+            idEpica,
             message: "Épica insertada exitosamente",
         });
     } catch (error) {
@@ -299,4 +299,89 @@ routerHistoriaDeUsuario.post("/insertarEpica",verifyToken,async(req,res)=>{
         res.status(500).send("Error al insertar: " + error.message);
     }
 })
+
+routerHistoriaDeUsuario.post("/insertarHUCriterioAceptacion",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de insertar Criterio Aceptacion");
+    //Insertar query aca
+    const {idHistoriaDeUsuario, dadoQue, cuando, entonces, escenario} = req.body;
+    const query = `
+        CALL INSERTAR_HU_CRITERIO_ACEPTACION(?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario,dadoQue,cuando,entonces,escenario]);
+        const idHistoriaCriterioDeAceptacion = results[0][0].idHistoriaCriterioDeAceptacion;
+        console.log(`Se insertó el criterio ${idHistoriaCriterioDeAceptacion}!`);
+        res.status(200).json({
+            idHistoriaCriterioDeAceptacion,
+            message: "Criterio Aceptacion insertada exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al insertar Criterio Aceptacion:", error);
+        res.status(500).send("Error al insertar: " + error.message);
+    }
+})
+
+routerHistoriaDeUsuario.delete("/eliminarHUCriterioAceptacion",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de eliminar Criterio Aceptacion");
+    //Insertar query aca
+    const {idHistoriaCriterioDeAceptacion} = req.body;
+    const query = `
+        CALL ELIMINAR_HU_CRITERIO_ACEPTACION(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaCriterioDeAceptacion]);
+        const id = results[0][0].idHistoriaCriterioDeAceptacion;
+        console.log(`Se elimino el Criterio Aceptacion ${id}!`);
+        res.status(200).json({
+            id,
+            message: "Criterio Aceptacion eliminada exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al la Criterio Aceptacion:", error);
+        res.status(500).send("Error al eliminar: " + error.message);
+    }
+})
+
+routerHistoriaDeUsuario.post("/insertarHURequisito",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de insertar Requisito");
+    //Insertar query aca
+    const {idHistoriaDeUsuario, descripcion} = req.body;
+    const query = `
+        CALL INSERTAR_HU_REQUISITO(?,?;
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaDeUsuario,descripcion]);
+        const idHistoriaRequisito = results[0][0].idHistoriaRequisito;
+        console.log(`Se insertó el Requisito ${idHistoriaRequisito}!`);
+        res.status(200).json({
+            idHistoriaRequisito,
+            message: "Requisito insertada exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al insertar Requisito:", error);
+        res.status(500).send("Error al insertar: " + error.message);
+    }
+})
+
+routerHistoriaDeUsuario.delete("/eliminarHURequisito",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de eliminar Requisito");
+    //Insertar query aca
+    const {idHistoriaRequisito} = req.body;
+    const query = `
+        CALL ELIMINAR_HU_REQUISITO(?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHistoriaRequisito]);
+        const id = results[0][0].idHistoriaRequisito;
+        console.log(`Se elimino el Requisito ${id}!`);
+        res.status(200).json({
+            id,
+            message: "Requisito eliminada exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al Requisito:", error);
+        res.status(500).send("Error al eliminar: " + error.message);
+    }
+})
+
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;

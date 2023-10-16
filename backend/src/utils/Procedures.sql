@@ -890,3 +890,60 @@ BEGIN
     WHERE nombre = _nombre;
     SELECT _nombre AS nombre;
 END$
+
+DROP PROCEDURE INSERTAR_HU_CRITERIO_ACEPTACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HU_CRITERIO_ACEPTACION(
+	IN  _idHistoriaDeUsuario INT,
+    IN _dadoQue VARCHAR(255),
+    IN _cuando VARCHAR(255),
+    IN _entonces VARCHAR(255),
+    IN _escenario VARCHAR(255)
+)
+BEGIN
+	DECLARE _idHistoriaCriterioDeAceptacion INT;
+	INSERT INTO HistoriaCriterioDeAceptacion(idHistoriaDeUsuario,activo,dadoQue,cuando,entonces,escenario) 
+    VALUES(_idHistoriaDeUsuario,1,_dadoQue,_cuando,_entonces,_escenario);
+    SET _idHistoriaCriterioDeAceptacion = @@last_insert_id;
+    SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
+END$
+
+DROP PROCEDURE ELIMINAR_HU_CRITERIO_ACEPTACION;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HU_CRITERIO_ACEPTACION(
+    IN _idHistoriaCriterioDeAceptacion INT
+)
+BEGIN
+    UPDATE HistoriaCriterioDeAceptacion 
+    SET activo = 0
+    WHERE idHistoriaCriterioDeAceptacion = _idHistoriaCriterioDeAceptacion;
+    SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
+END$
+
+DROP PROCEDURE INSERTAR_HU_REQUISITO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HU_REQUISITO(
+	IN  _idHistoriaDeUsuario INT,
+    IN _descripcion VARCHAR(255)
+)
+BEGIN
+	DECLARE _idHistoriaRequisito INT;
+	INSERT INTO HistoriaRequisito(idHistoriaDeUsuario,descripcion,activo) 
+    VALUES(_idHistoriaDeUsuario,_descripcion,1);
+    SET _idHistoriaRequisito = @@last_insert_id;
+    SELECT _idHistoriaRequisito AS idHistoriaRequisito;
+END$
+
+DROP PROCEDURE ELIMINAR_HU_REQUISITO;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HU_REQUISITO(
+    IN _idHistoriaRequisito INT
+)
+BEGIN
+    UPDATE HistoriaRequisito 
+    SET activo = 0
+    WHERE idHistoriaRequisito = _idHistoriaRequisito;
+    SELECT _idHistoriaRequisito AS idHistoriaRequisito;
+END$
