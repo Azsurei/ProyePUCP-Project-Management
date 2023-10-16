@@ -250,7 +250,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="containerBottom">
-                    {fieldsEmpty && <div className="text-right justify-center items-center text-red-500 font-bold">Faltan completar campos</div>}
+                {fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos" className="iconLabel3"/>}
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal 
@@ -273,7 +273,12 @@ export default function ProductBacklogRegister(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if(name==="" || como==="" || quiero==="" || para==="" || selectedValueEpic===null || selectedValuePriority===null || selectedValueState===null){
+                                if(name==="" || como==="" || quiero==="" || para==="" || 
+                                selectedValueEpic===null || selectedValuePriority===null || 
+                                selectedValueState===null || 
+                                requirementFields.some((requirement) => requirement.requirement === "" ||
+                                scenarioFields.some((scenario) => scenario.scenario === "" ||
+                                scenario.dadoQue === "" || scenario.cuando === "" || scenario.entonces === ""))){
                                     setFieldsEmpty(true);
                                     return false;
                                 }else{

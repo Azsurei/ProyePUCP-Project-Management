@@ -38,7 +38,9 @@ export default function ProductBacklogUpdate(props) {
     const [selectedNameState, setSelectedNameState] = useState("");
     const currentDate=getCurrentDate();
     const [scenarioFields, setScenarioFields] = useState([]);
+    const [scenarioFieldsOriginales, setScenarioFieldsOriginales] = useState([]);
     const [requirementFields, setRequirementFields] = useState([]);
+    const [requirementFieldsOriginales, setRequirementFieldsOriginales] = useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
     const [historiaUsuario, setHistoriaUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -70,12 +72,14 @@ export default function ProductBacklogUpdate(props) {
                 entonces: criterio.entonces || '' // Puedes agregar un valor predeterminado en caso de que falte
             }));
             setScenarioFields(scenarioFieldsActualizados);
+            setScenarioFieldsOriginales(scenarioFieldsActualizados);
             const requerimientosOriginales= historiaUsuario.requirimientos;
             const requirementFieldsActualizados = requerimientosOriginales.map((requerimiento) => ({
                 idHistoriaRequisito: requerimiento.idHistoriaRequisito || '', // Puedes agregar un valor predeterminado en caso de que falte
                 requirement: requerimiento.descripcion || '', // Puedes agregar un valor predeterminado en caso de que falte
             }));
             setRequirementFields(requirementFieldsActualizados);
+            setRequirementFieldsOriginales(requirementFieldsActualizados);
             console.log("Terminó de cargar los datos");
             setIsLoading(false);
         }
@@ -187,6 +191,14 @@ export default function ProductBacklogUpdate(props) {
     };
 
     const onSubmit= ()=>{
+        const scenarioFieldsOriginalesData=scenarioFieldsOriginales;
+        const requirementFieldsOriginalesData=requirementFieldsOriginales;
+        const addedScenarios = [];
+        const modifiedScenarios = [];
+        const deletedScenarios = [];
+        const addedRequirements = [];
+        const modifiedRequirements = [];
+        const deletedRequirements = [];
         const idEpic=selectedValueEpic;
         const idPriority=selectedValuePriority;
         const idState=selectedValueState;
@@ -359,7 +371,12 @@ export default function ProductBacklogUpdate(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if(name==="" || como==="" || quiero==="" || para==="" || selectedValueEpic===null || selectedValuePriority===null || selectedValueState===null){
+                                if(name==="" || como==="" || quiero==="" || para==="" || 
+                                selectedValueEpic===null || selectedValuePriority===null || 
+                                selectedValueState===null || 
+                                requirementFields.some((requirement) => requirement.requirement === "" ||
+                                scenarioFields.some((scenario) => scenario.scenario === "" ||
+                                scenario.dadoQue === "" || scenario.cuando === "" || scenario.entonces === ""))){
                                     setFieldsEmpty(true);
                                     return false;
                                 }else{
