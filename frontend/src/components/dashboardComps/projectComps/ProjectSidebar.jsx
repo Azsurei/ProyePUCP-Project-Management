@@ -331,7 +331,7 @@ function ProjectSidebar(props) {
             position: 10,
             optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
             optName: "Matriz de comunicaciones",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/matrizDeComunicaciones`,
         },
     ];
 
