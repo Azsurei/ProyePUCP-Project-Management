@@ -1,10 +1,11 @@
 .containerDescription{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     border-radius: 10px;
     border: 1px solid #DFDFDF;
-    padding: 1rem;
+    background-color: #f4f4f5;
+    padding-left: 1rem;
+    padding-right: 1rem;
     margin-top: 3%;
 }
 
@@ -19,7 +20,7 @@
     font-size: 16px;
     border: none; 
     outline: none;
-    background-color: #fffdfd;
+    background-color: #f4f4f5;
     width: 100%;
 }
 

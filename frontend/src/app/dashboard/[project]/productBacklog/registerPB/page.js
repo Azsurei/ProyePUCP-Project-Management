@@ -42,6 +42,7 @@ export default function ProductBacklogRegister(props) {
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
+    const [fieldsExcessive, setFieldsExcessive] = useState(false);
 
     useEffect(() => {
         const stringURLUsuario="http://localhost:8080/api/usuario/verInfoUsuario";
@@ -62,6 +63,7 @@ export default function ProductBacklogRegister(props) {
         setScenarioFields((prevFields) => [
             ...prevFields,
             {
+              idHistoriaCriterioDeAceptacion: `a${quantity}`,
               scenario: '',
               dadoQue: '',
               cuando: '',
@@ -72,7 +74,12 @@ export default function ProductBacklogRegister(props) {
 
     function addContainer1(){
         setQuantity1(quantity1+1);
-        setRequirementFields([...requirementFields, { requirement: '' }]);
+        setRequirementFields([...requirementFields, 
+            {   
+                idHistoriaRequisito: `a${quantity1}`,
+                requirement: '' 
+            }
+        ]);
     }
 
     function removeContainer() {
@@ -150,6 +157,22 @@ export default function ProductBacklogRegister(props) {
           console.error("Error al realizar la solicitud POST:", error);
         });
     };
+
+    function verifyFieldsEmpty(){
+        return name==="" || como==="" || quiero==="" || para==="" || 
+                                    selectedValueEpic===null || selectedValuePriority===null || 
+                                    selectedValueState===null || 
+                                    requirementFields.some((requirement) => requirement.requirement === "") ||
+                                    scenarioFields.some((scenario) => scenario.scenario === "" ||
+                                    scenario.dadoQue === "" || scenario.cuando === "" || scenario.entonces === "");
+    }
+
+    function verifyFieldsExcessive(){
+        return name.length>400 || como.length>400 || quiero.length>400 || para.length>400 ||
+        requirementFields.some((requirement) => requirement.requirement.length>400)  ||
+        scenarioFields.some((scenario) => scenario.scenario.length>400 ||
+        scenario.dadoQue.length>400 || scenario.cuando.length>400 || scenario.entonces.length>400);
+    }
 
     return(
         <form onSubmit={onSubmit} className="containerRegisterPB">
@@ -250,7 +273,9 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="containerBottom">
-                {fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos" className="iconLabel3"/>}
+                {fieldsEmpty && !fieldsExcessive && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos" className="iconLabel3"/>}
+                {fieldsExcessive && !fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Se excedió el límite de caracteres" className="iconLabel3"/>}
+                {fieldsExcessive && fieldsEmpty && <IconLabel icon="/icons/alert.svg" label="Faltan completar campos y se excedió el límite de caracteres" className="iconLabel3"/>}
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal 
@@ -273,15 +298,23 @@ export default function ProductBacklogRegister(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if(name==="" || como==="" || quiero==="" || para==="" || 
-                                selectedValueEpic===null || selectedValuePriority===null || 
-                                selectedValueState===null || 
-                                requirementFields.some((requirement) => requirement.requirement === "" ||
-                                scenarioFields.some((scenario) => scenario.scenario === "" ||
-                                scenario.dadoQue === "" || scenario.cuando === "" || scenario.entonces === ""))){
-                                    setFieldsEmpty(true);
+                                //FALTA HACER LA VERIFICACIÓN DE LOS CAMPOS
+                                if(verifyFieldsEmpty() && verifyFieldsExcessive()){
+                                        setFieldsEmpty(true);
+                                        setFieldsExcessive(true);
+                                        return false;
+                                }else if(verifyFieldsEmpty() && !verifyFieldsExcessive()){
+                                        setFieldsEmpty(true);
+                                        setFieldsExcessive(false);
+                                        return false;
+                                }
+                                else if(verifyFieldsExcessive() && !verifyFieldsEmpty()){
+                                    setFieldsExcessive(true);
+                                    setFieldsEmpty(false);
                                     return false;
-                                }else{
+                                }    
+                                else{
+                                    setFieldsExcessive(false);
                                     setFieldsEmpty(false);
                                     return true;
                                 }
