@@ -40,8 +40,84 @@
 
     display: flex;
     flex-direction: column;
+    gap: .6rem;
+    font-family: 'Montserrat';
 }
 
 .divRight.open{
     transform: translateX(0);
+}
+
+.contNombre{
+    margin-bottom: 0px;
+}
+
+.contDescripcion{
+    margin: 0 0;
+}
+
+.containerFechas{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.contFechaInicio{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.contFechaFin{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.containerTab{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.btnToPopUp{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(9, 30, 66, 0.06);
+    border-radius: 3px;
+    font-weight: 500;
+
+    padding: .2rem .9rem;
+
+    gap: .3rem;
+
+    cursor: pointer;
+    font-size: .85rem;
+    height: 27px;
+}
+
+.contUsers{
+    background-color: rgb(243, 242, 242);
+    height: 70px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.noUsersMsg{
+    color: rgb(179, 179, 179);
+}
+
+
+
+.twoButtonsEnd{
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
 }

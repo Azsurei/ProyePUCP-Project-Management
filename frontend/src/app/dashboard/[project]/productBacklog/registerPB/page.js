@@ -44,7 +44,7 @@ export default function ProductBacklogRegister(props) {
     const [para, setPara] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [modal, setModal] = useState(false);
-    const [backlog, setBacklog] = useState(null);
+    const [backlog, setBacklog] = useState([]);
 
     useEffect(() => {
         const fetchBacklog = async () => {
@@ -325,7 +325,7 @@ export default function ProductBacklogRegister(props) {
                     modal = {modal} 
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
                     url = {stringURLEpics}
-                    backlog = {backlog}
+                    backlogID = {backlog[0].idProductBacklog}
                     urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
                 />
                 )}

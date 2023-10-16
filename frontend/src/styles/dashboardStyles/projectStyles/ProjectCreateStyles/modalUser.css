@@ -55,6 +55,15 @@
     width: 100%;
 }
 
+.modalUser .botonBuscar{
+    background-color: #172B4D;
+    border-radius: 5px;
+    padding: .2rem .9rem;
+    color: var(--color-text-inverse, #FFF);
+    font-family: Montserrat;
+    font-weight: 500;
+}
+
 .buttonOneUser{
     border-radius: 5px;
     background-color: #172B4D;
@@ -107,10 +116,14 @@
 }
 .divUsers{
     width: 100%;
+    height: 100%;
     overflow-y: auto;
     padding-right: 4px;
     padding-bottom: 10px;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 

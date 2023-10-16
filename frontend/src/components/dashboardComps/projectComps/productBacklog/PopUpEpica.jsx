@@ -29,7 +29,7 @@ import { set } from "date-fns";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEliminate}) {
+export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlEliminate}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
@@ -52,45 +52,42 @@ export default function PopUpEpica({ modal, toggle, url, backlog, urlAdd, urlEli
             // Luego, limpia el campo de entrada y el mensaje de error.
             setNewEpicName("");
             setAddError("");
-            // const fetchData = async () => {
-            //     try {
-            //       const response = await axios.get(urlAdd);
-            //       const epicas = response.data["epicas"];
-            //       const filteredEpicas = filterValue
-            //           ? epicas.filter((epica) =>
-            //               epica.nombre.toLowerCase().includes(filterValue.toLowerCase())
-            //           )
-            //           : epicas;
-      
-            //       setListEpics(filteredEpicas); 
-            //       if (filteredEpicas.length === 0) {
-            //           setNoResults(true);
-            //       } else {
-            //           setNoResults(false);
-            //       }
-            //     } catch (error) {
-            //       console.error('Error al obtener datos:', error);
-            //     }
-            //   };
-          
-            //   fetchData();
+            const data = {
+                idProductBacklog: backlogID, // Reemplaza con el valor deseado
+                nombre: newEpicName // Reemplaza con el valor deseado
+              };
+              
+             
+                axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarEpica", data)
+                .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Registro correcto de la epica")
+                // Realizar acciones adicionales si es necesario
+                })
+                .catch((error) => {
+                 // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+                });
+                setFilterValue("");
         }
     };
 
     const EliminateEpic = (name) => {
-        // console.log(name);
-        // axios.post("urlEliminate", { data: { name } })
-        //     .then((response) => {
-        //         // Manejar la respuesta de la solicitud POST
-        //         console.log("Respuesta del servidor:", response.data);
-        //         console.log("Eliminado correcto");
-        //         // Llamar a refresh() aquí después de la solicitud HTTP exitosa
-        //         refresh();
-        //     })
-        //     .catch((error) => {
-        //         // Manejar errores si la solicitud POST falla
-        //         console.error("Error al realizar la solicitud POST:", error);
-        //     });
+        console.log(name);
+        setEliminateError("")
+        axios.post("urlEliminate", { nombreEpica: { name } })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Eliminado correcto");
+                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+                setFilterValue("");
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
     };
     const [selectedEpic, setSelectedEpic] = useState(null);
 

@@ -260,7 +260,7 @@ routerHistoriaDeUsuario.delete("/eliminarEpica",verifyToken,async(req,res)=>{
     }
 })
 
-routerHistoriaDeUsuario.post("/listarProductBacklog",async(req,res)=>{
+routerHistoriaDeUsuario.post("/listarProductBacklog",verifyToken,async(req,res)=>{
     const {idProyecto} = req.body;
     console.log(`Llegue a recibir solicitud listar backlog con id de Proyecto :  ${idProyecto}`);
     const query = `
@@ -279,4 +279,24 @@ routerHistoriaDeUsuario.post("/listarProductBacklog",async(req,res)=>{
     }
 })
 
+routerHistoriaDeUsuario.post("/insertarEpica",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de insertar Epica");
+    //Insertar query aca
+    const {idProductBacklog, nombre} = req.body;
+    const query = `
+        CALL INSERTAR_EPICA(?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idProductBacklog,nombre]);
+        const nombreEpica = results[0][0].nombre;
+        console.log(`Se insertó la épica ${nombreEpica}!`);
+        res.status(200).json({
+            nombreEpica,
+            message: "Épica insertada exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al insertar épica:", error);
+        res.status(500).send("Error al insertar: " + error.message);
+    }
+})
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;

@@ -26,10 +26,13 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 export const UserCardsContext = React.createContext();
 
-export default function ModalUser({ handlerModalClose, handlerModalFinished }) {
+export default function ModalUser({
+    handlerModalClose,
+    handlerModalFinished,
+    excludedUsers,
+}) {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
-    const [noResults, setNoResults] = useState(false);
 
     const onSearchChange = (value) => {
         setFilterValue(value);
@@ -75,45 +78,53 @@ export default function ModalUser({ handlerModalClose, handlerModalFinished }) {
                         email: user.correoElectronico,
                     };
                 });
-                if (usersArray.length > 0) {
-                    setListUsers(usersArray);
-                    setNoResults(false);
-                } else {
-                    setListUsers([]);
-                    setNoResults(true);
-                }
-                console.log(usersArray);
+
+                //quitamos los usuarios que ya fueron seleccionados
+                const filteredUsers = usersArray.filter(id => !excludedUsers.includes(id));
+
+                setListUsers(filteredUsers);
+                console.log(filteredUsers);
             })
             .catch(function (error) {
                 console.log(error);
             });
     };
 
-    useEffect(() => {
-        refreshList();
-    }, [filterValue]);
+    //useEffect(() => {
+    //    refreshList();
+    //}, [filterValue]);
 
     return (
         <div className="popUp">
-			<div className="overlay"></div>
+            <div className="overlay"></div>
             <div className="modalUser">
                 <p className="buscarSup">Buscar nuevo miembro</p>
-                <div className="divBuscador">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[100%]"
-                        placeholder="Ingresa un miembro..."
-                        startContent={<SearchIcon />}
-                        value={filterValue}
-                        onValueChange={onSearchChange}
-                        variant="faded"
-                    />
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        gap: ".6rem",
+                    }}
+                >
+                    <div className="divBuscador">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[100%]"
+                            placeholder="Ingresa un miembro..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            variant="faded"
+                        />
+                    </div>
+                    <div className="botonBuscar" onClick={refreshList}>
+                        Buscar
+                    </div>
                 </div>
-                {noResults && (
-                    <p className="noResultsMessage">
-                        No se encontraron resultados.
-                    </p>
-                )}
+
                 <div className="divUsers">
                     <UserCardsContext.Provider
                         value={{ addUserList, removeUserInList }}
@@ -130,7 +141,9 @@ export default function ModalUser({ handlerModalClose, handlerModalFinished }) {
                     </button>
                     <button
                         className="buttonOneUser"
-                        onClick={()=>{handlerModalFinished(listUsersSelect)}}
+                        onClick={() => {
+                            handlerModalFinished(listUsersSelect);
+                        }}
                     >
                         Confirmar
                     </button>
