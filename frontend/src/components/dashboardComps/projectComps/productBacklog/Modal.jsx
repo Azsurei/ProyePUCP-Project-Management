@@ -23,7 +23,11 @@ export default function ModalComponent({
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const verifyFirst = () => {
-        if(verifyFunction()){
+        if (typeof verifyFunction === 'function') {
+            if (verifyFunction()) {
+                onOpen();
+            }
+        } else {
             onOpen();
         }
     }
