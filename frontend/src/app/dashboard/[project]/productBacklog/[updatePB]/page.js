@@ -12,6 +12,7 @@ import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import {useRouter} from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/containerScenario2";
+import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -41,6 +42,10 @@ export default function ProductBacklogUpdate(props) {
     const [scenarioFieldsOriginales, setScenarioFieldsOriginales] = useState([]);
     const [requirementFields, setRequirementFields] = useState([]);
     const [requirementFieldsOriginales, setRequirementFieldsOriginales] = useState([]);
+    const [addedScenarios,setAddedScenarios] = useState([]);
+    const [deletedScenarios,setDeletedScenarios] = useState([]);
+    const [addedRequirements,setAddedRequirements] = useState([]);
+    const [deletedRequirements,setDeletedRequirements] = useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
     const [historiaUsuario, setHistoriaUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -138,12 +143,28 @@ export default function ProductBacklogUpdate(props) {
               cuando: '',
               entonces: '',
             }
-          ]);
+        ]);
+       setAddedScenarios((prevFields) => [
+            ...prevFields,
+            {
+              idHistoriaCriterioDeAceptacion: `a${quantity}`,
+              scenario: '',
+              dadoQue: '',
+              cuando: '',
+              entonces: '',
+            }
+        ]);
     }
 
     function addContainer1(){
         setQuantity1(quantity1+1);
         setRequirementFields([...requirementFields, 
+            {   
+                idHistoriaRequisito: `a${quantity1}`,
+                requirement: '' 
+            }
+        ]);
+        setAddedRequirements([...addedRequirements, 
             {   
                 idHistoriaRequisito: `a${quantity1}`,
                 requirement: '' 
@@ -199,12 +220,7 @@ export default function ProductBacklogUpdate(props) {
     const onSubmit= ()=>{
         const scenarioFieldsOriginalesData=scenarioFieldsOriginales;
         const requirementFieldsOriginalesData=requirementFieldsOriginales;
-        const addedScenarios = [];
-        const modifiedScenarios = [];
-        const deletedScenarios = [];
-        const addedRequirements = [];
-        const modifiedRequirements = [];
-        const deletedRequirements = [];
+
         const idEpic=selectedValueEpic;
         const idPriority=selectedValuePriority;
         const idState=selectedValueState;
