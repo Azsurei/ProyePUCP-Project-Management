@@ -9,6 +9,10 @@
     margin-top: 3%;
 }
 
+.customInput{
+    position: relative;
+}
+
 .placeholderLabel{
     display: block;
 
@@ -26,4 +30,12 @@
 
 textArea{
     resize: none;
+}
+
+.iconDelete{
+    position: absolute;
+    right: -3rem;
+    top: 50%;
+    cursor: pointer;
+
 }

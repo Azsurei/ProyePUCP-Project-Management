@@ -79,6 +79,7 @@ export default function ProductBacklogUpdate(props) {
             }));
             setScenarioFields(scenarioFieldsActualizados);
             setScenarioFieldsOriginales(scenarioFieldsActualizados);
+            setQuantity(scenarioFieldsActualizados.length)
             const requerimientosOriginales= historiaUsuario.requirimientos;
             const requirementFieldsActualizados = requerimientosOriginales.map((requerimiento) => ({
                 idHistoriaRequisito: requerimiento.idHistoriaRequisito || '', // Puedes agregar un valor predeterminado en caso de que falte
@@ -86,6 +87,7 @@ export default function ProductBacklogUpdate(props) {
             }));
             setRequirementFields(requirementFieldsActualizados);
             setRequirementFieldsOriginales(requirementFieldsActualizados);
+            setQuantity1(requirementFieldsActualizados.length)
             console.log("Terminó de cargar los datos");
             setIsLoading(false);
         }
@@ -357,6 +359,7 @@ export default function ProductBacklogUpdate(props) {
                             />
                         ))
                     }
+                    {console.log(scenarioFields)}
                     <div className="twoButtons">
                         <div className="buttonContainer">
                             <button onClick={addContainer} className="buttonTitle" type="button">Agregar</button>

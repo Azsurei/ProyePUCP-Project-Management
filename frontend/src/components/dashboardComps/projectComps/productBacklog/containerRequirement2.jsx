@@ -7,7 +7,7 @@ import { Textarea } from "@nextui-org/react";
 export default function ContainerRequirement({
     indice,
     updateRequirementField,
-    requirement
+    requirement,
 }) {
     const inputId1 = `customPlaceholderRequirementInput1-${indice}`;
 
@@ -45,6 +45,14 @@ export default function ContainerRequirement({
                         isTextTooLong(e.target.value);
                     }}
                     value={requirement.requirement}
+                />
+                <img
+                    src="/icons/icon-cross.svg"
+                    alt="Eliminar"
+                    className="iconDelete"
+/*                     onClick={() => {
+                        props.handleRemove(props.number);
+                    }} */
                 />
             </div>
         </div>
