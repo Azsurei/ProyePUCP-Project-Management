@@ -21,11 +21,12 @@ function Button({
     dataAttributes,
     className,
 }) {
-    const handleClick = () => {
+    const handleClick = (event) => {
         if (onClick) {
-            onClick();
+            onClick(event);
         }
     };
+
 
     const appearances = {
         default: {
@@ -106,7 +107,7 @@ function Button({
         <button
             className={buttonStyles.join(" ")}
             type={buttonType}
-            onClick={handleClick}
+            onClick={() => onClick()}
             disabled={isDisabled}
             id={id}
             name={name}

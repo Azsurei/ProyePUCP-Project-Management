@@ -379,7 +379,7 @@ function ProjectSidebar(props) {
 
             {/* <DropDownMenu info={listTools1}></DropDownMenu>
             <DropDownMenu info={listTools2}></DropDownMenu> */}
-            <Accordion selectionMode="multiple" isCompact variant="splitted">
+            <Accordion selectionMode="multiple"  variant="bordered">
                 <AccordionItem
                     key="1"
                     aria-label="Accordion 1"
