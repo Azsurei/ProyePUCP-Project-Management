@@ -41,9 +41,9 @@ function Login() {
 
     // Funciones adicionales
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const validateEmail = (email) =>
-        email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-    const validatePassword = (password) => password.length >= 6;
+    const validateEmail = (email) => true;
+        // email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    const validatePassword = (password) => password.length >= 5;
 
     // Control de flujo de variables de formulario
     const emailInvalid = React.useMemo(() => {
@@ -154,7 +154,7 @@ function Login() {
                     color={passwordInvalid ? "danger" : "default"}
                     errorMessage={
                         passwordInvalid
-                            ? "La contraseña debe tener 6 caracteres o más"
+                            ? "La contraseña debe tener 5 caracteres o más"
                             : ""
                     }
                     onValueChange={setPassword}
