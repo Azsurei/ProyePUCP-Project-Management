@@ -482,7 +482,38 @@ BEGIN
     SELECT _idTarea AS idTarea;
 END $
 
+SELECT *from Cronograma;
 
+
+
+DELIMITER $
+CREATE PROCEDURE  LISTAR_TAREAS_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT t.idTarea, t.idSubgrupo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas 
+    FROM Tarea t
+    WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto)
+    AND t.activo=1;
+END$
+
+CALL LISTAR_TAREAS_X_ID_PROYECTO(45)
+
+DROP PROCEDURE LISTAR_EQUIPO_X_ID_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE  LISTAR_EQUIPO_X_ID_EQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+	SELECT idEquipo,nombre,descripcion,fechaCreacion
+    FROM Equipo
+    WHERE  idEquipo = _idEquipo
+    AND activo=1;
+END$
+
+CALL LISTAR_EQUIPO_X_ID_EQUIPO(1);
+
+SELECT * FROM Equipo;
 
 
 DROP PROCEDURE IF EXISTS INSERTAR_CATALOGO_RIESGO;
