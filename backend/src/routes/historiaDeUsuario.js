@@ -384,4 +384,33 @@ routerHistoriaDeUsuario.delete("/eliminarHURequisito",verifyToken,async(req,res)
     }
 })
 
+//Eliminar Criterio de Aceptacion y Requisito
+routerHistoriaDeUsuario.delete("/eliminarCriterioRequisito",verifyToken,async(req,res)=>{
+    console.log("Llegue a recibir solicitud de eliminar Criterio de Aceptacion y Requisito");
+    //Insertar query aca
+    const {scenarioData,requirementData} = req.body;
+    try {
+        // Iteracion Eliminar Criterio de Aceptacion
+        for (const scenario of scenarioData) {
+            await connection.execute(`
+            CALL ELIMINAR_HU_CRITERIO_ACEPTACION(${scenario.idHistoriaCriterioDeAceptacion});
+            `);
+            console.log(`Se logró eliminar el criterio de aceptacion: ${scenario.idHistoriaCriterioDeAceptacion}`);
+        }
+        // Iteracion Eliminar Criterio de Aceptacion
+        for (const requerimiento of requirementData) {
+            await connection.execute(`
+            CALL ELIMINAR_HU_REQUISITO(${requerimiento.idHistoriaRequisito});
+            `);
+            console.log(`Se elimino el requisito: ${requerimiento.idHistoriaRequisito}`);
+        }
+        res.status(200).json({
+            message: "Criterios de Aceptacion y Requisitos eliminados exitosamente"
+        });
+    } catch (error) {
+        console.error("Error en la eliminacion:", error);
+        res.status(500).send("Error en la eliminacion: " + error.message);
+    }
+})
+
 module.exports.routerHistoriaDeUsuario = routerHistoriaDeUsuario;
