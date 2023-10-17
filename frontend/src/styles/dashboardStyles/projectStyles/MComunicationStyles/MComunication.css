@@ -1,0 +1,60 @@
+.container{
+    flex: 1;
+    font-family: Montserrat;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-top: 1rem;
+    font-family: Montserrat;
+}
+
+.matrizComunicaciones{
+    width: 100%;
+    height: 95%;
+    display: grid;
+    grid-template-rows: 1fr 1fr 3fr;
+}
+
+.titleComunicaciones{
+    display: flex;
+    font-size: 2rem;
+    /*align-items: center;*/
+    color: #172B4D;
+    font-family: Montserrat;
+    font-weight: bold;
+    padding-top: 10px;
+   
+}
+
+
+
+.btnComunicacionExport{
+    border-radius: 10px;
+    background-color: #29C85F;
+    border: #29C85F 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
+
+.btnComunicacionEliminar{
+    border-radius: 10px;
+    background-color: #CE3B3B;
+    border: #CE3B3B 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}

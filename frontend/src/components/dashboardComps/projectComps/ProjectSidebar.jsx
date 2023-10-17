@@ -5,6 +5,7 @@ import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 import Link from "next/link";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
+import { Accordion, AccordionItem } from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 
 const memberData = [
@@ -50,7 +51,10 @@ const memberData = [
 function MemberIcon(props) {
     return (
         <li className="memberContainer">
-            <p className="memberIcon">{props.name[0]}{props.lastName[0]}</p>
+            <p className="memberIcon">
+                {props.name[0]}
+                {props.lastName[0]}
+            </p>
         </li>
     );
 }
@@ -60,7 +64,7 @@ function DropDownItem(props) {
         <li className="DropDownItem">
             <Link
                 href={props.goTo}
-                style={{ display: "flex", alignItems: "center" }}
+                style={{ display: "flex", alignItems: "center", gap: ".7rem" }}
             >
                 <img src={props.icon} alt="icon" className="" />
                 <p>{props.name}</p>
@@ -83,19 +87,17 @@ function DropDownMenu(props) {
     return (
         <div className="DropDownMenu">
             <div className="DropTitleContainer" onClick={toggleDropdown}>
-                <div className="DropTitleLeft">
-                    <img
-                        src={props.info.tittleIcon}
-                        alt=""
-                        className="DropIconLeft"
-                    />
-                    <p className="DropTitle"> {props.info.tittleTitle} </p>
-                </div>
                 <img
                     src="/icons/chevron-down.svg"
                     alt=""
                     className="DropIconRight"
                 />
+                <img
+                    src={props.info.tittleIcon}
+                    alt=""
+                    className="DropIconLeft"
+                />
+                <p className="DropTitle"> {props.info.tittleTitle} </p>
             </div>
 
             <ul
@@ -229,14 +231,14 @@ function ProjectSidebar(props) {
             id: 9,
             position: 1,
             optIcon: "/icons/sideBarDropDown_icons/sbdd1.svg",
-            optName: "Autoevaluacion del equipo",
+            optName: "Autoevaluacion",
             goTo: `${stringBase}/toBeDefined`,
         },
         {
             id: 10,
             position: 2,
             optIcon: "/icons/sideBarDropDown_icons/sbdd2.svg",
-            optName: "Registro de retrospectivas",
+            optName: "Retrospectivas",
             goTo: `${stringBase}/toBeDefined`,
         },
         {
@@ -289,7 +291,7 @@ function ProjectSidebar(props) {
             position: 4,
             optIcon: "/icons/sideBarDropDown_icons/sbdd8.svg",
             optName: "Cronograma",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/cronograma`,
         },
         {
             id: 12,
@@ -331,7 +333,7 @@ function ProjectSidebar(props) {
             position: 10,
             optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
             optName: "Matriz de comunicaciones",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/matrizDeComunicaciones`,
         },
     ];
 
@@ -375,8 +377,42 @@ function ProjectSidebar(props) {
                 })}
             </ul>
 
-            <DropDownMenu info={listTools1}></DropDownMenu>
-            <DropDownMenu info={listTools2}></DropDownMenu>
+            {/* <DropDownMenu info={listTools1}></DropDownMenu>
+            <DropDownMenu info={listTools2}></DropDownMenu> */}
+            <Accordion selectionMode="multiple"  variant="bordered">
+                <AccordionItem
+                    key="1"
+                    aria-label="Accordion 1"
+                    title="Sobre proyecto"
+                >
+                    {listTools1.dataItems.map((item) => {
+                        return (
+                            <DropDownItem
+                                key={item.id}
+                                icon={item.optIcon}
+                                name={item.optName}
+                                goTo={item.goTo}
+                            ></DropDownItem>
+                        );
+                    })}
+                </AccordionItem>
+                <AccordionItem
+                    key="2"
+                    aria-label="Accordion 2"
+                    title="Herramientas"
+                >
+                    {listTools2.dataItems.map((item) => {
+                        return (
+                            <DropDownItem
+                                key={item.id}
+                                icon={item.optIcon}
+                                name={item.optName}
+                                goTo={item.goTo}
+                            ></DropDownItem>
+                        );
+                    })}
+                </AccordionItem>
+            </Accordion>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </nav>

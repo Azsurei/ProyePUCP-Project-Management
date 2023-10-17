@@ -16,7 +16,7 @@ export default function RootLayout({ children, params }) {
     return ( //AQUI CAMBIE BODY POR DIV, YA QUE AL TENER BODY QUITA EL LAYOUT DEL DASHBOARD
         <div className="DashboardProjectContainer" style={{width: '100%'}}>   
             <ProjectSidebar projectName={projectName} projectId={projectId} currentUrl={params.project}></ProjectSidebar>
-            <div style={{flex:'1'}} className="h-[100%] overflow-auto">
+            <div style={{flex:'1', backgroundColor:'white'}} className="h-[100%] overflow-auto">
                 {children}
             </div>
             

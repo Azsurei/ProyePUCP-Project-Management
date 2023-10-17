@@ -63,7 +63,7 @@ END$
 DELIMITER $
 CREATE PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO(IN _idUsuario INT)
 BEGIN
-	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion ,r.nombre
+	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion ,r.nombre as "nombrerol"
     FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol WHERE p.idProyecto = urp.idProyecto AND urp.idUsuario = _idUsuario;
 END$
 DELIMITER $
@@ -143,12 +143,13 @@ CREATE PROCEDURE INSERTAR_HISTORIA_DE_USUARIO(
 	IN descripcion VARCHAR(255),
     IN como VARCHAR(255),
     IN quiero VARCHAR(255),
-    IN para VARCHAR(255)
+    IN para VARCHAR(255),
+    IN _idUsuarioCreador INT
 )
 BEGIN
 	DECLARE _id_HU INT;
-	INSERT INTO HistoriaDeUsuario(idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,fechaCreacion,activo) 
-    VALUES(_idEpica,_idHistoriaPrioridad,_idHistoriaEstado,descripcion,como,quiero,para,NOW(),1);
+	INSERT INTO HistoriaDeUsuario(idEpica,idHistoriaPrioridad,idHistoriaEstado,descripcion,como,quiero,para,fechaCreacion,activo,idUsuarioCreador) 
+    VALUES(_idEpica,_idHistoriaPrioridad,_idHistoriaEstado,descripcion,como,quiero,para,NOW(),1,_idUsuarioCreador);
     SET _id_HU = @@last_insert_id;
     SELECT _id_HU AS idHistoriaDeUsuario;
 END$
@@ -432,6 +433,7 @@ BEGIN
 END$
 
 DROP PROCEDURE IF EXISTS INSERTAR_CRONOGRAMA;
+
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CRONOGRAMA(
     IN _idProyecto INT
@@ -442,6 +444,45 @@ BEGIN
     SET _idCronograma = @@last_insert_id;
     SELECT _idCronograma AS idCronograma;
 END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_CRONOGRAMA;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_CRONOGRAMA(
+    IN _idProyecto INT,
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    UPDATE Cronograma
+    SET 
+        fechaInicio = _fechaInicio,
+        fechaFin = _fechaFin
+    WHERE idProyecto = (SELECT p.idProyecto  FROM Proyecto p WHERE p.idProyecto = _idProyecto);
+END $
+SELECT *FROM Tarea;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_TAREA(
+	IN _idCronograma INT,
+    IN _idSubGrupo INT,
+    IN _idPadre INT,
+    IN _idTareaAnterior INT,
+    IN _sumillaTarea VARCHAR(255),
+    IN _descripcion VARCHAR(500),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _cantSubtareas INT,
+    IN _cantPosteriores INT,
+    IN _horasPlaneadas TIME
+)
+BEGIN
+	DECLARE _idTarea INT;
+	INSERT INTO Tarea(idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,activo) 
+    VALUES(_idCronograma,_idSubGrupo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,1);		
+    SET _idTarea = @@last_insert_id;
+    SELECT _idTarea AS idTarea;
+END $
+
+
 
 
 DROP PROCEDURE IF EXISTS INSERTAR_CATALOGO_RIESGO;
@@ -657,10 +698,19 @@ CREATE PROCEDURE LISTAR_HU_X_ID(
     IN _idHistoriaDeUsuario INT
 )
 BEGIN
-	SELECT * 
-    FROM HistoriaDeUsuario 
-    WHERE idHistoriaDeUsuario = _idHistoriaDeUsuario
-    AND activo=1;
+    SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
+    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario"
+    FROM HistoriaDeUsuario HU
+    JOIN Epica E
+    ON HU.idEpica = E.idEpica
+    JOIN HistoriaEstado HE
+    ON HU.idHistoriaEstado = HE.idHistoriaEstado
+    JOIN HistoriaPrioridad HP
+    ON HU.idHistoriaPrioridad = HP.idHistoriaPrioridad
+    JOIN Usuario U
+    ON HU.idUsuarioCreador = U.idUsuario
+    WHERE HU.idHistoriaDeUsuario = _idHistoriaDeUsuario
+    AND HU.activo=1;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_X_IDHU;
@@ -768,3 +818,218 @@ BEGIN
 	SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico FROM UsuarioXRolXProyecto urp, Usuario u
     WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND u.activo = 1;
 END
+
+
+DROP PROCEDURE MODIFICAR_FECHA_CRONOGRAMA;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_FECHA_CRONOGRAMA(
+    IN _idCronograma INT,
+	IN  _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    UPDATE Cronograma 
+    SET fechaInicio = _fechaInicio,
+        fechaFin = _fechaFin
+    WHERE idCronograma = _idCronograma;
+    SELECT _idCronograma AS idCronograma;
+END$
+
+DROP PROCEDURE INSERTAR_DETALLEAC_CREADO;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE INSERTAR_DETALLEAC_CREADO(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Propósito y Justificación del Proyecto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Descripción del Proyecto y Entregables", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Presupuesto Estimado", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Premisas y Restricciones", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Riesgos Iniciales de Alto Nivel", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requisitos de Aprobación del Proyecto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requerimientos de Alto Nivel", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requerimientos del Producto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Requerimientos del Proyecto", 1);
+    INSERT INTO DetalleAC (idActaConstitucion, nombre, activo)
+    VALUES (_idActaConstitucion, "Elaborado por", 1);
+END$
+
+DROP PROCEDURE INSERTAR_DETALLEAC_INFO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_DETALLEAC_INFO(   
+	IN _idUsuario INT,
+    IN _idEquipo INT
+)
+BEGIN
+	DECLARE _idUsuarioXEquipo INT;
+	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo) VALUES(_idUsuario,_idEquipo,1);		
+    SET _idUsuarioXEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
+END$
+
+DROP PROCEDURE ELIMINAR_EPICA_NOMBRE;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_EPICA_NOMBRE(
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+    UPDATE Epica 
+    SET activo = 0
+    WHERE nombre = _nombre;
+    SELECT _nombre AS nombre;
+END$
+
+DROP PROCEDURE INSERTAR_HU_CRITERIO_ACEPTACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HU_CRITERIO_ACEPTACION(
+	IN  _idHistoriaDeUsuario INT,
+    IN _dadoQue VARCHAR(255),
+    IN _cuando VARCHAR(255),
+    IN _entonces VARCHAR(255),
+    IN _escenario VARCHAR(255)
+)
+BEGIN
+	DECLARE _idHistoriaCriterioDeAceptacion INT;
+	INSERT INTO HistoriaCriterioDeAceptacion(idHistoriaDeUsuario,activo,dadoQue,cuando,entonces,escenario) 
+    VALUES(_idHistoriaDeUsuario,1,_dadoQue,_cuando,_entonces,_escenario);
+    SET _idHistoriaCriterioDeAceptacion = @@last_insert_id;
+    SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
+END$
+
+DROP PROCEDURE ELIMINAR_HU_CRITERIO_ACEPTACION;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HU_CRITERIO_ACEPTACION(
+    IN _idHistoriaCriterioDeAceptacion INT
+)
+BEGIN
+    UPDATE HistoriaCriterioDeAceptacion 
+    SET activo = 0
+    WHERE idHistoriaCriterioDeAceptacion = _idHistoriaCriterioDeAceptacion;
+    SELECT _idHistoriaCriterioDeAceptacion AS idHistoriaCriterioDeAceptacion;
+END$
+
+DROP PROCEDURE INSERTAR_HU_REQUISITO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HU_REQUISITO(
+	IN  _idHistoriaDeUsuario INT,
+    IN _descripcion VARCHAR(255)
+)
+BEGIN
+	DECLARE _idHistoriaRequisito INT;
+	INSERT INTO HistoriaRequisito(idHistoriaDeUsuario,descripcion,activo) 
+    VALUES(_idHistoriaDeUsuario,_descripcion,1);
+    SET _idHistoriaRequisito = @@last_insert_id;
+    SELECT _idHistoriaRequisito AS idHistoriaRequisito;
+END$
+
+DROP PROCEDURE ELIMINAR_HU_REQUISITO;
+--Modificar fecha del cronograma
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HU_REQUISITO(
+    IN _idHistoriaRequisito INT
+)
+BEGIN
+    UPDATE HistoriaRequisito 
+    SET activo = 0
+    WHERE idHistoriaRequisito = _idHistoriaRequisito;
+    SELECT _idHistoriaRequisito AS idHistoriaRequisito;
+END$
+
+DROP PROCEDURE LISTAR_DETALLEAC_X_IDACTA;
+--Listar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE LISTAR_DETALLEAC_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE MODIFICAR_CAMPO_DETALLEAC;
+--Modificar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_CAMPO_DETALLEAC(
+    IN _idDetalle INT,
+    IN _nombre VARCHAR(500),
+	IN  _detalle VARCHAR(500)
+)
+BEGIN
+    UPDATE DetalleAC 
+    SET nombre = _nombre,
+        detalle = _detalle
+    WHERE idDetalle = _idDetalle;
+    SELECT * FROM DetalleAC;
+END$
+
+DROP PROCEDURE LISTAR_INTERESADOAC_X_IDACTA;
+--Listar Interesados Acta Constitucion
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADOAC_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM InteresadoAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE INSERTAR_INTERESADOAC;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADOAC(
+	IN  _idActaConstitucion INT,
+    IN _nombre VARCHAR(255),
+    IN _cargo VARCHAR(255),
+    IN _organizacion VARCHAR(255)
+)
+BEGIN
+	DECLARE _idInteresado INT;
+	INSERT INTO InteresadoAC(idActaConstitucion,nombre,cargo,organizacion,activo) 
+    VALUES(_idActaConstitucion,_nombre,_cargo,_organizacion,1);
+    SET _idInteresado = @@last_insert_id;
+    SELECT _idInteresado AS idInteresado;
+END$
+
+DROP PROCEDURE LISTAR_HITOAC_X_IDACTA;
+--Listar Hito Acta Constitucion
+DELIMITER $
+CREATE PROCEDURE LISTAR_HITOAC_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM HitoAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE INSERTAR_HITOAC;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HITOAC(
+	IN  _idActaConstitucion INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaLimite DATE
+)
+BEGIN
+	DECLARE _idHito INT;
+	INSERT INTO HitoAC(idActaConstitucion,descripcion,fechaLimite,activo) 
+    VALUES(_idActaConstitucion,_descripcion,_fechaLimite,1);
+    SET _idHito = @@last_insert_id;
+    SELECT _idHito AS idHito;
+END$

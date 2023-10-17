@@ -1,34 +1,17 @@
-import React from "react";
+"use client"
+import React, { useContext } from "react";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
+import CardSelectedUser from "@/components/CardSelectedUser";
 
-function CardSelectedUser(props) {
-    return (
-        <div className="CardSelectedUser">
-            <div className="containerLeft">
-                <p className="profilePic">
-                    {props.name[0] + props.lastName[0]}
-                </p>
-                <div className="containerInfo">
-                    <p className="usrNames">
-                        {props.name + " " + props.lastName}
-                    </p>
-                    <p className="usrMail">{props.email}</p>
-                </div>
-            </div>
-            <img
-                src="/icons/icon-crossBlack.svg"
-                alt="delete"
-                className="icnRight"
-            />
-        </div>
-    );
-}
+
 
 export default function ChoiceUser({
     toggleModal1,
     toggleModal2,
     selectedSupervisoresList,
     selectedMiembrosList,
+    removeSupervisor,
+    removeMiembro
 }) {
     return (
         <div className="containerBusquedaUsuarios">
@@ -55,6 +38,7 @@ export default function ChoiceUser({
                                 lastName={component.lastName}
                                 usuarioObject={component}
                                 email={component.email}
+                                removeHandler={removeSupervisor}
                             ></CardSelectedUser>
                         );
                     })}
@@ -83,6 +67,7 @@ export default function ChoiceUser({
                                 lastName={component.lastName}
                                 usuarioObject={component}
                                 email={component.email}
+                                removeHandler={removeMiembro}
                             ></CardSelectedUser>
                         );
                     })}

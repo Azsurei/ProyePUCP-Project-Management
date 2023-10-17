@@ -12,12 +12,15 @@ export default function CardCreateProject({
     projectOwnerData,
     props,
 }) {
+
+
+
     return (
         <div
             style={{ display: "flex", flexDirection: "column", gap: "1.5rem", padding: "3vw 4vw" }}
         >
             <div className="divProjectNameDiv">
-                <p className="projectNametxt">Nombre del Proyecto</p>
+                <p className="projectNametxt">Nombre del Proyecto *</p>
                 <TextField handleChange={handleChangesNombre}></TextField>
             </div>
 

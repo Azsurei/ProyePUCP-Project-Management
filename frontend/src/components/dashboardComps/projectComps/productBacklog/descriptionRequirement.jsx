@@ -1,10 +1,11 @@
 import React from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/ContainerAsWantFor.css";
 
-export default function DescriptionRequeriment({ name, onNameChange , hu}) {
+export default function DescriptionRequeriment({ name, onNameChange}) {
   return (
     <div className="containerDescription">
       <textarea
+        required
         rows="2"
         id="customPlaceholderInput9"
         className="customPlaceholderInput"

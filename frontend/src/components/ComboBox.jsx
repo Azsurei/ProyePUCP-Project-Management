@@ -5,15 +5,21 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import axios from "axios";
 import { useEffect } from "react";
 
-export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam,initialID}) {
-  
+
+export default function Example({urlApi,property,nameDisplay,hasColor,colorProperty,onSelect,idParam,initialName}) {
+  const [selected, setSelected]= useState("");
   const [query, setQuery] = useState('')
   const [data, setData] = useState([]);
-
+  const [dataWithId, setDataWithId] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(urlApi);
+        const dataWithId = response.data[property].map((item, index) => ({
+          ...item,
+          id: index + 1, // Puedes ajustar esta lógica según tus necesidades
+        }));
+        setDataWithId(dataWithId);
         setData(response.data[property]); 
       } catch (error) {
         console.error('Error al obtener datos:', error);
@@ -23,8 +29,13 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
     fetchData();
   }, []);
   
-  const initiaValue = data.find((element) => element[idParam] === initialID);
-  const [selected, setSelected] = useState(initiaValue ? initiaValue[nameDisplay] : "");
+  
+  // const initiaValue = data.find((element) => element[idParam] === initialID);
+  // console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
+  // const [inputBase, setInputBase] = useState(initiaValue ? initiaValue[nameDisplay] : "");
+  // console.log(inputBase);  
+  // console.log("fin");
+  
 
   const filteredData =
     query === ''
@@ -35,7 +46,9 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
-        
+    setTimeout(() => {
+        // Cambia el estado o realiza alguna operación aquí si es necesario
+    }, 10000);
   return (
     <div>
       <Combobox value={selected} onChange={(selectedItem)=>{
@@ -49,10 +62,11 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
             <Combobox.Input
               className={`w-64 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
               style={hasColor ? { backgroundColor: selected[colorProperty] } : {}}
-              displayValue={(object) => object[nameDisplay]}
+              displayValue={(object) => object[nameDisplay]} //lo que se muestra en el input
               onChange={(event) => {
                 setQuery(event.target.value);
               }}
+              {...(selected === "" ? { value: initialName } : {})}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
@@ -91,7 +105,7 @@ export default function Example({urlApi,property,nameDisplay,hasColor,colorPrope
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
-                          {object[nameDisplay]}
+                          {object[nameDisplay]} {/* //lo que se muestra en la lista */}
                         </span>
                         {selected ? (
                           <span

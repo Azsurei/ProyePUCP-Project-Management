@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     background-color: #F5F5F5;
-    height: 100%; /* Cubre toda la altura disponible */
+    height: 100%;
     width: 100%; /* Cubre solo el área adicional debajo de contentDiv */
 
     padding: 2.5rem 2.5rem;

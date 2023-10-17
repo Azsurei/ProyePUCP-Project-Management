@@ -6,7 +6,9 @@ const connection = mysql.createPool({
   user: "admin",
   password: "pywxuk-baWqoh-bibvu4",
   database: "dbdibujitos",
+  acquireTimeout: 3600000
 });
+
 
 
 module.exports = connection;
