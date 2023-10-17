@@ -4,22 +4,34 @@ import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/
 import AgendaTable from "@/components/dashboardComps/projectComps/cronogramaComps/AgendaTable";
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
 //import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
 import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import { Textarea } from "@nextui-org/react";
 
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure,
+} from "@nextui-org/react";
 
 import axios from "axios";
+import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+
+    
 
     const [toggleNew, setToggleNew] = useState(false);
     const handlerGoToNew = () => {
@@ -86,7 +98,7 @@ export default function Cronograma(props) {
                 ) {
                     setModalFirstTime(true);
                 }
-                //setIsLoading(false);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -94,58 +106,65 @@ export default function Cronograma(props) {
     }, []);
 
     const msgEmptyField = "Este campo no puede estar vacio";
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     return (
         <div className="cronogramaDiv">
-            <button onClick={onOpen}>test</button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                Modal Title
-                            </ModalHeader>
-                            <ModalBody>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Nullam pulvinar risus non
-                                    risus hendrerit venenatis. Pellentesque sit
-                                    amet hendrerit risus, sed porttitor quam.
-                                </p>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Nullam pulvinar risus non
-                                    risus hendrerit venenatis. Pellentesque sit
-                                    amet hendrerit risus, sed porttitor quam.
-                                </p>
-                                <p>
-                                    Magna exercitation reprehenderit magna aute
-                                    tempor cupidatat consequat elit dolor
-                                    adipisicing. Mollit dolor eiusmod sunt ex
-                                    incididunt cillum quis. Velit duis sit
-                                    officia eiusmod Lorem aliqua enim laboris do
-                                    dolor eiusmod. Et mollit incididunt nisi
-                                    consectetur esse laborum eiusmod pariatur
-                                    proident Lorem eiusmod et. Culpa deserunt
-                                    nostrud ad veniam.
-                                </p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button
-                                    color="danger"
-                                    variant="light"
-                                    onPress={onClose}
-                                >
-                                    Close
-                                </Button>
-                                <Button color="primary" onPress={onClose}>
-                                    Action
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            {modalFirstTime && (
+                <Modal
+                    onOpenChange={onOpenChange}
+                    isDismissable={false}
+                    defaultOpen={true}
+                >
+                    <ModalContent>
+                        {(onClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">
+                                    Modal Title
+                                </ModalHeader>
+                                <ModalBody>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit. Nullam pulvinar risus
+                                        non risus hendrerit venenatis.
+                                        Pellentesque sit amet hendrerit risus,
+                                        sed porttitor quam.
+                                    </p>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit. Nullam pulvinar risus
+                                        non risus hendrerit venenatis.
+                                        Pellentesque sit amet hendrerit risus,
+                                        sed porttitor quam.
+                                    </p>
+                                    <p>
+                                        Magna exercitation reprehenderit magna
+                                        aute tempor cupidatat consequat elit
+                                        dolor adipisicing. Mollit dolor eiusmod
+                                        sunt ex incididunt cillum quis. Velit
+                                        duis sit officia eiusmod Lorem aliqua
+                                        enim laboris do dolor eiusmod. Et mollit
+                                        incididunt nisi consectetur esse laborum
+                                        eiusmod pariatur proident Lorem eiusmod
+                                        et. Culpa deserunt nostrud ad veniam.
+                                    </p>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button
+                                        color="danger"
+                                        variant="light"
+                                        onPress={onClose}
+                                    >
+                                        Close
+                                    </Button>
+                                    <Button color="primary" onPress={onClose}>
+                                        Action
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+            )}
 
             {!modalFirstTime && (
                 <>
