@@ -1,8 +1,18 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import Cookies from "js-cookie";
 
 function DashboardNav({ userName, userLastName }) {
+    const handleSignOut = async () => {
+        Cookies.remove("tokenProyePUCP");
+        await signOut();
+    };
+
     return (
         <nav className="DashboardNav">
             <img
@@ -33,9 +43,20 @@ function DashboardNav({ userName, userLastName }) {
                     <img src="/icons/icon-notif.svg" alt="" className="icon" />
                     <p className="textGuide">Notificaciones</p>
                 </li>
+                <li onClick={handleSignOut}>
+                    <img
+                        src="/icons/icon-signout.svg"
+                        alt=""
+                        className="icon"
+                    />
+                    <p className="textGuide">Cerrar sesión</p>
+                </li>
                 <li>
                     <Link href="/dashboard/templates">
-                        <p className="profilePic">{userName[0]}{userLastName[0]}</p>
+                        <p className="profilePic">
+                            {userName[0]}
+                            {userLastName[0]}
+                        </p>
                     </Link>
                     <p className="textGuide">Mi perfil</p>
                 </li>

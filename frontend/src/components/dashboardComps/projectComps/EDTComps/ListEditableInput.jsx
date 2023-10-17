@@ -1,5 +1,6 @@
 import TextField from "@/components/TextField";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/ListEditableInput.css";
+import { Textarea } from "@nextui-org/react";
 
 function EditableInput(props) {
     //recibe props 'name', 'number' (?) y 'data'
@@ -11,9 +12,13 @@ function EditableInput(props) {
                 {props.typeName} #{props.number}
             </p>
             <div className="inputXdeleteContainer">
-                <textarea
+                {/* <textarea
                     rows="1"
-                    className={props.beEditable === true ? "inputBox": "inputBox nonEditable"}
+                    className={
+                        props.beEditable === true
+                            ? "inputBox"
+                            : "inputBox nonEditable"
+                    }
                     placeholder="Escribe aquí"
                     maxLength="70"
                     onChange={(e) => {
@@ -21,6 +26,22 @@ function EditableInput(props) {
                     }}
                     readOnly={!props.beEditable}
                     value={props.data}
+                /> */}
+
+                <Textarea
+                    isInvalid={false}
+                    //errorMessage="Este campo no puede estar vacio"
+                    key={"bordered"}
+                    variant={"bordered"}
+                    labelPlacement="outside"
+                    placeholder="Escribe aquí"
+                    className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                    value={props.data}
+                    onChange={(e) => {
+                        props.handleChanges(e, props.number);
+                    }}
+                    minRows={1}
+                    size="sm"
                 />
                 {/* <TextField className="inputBox"></TextField> */}
                 {props.beEditable && (

@@ -46,6 +46,11 @@
     gap: 15%;
     margin-right: 15px;
 }
+.subcontainerCombo{
+    display: flex;
+    gap: 5%;
+    justify-content: flex-end;
+}
 
 .dateOfCreation{
     display: flex;

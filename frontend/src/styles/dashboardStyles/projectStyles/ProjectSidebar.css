@@ -24,6 +24,19 @@
 
 }
 
+.ProjectSidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ProjectSidebar::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.ProjectSidebar::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+}
+
 .ProjectSidebar .headerContainer{
     display: flex;
     flex-direction: row;
@@ -189,39 +202,38 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    
 
-    background-color: white;
+    padding: .4rem 0;
+    /* background-color: white; */
 
-    border-style: solid;
+    /* border-style: solid;
     border-color: rgb(212, 212, 212);
-    border-width: 1px;
+    border-width: 1px; */
     border-radius: 8px;
 
     cursor:pointer
 }
 
 
-.DropDownMenu .DropTitleContainer .DropTitleLeft{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
 
 .DropDownMenu .DropTitle{
     font-size: 1.2rem;  
 }
 
 .DropDownMenu .DropIconLeft{
-    width: 22px;
-    height: 22px;
-    margin: 0 .5rem; 
+    width: 28px;
+    height: 28px;
+    margin-right: .4rem;
 }
 
 .DropDownMenu .DropIconRight{
     width: 22px;
     height: 22px;
-    margin: 0 .3rem;
+    margin-left: .2rem;
+    margin-right: .1rem;
+    transform: rotate(270deg);
 }
 
 .DropDownMenu .ItemsContainer{
@@ -237,34 +249,35 @@
     
 }
 
-.DropDownMenu .ItemsContainer .DropDownItem{
+.DropDownItem{
     display: flex;
     flex-direction: row;
     align-items: center;
 
-    padding-left: .8rem;
+    padding-left: .5rem;
     padding-right: .3rem;
     padding-top: .2rem;
     padding-bottom: .2rem;
 
     border-radius: 7px;
-    font-weight: 500;
+    font-weight: 400;
+    font-size: 1rem;
     color: #414141;
+
      
 }
 
-.DropDownMenu .ItemsContainer .DropDownItem:hover{
+.DropDownItem:hover{
     background-color: #dad9d8;
 }   
 
-.DropDownMenu .ItemsContainer .DropDownItem img{
+.DropDownItem img{
     width: 22px;
     height: 22px;
 
-    margin: 0 .4rem;
 }
 
-.DropDownMenu .ItemsContainer .DropDownItem p{
+.DropDownItem p{
     font-size: 1rem;
 }
 

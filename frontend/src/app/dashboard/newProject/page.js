@@ -27,21 +27,18 @@ const items = [
         label: "Informacion General",
         percentageComplete: 0,
         status: "current",
-
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 0,
         status: "unvisited",
-
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "unvisited",
-
     },
 ];
 
@@ -51,21 +48,18 @@ const items2 = [
         label: "Informacion General",
         percentageComplete: 100,
         status: "visited",
-
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 0,
         status: "current",
-
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "unvisited",
-        
     },
 ];
 
@@ -75,21 +69,18 @@ const items3 = [
         label: "Informacion General",
         percentageComplete: 100,
         status: "visited",
-        
     },
     {
         id: "2",
         label: "Herramientas",
         percentageComplete: 100,
         status: "visited",
-
     },
     {
         id: "3",
         label: "Participantes",
         percentageComplete: 0,
         status: "current",
-        
     },
 ];
 
@@ -100,15 +91,31 @@ export default function newProject() {
 
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
-    const [selectedSupervisoresList, setSelectedSupervisoresList] = useState([]);
+    const [selectedSupervisoresList, setSelectedSupervisoresList] = useState(
+        []
+    );
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
+
+    const [isProjectNameFilled, setIsProjectNameFilled] = useState(false); //para saber si el nombre del proyecto esta lleno
+
+    const handleChangeProjectName = (e) => {
+        const projectName = e.target.value;
+        setNameProject(projectName);
+        //handleChangesNombre(projectName);  // Llama a la función prop para actualizar el nombre
+        setIsProjectNameFilled(!!projectName); // Actualiza el estado basado en si el campo está lleno
+    };
 
     const toggleModal1 = () => {
         setModal1(!modal1);
     };
 
-    const returnListOfSupervisores = (selectedSupervisoresList) => {
-        setSelectedSupervisoresList(selectedSupervisoresList);
+    const returnListOfSupervisores = (newSupervisoresList) => {
+        const newSupervsList = [
+            ...selectedSupervisoresList,
+            ...newSupervisoresList,
+        ];
+
+        setSelectedSupervisoresList(newSupervsList);
         setModal1(!modal1);
     };
 
@@ -116,9 +123,27 @@ export default function newProject() {
         setModal2(!modal2);
     };
 
-    const returnListOfMiembros = (selectedMiembrosList) => {
-        setSelectedMiembrosList(selectedMiembrosList);
+    const returnListOfMiembros = (newMiembrosList) => {
+        const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
+
+        setSelectedMiembrosList(newMembrsList);
         setModal2(!modal2);
+    };
+
+    const removeSupervisor = (supervisor) => {
+        const newSupervsList = selectedSupervisoresList.filter(
+            (item) => item.id !== supervisor.id
+        );
+        setSelectedSupervisoresList(newSupervsList);
+        console.log(newSupervsList);
+    };
+
+    const removeMiembro = (miembro) => {
+        const newMembrsList = selectedMiembrosList.filter(
+            (item) => item.id !== miembro.id
+        );
+        setSelectedMiembrosList(newMembrsList);
+        console.log(newMembrsList);
     };
 
 
@@ -139,9 +164,10 @@ export default function newProject() {
         }
     };
 
-    const handleChangeProjectName = (e) => {
+    /*const handleChangeProjectName = (e) => {
         setNameProject(e.target.value);
     };
+    */
 
     const handleChangesFechaInicio = (e) => {
         setFechaInicio(e.target.value);
@@ -150,8 +176,6 @@ export default function newProject() {
     const handleChangesFechaFin = (e) => {
         setFechaFin(e.target.value);
     };
-
-    
 
     //al cargar la pagina, cargaremos toda la info necesaria (datos de usuario y listado de herramientas)
     //para evitar loading times en los cambios entre niveles
@@ -175,7 +199,7 @@ export default function newProject() {
                 console.log("el nombre del usuario es ", userData.nombres);
                 console.log("el apellido del usuario es ", userData.apellidos);
                 setDatosUsuario(userData);
-                
+
                 setIsLoading(false);
             })
             .catch(function (error) {
@@ -204,7 +228,6 @@ export default function newProject() {
         console.log(newToolsList);
     };
 
-
     const checkData = () => {
         console.log("NOMBRE DE PROYECTO = " + nameProject);
         console.log("FECHA INICIO = " + fechaInicio);
@@ -216,7 +239,7 @@ export default function newProject() {
                 proyecto: { nombre, fechaInicio, fechaFin },
                 herramientas: listHerramientas,
                 participantesSupervisores: selectedSupervisoresList,
-                participantesMiembros: selectedMiembrosList
+                participantesMiembros: selectedMiembrosList,
             })
             .then(function (response) {
                 console.log(response);
@@ -316,18 +339,32 @@ export default function newProject() {
                         </ToolCardsContext.Provider>
                     )}
                     {estadoProgress === 3 && (
-                        <ChoiceUser
-                            toggleModal1={toggleModal1}
-                            toggleModal2={toggleModal2}
-                            selectedSupervisoresList={selectedSupervisoresList}
-                            selectedMiembrosList={selectedMiembrosList}
-                        ></ChoiceUser>
+                            <ChoiceUser
+                                toggleModal1={toggleModal1}
+                                toggleModal2={toggleModal2}
+                                selectedSupervisoresList={
+                                    selectedSupervisoresList
+                                }
+                                selectedMiembrosList={selectedMiembrosList}
+                                removeSupervisor={removeSupervisor}
+                                removeMiembro={removeMiembro}
+                            ></ChoiceUser>
                     )}
                 </div>
                 <div className="buttonContainer">
                     <button
                         className="myButton"
                         onClick={cambiarEstadoAdelante}
+                        style={{
+                            opacity:
+                                estadoProgress != 3 && isProjectNameFilled
+                                    ? "100"
+                                    : "0",
+                            pointerEvents:
+                                estadoProgress != 3 && isProjectNameFilled
+                                    ? "auto"
+                                    : "none",
+                        }}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -370,12 +407,14 @@ export default function newProject() {
                 <ModalUser
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfSupervisores}
+                    excludedUsers={selectedSupervisoresList}
                 ></ModalUser>
             )}
             {modal2 && (
                 <ModalUser
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
+                    excludedUsers={selectedMiembrosList}
                 ></ModalUser>
             )}
 

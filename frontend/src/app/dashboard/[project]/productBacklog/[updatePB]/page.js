@@ -12,7 +12,11 @@ import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/containerScenario2";
+<<<<<<< HEAD
 import { set } from "date-fns";
+=======
+import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
+>>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -24,11 +28,20 @@ function getCurrentDate() {
 }
 
 export default function ProductBacklogUpdate(props) {
+<<<<<<< HEAD
     const router = useRouter();
     const idHU = props.params.updatePB;
     const decodedUrl = decodeURIComponent(props.params.project); //borrar
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1); //borrar
     const stringURLEpics = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`; //borrar
+=======
+    const router=useRouter();
+    const idHU= props.params.updatePB;
+    const decodedUrl= decodeURIComponent(props.params.project); //borrar
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);//borrar
+    const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;//borrar
+    const stringURLBacklog= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
+>>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -119,7 +132,40 @@ export default function ProductBacklogUpdate(props) {
           });
       }, []);     */
 
+<<<<<<< HEAD
     useEffect(() => {
+=======
+      const [modal, setModal] = useState(false);
+    const [backlog, setBacklog] = useState([]);
+
+    useEffect(() => {
+        const fetchBacklog = async () => {
+          try {
+            const response = await axios.get(stringURLBacklog);
+            if (response.status === 200) {
+              setBacklog(response.data.backlog);
+              console.log("Se obtuvo el backlog correctamente", response.data.backlog);
+            }
+          } catch (error) {
+            setError('Error al obtener el backlog: ' + error.message);
+          }
+        };
+    
+        fetchBacklog();
+      }, []);
+    const toggleModal = () => {
+        setModal(!modal);
+    };
+    useEffect(() => {
+        if(modal) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+    }, [modal])
+
+      useEffect(() => {
+>>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         axios
             .get(stringURLHU)
@@ -398,6 +444,7 @@ export default function ProductBacklogUpdate(props) {
                 </h4>
                 <div className="combo">
                     <div className="epic containerCombo">
+<<<<<<< HEAD
                         <IconLabel
                             icon="/icons/epicPB.svg"
                             label="Épica"
@@ -412,6 +459,17 @@ export default function ProductBacklogUpdate(props) {
                             idParam="idEpica"
                             initialName={selectedNameEpic}
                         />
+=======
+                        <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
+                        {/* <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/> */}
+                        <div className="subcontainerCombo flex items-center">
+                            <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/>
+                            <button className="w-20 h-20" type="button" onClick={() => toggleModal()}>
+                                <img src="/icons/btnEditImagen.svg" alt="Descripción de la imagen" />
+                            </button>
+                        </div>
+                        
+>>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
                     </div>
                     {console.log("uwuwu", historiaUsuario.hu[0].idEpica)}
                     <div className="date containerCombo">
@@ -639,7 +697,20 @@ export default function ProductBacklogUpdate(props) {
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
             </div>
+=======
+                {modal && (
+                <PopUpEpica
+                    modal = {modal} 
+                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                    url = {stringURLEpics}
+                    backlogID = {backlog[0].idProductBacklog}
+                    urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
+                />
+                )}
+            </div> 
+>>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
         </form>
     );
 }

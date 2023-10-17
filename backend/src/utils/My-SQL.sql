@@ -221,6 +221,9 @@ CREATE TABLE HerramientaXProyecto(
 )
 ENGINE = InnoDB;
 
+------------
+-- Cronograma
+------------
 
 CREATE TABLE Cronograma(
 	idCronograma INT AUTO_INCREMENT PRIMARY KEY,
@@ -233,6 +236,39 @@ CREATE TABLE Cronograma(
 	FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
 ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS Tarea;
+
+CREATE TABLE Tarea(
+	idTarea INT AUTO_INCREMENT PRIMARY KEY,
+    idCronograma INT,
+    idSubGrupo INT,
+    idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
+    idTareaAnterior INT,
+	sumillaTarea VARCHAR(255),
+    descripcion VARCHAR (500),
+    fechaInicio DATE,
+    fechaFin DATE,
+    cantSubTareas INT,
+    cantPosteriores INT,
+    horasPlaneadas TIME,
+    activo TINYINT,
+	FOREIGN KEY (idCronograma) REFERENCES Cronograma(idCronograma)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS TareaEstado;
+
+CREATE TABLE TareaEstado(
+	idTareaEstado INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    nombre VARCHAR(255),
+    color VARCHAR(8),
+    activo TINYINT,
+	FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
 
 
 ------------
@@ -314,22 +350,22 @@ ENGINE = InnoDB;
 
 CREATE TABLE HitoAC(
 	idHito INT AUTO_INCREMENT PRIMARY KEY,
-    idActa INT,
+    idActaConstitucion INT,
     descripcion VARCHAR(255),
     fechaLimite DATE,
     activo TINYINT,
-    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+    FOREIGN KEY (idActaConstitucion) REFERENCES ActaConstitucion(idActaConstitucion)
 )
 ENGINE = InnoDB;
 
 CREATE TABLE InteresadoAC(
 	idInteresado INT AUTO_INCREMENT PRIMARY KEY,
-    idActa INT,
+    idActaConstitucion INT,
     nombre VARCHAR(255),
     cargo VARCHAR(255),
-    organizacion DATE,
+    organizacion VARCHAR(255),
     activo TINYINT,
-    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+    FOREIGN KEY (idActaConstitucion) REFERENCES ActaConstitucion(idActaConstitucion)
 )
 ENGINE = InnoDB;
 
