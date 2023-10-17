@@ -6,6 +6,7 @@ import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 import axios from "axios";
+import { Textarea } from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 
 export default function EDTNewVisualization({
@@ -17,16 +18,31 @@ export default function EDTNewVisualization({
 }) {
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
+    const [validName, setValidName] = useState(true);
+
     const [inTipoComponente, setInTipoComponente] = useState("");
-    const [inCodigoComponente, setInCodigoComponente] =
-        useState(codeNewComponent);
+    const [inCodigoComponente, setInCodigoComponente] = useState(codeNewComponent);
     const [inFechaInicio, setInFechaInicio] = useState("");
+    const [validFechaInicio, setValidFechaInicio] = useState(true);
+
     const [inFechaFin, setInFechaFin] = useState("");
+    const [validFechaFin, setValidFechaFin] = useState(true);
+
     const [inResponsables, setInResponsables] = useState("");
+    const [validResponsables, setValidResponsables] = useState(true);
+
     const [inDescripcion, setInDescripcion] = useState("");
+    const [validDescripcion, setValidDescripcion] = useState(true);
+
     const [inRecursos, setInRecursos] = useState("");
+    const [validRecursos, setValidRecursos] = useState(true);
+
     const [inHito, setInHito] = useState("");
+    const [validHito, setValidHito] = useState(true);
+
     const [inObservaciones, setInObservaciones] = useState("");
+    const [validObservaciones, setValidObservaciones] = useState(true);
+
 
     const [listEntregables, setListEntregables] = useState([
         { index: 1, data: "" },
@@ -172,6 +188,8 @@ export default function EDTNewVisualization({
             });
     };
 
+    const missingTextMsg = "Este campo no puede estar vacio";
+
     return (
         <div className="EDTNew">
             <HeaderWithButtonsSamePage
@@ -179,7 +197,9 @@ export default function EDTNewVisualization({
                 haveAddNew={false}
                 handlerReturn={handlerReturn}
                 breadcrump={
-                    "Inicio / Proyectos / "+projectName+" / EDT y Diccionario EDT"
+                    "Inicio / Proyectos / " +
+                    projectName +
+                    " / EDT y Diccionario EDT"
                 }
                 btnText={"Agregar elemento"}
             >
@@ -192,7 +212,7 @@ export default function EDTNewVisualization({
                     <div className="FirstCardContainer">
                         <div className="FirstLeftCont">
                             <p>Nombre del componente</p>
-                            <textarea
+                            {/* <textarea
                                 rows="1"
                                 id="inputBoxGeneric"
                                 placeholder="Escribe aquí"
@@ -200,6 +220,19 @@ export default function EDTNewVisualization({
                                 onChange={(e) => {
                                     setInComponentName(e.target.value);
                                 }}
+                            /> */}
+                            <Textarea
+                                isInvalid={!validName}
+                                errorMessage={!validName ? missingTextMsg : ""}
+                                key={"bordered"}
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inComponentName}
+                                onValueChange={setInComponentName}
+                                minRows={1}
+                                size="sm"
                             />
                             {/* <p>Tipo de componente</p>
                             <p>FASE</p> */}
@@ -260,7 +293,7 @@ export default function EDTNewVisualization({
                     <p className="Header">Detalles del componente</p>
                     <div className="SecondCardContainer">
                         <p>Descripcion detallada</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             id="inputBoxGeneric"
                             placeholder="Escribe aquí"
@@ -268,9 +301,20 @@ export default function EDTNewVisualization({
                             onChange={(e) => {
                                 setInDescripcion(e.target.value);
                             }}
+                        /> */}
+                        <Textarea
+                            key={"bordered"}
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inDescripcion}
+                            onValueChange={setInDescripcion}
+                            minRows={1}
+                            size="sm"
                         />
                         <p>Recursos</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             id="inputBoxGeneric"
                             placeholder="Escribe aquí"
@@ -278,9 +322,20 @@ export default function EDTNewVisualization({
                             onChange={(e) => {
                                 setInRecursos(e.target.value);
                             }}
+                        /> */}
+                        <Textarea
+                            key={"bordered"}
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inRecursos}
+                            onValueChange={setInRecursos}
+                            minRows={1}
+                            size="sm"
                         />
                         <p>Hito asociado</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             id="inputBoxGeneric"
                             placeholder="Escribe aquí"
@@ -288,9 +343,20 @@ export default function EDTNewVisualization({
                             onChange={(e) => {
                                 setInHito(e.target.value);
                             }}
+                        /> */}
+                        <Textarea
+                            key={"bordered"}
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inHito}
+                            onValueChange={setInHito}
+                            minRows={1}
+                            size="sm"
                         />
                         <p>Observaciones</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             id="inputBoxGeneric"
                             placeholder="Escribe aquí"
@@ -298,6 +364,17 @@ export default function EDTNewVisualization({
                             onChange={(e) => {
                                 setInObservaciones(e.target.value);
                             }}
+                        /> */}
+                        <Textarea
+                            key={"bordered"}
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inObservaciones}
+                            onValueChange={setInObservaciones}
+                            minRows={1}
+                            size="sm"
                         />
                     </div>
                 </div>

@@ -8,5 +8,6 @@ routerCronograma.post("/insertarCronograma",verifyToken, cronogramaController.cr
 routerCronograma.post("/insertarTarea", tareaController.crear);
 
 routerCronograma.put("/actualizarCronograma", cronogramaController.actualizar);
+routerCronograma.post("/listarCronograma", cronogramaController.listar);
 
 module.exports.routerCronograma = routerCronograma;
