@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Textarea } from "@nextui-org/react";
 import e from "cors";
 
-export default function ContainerScenario({ indice, onUpdateScenario}) {
+export default function ContainerScenario({ indice, onUpdateScenario,scenario,functionRemove}) {
     const inputId1 = `customPlaceholderScenarioInput1-${indice}`;
     const inputId2 = `customPlaceholderScenarioInput2-${indice}`;
     const inputId3 = `customPlaceholderScenarioInput3-${indice}`;
@@ -54,6 +54,7 @@ export default function ContainerScenario({ indice, onUpdateScenario}) {
                         handleInputChange("scenario", e.target.value);
                         isTextTooLong("scenario", e.target.value);
                     }}
+                    value={scenario.scenario}
                 />
             </div>
             <div className="customInput">
@@ -76,6 +77,7 @@ export default function ContainerScenario({ indice, onUpdateScenario}) {
                         handleInputChange("dadoQue", e.target.value);
                         isTextTooLong("dadoQue", e.target.value);
                     }}
+                    value={scenario.dadoQue}
                 />
             </div>
             <div className="customInput">
@@ -98,6 +100,7 @@ export default function ContainerScenario({ indice, onUpdateScenario}) {
                         handleInputChange("cuando", e.target.value);
                         isTextTooLong("cuando", e.target.value);
                     }}
+                    value={scenario.cuando}
                 />
             </div>
             <div className="customInput">
@@ -120,8 +123,17 @@ export default function ContainerScenario({ indice, onUpdateScenario}) {
                         handleInputChange("entonces", e.target.value);
                         isTextTooLong("entonces", e.target.value);
                     }}
+                    value={scenario.entonces}
                 />
             </div>
+            <img
+                src="/icons/icon-cross.svg"
+                alt="Eliminar"
+                className="iconDelete2"
+                onClick={() => {
+                    functionRemove(indice-1);
+                }}
+            />
         </div>
     );
 }

@@ -7,7 +7,8 @@ import { Textarea } from "@nextui-org/react";
 export default function ContainerScenario({
     indice,
     onUpdateScenario,
-    scenario
+    scenario,
+    functionRemove
 }) {
     const inputId1 = `customPlaceholderScenarioInput1-${indice}`;
     const inputId2 = `customPlaceholderScenarioInput2-${indice}`;
@@ -130,6 +131,14 @@ export default function ContainerScenario({
                     value={scenario.entonces}
                 />
             </div>
+            <img
+                src="/icons/icon-cross.svg"
+                alt="Eliminar"
+                className="iconDelete2"
+                onClick={() => {
+                    functionRemove(indice-1);
+                }}
+            />
         </div>
     );
 }

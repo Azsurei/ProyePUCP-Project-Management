@@ -8,6 +8,7 @@ export default function ContainerRequirement({
     indice,
     updateRequirementField,
     requirement,
+    functionRemove
 }) {
     const inputId1 = `customPlaceholderRequirementInput1-${indice}`;
 
@@ -50,9 +51,9 @@ export default function ContainerRequirement({
                     src="/icons/icon-cross.svg"
                     alt="Eliminar"
                     className="iconDelete"
-/*                     onClick={() => {
-                        props.handleRemove(props.number);
-                    }} */
+                    onClick={() => {
+                        functionRemove(indice-1);
+                    }}
                 />
             </div>
         </div>
