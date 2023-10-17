@@ -947,3 +947,32 @@ BEGIN
     WHERE idHistoriaRequisito = _idHistoriaRequisito;
     SELECT _idHistoriaRequisito AS idHistoriaRequisito;
 END$
+
+DROP PROCEDURE LISTAR_DETALLEAC_X_IDACTA;
+--Listar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE LISTAR_DETALLEAC_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE MODIFICAR_CAMPO_DETALLEAC;
+--Modificar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_CAMPO_DETALLEAC(
+    IN _idDetalle INT,
+    IN _nombre VARCHAR(500),
+	IN  _detalle VARCHAR(500)
+)
+BEGIN
+    UPDATE DetalleAC 
+    SET nombre = _nombre,
+        detalle = _detalle
+    WHERE idDetalle = _idDetalle;
+    SELECT * FROM DetalleAC;
+END$
