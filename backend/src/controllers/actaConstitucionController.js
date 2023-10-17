@@ -60,9 +60,40 @@ async function insertarInteresado(req,res,next){
     }
 }
 
+async function listarHito(req,res,next){
+    const {idActaConstitucion} = req.body;
+    try {
+        const query = `CALL LISTAR_HITOAC_X_IDACTA(?);`;
+        const [results] = await connection.query(query,[idActaConstitucion]);
+        const hitoAC = results[0];
+        res.status(200).json({hitoAC, message: "HitoAC listado"});
+    } catch (error) {
+        next(error);
+    }
+}
+async function insertarHito(req,res,next){
+    const{idActaConstitucion, descripcion, fechaLimite} = req.body;
+    const query = `
+        CALL INSERTAR_HITOAC(?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idActaConstitucion,descripcion,fechaLimite]);
+        const idHito = results[0][0].idHito;
+        console.log(`Se insertó el hito ${idHito}!`);
+        res.status(200).json({
+            idHito,
+            message: "Hito insertada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     listar,
     modificarCampos,
     listarInteresados,
-    insertarInteresado
+    insertarInteresado,
+    listarHito,
+    insertarHito
 };

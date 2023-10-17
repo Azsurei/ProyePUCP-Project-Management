@@ -350,11 +350,11 @@ ENGINE = InnoDB;
 
 CREATE TABLE HitoAC(
 	idHito INT AUTO_INCREMENT PRIMARY KEY,
-    idActa INT,
+    idActaConstitucion INT,
     descripcion VARCHAR(255),
     fechaLimite DATE,
     activo TINYINT,
-    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+    FOREIGN KEY (idActaConstitucion) REFERENCES ActaConstitucion(idActaConstitucion)
 )
 ENGINE = InnoDB;
 

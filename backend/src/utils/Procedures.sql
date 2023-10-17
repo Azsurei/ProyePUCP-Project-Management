@@ -1005,3 +1005,31 @@ BEGIN
     SET _idInteresado = @@last_insert_id;
     SELECT _idInteresado AS idInteresado;
 END$
+
+DROP PROCEDURE LISTAR_HITOAC_X_IDACTA;
+--Listar Hito Acta Constitucion
+DELIMITER $
+CREATE PROCEDURE LISTAR_HITOAC_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM HitoAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE INSERTAR_HITOAC;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_HITOAC(
+	IN  _idActaConstitucion INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaLimite DATE
+)
+BEGIN
+	DECLARE _idHito INT;
+	INSERT INTO HitoAC(idActaConstitucion,descripcion,fechaLimite,activo) 
+    VALUES(_idActaConstitucion,_descripcion,_fechaLimite,1);
+    SET _idHito = @@last_insert_id;
+    SELECT _idHito AS idHito;
+END$

@@ -10,5 +10,8 @@ routerActaConstitucion.get("/listarActaConstitucion", actaConstitucionController
 routerActaConstitucion.put("/modificarCampos", actaConstitucionController.modificarCampos);
 routerActaConstitucion.get("/listarInteresados", actaConstitucionController.listarInteresados);
 routerActaConstitucion.post("/insertarInteresado", actaConstitucionController.insertarInteresado);
+routerActaConstitucion.get("/listarHito", actaConstitucionController.listarHito);
+routerActaConstitucion.post("/insertarHito", actaConstitucionController.insertarHito);
+
 
 module.exports.routerActaConstitucion = routerActaConstitucion;
