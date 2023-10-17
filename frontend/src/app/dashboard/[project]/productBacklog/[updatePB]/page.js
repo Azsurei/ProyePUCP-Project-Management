@@ -335,7 +335,7 @@ export default function ProductBacklogUpdate(props) {
         };
         console.log("Eliminado correctamente");
         console.log(deleteData);
-        /*         axios
+        axios
             .put(
                 "http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
                 putData
@@ -349,7 +349,31 @@ export default function ProductBacklogUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud PUT falla
                 console.error("Error al realizar la solicitud PUT:", error);
-            }); */
+            }); 
+        axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarCriterioRequisito", postData)
+            .then((response) => {
+              // Manejar la respuesta de la solicitud POST
+              console.log("Respuesta del servidor (POST):", response.data);
+              console.log("Registro correcto (POST)");
+              // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+              // Manejar errores si la solicitud POST falla
+              console.error("Error al realizar la solicitud POST:", error);
+            });
+        axios.delete("http://localhost:8080/api/proyecto/backlog/hu/eliminarCriterioRequisito", {
+                data: deleteData
+              })
+                .then((response) => {
+                  // Manejar la respuesta de la solicitud DELETE
+                  console.log("Respuesta del servidor (DELETE):", response.data);
+                  console.log("Eliminación correcta (DELETE)");
+                  // Realizar acciones adicionales si es necesario
+                })
+                .catch((error) => {
+                  // Manejar errores si la solicitud DELETE falla
+                  console.error("Error al realizar la solicitud DELETE:", error);
+            });
     };
 
     function verifyFieldsEmpty() {
