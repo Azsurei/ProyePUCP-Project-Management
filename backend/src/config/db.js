@@ -5,8 +5,7 @@ const connection = mysql.createPool({
   port: "3306",
   user: "admin",
   password: "pywxuk-baWqoh-bibvu4",
-  database: "dbdibujitos",
-  acquireTimeout: 3600000
+  database: "dbdibujitos"
 });
 
 

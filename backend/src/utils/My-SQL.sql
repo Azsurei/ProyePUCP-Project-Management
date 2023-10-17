@@ -242,7 +242,7 @@ DROP TABLE IF EXISTS Tarea;
 CREATE TABLE Tarea(
 	idTarea INT AUTO_INCREMENT PRIMARY KEY,
     idCronograma INT,
-    idSubGrupo INT,
+    idEquipo INT,
     idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
     idTareaAnterior INT,
 	sumillaTarea VARCHAR(255),
@@ -269,7 +269,16 @@ CREATE TABLE TareaEstado(
 )
 ENGINE = InnoDB;
 
-
+CREATE TABLE UsuarioXTarea(
+	idUsuarioXTarea INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    idTarea INT,
+    activo TINYINT,
+    UNIQUE(idUsuario,idTarea),
+	FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idTarea) REFERENCES Tarea(idTarea)
+)
+ENGINE = InnoDB;
 
 ------------
 -- EDT
