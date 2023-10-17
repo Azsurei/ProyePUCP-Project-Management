@@ -445,6 +445,18 @@ BEGIN
     SELECT _idCronograma AS idCronograma;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_CRONOGRAMA_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRONOGRAMA_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT idCronograma, fechaInicio, fechaFin 
+    FROM Cronograma 
+    WHERE idProyecto = _idProyecto 
+    AND activo=1;
+END$
+
 DROP PROCEDURE IF EXISTS ACTUALIZAR_CRONOGRAMA;
 DELIMITER $
 CREATE PROCEDURE ACTUALIZAR_CRONOGRAMA(
@@ -459,11 +471,16 @@ BEGIN
         fechaFin = _fechaFin
     WHERE idProyecto = (SELECT p.idProyecto  FROM Proyecto p WHERE p.idProyecto = _idProyecto);
 END $
-SELECT *FROM Tarea;
+
+
+---------------------------------------
+-- Tarea
+---------------------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_TAREA;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_TAREA(
 	IN _idCronograma INT,
-    IN _idSubGrupo INT,
+    IN _idEquipo INT,
     IN _idPadre INT,
     IN _idTareaAnterior INT,
     IN _sumillaTarea VARCHAR(255),
@@ -476,14 +493,84 @@ CREATE PROCEDURE INSERTAR_TAREA(
 )
 BEGIN
 	DECLARE _idTarea INT;
-	INSERT INTO Tarea(idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,activo) 
-    VALUES(_idCronograma,_idSubGrupo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,1);		
+	INSERT INTO Tarea(idCronograma,idEquipo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,activo) 
+    VALUES(_idCronograma,_idEquipo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,1);		
     SET _idTarea = @@last_insert_id;
     SELECT _idTarea AS idTarea;
 END $
 
+DROP PROCEDURE IF EXISTS LISTAR_TAREAS_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE  LISTAR_TAREAS_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas 
+    FROM Tarea t
+    WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto)
+    AND t.activo=1;
+END$
+
+---------------------------------------
+-- UsuarioXTarea
+---------------------------------------
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_USUARIO_X_TAREA(
+	IN _idUsuario INT,
+    IN _idTarea INT
+)
+BEGIN
+	DECLARE _idUsuarioXTarea INT;
+	INSERT INTO UsuarioXTarea(idUsuario,idTarea,activo) 
+    VALUES(_idUsuario,_idTarea,1);		
+    SET _idUsuarioXTarea = @@last_insert_id;
+    SELECT _idUsuarioXTarea AS idUsuarioXTarea;
+END $
+
+CALL INSERTAR_USUARIO_X_TAREA(78,3);
 
 
+DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_ID_TAREA;
+DELIMITER $
+CREATE PROCEDURE  LISTAR_USUARIOS_X_ID_TAREA(
+    IN _idTarea INT
+)
+BEGIN
+	SELECT u.idUsuario, u.nombres,u.apellidos, u.correoElectronico
+    FROM Usuario u, UsuarioXTarea ut
+    WHERE  u.idUsuario = ut.idUsuario AND _idTarea=ut.idTarea
+    AND u.activo=1 AND ut.activo=1;
+END$
+
+CALL LISTAR_USUARIOS_X_ID_TAREA(3);
+CALL LISTAR_TAREAS_X_ID_PROYECTO(45);
+SELECT *FROM Usuario;
+SELECT *FROM Cronograma;
+
+UPDATE UsuarioXTarea SET activo = 0 WHERE idUsuarioXTarea = 1;
+SELECT * FROM UsuarioXTarea;
+
+
+
+DROP PROCEDURE LISTAR_EQUIPO_X_ID_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE  LISTAR_EQUIPO_X_ID_EQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+	SELECT idEquipo,nombre,descripcion,fechaCreacion
+    FROM Equipo
+    WHERE  idEquipo = _idEquipo
+    AND activo=1;
+END$
+
+
+
+CALL LISTAR_EQUIPO_X_ID_EQUIPO(2);
+
+SELECT * FROM Tarea;
+UPDATE Tarea SET idEQuipo = 1 WHERE idTarea = 2;
 
 DROP PROCEDURE IF EXISTS INSERTAR_CATALOGO_RIESGO;
 DELIMITER $
@@ -631,6 +718,11 @@ BEGIN
 	SELECT u.idUsuario, u.nombres, u.apellidos FROM Usuario u, UsuarioXRolXProyecto urp WHERE u.idUsuario = urp.idUsuario AND urp.idProyecto = _idProyecto AND urp.idRol = _idRol AND urp.activo = 1;
 END$
 
+
+--------------------
+-- Equipo
+--------------------
+
 DELIMITER $
 CREATE PROCEDURE INSERTAR_EQUIPO(   
 	IN _idProyecto INT,
@@ -656,7 +748,20 @@ BEGIN
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
 
-CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(6,2);
+DROP PROCEDURE IF EXISTS LISTAR_EQUIPO_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE  LISTAR_EQUIPO_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT e.idEquipo,e.nombre,e.descripcion,e.fechaCreacion
+    FROM Equipo e
+    WHERE e.idProyecto = _idProyecto
+    AND e.activo=1;
+END$
+
+CALL LISTAR_EQUIPO_X_ID_PROYECTO(6)
+
 
 DROP PROCEDURE IF EXISTS LISTAR_COMPONENTE_EDT;
 DELIMITER $

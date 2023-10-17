@@ -35,7 +35,7 @@ INSERT INTO Herramienta (nombre,descripcion,imageURL,activo) VALUES("Presupuesto
 
 -- INSERTS EDT
 
--- PRIMER EDT
+-- PRIMER EDT	
 CALL INSERTAR_EDT(6,'EDT 1','Es el primer EDT de la BD',77,1);
 CALL INSERTAR_EDT(6,'EDT 2','Es el segundo EDT de la BD',77,1);
 

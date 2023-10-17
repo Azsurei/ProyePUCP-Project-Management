@@ -2,7 +2,7 @@ const express = require('express');
 const connection = require('../config/db');
 const routerEquipo = express.Router();
 const { verifyToken } = require('../middleware/middlewares');
-
+const equipoController = require('../controllers/equipoController');
 
 routerEquipo.post("/insertarEquipoYParticipantes",async(req,res)=>{
     //Insertar query aca
@@ -38,6 +38,8 @@ routerEquipo.post("/insertarEquipoYParticipantes",async(req,res)=>{
         res.status(500).send("Error en el registro: " + error.message);
     }
 })
+
+routerEquipo.get("/listarXIdProyecto/:idProyecto",equipoController.listarXIdProyecto);
 
 routerEquipo.get("/test/:testId", (req, res) => {
     res.send(req.params);

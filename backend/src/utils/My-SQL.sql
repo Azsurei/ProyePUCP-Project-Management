@@ -242,7 +242,7 @@ DROP TABLE IF EXISTS Tarea;
 CREATE TABLE Tarea(
 	idTarea INT AUTO_INCREMENT PRIMARY KEY,
     idCronograma INT,
-    idSubGrupo INT,
+    idEquipo INT,
     idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
     idTareaAnterior INT,
 	sumillaTarea VARCHAR(255),
@@ -269,7 +269,16 @@ CREATE TABLE TareaEstado(
 )
 ENGINE = InnoDB;
 
-
+CREATE TABLE UsuarioXTarea(
+	idUsuarioXTarea INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    idTarea INT,
+    activo TINYINT,
+    UNIQUE(idUsuario,idTarea),
+	FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idTarea) REFERENCES Tarea(idTarea)
+)
+ENGINE = InnoDB;
 
 ------------
 -- EDT
@@ -655,9 +664,9 @@ CREATE TABLE HistoriaDeUsuario(
 	idHistoriaPrioridad INT,
     idHistoriaEstado INT,
     descripcion VARCHAR(400),
-    como VARCHAR(255),
-    quiero VARCHAR(255),
-    para VARCHAR(255),
+    como VARCHAR(400),
+    quiero VARCHAR(400),
+    para VARCHAR(400),
     fechaCreacion DATE,
     activo TINYINT,
     FOREIGN KEY (idEpica) REFERENCES Epica(idEpica),
@@ -665,13 +674,16 @@ CREATE TABLE HistoriaDeUsuario(
     FOREIGN KEY (idHistoriaEstado) REFERENCES HistoriaEstado(idHistoriaEstado)
 )
 ENGINE = InnoDB;
+ALTER TABLE HistoriaRequisito 
+	MODIFY COLUMN descripcion VARCHAR(400)
+    ;
 
 
 
 CREATE TABLE HistoriaRequisito(
 	idHistoriaRequisito INT AUTO_INCREMENT PRIMARY KEY,
     idHistoriaDeUsuario INT,
-    descripcion VARCHAR(255),
+    descripcion VARCHAR(400),
     activo TINYINT,
     FOREIGN KEY (idHistoriaDeUsuario) REFERENCES HistoriaDeUsuario(idHistoriaDeUsuario)
 )
@@ -680,10 +692,10 @@ ENGINE = InnoDB;
 CREATE TABLE HistoriaCriterioDeAceptacion(
 	idHistoriaCriterioDeAceptacion INT AUTO_INCREMENT PRIMARY KEY,
 	idHistoriaDeUsuario INT,
-    escenario VARCHAR(255),
-    dadoQue VARCHAR(255),
-	cuando VARCHAR(255),
-	entonces VARCHAR(255),
+    escenario VARCHAR(400),
+    dadoQue VARCHAR(400),
+	cuando VARCHAR(400),
+	entonces VARCHAR(400),
     activo TINYINT,
 	FOREIGN KEY (idHistoriaDeUsuario) REFERENCES HistoriaDeUsuario(idHistoriaDeUsuario)
 )
