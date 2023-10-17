@@ -27,6 +27,7 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl= decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
+    const stringURLBacklog= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -43,7 +44,23 @@ export default function ProductBacklogRegister(props) {
     const [para, setPara] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [modal, setModal] = useState(false);
+    const [backlog, setBacklog] = useState([]);
 
+    useEffect(() => {
+        const fetchBacklog = async () => {
+          try {
+            const response = await axios.get(stringURLBacklog);
+            if (response.status === 200) {
+              setBacklog(response.data.backlog);
+              console.log("Se obtuvo el backlog correctamente", response.data.backlog);
+            }
+          } catch (error) {
+            setError('Error al obtener el backlog: ' + error.message);
+          }
+        };
+    
+        fetchBacklog();
+      }, []);
     const toggleModal = () => {
         setModal(!modal);
     };
@@ -308,6 +325,8 @@ export default function ProductBacklogRegister(props) {
                     modal = {modal} 
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
                     url = {stringURLEpics}
+                    backlogID = {backlog[0].idProductBacklog}
+                    urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
                 />
                 )}
             </div> 

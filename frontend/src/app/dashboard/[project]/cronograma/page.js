@@ -4,10 +4,11 @@ import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/
 import AgendaTable from "@/components/dashboardComps/projectComps/cronogramaComps/AgendaTable";
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
 import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import CardSelectedUser from "@/components/CardSelectedUser";
 
 export default function Cronograma(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -23,9 +24,33 @@ export default function Cronograma(props) {
     const [tareaDescripcion, setTareaDescripcion] = useState("");
     const [fechaInicio, setFechaInicio] = useState("");
 
-    const [selected, setSelected] = useState("users");
+    const [tabSelected, setTabSelected] = useState("users");
 
     const [modal, setModal] = useState(false);
+
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedSubteam, setSelectedSubteam] = useState(null);
+
+    const returnListOfUsers = (newUsersList) => {
+        const newList = [...selectedUsers, ...newUsersList];
+
+        setSelectedUsers(newList);
+        setModal(false);
+    };
+
+    const removeUser = (user) => {
+        const newList = selectedUsers.filter((item) => item.id !== user.id);
+        setSelectedUsers(newList);
+        console.log(newList);
+    };
+
+    useEffect(() => {
+        setSelectedSubteam(null);
+    }, [selectedUsers]);
+
+    useEffect(() => {
+        setSelectedUsers([]);
+    }, [selectedSubteam]);
 
     return (
         <div className="cronogramaDiv">
@@ -106,15 +131,17 @@ export default function Cronograma(props) {
                 </p>
                 <div className="containerTab">
                     <TabUserSelect
-                        selectedKey={selected}
-                        onSelectionChange={setSelected}
+                        selectedKey={tabSelected}
+                        onSelectionChange={setTabSelected}
                     ></TabUserSelect>
                     <div
                         className="btnToPopUp"
-                        onClick={()=>{setModal(true)}}
+                        onClick={() => {
+                            setModal(true);
+                        }}
                     >
                         <p>
-                            {selected === "users"
+                            {tabSelected === "users"
                                 ? "Buscar un miembro"
                                 : "Buscar un subequipo"}
                         </p>
@@ -125,13 +152,27 @@ export default function Cronograma(props) {
                         />
                     </div>
                 </div>
-                <div className="contUsers">
-                    <p className="noUsersMsg">
-                        {selected === "users"
-                            ? "No ha seleccionado ningun usuario"
-                            : "No ha seleccionado ningun subequipo"}
-                    </p>
-                </div>
+
+                <ul className="contUsers">
+                    {selectedUsers.length !== 0 ? (
+                        selectedUsers.map((component) => (
+                            <CardSelectedUser
+                                key={component.id}
+                                name={component.name}
+                                lastName={component.lastName}
+                                usuarioObject={component}
+                                email={component.email}
+                                removeHandler={removeUser}
+                            ></CardSelectedUser>
+                        ))
+                    ) : (
+                        <p className="noUsersMsg">
+                            {tabSelected === "users"
+                                ? "No ha seleccionado ningun usuario"
+                                : "No ha seleccionado ningun subequipo"}
+                        </p>
+                    )}
+                </ul>
 
                 <div className="twoButtonsEnd">
                     <Modal
@@ -152,10 +193,10 @@ export default function Cronograma(props) {
                             console.log(tareaName);
                         }}
                         verifyFunction={() => {
-                            if(false){
+                            if (false) {
                                 //setFieldsEmpty(true);
                                 return false;
-                            }else{
+                            } else {
                                 //setFieldsEmpty(false);
                                 return true;
                             }
@@ -163,13 +204,13 @@ export default function Cronograma(props) {
                     />
                 </div>
             </div>
-            {console.log('valor de modal es' + modal)}
             {modal && (
                 <ModalUser
                     handlerModalClose={() => {
                         setModal(false);
                     }}
-                    //handlerModalFinished={returnListOfMiembros}
+                    handlerModalFinished={returnListOfUsers}
+                    excludedUsers={selectedUsers}
                 ></ModalUser>
             )}
         </div>

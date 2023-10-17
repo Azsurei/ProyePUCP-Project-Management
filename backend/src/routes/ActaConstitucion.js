@@ -1,11 +1,14 @@
 const express = require("express");
-const connection = require("../config/db");
 const routerActaConstitucion = express.Router();
-const {verifyToken} = require('../middleware/middlewares');
+const { verifyToken } = require("../middleware/middlewares");
+const actaConstitucionController = require("../controllers/actaConstitucionController");
 
-//Lógica de Acta de constitucion
-//Se crea el acta, con campos fijos ¿En qué parte del proceso se crea el acta de constitución?
-//Se puede añadir campos a demanda en el Acta de Constitucion
+routerActaConstitucion.get("/listarActaConstitucion",verifyToken, actaConstitucionController.listar);
+routerActaConstitucion.put("/modificarCampos",verifyToken, actaConstitucionController.modificarCampos);
+routerActaConstitucion.get("/listarInteresados",verifyToken, actaConstitucionController.listarInteresados);
+routerActaConstitucion.post("/insertarInteresado",verifyToken, actaConstitucionController.insertarInteresado);
+routerActaConstitucion.get("/listarHito",verifyToken, actaConstitucionController.listarHito);
+routerActaConstitucion.post("/insertarHito",verifyToken, actaConstitucionController.insertarHito);
 
 
 module.exports.routerActaConstitucion = routerActaConstitucion;

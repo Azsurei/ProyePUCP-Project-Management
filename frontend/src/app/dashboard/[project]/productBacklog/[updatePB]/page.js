@@ -12,6 +12,7 @@ import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import {useRouter} from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/containerScenario2";
+import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -28,6 +29,7 @@ export default function ProductBacklogUpdate(props) {
     const decodedUrl= decodeURIComponent(props.params.project); //borrar
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);//borrar
     const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;//borrar
+    const stringURLBacklog= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -103,6 +105,35 @@ export default function ProductBacklogUpdate(props) {
             console.log(error);
           });
       }, []);     */
+
+      const [modal, setModal] = useState(false);
+    const [backlog, setBacklog] = useState([]);
+
+    useEffect(() => {
+        const fetchBacklog = async () => {
+          try {
+            const response = await axios.get(stringURLBacklog);
+            if (response.status === 200) {
+              setBacklog(response.data.backlog);
+              console.log("Se obtuvo el backlog correctamente", response.data.backlog);
+            }
+          } catch (error) {
+            setError('Error al obtener el backlog: ' + error.message);
+          }
+        };
+    
+        fetchBacklog();
+      }, []);
+    const toggleModal = () => {
+        setModal(!modal);
+    };
+    useEffect(() => {
+        if(modal) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+    }, [modal])
 
       useEffect(() => {
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
@@ -242,7 +273,14 @@ export default function ProductBacklogUpdate(props) {
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
-                        <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/>
+                        {/* <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/> */}
+                        <div className="subcontainerCombo flex items-center">
+                            <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/>
+                            <button className="w-20 h-20" type="button" onClick={() => toggleModal()}>
+                                <img src="/icons/btnEditImagen.svg" alt="Descripción de la imagen" />
+                            </button>
+                        </div>
+                        
                     </div>
                     {console.log("uwuwu",historiaUsuario.hu[0].idEpica)}
                     <div className="date containerCombo">
@@ -371,6 +409,15 @@ export default function ProductBacklogUpdate(props) {
                         </div>
                     </div>
                 </div>
+                {modal && (
+                <PopUpEpica
+                    modal = {modal} 
+                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                    url = {stringURLEpics}
+                    backlogID = {backlog[0].idProductBacklog}
+                    urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
+                />
+                )}
             </div> 
         </form>
     );

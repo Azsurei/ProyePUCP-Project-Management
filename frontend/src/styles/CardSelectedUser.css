@@ -1,0 +1,61 @@
+.CardSelectedUser{
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: .3rem .3rem;
+
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #DFDFDF;
+    border-width: 1px;
+
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+    width: 100%;
+}
+
+.CardSelectedUser .containerLeft{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: .5rem;
+}
+
+.CardSelectedUser .containerLeft .profilePic{
+    
+    border-radius: 100%;
+    background-color: rgb(212, 212, 212);
+    height: 50px;
+    width: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardSelectedUser .containerLeft .containerInfo{
+    display: flex;
+    flex-direction: column;
+}
+
+.CardSelectedUser .containerLeft .containerInfo .usrNames{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-family: 'Roboto';
+    font-weight: 700;
+    margin: 0 0;
+}
+
+.CardSelectedUser .containerLeft .containerInfo .usrMail{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-family: 'Roboto';
+    font-weight: 300;
+    margin: 0 0;
+}

@@ -29,16 +29,39 @@ import { set } from "date-fns";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url}) {
+export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlEliminate}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
     const [newEpicName, setNewEpicName] = useState("");
     const [addError, setAddError] = useState("");
-
+    const [eliminateError, setEliminateError] = useState("");
+    const [noEpic, setNoEpic] = useState("");
+    const [isSelected, setIsSelected] = useState(false);
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
+
+    const fetchData = async () => {
+        try {
+          const response = await axios.get(url);
+          const epicas = response.data["epicas"];
+          const filteredEpicas = filterValue
+              ? epicas.filter((epica) =>
+                  epica.nombre.toLowerCase().includes(filterValue.toLowerCase())
+              )
+              : epicas;
+
+          setListEpics(filteredEpicas); 
+          if (filteredEpicas.length === 0) {
+              setNoResults(true);
+          } else {
+              setNoResults(false);
+          }
+        } catch (error) {
+          console.error('Error al obtener datos:', error);
+        }
+      };
     const handleInsertEpic = () => {
         if (newEpicName.trim() === "") {
             setAddError("El nombre de la épica no puede estar vacío.");
@@ -49,30 +72,66 @@ export default function PopUpEpica({ modal, toggle, url}) {
             // Luego, limpia el campo de entrada y el mensaje de error.
             setNewEpicName("");
             setAddError("");
+            const data = {
+                idProductBacklog: backlogID, // Reemplaza con el valor deseado
+                nombre: newEpicName // Reemplaza con el valor deseado
+              };
+              
+             
+                axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarEpica", data)
+                .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Registro correcto de la epica")
+                // Realizar acciones adicionales si es necesario
+                fetchData();
+                })
+                .catch((error) => {
+                 // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+                });
+                
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await axios.get(url);
-            const epicas = response.data["epicas"];
-            const filteredEpicas = filterValue
-                ? epicas.filter((epica) =>
-                    epica.nombre.toLowerCase().includes(filterValue.toLowerCase())
-                )
-                : epicas;
-
-            setListEpics(filteredEpicas); 
-            if (filteredEpicas.length === 0) {
-                setNoResults(true);
-            } else {
-                setNoResults(false);
-            }
-          } catch (error) {
-            console.error('Error al obtener datos:', error);
-          }
+    const EliminateEpic = (name) => {
+        console.log(name);
+        setEliminateError("");
+        const data = {
+            nombreEpica: name // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
+        axios.delete("http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica", { data })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Eliminado correcto");
+                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+                fetchData();
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
+    };
+    
+    const [selectedEpic, setSelectedEpic] = useState(null);
+
+    const selectEpic = (epic) => {
+        setSelectedEpic(epic);
+        setIsSelected(true);
+        setNoEpic("");
+        console.log(epic);
+    };
+
+    const deselectEpic = (epic) => {
+        setSelectedEpic(null);
+        setIsSelected(false);
+    };
+
+    
+
+    useEffect(() => {
+        
     
         fetchData();
       }, [filterValue]);
@@ -98,7 +157,9 @@ export default function PopUpEpica({ modal, toggle, url}) {
                             <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={handleInsertEpic}>
                                 Agregar Epica
                             </Button>
-                            <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnElimanteEpic">
+                            <Button color="danger"  onClick={() => {
+                                                    isSelected ? setEliminateError("Seguro desea eliminar la epica?") : setNoEpic("Falta seleccionar una epica");
+                                                    }} endContent={<PlusIcon />} className="btnElimanteEpic" >
                                 Eliminar
                             </Button>
                             
@@ -113,7 +174,11 @@ export default function PopUpEpica({ modal, toggle, url}) {
                 )}
                 <div className="container">
                     <div className="divEpics">
-                        <ListEpic lista={listEpics}></ListEpic>
+                        <UserCardsContext.Provider
+                            value={{ selectEpic, deselectEpic }}
+                        >
+                            <ListEpic lista={listEpics}></ListEpic>
+                        </UserCardsContext.Provider>
                     </div>
                     <div className="subcontainer">
                         
@@ -129,9 +194,27 @@ export default function PopUpEpica({ modal, toggle, url}) {
                             }}
                         ></input>
                         {addError && <p className="error-message">{addError}</p>}
-                    </div>
-                    
-                    
+                        {noEpic && <p className="error-message">{noEpic}</p>}
+                        {eliminateError ? (
+                            <div>
+                                <p className="error-message">{eliminateError}</p>
+                                <div className="endButtons">
+                                    <button
+                                        className="buttonTwoUser"
+                                        onClick={() => setEliminateError("")}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        className="buttonOneUser"
+                                        onClick={() => EliminateEpic(selectedEpic.nombre)}
+                                    >
+                                        Confirmar
+                                     </button>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>  
                 </div>
                 <div >
                         <button

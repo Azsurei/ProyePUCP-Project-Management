@@ -1,17 +1,10 @@
 "use client"
-import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css";
-
-//import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import InConstruction from "@/common/InConstruction";
 import { useState, useEffect, useCallback } from "react";
-import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
-import BacklogRow from "@/components/dashboardComps/projectComps/productBacklog/BacklogRow";
-import TableComponent from "@/components/dashboardComps/projectComps/productBacklog/TableComponent";
 import MyDynamicTable from "@/components/DynamicTable";
-import { data } from "autoprefixer";
 import React from "react";
-import axios from "axios";
-import RouteringBacklog from "@/components/dashboardComps/projectComps/productBacklog/RouteringBacklog";
+import axios from "axios"
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -29,8 +22,8 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
-
-export default function ProductBacklog(props) {
+import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication.css";
+export default function MatrizDeComunicaciones(props){
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -42,135 +35,40 @@ export default function ProductBacklog(props) {
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
 
-    
-
-   //const stringURL1 = "http://localhost:8080/api/proyecto/backlog/42/listarHistorias";
-
-/*axios.get(stringURL1)
-  .then(response => {
-    console.log(response.data); // Maneja la respuesta aquí
-  })
-  .catch(error => {
-    console.error(error);
-  });*/
-  
-
-  
-
-    
-
-
-    
-
-    /*function DataTable() {
-        console.log(projectId);
-    
-        const stringURL =
-            "http://localhost:8080/api/proyecto/backlog/" +
-            projectId +
-            "/listarHistorias";
-    
-            axios
-            .get(stringURL)
-            .then(function (response) {
-                const componentsArray = response.data.historias;
-                console.log(componentsArray);
-                setData(componentsArray);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-    useEffect(() => {
-        DataTable();
-    }, []);
-
-    
-
-    console.log(data.idHistoriaDeUsuario);*/
-    const [data, setData] = useState([]);
-    const [objectID, setObjectID] = useState(null);
-    const [navegate, setNavegate] = useState(false);
-    function DataTable(){
-        const fetchData = async () => {
-          try {
-            // Realiza la solicitud HTTP al endpoint del router
-            const stringURL =
-            "http://localhost:8080/api/proyecto/backlog/" +
-            projectId +
-            "/listarHistorias";
-            const response = await axios.get(stringURL);
-    
-            // Actualiza el estado 'data' con los datos recibidos
-            setData(response.data.historias);
-    
-            console.log(`Datos obtenidos exitosamente:`, response.data.historias);
-          } catch (error) {
-            console.error('Error al obtener datos:', error);
-          }
-        };
-    
-        fetchData();
-      };
-    
-    useEffect(() => {
-        DataTable();
-    }, []);
-
-    const toggleModal = (task) => {
-        setSelectedTask(task);
-        console.log(task.idHistoriaDeUsuario);
-        setModal1(!modal1);
-    };
-
-    const setRoutering = (objectID) => {
-        setObjectID(objectID);
-        setNavegate(!navegate);
-    };
-
-    const toggleModalAll = () => {
-        setModal2(!modal2);
-    };
-    
-
-    useEffect(() => {
-        if(modal1 || modal2) {
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = 'auto'
-        }
-    }, [modal1, modal2])
-
-    
-    
     const columns = [
         {
-            name: 'Nombre',
-            uid: 'DescripcionHistoria',
+            name: 'Informacion Requerida',
+            uid: 'Informacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Epica',
-            uid: 'NombreEpica',
+            name: 'Formato',
+            uid: 'FormatoComunicacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Prioridad',
-            uid: 'NombrePrioridad',
+            name: 'Responsable de comunicar',
+            uid: 'ResponsableComunicacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Color',
-            uid: 'color',
+            name: 'Grupo receptor',
+            uid: 'GrupoReceptorComunicacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: false
+            sortable: true
         },
         {
-            name: 'Estado',
-            uid: 'NombreEstado',
+            name: 'Canal',
+            uid: 'CanalComunicacion',
+            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
+            sortable: true
+        },
+        {
+            name: 'Frecuencia',
+            uid: 'FrecuenciaComunicacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -181,123 +79,23 @@ export default function ProductBacklog(props) {
             sortable: false
         }
     ];
-
-    /*const data = [
+    const data = [
         {
             id: 1,
-            descripcion: 'Historia 1',
-            epic: 'Epic 1',
-            priority: 'Must',
-            state: 'No iniciado'
+            Informacion: 'Acta de constitucion',
+            FormatoComunicacion: 'Word',
+            ResponsableComunicacion: 'Gestor de proyecto',
+            GrupoReceptorComunicacion: 'Todos los interesados',
+            CanalComunicacion: 'Reunion presencial',
+            FrecuenciaComunicacion: 'Una sola vez',
         },
-        {
-            id: 2,
-            descripcion: 'Historia 2',
-            epic: 'Epic 2',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 3,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 4,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 5,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 6,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 7,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 8,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 9,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 10,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 11,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 12,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 13,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 14,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 15,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        }
-    ];*/
-    
-
+        
+    ];
     const toolsOptions = [
         { name: "Herramienta 1", uid: "active" },
         { name: "Herramienta 2", uid: "paused" },
         { name: "Herramienta 3", uid: "vacation" },
     ];
-
-    //const [datas, setDatas] = useState([]);
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
@@ -317,7 +115,7 @@ export default function ProductBacklog(props) {
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                data.DescripcionHistoria.toLowerCase().includes(filterValue.toLowerCase())
+                data.Informacion.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -325,7 +123,7 @@ export default function ProductBacklog(props) {
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                Array.from(toolsFilter).includes(data.DescripcionHistoria)
+                Array.from(toolsFilter).includes(data.Informacion)
             );
         }
 
@@ -398,35 +196,17 @@ export default function ProductBacklog(props) {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onClick={() => {
-                                    setRoutering(data)
-                                }}>
+                                <DropdownItem >
                                 {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
                                         Editar 
                                 {/* </Link> */}
                                 </DropdownItem>
 
-                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
+                                <DropdownItem >Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
                 );
-            case "NombrePrioridad":
-                return (
-                    <span className="p-1.5 text-sm uppercase tracking-wider rounded-lg bg-opacity-50"
-                        style={{ backgroundColor: data.ColorPrioridad || "transparent" }}
-                    >
-                        {cellValue}
-                    </span>
-                );
-            case "NombreEstado":
-                return (
-                    <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
-                        {cellValue}
-                    </span>
-                );
-            case "color":
-                    return null;
             default:
                 return cellValue;
         }
@@ -439,7 +219,7 @@ export default function ProductBacklog(props) {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Buscar por nombre..."
+                        placeholder="Buscar por informacion..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -476,17 +256,17 @@ export default function ProductBacklog(props) {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />} className="btnBacklogExport">
+                        <Button color="primary" endContent={<PlusIcon />} className="btnComunicacionExport">
                             Exportar
                         </Button>
-                        <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnBacklogEliminar">
+                        <Button color="danger" endContent={<PlusIcon />} className="btnComunicacionEliminar">
                             Eliminar
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {data.length} historias
+                        Total: {data.length} informaciones
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -549,36 +329,17 @@ export default function ProductBacklog(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    return(
 
-    return (
-        //Aqui va el codigo del contenido del dashboard
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog
+                Inicio / Proyectos / Nombre del proyecto / MatrizDeComunicaciones
             </div>
-            <div className="backlog">
-                <div className="titleBacklog">BACKLOG</div>
-                <div className="navigationBacklog">
-                    <div className="navigationBacklogIzquierda">
-                        <Link href="#tableroKanban">
-                            <button className="btnBacklog sm:w-1 sm:h-1" type="button">Tablero Kanban</button>
-                        </Link>
-                        <Link href="#sprintBacklog">
-                            <button className="btnBacklog sm:w-1 sm:h-1" type="button">Sprint Backlog</button>
-                        </Link>
-                        <Link href="#productBacklog">
-                            <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Product Backlog</button>
-                        </Link>
-                    </div>
-                    <div className="navigationBacklogDerecha">
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/registerPB"}>
-                            <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Añadir elemento</button>
-                        </Link>
-                    </div>
-                </div>
+            <div className="matrizComunicaciones">
+                <div className="titleComunicaciones">Matriz de Comunicaciones</div>
                 <div>
                        <MyDynamicTable 
-                            label ="Tabla Backlog" 
+                            label ="Tabla Matriz de Comunicaciones" 
                             bottomContent={bottomContent} 
                             selectedKeys={selectedKeys}
                             setSelectedKeys={setSelectedKeys}
@@ -588,43 +349,13 @@ export default function ProductBacklog(props) {
                             columns={columns}
                             sortedItems={sortedItems}
                             renderCell={renderCell}
-                            idKey="idHistoriaDeUsuario"
+                            idKey="id"
                         />
-                {/*<TableComponent data={data} /*urlApi = {stringURL} columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/>*/} {/* Pasa toggleModal como prop al componente TableComponent */}
-                </div>
                 
+                </div>
             </div>
-            {modal1 && selectedTask && (
-                <PopUpEliminateHU
-                    modal = {modal1} 
-                    toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
-                    taskName={selectedTask.DescripcionHistoria}
-                    idHistoriaDeUsuario = {selectedTask.idHistoriaDeUsuario}
-                    refresh ={DataTable}
-                />
-            )}
-            {modal2 && (
-                <PopUpEliminateAll 
-                    modal={modal2}
-                    toggle={() => toggleModalAll()} 
-                    
-                />
-            )}
-            {navegate && objectID.idHistoriaDeUsuario && (
-                <RouteringBacklog
-                    proy_name = {projectName}
-                    proy_id = {projectId}
-                    idHu = {objectID.idHistoriaDeUsuario}
-                />
-            )
-            }
             
         </div>
+        
     );
 }
-
-
-
-
-
-
