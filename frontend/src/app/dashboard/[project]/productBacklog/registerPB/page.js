@@ -10,13 +10,10 @@ import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
 import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-<<<<<<< HEAD
 import { useRouter } from "next/navigation";
-
-=======
-import {useRouter} from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+import { useContext } from "react";
+import { SmallLoadingScreen } from "../../layout";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -28,18 +25,12 @@ function getCurrentDate() {
 }
 
 export default function ProductBacklogRegister(props) {
-<<<<<<< HEAD
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const stringURLEpics = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
-=======
-    const router=useRouter();
-    const decodedUrl= decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
-    const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
-    const stringURLBacklog= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+    const stringURLBacklog = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -55,31 +46,32 @@ export default function ProductBacklogRegister(props) {
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
-<<<<<<< HEAD
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
-=======
     const [modal, setModal] = useState(false);
     const [backlog, setBacklog] = useState([]);
 
     useEffect(() => {
         const fetchBacklog = async () => {
-          try {
-            const response = await axios.get(stringURLBacklog);
-            if (response.status === 200) {
-              setBacklog(response.data.backlog);
-              console.log("Se obtuvo el backlog correctamente", response.data.backlog);
+            try {
+                const response = await axios.get(stringURLBacklog);
+                if (response.status === 200) {
+                    setBacklog(response.data.backlog);
+                    console.log(
+                        "Se obtuvo el backlog correctamente",
+                        response.data.backlog
+                    );
+                }
+                setIsLoadingSmall(false);
+            } catch (error) {
+                setError("Error al obtener el backlog: " + error.message);
             }
-          } catch (error) {
-            setError('Error al obtener el backlog: ' + error.message);
-          }
         };
-    
+
         fetchBacklog();
-      }, []);
+    }, []);
     const toggleModal = () => {
         setModal(!modal);
     };
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
 
     useEffect(() => {
         const stringURLUsuario =
@@ -91,26 +83,23 @@ export default function ProductBacklogRegister(props) {
                 const userData = response.data.usuario[0];
                 setDatosUsuario(userData);
                 setIsLoading(false);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
 
-<<<<<<< HEAD
-    function addContainer() {
-=======
     useEffect(() => {
-        if(modal) {
-            document.body.style.overflow = 'hidden'
+        if (modal) {
+            document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = 'auto'
+            document.body.style.overflow = "auto";
         }
-    }, [modal])
+        setIsLoadingSmall(false);
+    }, [modal]);
 
-    function addContainer(){
-        setQuantity(quantity+1);
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+    function addContainer() {
         setScenarioFields((prevFields) => [
             ...prevFields,
             {
@@ -151,10 +140,10 @@ export default function ProductBacklogRegister(props) {
         setRequirementFields((prevFields) => {
             const updatedFields = [...prevFields];
             // Elimina el elemento con el índice proporcionado
-            console.log("XD",indice);
-            console.log("XD",updatedFields);
+            console.log("XD", indice);
+            console.log("XD", updatedFields);
             updatedFields.splice(indice, 1);
-            console.log("XD2",updatedFields);
+            console.log("XD2", updatedFields);
             return updatedFields;
         });
     }
@@ -289,29 +278,31 @@ export default function ProductBacklogRegister(props) {
                 </h4>
                 <div className="combo">
                     <div className="epic containerCombo">
-<<<<<<< HEAD
                         <IconLabel
                             icon="/icons/epicPB.svg"
                             label="Épica"
                             className="iconLabel"
                         />
-                        <MyCombobox
-                            urlApi={stringURLEpics}
-                            property="epicas"
-                            nameDisplay="nombre"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeEpic}
-                            idParam="idEpica"
-                        />
-=======
-                        <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel" />
                         <div className="subcontainerCombo flex items-center">
-                            <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" />
-                            <button className="w-20 h-20" type="button" onClick={() => toggleModal()}>
-                                <img src="/icons/btnEditImagen.svg" alt="Descripción de la imagen" />
+                            <MyCombobox
+                                urlApi={stringURLEpics}
+                                property="epicas"
+                                nameDisplay="nombre"
+                                hasColor={false}
+                                onSelect={handleSelectedValueChangeEpic}
+                                idParam="idEpica"
+                            />
+                            <button
+                                className="w-20 h-20"
+                                type="button"
+                                onClick={() => toggleModal()}
+                            >
+                                <img
+                                    src="/icons/btnEditImagen.svg"
+                                    alt="Descripción de la imagen"
+                                />
                             </button>
                         </div>
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
                     </div>
                     <div className="date containerCombo">
                         <IconLabel
@@ -321,7 +312,6 @@ export default function ProductBacklogRegister(props) {
                         />
                         <div className="dateOfCreation">{currentDate}</div>
                     </div>
-<<<<<<< HEAD
                     <div className="priority containerCombo">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
@@ -337,11 +327,6 @@ export default function ProductBacklogRegister(props) {
                             onSelect={handleSelectedValueChangePriority}
                             idParam="idHistoriaPrioridad"
                         />
-=======
-                    <div className="priority containerCombo items-center">
-                        <IconLabel icon="/icons/priorityPB.svg" label="Prioridad" className="iconLabel"/>
-                        <MyCombobox urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad" property="historiasPrioridad" nameDisplay="nombre" hasColor={true} colorProperty="RGB" onSelect={handleSelectedValueChangePriority} idParam="idHistoriaPrioridad"/>
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
                     </div>
                     <div className="createdBy containerCombo">
                         <IconLabel
@@ -539,20 +524,16 @@ export default function ProductBacklogRegister(props) {
                         </div>
                     </div>
                 </div>
-<<<<<<< HEAD
-            </div>
-=======
                 {modal && (
-                <PopUpEpica
-                    modal = {modal} 
-                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                    url = {stringURLEpics}
-                    backlogID = {backlog[0].idProductBacklog}
-                    urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
-                />
+                    <PopUpEpica
+                        modal={modal}
+                        toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                        url={stringURLEpics}
+                        backlogID={backlog[0].idProductBacklog}
+                        urlEliminate={`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
+                    />
                 )}
-            </div> 
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+            </div>
         </form>
     );
 }

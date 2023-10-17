@@ -1,7 +1,6 @@
 "use client";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
 import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
-import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
 import ContainerRequirement2 from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement2";
 import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
@@ -12,11 +11,9 @@ import { Spinner } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/containerScenario2";
-<<<<<<< HEAD
-import { set } from "date-fns";
-=======
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+import { useContext } from "react";
+import { SmallLoadingScreen } from "../../layout";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -28,20 +25,13 @@ function getCurrentDate() {
 }
 
 export default function ProductBacklogUpdate(props) {
-<<<<<<< HEAD
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const idHU = props.params.updatePB;
     const decodedUrl = decodeURIComponent(props.params.project); //borrar
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1); //borrar
     const stringURLEpics = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`; //borrar
-=======
-    const router=useRouter();
-    const idHU= props.params.updatePB;
-    const decodedUrl= decodeURIComponent(props.params.project); //borrar
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);//borrar
-    const stringURLEpics= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;//borrar
-    const stringURLBacklog= `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+    const stringURLBacklog = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -52,7 +42,9 @@ export default function ProductBacklogUpdate(props) {
     const [selectedNameState, setSelectedNameState] = useState("");
     const currentDate = getCurrentDate();
     const [scenarioFields, setScenarioFields] = useState([]);
-    const [scenarioFieldsOriginales, setScenarioFieldsOriginales] = useState([]);
+    const [scenarioFieldsOriginales, setScenarioFieldsOriginales] = useState(
+        []
+    );
     const [requirementFields, setRequirementFields] = useState([]);
     const [requirementFieldsOriginales, setRequirementFieldsOriginales] =
         useState([]);
@@ -106,66 +98,45 @@ export default function ProductBacklogUpdate(props) {
             setQuantity1(requirementFieldsActualizados.length);
             console.log("Terminó de cargar los datos");
             setIsLoading(false);
+            setIsLoadingSmall(false);
         }
     }, [historiaUsuario]);
 
-    /*     useEffect(() => {
-        const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
-        const stringURLUsuario = "http://localhost:8080/api/usuario/verInfoUsuario";
-        Promise.all([
-          axios.get(stringURLHU),
-          axios.get(stringURLUsuario),
-        ])
-          .then(function (responses) {
-            const huData = responses[0].data.historiaUsuario;
-            const userData = responses[1].data.usuario[0];
-            console.log("ID HU:", idHU);
-            console.log("DATA:", huData);
-            console.log("USUARIO:", userData);
-            
-            setHistoriaUsuario(huData);
-            setDatosUsuario(userData);
-            //setIsLoading(false);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }, []);     */
-
-<<<<<<< HEAD
-    useEffect(() => {
-=======
-      const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(false);
     const [backlog, setBacklog] = useState([]);
 
     useEffect(() => {
         const fetchBacklog = async () => {
-          try {
-            const response = await axios.get(stringURLBacklog);
-            if (response.status === 200) {
-              setBacklog(response.data.backlog);
-              console.log("Se obtuvo el backlog correctamente", response.data.backlog);
+            try {
+                const response = await axios.get(stringURLBacklog);
+                if (response.status === 200) {
+                    setBacklog(response.data.backlog);
+                    console.log(
+                        "Se obtuvo el backlog correctamente",
+                        response.data.backlog
+                    );
+                }
+                setIsLoadingSmall(false);
+            } catch (error) {
+                setError("Error al obtener el backlog: " + error.message);
             }
-          } catch (error) {
-            setError('Error al obtener el backlog: ' + error.message);
-          }
         };
-    
+
         fetchBacklog();
-      }, []);
+    }, []);
     const toggleModal = () => {
         setModal(!modal);
     };
     useEffect(() => {
-        if(modal) {
-            document.body.style.overflow = 'hidden'
+        if (modal) {
+            document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = 'auto'
+            document.body.style.overflow = "auto";
         }
-    }, [modal])
+        setIsLoadingSmall(false);
+    }, [modal]);
 
-      useEffect(() => {
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+    useEffect(() => {
         const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         axios
             .get(stringURLHU)
@@ -174,13 +145,13 @@ export default function ProductBacklogUpdate(props) {
                 console.log("ID HU:", idHU);
                 console.log("DATA:", huData);
                 setHistoriaUsuario(huData);
+                setIsLoadingSmall(false);
                 // Puedes manejar el estado de isLoading aquí
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
-    //const [name, setName] = useState(historiaUsuario?.descripcion || "");
 
     function addContainer() {
         setQuantity(quantity + 1);
@@ -257,7 +228,11 @@ export default function ProductBacklogUpdate(props) {
         });
     };
 
-    const findModifiedDeletedAdded = (originalArray, newArray, comparisonField) => {
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
         const modifiedArray = [];
         const deletedArray = [];
         const addedArray = [];
@@ -265,12 +240,13 @@ export default function ProductBacklogUpdate(props) {
         // Encuentra elementos modificados y eliminados
         originalArray.forEach((originalItem) => {
             const newItem = newArray.find(
-                (newItem) => newItem[comparisonField] === originalItem[comparisonField]
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
             );
 
             if (newItem) {
                 modifiedArray.push(newItem);
-/*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
                     modifiedArray.push(newItem);
                 } */
             } else {
@@ -282,7 +258,9 @@ export default function ProductBacklogUpdate(props) {
         newArray.forEach((newItem) => {
             if (
                 !originalArray.some(
-                    (originalItem) => originalItem[comparisonField] === newItem[comparisonField]
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
                 )
             ) {
                 addedArray.push(newItem);
@@ -293,10 +271,10 @@ export default function ProductBacklogUpdate(props) {
     };
 
     const onSubmit = () => {
-        const scenarioOriginal=scenarioFieldsOriginales;
-        const scenario=scenarioFields;
-        const requirementOriginal=requirementFieldsOriginales;
-        const requirement=requirementFields;
+        const scenarioOriginal = scenarioFieldsOriginales;
+        const scenario = scenarioFields;
+        const requirementOriginal = requirementFieldsOriginales;
+        const requirement = requirementFields;
         console.log("Original:", scenarioOriginal);
         console.log("Nuevo:", scenario);
         console.log("Original1:", requirementOriginal);
@@ -305,12 +283,20 @@ export default function ProductBacklogUpdate(props) {
             modifiedArray: modifiedArray,
             deletedArray: deletedArray,
             addedArray: addedArray,
-          } = findModifiedDeletedAdded(scenarioOriginal, scenario, 'idHistoriaCriterioDeAceptacion');
-          const {
+        } = findModifiedDeletedAdded(
+            scenarioOriginal,
+            scenario,
+            "idHistoriaCriterioDeAceptacion"
+        );
+        const {
             modifiedArray: modifiedArray1,
             deletedArray: deletedArray1,
             addedArray: addedArray1,
-          } = findModifiedDeletedAdded(requirementOriginal, requirement, 'idHistoriaRequisito');
+        } = findModifiedDeletedAdded(
+            requirementOriginal,
+            requirement,
+            "idHistoriaRequisito"
+        );
         console.log("Modified:", modifiedArray);
         console.log("Deleted:", deletedArray);
         console.log("Added:", addedArray);
@@ -349,7 +335,7 @@ export default function ProductBacklogUpdate(props) {
         };
         console.log("Eliminado correctamente");
         console.log(deleteData);
-/*         axios
+        /*         axios
             .put(
                 "http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
                 putData
@@ -364,8 +350,6 @@ export default function ProductBacklogUpdate(props) {
                 // Manejar errores si la solicitud PUT falla
                 console.error("Error al realizar la solicitud PUT:", error);
             }); */
-
-        
     };
 
     function verifyFieldsEmpty() {
@@ -409,12 +393,7 @@ export default function ProductBacklogUpdate(props) {
         );
     }
 
-    return isLoading ? (
-        <div>
-            Cargando datos...
-            {console.log("Cargando")}
-        </div>
-    ) : (
+    return (
         <form className="containerRegisterPB">
             <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product
@@ -444,34 +423,34 @@ export default function ProductBacklogUpdate(props) {
                 </h4>
                 <div className="combo">
                     <div className="epic containerCombo">
-<<<<<<< HEAD
                         <IconLabel
                             icon="/icons/epicPB.svg"
                             label="Épica"
                             className="iconLabel"
                         />
-                        <MyCombobox
-                            urlApi={stringURLEpics}
-                            property="epicas"
-                            nameDisplay="nombre"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeEpic}
-                            idParam="idEpica"
-                            initialName={selectedNameEpic}
-                        />
-=======
-                        <IconLabel icon="/icons/epicPB.svg" label="Épica" className="iconLabel"/>
                         {/* <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/> */}
                         <div className="subcontainerCombo flex items-center">
-                            <MyCombobox urlApi={stringURLEpics} property="epicas" nameDisplay="nombre" hasColor={false} onSelect={handleSelectedValueChangeEpic} idParam="idEpica" initialName={selectedNameEpic}/>
-                            <button className="w-20 h-20" type="button" onClick={() => toggleModal()}>
-                                <img src="/icons/btnEditImagen.svg" alt="Descripción de la imagen" />
+                            <MyCombobox
+                                urlApi={stringURLEpics}
+                                property="epicas"
+                                nameDisplay="nombre"
+                                hasColor={false}
+                                onSelect={handleSelectedValueChangeEpic}
+                                idParam="idEpica"
+                                initialName={selectedNameEpic}
+                            />
+                            <button
+                                className="w-20 h-20"
+                                type="button"
+                                onClick={() => toggleModal()}
+                            >
+                                <img
+                                    src="/icons/btnEditImagen.svg"
+                                    alt="Descripción de la imagen"
+                                />
                             </button>
                         </div>
-                        
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
                     </div>
-                    {console.log("uwuwu", historiaUsuario.hu[0].idEpica)}
                     <div className="date containerCombo">
                         <IconLabel
                             icon="/icons/datePB.svg"
@@ -571,7 +550,7 @@ export default function ProductBacklogUpdate(props) {
                             />
                         ))
                     )}
-                    {console.log("Scenario fields: ",scenarioFields)}
+                    {console.log("Scenario fields: ", scenarioFields)}
                     <div className="twoButtons">
                         <div className="buttonContainer">
                             <button
@@ -606,7 +585,7 @@ export default function ProductBacklogUpdate(props) {
                             />
                         ))
                     )}
-                    {console.log("Requeriments Fields: ",requirementFields)}
+                    {console.log("Requeriments Fields: ", requirementFields)}
                     <div className="twoButtons">
                         <div className="buttonContainer">
                             <button
@@ -697,20 +676,16 @@ export default function ProductBacklogUpdate(props) {
                         </div>
                     </div>
                 </div>
-<<<<<<< HEAD
-            </div>
-=======
                 {modal && (
-                <PopUpEpica
-                    modal = {modal} 
-                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                    url = {stringURLEpics}
-                    backlogID = {backlog[0].idProductBacklog}
-                    urlEliminate = {`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
-                />
+                    <PopUpEpica
+                        modal={modal}
+                        toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                        url={stringURLEpics}
+                        backlogID={backlog[0].idProductBacklog}
+                        urlEliminate={`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
+                    />
                 )}
-            </div> 
->>>>>>> 17b7f523d2cde6635092de9b03f8d1978a28dda0
+            </div>
         </form>
     );
 }

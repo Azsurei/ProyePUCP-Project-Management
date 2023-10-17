@@ -12,6 +12,7 @@ import { data } from "autoprefixer";
 import React from "react";
 import axios from "axios";
 import RouteringBacklog from "@/components/dashboardComps/projectComps/productBacklog/RouteringBacklog";
+import { useContext } from "react";
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -29,8 +30,10 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
+import { SmallLoadingScreen } from "../layout";
 
 export default function ProductBacklog(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -103,7 +106,7 @@ export default function ProductBacklog(props) {
     
             // Actualiza el estado 'data' con los datos recibidos
             setData(response.data.historias);
-    
+            setIsLoadingSmall(false);
             console.log(`Datos obtenidos exitosamente:`, response.data.historias);
           } catch (error) {
             console.error('Error al obtener datos:', error);
