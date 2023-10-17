@@ -8,5 +8,7 @@ const actaConstitucionController = require("../controllers/actaConstitucionContr
 
 routerActaConstitucion.get("/listarActaConstitucion", actaConstitucionController.listar);
 routerActaConstitucion.put("/modificarCampos", actaConstitucionController.modificarCampos);
+routerActaConstitucion.get("/listarInteresados", actaConstitucionController.listarInteresados);
+routerActaConstitucion.post("/insertarInteresado", actaConstitucionController.insertarInteresado);
 
 module.exports.routerActaConstitucion = routerActaConstitucion;

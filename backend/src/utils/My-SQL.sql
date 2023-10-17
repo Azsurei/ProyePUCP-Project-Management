@@ -360,12 +360,12 @@ ENGINE = InnoDB;
 
 CREATE TABLE InteresadoAC(
 	idInteresado INT AUTO_INCREMENT PRIMARY KEY,
-    idActa INT,
+    idActaConstitucion INT,
     nombre VARCHAR(255),
     cargo VARCHAR(255),
-    organizacion DATE,
+    organizacion VARCHAR(255),
     activo TINYINT,
-    FOREIGN KEY (idActa) REFERENCES ActaConstitucion(idActa)
+    FOREIGN KEY (idActaConstitucion) REFERENCES ActaConstitucion(idActaConstitucion)
 )
 ENGINE = InnoDB;
 

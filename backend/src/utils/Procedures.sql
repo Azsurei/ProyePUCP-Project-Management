@@ -976,3 +976,32 @@ BEGIN
     WHERE idDetalle = _idDetalle;
     SELECT * FROM DetalleAC;
 END$
+
+DROP PROCEDURE LISTAR_INTERESADOAC_X_IDACTA;
+--Listar Interesados Acta Constitucion
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADOAC_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM InteresadoAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE INSERTAR_INTERESADOAC;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADOAC(
+	IN  _idActaConstitucion INT,
+    IN _nombre VARCHAR(255),
+    IN _cargo VARCHAR(255),
+    IN _organizacion VARCHAR(255)
+)
+BEGIN
+	DECLARE _idInteresado INT;
+	INSERT INTO InteresadoAC(idActaConstitucion,nombre,cargo,organizacion,activo) 
+    VALUES(_idActaConstitucion,_nombre,_cargo,_organizacion,1);
+    SET _idInteresado = @@last_insert_id;
+    SELECT _idInteresado AS idInteresado;
+END$

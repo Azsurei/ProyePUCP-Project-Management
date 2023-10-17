@@ -1,16 +1,5 @@
 const connection = require("../config/db");
 
-async function crear(req,res,next){
-    const {idProyecto} = req.body;
-    try {
-        const query = `CALL INSERTAR_CRONOGRAMA(?);`;
-        await connection.query(query,[idProyecto]);
-        res.status(200).json({message: "Cronograma creado"});
-    } catch (error) {
-        next(error);
-    }
-}
-
 async function listar(req,res,next){
     const {idActaConstitucion} = req.body;
     try {
@@ -42,8 +31,38 @@ async function modificarCampos(req,res,next){
     }
 }
 
+async function listarInteresados(req,res,next){
+    const {idActaConstitucion} = req.body;
+    try {
+        const query = `CALL LISTAR_INTERESADOAC_X_IDACTA(?);`;
+        const [results] = await connection.query(query,[idActaConstitucion]);
+        const interesadoAC = results[0];
+        res.status(200).json({interesadoAC, message: "InteresadoAC listado"});
+    } catch (error) {
+        next(error);
+    }
+}
+async function insertarInteresado(req,res,next){
+    const{idActaConstitucion, nombre, cargo, organizacion} = req.body;
+    const query = `
+        CALL INSERTAR_INTERESADOAC(?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idActaConstitucion,nombre,cargo,organizacion]);
+        const idInteresado = results[0][0].idInteresado;
+        console.log(`Se insertó el interesado ${idInteresado}!`);
+        res.status(200).json({
+            idInteresado,
+            message: "InteresadoAC insertada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    crear,
     listar,
-    modificarCampos
+    modificarCampos,
+    listarInteresados,
+    insertarInteresado
 };
