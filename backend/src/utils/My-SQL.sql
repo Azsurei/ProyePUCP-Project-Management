@@ -846,4 +846,4 @@ CREATE TABLE UsuarioXEquipo(
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB;
