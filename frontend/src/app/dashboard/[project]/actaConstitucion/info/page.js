@@ -50,25 +50,24 @@ function DetailCard({ detail, onSave }) {
 export default function Info() {
 
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    useEffect(() => {
-        setIsLoadingSmall(false);
-    }, []);
     // Manejando la carga de la lista de detalles de acta de constitucion
     const [details, setDetails] = useState([]);
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion', {
+                const response =
+                    await axios.get('http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/11', {
                     headers: { 'Content-Type': 'application/json' },
-                    data: { idActaConstitucion: 11 }
                 }).then(
                     response => {
                         console.log(response.data.detalleAC);
                         setDetails(response.data.detalleAC);
+                        setIsLoadingSmall(false);
                     }
                 );
+                console.log(response);
             } catch (err) {
-                setError(err);
+                console.log(err);
             }
         }
         fetchData();

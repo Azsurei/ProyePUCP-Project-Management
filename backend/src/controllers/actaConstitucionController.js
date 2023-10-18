@@ -1,13 +1,14 @@
 const connection = require("../config/db");
 
 async function listar(req,res,next){
-    const {idActaConstitucion} = req.body;
+    const {idActaConstitucion} = req.params;
     try {
         const query = `CALL LISTAR_DETALLEAC_X_IDACTA(?);`;
         const [results] = await connection.query(query,[idActaConstitucion]);
         const detalleAC = results[0];
         res.status(200).json({detalleAC, message: "DetalleAC listado"});
     } catch (error) {
+        console.log(error);
         next(error);
     }
 }
