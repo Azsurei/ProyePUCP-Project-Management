@@ -21,7 +21,8 @@ import {
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-
+import axios from "axios";
+axios.defaults.withCredentials = true;
 const columns = [
     { name: "Hito", uid: "name", sortable: true},
     { name: "Estado", uid: "state", sortable: true },
