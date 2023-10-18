@@ -3,7 +3,7 @@ import NormalInput from "@/components/NormalInput";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import AgendaTable from "@/components/dashboardComps/projectComps/cronogramaComps/AgendaTable";
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
-//import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useContext, useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
 import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
@@ -11,15 +11,15 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import CardSelectedUser from "@/components/CardSelectedUser";
 import { Textarea } from "@nextui-org/react";
 
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
-} from "@nextui-org/react";
+// import {
+//     Modal,
+//     ModalContent,
+//     ModalHeader,
+//     ModalBody,
+//     ModalFooter,
+//     Button,
+//     useDisclosure,
+// } from "@nextui-org/react";
 
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
@@ -30,8 +30,6 @@ export default function Cronograma(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
-    
 
     const [toggleNew, setToggleNew] = useState(false);
     const handlerGoToNew = () => {
@@ -129,7 +127,7 @@ export default function Cronograma(props) {
                     cronogramaData.fechaInicio === null ||
                     cronogramaData.fechaFin === null
                 ) {
-                    setModalFirstTime(true);
+                    setModalFirstTime(false);
                 }
                 setIsLoadingSmall(false);
             })
@@ -139,12 +137,10 @@ export default function Cronograma(props) {
     }, []);
 
     const msgEmptyField = "Este campo no puede estar vacio";
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-
+    //const { isOpen, onOpen, onOpenChange } = useDisclosure();
     return (
         <div className="cronogramaDiv">
-            {modalFirstTime && (
+            {/* {modalFirstTime && (
                 <Modal
                     onOpenChange={onOpenChange}
                     isDismissable={false}
@@ -199,23 +195,27 @@ export default function Cronograma(props) {
                         )}
                     </ModalContent>
                 </Modal>
-            )}
+            )} */}
 
             {!modalFirstTime && (
                 <>
                     <div className={toggleNew ? "divLeft closed" : "divLeft"}>
-                        <HeaderWithButtonsSamePage
-                            haveReturn={false}
-                            haveAddNew={true}
-                            handlerAddNew={handlerGoToNew}
-                            //newPrimarySon={ListComps.length + 1}
-                            breadcrump={"Inicio / Proyectos / " + projectName}
-                            btnText={"Nueva tarea"}
-                        >
-                            Cronograma
-                        </HeaderWithButtonsSamePage>
+                        <div className="containerGeneralLeft">
+                            <HeaderWithButtonsSamePage
+                                haveReturn={false}
+                                haveAddNew={true}
+                                handlerAddNew={handlerGoToNew}
+                                //newPrimarySon={ListComps.length + 1}
+                                breadcrump={
+                                    "Inicio / Proyectos / " + projectName
+                                }
+                                btnText={"Nueva tarea"}
+                            >
+                                Cronograma
+                            </HeaderWithButtonsSamePage>
 
-                        <AgendaTable></AgendaTable>
+                            <AgendaTable></AgendaTable>
+                        </div>
                     </div>
 
                     {/*=========================================================================================*/}
@@ -368,7 +368,7 @@ export default function Cronograma(props) {
                             </ul>
 
                             <div className="twoButtonsEnd">
-                                {/* <Modal
+                                <Modal
                                     nameButton="Descartar"
                                     textHeader="Descartar Registro"
                                     textBody="¿Seguro que quiere descartar el registro de el componente EDT?"
@@ -400,7 +400,7 @@ export default function Cronograma(props) {
                                             return true;
                                         }
                                     }}
-                                /> */}
+                                />
                             </div>
                         </div>
                     </div>
