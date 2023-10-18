@@ -136,8 +136,18 @@
     background-color: rgb(212, 212, 212);
     height: 50px;
     width: 50px;
-
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.iconLabel2{
+    display: flex;
+    align-items: center;
+    gap: 10%;
+    font-weight: 400;
+}
+
+.labelDatoUsuario{
+    flex: 1;
 }
