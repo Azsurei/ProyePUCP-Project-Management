@@ -23,8 +23,7 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
-import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication.css";
-import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/PopUpEliminateMC";
+import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -48,38 +47,32 @@ export default function MatrizDeComunicaciones(props){
     };
     const columns = [
         {
-            name: 'Informacion Requerida',
-            uid: 'Informacion',
+            name: 'Riesgo',
+            uid: 'nombreRiesgo',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Formato',
-            uid: 'FormatoComunicacion',
+            name: 'Fecha identificacion',
+            uid: 'fechaRiesgo',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Responsable de comunicar',
-            uid: 'ResponsableComunicacion',
+            name: 'Severidad',
+            uid: 'severidadRiesgo',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Grupo receptor',
-            uid: 'GrupoReceptorComunicacion',
+            name: 'Dueño del riesgo',
+            uid: 'dueñoRiesgo',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Canal',
-            uid: 'CanalComunicacion',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
-        },
-        {
-            name: 'Frecuencia',
-            uid: 'FrecuenciaComunicacion',
+            name: 'Estado',
+            uid: 'estadoRiesgo',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -93,12 +86,11 @@ export default function MatrizDeComunicaciones(props){
     const data = [
         {
             id: 1,
-            Informacion: 'Acta de constitucion',
-            FormatoComunicacion: 'Word',
-            ResponsableComunicacion: 'Gestor de proyecto',
-            GrupoReceptorComunicacion: 'Todos los interesados',
-            CanalComunicacion: 'Reunion presencial',
-            FrecuenciaComunicacion: 'Una sola vez',
+            nombreRiesgo: 'Riesgos de recursos',
+            fechaRiesgo: '07/09/2023',
+            severidadRiesgo: 'Baja',
+            dueñoRiesgo: 'Anthony Estrada',
+            estadoRiesgo: 'Estado',
         },
         
     ];
@@ -126,7 +118,7 @@ export default function MatrizDeComunicaciones(props){
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                data.Informacion.toLowerCase().includes(filterValue.toLowerCase())
+                data.nombreRiesgo.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -134,7 +126,7 @@ export default function MatrizDeComunicaciones(props){
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                Array.from(toolsFilter).includes(data.Informacion)
+                Array.from(toolsFilter).includes(data.nombreRiesgo)
             );
         }
 
@@ -195,9 +187,7 @@ export default function MatrizDeComunicaciones(props){
         
         switch (columnKey) {
                 
-            case "FormatoComunicacion":
-                // return <img src={cellValue} alt="Icono de plantilla"></img>;
-                return <img src={cellValue === "Word" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
+            
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -231,7 +221,7 @@ export default function MatrizDeComunicaciones(props){
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Buscar por informacion..."
+                        placeholder="Buscar por riesgo..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -268,17 +258,17 @@ export default function MatrizDeComunicaciones(props){
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />} className="btnComunicacionExport">
+                        <Button color="primary" endContent={<PlusIcon />} className="btnRiesgosExport">
                             Exportar
                         </Button>
-                        <Button color="danger" endContent={<PlusIcon />} className="btnComunicacionEliminar">
+                        <Button color="danger" endContent={<PlusIcon />} className="btnRiesgosEliminar">
                             Eliminar
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {data.length} informaciones
+                        Total: {data.length} riesgos
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -345,13 +335,13 @@ export default function MatrizDeComunicaciones(props){
 
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / MatrizDeComunicaciones
+                Inicio / Proyectos / Nombre del proyecto / Catalogo de Riesgos
             </div>
-            <div className="matrizComunicaciones">
-                <div className="titleComunicaciones">Matriz de Comunicaciones</div>
+            <div className="catalogoRiesgos">
+                <div className="titleRiesgos">Catalogo de Riesgos</div>
                 <div>
                        <MyDynamicTable 
-                            label ="Tabla Matriz de Comunicaciones" 
+                            label ="Tabla Riesgos" 
                             bottomContent={bottomContent} 
                             selectedKeys={selectedKeys}
                             setSelectedKeys={setSelectedKeys}
@@ -366,14 +356,6 @@ export default function MatrizDeComunicaciones(props){
                 
                 </div>
             </div>
-            {modal1 && selectedTask && (
-                <PopUpEliminateMC
-                    modal = {modal1} 
-                    toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
-                    taskName={selectedTask.Informacion}
-                    idHistoriaDeUsuario = {selectedTask.id}
-                />
-            )}
         </div>
         
     );

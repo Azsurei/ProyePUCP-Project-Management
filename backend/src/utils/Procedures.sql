@@ -1223,9 +1223,11 @@ BEGIN
     SELECT _idIngreso AS idIngreso;
 END$
 
-SELECT *FROM Presupuesto;
+DROP PROCEDURE IF EXISTS INSERTAR_LINEA_INGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
+	IN _idIngreso INT,
+    IN _idMoneda INT,
 	IN _idTransaccionTipo INT,
     IN _idIngresoTipo INT,
     IN _descripcion VARCHAR(255),
@@ -1235,16 +1237,16 @@ CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
 )
 BEGIN
 	DECLARE _idLineaIngreso INT;
-	INSERT INTO LineaIngreso(idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
-    VALUES(_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
+	INSERT INTO LineaIngreso(idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
+    VALUES(_idIngreso,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
     SET _idLineaIngreso = @@last_insert_id;
-    SELECT _idIngreso AS idIngreso;
+    SELECT _idLineaIngreso AS idLineaIngreso;
 END$
 
 CALL INSERTAR_PRESUPUESTO(50,4500);
 CALL INSERTAR_INGRESO(2,300);
-CALL INSERTAR_LINEA_INGRESO(1,1,"Primer ingreso realizado",200,1,CURDATE());
+CALL INSERTAR_LINEA_INGRESO(4,1,1,1,"Segundo ingreso realizado",200,1,CURDATE());
 
 CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
-SELECT * FROM Proyecto;
 SELECT * FROM Ingreso;
+SELECT * FROM LineaIngreso;

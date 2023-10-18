@@ -320,7 +320,7 @@ function ProjectSidebar(props) {
             position: 7,
             optIcon: "/icons/sideBarDropDown_icons/sbdd11.svg",
             optName: "Catalogo de riesgos",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/catalogoDeRiesgos`,
         },
         {
             id: 6,
