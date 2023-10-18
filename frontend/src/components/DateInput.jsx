@@ -31,9 +31,7 @@ export default function DateInput({
             id="inputBoxGeneric"
             style={inputStyle}
             name="datepicker"
-            onChange={(e) => {
-                onChangeHandler(e.target.value);
-            }}
+            onChange={onChangeHandler}
         ></input>
     );
 }
