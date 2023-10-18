@@ -516,7 +516,7 @@ export default function ProductBacklogUpdate(props) {
                                     {datosUsuario.split(" ")[0][0] +
                                         datosUsuario.split(" ")[1][0]}
                                 </p>
-                                <div className="label">{`${datosUsuario}`}</div>
+                                <div className="labelDatoUsuario">{`${datosUsuario}`}</div>
                             </div>
                         )}
                     </div>

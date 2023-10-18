@@ -19,6 +19,7 @@ async function crear(req,res,next){
         res.status(200).json({message: `Tarea ${idTarea}creada`});
     } catch (error) {
         next(error);
+        console.log(error);
     }
 }
 

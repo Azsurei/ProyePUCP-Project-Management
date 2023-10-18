@@ -4,12 +4,41 @@ import Link from "next/link";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.css";
 import ListProject from "@/components/dashboardComps/projectComps/projectCreateComps/ListProject";
 import axios from "axios";
-import SearchBar from "@/components/SearchBar";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import { useEffect, useState } from "react";
 
 axios.defaults.withCredentials = true;
 
+import {
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell,
+    Input,
+    Button,
+    DropdownTrigger,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem,
+    Chip,
+    User,
+    Pagination,
+} from "@nextui-org/react";
+import { SearchIcon } from "@/../public/icons/SearchIcon";
+
+
+
 export default function Dashboard() {
+
+    const [filterValue, setFilterValue] = useState("");
+    const [listUsers, setListUsers] = useState([]);
+
+    const onSearchChange = (value) => {
+        setFilterValue(value);
+    };
+
     return (
         <div className="mainDiv">
             <div className="headerDiv">
@@ -21,7 +50,17 @@ export default function Dashboard() {
             </div>
 
             <div className="divSearch">
-                <SearchBar placeholder="Buscar Proyecto"></SearchBar>
+                <div className="divBuscador">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[80%]"
+                                placeholder="Buscar Proyecto..."
+                                startContent={<SearchIcon />}
+                                value={filterValue}
+                                onValueChange={onSearchChange}
+                                variant="faded"
+                            />
+                        </div>  
 
                 <div className="contentDer">
                     <p className="textProject">¿Tienes ya la idea ganadora?</p>

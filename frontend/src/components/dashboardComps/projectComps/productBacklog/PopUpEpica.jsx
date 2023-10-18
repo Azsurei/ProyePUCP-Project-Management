@@ -25,7 +25,7 @@ import {
 } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
-import { set } from "date-fns";
+//import { set } from "date-fns";
 
 export const UserCardsContext = React.createContext();
 
@@ -137,11 +137,11 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
       }, [filterValue]);
 
     return (
-        (modal && <div className="popUp">
+        (modal && <div className="popUp" style={{animation: "droptop .3s linear"}}>
 			<div onClick={toggle} className="overlay"></div>
             <div className="modalEpic">
                 <p className="buscarEpic">Lista de Epicas</p>
-                <div className="container">
+                <div className="containerModal">
                     <div className="divBuscador">
                         <Input
                             isClearable
@@ -153,7 +153,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                             variant="faded"
                         />
                     </div>
-                    <div className="subcontainer">
+                    <div className="subcontainer custom-flex">
                             <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={handleInsertEpic}>
                                 Agregar Epica
                             </Button>
@@ -172,7 +172,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         No se encontraron resultados.
                     </p>
                 )}
-                <div className="container">
+                <div className="containerModal">
                     <div className="divEpics">
                         <UserCardsContext.Provider
                             value={{ selectEpic, deselectEpic }}
