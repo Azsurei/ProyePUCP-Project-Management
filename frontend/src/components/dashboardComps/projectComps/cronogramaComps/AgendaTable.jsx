@@ -10,16 +10,22 @@ import {
     Chip,
     Tooltip,
     getKeyValue,
+    Dropdown,
+    DropdownTrigger,
+    Button,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { useCallback } from "react";
 import { EditIcon } from "./EditIcon";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
 import GroupUserIcons from "./GroupUserIcons";
+import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 
 const columns = [
     { name: "TAREA", uid: "name" },
-    { name: "ASIGNADO (S)", uid: "role" },
+    { name: "ASIGNADO (S)", uid: "usuarios" },
     { name: "ESTADO", uid: "status" },
     { name: "FECHA FIN", uid: "fechaFin" },
     { name: "ACTIONS", uid: "actions" },
@@ -29,183 +35,27 @@ const users = [
     {
         id: 1,
         name: "Hacer cronograma",
-        role: "CEO",
-        team: "2 subtareas | 1 tarea posterior",
-        status: "En progreso",
-        age: "29",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-        email: "tony.reichert@example.com",
-        fechaFin: "27/03/2023"
+        txtAdicional: "2 subtareas | 1 tarea posterior",
+        usuarios: "Backend",
+        status: "progress",
+        fechaFin: "27/03/2023",
     },
     {
         id: 2,
         name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
+        txtAdicional: "",
+        usuarios: "Backend",
         status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
+        fechaFin: "27/03/2023",
     },
     {
         id: 3,
         name: "Terminar parciales",
-        role: "Senior Developer",
-        team: "3 subtareas",
+        txtAdicional: "3 subtareas",
+        usuarios: [],
         status: "finalizado",
-        age: "22",
-        avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-        email: "jane.fisher@example.com",
-        fechaFin: "27/03/2023"
+        fechaFin: "27/03/2023",
     },
-    {
-        id: 4,
-        name: "Realizar validacion de datos",
-        role: "Community Manager",
-        team: "",
-        status: "atrasado",
-        age: "28",
-        avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-        email: "william.howard@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 5,
-        name: "Esforzarse en ProyePUCP",
-        //subequipo: "Backend team",
-        role: "subequipo",
-        team: "5 tareas posteriores",
-        status: "finalizado",
-        age: "24",
-        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-        email: "kristen.cooper@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 6,
-        name: "Esforzarse en ProyePUCP",
-        //subequipo: "Backend team",
-        role: "subequipo",
-        team: "5 tareas posteriores",
-        status: "finalizado",
-        age: "24",
-        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-        email: "kristen.cooper@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 7,
-        name: "Esforzarse en ProyePUCP",
-        //subequipo: "Backend team",
-        role: "subequipo",
-        team: "5 tareas posteriores",
-        status: "finalizado",
-        age: "24",
-        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-        email: "kristen.cooper@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 8,
-        name: "Esforzarse en ProyePUCP",
-        //subequipo: "Backend team",
-        role: "subequipo",
-        team: "5 tareas posteriores",
-        status: "finalizado",
-        age: "24",
-        avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-        email: "kristen.cooper@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 9,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 10,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 11,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 12,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 13,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 14,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 15,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    },
-    {
-        id: 16,
-        name: "Sacar 20",
-        role: "Technical Lead",
-        team: "",
-        status: "No iniciado",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-        fechaFin: "27/03/2023"
-    }
 ];
 
 const statusColorMap = {
@@ -214,64 +64,85 @@ const statusColorMap = {
     vacation: "warning",
     atrasado: "warning",
     finalizado: "success",
+    progress: "primary"
 };
 
-export default function AgendaTable() {
+export default function AgendaTable({ listTareas }) {
+
+    const taskList = listTareas.map((tarea) => {
+        const strSubtareas = tarea.cantSubTareas !== 0 ? tarea.cantSubTareas+" Subtareas" : "";
+        const strTareaPosterior = tarea.cantPosteriores !== 0 ? tarea.cantPosteriores+" Tarea posterior" : "";
+        let strAd;
+        if(tarea.cantSubTareas !== 0 && tarea.cantPosteriores !== 0){
+            strAd = strSubtareas + " | " + strTareaPosterior;
+        }
+        else if(tarea.cantSubTareas !== 0 && tarea.cantPosteriores === 0){
+            strAd = strSubtareas;
+        }
+        else if(tarea.cantSubTareas === 0 && tarea.cantPosteriores !== 0){
+            strAd = strTareaPosterior;
+        }
+        else{
+            strAd = "";
+        }
+
+        //const usuariosAtr = tarea.equipo === falta ver
+
+        const duracion = tarea.fechaInicio + " - " + tarea.fechaFin;
+        return {
+            id: tarea.idTarea,
+            name: tarea.sumillaTarea,
+            txtAdicional: strAd,
+            //usuarios: "",
+            status: tarea.nombreTareaEstado, //falta agregar color, se logra facil trayendo el color desde bd
+            fechaFin: duracion
+        };
+    });
+
+
     const renderCell = useCallback((user, columnKey) => {
         const cellValue = user[columnKey];
 
         switch (columnKey) {
-            case "fechaFin":
-                return(
-                    <div>{cellValue}</div>
-                );
-            case "subequipo":
-                return <div>HOLAAAAA</div>;
             case "name":
                 return (
-                    // <User
-                    //     description={user.email}
-                    //     name={cellValue}
-                    //     avatar={false}
-                    //     avatarProps={{
-                    //         src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-                    //         isBordered: true,
-                    //         isDisabled: true
-                    //       }}
-                    // >
-                    //     {user.email}
-                    // </User>
                     <div className="flex flex-col">
                         <p className="text-bold text-sm capitalize">
                             {cellValue}
                         </p>
                         <p className="text-bold text-sm capitalize text-default-400">
-                            {user.team}
+                            {user.txtAdicional}
                         </p>
                     </div>
                 );
-            case "role":
-                if(cellValue==="subequipo"){
+            case "usuarios":
+                if (Array.isArray(cellValue)) {
                     return (
-                        <div style={{display:'flex',flexDirection:'row', alignItems:'center',gap:'.5rem'}}>
-                            <img src="/icons/sideBarDropDown_icons/sbdd14.svg" alt="" className="" />
-                            <p style={{fontSize:'1rem',fontWeight:'500'}}>Equipo Backend</p>
+                        <div style={{ width: "auto", display: "flex" }}>
+                            <GroupUserIcons></GroupUserIcons>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: ".5rem",
+                            }}
+                        >
+                            <img
+                                src="/icons/sideBarDropDown_icons/sbdd14.svg"
+                                alt=""
+                                className=""
+                            />
+                            <p style={{ fontSize: "1rem", fontWeight: "500" }}>
+                                Equipo Backend
+                            </p>
                         </div>
                     );
                 }
-                return (
-                    // <div className="flex flex-col">
-                    //     <p className="text-bold text-sm capitalize">
-                    //         {cellValue}
-                    //     </p>
-                    //     <p className="text-bold text-sm capitalize text-default-400">
-                    //         {user.team}
-                    //     </p>
-                    // </div>
-                    <div style={{ width: "auto", display: "flex" }}>
-                        <GroupUserIcons></GroupUserIcons>
-                    </div>
-                );
             case "status":
                 return (
                     <Chip
@@ -283,24 +154,23 @@ export default function AgendaTable() {
                         {cellValue}
                     </Chip>
                 );
+            case "fechaFin":
+                return <div>{cellValue}</div>;
             case "actions":
                 return (
-                    <div className="relative flex items-center gap-2">
-                        <Tooltip content="Details">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon />
-                            </span>
-                        </Tooltip>
-                        <Tooltip content="Edit user">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon />
-                            </span>
-                        </Tooltip>
-                        <Tooltip color="danger" content="Delete user">
-                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                <DeleteIcon />
-                            </span>
-                        </Tooltip>
+                    <div className="relative flex justify-end items-center gap-2">
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button isIconOnly size="sm" variant="light">
+                                    <VerticalDotsIcon className="text-default-300" />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu>
+                                <DropdownItem>View</DropdownItem>
+                                <DropdownItem>Edit</DropdownItem>
+                                <DropdownItem>Delete</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                 );
             default:
@@ -320,7 +190,7 @@ export default function AgendaTable() {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody items={users}>
+            <TableBody items={taskList} emptyContent={"El proyecto no tiene tareas."}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => (

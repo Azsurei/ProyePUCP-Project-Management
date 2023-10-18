@@ -14,4 +14,5 @@ routerCronograma.put("/actualizarCronograma", verifyToken,cronogramaController.a
 
 routerCronograma.post("/listarCronograma", cronogramaController.listar);
 routerCronograma.get("/listarTareasXidProyecto/:idProyecto", tareaController.listarXIdProyecto);
+
 module.exports.routerCronograma = routerCronograma;

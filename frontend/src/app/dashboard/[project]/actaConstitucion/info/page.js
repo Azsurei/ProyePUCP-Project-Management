@@ -10,7 +10,7 @@ import axios from 'axios';
 import {error} from "next/dist/build/output/log";
 
 const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
-
+axios.defaults.withCredentials = true;
 export default function Info() {
     const [IsCancelling, setIsCancelling] = useState(false);
     const [IsEditingHere, setIsEditingHere] = useState(false);

@@ -3,7 +3,6 @@ import NormalInput from "@/components/NormalInput";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import AgendaTable from "@/components/dashboardComps/projectComps/cronogramaComps/AgendaTable";
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
-import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useContext, useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
 import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
@@ -11,18 +10,20 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import CardSelectedUser from "@/components/CardSelectedUser";
 import { Textarea } from "@nextui-org/react";
 
-// import {
-//     Modal,
-//     ModalContent,
-//     ModalHeader,
-//     ModalBody,
-//     ModalFooter,
-//     Button,
-//     useDisclosure,
-// } from "@nextui-org/react";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure,
+} from "@nextui-org/react";
 
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
+import BtnToModal from "@/components/BtnToModal";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -30,12 +31,23 @@ export default function Cronograma(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const router = useRouter();
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [toggleNew, setToggleNew] = useState(false);
     const handlerGoToNew = () => {
         setToggleNew(!toggleNew);
     };
 
+    //States from firstTimeModal
+    const [firstFechaInicio, setFirstFechaInicio] = useState("");
+    const [firstFechaFin, setFirstFechaFin] = useState("");
+
+    //States from Cronograma
+    const [cronogramaId, setCronogramaId] = useState(null);
+
+    //States from Tareas table
     const [listTareas, setListTareas] = useState([]);
 
     const [tareaName, setTareaName] = useState("");
@@ -45,10 +57,8 @@ export default function Cronograma(props) {
     const [validDescripcion, setValidDescripcion] = useState(true);
 
     const [fechaInicio, setFechaInicio] = useState("");
-    const [validFechaI, setValidFechaI] = useState(true);
-
     const [fechaFin, setFechaFin] = useState("");
-    const [validFechaF, setValidFechaF] = useState(true);
+    const [validFechas, setValidFechas] = useState("");
 
     const [tabSelected, setTabSelected] = useState("users");
     const [modal, setModal] = useState(false);
@@ -74,6 +84,73 @@ export default function Cronograma(props) {
         console.log(newList);
     };
 
+    const volverMainDashboard = () => {
+        router.push("/dashboard/" + projectName + "=" + projectId);
+    };
+
+    const crearCronogramaYContinuar = () => {
+        setModalFirstTime(false);
+        setIsLoadingSmall(true);
+
+        const updateURL =
+            "http://localhost:8080/api/proyecto/cronograma/actualizarCronograma";
+        axios
+            .put(updateURL, {
+                idProyecto: projectId,
+                fechaInicio: firstFechaInicio,
+                fechaFin: firstFechaFin,
+            })
+            .then(function (response) {
+                console.log(response.data.message);
+
+                const tareasURL =
+                    "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                    projectId;
+                axios
+                    .get(tareasURL)
+                    .then(function (response) {
+                        setListTareas(response.data.tareas);
+                        console.log(response.data.tareas);
+
+                        setIsLoadingSmall(false);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+
+    const registrarTarea = () => {
+        const updateURL =
+            "http://localhost:8080/api/proyecto/cronograma/insertarTarea";
+        axios
+            .post(updateURL, {
+                idCronograma: cronogramaId,
+                idTareaEstado: 1,   //No iniciado
+                idSubGrupo: null,
+                idPadre: null,
+                idTareaAnterior: null,
+                sumillaTarea: tareaName,
+                descripcion: tareaDescripcion,
+                fechaInicio: fechaInicio,
+                fechaFin: fechaFin,
+                cantSubtareas: 0,
+                cantPosteriores: 0,
+                horasPlaneadas: null
+            })
+            .then(function (response) {
+                console.log(response.data.message);
+                router.refresh();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     // useEffect(() => {
     //     setSelectedSubteam(null);
     // }, [selectedUsers]);
@@ -81,7 +158,6 @@ export default function Cronograma(props) {
     // useEffect(() => {
     //     setSelectedUsers([]);
     // }, [selectedSubteam]);
-
 
     useEffect(() => {
         const stringURL =
@@ -92,12 +168,12 @@ export default function Cronograma(props) {
             .then(function (response) {
                 const cronogramaData = response.data.cronograma;
                 console.log(cronogramaData);
-
+                setCronogramaId(cronogramaData.idCronograma);
                 if (
                     cronogramaData.fechaInicio === null ||
                     cronogramaData.fechaFin === null
                 ) {
-                    setModalFirstTime(false);
+                    setModalFirstTime(true);
                 } else {
                     const tareasURL =
                         "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
@@ -106,7 +182,7 @@ export default function Cronograma(props) {
                         .get(tareasURL)
                         .then(function (response) {
                             setListTareas(response.data.tareas);
-                            console.log(response.data.tareas)
+                            console.log(response.data.tareas);
                         })
                         .catch(function (error) {
                             console.log(error);
@@ -121,57 +197,64 @@ export default function Cronograma(props) {
     }, []);
 
     const msgEmptyField = "Este campo no puede estar vacio";
-    //const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     return (
         <div className="cronogramaDiv">
-            {/* {modalFirstTime && (
+            {modalFirstTime && (
                 <Modal
                     onOpenChange={onOpenChange}
                     isDismissable={false}
                     defaultOpen={true}
+                    classNames={{
+                        header: "pb-0",
+                        body: "pt-0 pb-0",
+                    }}
                 >
                     <ModalContent>
                         {(onClose) => (
                             <>
                                 <ModalHeader className="flex flex-col gap-1">
-                                    Modal Title
+                                    Crea tu cronograma!
                                 </ModalHeader>
                                 <ModalBody>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit. Nullam pulvinar risus
-                                        non risus hendrerit venenatis.
-                                        Pellentesque sit amet hendrerit risus,
-                                        sed porttitor quam.
-                                    </p>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipiscing elit. Nullam pulvinar risus
-                                        non risus hendrerit venenatis.
-                                        Pellentesque sit amet hendrerit risus,
-                                        sed porttitor quam.
-                                    </p>
-                                    <p>
-                                        Magna exercitation reprehenderit magna
-                                        aute tempor cupidatat consequat elit
-                                        dolor adipisicing. Mollit dolor eiusmod
-                                        sunt ex incididunt cillum quis. Velit
-                                        duis sit officia eiusmod Lorem aliqua
-                                        enim laboris do dolor eiusmod. Et mollit
-                                        incididunt nisi consectetur esse laborum
-                                        eiusmod pariatur proident Lorem eiusmod
-                                        et. Culpa deserunt nostrud ad veniam.
-                                    </p>
+                                    <div className="modalMainContainer">
+                                        <p className="modalDescr">
+                                            Empieza definiendo algunas fechas
+                                        </p>
+                                        <div className="fechasCrearCronograma">
+                                            <div className="fechaCrearLeft">
+                                                <p>Fecha inicio</p>
+                                                <DateInput
+                                                    className={""}
+                                                    onChangeHandler={
+                                                        setFirstFechaInicio
+                                                    }
+                                                ></DateInput>
+                                            </div>
+                                            <div className="fechaCrearRight">
+                                                <p>Fecha fin</p>
+                                                <DateInput
+                                                    className={""}
+                                                    onChangeHandler={
+                                                        setFirstFechaFin
+                                                    }
+                                                ></DateInput>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button
                                         color="danger"
                                         variant="light"
-                                        onPress={onClose}
+                                        onPress={volverMainDashboard}
                                     >
                                         Close
                                     </Button>
-                                    <Button color="primary" onPress={onClose}>
+                                    <Button
+                                        color="primary"
+                                        onPress={crearCronogramaYContinuar}
+                                    >
                                         Action
                                     </Button>
                                 </ModalFooter>
@@ -179,7 +262,7 @@ export default function Cronograma(props) {
                         )}
                     </ModalContent>
                 </Modal>
-            )} */}
+            )}
 
             {!modalFirstTime && (
                 <>
@@ -198,7 +281,7 @@ export default function Cronograma(props) {
                                 Cronograma
                             </HeaderWithButtonsSamePage>
 
-                            <AgendaTable></AgendaTable>
+                            <AgendaTable listTareas={listTareas}></AgendaTable>
                         </div>
                     </div>
 
@@ -269,20 +352,78 @@ export default function Cronograma(props) {
                             </div>
 
                             <div className="containerFechas">
-                                <div className="contFechaInicio">
-                                    <p>Fecha de inicio</p>
-                                    <DateInput
-                                        className={""}
-                                        onChangeHandler={setFechaInicio}
-                                    ></DateInput>
-                                </div>
+                                <div className="horizontalFechas">
+                                    <div className="contFechaInicio">
+                                        <p className="headerFInicio">
+                                            Fecha de inicio
+                                        </p>
+                                        <DateInput
+                                            className={""}
+                                            onChangeHandler={(e)=>{
+                                                setFechaInicio(e.target.value);
+                                                setValidFechas(true);
+                                            }}
+                                        ></DateInput>
+                                    </div>
 
-                                <div className="contFechaFin">
-                                    <p>Fecha de fin</p>
-                                    <DateInput
-                                        className={""}
-                                        onChangeHandler={setFechaInicio}
-                                    ></DateInput>
+                                    <div className="contFechaFin">
+                                        <p className="headerFFin">
+                                            Fecha de fin
+                                        </p>
+                                        <DateInput
+                                            className={""}
+                                            onChangeHandler={(e)=>{
+                                                setFechaFin(e.target.value);
+                                                setValidFechas(true);
+                                            }}
+                                        ></DateInput>
+                                    </div>
+                                </div>
+                                {validFechas === "isEmpty" && (
+                                    <div className="flex relative flex-col gap-1.5 pt-1 px-1">
+                                        <p className="text-tiny text-danger">
+                                            Estos campos no pueden estar vacios
+                                        </p>
+                                    </div>
+                                )}
+                                {validFechas === "isFalse" && (
+                                    <div className="flex relative flex-col gap-1.5 pt-1 px-1">
+                                        <p className="text-tiny text-danger">
+                                            La fecha fin no puede ser antes que la fecha inicio
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="containerSubtareas">
+                                <div className="subTareasHeader">
+                                    <p>
+                                        Subtareas (Aqui se abrira un modal para
+                                        introducir nombre, desc, fechaI y
+                                        fechaF)
+                                    </p>
+                                    <div className="btnToPopUp">
+                                        <p>Añadir</p>
+                                    </div>
+                                </div>
+                                <div className="subTareasViewContainer">
+                                    <p className="noUsersMsg">
+                                        No ha seleccionado subtareas
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="containerPosteriores">
+                                <div className="posterioresHeader">
+                                    <p>Tareas posteriores</p>
+                                    <div className="btnToPopUp">
+                                        <p>Añadir</p>
+                                    </div>
+                                </div>
+                                <div className="posterioresViewContainer">
+                                    <p className="noUsersMsg">
+                                        No ha seleccionado subtareas
+                                    </p>
                                 </div>
                             </div>
 
@@ -352,23 +493,22 @@ export default function Cronograma(props) {
                             </ul>
 
                             <div className="twoButtonsEnd">
-                                <Modal
+                                <BtnToModal
                                     nameButton="Descartar"
-                                    textHeader="Descartar Registro"
-                                    textBody="¿Seguro que quiere descartar el registro de el componente EDT?"
+                                    textHeader="Descartar Tarea"
+                                    textBody="¿Seguro que quiere descartar el registro de esta tarea?"
+                                    textColor="red"
                                     colorButton="w-36 bg-slate-100 text-black"
                                     oneButton={false}
                                     //secondAction={handlerReturn}
                                 />
-                                <Modal
+                                <BtnToModal
                                     nameButton="Aceptar"
-                                    textHeader="Registrar Componente"
-                                    textBody="¿Seguro que quiere desea registrar el componente?"
+                                    textHeader="Registrar Tarea"
+                                    textBody="¿Seguro que quiere desea registrar esta tarea?"
                                     colorButton="w-36 bg-blue-950 text-white"
                                     oneButton={false}
-                                    secondAction={() => {
-                                        console.log(tareaName);
-                                    }}
+                                    secondAction={registrarTarea}
                                     verifyFunction={() => {
                                         let allValid = true;
                                         if (tareaName === "") {
@@ -379,7 +519,17 @@ export default function Cronograma(props) {
                                             setValidDescripcion(false);
                                             allValid = false;
                                         }
-
+                                        if (fechaFin < fechaInicio) {
+                                            setValidFechas("isFalse");
+                                            allValid = false;
+                                        }
+                                        if (
+                                            fechaInicio === "" ||
+                                            fechaFin === ""
+                                        ) {
+                                            setValidFechas("isEmpty");
+                                            allValid = false;
+                                        }
                                         if (allValid) {
                                             return true;
                                         }

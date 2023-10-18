@@ -313,7 +313,7 @@ function ProjectSidebar(props) {
             position: 6,
             optIcon: "/icons/sideBarDropDown_icons/sbdd10.svg",
             optName: "Presupuesto",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/presupuesto`,
         },
         {
             id: 5,
