@@ -33,6 +33,25 @@ INSERT INTO Herramienta (nombre,descripcion,imageURL, activo) VALUES ('Acta de r
 INSERT INTO Herramienta (nombre,descripcion,imageURL,activo) VALUES("Registro de equipos","Ayuda a dividir el grupo en subequipos",NULL,1);
 INSERT INTO Herramienta (nombre,descripcion,imageURL,activo) VALUES("Presupuesto","Registra eficientemente tus gastos y ingresos",NULL,1);
 
+
+-- INSERTS MONEDA
+
+INSERT INTO Moneda (tipoCambio,nombre,activo) VALUES (3.34,'Dolar', 1);
+INSERT INTO Moneda (tipoCambio,nombre,activo) VALUES (3.34,'Sol', 1);
+
+SELECT * FROM TransaccionTipo;
+-- INSERTS TIPO TRANSACCION
+
+INSERT INTO TransaccionTipo (descripcion,activo) VALUES ('Efectivo', 1);
+INSERT INTO TransaccionTipo (descripcion,activo) VALUES ('Cheque', 1);
+INSERT INTO TransaccionTipo (descripcion,activo) VALUES ('Transferencia', 1);
+
+-- INSERTS TIPO INGRESO
+
+INSERT INTO IngresoTipo (descripcion,activo) VALUES ('Prestamo', 1);
+INSERT INTO IngresoTipo (descripcion,activo) VALUES ('Donaciones', 1);
+INSERT INTO IngresoTipo (descripcion,activo) VALUES ('Subsidio', 1);
+
 -- INSERTS EDT
 
 -- PRIMER EDT	

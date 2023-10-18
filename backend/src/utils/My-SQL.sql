@@ -242,6 +242,7 @@ DROP TABLE IF EXISTS Tarea;
 CREATE TABLE Tarea(
 	idTarea INT AUTO_INCREMENT PRIMARY KEY,
     idCronograma INT,
+    idTareaEstado INT,
     idEquipo INT,
     idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
     idTareaAnterior INT,
@@ -252,10 +253,13 @@ CREATE TABLE Tarea(
     cantSubTareas INT,
     cantPosteriores INT,
     horasPlaneadas TIME,
+    fechaUltimaModificacionEstado DATE, ## Campo para verificar cuando se cambio el estado de la tarea
     activo TINYINT,
-	FOREIGN KEY (idCronograma) REFERENCES Cronograma(idCronograma)
+	FOREIGN KEY (idCronograma) REFERENCES Cronograma(idCronograma),
+    FOREIGN KEY (idTareaEstado) REFERENCES TareaEstado(idTareaEstado)
 )
 ENGINE = InnoDB;
+
 
 DROP TABLE IF EXISTS TareaEstado;
 
@@ -513,6 +517,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE Moneda(
 	idMoneda INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
     tipoCambio DECIMAL(10,2),
     activo TINYINT
 )
