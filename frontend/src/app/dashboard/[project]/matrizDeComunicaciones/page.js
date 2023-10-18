@@ -1,6 +1,7 @@
 "use client"
 import InConstruction from "@/common/InConstruction";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { SmallLoadingScreen } from "../layout";
 import Link from "next/link";
 import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
@@ -24,6 +25,7 @@ import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
 import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication.css";
 export default function MatrizDeComunicaciones(props){
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -34,6 +36,10 @@ export default function MatrizDeComunicaciones(props){
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    
+    useEffect(() => {
+        setIsLoadingSmall(false);
+    }, []);
 
     const columns = [
         {
