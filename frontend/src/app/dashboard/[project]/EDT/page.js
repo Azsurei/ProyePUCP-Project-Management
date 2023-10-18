@@ -5,18 +5,22 @@ import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps
 import ListElementsEDT from "@/components/dashboardComps/projectComps/EDTComps/ListElementsEDT";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 import EDTCompVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTCompVisualization";
 import { Spinner } from "@nextui-org/react";
+import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
 
+
 export default function EDT(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+
 
     const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
@@ -25,8 +29,6 @@ export default function EDT(props) {
 
     //Variables for EDTCompVisualization
     const [idComponentToSee, setIdComponentToSee] = useState(null);
-
-    const [isLoading, setIsLoading] = useState(true);
 
     function refreshComponentsEDT() {
         console.log("rerendering ListComps");
@@ -42,7 +44,7 @@ export default function EDT(props) {
                 console.log(componentsArray);
                 setListComps(componentsArray);
 
-                setIsLoading(false);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -82,24 +84,17 @@ export default function EDT(props) {
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
-        <div style={{height:'100%'}}>
-            {isLoading ? (
-                <div style={{height: '100%', display: 'flex',justifyContent:'center',alignItems:'center'}}>
-                    <Spinner size="lg" />
-                </div>
-            ) : (
-                screenState === 1 && (
-                    <EDTVisualization
-                        projectName={projectName}
-                        projectId={projectId}
-                        ListComps={ListComps}
-                        handlerGoToNew={handleSetCompCode}
-                        handleVerDetalle={handleVerDetalle}
-                        refreshComponentsEDT={refreshComponentsEDT}
-                    ></EDTVisualization>
-                )
+        <div style={{ height: "100%" }}>
+            {screenState === 1 && (
+                <EDTVisualization
+                    projectName={projectName}
+                    projectId={projectId}
+                    ListComps={ListComps}
+                    handlerGoToNew={handleSetCompCode}
+                    handleVerDetalle={handleVerDetalle}
+                    refreshComponentsEDT={refreshComponentsEDT}
+                ></EDTVisualization>
             )}
-
             {screenState === 2 && (
                 <EDTNewVisualization
                     projectName={projectName}
@@ -109,7 +104,6 @@ export default function EDT(props) {
                     idElementoPadre={idElementoPadre}
                 ></EDTNewVisualization>
             )}
-
             {screenState === 3 && (
                 <EDTCompVisualization
                     projectName={projectName}

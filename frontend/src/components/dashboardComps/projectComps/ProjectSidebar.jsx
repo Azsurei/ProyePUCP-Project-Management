@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 import Link from "next/link";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 axios.defaults.withCredentials = true;
 
 const memberData = [
@@ -60,15 +62,21 @@ function MemberIcon(props) {
 }
 
 function DropDownItem(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const router = useRouter();
+    const prenderLoadYPush = () => {
+        setIsLoadingSmall(true);
+        router.push(props.goTo);
+    }
     return (
-        <li className="DropDownItem">
-            <Link
+        <li className="DropDownItem" onClick={prenderLoadYPush}>
+            {/* <Link
                 href={props.goTo}
                 style={{ display: "flex", alignItems: "center", gap: ".7rem" }}
-            >
+            > */}
                 <img src={props.icon} alt="icon" className="" />
                 <p>{props.name}</p>
-            </Link>
+            {/* </Link> */}
         </li>
     );
 }

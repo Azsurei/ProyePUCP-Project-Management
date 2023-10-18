@@ -3,20 +3,30 @@ import NormalInput from "@/components/NormalInput";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import AgendaTable from "@/components/dashboardComps/projectComps/cronogramaComps/AgendaTable";
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
-//import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import { useEffect, useState } from "react";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import { useContext, useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
 import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import { Textarea } from "@nextui-org/react";
 
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
+// import {
+//     Modal,
+//     ModalContent,
+//     ModalHeader,
+//     ModalBody,
+//     ModalFooter,
+//     Button,
+//     useDisclosure,
+// } from "@nextui-org/react";
 
 import axios from "axios";
+import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -25,6 +35,8 @@ export default function Cronograma(props) {
     const handlerGoToNew = () => {
         setToggleNew(!toggleNew);
     };
+
+    const [listTareas, setListTareas] = useState([]);
 
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
@@ -70,6 +82,7 @@ export default function Cronograma(props) {
     //     setSelectedUsers([]);
     // }, [selectedSubteam]);
 
+
     useEffect(() => {
         const stringURL =
             "http://localhost:8080/api/proyecto/cronograma/listarCronograma";
@@ -84,9 +97,23 @@ export default function Cronograma(props) {
                     cronogramaData.fechaInicio === null ||
                     cronogramaData.fechaFin === null
                 ) {
-                    setModalFirstTime(true);
+                    setModalFirstTime(false);
+                } else {
+                    const tareasURL =
+                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            setListTareas(response.data.tareas);
+                            console.log(response.data.tareas)
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 }
-                //setIsLoading(false);
+
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -94,74 +121,85 @@ export default function Cronograma(props) {
     }, []);
 
     const msgEmptyField = "Este campo no puede estar vacio";
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    //const { isOpen, onOpen, onOpenChange } = useDisclosure();
     return (
         <div className="cronogramaDiv">
-            <button onClick={onOpen}>test</button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                Modal Title
-                            </ModalHeader>
-                            <ModalBody>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Nullam pulvinar risus non
-                                    risus hendrerit venenatis. Pellentesque sit
-                                    amet hendrerit risus, sed porttitor quam.
-                                </p>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Nullam pulvinar risus non
-                                    risus hendrerit venenatis. Pellentesque sit
-                                    amet hendrerit risus, sed porttitor quam.
-                                </p>
-                                <p>
-                                    Magna exercitation reprehenderit magna aute
-                                    tempor cupidatat consequat elit dolor
-                                    adipisicing. Mollit dolor eiusmod sunt ex
-                                    incididunt cillum quis. Velit duis sit
-                                    officia eiusmod Lorem aliqua enim laboris do
-                                    dolor eiusmod. Et mollit incididunt nisi
-                                    consectetur esse laborum eiusmod pariatur
-                                    proident Lorem eiusmod et. Culpa deserunt
-                                    nostrud ad veniam.
-                                </p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button
-                                    color="danger"
-                                    variant="light"
-                                    onPress={onClose}
-                                >
-                                    Close
-                                </Button>
-                                <Button color="primary" onPress={onClose}>
-                                    Action
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            {/* {modalFirstTime && (
+                <Modal
+                    onOpenChange={onOpenChange}
+                    isDismissable={false}
+                    defaultOpen={true}
+                >
+                    <ModalContent>
+                        {(onClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">
+                                    Modal Title
+                                </ModalHeader>
+                                <ModalBody>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit. Nullam pulvinar risus
+                                        non risus hendrerit venenatis.
+                                        Pellentesque sit amet hendrerit risus,
+                                        sed porttitor quam.
+                                    </p>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur
+                                        adipiscing elit. Nullam pulvinar risus
+                                        non risus hendrerit venenatis.
+                                        Pellentesque sit amet hendrerit risus,
+                                        sed porttitor quam.
+                                    </p>
+                                    <p>
+                                        Magna exercitation reprehenderit magna
+                                        aute tempor cupidatat consequat elit
+                                        dolor adipisicing. Mollit dolor eiusmod
+                                        sunt ex incididunt cillum quis. Velit
+                                        duis sit officia eiusmod Lorem aliqua
+                                        enim laboris do dolor eiusmod. Et mollit
+                                        incididunt nisi consectetur esse laborum
+                                        eiusmod pariatur proident Lorem eiusmod
+                                        et. Culpa deserunt nostrud ad veniam.
+                                    </p>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button
+                                        color="danger"
+                                        variant="light"
+                                        onPress={onClose}
+                                    >
+                                        Close
+                                    </Button>
+                                    <Button color="primary" onPress={onClose}>
+                                        Action
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+            )} */}
 
             {!modalFirstTime && (
                 <>
                     <div className={toggleNew ? "divLeft closed" : "divLeft"}>
-                        <HeaderWithButtonsSamePage
-                            haveReturn={false}
-                            haveAddNew={true}
-                            handlerAddNew={handlerGoToNew}
-                            //newPrimarySon={ListComps.length + 1}
-                            breadcrump={"Inicio / Proyectos / " + projectName}
-                            btnText={"Nueva tarea"}
-                        >
-                            Cronograma
-                        </HeaderWithButtonsSamePage>
+                        <div className="containerGeneralLeft">
+                            <HeaderWithButtonsSamePage
+                                haveReturn={false}
+                                haveAddNew={true}
+                                handlerAddNew={handlerGoToNew}
+                                //newPrimarySon={ListComps.length + 1}
+                                breadcrump={
+                                    "Inicio / Proyectos / " + projectName
+                                }
+                                btnText={"Nueva tarea"}
+                            >
+                                Cronograma
+                            </HeaderWithButtonsSamePage>
 
-                        <AgendaTable></AgendaTable>
+                            <AgendaTable></AgendaTable>
+                        </div>
                     </div>
 
                     {/*=========================================================================================*/}
@@ -314,7 +352,7 @@ export default function Cronograma(props) {
                             </ul>
 
                             <div className="twoButtonsEnd">
-                                {/* <Modal
+                                <Modal
                                     nameButton="Descartar"
                                     textHeader="Descartar Registro"
                                     textBody="¿Seguro que quiere descartar el registro de el componente EDT?"
@@ -346,7 +384,7 @@ export default function Cronograma(props) {
                                             return true;
                                         }
                                     }}
-                                /> */}
+                                />
                             </div>
                         </div>
                     </div>

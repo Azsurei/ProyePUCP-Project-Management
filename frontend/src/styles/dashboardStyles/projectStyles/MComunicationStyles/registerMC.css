@@ -1,0 +1,26 @@
+.containerRegisterMC{
+    flex: 1;
+    font-family: Montserrat;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.headerRegisterMC{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 0.8rem;
+}
+
+.titleBacklogRegisterMC{
+    display: flex;
+    font-size: 1.3rem;
+    align-items: center;
+    color: #172B4D;
+    font-weight: 600;
+}

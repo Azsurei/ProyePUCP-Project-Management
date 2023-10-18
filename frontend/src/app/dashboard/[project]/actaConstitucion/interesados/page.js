@@ -24,7 +24,8 @@ import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
-
+import axios from "axios";
+axios.defaults.withCredentials = true;
 const columns = [
     { name: "Nombre", uid: "name", sortable: true},
     { name: "Cargo", uid: "position", sortable:true},
@@ -91,43 +92,67 @@ const templates = [
 
 export default function Interesados() {
     // Estados generales
-    const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-    const [toolsFilter, setToolsFilter] = React.useState("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [sortDescriptor, setSortDescriptor] = React.useState({
+    const [filterValue, setFilterValue] = useState("");
+    const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+    const [toolsFilter, setToolsFilter] = useState("all");
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [sortDescriptor, setSortDescriptor] = useState({
         column: "name",
         direction: "ascending",
     });
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
+    const [interesados, setInteresados] = useState([]); // State to hold interesados data
+
+    // Function to list interesados
+    const listarInteresados = async () => {
+        try {
+            const response = await axios.get('/api/listarInteresados'); // Replace with the correct API endpoint
+            // Assuming the response contains an array of interesados data
+            setInteresados(response.data);
+        } catch (error) {
+            console.error('Error fetching interesados:', error);
+        }
+    };
+
+    // Function to insert interesado
+    const insertarInteresado = async (data) => {
+        try {
+            const response = await axios.post('/api/insertarInteresado', data); // Replace with the correct API endpoint
+            // Handle the response as needed
+            // After successful insertion, you might want to refresh the list of interesados
+            listarInteresados();
+        } catch (error) {
+            console.error('Error inserting interesado:', error);
+        }
+    };
 
     // Variables adicionales
-    const pages = Math.ceil(templates.length / rowsPerPage);
+    const pages = Math.ceil(interesados.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)
-    const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...templates];
+    const filteredItems = useMemo(() => {
+        let filteredInteresados = [...interesados];
 
         if (hasSearchFilter) {
-            filteredTemplates = filteredTemplates.filter((template) =>
-                template.name.toLowerCase().includes(filterValue.toLowerCase())
+            filteredInteresados = filteredInteresados.filter((interesado) =>
+                interesado.name.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
             toolsFilter !== "all" &&
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
-            filteredTemplates = filteredTemplates.filter((template) =>
-                Array.from(toolsFilter).includes(template.tools)
+            filteredInteresados = filteredInteresados.filter((interesado) =>
+                Array.from(toolsFilter).includes(interesado.tools)
             );
         }
 
-        return filteredTemplates;
-    }, [templates, filterValue, toolsFilter]);
+        return filteredInteresados;
+    }, [interesados, filterValue, toolsFilter]);
 
     // Items de tabla paginados
-    const items = React.useMemo(() => {
+    const items = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
@@ -135,7 +160,7 @@ export default function Interesados() {
     }, [page, filteredItems, rowsPerPage]);
 
     // Items de tabla ordenados
-    const sortedItems = React.useMemo(() => {
+    const sortedItems = useMemo(() => {
         return [...items].sort((a, b) => {
             const first = a[sortDescriptor.column];
             const second = b[sortDescriptor.column];

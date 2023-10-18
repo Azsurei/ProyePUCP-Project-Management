@@ -15,13 +15,43 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    padding: 2.5rem 2.5rem;
 
     transform: translateX(0);
     transition: transform 0.6s ease;
 
+    display: flex;
+    justify-content: center;
+
     overflow-y: auto;
 }
+
+.containerGeneralLeft{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    padding: 2.5rem 2.5rem;
+    flex-direction: column;
+    gap: .6rem;
+    font-family: 'Montserrat';
+    max-width: 1300px;  
+
+     
+}
+
+
+.containerGeneralLeft::-webkit-scrollbar {
+    width: 5px;
+}
+
+.containerGeneralLeft::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.containerGeneralLeft::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+}
+
 
 .divLeft.closed{
     transform: translateX(-100%);
