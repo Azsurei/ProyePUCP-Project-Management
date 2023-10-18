@@ -1,5 +1,6 @@
 export default function DateInput({
     className,
+    isInvalid,
     onChangeHandler,
 }) {
     // #inputBoxGeneric{
@@ -17,7 +18,7 @@ export default function DateInput({
     const inputStyle = {
         width: "100%",
         overflowY: "auto",
-        borderColor: "rgb(211, 211, 211)",
+        borderColor: isInvalid ? "red" : "rgb(211, 211, 211)",
         borderWidth: "1px",
         borderRadius: "4px",
         padding: "0 .4rem",
