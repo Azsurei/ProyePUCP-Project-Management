@@ -116,6 +116,33 @@ export default function CronogramaActa() {
         return filteredTemplates;
     }, [templates, filterValue, toolsFilter]);
 
+    // Initialize hito on page load
+    useEffect(() => {
+        initializeHito();
+    }, []); // Empty dependency array ensures this effect runs only once on page load
+
+    const initializeHito = async () => {
+        try {
+            // Fetch the initial hito value from your API or set it to a default value
+            const response = await axios.get('/api/listarHito'); // Replace with the correct API endpoint
+            setHito(response.data); // Assuming response.data contains the initial hito value
+        } catch (error) {
+            console.error('Error initializing hito:', error);
+        }
+    };
+
+    // Function to insert a new hito
+    const insertarHito = async () => {
+        try {
+            // Make a POST request to insert a new hito
+            const response = await axios.post('/api/insertarHito', { hito }); // Replace with the correct API endpoint
+            // Handle the response as needed
+            // After successful insertion, you can optionally refresh the hito value
+        } catch (error) {
+            console.error('Error inserting hito:', error);
+        }
+    };
+
     // Items de tabla paginados
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
