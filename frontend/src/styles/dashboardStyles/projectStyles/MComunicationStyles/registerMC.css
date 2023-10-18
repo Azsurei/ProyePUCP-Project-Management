@@ -42,3 +42,9 @@
     grid-template-columns: repeat(auto-fit,minmax(432px,1fr));
     row-gap: 2rem;
 }
+
+.containerComboMC{
+    display: flex;
+    gap: 15%;
+    margin-right: 15px;
+}

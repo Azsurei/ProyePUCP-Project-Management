@@ -4,17 +4,28 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
+import MyCombobox from "@/components/ComboBox";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 
 export default function MatrizComunicacionesRegister(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const router = useRouter();
     const [sumilla, setSumilla] = useState("");
-    const [detalle, setDetalle] = useState("");
-    const [grupoReceptor, setGrupoReceptor] = useState("");
+    const [detail, setDetail] = useState("");
+    const [groupReceiver, setGroupReceiver] = useState("");
+    const [canal, setCanal] = useState("");
+    const [frecuency, setFrecuency] = useState("");
+    const [format, setFormat] = useState("");
 
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
+
+    const handleSelectedValueChangeCanal = (value) => {
+        setCanal(value);
+    };
 
     return (
         <div className="containerRegisterMC">
@@ -38,7 +49,66 @@ export default function MatrizComunicacionesRegister(props) {
                     />
                 </div>
                 <div className="comboMC">
-
+                    <div className="containerComboMC">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Prioridad"
+                            className="iconLabel"
+                        />
+                        <MyCombobox
+                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            property="historiasPrioridad"
+                            nameDisplay="nombre"
+                            hasColor={false}
+                            onSelect={handleSelectedValueChangeCanal}
+                            idParam="idHistoriaPrioridad"
+                        />
+                    </div>
+                    <div className="containerComboMC">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Prioridad"
+                            className="iconLabel"
+                        />
+                        <MyCombobox
+                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            property="historiasPrioridad"
+                            nameDisplay="nombre"
+                            hasColor={false}
+                            onSelect={handleSelectedValueChangeCanal}
+                            idParam="idHistoriaPrioridad"
+                        />
+                    </div>
+                    <div className="containerComboMC">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Prioridad"
+                            className="iconLabel"
+                        />
+                        <MyCombobox
+                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            property="historiasPrioridad"
+                            nameDisplay="nombre"
+                            hasColor={false}
+                            onSelect={handleSelectedValueChangeCanal}
+                            idParam="idHistoriaPrioridad"
+                        />
+                    </div>
+                    <div className="containerComboMC">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Prioridad"
+                            className="iconLabel"
+                        />
+                        <MyCombobox
+                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            property="historiasPrioridad"
+                            nameDisplay="nombre"
+                            hasColor={false}
+                            onSelect={handleSelectedValueChangeCanal}
+                            idParam="idHistoriaPrioridad"
+                        />
+                    </div>
                 </div>
                 <div>
                     <Textarea
@@ -48,21 +118,24 @@ export default function MatrizComunicacionesRegister(props) {
                         isRequired
                         className="custom-label"
                         minRows="5"
-                        value={detalle}
-                        onValueChange={setDetalle}
+                        value={detail}
+                        onValueChange={setDetail}
                     />
-                 </div>   
-                 <div>
+                </div>
+                <div>
                     <Textarea
                         label="Grupo receptor"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
                         className="custom-label"
-                        value={grupoReceptor}
-                        onValueChange={setGrupoReceptor}
+                        value={groupReceiver}
+                        onValueChange={setGroupReceiver}
                     />
-                 </div>
+                </div>
+                <div className="containerBottom">
+
+                </div>
             </div>
         </div>
     );

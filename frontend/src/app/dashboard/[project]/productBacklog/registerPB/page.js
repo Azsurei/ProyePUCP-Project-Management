@@ -359,7 +359,7 @@ export default function ProductBacklogRegister(props) {
                                         datosUsuario?.apellidos[0]}
                                 </p>
                                 <div className="labelDatoUsuario">
-                                {capitalizeWords(`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`)}
+                                    {capitalizeWords(`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`)}
                                 </div>
                             </div>
                         )}
