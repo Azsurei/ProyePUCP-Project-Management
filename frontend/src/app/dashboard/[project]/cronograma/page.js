@@ -36,6 +36,8 @@ export default function Cronograma(props) {
         setToggleNew(!toggleNew);
     };
 
+    const [listTareas, setListTareas] = useState([]);
+
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
 
@@ -80,38 +82,6 @@ export default function Cronograma(props) {
     //     setSelectedUsers([]);
     // }, [selectedSubteam]);
 
-    // States
-    const [hito, setHito] = useState(""); // State to hold the hito value
-
-    // Initialize hito on page load
-    useEffect(() => {
-        initializeHito();
-    }, []); // Empty dependency array ensures this effect runs only once on page load
-
-    const initializeHito = async () => {
-        try {
-            // Fetch the initial hito value from your API or set it to a default value
-            const response = await axios.get('/api/listarHito'); // Replace with the correct API endpoint
-            setHito(response.data); // Assuming response.data contains the initial hito value
-        } catch (error) {
-            console.error('Error initializing hito:', error);
-        }
-    };
-
-    // Function to insert a new hito
-    const insertarHito = async () => {
-        try {
-            // Make a POST request to insert a new hito
-            const response = await axios.post('/api/insertarHito', { hito }); // Replace with the correct API endpoint
-            // Handle the response as needed
-            // After successful insertion, you can optionally refresh the hito value
-        } catch (error) {
-            console.error('Error inserting hito:', error);
-        }
-    };
-
-
-
 
     useEffect(() => {
         const stringURL =
@@ -128,7 +98,21 @@ export default function Cronograma(props) {
                     cronogramaData.fechaFin === null
                 ) {
                     setModalFirstTime(false);
+                } else {
+                    const tareasURL =
+                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            setListTareas(response.data.tareas);
+                            console.log(response.data.tareas)
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 }
+
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -415,29 +399,6 @@ export default function Cronograma(props) {
                     )}
                 </>
             )}
-            <div className="flex flex-row space-x-4 mb-4">
-                <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
-                    Lista de Interesados (StakeHolders)
-                </h2>
-                <img src="/icons/info-circle.svg" alt="Informacion"></img>
-            </div>
-
-            {/* Initialize hito */}
-            <div>
-                <h3>Initial Hito Value: {hito}</h3>
-            </div>
-
-            {/* Insert new hito */}
-            <div>
-                <Input
-                    placeholder="Insertar Hito"
-                    value={hito}
-                    onChange={(e) => setHito(e.target.value)}
-                />
-                <Button color="primary" onClick={insertarHito}>
-                    Insertar Hito
-                </Button>
-            </div>
         </div>
     );
 }
