@@ -8,6 +8,9 @@
     padding: 2.5rem 2.5rem;
 }
 
+.divBuscador{
+    width: 100%;
+}
 
 .divSearch {
     display: flex;
