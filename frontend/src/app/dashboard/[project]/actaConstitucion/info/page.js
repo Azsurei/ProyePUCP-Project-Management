@@ -1,4 +1,4 @@
-"use strict";
+"use client";
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
 import Button from "@/components/dashboardComps/projectComps/appConstComps/Button";
