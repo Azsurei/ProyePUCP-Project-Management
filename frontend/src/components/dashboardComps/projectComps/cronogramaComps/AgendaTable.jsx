@@ -87,8 +87,9 @@ export default function AgendaTable({ listTareas }) {
         }
 
         //const usuariosAtr = tarea.equipo === falta ver
-
-        const duracion = tarea.fechaInicio + " - " + tarea.fechaFin;
+        const formattedStartDate = new Date(tarea.fechaInicio);
+        const formattedEndDate = new Date(tarea.fechaFin);
+        const duracion = formattedStartDate.toLocaleDateString() + " - " + formattedEndDate.toLocaleDateString();
         return {
             id: tarea.idTarea,
             name: tarea.sumillaTarea,
