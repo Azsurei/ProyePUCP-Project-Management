@@ -68,7 +68,7 @@ export default function MatrizComunicacionesRegister(props) {
             idFormat: format,
             groupReceiver: groupReceiver,
         };
-        console.log(postData);
+        console.log("El postData es :",postData);
     }
 
     return (
@@ -156,7 +156,7 @@ export default function MatrizComunicacionesRegister(props) {
                             className="containerToPopUpUsrSearch"
                             onClick={toggleModal2}
                         >
-                            <p>Buscar nuevo participante</p>
+                            <p>Buscar participante</p>
                             <img
                                 src="/icons/icon-searchBar.svg"
                                 alt=""

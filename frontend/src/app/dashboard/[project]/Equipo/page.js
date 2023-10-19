@@ -100,7 +100,7 @@ const grupos = [
 export default function Equipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     setIsLoadingSmall(false);
