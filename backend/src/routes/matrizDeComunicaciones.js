@@ -8,6 +8,6 @@ routerMatrizComunicaciones.get("/listarFrecuencia", matrizComunicacionesControll
 routerMatrizComunicaciones.get("/listarFormato", matrizComunicacionesController.listarFormato);
 routerMatrizComunicaciones.get("/listarMatrizComunicacion/:idProyecto", matrizComunicacionesController.listarMatrizComunicacion);
 routerMatrizComunicaciones.post("/insertarMatrizComunicacion", matrizComunicacionesController.insertarMatrizComunicacion);
-
+routerMatrizComunicaciones.put("/modificarMatrizComunicacion", matrizComunicacionesController.modificarMatrizComunicacion);
 
 module.exports.routerMatrizComunicaciones = routerMatrizComunicaciones;

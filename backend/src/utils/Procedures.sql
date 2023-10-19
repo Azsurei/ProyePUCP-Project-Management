@@ -1525,6 +1525,33 @@ BEGIN
 	WHERE c.idComunicacion = _idMatrizComunicacion AND c.activo=1;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_COMUNICACION;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_COMUNICACION(
+    IN _idComunicacion INT,
+	IN _idCanal INT,
+    IN _idFrecuencia INT,
+    IN _idFormato INT,
+    IN _sumillaInformacion VARCHAR(500),
+    IN _detalleInformacion VARCHAR(500),
+    IN _responsableDeComunicar VARCHAR(500),
+    IN _grupoReceptor VARCHAR(500)
+)
+BEGIN
+	UPDATE Comunicacion 
+    SET idCanal = _idCanal,
+        idFrecuencia = _idFrecuencia,
+        idFormato = _idFormato,
+        sumillaInformacion = _sumillaInformacion,
+        detalleInformacion = _detalleInformacion,
+        responsableDeComunicar = _responsableDeComunicar,
+        grupoReceptor = _grupoReceptor
+    WHERE idComunicacion = _idComunicacion;
+    SELECT _idComunicacion AS idComunicacion;
+END$
+
+
+
 --Listar usuarios x id de proyecto
 DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_IDPROYECTO;
 DELIMITER $
