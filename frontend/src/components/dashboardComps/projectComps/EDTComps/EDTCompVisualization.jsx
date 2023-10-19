@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
@@ -6,6 +6,8 @@ import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTCompVisualization.cs
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 import axios from "axios";
+import { Textarea } from "@nextui-org/react";
+import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 axios.defaults.withCredentials = true;
 
 export default function EDTCompVisualization({
@@ -14,6 +16,8 @@ export default function EDTCompVisualization({
     handlerReturn,
     idComponentToSee,
 }) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+
     const [estadoEditar, setEstadoEditar] = useState(false);
     const [baseComponentDate, setBaseComponentData] = useState(null);
     //Variables para input
@@ -160,6 +164,7 @@ export default function EDTCompVisualization({
     };
 
     useEffect(() => {
+        //setIsLoadingSmall(true);
         console.log("Procediendo sacar informacion del componente");
         axios
             .post(
@@ -233,6 +238,8 @@ export default function EDTCompVisualization({
                 console.log(
                     "haz conseguido la informacion de dicho componente con exito"
                 );
+
+                //setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -253,7 +260,9 @@ export default function EDTCompVisualization({
                     haveAddNew={false}
                     handlerReturn={handlerReturn}
                     breadcrump={
-                        "Inicio / Proyectos / "+projectName+" / EDT y Diccionario EDT"
+                        "Inicio / Proyectos / " +
+                        projectName +
+                        " / EDT y Diccionario EDT"
                     }
                     btnText={"Agregar elemento"}
                 >
@@ -282,7 +291,7 @@ export default function EDTCompVisualization({
                     <div className="FirstCardContainer">
                         <div className="FirstLeftCont">
                             <p>Nombre del componente</p>
-                            <textarea
+                            {/* <textarea
                                 rows="1"
                                 className={
                                     estadoEditar
@@ -296,9 +305,18 @@ export default function EDTCompVisualization({
                                     setInComponentName(e.target.value);
                                 }}
                                 value={inComponentName}
+                            /> */}
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inComponentName}
+                                onValueChange={setInComponentName}
+                                minRows={1}
+                                size="sm"
+                                readOnly={!estadoEditar}
                             />
-                            {/* <p>Tipo de componente</p>
-                            <p>FASE</p> */}
                             <div
                                 style={{
                                     display: "flex",
@@ -311,12 +329,22 @@ export default function EDTCompVisualization({
                                     alt="help"
                                 ></img> */}
                             </div>
-                            <textarea
+                            {/* <textarea
                                 rows="1"
                                 className="inputBoxGeneric nonEditable"
                                 readOnly={true}
                                 value={inCodigoComponente}
-                            ></textarea>
+                            ></textarea> */}
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inCodigoComponente}
+                                minRows={1}
+                                size="sm"
+                                readOnly={true}
+                            />
                         </div>
                         <div className="FirstRightCont">
                             <p>Fecha de inicio</p>
@@ -350,7 +378,7 @@ export default function EDTCompVisualization({
                                 value={inFechaFin}
                             ></input>
                             <p>Responsables</p>
-                            <textarea
+                            {/* <textarea
                                 rows="1"
                                 className={
                                     estadoEditar
@@ -364,6 +392,17 @@ export default function EDTCompVisualization({
                                     setInResponsables(e.target.value);
                                 }}
                                 value={inResponsables}
+                            /> */}
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inResponsables}
+                                onValueChange={setInResponsables}
+                                minRows={1}
+                                size="sm"
+                                readOnly={!estadoEditar}
                             />
                         </div>
                     </div>
@@ -373,7 +412,7 @@ export default function EDTCompVisualization({
                     <p className="Header">Detalles del componente</p>
                     <div className="SecondCardContainer">
                         <p>Descripcion detallada</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             className={
                                 estadoEditar
@@ -387,9 +426,21 @@ export default function EDTCompVisualization({
                                 setInDescripcion(e.target.value);
                             }}
                             value={inDescripcion}
+                        /> */}
+
+                        <Textarea
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inDescripcion}
+                            onValueChange={setInDescripcion}
+                            minRows={1}
+                            size="sm"
+                            readOnly={!estadoEditar}
                         />
                         <p>Recursos</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             className={
                                 estadoEditar
@@ -403,9 +454,21 @@ export default function EDTCompVisualization({
                                 setInRecursos(e.target.value);
                             }}
                             value={inRecursos}
+                        /> */}
+
+                        <Textarea
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inRecursos}
+                            onValueChange={setInRecursos}
+                            minRows={1}
+                            size="sm"
+                            readOnly={!estadoEditar}
                         />
                         <p>Hito asociado</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             className={
                                 estadoEditar
@@ -419,9 +482,21 @@ export default function EDTCompVisualization({
                                 setInHito(e.target.value);
                             }}
                             value={inHito}
+                        /> */}
+
+                        <Textarea
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inHito}
+                            onValueChange={setInHito}
+                            minRows={1}
+                            size="sm"
+                            readOnly={!estadoEditar}
                         />
                         <p>Observaciones</p>
-                        <textarea
+                        {/* <textarea
                             rows="1"
                             className={
                                 estadoEditar
@@ -435,6 +510,18 @@ export default function EDTCompVisualization({
                                 setInObservaciones(e.target.value);
                             }}
                             value={inObservaciones}
+                        /> */}
+
+                        <Textarea
+                            variant={"bordered"}
+                            labelPlacement="outside"
+                            placeholder="Escribe aquí"
+                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            value={inObservaciones}
+                            onValueChange={setInObservaciones}
+                            minRows={1}
+                            size="sm"
+                            readOnly={!estadoEditar}
                         />
                     </div>
                 </div>
