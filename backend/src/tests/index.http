@@ -251,7 +251,13 @@ PUT http://localhost:8080/api/proyecto/ActaConstitucion/modificarCampos HTTP/1.1
 Content-Type:  application/json
 
 {
-  "detalleAC": [
+  "idActaConstitucion": 11,
+  "nombreProyecto": "Prueba123",
+  "empresa": "Prueba123",
+  "cliente": "Prueba123",
+  "patrocinador": "Prueba123",
+  "gerente": "Prueba123",
+  "actaData": [
     {
       "idDetalle": 1,
       "idActaConstitucion": 11,

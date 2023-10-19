@@ -1103,6 +1103,27 @@ BEGIN
     AND activo = 1;
 END$
 
+DROP PROCEDURE MODIFICAR_ACTA_CONSTITUCION;
+--Modificar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ACTA_CONSTITUCION(
+    IN _idActaConstitucion INT,
+    IN _nombreProyecto VARCHAR(200),
+	IN _empresa VARCHAR(200),
+    IN _cliente VARCHAR(200),
+	IN _patrocinador VARCHAR(200),
+	IN _gerente VARCHAR(200)
+)
+BEGIN
+    UPDATE ActaConstitucion 
+    SET nombreProyecto = _nombreProyecto,
+        empresa = _empresa,
+        cliente = _cliente,
+        patrocinador = _patrocinador,
+        gerente = _gerente
+    WHERE idActaConstitucion = _idActaConstitucion;
+END$
+
 DROP PROCEDURE MODIFICAR_CAMPO_DETALLEAC;
 --Modificar DETALLEAC
 DELIMITER $

@@ -19,9 +19,12 @@ async function listar(req,res,next){
 }
 
 async function modificarCampos(req,res,next){
-    const{detalleAC} = req.body;
+    const{idActaConstitucion, nombreProyecto, empresa, cliente, patrocinador, gerente, actaData} = req.body;
     try {
-        for (const campo of detalleAC) {
+        const query1 = `CALL MODIFICAR_ACTA_CONSTITUCION(?,?,?,?,?,?);`;
+        const [acta] = await connection.query(query1,[idActaConstitucion, nombreProyecto, 
+            empresa, cliente, patrocinador, gerente]);
+        for (const campo of actaData) {
             console.log(`Datos: ${campo.idDetalle},${campo.nombre},${campo.detalle}`);
             const [results] = await connection.execute(`
             CALL MODIFICAR_CAMPO_DETALLEAC(

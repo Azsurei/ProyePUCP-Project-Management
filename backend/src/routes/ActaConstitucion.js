@@ -4,7 +4,7 @@ const { verifyToken } = require("../middleware/middlewares");
 const actaConstitucionController = require("../controllers/actaConstitucionController");
 
 routerActaConstitucion.get("/listarActaConstitucion/:idActaConstitucion", actaConstitucionController.listar);
-routerActaConstitucion.put("/modificarCampos",verifyToken, actaConstitucionController.modificarCampos);
+routerActaConstitucion.put("/modificarCampos", actaConstitucionController.modificarCampos);
 routerActaConstitucion.get("/listarInteresados",verifyToken, actaConstitucionController.listarInteresados);
 routerActaConstitucion.post("/insertarInteresado",verifyToken, actaConstitucionController.insertarInteresado);
 routerActaConstitucion.get("/listarHito",verifyToken, actaConstitucionController.listarHito);
