@@ -13,8 +13,8 @@ const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de 
 export default function actaConstitucion() {
 
     return (
-        <div>
-            
+        <div style={{width:'100%', height:'100%', border: '1px green solid'}}>
+
         </div>
     );
 }

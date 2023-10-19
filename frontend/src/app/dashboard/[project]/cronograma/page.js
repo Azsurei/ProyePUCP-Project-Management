@@ -74,9 +74,9 @@ export default function Cronograma(props) {
     });
 
     const returnListOfUsers = (newUsersList) => {
-        //const newList = [...selectedUsers, ...newUsersList];
+        const newList = [...selectedUsers, ...newUsersList];
 
-        setSelectedUsers(newUsersList);
+        setSelectedUsers(newList);
         setModal(false);
     };
 
