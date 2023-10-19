@@ -1727,5 +1727,5 @@ BEGIN
     SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
 	FROM Usuario AS u
     LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
-	WHERE ue.idEquipo = _idEquipo AND activo=1;
+	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
