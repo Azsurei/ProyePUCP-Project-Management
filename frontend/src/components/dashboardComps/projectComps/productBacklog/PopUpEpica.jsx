@@ -167,11 +167,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                     
                 </div>
 
-                {noResults && (
-                    <p className="noResultsMessage">
-                        No se encontraron resultados.
-                    </p>
-                )}
+                
                 <div className="containerModal">
                     <div className="divEpics">
                         <UserCardsContext.Provider
@@ -179,13 +175,19 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         >
                             <ListEpic lista={listEpics}></ListEpic>
                         </UserCardsContext.Provider>
+                        {noResults && (
+                            <p className="error-message">
+                                No se encontraron resultados.
+                            </p>
+                        )}
                     </div>
                     <div className="subcontainer">
                         
                         <p className="buscarEpic">Insertar Epica</p>
                         <input
-                            type="text"
-                            className="input-field"
+                            type="text" 
+                            autofocus 
+                            className="inputEpica"
                             placeholder="Escribe la nueva epica"
                             value={newEpicName}
                             onChange={(e) => {

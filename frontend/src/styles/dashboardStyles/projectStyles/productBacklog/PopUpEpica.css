@@ -21,11 +21,11 @@
     z-index: 99999;
     display: flex;
     width: 60rem;
-    height: 400px;
+    min-height: 400px;
     padding: 30px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 30px;
+    gap: 20px;
     border-radius: 20px;
     background: #FFF;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -109,8 +109,9 @@
     width: 50%;
     overflow-y: auto;
     padding-right: 4px;
-    padding-bottom: 10px;
-
+    padding-bottom: 100px;
+    /* border: 2px solid #6a7991;
+    border-radius: 5px; */
 }
 
 .containerModal {
@@ -194,7 +195,7 @@
     width: 150px;
     color: white;
 }
-.input-field {
+.inputEpica{
     font-size: 16px;
     font-family: Montserrat;
     background-color: #E8EBEE;
@@ -210,7 +211,7 @@
     margin-top: 25px;
 }
 
-.input-field::placeholder {
+.inputEpica::placeholder {
     font-weight: 300; /* Fuente ligera */
     color: #888; /* Color del texto del marcador de posición */
     font-family: Montserrat, sans-serif;
