@@ -25,7 +25,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
 import axios from "axios";
-
+axios.defaults.withCredentials = true;
 const columns = [
     { name: "Nombre", uid: "name", sortable: true},
     { name: "Cargo", uid: "position", sortable:true},

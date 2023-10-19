@@ -1,6 +1,7 @@
 "use client"
 import InConstruction from "@/common/InConstruction";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { SmallLoadingScreen } from "../layout";
 import Link from "next/link";
 import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
@@ -23,7 +24,9 @@ import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
 import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication.css";
+import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/PopUpEliminateMC";
 export default function MatrizDeComunicaciones(props){
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -34,7 +37,15 @@ export default function MatrizDeComunicaciones(props){
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    
+    useEffect(() => {
+        setIsLoadingSmall(false);
+    }, []);
 
+    const toggleModal = (task) => {
+        setSelectedTask(task);
+        setModal1(!modal1);
+    };
     const columns = [
         {
             name: 'Informacion Requerida',
@@ -184,8 +195,9 @@ export default function MatrizDeComunicaciones(props){
         
         switch (columnKey) {
                 
-            case "iconSrc":
-                return <img src={cellValue} alt="Icono de plantilla"></img>;
+            case "FormatoComunicacion":
+                // return <img src={cellValue} alt="Icono de plantilla"></img>;
+                return <img src={cellValue === "Word" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -202,7 +214,7 @@ export default function MatrizDeComunicaciones(props){
                                 {/* </Link> */}
                                 </DropdownItem>
 
-                                <DropdownItem >Eliminar</DropdownItem>
+                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -354,7 +366,14 @@ export default function MatrizDeComunicaciones(props){
                 
                 </div>
             </div>
-            
+            {modal1 && selectedTask && (
+                <PopUpEliminateMC
+                    modal = {modal1} 
+                    toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
+                    taskName={selectedTask.Informacion}
+                    idHistoriaDeUsuario = {selectedTask.id}
+                />
+            )}
         </div>
         
     );

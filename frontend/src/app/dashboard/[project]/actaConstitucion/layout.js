@@ -1,3 +1,4 @@
+"use client"
 import ProjectSidebar from "@/components/dashboardComps/projectComps/ProjectSidebar";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 import Page from "@/components/dashboardComps/projectComps/appConstComps/Page";
@@ -10,15 +11,20 @@ import CalendarIcon from '../../../../../public/images/CalendarIcon.svg';
 import PersonWithCircleIcon from '../../../../../public/images/PersonWithCircleIcon.svg';
 import TaskIcon from '../../../../../public/images/TaskIcon.svg';
 import Link from "next/link";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {Breadcrumbs, BreadcrumbsItem} from "@/components/Breadcrumb";
+import { SmallLoadingScreen } from "../layout";
 
 const itemsBreadCrumb = ['Inicio', 'Proyectos', 'Nombre del proyecto', 'Acta de Constitución'];
 export default function RootLayout({ children, params }) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
 
+    useEffect(()=>{
+        setIsLoadingSmall(false);
+    },[]);
     return (
         <Page margin={"20px 20px 20px"}>
             <div className="space-x-4 mb-2">

@@ -21,11 +21,11 @@
     z-index: 99999;
     display: flex;
     width: 60rem;
-    height: 400px;
+    min-height: 400px;
     padding: 30px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 25px;
+    gap: 20px;
     border-radius: 20px;
     background: #FFF;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -109,13 +109,18 @@
     width: 50%;
     overflow-y: auto;
     padding-right: 4px;
-    padding-bottom: 10px;
-
+    padding-bottom: 100px;
+    /* border: 2px solid #6a7991;
+    border-radius: 5px; */
 }
 
-.container {
+.containerModal {
     width: 100%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
     display: flex;
+    flex-direction: row;
     gap: 10%;
 }
 
@@ -190,7 +195,7 @@
     width: 150px;
     color: white;
 }
-.input-field {
+.inputEpica{
     font-size: 16px;
     font-family: Montserrat;
     background-color: #E8EBEE;
@@ -206,7 +211,7 @@
     margin-top: 25px;
 }
 
-.input-field::placeholder {
+.inputEpica::placeholder {
     font-weight: 300; /* Fuente ligera */
     color: #888; /* Color del texto del marcador de posición */
     font-family: Montserrat, sans-serif;
@@ -271,4 +276,19 @@
     margin-top: 2px;
 
 
+}
+.custom-flex {
+    flex-direction: row; /* Anula la dirección de columnas para elementos con la clase custom-flex */
+    /* Otros estilos para elementos con la clase custom-flex */
+  }
+
+@keyframes dropTop {
+    0% {
+        transform: translateY(-100%) scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0%) scale(1);
+        opacity: 1;
+    }
 }

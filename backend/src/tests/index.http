@@ -239,7 +239,7 @@ Content-Type:  application/json
 }
 
 ###
-GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion HTTP/1.1
+POST http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion HTTP/1.1
 Content-Type:  application/json
 
 {
@@ -392,4 +392,20 @@ Content-Type:  application/json
 
 
 GET http://localhost:8080/api/proyecto/equipo/listarXIdProyecto/6 HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos  HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/11 HTTP/1.1
 Content-Type:  application/json

@@ -480,6 +480,7 @@ DROP PROCEDURE IF EXISTS INSERTAR_TAREA;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_TAREA(
 	IN _idCronograma INT,
+    IN _idTareaEstado INT,
     IN _idEquipo INT,
     IN _idPadre INT,
     IN _idTareaAnterior INT,
@@ -493,8 +494,8 @@ CREATE PROCEDURE INSERTAR_TAREA(
 )
 BEGIN
 	DECLARE _idTarea INT;
-	INSERT INTO Tarea(idCronograma,idEquipo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,activo) 
-    VALUES(_idCronograma,_idEquipo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,1);		
+	INSERT INTO Tarea(idCronograma,idTareaEstado,idEquipo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,fechaUltimaModificacionEstado,activo) 
+    VALUES(_idCronograma,_idTareaEstado,_idEquipo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,curdate(),1);		
     SET _idTarea = @@last_insert_id;
     SELECT _idTarea AS idTarea;
 END $
@@ -505,11 +506,30 @@ CREATE PROCEDURE  LISTAR_TAREAS_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas 
-    FROM Tarea t
-    WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto)
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado
+    FROM Tarea t, TareaEstado te
+    WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto) AND t.idTareaEstado = te.idTareaEstado
     AND t.activo=1;
 END$
+
+CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
+
+--------------------------
+-- Tarea Estado
+--------------------------
+DELIMITER $
+CREATE PROCEDURE INSERTAR_TAREA_ESTADO(
+	IN _nombre VARCHAR(255),
+    IN _color VARCHAR(8)
+)
+BEGIN
+	DECLARE _idTareaEstado INT;
+	INSERT INTO TareaEstado(nombre,color,activo) 
+    VALUES(_nombre,_color,1);		
+    SET _idTareaEstado = @@last_insert_id;
+    SELECT _idTareaEstado AS idTareaEstado;
+END $
+
 
 ---------------------------------------
 -- UsuarioXTarea
@@ -527,8 +547,6 @@ BEGIN
     SET _idUsuarioXTarea = @@last_insert_id;
     SELECT _idUsuarioXTarea AS idUsuarioXTarea;
 END $
-
-CALL INSERTAR_USUARIO_X_TAREA(78,3);
 
 
 DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_ID_TAREA;
@@ -1138,3 +1156,97 @@ BEGIN
     SET _idHito = @@last_insert_id;
     SELECT _idHito AS idHito;
 END$
+
+---------------
+-- Presupuesto
+---------------
+
+DROP PROCEDURE IF EXISTS LISTAR_MONEDA_TODAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_MONEDA_TODAS()
+BEGIN
+    SELECT idMoneda, nombre,tipoCambio
+    FROM Moneda
+    WHERE activo = 1;
+END$
+
+CALL LISTAR_MONEDA_TODAS;
+
+DROP PROCEDURE IF EXISTS LISTAR_TIPO_INGRESO_TODOS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TIPO_INGRESO_TODOS()
+BEGIN
+    SELECT idIngresoTipo, descripcion
+    FROM IngresoTipo
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_TIPO_TRANSACCION_TODOS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TIPO_TRANSACCION_TODOS()
+BEGIN
+    SELECT idTransaccionTipo, descripcion
+    FROM TransaccionTipo
+    WHERE activo = 1;
+END$
+
+
+DROP PROCEDURE INSERTAR_PRESUPUESTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PRESUPUESTO(
+	IN  _idProyecto INT,
+    IN _presupuestoInicial DECIMAL(10,2)
+)
+BEGIN
+	DECLARE _idPresupuesto INT;
+	INSERT INTO Presupuesto(idHerramienta,idProyecto,presupuestoInicial,fechaCreacion,activo) 
+    VALUES(13,_idProyecto,_presupuestoInicial,curdate(),1);
+    
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,activo) VALUES(_idProyecto,13,1);
+    
+    SET _idPresupuesto = @@last_insert_id;
+    SELECT _idPresupuesto AS idPresupuesto;
+END$
+
+DROP PROCEDURE INSERTAR_INGRESO
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INGRESO(
+	IN  _idPresupuesto INT,
+    IN _subtotal DECIMAL(10,2)
+)
+BEGIN
+	DECLARE _idIngreso INT;
+	INSERT INTO Ingreso(idPresupuesto,subtotal,activo) 
+    VALUES(_idPresupuesto,_subtotal,1);
+    
+    SET _idIngreso = @@last_insert_id;
+    SELECT _idIngreso AS idIngreso;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_LINEA_INGRESO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
+	IN _idIngreso INT,
+    IN _idMoneda INT,
+	IN _idTransaccionTipo INT,
+    IN _idIngresoTipo INT,
+    IN _descripcion VARCHAR(255),
+    IN _monto DECIMAL(10,2),
+    IN _cantidad INT,
+    in _fechaTransaccion DATE
+)
+BEGIN
+	DECLARE _idLineaIngreso INT;
+	INSERT INTO LineaIngreso(idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
+    VALUES(_idIngreso,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
+    SET _idLineaIngreso = @@last_insert_id;
+    SELECT _idLineaIngreso AS idLineaIngreso;
+END$
+
+CALL INSERTAR_PRESUPUESTO(50,4500);
+CALL INSERTAR_INGRESO(2,300);
+CALL INSERTAR_LINEA_INGRESO(4,1,1,1,"Segundo ingreso realizado",200,1,CURDATE());
+
+CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
+SELECT * FROM Ingreso;
+SELECT * FROM LineaIngreso;

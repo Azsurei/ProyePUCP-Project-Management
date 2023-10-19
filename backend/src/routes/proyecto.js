@@ -6,6 +6,7 @@ const routerActaConstitucion = require("./ActaConstitucion").routerActaConstituc
 const routerBacklog = require("./backlog").routerBacklog;
 const routerEquipo = require("./equipo").routerEquipo;
 const routerCronograma = require('./cronograma').routerCronograma;
+const routerPresupuesto = require('./presupuesto').routerPresupuesto;
 const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
@@ -13,6 +14,7 @@ routerProyecto.use("/EDT", routerEDT);
 routerProyecto.use("/equipo", routerEquipo);
 routerProyecto.use("/ActaConstitucion", routerActaConstitucion);
 routerProyecto.use('/cronograma', routerCronograma);
+routerProyecto.use("/presupuesto", routerPresupuesto);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token

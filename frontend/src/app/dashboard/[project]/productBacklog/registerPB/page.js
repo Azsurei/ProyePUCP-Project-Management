@@ -24,6 +24,20 @@ function getCurrentDate() {
     return `${dia}/${mes}/${anio}`;
 }
 
+function capitalizeWords(str) {
+    // Dividimos la cadena en palabras usando el espacio como separador
+    const words = str.split(' ');
+  
+    // Iteramos por cada palabra y aplicamos la capitalización
+    const capitalizedWords = words.map((word) => {
+      // Convierte la primera letra a mayúscula y el resto a minúscula
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+  
+    // Unimos las palabras nuevamente en una cadena
+    return capitalizedWords.join(' ');
+  }
+  
 export default function ProductBacklogRegister(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
@@ -49,6 +63,12 @@ export default function ProductBacklogRegister(props) {
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
     const [backlog, setBacklog] = useState([]);
+    const [reloadData, setReloadData] = useState(false);
+
+  // Esta función se llama cuando deseas recargar los datos
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
 
     useEffect(() => {
         const fetchBacklog = async () => {
@@ -70,6 +90,7 @@ export default function ProductBacklogRegister(props) {
         fetchBacklog();
     }, []);
     const toggleModal = () => {
+        handleReloadData();
         setModal(!modal);
     };
 
@@ -93,8 +114,10 @@ export default function ProductBacklogRegister(props) {
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
+            setReloadData(true);
         } else {
             document.body.style.overflow = "auto";
+            setReloadData(false);
         }
         setIsLoadingSmall(false);
     }, [modal]);
@@ -291,6 +314,7 @@ export default function ProductBacklogRegister(props) {
                                 hasColor={false}
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
+                                reloadData={reloadData}
                             />
                             <button
                                 className="w-20 h-20"
@@ -344,8 +368,8 @@ export default function ProductBacklogRegister(props) {
                                     {datosUsuario?.nombres[0] +
                                         datosUsuario?.apellidos[0]}
                                 </p>
-                                <div className="label">
-                                    {`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`}
+                                <div className="labelDatoUsuario">
+                                    {capitalizeWords(`${datosUsuario?.nombres} ${datosUsuario?.apellidos}`)}
                                 </div>
                             </div>
                         )}

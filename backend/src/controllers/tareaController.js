@@ -1,15 +1,25 @@
 const connection = require("../config/db");
 
 async function crear(req,res,next){
-    const {idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
+    const {idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
         descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,
-        horasPlaneadas} = req.body;
+        horasPlaneadas,usuarios} = req.body;
     try {
         const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?);`;
-        await connection.query(query,[idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
-        res.status(200).json({message: "Tarea creada"});
+        const [results] =await connection.query(query,[idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
+        const idTarea = results[0][0].idTarea;
+        
+        if(usuarios != null){
+            for(const usuario in usuarios){
+                const query2 = `CALL INSERTAR_USUARIO_X_TAREA(?);`;
+                await connection.query(query2,[usuario.idUsuario,idTarea]);
+            }
+        }
+
+        res.status(200).json({message: `Tarea ${idTarea}creada`});
     } catch (error) {
         next(error);
+        console.log(error);
     }
 }
 
