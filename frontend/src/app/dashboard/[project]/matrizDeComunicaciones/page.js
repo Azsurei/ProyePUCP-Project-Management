@@ -34,6 +34,32 @@ export default function MatrizDeComunicaciones(props){
     console.log(projectId);
     console.log(projectName);
     
+    // function DataTable(){
+    //     const fetchData = async () => {
+    //       try {
+    //         // Realiza la solicitud HTTP al endpoint del router
+    //         const stringURL =
+    //         "http://localhost:8080/api/proyecto/matrizDeComunicaciones/" +
+    //         projectId +
+    //         "/listarHistorias";
+    //         const response = await axios.get(stringURL);
+    
+    //         // Actualiza el estado 'data' con los datos recibidos
+    //         setData(response.data.matrizComunicacion);
+    //         setIsLoadingSmall(false);
+    //         console.log(`Datos obtenidos exitosamente:`, response.data.matrizComunicacion);
+    //       } catch (error) {
+    //         console.error('Error al obtener datos:', error);
+    //       }
+    //     };
+    
+    //     fetchData();
+    //   };
+    
+    // useEffect(() => {
+    //     DataTable();
+    // }, []);
+
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
@@ -49,37 +75,37 @@ export default function MatrizDeComunicaciones(props){
     const columns = [
         {
             name: 'Informacion Requerida',
-            uid: 'Informacion',
+            uid: 'sumillaInformacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Formato',
-            uid: 'FormatoComunicacion',
+            uid: 'nombreFormato',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Responsable de comunicar',
-            uid: 'ResponsableComunicacion',
+            uid: 'responsableDeComunicar',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Grupo receptor',
-            uid: 'GrupoReceptorComunicacion',
+            uid: 'grupoReceptor',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Canal',
-            uid: 'CanalComunicacion',
+            uid: 'nombreCanal',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Frecuencia',
-            uid: 'FrecuenciaComunicacion',
+            uid: 'nombreFrecuencia',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -93,12 +119,12 @@ export default function MatrizDeComunicaciones(props){
     const data = [
         {
             id: 1,
-            Informacion: 'Acta de constitucion',
-            FormatoComunicacion: 'Word',
-            ResponsableComunicacion: 'Gestor de proyecto',
-            GrupoReceptorComunicacion: 'Todos los interesados',
-            CanalComunicacion: 'Reunion presencial',
-            FrecuenciaComunicacion: 'Una sola vez',
+            sumillaInformacion: 'Acta de constitucion',
+            nombreFormato: 'Word',
+            responsableDeComunicar: 'Gestor de proyecto',
+            grupoReceptor: 'Todos los interesados',
+            nombreCanal: 'Reunion presencial',
+            nombreFrecuencia: 'Una sola vez',
         },
         
     ];
@@ -195,7 +221,7 @@ export default function MatrizDeComunicaciones(props){
         
         switch (columnKey) {
                 
-            case "FormatoComunicacion":
+            case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
                 return <img src={cellValue === "Word" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
             case "actions":
