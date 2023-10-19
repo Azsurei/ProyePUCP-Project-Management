@@ -1707,14 +1707,25 @@ BEGIN
 END$
 
 
-
---Listar usuarios x id de proyecto
-DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_IDPROYECTO;
+------------
+-- Equipos
+------------
+--Listar Equipos x id de proyecto
+DROP PROCEDURE IF EXISTS LISTAR_EQUIPOS_X_IDPROYECTO;
 DELIMITER $
-CREATE PROCEDURE LISTAR_USUARIOS_X_IDPROYECTO(IN _idProyecto INT)
+CREATE PROCEDURE LISTAR_EQUIPOS_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT *
+	FROM Equipo
+	WHERE idProyecto = _idProyecto AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTES_X_IDEQUIPO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PARTICIPANTES_X_IDEQUIPO(IN _idEquipo INT)
 BEGIN
     SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
 	FROM Usuario AS u
-    JOIN UsuarioXRolXProyecto AS up ON u.idUsuario = up.idUsuario
-	WHERE up.idProyecto = _idProyecto AND up.activo=1;
+    LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
+	WHERE ue.idEquipo = _idEquipo AND activo=1;
 END$

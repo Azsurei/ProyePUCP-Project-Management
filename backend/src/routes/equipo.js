@@ -4,8 +4,8 @@ const routerEquipo = express.Router();
 const { verifyToken } = require('../middleware/middlewares');
 const equipoController = require('../controllers/equipo/equipoController');
 
-
 routerEquipo.post("/insertarEquipoYParticipantes",equipoController.insertarEquipoYParticipantes);
 routerEquipo.get("/listarXIdProyecto/:idProyecto",equipoController.listarXIdProyecto);
-routerEquipo.get("/listarEquipos",equipoController.listarEquipos);
+routerEquipo.get("/listarEquiposYParticipantes/:idProyecto",equipoController.listarEquiposYParticipantes);
+
 module.exports.routerEquipo = routerEquipo;

@@ -292,7 +292,7 @@ Content-Type:  application/json
 ###
 
 
-GET http://localhost:8080/api/proyecto/equipo/listarXIdProyecto/6 HTTP/1.1
+GET http://localhost:8080/api/proyecto/equipo/listarEquiposYParticipantes/4 HTTP/1.1
 Content-Type:  application/json
 
 ###
@@ -358,7 +358,7 @@ POST http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizCom
 Content-Type:  application/json
 
 {
-  "idProyecto": 58,
+  "idProyecto": 59,
   "idCanal": 1,
   "idFrecuencia": 1,
   "idFormato": 1,
