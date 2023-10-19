@@ -364,7 +364,7 @@ Content-Type:  application/json
   "idFormato": 1,
   "sumillaInformacion": "Prueba 123",
   "detalleInformacion": "Prueba 123",
-  "responsableDeComunicar": "Diego",
+  "responsableDeComunicar": 1,
   "grupoReceptor": "Prueba 123"
 }
 

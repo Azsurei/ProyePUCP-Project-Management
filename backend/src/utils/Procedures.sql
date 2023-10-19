@@ -1690,7 +1690,7 @@ CREATE PROCEDURE MODIFICAR_COMUNICACION(
     IN _idFormato INT,
     IN _sumillaInformacion VARCHAR(500),
     IN _detalleInformacion VARCHAR(500),
-    IN _responsableDeComunicar VARCHAR(500),
+    IN _responsableDeComunicar INT,
     IN _grupoReceptor VARCHAR(500)
 )
 BEGIN
