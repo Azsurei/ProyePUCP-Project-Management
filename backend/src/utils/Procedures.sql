@@ -1252,7 +1252,6 @@ CALL INSERTAR_PRESUPUESTO(50,4500);
 CALL INSERTAR_INGRESO(2,300);
 CALL INSERTAR_LINEA_INGRESO(4,1,1,1,"Segundo ingreso realizado",200,1,CURDATE());
 
-<<<<<<< HEAD
 UPDATE LineaEstimacionCosto SET idProyecto = 50 WHERE idLineaEstimacion >0;
 UPDATE LineaIngreso SET idProyecto = 50 WHERE idLineaIngreso >0;
 UPDATE LineaEgreso SET idProyecto = 50 WHERE idLineaEgreso >0;
@@ -1403,7 +1402,6 @@ BEGIN
 	UPDATE LineaEstimacionCosto SET activo = 0 WHERE idLineaEstimacionCosto =  _idLineaEstimacionCosto AND activo = 1;
 END$
 
-=======
 CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
 SELECT * FROM Ingreso;
 SELECT * FROM LineaIngreso;
@@ -1470,4 +1468,3 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
->>>>>>> a556a1acff07ecfbc09388aaabfacd92351a2435
