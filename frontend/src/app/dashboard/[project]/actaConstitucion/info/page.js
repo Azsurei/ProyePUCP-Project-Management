@@ -11,39 +11,24 @@ import axios from 'axios';
 import { SmallLoadingScreen } from "../../layout";
 axios.defaults.withCredentials = true;
 
+import "../../../../../styles/dashboardStyles/projectStyles/actaConstStyles/TextInfoCard.css";
+import "../../../../../styles/dashboardStyles/projectStyles/actaConstStyles/CardItem.css";
+
 function DetailCard({ detail, onSave }) {
 
     const [editMode, setEditMode] = useState(false);
     const [editedDetail, setEditedDetail] = useState(detail);
-
-    const handleEdit = () => {
-        setEditMode(true);
-    };
-
     const handleChange = (field, value) => {
         setEditedDetail(prev => ({ ...prev, [field]: value }));
     };
-
-    const handleSave = () => {
-        onSave(editedDetail);
-        setEditMode(false);
-    };
-
     return (
-        <div className="card">
-            {editMode ? (
-                <>
-                    <input value={editedDetail.nombre} onChange={e => handleChange('nombre', e.target.value)} />
-                    <input value={editedDetail.detalle} onChange={e => handleChange('detalle', e.target.value)} />
-                    <button onClick={handleSave}>Save</button>
-                </>
-            ) : (
-                <>
-                    <div>{detail.nombre}</div>
-                    <div>{detail.detalle}</div>
-                    <button onClick={handleEdit}>Edit</button>
-                </>
-            )}
+        <div className="project-card">
+            <div className="project-card__title">{detail.nombre}</div>
+                <input
+                    className="editable-input"
+                    value={detail.detalle}  // Use the local state as the value
+                    onChange={handleInputChange}  // Use the local handler for changes
+                />
         </div>
     );
 }
