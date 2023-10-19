@@ -42,10 +42,10 @@ async function modificarCampos(req,res,next){
 }
 
 async function listarInteresados(req,res,next){
-    const {idActaConstitucion} = req.body;
+    const {idProyecto} = req.params;
     try {
-        const query = `CALL LISTAR_INTERESADOAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query,[idActaConstitucion]);
+        const query = `CALL LISTAR_INTERESADOAC_AC(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
         const interesadoAC = results[0];
         res.status(200).json({interesadoAC, message: "InteresadoAC listado"});
     } catch (error) {
@@ -53,12 +53,12 @@ async function listarInteresados(req,res,next){
     }
 }
 async function insertarInteresado(req,res,next){
-    const{idActaConstitucion, nombre, cargo, organizacion} = req.body;
+    const{idProyecto, nombre, cargo, organizacion} = req.body;
     const query = `
         CALL INSERTAR_INTERESADOAC(?,?,?,?);
     `;
     try {
-        const [results] = await connection.query(query,[idActaConstitucion,nombre,cargo,organizacion]);
+        const [results] = await connection.query(query,[idProyecto,nombre,cargo,organizacion]);
         const idInteresado = results[0][0].idInteresado;
         console.log(`Se insertó el interesado ${idInteresado}!`);
         res.status(200).json({
@@ -71,10 +71,10 @@ async function insertarInteresado(req,res,next){
 }
 
 async function listarHito(req,res,next){
-    const {idActaConstitucion} = req.body;
+    const {idProyecto} = req.params;
     try {
-        const query = `CALL LISTAR_HITOAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query,[idActaConstitucion]);
+        const query = `CALL LISTAR_HITOAC_X_AC(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
         const hitoAC = results[0];
         res.status(200).json({hitoAC, message: "HitoAC listado"});
     } catch (error) {
@@ -82,12 +82,12 @@ async function listarHito(req,res,next){
     }
 }
 async function insertarHito(req,res,next){
-    const{idActaConstitucion, descripcion, fechaLimite} = req.body;
+    const{idProyecto, descripcion, fechaLimite} = req.body;
     const query = `
         CALL INSERTAR_HITOAC(?,?,?);
     `;
     try {
-        const [results] = await connection.query(query,[idActaConstitucion,descripcion,fechaLimite]);
+        const [results] = await connection.query(query,[idProyecto,descripcion,fechaLimite]);
         const idHito = results[0][0].idHito;
         console.log(`Se insertó el hito ${idHito}!`);
         res.status(200).json({
