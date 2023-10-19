@@ -27,7 +27,7 @@ function DetailCard({ detail, onSave }) {
                 <input
                     className="editable-input"
                     value={detail.detalle}  // Use the local state as the value
-                    onChange={handleInputChange}  // Use the local handler for changes
+                    onChange={handleChange}  // Use the local handler for changes
                 />
         </div>
     );
