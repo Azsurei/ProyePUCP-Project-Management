@@ -640,7 +640,7 @@ CREATE PROCEDURE INSERTAR_MATRIZ_COMUNICACION(
 )
 BEGIN
 	DECLARE _idMatrizComunicacion INT;
-	INSERT INTO MatrizResponsabilidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(8,_idProyecto,curdate(),1);		
+	INSERT INTO MatrizComunicacion(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(8,_idProyecto,curdate(),1);		
     SET _idMatrizComunicacion = @@last_insert_id;
     SELECT _idMatrizComunicacion AS idMatrizComunicacion;
 END$
@@ -1473,7 +1473,7 @@ DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(IN _idProyecto INT)
 BEGIN
-    SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, c.idMatrizComunicacion, 
+    SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, c.idMatrizComunicacion, mc.idProyecto, 
     c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
     JOIN MatrizComunicacion AS mc ON c.idMatrizComunicacion = mc.idMatrizComunicacion
