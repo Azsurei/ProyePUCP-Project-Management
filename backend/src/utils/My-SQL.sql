@@ -364,6 +364,11 @@ CREATE TABLE ActaConstitucion(
     idProyecto INT,
     fechaCreacion DATE,
     activo tinyint NOT NULL,
+    nombreProyecto VARCHAR(200),
+    empresa VARCHAR(200),
+    cliente VARCHAR(200),
+    patrocinador VARCHAR(200),
+    gerente VARCHAR(200),
     FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
@@ -885,5 +890,24 @@ CREATE TABLE ComFormato(
 	idFormato INT AUTO_INCREMENT PRIMARY KEY,
     nombreFormato VARCHAR(200),
     activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE Comunicacion;
+CREATE TABLE Comunicacion(
+	idComunicacion INT AUTO_INCREMENT PRIMARY KEY,
+    idCanal INT,
+    idFrecuencia INT,
+    idFormato INT,
+    idMatrizComunicacion INT,
+    sumillaInformacion VARCHAR(500),
+    detalleInformacion VARCHAR(500),
+    responsaleDeComunicar VARCHAR(500),
+    grupoReceptor VARCHAR(500),
+    activo TINYINT,
+    FOREIGN KEY (idCanal) REFERENCES ComCanal(idCanal),
+    FOREIGN KEY (idFrecuencia) REFERENCES ComFrecuencia(idFrecuencia),
+    FOREIGN KEY (idFormato) REFERENCES ComFormato(idFormato),
+    FOREIGN KEY (idMatrizComunicacion) REFERENCES MatrizComunicacion(idMatrizComunicacion)
 )
 ENGINE = InnoDB;

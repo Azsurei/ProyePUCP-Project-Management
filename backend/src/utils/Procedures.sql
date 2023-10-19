@@ -1468,3 +1468,17 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, c.idMatrizComunicacion, 
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, c.grupoReceptor, c.activo
+	FROM Comunicacion AS c
+    JOIN MatrizComunicacion AS mc ON c.idMatrizComunicacion = mc.idMatrizComunicacion
+    JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
+    JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
+    JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+	WHERE mc.idProyecto = _idProyecto AND c.activo=1;
+END$
