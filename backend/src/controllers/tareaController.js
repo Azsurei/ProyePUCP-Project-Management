@@ -3,7 +3,7 @@ const connection = require("../config/db");
 async function crear(req,res,next){
     const {idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
         descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,
-        horasPlaneadas,usuarios} = req.body;
+        horasPlaneadas,usuarios,subTareas,tareasPosteriores} = req.body;
     try {
         const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?);`;
         const [results] =await connection.query(query,[idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
@@ -16,38 +16,50 @@ async function crear(req,res,next){
             }
         }
 
+        if (subTareas != null) {
+            for (const subTarea of subTareas) {
+
+                const {idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
+                    descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas,
+                    usuarios
+                } = subTarea.body;
+
+                const [results] =await connection.query(query,[idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
+
+                const idTarea = results[0][0].idTarea;
+                if(usuarios != null){
+                    for(const usuario in usuarios){
+                        const query2 = `CALL INSERTAR_USUARIO_X_TAREA(?);`;
+                        await connection.query(query2,[usuario.idUsuario,idTarea]);
+                    }
+                }
+                
+            }
+        }
+
+        if(tareasPosteriores!=null){
+            for(const tareaPosterior in tareasPosteriores){
+                const {idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
+                    descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas,
+                    usuarios
+                } = tareaPosterior.body;
+                const [results] =await connection.query(query,[idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
+                const idTarea = results[0][0].idTarea;
+                if(usuarios != null){
+                    for(const usuario in usuarios){
+                        const query2 = `CALL INSERTAR_USUARIO_X_TAREA(?);`;
+                        await connection.query(query2,[usuario.idUsuario,idTarea]);
+                    }
+                }
+            }
+        }
         res.status(200).json({message: `Tarea ${idTarea}creada`});
     } catch (error) {
         next(error);
         console.log(error);
-    } 
-}
-
-async function asignarUsuario(req,res,next){
-    const {idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
-        descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,
-        horasPlaneadas} = req.body;
-    try {
-        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?);`;
-        await connection.query(query,[idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
-        res.status(200).json({message: "Tarea creada"});
-    } catch (error) {
-        next(error);
     }
 }
 
-async function asignarEquipo(req,res,next){
-    const {idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,
-        descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,
-        horasPlaneadas} = req.body;
-    try {
-        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?);`;
-        await connection.query(query,[idCronograma,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
-        res.status(200).json({message: "Tarea creada"});
-    } catch (error) {
-        next(error);
-    }
-}
 
 async function listarXIdProyecto(req,res,next){
     const {idProyecto} = req.params;
