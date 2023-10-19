@@ -1,6 +1,6 @@
 "use client";
 
-import InConstruction from "@/common/inConstruction";
+import InConstruction from "@/common/InConstruction";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";

@@ -1,6 +1,6 @@
 "use client"
 import React, { useContext } from "react";
-import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
+import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/ChoiceUser.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
 
 
