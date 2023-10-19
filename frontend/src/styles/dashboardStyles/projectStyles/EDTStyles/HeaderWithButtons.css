@@ -23,34 +23,45 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
 }
 
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer{
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-start;
     gap: .7rem;
+    
+
+    min-width: 0px;
 }
 
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #MainHeader{
     font-weight: 700;
     font-size: 30px;
     color: #172B4D;
+    
+    white-space: normal; /* Allow text to wrap when necessary */
+    overflow-wrap: break-word; /* Allow word breaking when necessary */
+    max-width: 100%; 
+    min-width: none;
 }
 
 
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #HeaderIconGoBack{
-    width: 100%;
-    height: 100%;
+    width: 25px;
+    height: 25px;
     object-fit: contain;
     border-radius: 100%;
     background-color: transparent;
     transition: background-color 0.15s ease;
 
-    margin-bottom: .15rem;
+    margin-top: .12rem;
 
-    &:hover{
-        background-color: rgb(206, 214, 221);
-        transition: background-color 0.15s ease;
-    }
     
+}
+
+#HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #HeaderIconGoBack:hover{
+    background-color: rgb(206, 214, 221);
+    transition: background-color 0.15s ease;
 }

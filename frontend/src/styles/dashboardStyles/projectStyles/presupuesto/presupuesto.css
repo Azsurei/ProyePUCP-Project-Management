@@ -1,0 +1,104 @@
+.mainDivPresupuesto{
+    flex: 1;
+    font-family: Montserrat;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-top: 1rem;
+    font-family: Montserrat;
+    font-weight: 600;
+    color: #555;
+
+}
+
+.presupuesto{
+    width: 100%;
+    height: 95%;
+    display: grid;
+    grid-template-rows: 0.5fr 0.5fr 4fr;
+}
+
+.titlePresupuesto{
+    display: flex;
+    font-size: 2rem;
+    
+    font-family: Montserrat;
+    font-weight: bold;
+    padding-top: 10px;
+
+
+    color: #000;
+    font-style: normal;
+
+   
+}
+
+.buttonsPresu{
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.btnCommon {
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 29px;
+    width: 100px;
+    color: white;
+    padding: 0px 12px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+
+.btnFlujo{
+
+    background-color: #FF9929;
+    border: 1px solid #FF9929;
+}
+
+.btnHistorial {
+    background-color: #4369CC;
+    border: 1px solid #4369CC;
+}
+
+.btnIngreso {
+    background-color: #16C78E;
+    border: 1px solid #16C78E;
+}
+
+.btnEgreso {
+    background-color: #E2284D;
+    border: 1px solid #E2284D;
+}
+
+.btnEstimacion {
+    background-color: #41B9E4;
+    border: 1px solid #41B9E4;
+}
+
+.btnSelected{
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+}
+
+
+
+.btnCommon:not(.btnDisabled):hover,
+.btnFlujo:not(.btnDisabled):hover,
+.btnHistorial:not(.btnDisabled):hover,
+.btnIngreso:not(.btnDisabled):hover,
+.btnEgreso:not(.btnDisabled):hover,
+.btnEstimacion:not(.btnDisabled):hover {
+    cursor: pointer;
+    opacity: 0.8;
+}

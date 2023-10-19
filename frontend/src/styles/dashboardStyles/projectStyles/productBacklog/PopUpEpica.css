@@ -1,0 +1,293 @@
+.popUp, .overlay {
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    bottom: 0;
+    position: fixed;
+    font-family: Montserrat-Medium, sans-serif;
+    
+    
+}
+
+.overlay {
+    background: rgba(49,49,49,0.8);
+
+    
+}
+
+
+.modalEpic{
+    z-index: 99999;
+    display: flex;
+    width: 60rem;
+    height: 400px;
+    padding: 30px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    border-radius: 20px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: 1px solid #DFDFDF;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.buscarEpic{
+
+    color: #172B4D;
+    /* Heading/H600 */
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 120% */
+}
+
+.divBuscador{
+
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+}
+
+.buttonAccept{
+    border-radius: 5px;
+    background-color: #172B4D;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    height: 35px;
+    width: 6rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+
+
+    color: var(--color-text-inverse, #FFF);
+    text-align: center;
+    /* Heading/H400 */
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 114.286% */
+    margin-top: 2px;
+
+}
+
+.buttonCreate{
+    border-radius: 5px;
+    background-color: #9b9b9b9b;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    height: 35px;
+    width: 5rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+
+
+    color: var(--color-text-inverse, #FFF);
+    text-align: center;
+    /* Heading/H400 */
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 114.286% */
+    margin-top: 2px;
+
+
+}
+.divEpics{
+    width: 50%;
+    overflow-y: auto;
+    padding-right: 4px;
+    padding-bottom: 10px;
+
+}
+
+.containerModal {
+    width: 100%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
+    display: flex;
+    flex-direction: row;
+    gap: 10%;
+}
+
+.subcontainer {
+    width: 50%;
+    gap: 10%;
+}
+
+.divEpics::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .divEpics::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+  
+  .divEpics::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+
+  }
+
+.endButtons{
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.btn-modal, .close-modal {
+    font-family: Montserrat, sans-serif;
+    
+    width: 102px;
+    height: 42px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    font-weight: 500;
+    align-items: center;
+    background-color: #172B4D;
+    color: white;
+    font-size: 18px;
+    border-radius: 5px;
+    padding: 0px 12px;
+
+    position: absolute;
+    bottom: 10px; /* Ajusta el valor según tu preferencia */
+    right: 10px;
+    margin: 20px
+    
+}
+
+.btnAddEpic{
+    border-radius: 10px;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+    margin-right: 30px;
+}
+
+.btnElimanteEpic{
+    border-radius: 10px;
+    background-color: #CE3B3B;
+    border: #CE3B3B 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
+.input-field {
+    font-size: 16px;
+    font-family: Montserrat;
+    background-color: #E8EBEE;
+    border-color: #A1BDD9;
+    width: 90%;
+    height: 30px;
+    text-align: left;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.input-field::placeholder {
+    font-weight: 300; /* Fuente ligera */
+    color: #888; /* Color del texto del marcador de posición */
+    font-family: Montserrat, sans-serif;
+    
+}
+.error-message {
+    color: #CE3B3B;
+    font-family: Montserrat, sans-serif;
+}
+.endButtons{
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    width: 100%;
+}
+.buttonOneUser{
+    border-radius: 5px;
+    background-color: #172B4D;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    height: 35px;
+    width: 6rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+
+
+    color: var(--color-text-inverse, #FFF);
+    text-align: center;
+    /* Heading/H400 */
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 114.286% */
+    margin-top: 2px;
+
+}
+
+.buttonTwoUser{
+    border-radius: 5px;
+    background-color: #9b9b9b9b;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    height: 35px;
+    width: 5rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+
+
+    color: var(--color-text-inverse, #FFF);
+    text-align: center;
+    /* Heading/H400 */
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 114.286% */
+    margin-top: 2px;
+
+
+}
+.custom-flex {
+    flex-direction: row; /* Anula la dirección de columnas para elementos con la clase custom-flex */
+    /* Otros estilos para elementos con la clase custom-flex */
+  }
+
+@keyframes dropTop {
+    0% {
+        transform: translateY(-100%) scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0%) scale(1);
+        opacity: 1;
+    }
+}

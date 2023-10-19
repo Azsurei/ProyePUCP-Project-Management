@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    async rewrites() {
-        return [
-          {
-            source: '/api/:path*', // Ruta de la API en tu servidor Node.js
-            destination: 'http://localhost:8080/api/:path*', // URL de tu servidor Node.js
-          },
-        ];
-      },
-}
+    webpack(config) {
+        config.module.rules.push({
+            test: /\.svg$/,
+            use: ['@svgr/webpack'],
+        });
 
-module.exports = nextConfig
+        return config;
+    },
+};
+
+module.exports = nextConfig;

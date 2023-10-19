@@ -1,9 +1,9 @@
 import "@/styles/dashboardStyles/projectStyles/productBacklog/IconLabel.css";
 
-export default function IconLabel({icon,label}) {
+export default function IconLabel({icon,label,className}) {
     return (
-        <div className="iconLabel">
-            <img src={icon}/>
+        <div className={className}>
+            <img src={icon} className="icono"/>
             <div className="label">
                 {label}
             </div>

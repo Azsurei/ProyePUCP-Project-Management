@@ -1,0 +1,72 @@
+"use client";
+import ProjectSidebar from "@/components/dashboardComps/projectComps/ProjectSidebar";
+import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
+import { createContext, useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
+export const SmallLoadingScreen = createContext();
+
+export default function RootLayout({ children, params }) {
+    const decodedUrl = decodeURIComponent(params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+
+    const [isLoadingSmall, setIsLoadingSmall] = useState(true);
+
+    return (
+        //AQUI CAMBIE BODY POR DIV, YA QUE AL TENER BODY QUITA EL LAYOUT DEL DASHBOARD
+        <div className="DashboardProjectContainer" style={{ width: "100%" }}>
+            <SmallLoadingScreen.Provider value={{ setIsLoadingSmall }}>
+                <ProjectSidebar
+                    projectName={projectName}
+                    projectId={projectId}
+                    currentUrl={params.project}
+                ></ProjectSidebar>
+                <div
+                    style={{
+                        flex: "1",
+                        backgroundColor: "white",
+                        position: "relative",
+                    }}
+                    className="h-[100%] overflow-auto"
+                >
+                    {isLoadingSmall && (
+                        <div
+                            style={{
+                                position: "absolute",
+                                width: "100%",
+                                height: "100%",
+                                background: "white",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                gap: ".2rem",
+                                zIndex: 9
+                            }}
+                        >
+                            <p
+                                style={{
+                                    fontFamily: "Montserrat",
+                                    fontSize: "2.5rem",
+                                    color: "lightgray",
+                                    fontWeight: "700",
+                                }}
+                            >
+                                ProyePUCP
+                            </p>
+                            <Box sx={{ width: "170px", color: "lightgray" }}>
+                                <LinearProgress color="inherit" />
+                            </Box>
+                        </div>
+                    )}
+                    {children}
+                </div>
+            </SmallLoadingScreen.Provider>
+        </div>
+    );
+}

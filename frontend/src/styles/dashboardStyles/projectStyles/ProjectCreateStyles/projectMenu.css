@@ -1,0 +1,150 @@
+.mainDiv{
+    display: flex;
+    flex-direction: column;
+    background-color: #F5F5F5;
+    height: 100%;
+    width: 100%; /* Cubre solo el área adicional debajo de contentDiv */
+
+    padding: 2.5rem 2.5rem;
+}
+
+.divBuscador{
+    width: 100%;
+}
+
+.divSearch {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 5%;
+
+    padding-top: 10px;
+}
+
+.searchProject {
+    font-family: Montserrat;
+    font-size: 16px;
+    width: 34rem;
+    height: 3rem;
+    font-weight: 200;
+    position: relative;
+    margin: 0;
+    margin-bottom: 13.5px;
+    text-align: left;
+    display: flex;
+    padding: 10px;
+    align-items: flex-start;
+    gap: 10px;
+    flex-shrink: 0;
+
+    border-radius: 3.375px;
+    border: 2.25px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
+    background: var(--color-background-input-default, #fff);
+}
+
+.searchButton {
+    background: none;
+    border: none;
+    all: unset;
+    cursor: pointer;
+}
+
+
+
+/*Boton añadir nuevo Project*/
+.addProjectbtn {
+    border-radius: 5px;
+    background-color: #f0ae19;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 36px;
+    width: 160px;
+    color: white;
+    transition: background-color 0.15s ease-in;
+}
+
+.addProjectbtn:hover {
+    background-color: #ca9415;
+    transition: background-color 0.15s ease-in;
+}
+
+
+.textProject {
+    text-decoration: none;
+    color: #626f86;
+    font-size: 1rem;
+    font-weight: 450;
+    font-family: Montserrat, serif;
+    line-height: 2rem;
+    width: max-content;
+}
+
+.textProject2 {
+    font-weight: 700;
+    font-size: 30px;
+    color: #172b4d;
+}
+
+.contentDer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+
+
+@media (max-width: 940px){
+    .divSearch{
+        align-items: flex-end;
+        padding-top: 0px;
+    }
+
+    .contentDer{
+        flex-direction: column;
+        align-items: center;
+        gap: .2rem;
+    }
+
+}
+
+@media (max-width: 560px){
+    .divSearch{
+        align-items: center;
+    }
+
+    .textProject{
+        display:none;
+    }
+}
+
+@media (max-width: 480px){
+    .divSearch{
+        flex-direction: column;
+        gap: .3rem;
+    }
+
+    .contentDer{
+        width: 100%;
+        height: 30px;
+    }
+
+    .butonAddProject {
+        width: 100%;
+        height: 100%;
+    }
+
+    #newProBtnContainer{
+        width: 100%;
+        height: 100%;
+    }
+
+    .addProjectbtn{
+        width: 100%;
+        height: 100%;
+    }   
+}

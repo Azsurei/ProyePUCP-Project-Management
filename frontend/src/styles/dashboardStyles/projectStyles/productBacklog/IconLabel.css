@@ -1,8 +1,31 @@
 .iconLabel{
     display: flex;
-    gap: 3%;
+    align-items: center;
+    width: 25%;
+    gap: 10%;
+    font-weight: 600;
+}
+
+.iconLabel2{
+    display: flex;
+    align-items: center;
+    width: 50%;
+    gap: 10%;
+    font-weight: 400;
+}
+.iconLabel3{
+    display: flex;
+    align-items: center;
+    width: 50%;
+    gap: 5%;
+    font-weight: 600;
+    color: red;
+}
+
+.icono{
+    width: 20px;
 }
 
 .label{
-    font-weight: 600;
+    flex: 1;
 }

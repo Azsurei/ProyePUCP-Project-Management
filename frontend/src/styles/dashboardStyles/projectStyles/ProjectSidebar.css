@@ -1,17 +1,13 @@
 .DashboardProjectContainer{
     display: flex;
+    height: 100%;
 }
 
 .ProjectSidebar{
-<<<<<<< HEAD
-    /* Ponemos 117 porque es la suma entre heights de Navbar y SecondNavbar */
-    height: auto;
-=======
     /* Ponemos 123 porque es la suma entre heights de Navbar y SecondNavbar */
-    height: calc(100vh - 123px);
+    height: 100%;
     width: 310px;
     min-width: 0px;
->>>>>>> 2423af5d9260788e97a411d75fd01bdc6a031577
     overflow: auto;
     background-color: #F5F5F5;
 
@@ -24,7 +20,21 @@
 
     font-family: 'Montserrat', sans-serif;
 
-    overflow: visible;
+    transition: width 0.3s ease-in-out;
+
+}
+
+.ProjectSidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ProjectSidebar::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.ProjectSidebar::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
 }
 
 .ProjectSidebar .headerContainer{
@@ -34,7 +44,7 @@
     border-style: solid;
 }
 
-.ProjectSidebar .header{
+.ProjectSidebar .SidebarHeader{
     font-size: 2rem;
     font-weight: 600;
     color: #172B4D;
@@ -72,8 +82,9 @@
     height: 25px;
     border-radius: 100%;
     position: absolute;
-    left: 297px;
+    left: 14px;
     top: 155px;
+    transition: left 0.3s ease-in-out;
 }
 
 
@@ -91,32 +102,195 @@
     display: flex;
 }
 
+
 .memberContainer .memberIcon{
     width: 50px;
     height: 50px;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 50%;
+    border-radius: 10px;
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*=============== STYLES OF FoldButton ===============*/
+
+.closedSidebar {
+    left: 0;
+    width: 25px; /* width of the button */
+    overflow: hidden;
+}
+
+.openSidebar {
+    width: 310px; /* original width of the sidebar */
+}
+
+.openSidebar .btnOpenSidebar {
+    left: 255px; /* move the button next to the text when open */
+}
+
+.closedSidebar .SidebarHeader,
+.closedSidebar .header,
+.closedSidebar .dates,
+.closedSidebar .teamContainer,
+.closedSidebar .members,
+.closedSidebar .DropDownMenu{
+    display: none
+}
+
+.closedSidebar .triangle{
+    transform: rotate(180deg);
+    transition: transform 0.5s ease-in-out;
+}
+
+.openSidebar .triangle{
+    transition: transform 0.5s ease-in-out;
 }
 
 
- @media (max-width : 768px){
+.ProjectSidebar .btnOpenSidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #fff; /* Change this to any color you prefer for the < character */
+}
 
-    .ProjectSidebar{
-        position: absolute;
-    }
+.customArrow {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
 
-    .ProjectSidebar .btnOpenSidebar{
-        background-color: #F0AE19;
-        width: 25px;
-        height: 25px;
-        border-radius: 100%;
-        position: absolute;
-        left: 297px;
-        top: 32px;
+.triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: block;
+    border-width: 6px 9px 6px 0;
+    border-color: transparent #fff transparent transparent;
+    margin-right: 2px;
+}
 
-        z-index: 30;
-    }
+.triangle-blue {
+
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: block;
+    border-width: 6px 9px 6px 0;
+    border-color: transparent #172B4D transparent transparent;
+    margin-right: 2px;
+}
+
+/*=============== STYLES OF DropDownMenu ===============*/
+.DropDownMenu{
+    display: flex;
+    flex-direction: column;
+
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(212, 212, 212);
+
+    border-radius: 10px;
+
+}
+
+.DropDownMenu .DropTitleContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
     
 
-} 
+    padding: .4rem 0;
+    /* background-color: white; */
+
+    /* border-style: solid;
+    border-color: rgb(212, 212, 212);
+    border-width: 1px; */
+    border-radius: 8px;
+
+    cursor:pointer
+}
+
+
+
+.DropDownMenu .DropTitle{
+    font-size: 1.2rem;  
+}
+
+.DropDownMenu .DropIconLeft{
+    width: 28px;
+    height: 28px;
+    margin-right: .4rem;
+}
+
+.DropDownMenu .DropIconRight{
+    width: 22px;
+    height: 22px;
+    margin-left: .2rem;
+    margin-right: .1rem;
+    transform: rotate(270deg);
+}
+
+.DropDownMenu .ItemsContainer{
+    max-height: 0;
+    overflow: hidden;
+    
+}
+
+.DropDownMenu .ItemsContainer.show{
+    height: auto;
+    max-height: 9999px;
+    transition: all 0.1s ease;
+    
+}
+
+.DropDownItem{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .2rem;
+
+    padding-left: .3rem;
+    padding-right: .3rem;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+
+    border-radius: 7px;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #414141;
+
+     cursor: pointer;
+}
+
+.DropDownItem:hover{
+    background-color: #dad9d8;
+}   
+
+.DropDownItem img{
+    width: 22px;
+    height: 22px;
+
+}
+
+.DropDownItem p{
+    font-size: 1rem;
+}
+
+
+
+.DropDownMenu.active .ItemsContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+a:-webkit-any-link{
+    color: inherit;
+    text-decoration: none;
+}
+
