@@ -20,8 +20,8 @@
 .modalEpic{
     z-index: 99999;
     display: flex;
-    width: 60rem;
-    min-height: 400px;
+    width: 40rem;
+    min-height: 500px;
     padding: 30px;
     flex-direction: column;
     align-items: flex-start;
@@ -46,13 +46,14 @@
     font-style: normal;
     font-weight: 500;
     line-height: 24px; /* 120% */
+    width: 100%;
 }
 
 .divBuscador{
 
     display: flex;
     justify-content: space-between;
-    width: 50%;
+    width: 100%;
 }
 
 .buttonAccept{
@@ -106,17 +107,17 @@
 
 }
 .divEpics{
-    width: 50%;
+    width: 100%;
     overflow-y: auto;
     padding-right: 4px;
-    padding-bottom: 100px;
+    padding-bottom: 10px;
     /* border: 2px solid #6a7991;
     border-radius: 5px; */
 }
 
 .containerModal {
     width: 100%;
-    flex-grow: 1;
+    /* flex-grow: 1; */
     flex-shrink: 1;
     flex-basis: 0%;
     display: flex;
@@ -125,7 +126,7 @@
 }
 
 .subcontainer {
-    width: 50%;
+    width: 100%;
     gap: 10%;
 }
 
@@ -182,7 +183,7 @@
     height: 36px;
     width: 150px;
     color: white;
-    margin-right: 30px;
+
 }
 
 .btnElimanteEpic{
@@ -200,15 +201,15 @@
     font-family: Montserrat;
     background-color: #E8EBEE;
     border-color: #A1BDD9;
-    width: 90%;
+    width: 95%;
     height: 30px;
     text-align: left;
     display: flex;
     padding: 10px;
     align-items: center;
     gap: 10px;
-    margin-bottom: 25px;
-    margin-top: 25px;
+    /* margin-bottom: 25px;
+    margin-top: 25px; */
 }
 
 .inputEpica::placeholder {
