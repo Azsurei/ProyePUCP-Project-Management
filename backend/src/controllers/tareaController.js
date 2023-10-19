@@ -20,7 +20,7 @@ async function crear(req,res,next){
     } catch (error) {
         next(error);
         console.log(error);
-    }
+    } 
 }
 
 async function asignarUsuario(req,res,next){

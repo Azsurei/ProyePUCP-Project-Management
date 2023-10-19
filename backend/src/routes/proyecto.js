@@ -418,13 +418,13 @@ routerProyecto.post(
     verifyToken,
     async (req, res) => {
         console.log("Llegue a recibir solicitud listar proyecto por nombre");
-        const { nombre } = req.body;
+        const { idUsuario,nombre } = req.body;
 
         const query = `
-        CALL LISTAR_PROYECTOS_X_NOMBRE(?);
+        CALL LISTAR_PROYECTOS_X_NOMBRE(?,?);
     `;
         try {
-            const [results] = await connection.query(query, [nombre]);
+            const [results] = await connection.query(query, [idUsuario,nombre]);
             res.status(200).json({
                 proyectos: results[0],
                 message: "Proyectos obtenidos exitosamente",
