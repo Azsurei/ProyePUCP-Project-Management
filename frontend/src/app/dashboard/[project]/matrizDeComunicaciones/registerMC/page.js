@@ -9,7 +9,6 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/i
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
 function capitalizeWords(str) {
@@ -105,14 +104,14 @@ export default function MatrizComunicacionesRegister(props) {
 
     const onSubmit = () => {
         const postData = {
-            responsableDeComunicar: selectedMiembrosList[0].id,
-            sumillaInformacion: sumilla,
-            detalleInformacion: detail,
+            idProyecto: parseInt(projectId),
             idCanal: canal,
             idFrecuencia: frecuency,
             idFormato: format,
-            grupoReceptor: groupReceiver,
-            idProyecto: projectId
+            sumillaInformacion: sumilla,
+            detalleInformacion: detail,
+            responsableDeComunicar: selectedMiembrosList[0].id,
+            grupoReceptor: groupReceiver
         };
         console.log("El postData es :", postData);
         axios
