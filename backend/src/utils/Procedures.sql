@@ -1229,6 +1229,33 @@ BEGIN
     SELECT _idHito AS idHito;
 END$
 
+DROP PROCEDURE CREAR_CAMPO_AC;
+DELIMITER $
+CREATE PROCEDURE CREAR_CAMPO_AC(
+	IN  _idProyecto INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+	DECLARE _idDetalle INT;
+    SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO DetalleAC(idActaConstitucion,nombre,activo) 
+    VALUES(@_idActaConstitucion,_nombre,1);
+    SET _idDetalle = @@last_insert_id;
+    SELECT _idDetalle AS idDetalle;
+END$
+
+DROP PROCEDURE ELIMINAR_CAMPO_AC;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CAMPO_AC(
+    IN _idDetalle INT
+)
+BEGIN
+    UPDATE DetalleAC 
+    SET activo = 0
+    WHERE idDetalle = _idDetalle;
+    SELECT _idDetalle AS idDetalle;
+END$
+
 ---------------
 -- Presupuesto
 ---------------
@@ -1611,13 +1638,13 @@ BEGIN
 	WHERE mc.idProyecto = _idProyecto AND c.activo=1;
 END$
 
-DROP PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ;
+DROP PROCEDURE INSERTAR_COMUNICACION_X_IDPROYECTO;
 DELIMITER $
-CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ(
+CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDPROYECTO(
+    IN _idProyecto INT,
 	IN _idCanal INT,
     IN _idFrecuencia INT,
     IN _idFormato INT,
-    IN _idMatrizComunicacion INT,
     IN _sumillaInformacion VARCHAR(500),
     IN _detalleInformacion VARCHAR(500),
     IN _responsableDeComunicar VARCHAR(500),
@@ -1625,8 +1652,9 @@ CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ(
 )
 BEGIN
 	DECLARE _idComunicacion INT;
+    SET @_idMatrizComunicacion = (SELECT idMatrizComunicacion FROM MatrizComunicacion WHERE idProyecto = _idProyecto AND activo = 1);
 	INSERT INTO Comunicacion(idCanal,idFrecuencia,idFormato,idMatrizComunicacion,sumillaInformacion,detalleInformacion,responsableDeComunicar,grupoReceptor,activo) 
-    VALUES(_idCanal,_idFrecuencia,_idFormato,_idMatrizComunicacion,_sumillaInformacion,_detalleInformacion,_responsableDeComunicar,_grupoReceptor,1);
+    VALUES(_idCanal,_idFrecuencia,_idFormato,@_idMatrizComunicacion,_sumillaInformacion,_detalleInformacion,_responsableDeComunicar,_grupoReceptor,1);
     SET _idComunicacion = @@last_insert_id;
     SELECT _idComunicacion AS idComunicacion;
 END$
@@ -1640,7 +1668,7 @@ BEGIN
 	WHERE idProyecto = _idProyecto AND activo=1;
 END$
 
-DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ;
+DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ(IN _idMatrizComunicacion INT)
 BEGIN
@@ -1662,7 +1690,7 @@ CREATE PROCEDURE MODIFICAR_COMUNICACION(
     IN _idFormato INT,
     IN _sumillaInformacion VARCHAR(500),
     IN _detalleInformacion VARCHAR(500),
-    IN _responsableDeComunicar VARCHAR(500),
+    IN _responsableDeComunicar INT,
     IN _grupoReceptor VARCHAR(500)
 )
 BEGIN
