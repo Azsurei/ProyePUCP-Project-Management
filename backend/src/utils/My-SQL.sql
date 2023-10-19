@@ -852,3 +852,28 @@ CREATE TABLE UsuarioXEquipo(
     FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
 )
 ENGINE = InnoDB;
+
+
+DROP TABLE ComCanal;
+CREATE TABLE ComCanal(
+	idCanal INT AUTO_INCREMENT PRIMARY KEY,
+    nombreCanal VARCHAR(200),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE ComFrecuencia;
+CREATE TABLE ComFrecuencia(
+	idFrecuencia INT AUTO_INCREMENT PRIMARY KEY,
+    nombreFrecuencia VARCHAR(200),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE ComFormato;
+CREATE TABLE ComFormato(
+	idFormato INT AUTO_INCREMENT PRIMARY KEY,
+    nombreFormato VARCHAR(200),
+    activo TINYINT
+)
+ENGINE = InnoDB;
