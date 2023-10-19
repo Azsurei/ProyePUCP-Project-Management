@@ -13,6 +13,9 @@ import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
 export default function MatrizComunicacionesRegister(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    console.log("El id del proyecto es:",projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const [sumilla, setSumilla] = useState("");
@@ -84,6 +87,7 @@ export default function MatrizComunicacionesRegister(props) {
                 <div>
                     <Textarea
                         label="Sumilla de la información requerida"
+                        variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -182,6 +186,7 @@ export default function MatrizComunicacionesRegister(props) {
                 <div>
                     <Textarea
                         label="Detalle de la información requerida"
+                        variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -194,6 +199,7 @@ export default function MatrizComunicacionesRegister(props) {
                 <div>
                     <Textarea
                         label="Grupo receptor"
+                        variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
