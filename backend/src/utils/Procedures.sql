@@ -1524,3 +1524,14 @@ BEGIN
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
 	WHERE c.idComunicacion = _idMatrizComunicacion AND c.activo=1;
 END$
+
+--Listar usuarios x id de proyecto
+DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM Usuario AS u
+    JOIN UsuarioXRolXProyecto AS up ON u.idUsuario = up.idUsuario
+	WHERE up.idProyecto = _idProyecto AND up.activo=1;
+END$

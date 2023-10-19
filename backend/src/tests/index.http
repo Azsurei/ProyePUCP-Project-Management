@@ -461,3 +461,7 @@ Content-Type:  application/json
 ###
 GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/58 HTTP/1.1
 Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/58 HTTP/1.1
+Content-Type:  application/json
