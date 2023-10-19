@@ -1,12 +1,13 @@
 const connection = require("../config/db");
 
+//Todo va a ser idProyecto
 async function listar(req,res,next){
-    const {idActaConstitucion} = req.params;
+    const {idProyecto} = req.params;
     try {
-        const query1 = `CALL LISTAR_ACTA_X_IDACTA(?);`;
-        const [acta] = await connection.query(query1,[idActaConstitucion]);
-        const query2 = `CALL LISTAR_DETALLEAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query2,[idActaConstitucion]);
+        const query1 = `CALL LISTAR_ACTA_X_IDPROYECTO(?);`;
+        const [acta] = await connection.query(query1,[idProyecto]);
+        const query2 = `CALL LISTAR_DETALLEAC_X_IDPROYECTO(?);`;
+        const [results] = await connection.query(query2,[idProyecto]);
         const detalleAC = {
             general: acta[0],
             actaData: results[0]
@@ -19,10 +20,10 @@ async function listar(req,res,next){
 }
 
 async function modificarCampos(req,res,next){
-    const{idActaConstitucion, nombreProyecto, empresa, cliente, patrocinador, gerente, actaData} = req.body;
+    const{idProyecto, nombreProyecto, empresa, cliente, patrocinador, gerente, actaData} = req.body;
     try {
         const query1 = `CALL MODIFICAR_ACTA_CONSTITUCION(?,?,?,?,?,?);`;
-        const [acta] = await connection.query(query1,[idActaConstitucion, nombreProyecto, 
+        const [acta] = await connection.query(query1,[idProyecto, nombreProyecto, 
             empresa, cliente, patrocinador, gerente]);
         for (const campo of actaData) {
             console.log(`Datos: ${campo.idDetalle},${campo.nombre},${campo.detalle}`);

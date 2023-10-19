@@ -1076,6 +1076,34 @@ BEGIN
     SELECT _idHistoriaRequisito AS idHistoriaRequisito;
 END$
 
+--Acta de Constitucion
+DROP PROCEDURE LISTAR_ACTA_X_IDPROYECTO;
+--Listar Datos principales
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTA_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT * 
+    FROM ActaConstitucion
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+
+DROP PROCEDURE LISTAR_DETALLEAC_X_IDPROYECTO;
+--Listar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE LISTAR_DETALLEAC_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT dac.idDetalle, dac.idActaConstitucion, dac.nombre, dac.detalle, dac.activo 
+    FROM DetalleAC AS dac
+    LEFT JOIN ActaConstitucion AS ac ON dac.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND dac.activo = 1;
+END$
+
 
 DROP PROCEDURE LISTAR_ACTA_X_IDACTA;
 --Listar Datos principales
@@ -1107,7 +1135,7 @@ DROP PROCEDURE MODIFICAR_ACTA_CONSTITUCION;
 --Modificar DETALLEAC
 DELIMITER $
 CREATE PROCEDURE MODIFICAR_ACTA_CONSTITUCION(
-    IN _idActaConstitucion INT,
+    IN _idProyecto INT,
     IN _nombreProyecto VARCHAR(200),
 	IN _empresa VARCHAR(200),
     IN _cliente VARCHAR(200),
@@ -1121,7 +1149,7 @@ BEGIN
         cliente = _cliente,
         patrocinador = _patrocinador,
         gerente = _gerente
-    WHERE idActaConstitucion = _idActaConstitucion;
+    WHERE idProyecto = _idProyecto and activo = 1;
 END$
 
 DROP PROCEDURE MODIFICAR_CAMPO_DETALLEAC;

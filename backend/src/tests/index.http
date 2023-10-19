@@ -247,16 +247,150 @@ Content-Type:  application/json
 }
 
 ###
+GET http://localhost:8080/api/proyecto/ActaConstitucion/listarInteresados HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idActaConstitucion": 11
+}
+
+###
+GET http://localhost:8080/api/proyecto/ActaConstitucion/listarHito HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idActaConstitucion": 11
+}
+
+
+###
+
+POST http://localhost:8080/api/proyecto/cronograma/insertarTarea HTTP/1.1
+Content-Type:  application/json
+
+
+{
+    "idCronograma": 6,
+    "idSubGrupo": null,
+    "idPadre": null,
+    "idTareaAnterior": null,
+    "sumillaTarea": "Ejemplo de tarea",
+    "descripcion": "Esta es una descripción detallada de la tarea.",
+    "fechaInicio": "2023-10-17",
+    "fechaFin": "2023-11-17",
+    "cantSubTareas": 5,
+    "cantPosteriores": 2,
+    "horasPlaneadas": "02:00:00",
+    "activo": 1
+}
+
+###
+
+GET http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/45 HTTP/1.1
+Content-Type:  application/json
+
+###
+
+
+GET http://localhost:8080/api/proyecto/equipo/listarXIdProyecto/6 HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos  HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos HTTP/1.1
+Content-Type:  application/json
+
+###
+
+###
+POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idIngreso": 4,
+  "idMoneda": 1,
+  "idTransaccionTipo": 2,
+  "idIngresoTipo": 3,
+  "descripcion": "Pago de servicios",
+  "monto": 1500.50,
+  "cantidad": 5,
+  "fechaTransaccion": "2023-10-19"
+}
+
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineasTodas/50 HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato HTTP/1.1
+Content-Type:  application/json
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineaEgresoXNombreFechas/50/NULL/NULL/NULL HTTP/1.1
+Content-Type:  application/json
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXNombreFechas/50/NULL/NULL/NULL HTTP/1.1
+Content-Type:  application/json
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineaEstimacionCostoXNombreFechas/50/NULL/NULL/NULL HTTP/1.1
+
+###
+POST http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idCanal": 1,
+  "idFrecuencia": 1,
+  "idFormato": 1,
+  "idMatrizComunicacion": 1,
+  "sumillaInformacion": "Prueba 123",
+  "detalleInformacion": "Prueba 123",
+  "responsableDeComunicar": "Diego",
+  "grupoReceptor": "Prueba 123"
+}
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/58 HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/58 HTTP/1.1
+Content-Type:  application/json
+
+////////////////////////////
+//  ACTA de CONSTITUCION  //
+////////////////////////////
+
+###LISTAR ACTA DE CONSTITUCION
+GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/50 HTTP/1.1
+Content-Type:  application/json
+
+###MODIFICAR CAMPOS ACTA DE CONSTITUCION
 PUT http://localhost:8080/api/proyecto/ActaConstitucion/modificarCampos HTTP/1.1
 Content-Type:  application/json
 
 {
-  "idActaConstitucion": 11,
-  "nombreProyecto": "Prueba123",
-  "empresa": "Prueba123",
-  "cliente": "Prueba123",
-  "patrocinador": "Prueba123",
-  "gerente": "Prueba123",
+  "idProyecto": 50,
+  "nombreProyecto": "Hola123",
+  "empresa": "Hola123",
+  "cliente": "Hola123",
+  "patrocinador": "Hola123",
+  "gerente": "Hola123",
   "actaData": [
     {
       "idDetalle": 1,
@@ -330,21 +464,14 @@ Content-Type:  application/json
     }
   ]
 }
-
 ###
-GET http://localhost:8080/api/proyecto/ActaConstitucion/listarInteresados HTTP/1.1
+POST http://localhost:8080/api/proyecto/ActaConstitucion/insertarHito HTTP/1.1
 Content-Type:  application/json
 
 {
-  "idActaConstitucion": 11
-}
-
-###
-GET http://localhost:8080/api/proyecto/ActaConstitucion/listarHito HTTP/1.1
-Content-Type:  application/json
-
-{
-  "idActaConstitucion": 11
+  "idActaConstitucion": 11,
+  "descripcion": "Prueba123", 
+  "fechaLimite": "2023-10-29"
 }
 
 ###
@@ -357,125 +484,3 @@ Content-Type:  application/json
   "cargo": "Prueba123",  
   "organizacion": "Prueba123"
 }
-
-###
-POST http://localhost:8080/api/proyecto/ActaConstitucion/insertarHito HTTP/1.1
-Content-Type:  application/json
-
-{
-  "idActaConstitucion": 11,
-  "descripcion": "Prueba123", 
-  "fechaLimite": "2023-10-29"
-}
-
-###
-
-POST http://localhost:8080/api/proyecto/cronograma/insertarTarea HTTP/1.1
-Content-Type:  application/json
-
-
-{
-    "idCronograma": 6,
-    "idSubGrupo": null,
-    "idPadre": null,
-    "idTareaAnterior": null,
-    "sumillaTarea": "Ejemplo de tarea",
-    "descripcion": "Esta es una descripción detallada de la tarea.",
-    "fechaInicio": "2023-10-17",
-    "fechaFin": "2023-11-17",
-    "cantSubTareas": 5,
-    "cantPosteriores": 2,
-    "horasPlaneadas": "02:00:00",
-    "activo": 1
-}
-
-###
-
-GET http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/45 HTTP/1.1
-Content-Type:  application/json
-
-###
-
-
-GET http://localhost:8080/api/proyecto/equipo/listarXIdProyecto/6 HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos  HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos HTTP/1.1
-Content-Type:  application/json
-
-###
-
-###
-POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso HTTP/1.1
-Content-Type:  application/json
-
-{
-  "idIngreso": 4,
-  "idMoneda": 1,
-  "idTransaccionTipo": 2,
-  "idIngresoTipo": 3,
-  "descripcion": "Pago de servicios",
-  "monto": 1500.50,
-  "cantidad": 5,
-  "fechaTransaccion": "2023-10-19"
-}
-
-
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarLineasTodas/50 HTTP/1.1
-Content-Type:  application/json
-###
-GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/11 HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato HTTP/1.1
-Content-Type:  application/json
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarLineaEgresoXNombreFechas/50/NULL/NULL/NULL HTTP/1.1
-Content-Type:  application/json
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXNombreFechas/50/NULL/NULL/NULL HTTP/1.1
-Content-Type:  application/json
-###
-GET http://localhost:8080/api/proyecto/presupuesto/listarLineaEstimacionCostoXNombreFechas/50/NULL/NULL/NULL HTTP/1.1
-
-###
-POST http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion HTTP/1.1
-Content-Type:  application/json
-
-{
-  "idCanal": 1,
-  "idFrecuencia": 1,
-  "idFormato": 1,
-  "idMatrizComunicacion": 1,
-  "sumillaInformacion": "Prueba 123",
-  "detalleInformacion": "Prueba 123",
-  "responsableDeComunicar": "Diego",
-  "grupoReceptor": "Prueba 123"
-}
-
-###
-GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/58 HTTP/1.1
-Content-Type:  application/json
-
-###
-GET http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/58 HTTP/1.1
-Content-Type:  application/json
