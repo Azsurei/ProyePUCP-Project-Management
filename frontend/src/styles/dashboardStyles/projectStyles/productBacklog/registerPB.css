@@ -45,6 +45,7 @@
     display: flex;
     gap: 15%;
     margin-right: 15px;
+    align-items: center;    
 }
 .subcontainerCombo{
     display: flex;
