@@ -23,39 +23,35 @@ export default function ContainerRequirement({
     };
 
     return (
-        <div className="containerDescription">
-            <div className="customInput">
-                <label
-                    htmlFor={inputId1}
-                    className="placeholderLabel"
-                >{`Requerimiento ${indice}`}</label>
-                <Textarea
-                    id={inputId1}
-                    isInvalid={isTextTooLong1}
-                    errorMessage={
-                        isTextTooLong1
-                            ? "El texto debe ser como máximo de 400 caracteres."
-                            : ""
-                    }
-                    variant={isTextTooLong1 ? "bordered" : "default"}
-                    className="customPlaceholderInput"
-                    placeholder="Escribe aquí"
-                    maxLength="450"
-                    onChange={(e) => {
-                        handleInputChange(e.target.value);
-                        isTextTooLong(e.target.value);
-                    }}
-                    value={requirement.requirement}
-                />
-                <img
-                    src="/icons/icon-cross.svg"
-                    alt="Eliminar"
-                    className="iconDelete"
-                    onClick={() => {
-                        functionRemove(indice-1);
-                    }}
-                />
-            </div>
+        <div>
+            <Textarea
+                className="paddingTop custom-label"
+                label={`Requerimiento ${indice}`}
+                labelPlacement="outside"
+                id={inputId1}
+                isInvalid={isTextTooLong1}
+                errorMessage={
+                    isTextTooLong1
+                        ? "El texto debe ser como máximo de 400 caracteres."
+                        : ""
+                }
+                variant="bordered"
+                placeholder="Escribe aquí"
+                maxLength="450"
+                onChange={(e) => {
+                    handleInputChange(e.target.value);
+                    isTextTooLong(e.target.value);
+                }}
+                value={requirement.requirement}
+            />
+            <img
+                src="/icons/icon-cross.svg"
+                alt="Eliminar"
+                className="iconDelete"
+                onClick={() => {
+                    functionRemove(indice-1);
+                }}
+            />
         </div>
     );
 }

@@ -428,11 +428,7 @@ export default function ProductBacklogUpdate(props) {
                     Editar elemento en el Backlog
                 </div>
                 {historiaUsuario ? (
-                    <div className="description">
-                        <h4 style={{ fontWeight: 600 }}>
-                            Nombre de la historia de usuario
-                            <span className="text-red-500"> *</span>
-                        </h4>
+                    <div>
                         <DescriptionRequeriment
                             name={name}
                             onNameChange={setName}
