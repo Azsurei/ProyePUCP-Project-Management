@@ -22,6 +22,27 @@ async function crearLineaIngreso(req,res,next){
     }
 }
 
+async function listarLineasXNombreFechas(req,res,next){
+    const {idProyecto,descripcion,fechaIni,fechaFin} = req.params;
+
+    const processeddescripcion = descripcion !== 'NULL' ? descripcion : null;
+    const processedfechaIni = fechaIni !== 'NULL' ? fechaIni : null;
+    const processedfechaFin = fechaFin !== 'NULL' ? fechaFin : null;
+
+    try {
+        const query = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(?,?,?,?);`;
+        const [resultsLineasIngreso] = await connection.query(query,[idProyecto,processeddescripcion,processedfechaIni,processedfechaFin]);
+        lineasIngreso = resultsLineasIngreso[0];
+        
+        res.status(200).json({
+            lineasIngreso,
+            message: "Linea de ingreso listadas correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function eliminarLineaIngreso(req,res,next){
     const {idLineaIngreso} = req.body;
     try {
@@ -36,5 +57,6 @@ async function eliminarLineaIngreso(req,res,next){
 module.exports = {
     crear,
     crearLineaIngreso,
+    listarLineasXNombreFechas,
     eliminarLineaIngreso
 };

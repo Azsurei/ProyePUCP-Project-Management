@@ -1269,7 +1269,28 @@ BEGIN
 	WHERE l.idProyecto = _idProyecto AND l.activo=1;
 END$
 
-CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(50);
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PROYECTO_NOMBRE_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(
+	IN _idProyecto INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaIni DATE,
+    IN _fechaFin DATE)
+BEGIN
+    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion, t.idTransaccionTipo, t.descripcion AS descripcionTransaccionTipo,
+    i.idIngresoTipo, i.descripcion AS descripcionIngresoTipo, m.idMoneda, m.nombre AS nombreMoneda
+	FROM LineaIngreso AS l LEFT JOIN TransaccionTipo AS t ON l.idTransaccionTipo = t.idTransaccionTipo
+							LEFT JOIN IngresoTipo AS i ON l.idIngresoTipo = i.idIngresoTipo
+							LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
+	WHERE l.descripcion LIKE CONCAT('%', IFNULL(_descripcion, l.descripcion), '%') 
+    AND (l.fechaTransaccion BETWEEN IFNULL(_fechaIni, '1000-01-01') AND IFNULL(_fechaFin, '9999-12-31'))
+    AND l.idProyecto = _idProyecto AND l.activo=1;
+END$
+
+
+CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(50,NULL,NULL,NULL)
+
 
 DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_INGRESO;
 DELIMITER $
@@ -1302,13 +1323,15 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 	IN _idEgreso INT,
     IN _idMoneda INT,
+	IN _descripcion  VARCHAR(255),
     IN _costoReal DECIMAL(10,2),
+	IN _fechaRegistro DATE,
     IN _cantidad INT
 )
 BEGIN
 	DECLARE _idLineaEgreso INT;
-	INSERT INTO LineaEgreso(idEgreso,idMoneda,costoReal,cantidad,activo) 
-    VALUES(_idEgreso,_idMoneda,_costoReal,_cantidad,1);
+	INSERT INTO LineaEgreso(idEgreso,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
+    VALUES(_idEgreso,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
     SET _idLineaEgreso = @@last_insert_id;
     SELECT _idLineaEgreso AS idLineaEgreso;
 END$
@@ -1317,12 +1340,33 @@ DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PROYECTO(IN _idProyecto INT)
 BEGIN
-    SELECT l.idLineaEgreso, l.costoReal, l.cantidad, m.idMoneda, m.nombre AS nombreMoneda
+    SELECT l.idLineaEgreso,l.descripcion, l.costoReal,l.fechaRegistro, l.cantidad, m.idMoneda, m.nombre AS nombreMoneda
 	FROM LineaEgreso AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
 	WHERE l.idProyecto = _idProyecto AND l.activo=1;
 END$
 
 CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(50);
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO_NOMBRE_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(
+	IN _idProyecto INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaIni DATE,
+    IN _fechaFin DATE
+    )
+BEGIN
+    SELECT l.idLineaEgreso,l.descripcion, l.costoReal,l.fechaRegistro, l.cantidad, m.idMoneda, m.nombre AS nombreMoneda
+	FROM LineaEgreso AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
+	WHERE l.descripcion LIKE CONCAT('%', IFNULL(_descripcion, l.descripcion), '%') 
+    AND (l.fechaRegistro BETWEEN IFNULL(_fechaIni, '1000-01-01') AND IFNULL(_fechaFin, '9999-12-31'))
+    AND l.idProyecto = _idProyecto AND l.activo=1;
+END$
+
+
+CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(50,'Eg',NULL,NULL)
+
+SELECT * FROM LineaEgreso;
 
 DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_EGRESO;
 DELIMITER $
@@ -1391,7 +1435,24 @@ BEGIN
 	WHERE l.idProyecto = _idProyecto AND l.activo=1;
 END$
 
-CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(50);
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS(
+	IN _idProyecto INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaIni DATE,
+    IN _fechaFin DATE)
+BEGIN
+    SELECT l.idLineaEstimacion, l.descripcion, l.tarifaUnitaria,l.cantidadRecurso,l.subtotal,l.fechaInicio, m.idMoneda, m.nombre AS nombreMoneda
+	FROM LineaEstimacionCosto AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
+	WHERE l.descripcion LIKE CONCAT('%', IFNULL(_descripcion, l.descripcion), '%') 
+    AND (l.fechaInicio BETWEEN IFNULL(_fechaIni, '1000-01-01') AND IFNULL(_fechaFin, '9999-12-31'))
+    AND l.idProyecto = _idProyecto AND l.activo=1;
+END$
+
+SELECT * FROM LineaEstimacionCosto;
+CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS(50,'Pri',NULL,NULL)
+
 
 DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_ESTIMACION_COSTO;
 DELIMITER $
@@ -1468,6 +1529,8 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
+<<<<<<< HEAD
+=======
 
 DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
@@ -1524,3 +1587,4 @@ BEGIN
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
 	WHERE c.idComunicacion = _idMatrizComunicacion AND c.activo=1;
 END$
+>>>>>>> af04ce4545e080ab181fc0571e54b83ddbd71fcb
