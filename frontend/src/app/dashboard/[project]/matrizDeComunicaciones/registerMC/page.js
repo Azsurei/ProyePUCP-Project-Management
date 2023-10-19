@@ -8,24 +8,29 @@ import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import ModalUsersOne from "@/components/ModalUsersOne";
 import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
 export default function MatrizComunicacionesRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-    console.log("El id del proyecto es:",projectId);
+    console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const [sumilla, setSumilla] = useState("");
     const [detail, setDetail] = useState("");
     const [groupReceiver, setGroupReceiver] = useState("");
-    const [canal, setCanal] = useState(null); //id 
-    const [frecuency, setFrecuency] = useState(null); //id 
-    const [format, setFormat] = useState(null); //id 
+    const [canal, setCanal] = useState(null); //id
+    const [frecuency, setFrecuency] = useState(null); //id
+    const [format, setFormat] = useState(null); //id
     const [modal2, setModal2] = useState(false);
-    const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
+    const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
+    const isTextTooLong1 = sumilla.length > 400;
+    const isTextTooLong2 = detail.length > 400;
+    const isTextTooLong3 = groupReceiver.length > 400;
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
+    const [fieldsExcessive, setFieldsExcessive] = useState(false);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -48,10 +53,12 @@ export default function MatrizComunicacionesRegister(props) {
     };
 
     const returnListOfMiembros = (newMiembrosList) => {
-        const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
+        console.log("En return:", newMiembrosList[0]);
 
-        setSelectedMiembrosList(newMembrsList);
-        setModal2(!modal2);
+        // Establecer el arreglo como un arreglo que contiene solo el nuevo objeto
+        setSelectedMiembrosList([newMiembrosList[0]]);
+
+        setModal2(false);
     };
 
     const removeMiembro = (miembro) => {
@@ -59,20 +66,40 @@ export default function MatrizComunicacionesRegister(props) {
             (item) => item.id !== miembro.id
         );
         setSelectedMiembrosList(newMembrsList);
-        console.log(newMembrsList);
+        console.log(newMembrsList); 
     };
 
+    function verifyFieldsEmpty() {
+        return (
+            sumilla === "" ||
+            detail === "" ||
+            groupReceiver === "" ||
+            canal === null ||
+            frecuency === null ||
+            format === null || selectedMiembrosList.length === 0
+        );
+    }
+
+    function verifyFieldsExcessive() {
+        return (
+            sumilla.length > 400 ||
+            detail.length > 400 ||
+            groupReceiver.length > 400
+        );
+    }
+
     const onSubmit = () => {
-        const postData={
+        const postData = {
+            selectedMiembrosList: selectedMiembrosList,
             sumilla: sumilla,
             detail: detail,
             idCanal: canal,
-            idFrecuency: frecuency,
-            idFormat: format,
+            idFrecuencia: frecuency,
+            idFormato: format,
             groupReceiver: groupReceiver,
         };
-        console.log("El postData es :",postData);
-    }
+        console.log("El postData es :", postData);
+    };
 
     return (
         <div className="containerRegisterMC">
@@ -94,6 +121,13 @@ export default function MatrizComunicacionesRegister(props) {
                         className="custom-label"
                         value={sumilla}
                         onValueChange={setSumilla}
+                        maxLength="450"
+                        isInvalid={isTextTooLong1}
+                        errorMessage={
+                            isTextTooLong1
+                                ? "El texto debe ser como máximo de 400 caracteres."
+                                : ""
+                        }
                     />
                 </div>
                 <div className="comboMC">
@@ -168,6 +202,10 @@ export default function MatrizComunicacionesRegister(props) {
                             />
                         </div>
                         <ul className="listUsersContainer">
+                            {console.log(
+                                "LOS DATITOS DEL USUARIO SON:",
+                                selectedMiembrosList
+                            )}
                             {selectedMiembrosList.map((component) => {
                                 return (
                                     <CardSelectedUser
@@ -194,6 +232,13 @@ export default function MatrizComunicacionesRegister(props) {
                         minRows="5"
                         value={detail}
                         onValueChange={setDetail}
+                        maxLength="450"
+                        isInvalid={isTextTooLong2}
+                        errorMessage={
+                            isTextTooLong2
+                                ? "El texto debe ser como máximo de 400 caracteres."
+                                : ""
+                        }
                     />
                 </div>
                 <div>
@@ -206,15 +251,43 @@ export default function MatrizComunicacionesRegister(props) {
                         className="custom-label"
                         value={groupReceiver}
                         onValueChange={setGroupReceiver}
+                        maxLength="450"
+                        isInvalid={isTextTooLong3}
+                        errorMessage={
+                            isTextTooLong3
+                                ? "El texto debe ser como máximo de 400 caracteres."
+                                : ""
+                        }
                     />
                 </div>
                 <div className="containerBottomMC">
+                {fieldsEmpty && !fieldsExcessive && (
+                        <IconLabel
+                            icon="/icons/alert.svg"
+                            label="Faltan completar campos"
+                            className="iconLabel3"
+                        />
+                    )}
+                    {fieldsExcessive && !fieldsEmpty && (
+                        <IconLabel
+                            icon="/icons/alert.svg"
+                            label="Se excedió el límite de caracteres"
+                            className="iconLabel3"
+                        />
+                    )}
+                    {fieldsExcessive && fieldsEmpty && (
+                        <IconLabel
+                            icon="/icons/alert.svg"
+                            label="Faltan completar campos y se excedió el límite de caracteres"
+                            className="iconLabel3"
+                        />
+                    )}
                     <div className="twoButtonsMC">
                         <div className="buttonContainerMC">
                             <Modal
                                 nameButton="Descartar"
                                 textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                                textBody="¿Seguro que quiere descartar el registro de la información?"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
                                 secondAction={() => router.back()}
@@ -223,25 +296,54 @@ export default function MatrizComunicacionesRegister(props) {
                             <Modal
                                 nameButton="Aceptar"
                                 textHeader="Registrar Historia de Usuario"
-                                textBody="¿Seguro que quiere registrar la historia de usuario?"
+                                textBody="¿Seguro que quiere registrar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    router.back();
+                                    //router.back();
                                 }}
                                 textColor="blue"
+                                verifyFunction={() => {
+                                    if (
+                                        verifyFieldsEmpty() &&
+                                        verifyFieldsExcessive()
+                                    ) {
+                                        setFieldsEmpty(true);
+                                        setFieldsExcessive(true);
+                                        return false;
+                                    } else if (
+                                        verifyFieldsEmpty() &&
+                                        !verifyFieldsExcessive()
+                                    ) {
+                                        setFieldsEmpty(true);
+                                        setFieldsExcessive(false);
+                                        return false;
+                                    } else if (
+                                        verifyFieldsExcessive() &&
+                                        !verifyFieldsEmpty()
+                                    ) {
+                                        setFieldsExcessive(true);
+                                        setFieldsEmpty(false);
+                                        return false;
+                                    } else {
+                                        setFieldsExcessive(false);
+                                        setFieldsEmpty(false);
+                                        return true;
+                                    }
+                                }}
                             />
                         </div>
                     </div>
                 </div>
             </div>
             {modal2 && (
-                <ModalUser
+                <ModalUsersOne
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
                     excludedUsers={selectedMiembrosList}
-                ></ModalUser>
+                    idProyecto={projectId}
+                ></ModalUsersOne>
             )}
         </div>
     );

@@ -31,6 +31,7 @@ export default function ModalUsersOne({
     handlerModalClose,
     handlerModalFinished,
     excludedUsers,
+    idProyecto
 }) {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
@@ -51,12 +52,15 @@ export default function ModalUsersOne({
         //         email: user.email,
         //     },
         // ];
-        setlistUsersSelected([{
-            id: user.id,
-            name: user.name,
-            lastName: user.lastName,
-            email: user.email
-        }]);
+        setlistUsersSelected([
+            {
+                id: user.id,
+                name: user.name,
+                lastName: user.lastName,
+                email: user.email,
+            },
+        ]);
+        console.log("En el modal:", listUsersSelect);
     };
 
     const removeUserInList = (user) => {
@@ -68,11 +72,9 @@ export default function ModalUsersOne({
     };
 
     const refreshList = () => {
-        const stringURL = "http://localhost:8080/api/usuario/listarUsuarios";
+        const stringURL = `http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
         axios
-            .post(stringURL, {
-                nombreCorreo: filterValue,
-            })
+            .get(stringURL)
             .then(function (response) {
                 console.log(response);
                 const usersArray = response.data.usuarios.map((user) => {

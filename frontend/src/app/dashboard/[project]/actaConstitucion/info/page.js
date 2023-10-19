@@ -104,9 +104,9 @@ export default function Info() {
                     </div>
                 </Button>
             </ButtonPanel>
-            {details.map((detail, index) => (
+            {/* {details.map((detail, index) => (
                 <DetailCard key={index} detail={detail} onSave={handleModifyField} />
-            ))}
+            ))} */}
             <ButtonPanel margin="20px 20px 20px" align="center" style={{ display: isEditActive ? 'flex' : 'none' }}>
                 <Button appearance="subtle" state="default" spacing="compact" onClick={handleCancelClick}>
                     <div>

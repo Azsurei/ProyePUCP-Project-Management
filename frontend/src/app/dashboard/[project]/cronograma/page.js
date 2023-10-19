@@ -74,9 +74,9 @@ export default function Cronograma(props) {
     });
 
     const returnListOfUsers = (newUsersList) => {
-        const newList = [...selectedUsers, ...newUsersList];
+        //const newList = [...selectedUsers, ...newUsersList];
 
-        setSelectedUsers(newList);
+        setSelectedUsers(newUsersList);
         setModal(false);
     };
 
@@ -614,6 +614,7 @@ export default function Cronograma(props) {
                     }}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedUsers}
+                    idProyecto={projectId}
                 ></ModalUsersOne>
             )}
         </div>
