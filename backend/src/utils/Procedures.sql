@@ -1076,6 +1076,34 @@ BEGIN
     SELECT _idHistoriaRequisito AS idHistoriaRequisito;
 END$
 
+--Acta de Constitucion
+DROP PROCEDURE LISTAR_ACTA_X_IDPROYECTO;
+--Listar Datos principales
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTA_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT * 
+    FROM ActaConstitucion
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+
+DROP PROCEDURE LISTAR_DETALLEAC_X_IDPROYECTO;
+--Listar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE LISTAR_DETALLEAC_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT dac.idDetalle, dac.idActaConstitucion, dac.nombre, dac.detalle, dac.activo 
+    FROM DetalleAC AS dac
+    LEFT JOIN ActaConstitucion AS ac ON dac.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND dac.activo = 1;
+END$
+
 
 DROP PROCEDURE LISTAR_ACTA_X_IDACTA;
 --Listar Datos principales
@@ -1107,7 +1135,7 @@ DROP PROCEDURE MODIFICAR_ACTA_CONSTITUCION;
 --Modificar DETALLEAC
 DELIMITER $
 CREATE PROCEDURE MODIFICAR_ACTA_CONSTITUCION(
-    IN _idActaConstitucion INT,
+    IN _idProyecto INT,
     IN _nombreProyecto VARCHAR(200),
 	IN _empresa VARCHAR(200),
     IN _cliente VARCHAR(200),
@@ -1121,7 +1149,7 @@ BEGIN
         cliente = _cliente,
         patrocinador = _patrocinador,
         gerente = _gerente
-    WHERE idActaConstitucion = _idActaConstitucion;
+    WHERE idProyecto = _idProyecto and activo = 1;
 END$
 
 DROP PROCEDURE MODIFICAR_CAMPO_DETALLEAC;
@@ -1140,59 +1168,63 @@ BEGIN
     SELECT * FROM DetalleAC;
 END$
 
-DROP PROCEDURE LISTAR_INTERESADOAC_X_IDACTA;
+DROP PROCEDURE LISTAR_INTERESADOAC_AC;
 --Listar Interesados Acta Constitucion
 DELIMITER $
-CREATE PROCEDURE LISTAR_INTERESADOAC_X_IDACTA(
-    IN _idActaConstitucion INT
+CREATE PROCEDURE LISTAR_INTERESADOAC_AC(
+    IN _idProyecto INT
 )
 BEGIN
-    SELECT * 
-    FROM InteresadoAC
-    WHERE idActaConstitucion = _idActaConstitucion
-    AND activo = 1;
+    SELECT i.idInteresado, i.idActaConstitucion, i.nombre, i.cargo, i.organizacion, i.activo
+    FROM InteresadoAC AS i
+    LEFT JOIN ActaConstitucion AS ac ON i.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND i.activo = 1;
 END$
 
 DROP PROCEDURE INSERTAR_INTERESADOAC;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_INTERESADOAC(
-	IN  _idActaConstitucion INT,
+	IN  _idProyecto INT,
     IN _nombre VARCHAR(255),
     IN _cargo VARCHAR(255),
     IN _organizacion VARCHAR(255)
 )
 BEGIN
 	DECLARE _idInteresado INT;
+    SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
 	INSERT INTO InteresadoAC(idActaConstitucion,nombre,cargo,organizacion,activo) 
-    VALUES(_idActaConstitucion,_nombre,_cargo,_organizacion,1);
+    VALUES(@_idActaConstitucion,_nombre,_cargo,_organizacion,1);
     SET _idInteresado = @@last_insert_id;
     SELECT _idInteresado AS idInteresado;
 END$
 
-DROP PROCEDURE LISTAR_HITOAC_X_IDACTA;
+DROP PROCEDURE LISTAR_HITOAC_X_AC;
 --Listar Hito Acta Constitucion
 DELIMITER $
-CREATE PROCEDURE LISTAR_HITOAC_X_IDACTA(
-    IN _idActaConstitucion INT
+CREATE PROCEDURE LISTAR_HITOAC_X_AC(
+    IN _idProyecto INT
 )
 BEGIN
-    SELECT * 
-    FROM HitoAC
-    WHERE idActaConstitucion = _idActaConstitucion
-    AND activo = 1;
+    SELECT h.idHito, h.idActaConstitucion, h.descripcion, h.fechaLimite, h.activo 
+    FROM HitoAC AS h
+    LEFT JOIN ActaConstitucion AS ac ON h.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND h.activo = 1;
 END$
 
 DROP PROCEDURE INSERTAR_HITOAC;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_HITOAC(
-	IN  _idActaConstitucion INT,
+	IN  _idProyecto INT,
     IN _descripcion VARCHAR(255),
     IN _fechaLimite DATE
 )
 BEGIN
 	DECLARE _idHito INT;
+    SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
 	INSERT INTO HitoAC(idActaConstitucion,descripcion,fechaLimite,activo) 
-    VALUES(_idActaConstitucion,_descripcion,_fechaLimite,1);
+    VALUES(@_idActaConstitucion,_descripcion,_fechaLimite,1);
     SET _idHito = @@last_insert_id;
     SELECT _idHito AS idHito;
 END$
