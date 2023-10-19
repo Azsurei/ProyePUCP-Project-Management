@@ -24,6 +24,7 @@ import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 import BtnToModal from "@/components/BtnToModal";
 import { useRouter } from "next/navigation";
+import ModalUsersOne from "@/components/ModalUsersOne";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -607,13 +608,13 @@ export default function Cronograma(props) {
                 </div>
             </div>
             {modal && (
-                <ModalUser
+                <ModalUsersOne
                     handlerModalClose={() => {
                         setModal(false);
                     }}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedUsers}
-                ></ModalUser>
+                ></ModalUsersOne>
             )}
         </div>
     );
