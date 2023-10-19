@@ -145,7 +145,7 @@ export default function CronogramaActa() {
     };
 
     // Items de tabla paginados
-    const items = React.useMemo(() => {
+    const items = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
@@ -153,7 +153,7 @@ export default function CronogramaActa() {
     }, [page, filteredItems, rowsPerPage]);
 
     // Items de tabla ordenados
-    const sortedItems = React.useMemo(() => {
+    const sortedItems = useMemo(() => {
         return [...items].sort((a, b) => {
             const first = a[sortDescriptor.column];
             const second = b[sortDescriptor.column];
@@ -242,13 +242,13 @@ export default function CronogramaActa() {
                             Exportar
                         </Button>
                         <Button color="primary" endContent={<PlusIcon />}>
-                            Añadir Hito
+                            Añadir Interesado
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {templates.length} hitos
+                        Total: {templates.length} interesados
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -276,7 +276,6 @@ export default function CronogramaActa() {
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-
                 <span className="w-[30%] text-small text-default-400">
                     {selectedKeys === "all"
                         ? "Todos los items seleccionados"

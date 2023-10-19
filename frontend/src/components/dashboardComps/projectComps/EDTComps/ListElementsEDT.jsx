@@ -6,7 +6,7 @@ import { OpenMenuContext } from "./EDTVisualization";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-function CardEDT({showElimConfirm, ...props}) {
+function CardEDT({ showElimConfirm, ...props }) {
     let hasChilds;
     props.childList === null ? (hasChilds = false) : (hasChilds = true);
 
@@ -51,54 +51,47 @@ function CardEDT({showElimConfirm, ...props}) {
                     </div>
                 </div>
 
-                <div className="buttonsContainer">
-                    <img
-                        src="/icons/icon-seeMore.svg"
-                        alt="More"
-                        className="iconSeeMore"
-                        ref={iconRef}
-                        onClick={(e) => handleOpenMore(e, props.id)}
-                    />
-                </div>
 
-                {openMenuId === props.id && (
-                    <div
-                        className="menu"
-                        style={{
-                            position: "absolute",
-                            top: `${menuPosition.top}px`, // Set the top position dynamically
-                            left: `calc(${menuPosition.left}px)`, // Set the left position dynamically
-                            background: "white",
-                            border: "1px solid #ccc",
-                            paddingTop: "0px",
-                            paddingLeft: "0px",
-                            paddingRight: "0px",
-                            zIndex: 1,
-                            width: "130px",
-                            display: "flex",
-                            flexDirection: "column",
+                <Dropdown>
+                    <DropdownTrigger>
+                        {/* <Button variant="bordered">Open Menu</Button> */}
+                        <div className="buttonsContainer">
+                            <img
+                                src="/icons/icon-seeMore.svg"
+                                alt="More"
+                                className="iconSeeMore"
+                                //ref={iconRef}
+                                //onClick={(e) => handleOpenMore(e, props.id)}
+                            />
+                        </div>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                        aria-label="Static Actions"
+                        onAction={(key) => {
+                            if (key === "add") {
+                                handlerGoToNew(props.nextSon, props.id);
+                            }
+                            if (key === "view") {
+                                handleVerDetalle(props.id);
+                            }
+                            if (key === "delete") {
+                                showElimConfirm(props.id, props.levelCounter);
+                            }
                         }}
                     >
-                        {/* Menu content */}
-                        <button
-                            onClick={() =>
-                                handlerGoToNew(props.nextSon, props.id)
-                            }
+                        <DropdownItem key="view">Ver detalle</DropdownItem>
+                        <DropdownItem key="add">Agregar Hijo</DropdownItem>
+                        <DropdownItem
+                            key="delete"
+                            className="text-danger"
+                            color="danger"
                         >
-                            Agregar hijo
-                        </button>
-                        <button
-                            onClick={() => {
-                                handleVerDetalle(props.id);
-                            }}
-                        >
-                            Ver detalle
-                        </button>
-                        <button onClick={()=>{showElimConfirm(props.id,props.levelCounter)}}>
                             Eliminar
-                        </button>
-                    </div>
-                )}
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+
+                
             </li>
             {hasChilds && openChilds && (
                 <ListElementsEDT
@@ -118,6 +111,10 @@ import {
     ModalFooter,
     Button,
     useDisclosure,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
@@ -135,11 +132,11 @@ export default function ListElementsEDT(props) {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const mostrarModalConfirmacion = (idComp,codComp) =>{
+    const mostrarModalConfirmacion = (idComp, codComp) => {
         setIdAEliminar(idComp);
         setCodAEliminar(codComp);
         onOpen();
-    }
+    };
 
     const confirmarModalEliminacion = () => {
         console.log("Procediendo con insertar el componente");
@@ -147,8 +144,8 @@ export default function ListElementsEDT(props) {
             .post(
                 "http://localhost:8080/api/proyecto/EDT/eliminarComponenteEDT",
                 {
-                    idComponente: idAEliminar, 
-                    codigo: codAEliminar
+                    idComponente: idAEliminar,
+                    codigo: codAEliminar,
                 }
             )
             .then(function (response) {
@@ -161,7 +158,7 @@ export default function ListElementsEDT(props) {
             });
 
         //NO SE COMO SE CIERRA MODAAAAAAL
-    }
+    };
 
     return (
         <ul
@@ -184,7 +181,7 @@ export default function ListElementsEDT(props) {
                     ></CardEDT>
                 );
             })}
-            
+
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
@@ -210,8 +207,8 @@ export default function ListElementsEDT(props) {
 
                                 <Button
                                     className="bg-indigo-950 text-slate-50"
-                                    onPress={()=>{
-                                        confirmarModalEliminacion(); 
+                                    onPress={() => {
+                                        confirmarModalEliminacion();
                                     }}
                                 >
                                     Continuar

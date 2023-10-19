@@ -63,6 +63,12 @@ export default function ProductBacklogRegister(props) {
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
     const [backlog, setBacklog] = useState([]);
+    const [reloadData, setReloadData] = useState(false);
+
+  // Esta función se llama cuando deseas recargar los datos
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
 
     useEffect(() => {
         const fetchBacklog = async () => {
@@ -84,6 +90,7 @@ export default function ProductBacklogRegister(props) {
         fetchBacklog();
     }, []);
     const toggleModal = () => {
+        handleReloadData();
         setModal(!modal);
     };
 
@@ -107,8 +114,10 @@ export default function ProductBacklogRegister(props) {
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
+            setReloadData(true);
         } else {
             document.body.style.overflow = "auto";
+            setReloadData(false);
         }
         setIsLoadingSmall(false);
     }, [modal]);
@@ -305,6 +314,7 @@ export default function ProductBacklogRegister(props) {
                                 hasColor={false}
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
+                                reloadData={reloadData}
                             />
                             <button
                                 className="w-20 h-20"

@@ -14,6 +14,7 @@ export default function Example({
     onSelect,
     idParam,
     initialName,
+    reloadData,
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
@@ -37,7 +38,10 @@ export default function Example({
         };
 
         fetchData();
-    }, []);
+        if (reloadData) {
+            fetchData();
+          }
+    }, [reloadData]);
 
     // const initiaValue = data.find((element) => element[idParam] === initialID);
     // console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");

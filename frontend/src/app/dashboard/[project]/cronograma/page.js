@@ -53,6 +53,9 @@ export default function Cronograma(props) {
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
 
+    const [tareaEstado , setTareaEstado] = useState({id:0,texto:"",color:""});
+    const [dropBoxColor, setDropBoxColor] = useState(null);
+
     const [tareaDescripcion, setTareaDescripcion] = useState("");
     const [validDescripcion, setValidDescripcion] = useState(true);
 
@@ -148,6 +151,37 @@ export default function Cronograma(props) {
                 console.log(error);
             });
     };
+
+
+    const dropBoxItems = [
+        {
+            id: 1,
+            texto: "No iniciado",
+            color: "default"
+        },
+        {
+            id: 2,
+            texto: "En progreso",
+            color: "primary"
+        },
+        {
+            id: 3,
+            texto: "Atrasado",
+            color: "warning"
+        },
+        {
+            id: 4,
+            texto: "Finalizado",
+            color: "success"
+        }
+    ];
+
+    const colorDropbox = [
+        "default",
+        "primary",
+        "warning",
+        "success"
+    ];
 
     // useEffect(() => {
     //     setSelectedSubteam(null);
@@ -341,21 +375,27 @@ export default function Cronograma(props) {
                         <div className="contEstado">
                             <p>Estado</p>
                             <Select
-                                variant="bordered"
+                                //variant="bordered"
                                 label=""
                                 placeholder="Selecciona"
                                 labelPlacement="outside"
                                 classNames={{trigger:"h-10"}}
                                 size="sm"
+                                color={colorDropbox[tareaEstado-1]}
+                                onChange={(e)=>{
+                                    setTareaEstado(e.target.value);
+                                    console.log(tareaEstado);
+                                }}
                             >
-                                {//animals.map((animal) => (
+                                {dropBoxItems.map((items) => (
                                     <SelectItem
-                                        key={2}
-                                        value={"hola"}
+                                        key={items.id}
+                                        value={items.texto}
+                                        color={items.color}
                                     >
-                                        {"si"}
+                                        {items.texto}
                                     </SelectItem>
-                                //))
+                                ))
                                 }
                             </Select>
                         </div>

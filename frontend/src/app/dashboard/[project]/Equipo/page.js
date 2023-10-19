@@ -4,6 +4,8 @@ import CardEquipo from "@/components/equipoComps/CardEquipo";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
 import ProgressBar from "@/components/equipoComps/ProgressBar";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import { useContext } from "react";
+import { SmallLoadingScreen } from "../layout";
 
 const grupos = [
     
@@ -96,11 +98,13 @@ const grupos = [
 ];
 
 export default function Equipo(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.charAt(decodedUrl.length - 1);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-
+    setIsLoadingSmall(false);
+    
 
     return (
         <div className="container">
