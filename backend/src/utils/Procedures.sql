@@ -1678,7 +1678,21 @@ BEGIN
     JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
     JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
-	WHERE c.idComunicacion = _idMatrizComunicacion AND c.activo=1;
+	WHERE c.idMatrizComunicacion = _idMatrizComunicacion AND c.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_COMUNICACION_X_IDCOMUNICACION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMUNICACION_X_IDCOMUNICACION(IN _idComunicacion INT)
+BEGIN
+    SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, 
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, c.grupoReceptor, c.activo
+	FROM Comunicacion AS c
+    JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
+    JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
+    JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+    JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
+	WHERE c.idComunicacion = _idComunicacion AND c.activo=1;
 END$
 
 DROP PROCEDURE IF EXISTS MODIFICAR_COMUNICACION;

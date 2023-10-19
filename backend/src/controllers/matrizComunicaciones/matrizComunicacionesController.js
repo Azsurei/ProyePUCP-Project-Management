@@ -87,6 +87,18 @@ async function modificarMatrizComunicacion(req,res,next){
         next(error);
     }
 }
+async function listarComunicacion(req,res,next){
+    const {idComunicacion} = req.params;
+    try {
+        const query = `CALL LISTAR_COMUNICACION_X_IDCOMUNICACION(?);`;
+        const [results] = await connection.query(query,[idComunicacion]);
+        comunicacion = results[0];
+        res.status(200).json({comunicacion, message: "Comunicacion listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}   
 
 module.exports = {
     listarCanales,
@@ -94,5 +106,6 @@ module.exports = {
     listarFormato,
     listarMatrizComunicacion,
     insertarMatrizComunicacion,
-    modificarMatrizComunicacion
+    modificarMatrizComunicacion,
+    listarComunicacion
 };
