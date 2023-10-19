@@ -285,11 +285,7 @@ export default function ProductBacklogRegister(props) {
                 <div className="titleBacklogRegisterPB">
                     Registrar nuevo elemento en el Backlog
                 </div>
-                <div className="description">
-                    <h4 style={{ fontWeight: 600 }}>
-                        Nombre de la historia de usuario
-                        <span className="text-red-500"> *</span>
-                    </h4>
+                <div>
                     <DescriptionRequeriment
                         name={name}
                         onNameChange={setName}
@@ -389,7 +385,7 @@ export default function ProductBacklogRegister(props) {
                         />
                     </div>
                 </div>
-                <div className="userDescription">
+                <div>
                     <h4 style={{ fontWeight: 600 }}>
                         Descripción de usuario
                         <span className="text-red-500"> *</span>
