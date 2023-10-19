@@ -902,7 +902,7 @@ CREATE TABLE Comunicacion(
     idMatrizComunicacion INT,
     sumillaInformacion VARCHAR(500),
     detalleInformacion VARCHAR(500),
-    responsaleDeComunicar VARCHAR(500),
+    responsableDeComunicar VARCHAR(500),
     grupoReceptor VARCHAR(500),
     activo TINYINT,
     FOREIGN KEY (idCanal) REFERENCES ComCanal(idCanal),

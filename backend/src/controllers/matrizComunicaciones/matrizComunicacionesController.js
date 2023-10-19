@@ -47,11 +47,31 @@ async function listarMatrizComunicacion(req,res,next){
         console.log(error);
         next(error);
     }
+}   
+async function insertarMatrizComunicacion(req,res,next){
+        const{idCanal, idFrecuencia, idFormato, idMatrizComunicacion, sumillaInformacion, detalleInformacion, 
+            responsableDeComunicar, grupoReceptor} = req.body;
+        const query = `
+            CALL INSERTAR_COMUNICACION_X_IDMATRIZ(?,?,?,?,?,?,?,?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idCanal,idFrecuencia,idFormato,idMatrizComunicacion,
+                sumillaInformacion,detalleInformacion,responsableDeComunicar,grupoReceptor]);
+            const idComunicacion = results[0][0].idComunicacion;
+            console.log(`Se insertó la comunicacion ${idComunicacion}!`);
+            res.status(200).json({
+                idComunicacion,
+                message: "Comunicacion insertada exitosamente",
+            });
+        } catch (error) {
+            next(error);
+        }
 }
 
 module.exports = {
     listarCanales,
     listarFrecuencia,
     listarFormato,
-    listarMatrizComunicacion
+    listarMatrizComunicacion,
+    insertarMatrizComunicacion
 };

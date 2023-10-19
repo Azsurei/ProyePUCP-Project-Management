@@ -1482,3 +1482,23 @@ BEGIN
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
 	WHERE mc.idProyecto = _idProyecto AND c.activo=1;
 END$
+
+DROP PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ(
+	IN _idCanal INT,
+    IN _idFrecuencia INT,
+    IN _idFormato INT,
+    IN _idMatrizComunicacion INT,
+    IN _sumillaInformacion VARCHAR(500),
+    IN _detalleInformacion VARCHAR(500),
+    IN _responsableDeComunicar VARCHAR(500),
+    IN _grupoReceptor VARCHAR(500)
+)
+BEGIN
+	DECLARE _idComunicacion INT;
+	INSERT INTO Comunicacion(idCanal,idFrecuencia,idFormato,idMatrizComunicacion,sumillaInformacion,detalleInformacion,responsableDeComunicar,grupoReceptor,activo) 
+    VALUES(_idCanal,_idFrecuencia,_idFormato,_idMatrizComunicacion,_sumillaInformacion,_detalleInformacion,_responsableDeComunicar,_grupoReceptor,1);
+    SET _idComunicacion = @@last_insert_id;
+    SELECT _idComunicacion AS idComunicacion;
+END$
