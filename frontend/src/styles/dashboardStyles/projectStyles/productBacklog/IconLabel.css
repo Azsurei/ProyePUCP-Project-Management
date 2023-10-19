@@ -23,5 +23,9 @@
 }
 
 .icono{
-    width: 25px;
+    width: 20px;
+}
+
+.label{
+    flex: 1;
 }

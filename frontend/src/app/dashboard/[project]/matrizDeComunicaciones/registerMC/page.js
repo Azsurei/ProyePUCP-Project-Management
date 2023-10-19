@@ -7,6 +7,7 @@ import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 axios.defaults.withCredentials = true;
 
 export default function MatrizComunicacionesRegister(props) {
@@ -52,7 +53,7 @@ export default function MatrizComunicacionesRegister(props) {
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Canal"
                             className="iconLabel"
                         />
                         <MyCombobox
@@ -67,7 +68,7 @@ export default function MatrizComunicacionesRegister(props) {
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Frecuencia"
                             className="iconLabel"
                         />
                         <MyCombobox
@@ -82,7 +83,7 @@ export default function MatrizComunicacionesRegister(props) {
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Formato"
                             className="iconLabel"
                         />
                         <MyCombobox
@@ -97,7 +98,7 @@ export default function MatrizComunicacionesRegister(props) {
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Responsable de comunicar"
                             className="iconLabel"
                         />
                         <MyCombobox
@@ -133,8 +134,32 @@ export default function MatrizComunicacionesRegister(props) {
                         onValueChange={setGroupReceiver}
                     />
                 </div>
-                <div className="containerBottom">
-
+                <div className="containerBottomMC">
+                    <div className="twoButtonsMC">
+                        <div className="buttonContainerMC">
+                            <Modal
+                                nameButton="Descartar"
+                                textHeader="Descartar Registro"
+                                textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                                colorButton="w-36 bg-slate-100 text-black"
+                                oneButton={false}
+                                secondAction={() => router.back()}
+                                textColor="red"
+                            />
+                            <Modal
+                                nameButton="Aceptar"
+                                textHeader="Registrar Historia de Usuario"
+                                textBody="¿Seguro que quiere registrar la historia de usuario?"
+                                colorButton="w-36 bg-blue-950 text-white"
+                                oneButton={false}
+                                secondAction={() => {
+                                    //onSubmit();
+                                    router.back();
+                                }}
+                                textColor="blue"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
