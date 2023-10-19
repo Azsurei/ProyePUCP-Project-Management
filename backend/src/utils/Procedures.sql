@@ -49,7 +49,7 @@ CREATE PROCEDURE INSERTAR_PROYECTO(
 	IN _nombre VARCHAR(200),
     IN _maxCantParticipantes INT,
     IN _fechaInicio DATE,
-    IN _fechaFinINSERTAR_PROYECTO DATE
+    IN _fechaFin DATE
 )
 BEGIN
 	DECLARE _id_proyecto INT;
@@ -1252,6 +1252,7 @@ CALL INSERTAR_PRESUPUESTO(50,4500);
 CALL INSERTAR_INGRESO(2,300);
 CALL INSERTAR_LINEA_INGRESO(4,1,1,1,"Segundo ingreso realizado",200,1,CURDATE());
 
+<<<<<<< HEAD
 UPDATE LineaEstimacionCosto SET idProyecto = 50 WHERE idLineaEstimacion >0;
 UPDATE LineaIngreso SET idProyecto = 50 WHERE idLineaIngreso >0;
 UPDATE LineaEgreso SET idProyecto = 50 WHERE idLineaEgreso >0;
@@ -1402,3 +1403,71 @@ BEGIN
 	UPDATE LineaEstimacionCosto SET activo = 0 WHERE idLineaEstimacionCosto =  _idLineaEstimacionCosto AND activo = 1;
 END$
 
+=======
+CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
+SELECT * FROM Ingreso;
+SELECT * FROM LineaIngreso;
+
+------------
+-- Matriz de Comunicaciones
+------------
+DROP PROCEDURE INSERTAR_COMUNICACION_CANAL;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMUNICACION_CANAL(
+	IN _nombreCanal VARCHAR(200)
+)
+BEGIN
+	DECLARE _idCanal INT;
+	INSERT INTO ComCanal(nombreCanal,activo) VALUES(_nombreCanal,1);
+    SET _idCanal = @@last_insert_id;
+    SELECT _idCanal AS idCanal;
+END$
+
+DROP PROCEDURE INSERTAR_COMUNICACION_FRECUENCIA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMUNICACION_FRECUENCIA(
+	IN _nombreFrecuencia VARCHAR(200)
+)
+BEGIN
+	DECLARE _idFrecuencia INT;
+	INSERT INTO ComFrecuencia(nombreFrecuencia,activo) VALUES(_nombreFrecuencia,1);
+    SET _idFrecuencia = @@last_insert_id;
+    SELECT _idFrecuencia AS idFrecuencia;
+END$
+
+DROP PROCEDURE INSERTAR_COMUNICACION_FORMATO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMUNICACION_FORMATO(
+	IN _nombreFormato VARCHAR(200)
+)
+BEGIN
+	DECLARE _idFormato INT;
+	INSERT INTO ComFormato(nombreFormato,activo) VALUES(_nombreFormato,1);
+    SET _idFormato = @@last_insert_id;
+    SELECT _idFormato AS idFormato;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMUNICACION_CANAL()
+BEGIN
+	SELECT *
+    FROM ComCanal
+    WHERE activo = 1;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMUNICACION_FRECUENCIA()
+BEGIN
+	SELECT *
+    FROM ComFrecuencia
+    WHERE activo = 1;
+END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMUNICACION_FORMATO()
+BEGIN
+	SELECT *
+    FROM ComFormato
+    WHERE activo = 1;
+END$
+>>>>>>> a556a1acff07ecfbc09388aaabfacd92351a2435

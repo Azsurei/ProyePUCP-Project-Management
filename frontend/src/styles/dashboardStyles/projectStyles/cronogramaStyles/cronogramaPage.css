@@ -100,6 +100,8 @@
     display: flex;
     justify-content: center;
 
+    overflow-y: auto;
+
 }
 
 .containerGeneralRight{
@@ -117,8 +119,24 @@
     transform: translateX(0);
 }
 
-.contNombre{
+.contFirstRow{
     margin-bottom: 0px;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.contNombre{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    gap: 0;
+}
+
+.contEstado{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .contDescripcion{
