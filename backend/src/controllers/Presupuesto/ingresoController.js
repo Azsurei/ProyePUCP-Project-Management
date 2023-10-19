@@ -12,11 +12,22 @@ async function crear(req,res,next){
 }
 
 async function crearLineaIngreso(req,res,next){
-    const {idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} = req.body;
+    const {idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} = req.body;
     try {
-        const query = `CALL INSERTAR_LINEA_INGRESO(?,?,?,?,?,?);`;
-        await connection.query(query,[idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
+        const query = `CALL INSERTAR_LINEA_INGRESO(?,?,?,?,?,?,?,?);`;
+        await connection.query(query,[idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
         res.status(200).json({message: "Linea ingreso creada"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarLineaIngreso(req,res,next){
+    const {idLineaIngreso} = req.body;
+    try {
+        const query = `CALL ELIMINAR_LINEA_INGRESO(?);`;
+        await connection.query(query,[idLineaIngreso]);
+        res.status(200).json({message: "Linea ingreso eliminada"});
     } catch (error) {
         next(error);
     }
@@ -24,5 +35,6 @@ async function crearLineaIngreso(req,res,next){
 
 module.exports = {
     crear,
-    crearLineaIngreso
+    crearLineaIngreso,
+    eliminarLineaIngreso
 };

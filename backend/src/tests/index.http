@@ -407,6 +407,27 @@ GET http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos HT
 Content-Type:  application/json
 
 ###
+
+###
+POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idIngreso": 4,
+  "idMoneda": 1,
+  "idTransaccionTipo": 2,
+  "idIngresoTipo": 3,
+  "descripcion": "Pago de servicios",
+  "monto": 1500.50,
+  "cantidad": 5,
+  "fechaTransaccion": "2023-10-19"
+}
+
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineasTodas/50 HTTP/1.1
+Content-Type:  application/json
+
 GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/11 HTTP/1.1
 Content-Type:  application/json
 

@@ -6,7 +6,6 @@ const cors = require("cors");
 const secret = "secretKey";
 const app = express();
 const port = 8080;
-
 //Usamos el router de loggin
 //const routerProgramacion = require('../../routes/routerLogin').routerLoggin;
 //app.use('/api/loggin',routerProgramacion);
@@ -30,7 +29,7 @@ app.use('/api/proyecto',routerProyecto);
 app.use('/api/usuario',routerUsuario);
 
 //Empezar a escuchar en puerto 8080
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || port;
 app.listen(PORT, () => {
     console.log(`Servidor API corriendo en el puerto ${PORT}`);
 });

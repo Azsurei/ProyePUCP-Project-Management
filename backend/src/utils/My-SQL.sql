@@ -70,6 +70,16 @@ CREATE TABLE IF NOT EXISTS LineaIngreso (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+ALTER TABLE LineaIngreso ADD COLUMN idMoneda INT;
+ALTER TABLE LineaIngreso ADD COLUMN idIngreso INT;
+
+ALTER TABLE LineaIngreso 
+ADD FOREIGN KEY (idMoneda) 
+REFERENCES Moneda(idMoneda);
+
+ALTER TABLE LineaIngreso 
+ADD FOREIGN KEY (idIngreso) 
+REFERENCES Ingreso(idIngreso);
 -- -----------------------------------------------------
 -- Table Privilegios
 -- -----------------------------------------------------
@@ -574,7 +584,7 @@ CREATE TABLE EstimacionCosto(
 	idEstimacion INT AUTO_INCREMENT PRIMARY KEY,
     idPresupuesto INT,
     subtotal  DECIMAL(10,2),
-    reservaContigencia  DECIMAL(10,2),
+    reservaContingencia  DECIMAL(10,2),
     lineaBase  DECIMAL(10,2),
     ganancia  DECIMAL(10,2),
 	IGV DECIMAL(10,2),

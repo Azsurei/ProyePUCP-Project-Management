@@ -59,7 +59,7 @@ BEGIN
     SELECT _id_proyecto AS idProyecto;
 END$
 
-
+DROP PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO(IN _idUsuario INT)
 BEGIN
@@ -68,6 +68,8 @@ BEGIN
 END$
 DELIMITER $
 
+
+SELECT *FROM Proyecto;
 -- ---------------------
 -- PROCEDURES HERRAMIENTAS
 -- ---------------------
@@ -363,10 +365,13 @@ END$
 DROP PROCEDURE LISTAR_PROYECTOS_X_NOMBRE;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PROYECTOS_X_NOMBRE(
+	IN _idUsuario INT,
     IN _nombre VARCHAR(255)
 )
 BEGIN
-	SELECT *FROM Proyecto WHERE nombre LIKE CONCAT('%',_nombre,'%')AND activo =1;
+	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion , urp.fechaAsignacion 
+    FROM Proyecto p, UsuarioXRolXProyecto urp WHERE p.nombre LIKE CONCAT('%',_nombre,'%') AND p.idProyecto = urp.idProyecto AND urp.idUsuario
+    AND p.activo =1;
 END$
 
 DELIMITER $
@@ -1247,6 +1252,158 @@ CALL INSERTAR_PRESUPUESTO(50,4500);
 CALL INSERTAR_INGRESO(2,300);
 CALL INSERTAR_LINEA_INGRESO(4,1,1,1,"Segundo ingreso realizado",200,1,CURDATE());
 
+<<<<<<< HEAD
+UPDATE LineaEstimacionCosto SET idProyecto = 50 WHERE idLineaEstimacion >0;
+UPDATE LineaIngreso SET idProyecto = 50 WHERE idLineaIngreso >0;
+UPDATE LineaEgreso SET idProyecto = 50 WHERE idLineaEgreso >0;
+
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion, t.idTransaccionTipo, t.descripcion AS descripcionTransaccionTipo,
+    i.idIngresoTipo, i.descripcion AS descripcionIngresoTipo, m.idMoneda, m.nombre AS nombreMoneda
+	FROM LineaIngreso AS l LEFT JOIN TransaccionTipo AS t ON l.idTransaccionTipo = t.idTransaccionTipo
+							LEFT JOIN IngresoTipo AS i ON l.idIngresoTipo = i.idIngresoTipo
+							LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
+	WHERE l.idProyecto = _idProyecto AND l.activo=1;
+END$
+
+CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(50);
+
+DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_INGRESO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_LINEA_INGRESO(
+	IN _idLineaIngreso INT
+)
+BEGIN
+	UPDATE LineaIngreso SET activo = 0 WHERE idLineaIngreso =  _idLineaIngreso AND activo = 1;
+END$
+
+-----------
+-- Egreso
+-----------
+DROP PROCEDURE IF EXISTS INSERTAR_EGRESO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_EGRESO(
+	IN _idPresupuesto INT,
+    IN _subtotal DECIMAL(10,2)
+)
+BEGIN
+	DECLARE _idEgreso INT;
+	INSERT INTO Egreso(idPresupuesto,subtotal,activo) 
+    VALUES(_idPresupuesto,_subtotal,1);
+    SET _idEgreso = @@last_insert_id;
+    SELECT _idEgreso AS idEgreso;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_LINEA_EGRESO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
+	IN _idEgreso INT,
+    IN _idMoneda INT,
+    IN _costoReal DECIMAL(10,2),
+    IN _cantidad INT
+)
+BEGIN
+	DECLARE _idLineaEgreso INT;
+	INSERT INTO LineaEgreso(idEgreso,idMoneda,costoReal,cantidad,activo) 
+    VALUES(_idEgreso,_idMoneda,_costoReal,_cantidad,1);
+    SET _idLineaEgreso = @@last_insert_id;
+    SELECT _idLineaEgreso AS idLineaEgreso;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT l.idLineaEgreso, l.costoReal, l.cantidad, m.idMoneda, m.nombre AS nombreMoneda
+	FROM LineaEgreso AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
+	WHERE l.idProyecto = _idProyecto AND l.activo=1;
+END$
+
+CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(50);
+
+DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_EGRESO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_LINEA_EGRESO(
+	IN _idLineaEgreso INT
+)
+BEGIN
+	UPDATE LineaEgreso SET activo = 0 WHERE _idLineaEgreso =  _idLineaEgreso AND activo = 1;
+END$
+
+-----------------
+-- Estimacion Costo
+------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_ESTIMACION_COSTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ESTIMACION_COSTO(
+	IN _idPresupuesto INT,
+    IN _subtotal DECIMAL(10,2),
+    IN _reservacionContingencia DECIMAL(10,2),
+    IN _lineaBase DECIMAL(10,2),
+    IN _ganancia DECIMAL(10,2),
+    IN _IGV DECIMAL(10,2)
+)
+BEGIN
+	DECLARE _idEstimacionCosto INT;
+	INSERT INTO EstimacionCosto(idPresupuesto,subtotal,reservaContigencia,lineaBase,ganancia,IGV,activo) 
+    VALUES(_idPresupuesto,_subtotal,_reservacionContingencia,_lineaBase,_ganancia,_IGV,1);
+    SET _idEstimacionCosto = @@last_insert_id;
+    SELECT _idEstimacionCosto AS idEstimacionCosto;
+END$
+
+
+
+
+
+
+DROP PROCEDURE IF EXISTS INSERTAR_LINEA_ESTIMACION_COSTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
+	IN _idLineaEgreso INT,
+    IN _idMoneda INT,
+    IN _idEstimacion INT,
+    IN _descripcion VARCHAR(255),
+    IN _tarifaUnitaria DECIMAL(10,2),
+    IN _cantidadRecurso INT,
+    IN _subtotal DECIMAL(10,2),
+    IN _fechaInicio DATE
+)
+BEGIN
+	DECLARE _idLineaEstimacionCosto INT;
+	INSERT INTO LineaEstimacionCosto(idLineaEgreso,idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
+    VALUES(_idLineaEgreso,_idMoneda,_idEstimacion,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
+    SET _idLineaEstimacionCosto = @@last_insert_id;
+    SELECT _idLineaEstimacionCosto AS idLineaEstimacionCosto;
+END$
+
+CALL INSERTAR_LINEA_ESTIMACION_COSTO(1,1,1,"Primera linea de estimacion costo",20,2,40,CURDATE());
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT l.idLineaEstimacion, l.descripcion, l.tarifaUnitaria,l.cantidadRecurso,l.subtotal,l.fechaInicio, m.idMoneda, m.nombre AS nombreMoneda
+	FROM LineaEstimacionCosto AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
+	WHERE l.idProyecto = _idProyecto AND l.activo=1;
+END$
+
+CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(50);
+
+DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_ESTIMACION_COSTO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_LINEA_ESTIMACION_COSTO(
+	IN _idLineaEstimacionCosto INT
+)
+BEGIN
+	UPDATE LineaEstimacionCosto SET activo = 0 WHERE idLineaEstimacionCosto =  _idLineaEstimacionCosto AND activo = 1;
+END$
+
+=======
 CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
 SELECT * FROM Ingreso;
 SELECT * FROM LineaIngreso;
@@ -1313,3 +1470,4 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
+>>>>>>> a556a1acff07ecfbc09388aaabfacd92351a2435
