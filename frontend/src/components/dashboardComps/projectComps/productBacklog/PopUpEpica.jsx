@@ -227,16 +227,19 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                                 </div>
                             </div>
                         ) : null}
-                    </div> 
-                <div >
-                        <button
-                            className="btn-modal"
-                            onClick={handleInsertEpic}
-                        >
-                            Aceptar
+                </div> 
+                
+                <div className="buttonSection">
+                    <button className="btn-modal" onClick={handleInsertEpic}>
+                        Aceptar
+                    </button>
+                    <div className="right-buttons">
+                        <button className="close-modal" onClick={toggle}>
+                            Cancelar
                         </button>
                     </div>
-
+                </div>
+                
             </div>
         </div>
         )
