@@ -409,3 +409,15 @@ Content-Type:  application/json
 ###
 GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/11 HTTP/1.1
 Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato HTTP/1.1
+Content-Type:  application/json
