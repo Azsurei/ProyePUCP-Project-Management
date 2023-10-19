@@ -244,7 +244,6 @@
     justify-content: flex-start;
     align-items: flex-start;
 
-    overflow-y: auto;
 
     padding: .8rem .8rem;
     gap: 10px;

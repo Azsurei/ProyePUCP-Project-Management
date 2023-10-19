@@ -70,6 +70,16 @@ CREATE TABLE IF NOT EXISTS LineaIngreso (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+ALTER TABLE LineaIngreso ADD COLUMN idMoneda INT;
+ALTER TABLE LineaIngreso ADD COLUMN idIngreso INT;
+
+ALTER TABLE LineaIngreso 
+ADD FOREIGN KEY (idMoneda) 
+REFERENCES Moneda(idMoneda);
+
+ALTER TABLE LineaIngreso 
+ADD FOREIGN KEY (idIngreso) 
+REFERENCES Ingreso(idIngreso);
 -- -----------------------------------------------------
 -- Table Privilegios
 -- -----------------------------------------------------
@@ -574,7 +584,7 @@ CREATE TABLE EstimacionCosto(
 	idEstimacion INT AUTO_INCREMENT PRIMARY KEY,
     idPresupuesto INT,
     subtotal  DECIMAL(10,2),
-    reservaContigencia  DECIMAL(10,2),
+    reservaContingencia  DECIMAL(10,2),
     lineaBase  DECIMAL(10,2),
     ganancia  DECIMAL(10,2),
 	IGV DECIMAL(10,2),
@@ -850,5 +860,30 @@ CREATE TABLE UsuarioXEquipo(
     UNIQUE(idUsuario,idEquipo),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+)
+ENGINE = InnoDB;
+
+
+DROP TABLE ComCanal;
+CREATE TABLE ComCanal(
+	idCanal INT AUTO_INCREMENT PRIMARY KEY,
+    nombreCanal VARCHAR(200),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE ComFrecuencia;
+CREATE TABLE ComFrecuencia(
+	idFrecuencia INT AUTO_INCREMENT PRIMARY KEY,
+    nombreFrecuencia VARCHAR(200),
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE ComFormato;
+CREATE TABLE ComFormato(
+	idFormato INT AUTO_INCREMENT PRIMARY KEY,
+    nombreFormato VARCHAR(200),
+    activo TINYINT
 )
 ENGINE = InnoDB;

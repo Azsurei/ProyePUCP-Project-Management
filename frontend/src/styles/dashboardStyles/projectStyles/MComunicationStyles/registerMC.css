@@ -47,4 +47,23 @@
     display: flex;
     gap: 15%;
     margin-right: 15px;
+    align-items: center;
+}
+
+.containerBottomMC{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.twoButtonsMC{
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.buttonContainerMC{
+    display: flex;
+    gap: 10px;
+    padding: 1rem;
 }

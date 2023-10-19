@@ -23,6 +23,20 @@
     margin-top: 1rem;
 }
 
+.liderEquipo p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555555;
+}
+
+
+.participantes {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+
 .participantes h3 {
     margin-top: 1rem;
 }

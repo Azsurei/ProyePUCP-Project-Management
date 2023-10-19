@@ -7,6 +7,9 @@ import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
 export default function MatrizComunicacionesRegister(props) {
@@ -18,6 +21,8 @@ export default function MatrizComunicacionesRegister(props) {
     const [canal, setCanal] = useState("");
     const [frecuency, setFrecuency] = useState("");
     const [format, setFormat] = useState("");
+    const [modal2, setModal2] = useState(false);
+    const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -25,6 +30,25 @@ export default function MatrizComunicacionesRegister(props) {
 
     const handleSelectedValueChangeCanal = (value) => {
         setCanal(value);
+    };
+
+    const toggleModal2 = () => {
+        setModal2(!modal2);
+    };
+
+    const returnListOfMiembros = (newMiembrosList) => {
+        const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
+
+        setSelectedMiembrosList(newMembrsList);
+        setModal2(!modal2);
+    };
+
+    const removeMiembro = (miembro) => {
+        const newMembrsList = selectedMiembrosList.filter(
+            (item) => item.id !== miembro.id
+        );
+        setSelectedMiembrosList(newMembrsList);
+        console.log(newMembrsList);
     };
 
     return (
@@ -52,52 +76,52 @@ export default function MatrizComunicacionesRegister(props) {
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Canal"
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
-                            property="historiasPrioridad"
-                            nameDisplay="nombre"
+                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            property="canales"
+                            nameDisplay="nombreCanal"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCanal}
-                            idParam="idHistoriaPrioridad"
+                            idParam="idCanal"
                         />
                     </div>
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Frecuencia"
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
-                            property="historiasPrioridad"
-                            nameDisplay="nombre"
+                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            property="frecuencias"
+                            nameDisplay="nombreFrecuencia"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCanal}
-                            idParam="idHistoriaPrioridad"
+                            idParam="idFrecuencia"
                         />
                     </div>
                     <div className="containerComboMC">
                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Formato"
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
-                            property="historiasPrioridad"
-                            nameDisplay="nombre"
+                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato"
+                            property="formatos"
+                            nameDisplay="nombreFormato"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCanal}
-                            idParam="idHistoriaPrioridad"
+                            idParam="idFormato"
                         />
                     </div>
                     <div className="containerComboMC">
-                        <IconLabel
+                        {/*                         <IconLabel
                             icon="/icons/priorityPB.svg"
-                            label="Prioridad"
+                            label="Responsable de comunicar"
                             className="iconLabel"
                         />
                         <MyCombobox
@@ -107,7 +131,32 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCanal}
                             idParam="idHistoriaPrioridad"
-                        />
+                        /> */}
+                        <div
+                            className="containerToPopUpUsrSearch"
+                            onClick={toggleModal2}
+                        >
+                            <p>Buscar nuevo participante</p>
+                            <img
+                                src="/icons/icon-searchBar.svg"
+                                alt=""
+                                className="icnSearch"
+                            />
+                        </div>
+                        <ul className="listUsersContainer">
+                            {selectedMiembrosList.map((component) => {
+                                return (
+                                    <CardSelectedUser
+                                        key={component.id}
+                                        name={component.name}
+                                        lastName={component.lastName}
+                                        usuarioObject={component}
+                                        email={component.email}
+                                        removeHandler={removeMiembro}
+                                    ></CardSelectedUser>
+                                );
+                            })}
+                        </ul>
                     </div>
                 </div>
                 <div>
@@ -133,10 +182,41 @@ export default function MatrizComunicacionesRegister(props) {
                         onValueChange={setGroupReceiver}
                     />
                 </div>
-                <div className="containerBottom">
-
+                <div className="containerBottomMC">
+                    <div className="twoButtonsMC">
+                        <div className="buttonContainerMC">
+                            <Modal
+                                nameButton="Descartar"
+                                textHeader="Descartar Registro"
+                                textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                                colorButton="w-36 bg-slate-100 text-black"
+                                oneButton={false}
+                                secondAction={() => router.back()}
+                                textColor="red"
+                            />
+                            <Modal
+                                nameButton="Aceptar"
+                                textHeader="Registrar Historia de Usuario"
+                                textBody="¿Seguro que quiere registrar la historia de usuario?"
+                                colorButton="w-36 bg-blue-950 text-white"
+                                oneButton={false}
+                                secondAction={() => {
+                                    //onSubmit();
+                                    router.back();
+                                }}
+                                textColor="blue"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
+            {modal2 && (
+                <ModalUser
+                    handlerModalClose={toggleModal2}
+                    handlerModalFinished={returnListOfMiembros}
+                    excludedUsers={selectedMiembrosList}
+                ></ModalUser>
+            )}
         </div>
     );
 }
