@@ -239,17 +239,9 @@ export default function MatrizDeComunicaciones(props){
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="hidden sm:flex .roboto">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto'] color-['#172B4D']"
-                                >
-                                    Herramienta
-                                </Button>
+                                
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
@@ -267,7 +259,12 @@ export default function MatrizDeComunicaciones(props){
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
+                        <Button color="primary" endContent={<PlusIcon />} className="btnAddComunicacion">
+                            <Link href={"/dashboard/"+projectName+"="+projectId+"/matrizDeComunicaciones/registerMC"}>
+                            Agregar
+                            </Link> 
+                        </Button>
                         <Button color="primary" endContent={<PlusIcon />} className="btnComunicacionExport">
                             Exportar
                         </Button>

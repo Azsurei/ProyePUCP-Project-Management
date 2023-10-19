@@ -8,25 +8,28 @@ import { UserCardsContext } from "./ModalUsersOne";
 axios.defaults.withCredentials = true;
 
 function CardUser(props) {
-    const [isSelected, setIsSelected] = useState(false);
-    //const isSelected = props.isSelected;
+    //const [isSelected, setIsSelected] = useState(false);
+    const isSelected = props.isSelected;
 
     const { addUserList, removeUserInList } = useContext(UserCardsContext);
 
     const handleSelectedOn = () => {
+        props.setSelectedUser;
         addUserList(props.usuarioObject);
-        setIsSelected(true);
+        //setIsSelected(true);
     };
 
     const handleSelectedOff = () => {
+        props.setSelectedUser;
         removeUserInList(props.usuarioObject);
-        setIsSelected(false);
+        //setIsSelected(false);
     };
 
     return (
         <li
             className={isSelected ? "UserCard active" : "UserCard"}
-            onClick={isSelected ? handleSelectedOff : handleSelectedOn}
+            //onClick={isSelected ? handleSelectedOff : handleSelectedOn}
+            onClick={props.setSelectedUser}
         >
             <img
                 className="imgageUserDefault"
@@ -45,15 +48,7 @@ function CardUser(props) {
 export default function ListUsersOne(props) {
     const router = useRouter();
 
-    // const [selectedStates, setSelectedStates] = useState(
-    //     props.lista.map((component) => {
-    //         return { numb_pos: index, estado: false };
-    //     })
-    // );
-
-    // const handleSelection = (numb_pos) => {
-    //     setSelectedStates
-    // };
+    const [selectedUser, setSelectedUser] = useState(null); //contiene el id del seleccionado
 
     if (props.lista.length === 0) {
         return (
@@ -70,7 +65,8 @@ export default function ListUsersOne(props) {
                         lastName={component.lastName}
                         usuarioObject={component}
                         email={component.email}
-                        //isSelected={selectedStates[index]}
+                        isSelected={selectedUser === component.id}
+                        onSelection={()=>{setSelectedUser(component.id)}}
                     ></CardUser>
                 );
             })}
