@@ -18,9 +18,9 @@ export default function MatrizComunicacionesRegister(props) {
     const [sumilla, setSumilla] = useState("");
     const [detail, setDetail] = useState("");
     const [groupReceiver, setGroupReceiver] = useState("");
-    const [canal, setCanal] = useState("");
-    const [frecuency, setFrecuency] = useState("");
-    const [format, setFormat] = useState("");
+    const [canal, setCanal] = useState(null); //id 
+    const [frecuency, setFrecuency] = useState(null); //id 
+    const [format, setFormat] = useState(null); //id 
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
 
@@ -30,6 +30,14 @@ export default function MatrizComunicacionesRegister(props) {
 
     const handleSelectedValueChangeCanal = (value) => {
         setCanal(value);
+    };
+
+    const handleSelectedValueChangeFrecuency = (value) => {
+        setFrecuency(value);
+    };
+
+    const handleSelectedValueChangeFormat = (value) => {
+        setFormat(value);
     };
 
     const toggleModal2 = () => {
@@ -50,6 +58,18 @@ export default function MatrizComunicacionesRegister(props) {
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
     };
+
+    const onSubmit = () => {
+        const postData={
+            sumilla: sumilla,
+            detail: detail,
+            idCanal: canal,
+            idFrecuency: frecuency,
+            idFormat: format,
+            groupReceiver: groupReceiver,
+        };
+        console.log(postData);
+    }
 
     return (
         <div className="containerRegisterMC">
@@ -99,7 +119,7 @@ export default function MatrizComunicacionesRegister(props) {
                             property="frecuencias"
                             nameDisplay="nombreFrecuencia"
                             hasColor={false}
-                            onSelect={handleSelectedValueChangeCanal}
+                            onSelect={handleSelectedValueChangeFrecuency}
                             idParam="idFrecuencia"
                         />
                     </div>
@@ -114,7 +134,7 @@ export default function MatrizComunicacionesRegister(props) {
                             property="formatos"
                             nameDisplay="nombreFormato"
                             hasColor={false}
-                            onSelect={handleSelectedValueChangeCanal}
+                            onSelect={handleSelectedValueChangeFormat}
                             idParam="idFormato"
                         />
                     </div>
@@ -201,7 +221,7 @@ export default function MatrizComunicacionesRegister(props) {
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 secondAction={() => {
-                                    //onSubmit();
+                                    onSubmit();
                                     router.back();
                                 }}
                                 textColor="blue"
