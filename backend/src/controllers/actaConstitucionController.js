@@ -41,6 +41,28 @@ async function modificarCampos(req,res,next){
     }
 }
 
+async function crearCampos(req,res,next){
+    const{idProyecto, nombreCampo} = req.body;
+    try {
+        const query1 = `CALL CREAR_CAMPO_AC(?,?);`;
+        const [results] = await connection.query(query1,[idProyecto, nombreCampo]);
+        res.status(200).json({message: "CampoAC Creado"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarCampo(req,res,next){
+    const{idDetalle} = req.body;
+    try {
+        const query1 = `CALL ELIMINAR_CAMPO_AC(?);`;
+        const [results] = await connection.query(query1,[idDetalle]);
+        res.status(200).json({message: "CampoAC Eliminado"});
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function listarInteresados(req,res,next){
     const {idProyecto} = req.params;
     try {
@@ -102,6 +124,8 @@ async function insertarHito(req,res,next){
 module.exports = {
     listar,
     modificarCampos,
+    crearCampos,
+    eliminarCampo,
     listarInteresados,
     insertarInteresado,
     listarHito,

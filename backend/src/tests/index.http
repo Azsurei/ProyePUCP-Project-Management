@@ -464,6 +464,14 @@ Content-Type:  application/json
     }
   ]
 }
+###CREAR CAMPO AC
+POST http://localhost:8080/api/proyecto/ActaConstitucion/crearCampos HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProyecto": 50,
+  "nombreCampo": "Prueba"
+}
 ###LISTAR INTERESADOS AC
 GET http://localhost:8080/api/proyecto/ActaConstitucion/listarInteresados/50 HTTP/1.1
 Content-Type:  application/json
@@ -477,4 +485,11 @@ Content-Type:  application/json
   "nombre": "Hola123", 
   "cargo": "Hola123",  
   "organizacion": "Hola123"
+}
+###ELIMINAR CAMPO AC
+DELETE http://localhost:8080/api/proyecto/ActaConstitucion/eliminarCampo HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idDetalle": 64
 }
