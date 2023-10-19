@@ -25,6 +25,7 @@ import {
 } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
+import { set } from "date-fns";
 //import { set } from "date-fns";
 
 export const UserCardsContext = React.createContext();
@@ -38,9 +39,14 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
     const [eliminateError, setEliminateError] = useState("");
     const [noEpic, setNoEpic] = useState("");
     const [isSelected, setIsSelected] = useState(false);
+    const [addEpic, setAddEpic] = useState(false);
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
+
+    const AddNewEpic = () => {
+        setAddEpic(true);
+    }
 
     const fetchData = async () => {
         try {
@@ -90,7 +96,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                  // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
                 });
-                
+            toggle();
         }
     };
 
@@ -140,21 +146,12 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
         (modal && <div className="popUp" style={{animation: "droptop .3s linear"}}>
 			<div onClick={toggle} className="overlay"></div>
             <div className="modalEpic">
-                <p className="buscarEpic">Lista de Epicas</p>
+                
                 <div className="containerModal">
-                    <div className="divBuscador">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[100%]"
-                            placeholder="Ingresa una epica..."
-                            startContent={<SearchIcon />}
-                            value={filterValue}
-                            onValueChange={onSearchChange}
-                            variant="faded"
-                        />
-                    </div>
-                    <div className="subcontainer custom-flex">
-                            <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={handleInsertEpic}>
+                    
+                    <p className="buscarEpic">Lista de Epicas</p>
+                    <div className="subcontainer flex justify-end">
+                            <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={AddNewEpic}>
                                 Agregar Epica
                             </Button>
                             <Button color="danger"  onClick={() => {
@@ -166,7 +163,17 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                     </div>
                     
                 </div>
-
+                <div className="divBuscador">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[100%]"
+                            placeholder="Ingresa una epica..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            variant="faded"
+                        />
+                </div>
                 
                 <div className="containerModal">
                     <div className="divEpics">
@@ -181,10 +188,13 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                             </p>
                         )}
                     </div>
-                    <div className="subcontainer">
+                     
+                </div>
+                <div className="subcontainer">
                         
-                        <p className="buscarEpic">Insertar Epica</p>
-                        <input
+                        
+                        {addEpic ? (
+                            <input
                             type="text" 
                             autofocus 
                             className="inputEpica"
@@ -194,7 +204,8 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                                 setNewEpicName(e.target.value);
                                 setAddError("");
                             }}
-                        ></input>
+                            ></input>
+                        ):null}
                         {addError && <p className="error-message">{addError}</p>}
                         {noEpic && <p className="error-message">{noEpic}</p>}
                         {eliminateError ? (
@@ -216,12 +227,11 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                                 </div>
                             </div>
                         ) : null}
-                    </div>  
-                </div>
+                    </div> 
                 <div >
                         <button
                             className="btn-modal"
-                            onClick={toggle}
+                            onClick={handleInsertEpic}
                         >
                             Aceptar
                         </button>

@@ -58,3 +58,13 @@
     width: 150px;
     color: white;
 }
+.btnAddComunicacion{
+    border-radius: 10px;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+}
