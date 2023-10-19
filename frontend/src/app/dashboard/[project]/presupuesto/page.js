@@ -22,6 +22,7 @@ import {
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../layout";
+import {ExportIcon} from "@/../public/icons/ExportIcon";
 
 export default function Presupuesto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -33,7 +34,6 @@ export default function Presupuesto(props) {
     console.log(projectId);
     console.log(projectName);
     //const router=userRouter();
-
 
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -69,8 +69,14 @@ export default function Presupuesto(props) {
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
                                 <button className="btnCommon btnEstimacion sm:w-1 sm:h-1" type="button">Estimacion</button>
                         </Link>
+
+                        <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
+                            Exportar
+                        </Button>
                     </div>
-           
+
+ 
+                    
 
 
                     <TableBudget> </TableBudget>

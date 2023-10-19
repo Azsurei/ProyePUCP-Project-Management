@@ -45,7 +45,7 @@
 .buttonsPresu{
     display: inline-flex;
     align-items: flex-start;
-    gap: 16px;
+    gap: 20px;
 }
 
 .btnCommon {
@@ -101,4 +101,47 @@
 .btnEstimacion:not(.btnDisabled):hover {
     cursor: pointer;
     opacity: 0.8;
+}
+
+
+.btnExportPresupuesto{
+    border-radius: 10px;
+    background-color: #29C85F;
+    border: #29C85F 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 130px;
+    color: white;
+    margin-left: auto;
+}
+
+.btnExportPresupuesto:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.highlighted-row {
+    font-weight: bold; /* Hace que el texto sea más audaz */
+    color: #FF0000; /* Cambia el color del texto a rojo */
+  }
+
+.btnAddIngreso{
+
+    border-radius: 10px;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+    margin-left: auto;
+
+
+}
+
+.divBuscador{
+
+    width: 70%;
 }

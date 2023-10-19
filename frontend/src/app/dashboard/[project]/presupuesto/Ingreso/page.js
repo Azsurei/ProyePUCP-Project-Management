@@ -33,7 +33,11 @@ export default function Ingresos(props) {
     console.log(projectId);
     console.log(projectName);
     //const router=userRouter();
+    const [listUsers, setListUsers] = useState([]);
 
+    const onSearchChange = (value) => {
+        setFilterValue(value);
+    };
 
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -69,8 +73,22 @@ export default function Ingresos(props) {
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
                                 <button className="btnCommon btnEstimacion sm:w-1 sm:h-1" type="button">Estimacion</button>
                         </Link>
-                    </div>
 
+                        <Button color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                            Agregar
+                        </Button>
+                    </div>
+                    <div className="divBuscador">
+                            <Input
+                                isClearable
+                                className="w-full sm:max-w-[80%]"
+                                placeholder="Buscar Ingreso..."
+                                startContent={<SearchIcon />}
+                                value={filterValue}
+                                onValueChange={onSearchChange}
+                                variant="faded"
+                            />
+                        </div>    
 
                 
                 </div>
