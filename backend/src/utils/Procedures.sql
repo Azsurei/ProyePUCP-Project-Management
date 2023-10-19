@@ -1076,6 +1076,20 @@ BEGIN
     SELECT _idHistoriaRequisito AS idHistoriaRequisito;
 END$
 
+
+DROP PROCEDURE LISTAR_ACTA_X_IDACTA;
+--Listar Datos principales
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTA_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM ActaConstitucion
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
 DROP PROCEDURE LISTAR_DETALLEAC_X_IDACTA;
 --Listar DETALLEAC
 DELIMITER $
@@ -1529,8 +1543,6 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
-<<<<<<< HEAD
-=======
 
 DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $

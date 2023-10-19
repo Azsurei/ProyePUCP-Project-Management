@@ -3,9 +3,14 @@ const connection = require("../config/db");
 async function listar(req,res,next){
     const {idActaConstitucion} = req.params;
     try {
-        const query = `CALL LISTAR_DETALLEAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query,[idActaConstitucion]);
-        const detalleAC = results[0];
+        const query1 = `CALL LISTAR_ACTA_X_IDACTA(?);`;
+        const [acta] = await connection.query(query1,[idActaConstitucion]);
+        const query2 = `CALL LISTAR_DETALLEAC_X_IDACTA(?);`;
+        const [results] = await connection.query(query2,[idActaConstitucion]);
+        const detalleAC = {
+            general: acta[0],
+            actaData: results[0]
+        };
         res.status(200).json({detalleAC, message: "DetalleAC listado"});
     } catch (error) {
         console.log(error);
