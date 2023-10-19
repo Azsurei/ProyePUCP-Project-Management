@@ -105,18 +105,19 @@ export default function MatrizComunicacionesRegister(props) {
 
     const onSubmit = () => {
         const postData = {
-            selectedMiembrosList: selectedMiembrosList[0].id,
-            sumilla: sumilla,
-            detail: detail,
+            responsableDeComunicar: selectedMiembrosList[0].id,
+            sumillaInformacion: sumilla,
+            detalleInformacion: detail,
             idCanal: canal,
             idFrecuencia: frecuency,
             idFormato: format,
-            groupReceiver: groupReceiver,
+            grupoReceptor: groupReceiver,
+            idProyecto: projectId
         };
         console.log("El postData es :", postData);
         axios
             .post(
-                "http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario",
+                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
                 postData
             )
             .then((response) => {
@@ -330,7 +331,7 @@ export default function MatrizComunicacionesRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
