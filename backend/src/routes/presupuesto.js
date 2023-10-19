@@ -22,17 +22,20 @@ routerPresupuesto.get("/listarTipoTransaccionTodos",verifyToken, tipoTransaccion
 // Ingresos
 routerPresupuesto.post("/insertarIngreso",ingresoController.crear);
 routerPresupuesto.post("/insertarLineaIngreso",ingresoController.crearLineaIngreso);
+routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
 
 // Egresos
 routerPresupuesto.post("/insertarEgreso",egresoController.crear);
 routerPresupuesto.post("/insertarLineaEgreso",egresoController.crearLineaEgreso);
+routerPresupuesto.get("/listarLineaEgresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",egresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEgreso);    
 
 
 //Estimacion de costos
 routerPresupuesto.post("/insertarEstimacionCosto",estimacionCostoController.crear);
 routerPresupuesto.post("/insertarLineaEstimacionCosto",estimacionCostoController.crearLineaEstimacionCosto);
+routerPresupuesto.get("/listarLineaEstimacionCostoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",estimacionCostoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaCosto",estimacionCostoController.eliminarLineaEstimacionCosto);
 
 module.exports.routerPresupuesto = routerPresupuesto;
