@@ -1502,3 +1502,25 @@ BEGIN
     SET _idComunicacion = @@last_insert_id;
     SELECT _idComunicacion AS idComunicacion;
 END$
+
+DROP PROCEDURE IF EXISTS OBTENER_IDMATRIZCOMUNICACION_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE OBTENER_IDMATRIZCOMUNICACION_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT idMatrizComunicacion
+	FROM MatrizComunicacion
+	WHERE idProyecto = _idProyecto AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ;
+DELIMITER $
+CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ(IN _idMatrizComunicacion INT)
+BEGIN
+    SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, 
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, c.grupoReceptor, c.activo
+	FROM Comunicacion AS c
+    JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
+    JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
+    JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+	WHERE c.idComunicacion = _idMatrizComunicacion AND c.activo=1;
+END$
