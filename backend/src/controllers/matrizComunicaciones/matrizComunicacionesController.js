@@ -39,9 +39,17 @@ async function listarFormato(req,res,next){
 async function listarMatrizComunicacion(req,res,next){
     const {idProyecto} = req.params;
     try {
-        const query = `CALL LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(?);`;
+        const query = `CALL OBTENER_IDMATRIZCOMUNICACION_X_IDPROYECTO(?);`;
         const [results] = await connection.query(query,[idProyecto]);
-        const matrizComunicacion = results[0];
+        const objetoString = JSON.stringify(results[0][0].idMatrizComunicacion);
+        console.log(objetoString);
+        const [matrizComunicacionData] = await connection.execute(`
+            CALL LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ(${objetoString});
+        `);
+        const matrizComunicacion = {
+            idMatrizComunicacion: parseInt(objetoString),
+            matrizComunicacionData: matrizComunicacionData[0]
+        };
         res.status(200).json({matrizComunicacion, message: "Matriz de Comunicacion listado"});
     } catch (error) {
         console.log(error);
