@@ -646,7 +646,7 @@ export default function ProductBacklogUpdate(props) {
                             <Modal
                                 nameButton="Descartar"
                                 textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de la historia de usuario?"
+                                textBody="¿Seguro que quiere descartar la actualización de la historia de usuario?"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
                                 secondAction={() => router.back()}
@@ -655,7 +655,7 @@ export default function ProductBacklogUpdate(props) {
                             <Modal
                                 nameButton="Aceptar"
                                 textHeader="Registrar Historia de Usuario"
-                                textBody="¿Seguro que quiere registrar la historia de usuario?"
+                                textBody="¿Seguro que quiere actualizar la historia de usuario?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 secondAction={() => {

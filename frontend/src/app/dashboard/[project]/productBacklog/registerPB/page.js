@@ -512,7 +512,6 @@ export default function ProductBacklogRegister(props) {
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
-                                    //FALTA HACER LA VERIFICACIÓN DE LOS CAMPOS
                                     if (
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
