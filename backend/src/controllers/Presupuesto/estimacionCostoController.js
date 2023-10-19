@@ -22,16 +22,37 @@ async function crearLineaEstimacionCosto(req,res,next){
     }
 }
 
-async function listarLineasTodas(req,res,next){
-    const {idLineaEstimacionCosto} = req.body;
+// async function listarLineasTodas(req,res,next){
+//     const {idLineaEstimacionCosto} = req.body;
+//     try {
+//         const query = `CALL ELIMINAR_LINEA_ESTIMACION_COSTO(?);`;
+//         await connection.query(query,[idLineaEstimacionCosto]);
+//         res.status(200).json({message: "Linea estimacion costo eliminada"});
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+async function listarLineasXNombreFechas(req,res,next){
+    const {idProyecto,descripcion,fechaIni,fechaFin} = req.params;
+    const processeddescripcion = descripcion !== 'NULL' ? descripcion : null;
+    const processedfechaIni = fechaIni !== 'NULL' ? fechaIni : null;
+    const processedfechaFin = fechaFin !== 'NULL' ? fechaFin : null;
+
     try {
-        const query = `CALL ELIMINAR_LINEA_ESTIMACION_COSTO(?);`;
-        await connection.query(query,[idLineaEstimacionCosto]);
-        res.status(200).json({message: "Linea estimacion costo eliminada"});
+        const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS(?,?,?,?);`;
+        const [resultsLineasEstimacionCosto] = await connection.query(query,[idProyecto,processeddescripcion,processedfechaIni,processedfechaFin]);
+        lineasEstimacionCosto = resultsLineasEstimacionCosto[0];
+        
+        res.status(200).json({
+            lineasEstimacionCosto,
+            message: "Lineas de estimacion costo listadas correctamente"
+        });
     } catch (error) {
         next(error);
     }
 }
+
 async function eliminarLineaEstimacionCosto(req,res,next){
     const {idLineaEstimacionCosto} = req.body;
     try {
@@ -46,5 +67,6 @@ async function eliminarLineaEstimacionCosto(req,res,next){
 module.exports = {
     crear,
     crearLineaEstimacionCosto,
+    listarLineasXNombreFechas,
     eliminarLineaEstimacionCosto
 };

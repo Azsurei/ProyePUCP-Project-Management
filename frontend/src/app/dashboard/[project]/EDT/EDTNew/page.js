@@ -27,8 +27,6 @@ export default function EDTNew(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf('=') + 1);
     const projectName= decodedUrl.substring(0, decodedUrl.lastIndexOf('='));
 
-
-
     //Variables para input
     const [inComponentName,setInComponentName] = useState('');
     const [inTipoComponente,setInTipoComponente] = useState('');

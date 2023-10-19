@@ -6,7 +6,8 @@ const matrizComunicacionesController = require("../controllers/matrizComunicacio
 routerMatrizComunicaciones.get("/listarCanales", matrizComunicacionesController.listarCanales);
 routerMatrizComunicaciones.get("/listarFrecuencia", matrizComunicacionesController.listarFrecuencia);
 routerMatrizComunicaciones.get("/listarFormato", matrizComunicacionesController.listarFormato);
-routerMatrizComunicaciones.get("/:idProyecto/listarMatrizComunicacion", matrizComunicacionesController.listarMatrizComunicacion);
+routerMatrizComunicaciones.get("/listarMatrizComunicacion/:idProyecto", matrizComunicacionesController.listarMatrizComunicacion);
+routerMatrizComunicaciones.post("/insertarMatrizComunicacion", matrizComunicacionesController.insertarMatrizComunicacion);
 
 
 module.exports.routerMatrizComunicaciones = routerMatrizComunicaciones;
