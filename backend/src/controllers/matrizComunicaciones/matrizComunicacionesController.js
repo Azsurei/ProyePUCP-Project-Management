@@ -36,8 +36,22 @@ async function listarFormato(req,res,next){
     }
 }
 
+async function listarMatrizComunicacion(req,res,next){
+    const {idProyecto} = req.params;
+    try {
+        const query = `CALL LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
+        const matrizComunicacion = results[0];
+        res.status(200).json({matrizComunicacion, message: "Matriz de Comunicacion listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 module.exports = {
     listarCanales,
     listarFrecuencia,
-    listarFormato
+    listarFormato,
+    listarMatrizComunicacion
 };

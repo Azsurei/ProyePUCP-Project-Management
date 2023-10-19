@@ -224,7 +224,6 @@ export default function EDTNewVisualization({
                             <Textarea
                                 isInvalid={!validName}
                                 errorMessage={!validName ? missingTextMsg : ""}
-                                key={"bordered"}
                                 variant={"bordered"}
                                 labelPlacement="outside"
                                 placeholder="Escribe aquí"
@@ -303,7 +302,6 @@ export default function EDTNewVisualization({
                             }}
                         /> */}
                         <Textarea
-                            key={"bordered"}
                             variant={"bordered"}
                             labelPlacement="outside"
                             placeholder="Escribe aquí"
@@ -324,7 +322,6 @@ export default function EDTNewVisualization({
                             }}
                         /> */}
                         <Textarea
-                            key={"bordered"}
                             variant={"bordered"}
                             labelPlacement="outside"
                             placeholder="Escribe aquí"
@@ -345,7 +342,6 @@ export default function EDTNewVisualization({
                             }}
                         /> */}
                         <Textarea
-                            key={"bordered"}
                             variant={"bordered"}
                             labelPlacement="outside"
                             placeholder="Escribe aquí"
@@ -366,7 +362,6 @@ export default function EDTNewVisualization({
                             }}
                         /> */}
                         <Textarea
-                            key={"bordered"}
                             variant={"bordered"}
                             labelPlacement="outside"
                             placeholder="Escribe aquí"

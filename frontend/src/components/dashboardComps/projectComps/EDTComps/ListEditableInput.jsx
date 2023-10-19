@@ -42,6 +42,7 @@ function EditableInput(props) {
                     }}
                     minRows={1}
                     size="sm"
+                    readOnly={!props.beEditable}
                 />
                 {/* <TextField className="inputBox"></TextField> */}
                 {props.beEditable && (

@@ -192,6 +192,7 @@ export default function crear_equipo(props){
                 <div className="SelectedUsersContainer">
                     <div
                         className="containerToPopUpUsrSearch"
+                        style={{ width: '60%', padding: '0.2rem 0' }}
                         onClick={toggleModal2}
                     >
                         <p>Buscar nuevo participante</p>
@@ -199,10 +200,12 @@ export default function crear_equipo(props){
                             src="/icons/icon-searchBar.svg"
                             alt=""
                             className="icnSearch"
+                            style={{ width: '20px' }}
                         />
                     </div>
 
-                    <ul className="listUsersContainer">
+                    <ul className="listUsersContainer"
+                    style={{ width: '60%', padding: '0.2rem 0' }}>
                         {selectedMiembrosList.map((component) => {
                             return (
                                 <CardSelectedUser
@@ -218,6 +221,7 @@ export default function crear_equipo(props){
                     </ul>
                 </div>
             </div>
+            <div style={{ marginBottom: '20px' }}></div>
             <div className="bottom">
                 <button className="addTeamBtn" onClick={checkData}>
                     Crear Equipo
