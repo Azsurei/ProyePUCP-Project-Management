@@ -50,24 +50,30 @@ async function listarXIdProyecto(req,res,next){
     }
 }
 
-async function listarEquipos(req,res,next){
+async function listarEquiposYParticipantes(req,res,next){
     const {idProyecto} = req.params;
-    const query = `CALL LISTAR_INTERESADOAC_AC(?);`;
+    const query = `CALL LISTAR_EQUIPOS_X_IDPROYECTO(?);`;
     try {
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query,[idProyecto]);
+        const equipos = results[0];
+        for (const equipo of equipos){
+            const query1 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+            const [participantes] = await connection.query(query1,[equipo.idEquipo]);
+            equipo.participantes = participantes[0];
+        }
         res.status(200).json({
-            historiasEstado: results[0],
-            message: "Historias estado obtenidos exitosamente"
+            equipos,
+            message: "Equipos obtenidos exitosamente"
         });
-        console.log('Si se listarion los estados de las historias');
+        console.log('Se listaron los equipos correctamente');
     } catch (error) {
-        console.error("Error al obtener las historias estado:", error);
-        res.status(500).send("Error al obtener las historias estado: " + error.message);
+        console.log(error);
+        next(error);
     }
 }
 
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
-    listarEquipos
+    listarEquiposYParticipantes
 };
