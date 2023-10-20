@@ -8,10 +8,23 @@ async function crear(req, res, next) {
     } = req.body;
 
     try {
+<<<<<<< HEAD
         const idTarea = await insertarTarea(req.body);
         await insertarUsuarios(usuarios, idTarea);
         await insertarTareas(subTareas);
         await insertarTareas(tareasPosteriores);
+=======
+        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?);`;
+        const [results] =await connection.query(query,[idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
+        const idTarea = results[0][0].idTarea;
+        
+        if(usuarios != null){
+            for(const usuario in usuarios){
+                const query2 = `CALL INSERTAR_USUARIO_X_TAREA(?);`;
+                await connection.query(query2,[usuario.idUsuario,idTarea]);
+            }
+        }
+>>>>>>> 125fa51fe3a9b7913dd93be16bb957b5562f420f
 
         res.status(200).json({ message: `Tarea ${idTarea} creada` });
     } catch (error) {

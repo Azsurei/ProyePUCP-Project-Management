@@ -46,8 +46,8 @@ function DetailCard({
                 {!isEditable && (
                     <div className="project-card__title">{detail.nombre}</div>
                 )}
-                {isEditable && 
-                    (<Textarea
+                {isEditable && (
+                    <Textarea
                         //isInvalid={!validDescripcion}
                         //errorMessage={!validDescripcion ? msgEmptyField : ""}
                         //key={"bordered"}
@@ -59,7 +59,10 @@ function DetailCard({
                                 ? "Escribe aquí!"
                                 : "Aún no tiene información."
                         }
-                        classNames={{ label: "pb-0", input: "text-lg font-bold" }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
+                        classNames={{
+                            label: "pb-0",
+                            input: "text-lg font-bold",
+                        }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
                         readOnly={!isEditable}
                         value={detail.nombre}
                         //onValueChange={setTareaDescripcion}
@@ -68,8 +71,8 @@ function DetailCard({
                         onChange={(e) => {
                             handleModifyTitle(detail.idDetalle, e.target.value);
                         }}
-                    />)
-                }
+                    />
+                )}
 
                 <Textarea
                     //isInvalid={!validDescripcion}
@@ -132,6 +135,7 @@ export default function Info(props) {
     const [fieldToDelete, setFieldToDelete] = useState(null);
 
     useEffect(() => {
+        setIsLoadingSmall(true);
         const listURL =
             "http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/" +
             projectId;
@@ -156,6 +160,7 @@ export default function Info(props) {
 
     const handleSave = () => {
         //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
+        setIsLoadingSmall(true);
         const updateURL =
             "http://localhost:8080/api/proyecto/ActaConstitucion/modificarCampos";
         axios
@@ -172,6 +177,8 @@ export default function Info(props) {
                 console.log(response.data.message);
                 setDetails([...detailEdited]);
                 setEditActive(false);
+
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -282,33 +289,66 @@ export default function Info(props) {
 
     return (
         <div className="ACInfoContainer">
-            <ButtonPanel margin="20px 20px 20px" align="left">
-                <Button
-                    appearance="primary"
-                    state="default"
-                    spacing="compact"
-                    onClick={() => {
-                        setEditActive(true);
-                        handleCancelNewField();
-                    }}
-                >
-                    <div>
-                        <EditIcon />
-                        <div>Editar</div>
-                    </div>
-                </Button>
-                <Button
-                    appearance="primary"
-                    state="default"
-                    spacing="compact"
-                    onClick={handleAddField}
-                >
-                    <div>
-                        <AddIcon />
-                        <div>Agregar Campo</div>
-                    </div>
-                </Button>
-            </ButtonPanel>
+            {!isEditActive ? (
+                <ButtonPanel margin="10px 0 15px" align="right">
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={() => {
+                            setEditActive(true);
+                            handleCancelNewField();
+                        }}
+                    >
+                        <div>
+                            <EditIcon />
+                            <div>Editar</div>
+                        </div>
+                    </Button>
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={handleAddField}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: ".4rem",
+                            }}
+                        >
+                            <div style={{ fontSize: "2rem" }}>+</div>
+                            <div>Agregar Campo</div>
+                        </div>
+                    </Button>
+                </ButtonPanel>
+            ) : (
+                <ButtonPanel margin="10px 0 15px" align="right">
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={handleSave}
+                    >
+                        <div>
+                            <DocumentFilledIcon />
+                            <div>Guardar</div>
+                        </div>
+                    </Button>
+                    <Button
+                        appearance="subtle"
+                        state="default"
+                        spacing="compact"
+                        onClick={handleCancelEdit}
+                    >
+                        <div>
+                            <CrossIcon />
+                            <div>Cancelar</div>
+                        </div>
+                    </Button>
+                </ButtonPanel>
+            )}
 
             <div className="fieldsBigContainer">
                 {detailEdited.map((detail) => (
@@ -410,34 +450,32 @@ export default function Info(props) {
                 )}
             </div>
 
-            <ButtonPanel
-                margin="20px 20px 20px"
-                align="center"
-                style={{ display: isEditActive ? "flex" : "none" }}
-            >
-                <Button
-                    appearance="subtle"
-                    state="default"
-                    spacing="compact"
-                    onClick={handleCancelEdit}
-                >
-                    <div>
-                        <CrossIcon />
-                        <div>Cancelar</div>
-                    </div>
-                </Button>
-                <Button
-                    appearance="primary"
-                    state="default"
-                    spacing="compact"
-                    onClick={handleSave}
-                >
-                    <div>
-                        <DocumentFilledIcon />
-                        <div>Guardar</div>
-                    </div>
-                </Button>
-            </ButtonPanel>
+            {isEditActive && (
+                <ButtonPanel margin="20px 0 30px" align="right">
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={handleSave}
+                    >
+                        <div>
+                            <DocumentFilledIcon />
+                            <div>Guardar</div>
+                        </div>
+                    </Button>
+                    <Button
+                        appearance="subtle"
+                        state="default"
+                        spacing="compact"
+                        onClick={handleCancelEdit}
+                    >
+                        <div>
+                            <CrossIcon />
+                            <div>Cancelar</div>
+                        </div>
+                    </Button>
+                </ButtonPanel>
+            )}
 
             {
                 <Modal

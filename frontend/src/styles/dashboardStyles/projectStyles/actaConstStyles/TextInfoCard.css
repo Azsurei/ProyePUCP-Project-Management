@@ -51,9 +51,12 @@
 
 .cardDeleteIcn.show{
     opacity: 1;
+    transform: scale(1);
     transition: transform 0.1s;
+    transition: opacity 0.5s;
 }
 
 .cardDeleteIcn.show:hover{
     transform: scale(1.2);
+    transition: transform 0.1s;
 }

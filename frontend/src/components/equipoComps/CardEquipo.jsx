@@ -35,21 +35,40 @@ import {
     let completed = 0;
     let bgcolor = "#ef6c00";
 
+    console.log("Estos son los miembros: " + miembros);
+
     return (
       <div>
-        <Card className="w-full max-w-[20rem] h-34 shadow-md 
+        <Card className="w-full max-w-[70rem] h-50 shadow-md 
           border border-gray-300 rounded-lg card-hover my-2 overflow-hidden" onClick={openModal}>
           <CardBody className="pl-2 pr-2">
             <div className="mt-4 ml-4 mr-16 mb-2 flex items-center justify-between">
-              <Typography variant="h5" color="blue-gray" className="font-semibold">
+              <Typography variant="h6" color="blue-gray" className="font-semibold">
                 {nombre}
               </Typography>
             </div>
-            <Typography color="gray" className="mt-2 ml-4 card-text-hover">
-              {coordinador}
-              </Typography>
+            <p className="text-sm ml-4">Coordinador: {coordinador}</p>
+
+              {miembros.length > 0 ? (
+                <div className="divPictures">
+                    {miembros.slice(0, 4).map((member, index) => (
+                    <p className="membersIcon" key={member.idUsuario}>
+                        {member.nombres[0]}
+                        {member.apellidos[0]}
+                    </p>
+                    ))}
+                    {miembros.length > 4 && (
+                      <p className="membersIcon">
+                        +{miembros.length - 4}
+                      </p>
+                    )}
+                </div>
+              ) : (
+                  <p className="emptyMembers">Este equipo no cuenta con miembros</p>
+              )}
+            
           </CardBody>
-          <CardFooter className="pt-2">
+          <CardFooter>
             <div className="progressBarContainer">
               <ProgressBar key={id} bgcolor={bgcolor} completed={completed} />
             </div>

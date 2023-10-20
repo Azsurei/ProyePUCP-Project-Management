@@ -62,7 +62,7 @@
     background-color: #101e35;
 }
 .subtle:hover {
-    background-color: #f1f2f4;
+    background-color: #aa0303;
 }
 .link:hover {
     color: #0c66e4;
@@ -105,7 +105,7 @@
 }
 
 
-.default:focus {
+/* .default:focus {
     background-color: #b3b9c4;
     border: 1px solid #388bff;
 }
@@ -129,10 +129,11 @@
     background-color: #e2b203;
     border: 1px solid #388bff;
 }
+
 .danger:focus{
     background-color: #ca3521;
     border: 1px solid #388bff;
-}
+} */
 
 .selected {
     background-color: #e9f2ff;

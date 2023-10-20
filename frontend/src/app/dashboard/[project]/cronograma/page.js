@@ -143,6 +143,9 @@ export default function Cronograma(props) {
                 cantSubtareas: 0,
                 cantPosteriores: 0,
                 horasPlaneadas: null,
+                usuarios: null,
+                subTareas: null,
+                tareasPosteriores: null
             })
             .then(function (response) {
                 console.log(response.data.message);
@@ -608,14 +611,14 @@ export default function Cronograma(props) {
                 </div>
             </div>
             {modal && (
-                <ModalUsersOne
+                <ModalUser
                     handlerModalClose={() => {
                         setModal(false);
                     }}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedUsers}
                     idProyecto={projectId}
-                ></ModalUsersOne>
+                ></ModalUser>
             )}
         </div>
     );
