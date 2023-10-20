@@ -51,6 +51,7 @@ export default function MatrizDeComunicaciones(props){
             setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
             setData(response.data.matrizComunicacion.matrizComunicacionData);
             setIsLoadingSmall(false);
+            console.log(`Esta es la data:`, data);
             console.log(`Datos obtenidos exitosamente:`, response.data.matrizComunicacion);
           } catch (error) {
             console.error('Error al obtener datos:', error);

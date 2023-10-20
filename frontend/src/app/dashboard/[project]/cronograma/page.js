@@ -614,6 +614,7 @@ export default function Cronograma(props) {
                     }}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedUsers}
+                    idProyecto={projectId}
                 ></ModalUsersOne>
             )}
         </div>

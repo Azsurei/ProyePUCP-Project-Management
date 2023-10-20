@@ -284,7 +284,7 @@ function ProjectSidebar(props) {
             position: 2,
             optIcon: "/icons/sideBarDropDown_icons/sbdd6.svg",
             optName: "Acta de constitución",
-            goTo: `${stringBase}/actaConstitucion`,
+            goTo: `${stringBase}/actaConstitucion/info`,
         },
         {
             id: 2,

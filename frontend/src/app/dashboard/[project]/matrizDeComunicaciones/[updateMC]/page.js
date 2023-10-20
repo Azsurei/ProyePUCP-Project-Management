@@ -9,8 +9,21 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/i
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
+
+function capitalizeWords(str) {
+    // Dividimos la cadena en palabras usando el espacio como separador
+    const words = str.split(" ");
+
+    // Iteramos por cada palabra y aplicamos la capitalización
+    const capitalizedWords = words.map((word) => {
+        // Convierte la primera letra a mayúscula y el resto a minúscula
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+
+    // Unimos las palabras nuevamente en una cadena
+    return capitalizedWords.join(" ");
+}
 
 export default function MatrizComunicacionesRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -66,7 +79,7 @@ export default function MatrizComunicacionesRegister(props) {
             (item) => item.id !== miembro.id
         );
         setSelectedMiembrosList(newMembrsList);
-        console.log(newMembrsList); 
+        console.log(newMembrsList);
     };
 
     function verifyFieldsEmpty() {
@@ -76,7 +89,8 @@ export default function MatrizComunicacionesRegister(props) {
             groupReceiver === "" ||
             canal === null ||
             frecuency === null ||
-            format === null || selectedMiembrosList.length === 0
+            format === null ||
+            selectedMiembrosList.length === 0
         );
     }
 
@@ -90,15 +104,31 @@ export default function MatrizComunicacionesRegister(props) {
 
     const onSubmit = () => {
         const postData = {
-            selectedMiembrosList: selectedMiembrosList,
-            sumilla: sumilla,
-            detail: detail,
+            responsableDeComunicar: selectedMiembrosList[0].id,
+            sumillaInformacion: sumilla,
+            detalleInformacion: detail,
             idCanal: canal,
             idFrecuencia: frecuency,
             idFormato: format,
-            groupReceiver: groupReceiver,
+            grupoReceptor: groupReceiver,
+            idProyecto: projectId
         };
         console.log("El postData es :", postData);
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
+                postData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Registro correcto");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
     };
 
     return (
@@ -190,15 +220,11 @@ export default function MatrizComunicacionesRegister(props) {
                             onSelect={handleSelectedValueChangeCanal}
                             idParam="idHistoriaPrioridad"
                         /> */}
-                        <div
-                            className="containerToPopUpUsrSearch"
-                            onClick={toggleModal2}
-                        >
-                            <p>Buscar participante</p>
-                            <img
-                                src="/icons/icon-searchBar.svg"
-                                alt=""
-                                className="icnSearch"
+                        <div onClick={toggleModal2}>
+                            <IconLabel
+                                icon="/icons/icon-searchBar.svg"
+                                label="Buscar participante"
+                                className="iconLabel"
                             />
                         </div>
                         <ul className="listUsersContainer">
@@ -208,14 +234,17 @@ export default function MatrizComunicacionesRegister(props) {
                             )}
                             {selectedMiembrosList.map((component) => {
                                 return (
-                                    <CardSelectedUser
-                                        key={component.id}
-                                        name={component.name}
-                                        lastName={component.lastName}
-                                        usuarioObject={component}
-                                        email={component.email}
-                                        removeHandler={removeMiembro}
-                                    ></CardSelectedUser>
+                                    <div className="iconLabel2MC">
+                                        <p className="profilePicMC">
+                                            {component.name[0] +
+                                                component.lastName[0]}
+                                        </p>
+                                        <div className="labelDatoUsuarioMC">
+                                            {capitalizeWords(
+                                                `${component.name} ${component.lastName}`
+                                            )}
+                                        </div>
+                                    </div>
                                 );
                             })}
                         </ul>
@@ -261,7 +290,7 @@ export default function MatrizComunicacionesRegister(props) {
                     />
                 </div>
                 <div className="containerBottomMC">
-                {fieldsEmpty && !fieldsExcessive && (
+                    {fieldsEmpty && !fieldsExcessive && (
                         <IconLabel
                             icon="/icons/alert.svg"
                             label="Faltan completar campos"
@@ -301,7 +330,7 @@ export default function MatrizComunicacionesRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

@@ -26,7 +26,7 @@ export default function RootLayout({ children, params }) {
         setIsLoadingSmall(false);
     },[]);
     return (
-        <Page margin={"20px 20px 20px"}>
+        <div style={{border:'1px red solid', width: '100%', height: '100%'}}>
             <div className="space-x-4 mb-2">
                 <Breadcrumbs>
                     <BreadcrumbsItem
@@ -77,6 +77,6 @@ export default function RootLayout({ children, params }) {
                 </Button>
             </ButtonPanel>
             {children}
-        </Page>
+        </div>
     );
 }

@@ -36,7 +36,7 @@ routerAuth.post("/login", async (req, res) => {
                     user,
                 },
                 secret,
-                { expiresIn: "1h" }
+                { expiresIn: "3h" }
             );
 
             const serialized = cookie.serialize("tokenProyePUCP", token, {

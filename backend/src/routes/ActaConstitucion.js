@@ -5,6 +5,8 @@ const actaConstitucionController = require("../controllers/actaConstitucionContr
 
 routerActaConstitucion.get("/listarActaConstitucion/:idProyecto",verifyToken, actaConstitucionController.listar);
 routerActaConstitucion.put("/modificarCampos",verifyToken, actaConstitucionController.modificarCampos);
+routerActaConstitucion.post("/crearCampos", verifyToken, actaConstitucionController.crearCampos);
+routerActaConstitucion.delete("/eliminarCampo", verifyToken, actaConstitucionController.eliminarCampo);
 routerActaConstitucion.get("/listarInteresados/:idProyecto",verifyToken, actaConstitucionController.listarInteresados);
 routerActaConstitucion.post("/insertarInteresado",verifyToken, actaConstitucionController.insertarInteresado);
 routerActaConstitucion.get("/listarHito/:idProyecto",verifyToken, actaConstitucionController.listarHito);
