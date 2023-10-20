@@ -25,8 +25,7 @@ import {
 } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
-import { set } from "date-fns";
-//import { set } from "date-fns";
+
 
 export const UserCardsContext = React.createContext();
 
@@ -234,12 +233,12 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                 </div> 
                 
                 <div className="buttonSection">
-                    <button className="btn-modal" onClick={handleInsertEpic}>
-                        Aceptar
+                    <button className="close-modal" onClick={toggle}>
+                        Cancelar
                     </button>
                     <div className="right-buttons">
-                        <button className="close-modal" onClick={toggle}>
-                            Cancelar
+                        <button className="btn-modal" onClick={handleInsertEpic}>
+                            Aceptar
                         </button>
                     </div>
                 </div>
