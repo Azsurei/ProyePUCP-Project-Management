@@ -1765,3 +1765,19 @@ END$
 ------------
 -- AUTOEVALUACION
 ------------
+DROP PROCEDURE CREAR_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE CREAR_AUTOEVALUACION(
+    _idProyecto INT,
+    _fechaCreacion DATE,
+    _fechaLimite DATE,
+    _activo TINYINT
+)
+BEGIN
+	DECLARE _idAutoEvaluacion INT;
+	INSERT INTO autoEvaluacion(idProyecto,fechaCreacion,fechaLimite,activo) 
+    VALUES(_idProyecto,_fechaCreacion,_fechaLimite,1);
+    SET _idAutoEvaluacion = @@last_insert_id;
+    SELECT _idAutoEvaluacion AS idAutoEvaluacion;
+END$
+
