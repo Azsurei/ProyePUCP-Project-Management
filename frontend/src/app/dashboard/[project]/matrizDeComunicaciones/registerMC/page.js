@@ -6,6 +6,7 @@ import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
@@ -68,8 +69,11 @@ export default function MatrizComunicacionesRegister(props) {
     const returnListOfMiembros = (newMiembrosList) => {
         console.log("En return:", newMiembrosList[0]);
 
-        // Establecer el arreglo como un arreglo que contiene solo el nuevo objeto
-        setSelectedMiembrosList([newMiembrosList[0]]);
+        // Verificar si newMiembrosList es un arreglo con contenido
+        if (Array.isArray(newMiembrosList) && newMiembrosList.length > 0) {
+            // Establecer el arreglo como un arreglo que contiene solo el nuevo objeto
+            setSelectedMiembrosList([newMiembrosList[0]]);
+        }
 
         setModal2(false);
     };
@@ -103,7 +107,7 @@ export default function MatrizComunicacionesRegister(props) {
             sumillaInformacion: sumilla,
             detalleInformacion: detail,
             responsableDeComunicar: selectedMiembrosList[0].id,
-            grupoReceptor: groupReceiver
+            grupoReceptor: groupReceiver,
         };
         console.log("El postData es :", postData);
         axios
@@ -198,35 +202,29 @@ export default function MatrizComunicacionesRegister(props) {
                             idParam="idFormato"
                         />
                     </div>
-                    <div className="containerComboMC">
-                        <div onClick={toggleModal2}>
-                            <IconLabel
-                                icon="/icons/icon-searchBar.svg"
-                                label="Buscar participante"
-                                className="iconLabel"
-                            />
-                        </div>
-                        <ul className="listUsersContainer">
-                            {console.log(
-                                "LOS DATITOS DEL USUARIO SON:",
-                                selectedMiembrosList
-                            )}
-                            {selectedMiembrosList.map((component) => {
-                                return (
-                                    <div className="iconLabel2MC">
-                                        <p className="profilePicMC">
-                                            {component.name[0] +
-                                                component.lastName[0]}
-                                        </p>
-                                        <div className="labelDatoUsuarioMC">
-                                            {capitalizeWords(
-                                                `${component.name} ${component.lastName}`
-                                            )}
-                                        </div>
+                    <div className="containerButtonMC">
+                        <ButtonIconLabel
+                            icon="/icons/icon-searchBar.svg"
+                            label1="Responsable"
+                            label2="de comunicar"
+                            className="iconLabelButtonMC"
+                            onClickFunction={toggleModal2}
+                        />
+                        {selectedMiembrosList.map((component) => {
+                            return (
+                                <div className="iconLabel2MC">
+                                    <p className="profilePicMC">
+                                        {component.name[0] +
+                                            component.lastName[0]}
+                                    </p>
+                                    <div className="labelDatoUsuarioMC">
+                                        {capitalizeWords(
+                                            `${component.name} ${component.lastName}`
+                                        )}
                                     </div>
-                                );
-                            })}
-                        </ul>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
                 <div>

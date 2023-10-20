@@ -55,15 +55,6 @@
     width: 100%;
 }
 
-.modalUser .botonBuscar{
-    background-color: #172B4D;
-    border-radius: 5px;
-    padding: .2rem .9rem;
-    color: var(--color-text-inverse, #FFF);
-    font-family: Montserrat;
-    font-weight: 500;
-}
-
 .buttonOneUser{
     border-radius: 5px;
     background-color: #172B4D;
@@ -91,18 +82,15 @@
 
 .buttonTwoUser{
     border-radius: 5px;
-    background-color: #9b9b9b9b;
+    background-color: white;
     /* border: #F0AE19 1px solid; */
     border-style: none;
     height: 35px;
     width: 5rem;
-    color: white;
+    color: red;
     transition: background-color 0.15s ease-in;
     font-size: 12px;
     margin-left: 1rem;
-
-
-    color: var(--color-text-inverse, #FFF);
     text-align: center;
     /* Heading/H400 */
     font-family: Montserrat;
@@ -135,4 +123,5 @@
     align-items: flex-end;
     justify-content: flex-end;
     width: 100%;
+    gap: 5px;
 }
