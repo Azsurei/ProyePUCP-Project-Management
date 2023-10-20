@@ -18,7 +18,7 @@ BEGIN
 	INSERT INTO Usuario(nombres,apellidos,correoElectronico,password,activo,Privilegios_idPrivilegios) VALUES(_nombres, _apellidos, _correoElectronico, md5(_password), true, 1);
     SELECT @@last_insert_id AS idUsuario;
 END$
-
+SELECT * FROM Usuario;
 /*LOGIN*/
 DELIMITER $
 CREATE PROCEDURE VERIFICAR_CUENTA_USUARIO(
@@ -1668,6 +1668,8 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
+<<<<<<< HEAD
+=======
 
 DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
@@ -1801,6 +1803,9 @@ BEGIN
     LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
+<<<<<<< HEAD
+>>>>>>> 88a7fbcfbafbaa54dc2938c90e2132c09489ccfd
+=======
 
 ------------
 -- AUTOEVALUACION
@@ -1821,3 +1826,4 @@ BEGIN
     SELECT _idAutoEvaluacion AS idAutoEvaluacion;
 END$
 
+>>>>>>> 6145fcdbf7b45ed2a8ad1f0d5c8f6221e8ac1485

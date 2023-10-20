@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListUsers.css";
+import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/ListUsers.css";
 import { UserCardsContext } from "./modalUsers";
 
 axios.defaults.withCredentials = true;
