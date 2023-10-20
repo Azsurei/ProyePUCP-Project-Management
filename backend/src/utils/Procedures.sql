@@ -1269,6 +1269,34 @@ BEGIN
     SELECT _idHito AS idHito;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_INTERESADOAC;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_INTERESADOAC(
+    IN _idInteresado INT
+)
+BEGIN
+	UPDATE InteresadoAC 
+    SET activo = 0
+    WHERE idInteresado = _idInteresado;
+    SELECT _idInteresado AS idInteresado;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_INTERESADOAC;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_INTERESADOAC(
+    IN _idInteresado INT,
+    IN _nombre VARCHAR(255),
+    IN _cargo VARCHAR(255),
+    IN _organizacion VARCHAR(255)
+)
+BEGIN
+	UPDATE InteresadoAC 
+    SET nombre = _nombre,
+        cargo = _cargo,
+        organizacion = _organizacion
+    WHERE idInteresado = _idInteresado;
+    SELECT _idInteresado AS idInteresado;
+END$
 ---------------
 -- Presupuesto
 ---------------

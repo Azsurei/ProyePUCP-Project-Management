@@ -527,10 +527,29 @@ Content-Type:  application/json
   "idDetalle": 64
 }
 
-###ELIMINAR CAMPO AC
+###ELIMINAR HITO AC
 DELETE http://localhost:8080/api/proyecto/ActaConstitucion/eliminarHito HTTP/1.1
 Content-Type:  application/json
 
 {
   "idHito": 6
+}
+
+###ELIMINAR INTERESADO AC
+DELETE http://localhost:8080/api/proyecto/ActaConstitucion/eliminarInteresado HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idInteresado": 3
+}
+
+###MODIFICAR INTERESADO AC
+PUT http://localhost:8080/api/proyecto/ActaConstitucion/modificarInteresado HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idInteresado": 4,
+  "nombre": "ProbarEliminar",
+  "cargo": "Test",
+  "organizacion": "idk"
 }
