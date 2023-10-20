@@ -3,7 +3,7 @@
     flex-direction: row;
     gap: 2rem;
     justify-content: space-between;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
 
 }
 
@@ -11,8 +11,7 @@
     max-width: 40%;
     align-items: center;   
     flex-direction: row;
-    margin-bottom: 1rem;
-    margin-top:4px;
+    margin-bottom: 0.6rem;
 }
 
 .comboBoxTipo{

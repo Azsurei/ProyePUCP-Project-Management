@@ -22,6 +22,14 @@
     color: red;
 }
 
+.iconLabelButton{
+    display: flex;
+    align-items: center;
+    gap: 10%;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .icono{
     width: 20px;
 }
