@@ -364,6 +364,11 @@ CREATE TABLE ActaConstitucion(
     idProyecto INT,
     fechaCreacion DATE,
     activo tinyint NOT NULL,
+    nombreProyecto VARCHAR(200),
+    empresa VARCHAR(200),
+    cliente VARCHAR(200),
+    patrocinador VARCHAR(200),
+    gerente VARCHAR(200),
     FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 )
@@ -572,7 +577,9 @@ CREATE TABLE LineaEgreso(
 	idLineaEgreso INT AUTO_INCREMENT PRIMARY KEY,
     idEgreso INT,
     idMoneda INT,
+    descripcion VARCHAR(255),
     costoReal  DECIMAL(10,2),
+    fechaRegistro DATE,
     cantidad INT,
     activo TINYINT,
     FOREIGN KEY (idEgreso) REFERENCES Egreso(idEgreso),
@@ -885,5 +892,51 @@ CREATE TABLE ComFormato(
 	idFormato INT AUTO_INCREMENT PRIMARY KEY,
     nombreFormato VARCHAR(200),
     activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE Comunicacion;
+CREATE TABLE Comunicacion(
+	idComunicacion INT AUTO_INCREMENT PRIMARY KEY,
+    idCanal INT,
+    idFrecuencia INT,
+    idFormato INT,
+    idMatrizComunicacion INT,
+    sumillaInformacion VARCHAR(500),
+    detalleInformacion VARCHAR(500),
+    responsableDeComunicar INT,
+    grupoReceptor VARCHAR(500),
+    activo TINYINT,
+    FOREIGN KEY (idCanal) REFERENCES ComCanal(idCanal),
+    FOREIGN KEY (idFrecuencia) REFERENCES ComFrecuencia(idFrecuencia),
+    FOREIGN KEY (idFormato) REFERENCES ComFormato(idFormato),
+    FOREIGN KEY (idMatrizComunicacion) REFERENCES MatrizComunicacion(idMatrizComunicacion)
+)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- AUTOEVALUACION
+-- -----------------------------------------------------
+
+CREATE TABLE autoEvaluacion(
+	idAutoEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    fechaCreacion DATE,
+    fechaLimite DATE,
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+CREATE TABLE UsuarioXRolXProyecto (
+    idUsuarioRolProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT ,
+    idProyecto INT ,
+    idRol INT,
+    fechaAsignacion DATE,
+    activo TINYINT NOT NULL DEFAULT 1,
+    UNIQUE KEY (idUsuario, idProyecto, idRol),
+    FOREIGN KEY (idRol) REFERENCES Rol (idRol) ,
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto (idProyecto),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario (idUsuario) 
 )
 ENGINE = InnoDB;

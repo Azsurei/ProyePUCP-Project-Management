@@ -14,6 +14,8 @@ export default function Example({
     onSelect,
     idParam,
     initialName,
+    reloadData,
+    inputWidth=64,
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
@@ -37,7 +39,10 @@ export default function Example({
         };
 
         fetchData();
-    }, []);
+        if (reloadData) {
+            fetchData();
+          }
+    }, [reloadData]);
 
     // const initiaValue = data.find((element) => element[idParam] === initialID);
     // console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
@@ -72,7 +77,7 @@ export default function Example({
                     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
 
                         <Combobox.Input
-                            className={`w-64 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
+                            className={`w-${inputWidth} border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
                             style={
                                 hasColor
                                     ? {

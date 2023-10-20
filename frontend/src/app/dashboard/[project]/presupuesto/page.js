@@ -8,6 +8,7 @@ import { useContext } from "react";
 
 import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import TableBudget from "@/components/tableBudget";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 axios.defaults.withCredentials = true;
 import {
@@ -22,6 +23,9 @@ import {
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../layout";
+import {ExportIcon} from "@/../public/icons/ExportIcon";
+
+
 
 export default function Presupuesto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -35,16 +39,20 @@ export default function Presupuesto(props) {
     //const router=userRouter();
 
 
-
     const [filterValue, setFilterValue] = React.useState("");
 
     useEffect(()=>{setIsLoadingSmall(false)},[])
     return (
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
-                <div className="header">
-                     Inicio/Proyectos/{projectName}/Presupuesto
-                </div>
+
+                <Breadcrumbs>
+                    <BreadcrumbsItem href="/" text="Inicio" />
+                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                    <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
+                    <BreadcrumbsItem href="" text="Presupuesto" />
+
+                </Breadcrumbs>
 
                 <div className="presupuesto">
                     <div className="titlePresupuesto">Presupuesto</div>
@@ -69,8 +77,14 @@ export default function Presupuesto(props) {
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
                                 <button className="btnCommon btnEstimacion sm:w-1 sm:h-1" type="button">Estimacion</button>
                         </Link>
+
+                        <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
+                            Exportar
+                        </Button>
                     </div>
-           
+
+                    <div className="subtitlePresupuesto">Flujo de Caja Enero - Junio</div>
+                    
 
 
                     <TableBudget> </TableBudget>

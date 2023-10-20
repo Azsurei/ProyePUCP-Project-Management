@@ -36,8 +36,76 @@ async function listarFormato(req,res,next){
     }
 }
 
+async function listarMatrizComunicacion(req,res,next){
+    const {idProyecto} = req.params;
+    try {
+        const query = `CALL LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
+        matrizComunicacion = results[0];
+        res.status(200).json({matrizComunicacion, message: "Matriz de Comunicacion listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}   
+async function insertarMatrizComunicacion(req,res,next){
+        const{idProyecto, idCanal, idFrecuencia, idFormato, sumillaInformacion, detalleInformacion, 
+            responsableDeComunicar, grupoReceptor} = req.body;
+        const query = `
+            CALL INSERTAR_COMUNICACION_X_IDPROYECTO(?,?,?,?,?,?,?,?);
+        `;
+        try {
+            const [results] = await connection.query(query,[idProyecto, idCanal,idFrecuencia,idFormato,
+                sumillaInformacion,detalleInformacion,responsableDeComunicar,grupoReceptor]);
+            const idComunicacion = results[0][0].idComunicacion;
+            console.log(`Se insertó la comunicacion ${idComunicacion}!`);
+            res.status(200).json({
+                idComunicacion,
+                message: "Comunicacion insertada exitosamente",
+            });
+        } catch (error) {
+            next(error);
+        }
+}
+
+async function modificarMatrizComunicacion(req,res,next){
+    const{idComunicacion, idCanal, idFrecuencia, idFormato, sumillaInformacion, detalleInformacion, 
+        responsableDeComunicar, grupoReceptor} = req.body;
+    const query = `
+        CALL MODIFICAR_COMUNICACION(?,?,?,?,?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idComunicacion, idCanal,idFrecuencia,idFormato,
+            sumillaInformacion,detalleInformacion,responsableDeComunicar,grupoReceptor]);
+        const id_comunicacion = results[0][0].idComunicacion;
+        console.log(`Se modificó la comunicacion ${id_comunicacion}!`);
+        res.status(200).json({
+            id_comunicacion,
+            message: "Comunicacion modificada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+async function listarComunicacion(req,res,next){
+    const {idComunicacion} = req.params;
+    try {
+        const query = `CALL LISTAR_COMUNICACION_X_IDCOMUNICACION(?);`;
+        const [results] = await connection.query(query,[idComunicacion]);
+        comunicacion = results[0];
+        res.status(200).json({comunicacion, message: "Comunicacion listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}   
+
 module.exports = {
     listarCanales,
     listarFrecuencia,
-    listarFormato
+    listarFormato,
+    listarMatrizComunicacion,
+    insertarMatrizComunicacion,
+    modificarMatrizComunicacion,
+    listarComunicacion
 };

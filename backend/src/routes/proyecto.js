@@ -8,6 +8,7 @@ const routerEquipo = require("./equipo").routerEquipo;
 const routerCronograma = require('./cronograma').routerCronograma;
 const routerPresupuesto = require('./presupuesto').routerPresupuesto;
 const routerMatrizComunicaciones = require('./matrizDeComunicaciones').routerMatrizComunicaciones;
+const routerAutoEvaluacion = require('./autoEvaluacion').routerAutoEvaluacion;
 const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
@@ -17,6 +18,7 @@ routerProyecto.use("/ActaConstitucion", routerActaConstitucion);
 routerProyecto.use('/cronograma', routerCronograma);
 routerProyecto.use("/presupuesto", routerPresupuesto);
 routerProyecto.use("/matrizDeComunicaciones", routerMatrizComunicaciones);
+routerProyecto.use("/autoEvaluacion", routerAutoEvaluacion);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token
@@ -484,6 +486,32 @@ routerProyecto.post(
                 idRol,
                 idProyecto,
             ]);
+            res.status(200).json({
+                usuarios: results[0],
+                message: "Usuarios por rol en proyecto obtenidos exitosamente",
+            });
+            console.log(results[0]);
+            console.log("Si se listaron los usuarios por rol en proyecto");
+        } catch (error) {
+            console.error(
+                "Error al obtener los usuarios por rol en proyecto",
+                error
+            );
+            res.status(500).send(
+                "Error al obtener los usuarios por rol en proyecto: " +
+                    error.message
+            );
+        }
+    }
+);
+
+routerProyecto.get("/listarUsuariosXdProyecto/:idProyecto", async (req, res) => {
+        //Insertar query aca
+        const { idProyecto } = req.params;
+        console.log(idProyecto);
+        const query = `CALL LISTAR_USUARIOS_X_IDPROYECTO(?);`;
+        try {
+            const [results] = await connection.query(query, [idProyecto]);
             res.status(200).json({
                 usuarios: results[0],
                 message: "Usuarios por rol en proyecto obtenidos exitosamente",

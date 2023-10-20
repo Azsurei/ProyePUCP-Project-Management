@@ -63,6 +63,12 @@ export default function ProductBacklogRegister(props) {
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
     const [backlog, setBacklog] = useState([]);
+    const [reloadData, setReloadData] = useState(false);
+
+  // Esta función se llama cuando deseas recargar los datos
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
 
     useEffect(() => {
         const fetchBacklog = async () => {
@@ -84,6 +90,7 @@ export default function ProductBacklogRegister(props) {
         fetchBacklog();
     }, []);
     const toggleModal = () => {
+        handleReloadData();
         setModal(!modal);
     };
 
@@ -107,8 +114,10 @@ export default function ProductBacklogRegister(props) {
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
+            setReloadData(true);
         } else {
             document.body.style.overflow = "auto";
+            setReloadData(false);
         }
         setIsLoadingSmall(false);
     }, [modal]);
@@ -276,11 +285,7 @@ export default function ProductBacklogRegister(props) {
                 <div className="titleBacklogRegisterPB">
                     Registrar nuevo elemento en el Backlog
                 </div>
-                <div className="description">
-                    <h4 style={{ fontWeight: 600 }}>
-                        Nombre de la historia de usuario
-                        <span className="text-red-500"> *</span>
-                    </h4>
+                <div>
                     <DescriptionRequeriment
                         name={name}
                         onNameChange={setName}
@@ -305,6 +310,7 @@ export default function ProductBacklogRegister(props) {
                                 hasColor={false}
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
+                                reloadData={reloadData}
                             />
                             <button
                                 className="w-20 h-20"
@@ -379,7 +385,7 @@ export default function ProductBacklogRegister(props) {
                         />
                     </div>
                 </div>
-                <div className="userDescription">
+                <div>
                     <h4 style={{ fontWeight: 600 }}>
                         Descripción de usuario
                         <span className="text-red-500"> *</span>
@@ -506,7 +512,6 @@ export default function ProductBacklogRegister(props) {
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
-                                    //FALTA HACER LA VERIFICACIÓN DE LOS CAMPOS
                                     if (
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()

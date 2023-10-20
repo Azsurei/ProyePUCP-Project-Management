@@ -6,30 +6,39 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
+function createData(name, month1, month2, month3, month4,month5,month6) {
+  return { name, month1, month2, month3, month4,month5,month6 };
 }
 
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+  createData('Ingresos'),
+  createData('Préstamo', 1500, 1500, 1500, 1500,1500,1500),
+  createData('Pago Cliente', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Donaciones', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Total Ingresos', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Egresos'),
+  createData('Jefe de Proyecto', 1500, 1500, 1500, 1500,1500,1500),
+  createData('Ingenierio Industrial', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Licencia Bizagi', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Transporte', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Total Egresos', 2000, 1500, 1500, 1500,1500,1500),
+  createData('Total Acumulado', 2000, 1500, 1500, 1500,1500,1500)
 ];
 
 const TableBudget = () => {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+      <Table stickyHeader sx={{ minWidth: 650 }} size="small" aria-label="sticky table">
         <TableHead>
           <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            <TableCell></TableCell>
+            <TableCell align="right">Enero</TableCell>
+            <TableCell align="right">Febrero</TableCell>
+            <TableCell align="right">Marzo</TableCell>
+            <TableCell align="right">Abril</TableCell>
+            <TableCell align="right">Mayo</TableCell>
+            <TableCell align="right">Junio</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -38,16 +47,27 @@ const TableBudget = () => {
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
+          <TableCell component="th" scope="row" style={
+                  (row.name === 'Ingresos' || row.name === 'Egresos')
+                    ? { fontWeight: 'bold', color: '#172B4D', fontFamily: 'Roboto' ,fontStyle: 'italic', width: '20px'}
+                    : (row.name === 'Total Ingresos' || row.name === 'Total Egresos' || row.name === 'Total Acumulado')
+                    ? { backgroundColor: 'gray', color: 'white', width: '100px' }
+                    : { fontWeight: 'bold', color: '#172B4D', fontFamily: 'Roboto', paddingLeft: '30px' ,fontStyle: 'italic',width: '200px'}
+                }>
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+
+              <TableCell align="right">{row.month1}</TableCell>
+              <TableCell align="right">{row.month2}</TableCell>
+              <TableCell align="right">{row.month3}</TableCell>
+              <TableCell align="right">{row.month4}</TableCell>
+              <TableCell align="right">{row.month5}</TableCell>
+              <TableCell align="right">{row.month6}</TableCell>
             </TableRow>
           ))}
         </TableBody>
+
+
       </Table>
     </TableContainer>
   );

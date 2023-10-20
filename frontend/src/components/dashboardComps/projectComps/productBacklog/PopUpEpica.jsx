@@ -25,6 +25,7 @@ import {
 } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
+import { set } from "date-fns";
 //import { set } from "date-fns";
 
 export const UserCardsContext = React.createContext();
@@ -38,9 +39,14 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
     const [eliminateError, setEliminateError] = useState("");
     const [noEpic, setNoEpic] = useState("");
     const [isSelected, setIsSelected] = useState(false);
+    const [addEpic, setAddEpic] = useState(false);
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
+
+    const AddNewEpic = () => {
+        setAddEpic(true);
+    }
 
     const fetchData = async () => {
         try {
@@ -90,7 +96,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                  // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
                 });
-                
+            toggle();
         }
     };
 
@@ -140,21 +146,12 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
         (modal && <div className="popUp" style={{animation: "droptop .3s linear"}}>
 			<div onClick={toggle} className="overlay"></div>
             <div className="modalEpic">
-                <p className="buscarEpic">Lista de Epicas</p>
+                
                 <div className="containerModal">
-                    <div className="divBuscador">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[100%]"
-                            placeholder="Ingresa una epica..."
-                            startContent={<SearchIcon />}
-                            value={filterValue}
-                            onValueChange={onSearchChange}
-                            variant="faded"
-                        />
-                    </div>
-                    <div className="subcontainer custom-flex">
-                            <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={handleInsertEpic}>
+                    
+                    <p className="buscarEpic">Lista de Epicas</p>
+                    <div className="subcontainer flex justify-end">
+                            <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={AddNewEpic}>
                                 Agregar Epica
                             </Button>
                             <Button color="danger"  onClick={() => {
@@ -166,12 +163,18 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                     </div>
                     
                 </div>
-
-                {noResults && (
-                    <p className="noResultsMessage">
-                        No se encontraron resultados.
-                    </p>
-                )}
+                <div className="divBuscador">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[100%]"
+                            placeholder="Ingresa una epica..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            variant="faded"
+                        />
+                </div>
+                
                 <div className="containerModal">
                     <div className="divEpics">
                         <UserCardsContext.Provider
@@ -179,20 +182,30 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         >
                             <ListEpic lista={listEpics}></ListEpic>
                         </UserCardsContext.Provider>
+                        {noResults && (
+                            <p className="error-message">
+                                No se encontraron resultados.
+                            </p>
+                        )}
                     </div>
-                    <div className="subcontainer">
+                     
+                </div>
+                <div className="subcontainer">
                         
-                        <p className="buscarEpic">Insertar Epica</p>
-                        <input
-                            type="text"
-                            className="input-field"
+                        
+                        {addEpic ? (
+                            <input
+                            type="text" 
+                            autofocus 
+                            className="inputEpica"
                             placeholder="Escribe la nueva epica"
                             value={newEpicName}
                             onChange={(e) => {
                                 setNewEpicName(e.target.value);
                                 setAddError("");
                             }}
-                        ></input>
+                            ></input>
+                        ):null}
                         {addError && <p className="error-message">{addError}</p>}
                         {noEpic && <p className="error-message">{noEpic}</p>}
                         {eliminateError ? (
@@ -214,17 +227,19 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                                 </div>
                             </div>
                         ) : null}
-                    </div>  
-                </div>
-                <div >
-                        <button
-                            className="btn-modal"
-                            onClick={toggle}
-                        >
-                            Aceptar
+                </div> 
+                
+                <div className="buttonSection">
+                    <button className="btn-modal" onClick={handleInsertEpic}>
+                        Aceptar
+                    </button>
+                    <div className="right-buttons">
+                        <button className="close-modal" onClick={toggle}>
+                            Cancelar
                         </button>
                     </div>
-
+                </div>
+                
             </div>
         </div>
         )
