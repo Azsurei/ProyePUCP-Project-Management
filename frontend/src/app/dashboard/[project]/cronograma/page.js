@@ -474,8 +474,8 @@ export default function Cronograma(props) {
                     <div className="containerSubtareas">
                         <div className="subTareasHeader">
                             <p>
-                                Subtareas (Aqui se abrira un modal para
-                                introducir nombre, desc, fechaI y fechaF)
+                                { "Subtareas" /*(Aqui se abrira un modal para
+                                introducir nombre, desc, fechaI y fechaF) */}
                             </p>
                             <div className="btnToPopUp">
                                 <p>Añadir</p>
