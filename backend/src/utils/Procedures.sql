@@ -1076,6 +1076,48 @@ BEGIN
     SELECT _idHistoriaRequisito AS idHistoriaRequisito;
 END$
 
+--Acta de Constitucion
+DROP PROCEDURE LISTAR_ACTA_X_IDPROYECTO;
+--Listar Datos principales
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTA_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT * 
+    FROM ActaConstitucion
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+
+DROP PROCEDURE LISTAR_DETALLEAC_X_IDPROYECTO;
+--Listar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE LISTAR_DETALLEAC_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT dac.idDetalle, dac.idActaConstitucion, dac.nombre, dac.detalle, dac.activo 
+    FROM DetalleAC AS dac
+    LEFT JOIN ActaConstitucion AS ac ON dac.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND dac.activo = 1;
+END$
+
+
+DROP PROCEDURE LISTAR_ACTA_X_IDACTA;
+--Listar Datos principales
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTA_X_IDACTA(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT * 
+    FROM ActaConstitucion
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
 DROP PROCEDURE LISTAR_DETALLEAC_X_IDACTA;
 --Listar DETALLEAC
 DELIMITER $
@@ -1087,6 +1129,27 @@ BEGIN
     FROM DetalleAC
     WHERE idActaConstitucion = _idActaConstitucion
     AND activo = 1;
+END$
+
+DROP PROCEDURE MODIFICAR_ACTA_CONSTITUCION;
+--Modificar DETALLEAC
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ACTA_CONSTITUCION(
+    IN _idProyecto INT,
+    IN _nombreProyecto VARCHAR(200),
+	IN _empresa VARCHAR(200),
+    IN _cliente VARCHAR(200),
+	IN _patrocinador VARCHAR(200),
+	IN _gerente VARCHAR(200)
+)
+BEGIN
+    UPDATE ActaConstitucion 
+    SET nombreProyecto = _nombreProyecto,
+        empresa = _empresa,
+        cliente = _cliente,
+        patrocinador = _patrocinador,
+        gerente = _gerente
+    WHERE idProyecto = _idProyecto and activo = 1;
 END$
 
 DROP PROCEDURE MODIFICAR_CAMPO_DETALLEAC;
@@ -1105,61 +1168,93 @@ BEGIN
     SELECT * FROM DetalleAC;
 END$
 
-DROP PROCEDURE LISTAR_INTERESADOAC_X_IDACTA;
+DROP PROCEDURE LISTAR_INTERESADOAC_AC;
 --Listar Interesados Acta Constitucion
 DELIMITER $
-CREATE PROCEDURE LISTAR_INTERESADOAC_X_IDACTA(
-    IN _idActaConstitucion INT
+CREATE PROCEDURE LISTAR_INTERESADOAC_AC(
+    IN _idProyecto INT
 )
 BEGIN
-    SELECT * 
-    FROM InteresadoAC
-    WHERE idActaConstitucion = _idActaConstitucion
-    AND activo = 1;
+    SELECT i.idInteresado, i.idActaConstitucion, i.nombre, i.cargo, i.organizacion, i.activo
+    FROM InteresadoAC AS i
+    LEFT JOIN ActaConstitucion AS ac ON i.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND i.activo = 1;
 END$
 
 DROP PROCEDURE INSERTAR_INTERESADOAC;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_INTERESADOAC(
-	IN  _idActaConstitucion INT,
+	IN  _idProyecto INT,
     IN _nombre VARCHAR(255),
     IN _cargo VARCHAR(255),
     IN _organizacion VARCHAR(255)
 )
 BEGIN
 	DECLARE _idInteresado INT;
+    SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
 	INSERT INTO InteresadoAC(idActaConstitucion,nombre,cargo,organizacion,activo) 
-    VALUES(_idActaConstitucion,_nombre,_cargo,_organizacion,1);
+    VALUES(@_idActaConstitucion,_nombre,_cargo,_organizacion,1);
     SET _idInteresado = @@last_insert_id;
     SELECT _idInteresado AS idInteresado;
 END$
 
-DROP PROCEDURE LISTAR_HITOAC_X_IDACTA;
+DROP PROCEDURE LISTAR_HITOAC_X_AC;
 --Listar Hito Acta Constitucion
 DELIMITER $
-CREATE PROCEDURE LISTAR_HITOAC_X_IDACTA(
-    IN _idActaConstitucion INT
+CREATE PROCEDURE LISTAR_HITOAC_X_AC(
+    IN _idProyecto INT
 )
 BEGIN
-    SELECT * 
-    FROM HitoAC
-    WHERE idActaConstitucion = _idActaConstitucion
-    AND activo = 1;
+    SELECT h.idHito, h.idActaConstitucion, h.descripcion, h.fechaLimite, h.activo 
+    FROM HitoAC AS h
+    LEFT JOIN ActaConstitucion AS ac ON h.idActaConstitucion = ac.idActaConstitucion
+    WHERE ac.idProyecto = _idProyecto
+    AND h.activo = 1;
 END$
 
 DROP PROCEDURE INSERTAR_HITOAC;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_HITOAC(
-	IN  _idActaConstitucion INT,
+	IN  _idProyecto INT,
     IN _descripcion VARCHAR(255),
     IN _fechaLimite DATE
 )
 BEGIN
 	DECLARE _idHito INT;
+    SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
 	INSERT INTO HitoAC(idActaConstitucion,descripcion,fechaLimite,activo) 
-    VALUES(_idActaConstitucion,_descripcion,_fechaLimite,1);
+    VALUES(@_idActaConstitucion,_descripcion,_fechaLimite,1);
     SET _idHito = @@last_insert_id;
     SELECT _idHito AS idHito;
+END$
+
+DROP PROCEDURE CREAR_CAMPO_AC;
+DELIMITER $
+CREATE PROCEDURE CREAR_CAMPO_AC(
+	IN  _idProyecto INT,
+    IN _nombre VARCHAR(500),
+    IN _detalle VARCHAR(500)
+)
+BEGIN
+	DECLARE _idDetalle INT;
+    SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO DetalleAC(idActaConstitucion,nombre,detalle,activo) 
+    VALUES(@_idActaConstitucion,_nombre,_detalle,1);
+    SET _idDetalle = @@last_insert_id;
+    SELECT * FROM DetalleAC WHERE idDetalle = _idDetalle;
+END$
+
+DROP PROCEDURE ELIMINAR_CAMPO_AC;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CAMPO_AC(
+    IN _idDetalle INT
+)
+BEGIN
+    UPDATE DetalleAC 
+    SET activo = 0
+    WHERE idDetalle = _idDetalle;
+    SELECT _idDetalle AS idDetalle;
 END$
 
 ---------------
@@ -1529,30 +1624,29 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
-<<<<<<< HEAD
-=======
 
 DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(IN _idProyecto INT)
 BEGIN
     SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, c.idMatrizComunicacion, mc.idProyecto, 
-    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, c.grupoReceptor, c.activo
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correo, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
     JOIN MatrizComunicacion AS mc ON c.idMatrizComunicacion = mc.idMatrizComunicacion
     JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
     JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+    JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
 	WHERE mc.idProyecto = _idProyecto AND c.activo=1;
 END$
 
-DROP PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ;
+DROP PROCEDURE INSERTAR_COMUNICACION_X_IDPROYECTO;
 DELIMITER $
-CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ(
+CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDPROYECTO(
+    IN _idProyecto INT,
 	IN _idCanal INT,
     IN _idFrecuencia INT,
     IN _idFormato INT,
-    IN _idMatrizComunicacion INT,
     IN _sumillaInformacion VARCHAR(500),
     IN _detalleInformacion VARCHAR(500),
     IN _responsableDeComunicar VARCHAR(500),
@@ -1560,8 +1654,9 @@ CREATE PROCEDURE INSERTAR_COMUNICACION_X_IDMATRIZ(
 )
 BEGIN
 	DECLARE _idComunicacion INT;
+    SET @_idMatrizComunicacion = (SELECT idMatrizComunicacion FROM MatrizComunicacion WHERE idProyecto = _idProyecto AND activo = 1);
 	INSERT INTO Comunicacion(idCanal,idFrecuencia,idFormato,idMatrizComunicacion,sumillaInformacion,detalleInformacion,responsableDeComunicar,grupoReceptor,activo) 
-    VALUES(_idCanal,_idFrecuencia,_idFormato,_idMatrizComunicacion,_sumillaInformacion,_detalleInformacion,_responsableDeComunicar,_grupoReceptor,1);
+    VALUES(_idCanal,_idFrecuencia,_idFormato,@_idMatrizComunicacion,_sumillaInformacion,_detalleInformacion,_responsableDeComunicar,_grupoReceptor,1);
     SET _idComunicacion = @@last_insert_id;
     SELECT _idComunicacion AS idComunicacion;
 END$
@@ -1575,7 +1670,7 @@ BEGIN
 	WHERE idProyecto = _idProyecto AND activo=1;
 END$
 
-DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ;
+DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDMATRIZ(IN _idMatrizComunicacion INT)
 BEGIN
@@ -1585,6 +1680,68 @@ BEGIN
     JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
     JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
-	WHERE c.idComunicacion = _idMatrizComunicacion AND c.activo=1;
+	WHERE c.idMatrizComunicacion = _idMatrizComunicacion AND c.activo=1;
 END$
->>>>>>> af04ce4545e080ab181fc0571e54b83ddbd71fcb
+
+DROP PROCEDURE IF EXISTS LISTAR_COMUNICACION_X_IDCOMUNICACION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMUNICACION_X_IDCOMUNICACION(IN _idComunicacion INT)
+BEGIN
+    SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, 
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, c.grupoReceptor, c.activo
+	FROM Comunicacion AS c
+    JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
+    JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
+    JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+    JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
+	WHERE c.idComunicacion = _idComunicacion AND c.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_COMUNICACION;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_COMUNICACION(
+    IN _idComunicacion INT,
+	IN _idCanal INT,
+    IN _idFrecuencia INT,
+    IN _idFormato INT,
+    IN _sumillaInformacion VARCHAR(500),
+    IN _detalleInformacion VARCHAR(500),
+    IN _responsableDeComunicar INT,
+    IN _grupoReceptor VARCHAR(500)
+)
+BEGIN
+	UPDATE Comunicacion 
+    SET idCanal = _idCanal,
+        idFrecuencia = _idFrecuencia,
+        idFormato = _idFormato,
+        sumillaInformacion = _sumillaInformacion,
+        detalleInformacion = _detalleInformacion,
+        responsableDeComunicar = _responsableDeComunicar,
+        grupoReceptor = _grupoReceptor
+    WHERE idComunicacion = _idComunicacion;
+    SELECT _idComunicacion AS idComunicacion;
+END$
+
+
+------------
+-- Equipos
+------------
+--Listar Equipos x id de proyecto
+DROP PROCEDURE IF EXISTS LISTAR_EQUIPOS_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_EQUIPOS_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT *
+	FROM Equipo
+	WHERE idProyecto = _idProyecto AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTES_X_IDEQUIPO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PARTICIPANTES_X_IDEQUIPO(IN _idEquipo INT)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM Usuario AS u
+    LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
+	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
+END$

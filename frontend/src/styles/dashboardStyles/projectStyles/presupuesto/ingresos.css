@@ -1,0 +1,24 @@
+.modalAddIngreso{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: space-between;
+
+}
+
+.comboBoxMoneda{
+
+    display: flex;
+    max-width: 60%;
+    align-items: center;   
+    flex-direction: row;
+}
+
+.textIngreso{
+    color: var(--color-text-subtle, #44546F);
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 16px; /* 123.077% */
+}

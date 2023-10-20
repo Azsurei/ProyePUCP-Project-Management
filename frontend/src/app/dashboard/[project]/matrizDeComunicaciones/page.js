@@ -1,5 +1,4 @@
 "use client"
-import InConstruction from "@/common/InConstruction";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
 import Link from "next/link";
@@ -25,61 +24,100 @@ import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
 import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication.css";
 import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/PopUpEliminateMC";
+import { set } from "date-fns";
+import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringMC";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+    const stringURL = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/59`
     console.log(projectId);
     console.log(projectName);
-    
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [data, setData] = useState([]);
+    const [objectMC, setObjectMC] = useState(null);
+    const [navegate, setNavegate] = useState(false);
+    const [idMatriz, setIdMatriz] = useState(null);
+    function DataTable(){
+        const fetchData = async () => {
+          try {
+            // Realiza la solicitud HTTP al endpoint del router
+            const stringURL =
+            "http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/" +
+            projectId;
+            const response = await axios.get(stringURL);
     
+            // Actualiza el estado 'data' con los datos recibidos
+            // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+            setData(response.data.matrizComunicacion);
+            setIsLoadingSmall(false);
+            console.log(`Esta es la data:`, data);
+            console.log(`Datos obtenidos exitosamente:`, response.data.matrizComunicacion);
+          } catch (error) {
+            console.error('Error al obtener datos:', error);
+          }
+        };
+    
+        fetchData();
+      };
+    
+    useEffect(() => {
+        DataTable();
+    }, []);
+
+    
+
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
 
     const toggleModal = (task) => {
         setSelectedTask(task);
+        console.log("El id del objeto es: ", selectedTask);
         setModal1(!modal1);
+    };
+    const setRoutering = (objectID) => {
+        setObjectMC(objectID);
+        console.log("El id del objeto MC es: ", objectMC);
+        setNavegate(!navegate);
     };
     const columns = [
         {
             name: 'Informacion Requerida',
-            uid: 'Informacion',
+            uid: 'sumillaInformacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Formato',
-            uid: 'FormatoComunicacion',
+            uid: 'nombreFormato',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Responsable de comunicar',
-            uid: 'ResponsableComunicacion',
+            uid: 'nombres',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Grupo receptor',
-            uid: 'GrupoReceptorComunicacion',
+            uid: 'grupoReceptor',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Canal',
-            uid: 'CanalComunicacion',
+            uid: 'nombreCanal',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Frecuencia',
-            uid: 'FrecuenciaComunicacion',
+            uid: 'nombreFrecuencia',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -90,18 +128,18 @@ export default function MatrizDeComunicaciones(props){
             sortable: false
         }
     ];
-    const data = [
-        {
-            id: 1,
-            Informacion: 'Acta de constitucion',
-            FormatoComunicacion: 'Word',
-            ResponsableComunicacion: 'Gestor de proyecto',
-            GrupoReceptorComunicacion: 'Todos los interesados',
-            CanalComunicacion: 'Reunion presencial',
-            FrecuenciaComunicacion: 'Una sola vez',
-        },
+    // const data = [
+    //     {
+    //         id: 1,
+    //         sumillaInformacion: 'Acta de constitucion',
+    //         nombreFormato: 'Word',
+    //         responsableDeComunicar: 'Gestor de proyecto',
+    //         grupoReceptor: 'Todos los interesados',
+    //         nombreCanal: 'Reunion presencial',
+    //         nombreFrecuencia: 'Una sola vez',
+    //     },
         
-    ];
+    // ];
     const toolsOptions = [
         { name: "Herramienta 1", uid: "active" },
         { name: "Herramienta 2", uid: "paused" },
@@ -120,21 +158,21 @@ export default function MatrizDeComunicaciones(props){
     // Variables adicionales
     const pages = Math.ceil(data.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
-
+    
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...data];
+        let filteredTemplates = [...data]
 
         if (hasSearchFilter) {
-            filteredTemplates = filteredTemplates.filter((data) =>
-                data.Informacion.toLowerCase().includes(filterValue.toLowerCase())
+            filteredTemplates = filteredTemplates.filter((item) =>
+            item.sumillaInformacion.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
             toolsFilter !== "all" &&
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
-            filteredTemplates = filteredTemplates.filter((data) =>
-                Array.from(toolsFilter).includes(data.Informacion)
+            filteredTemplates = filteredTemplates.filter((item) =>
+                Array.from(toolsFilter).includes(item.sumillaInformacion)
             );
         }
 
@@ -192,12 +230,21 @@ export default function MatrizDeComunicaciones(props){
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
+        const imageOptions = {
+            "WORD": "/icons/icon-word.svg",
+            "Documento Excel": "/icons/icon-excel.svg",
+            "PDF": "/icons/icon-pdf.svg",
+            "Informe Escrito": "/icons/icon-information.svg",
+            "Informe Verbal": "/icons/icon-verbal.svg",
+            "Otros": "/icons/icon-other.svg",
+            // Agrega más opciones según sea necesario
+        };
         
         switch (columnKey) {
                 
-            case "FormatoComunicacion":
+            case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
-                return <img src={cellValue === "Word" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
+                return <img src={imageOptions[cellValue]} alt={`Icono de ${cellValue}`} />;
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -208,12 +255,13 @@ export default function MatrizDeComunicaciones(props){
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem >
+                            <DropdownItem onClick={() => 
+                                    setRoutering(data)
+                                }>
                                 {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
                                         Editar 
                                 {/* </Link> */}
                                 </DropdownItem>
-
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -239,17 +287,9 @@ export default function MatrizDeComunicaciones(props){
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="hidden sm:flex .roboto">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto'] color-['#172B4D']"
-                                >
-                                    Herramienta
-                                </Button>
+                                
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
@@ -267,7 +307,12 @@ export default function MatrizDeComunicaciones(props){
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
+                        <Button color="primary" endContent={<PlusIcon />} className="btnAddComunicacion">
+                            <Link href={"/dashboard/"+projectName+"="+projectId+"/matrizDeComunicaciones/registerMC"}>
+                            Agregar
+                            </Link> 
+                        </Button>
                         <Button color="primary" endContent={<PlusIcon />} className="btnComunicacionExport">
                             Exportar
                         </Button>
@@ -361,7 +406,7 @@ export default function MatrizDeComunicaciones(props){
                             columns={columns}
                             sortedItems={sortedItems}
                             renderCell={renderCell}
-                            idKey="id"
+                            idKey="idComunicacion"
                         />
                 
                 </div>
@@ -370,10 +415,18 @@ export default function MatrizDeComunicaciones(props){
                 <PopUpEliminateMC
                     modal = {modal1} 
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
-                    taskName={selectedTask.Informacion}
-                    idHistoriaDeUsuario = {selectedTask.id}
+                    taskName={selectedTask.sumillaInformacion}
+                    idComunicacion = {selectedTask.idComunicacion}
                 />
             )}
+            {navegate && objectMC.idComunicacion && (
+                <RouteringMC
+                    proy_name = {projectName}
+                    proy_id = {projectId}
+                    idMC = {objectMC.idComunicacion}
+                />
+            )
+            }
         </div>
         
     );

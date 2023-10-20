@@ -8,6 +8,7 @@ import { useContext } from "react";
 
 import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import TableBudget from "@/components/tableBudget";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 axios.defaults.withCredentials = true;
 import {
@@ -23,6 +24,8 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../layout";
 import {ExportIcon} from "@/../public/icons/ExportIcon";
+
+
 
 export default function Presupuesto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -42,9 +45,14 @@ export default function Presupuesto(props) {
     return (
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
-                <div className="header">
-                     Inicio/Proyectos/{projectName}/Presupuesto
-                </div>
+
+                <Breadcrumbs>
+                    <BreadcrumbsItem href="/" text="Inicio" />
+                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                    <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
+                    <BreadcrumbsItem href="" text="Presupuesto" />
+
+                </Breadcrumbs>
 
                 <div className="presupuesto">
                     <div className="titlePresupuesto">Presupuesto</div>
@@ -75,7 +83,7 @@ export default function Presupuesto(props) {
                         </Button>
                     </div>
 
- 
+                    <div className="subtitlePresupuesto">Flujo de Caja Enero - Junio</div>
                     
 
 

@@ -57,7 +57,6 @@ const TableBudget = () => {
                 {row.name}
               </TableCell>
 
-              
               <TableCell align="right">{row.month1}</TableCell>
               <TableCell align="right">{row.month2}</TableCell>
               <TableCell align="right">{row.month3}</TableCell>

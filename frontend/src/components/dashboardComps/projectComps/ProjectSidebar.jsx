@@ -254,7 +254,7 @@ function ProjectSidebar(props) {
             position: 3,
             optIcon: "/icons/sideBarDropDown_icons/sbdd3.svg",
             optName: "Actas de reunion",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/actaReunion`,
         },
         {
             id: 50 /*SIN ID EN BASE DE DATOS PORQUE SIEMPRE DEBE ESTAR PRESENTE*/,
@@ -284,7 +284,7 @@ function ProjectSidebar(props) {
             position: 2,
             optIcon: "/icons/sideBarDropDown_icons/sbdd6.svg",
             optName: "Acta de constitución",
-            goTo: `${stringBase}/actaConstitucion`,
+            goTo: `${stringBase}/actaConstitucion/info`,
         },
         {
             id: 2,

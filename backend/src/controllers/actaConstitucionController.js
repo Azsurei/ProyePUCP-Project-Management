@@ -1,11 +1,17 @@
 const connection = require("../config/db");
 
+//Todo va a ser idProyecto
 async function listar(req,res,next){
-    const {idActaConstitucion} = req.params;
+    const {idProyecto} = req.params;
     try {
-        const query = `CALL LISTAR_DETALLEAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query,[idActaConstitucion]);
-        const detalleAC = results[0];
+        const query1 = `CALL LISTAR_ACTA_X_IDPROYECTO(?);`;
+        const [acta] = await connection.query(query1,[idProyecto]);
+        const query2 = `CALL LISTAR_DETALLEAC_X_IDPROYECTO(?);`;
+        const [results] = await connection.query(query2,[idProyecto]);
+        const detalleAC = {
+            general: acta[0],
+            actaData: results[0]
+        };
         res.status(200).json({detalleAC, message: "DetalleAC listado"});
     } catch (error) {
         console.log(error);
@@ -14,9 +20,12 @@ async function listar(req,res,next){
 }
 
 async function modificarCampos(req,res,next){
-    const{detalleAC} = req.body;
+    const{idProyecto, nombreProyecto, empresa, cliente, patrocinador, gerente, actaData} = req.body;
     try {
-        for (const campo of detalleAC) {
+        const query1 = `CALL MODIFICAR_ACTA_CONSTITUCION(?,?,?,?,?,?);`;
+        const [acta] = await connection.query(query1,[idProyecto, nombreProyecto, 
+            empresa, cliente, patrocinador, gerente]);
+        for (const campo of actaData) {
             console.log(`Datos: ${campo.idDetalle},${campo.nombre},${campo.detalle}`);
             const [results] = await connection.execute(`
             CALL MODIFICAR_CAMPO_DETALLEAC(
@@ -32,11 +41,34 @@ async function modificarCampos(req,res,next){
     }
 }
 
-async function listarInteresados(req,res,next){
-    const {idActaConstitucion} = req.body;
+async function crearCampos(req,res,next){
+    const{idProyecto, nombreCampo, detalleCampo} = req.body;
     try {
-        const query = `CALL LISTAR_INTERESADOAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query,[idActaConstitucion]);
+        const query1 = `CALL CREAR_CAMPO_AC(?,?,?);`;
+        const [results] = await connection.query(query1,[idProyecto, nombreCampo, detalleCampo]);
+        campoCreado = results[0];
+        res.status(200).json({campoCreado, message: "CampoAC Creado"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarCampo(req,res,next){
+    const{idDetalle} = req.body;
+    try {
+        const query1 = `CALL ELIMINAR_CAMPO_AC(?);`;
+        const [results] = await connection.query(query1,[idDetalle]);
+        res.status(200).json({message: "CampoAC Eliminado"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarInteresados(req,res,next){
+    const {idProyecto} = req.params;
+    try {
+        const query = `CALL LISTAR_INTERESADOAC_AC(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
         const interesadoAC = results[0];
         res.status(200).json({interesadoAC, message: "InteresadoAC listado"});
     } catch (error) {
@@ -44,12 +76,12 @@ async function listarInteresados(req,res,next){
     }
 }
 async function insertarInteresado(req,res,next){
-    const{idActaConstitucion, nombre, cargo, organizacion} = req.body;
+    const{idProyecto, nombre, cargo, organizacion} = req.body;
     const query = `
         CALL INSERTAR_INTERESADOAC(?,?,?,?);
     `;
     try {
-        const [results] = await connection.query(query,[idActaConstitucion,nombre,cargo,organizacion]);
+        const [results] = await connection.query(query,[idProyecto,nombre,cargo,organizacion]);
         const idInteresado = results[0][0].idInteresado;
         console.log(`Se insertó el interesado ${idInteresado}!`);
         res.status(200).json({
@@ -62,10 +94,10 @@ async function insertarInteresado(req,res,next){
 }
 
 async function listarHito(req,res,next){
-    const {idActaConstitucion} = req.body;
+    const {idProyecto} = req.params;
     try {
-        const query = `CALL LISTAR_HITOAC_X_IDACTA(?);`;
-        const [results] = await connection.query(query,[idActaConstitucion]);
+        const query = `CALL LISTAR_HITOAC_X_AC(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
         const hitoAC = results[0];
         res.status(200).json({hitoAC, message: "HitoAC listado"});
     } catch (error) {
@@ -73,12 +105,12 @@ async function listarHito(req,res,next){
     }
 }
 async function insertarHito(req,res,next){
-    const{idActaConstitucion, descripcion, fechaLimite} = req.body;
+    const{idProyecto, descripcion, fechaLimite} = req.body;
     const query = `
         CALL INSERTAR_HITOAC(?,?,?);
     `;
     try {
-        const [results] = await connection.query(query,[idActaConstitucion,descripcion,fechaLimite]);
+        const [results] = await connection.query(query,[idProyecto,descripcion,fechaLimite]);
         const idHito = results[0][0].idHito;
         console.log(`Se insertó el hito ${idHito}!`);
         res.status(200).json({
@@ -93,6 +125,8 @@ async function insertarHito(req,res,next){
 module.exports = {
     listar,
     modificarCampos,
+    crearCampos,
+    eliminarCampo,
     listarInteresados,
     insertarInteresado,
     listarHito,
