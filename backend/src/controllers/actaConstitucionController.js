@@ -122,6 +122,23 @@ async function insertarHito(req,res,next){
     }
 }
 
+async function modificarHito(req,res,next){
+    const{ idHito, descripcion, fechaLimite} = req.body;
+    const query = `
+        CALL MODIFICAR_HITOAC(?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHito,descripcion,fechaLimite]);
+        const idHitoNew = results[0][0].idHito;
+        console.log(`Se modifico el hito ${idHitoNew}!`);
+        res.status(200).json({
+            message: "Hito modificado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     listar,
     modificarCampos,
@@ -130,5 +147,6 @@ module.exports = {
     listarInteresados,
     insertarInteresado,
     listarHito,
-    insertarHito
+    insertarHito,
+    modificarHito,
 };

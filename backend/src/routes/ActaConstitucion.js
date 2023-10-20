@@ -9,8 +9,10 @@ routerActaConstitucion.post("/crearCampos", verifyToken, actaConstitucionControl
 routerActaConstitucion.put("/eliminarCampo", verifyToken, actaConstitucionController.eliminarCampo);
 routerActaConstitucion.get("/listarInteresados/:idProyecto",verifyToken, actaConstitucionController.listarInteresados);
 routerActaConstitucion.post("/insertarInteresado",verifyToken, actaConstitucionController.insertarInteresado);
+
 routerActaConstitucion.get("/listarHito/:idProyecto",verifyToken, actaConstitucionController.listarHito);
 routerActaConstitucion.post("/insertarHito",verifyToken, actaConstitucionController.insertarHito);
+routerActaConstitucion.put("/modificarHito",verifyToken, actaConstitucionController.modificarHito);
 
 
 module.exports.routerActaConstitucion = routerActaConstitucion;
