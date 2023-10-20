@@ -42,8 +42,7 @@ export default function Ingresos(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     
-    console.log(projectId);
-    console.log(projectName);
+
     //const router=userRouter();
     const [listUsers, setListUsers] = useState([]);
 
@@ -60,18 +59,63 @@ export default function Ingresos(props) {
 
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const insertarLineaIngreso = () => {
 
-    };
+
+    const [descripcionLinea, setdescripcionLinea] = useState("");
+
+    const [montoLinea, setMontoLinea] = useState("");
+    
+    const insertarLineaIngreso = () => {
+        const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
+
+        console.log(projectId);
+
+        axios.post(stringUrlTipoTransaccion, {
+            idProyecto: projectId,
+            idMoneda: selectedMoneda,
+            idTransaccionTipo:selectedTipoTransaccion,
+            idIngresoTipo:selectedTipo,
+            descripcion:descripcionLinea,
+            monto:parseFloat(montoLinea),
+            cantidad:1,
+            fechaTransaccion:selectedDate,
+        })
+
+        .then(function (response) {
+            console.log(response);
+            console.log("Linea Ingresada");
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
 
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
-    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos `;
+    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
+    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
     
     const [selectedMoneda, setselectedMoneda] = useState("");
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
     };
+
+    const [selectedTipo, setselectedTipo] = useState("");
+    
+    const handleSelectedValueTipo = (value) => {
+        setselectedTipo(value);
+    };
+
+    const [selectedDate, setSelectedDate] = useState("");
+
+
+    const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
+    
+    const handleSelectedValueTipoTransaccion = (value) => {
+        setselectedTipoTransacciono(value);
+    };
+
+    //const {idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} 
     
     return (
 
@@ -141,7 +185,7 @@ export default function Ingresos(props) {
                 
                 </div>
 
-                <Modal size='lg' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+                <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
@@ -166,9 +210,10 @@ export default function Ingresos(props) {
                                                 hasColor={false}
                                                 onSelect={handleSelectedValueMoneda}
                                                 idParam="idMoneda"
-                                                initialName={selectedMoneda}
-                                                inputWidth="16"
+                                                initialName="Seleccione una moneda"
+                                                inputWidth="1/3"
                                             />
+
                                             </div>
 
                                             <Textarea
@@ -177,11 +222,14 @@ export default function Ingresos(props) {
                                                 placeholder=""
                                                 className="max-w-x"
                                                 maxRows="1"
-                                                />
+                                                onValueChange={setselectedTipo}
+                                            />
                                         
                                         </div>
-
                                         <p className="textIngreso">Descripción</p>
+
+                                        <div className="modalAddIngreso">
+                                            
 
                                         <Textarea
                                             label=""
@@ -189,23 +237,51 @@ export default function Ingresos(props) {
                                             placeholder=""
                                             className="max-w-x"
                                             maxRows="2"
+                                            onValueChange={montoLinea}
                                             />
+                                         </div>
 
-                                        <div className="comboBoxMoneda">
-                                            <p className="textIngreso">Tipo Transaccion</p>
+                                         <p className="textIngreso">Tipo Ingreso</p>
+                                        
+
+
+
+                                         <div className="comboBoxMoneda">
+                                            
                                             <MyCombobox
-                                                urlApi={stringUrlMonedas}
-                                                property="monedas"
-                                                nameDisplay="nombre"
+                                                urlApi={stringUrlTipoTransaccion}
+                                                property="tiposTransaccion"
+                                                nameDisplay="descripcion"
                                                 hasColor={false}
-                                                onSelect={handleSelectedValueMoneda}
-                                                idParam="idMoneda"
-                                                initialName={selectedMoneda}
-                                                inputWidth="16"
+                                                onSelect={handleSelectedValueTipoTransaccion}
+                                                idParam="idTransaccionTipo"
+                                                initialName="Seleccione Transaccion"
+                                                inputWidth="64"
                                             />
 
                                         </div>
+                                         
+                                        <p className="textIngreso">Tipo Transacción</p>
 
+                                        <div className="comboBoxMoneda">
+                                            
+                                            <MyCombobox
+                                                urlApi={stringUrlTipoIngreso}
+                                                property="tiposIngreso"
+                                                nameDisplay="descripcion"
+                                                hasColor={false}
+                                                onSelect={handleSelectedValueTipo}
+                                                idParam="idIngresoTipo"
+                                                initialName="Seleccione Ingreso"
+                                                inputWidth="64"
+                                            />
+
+                                        </div>
+                                        <p className="textPresuLast">Fecha Transacción</p>
+                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={()=>{setSelectedDate(e.target.value)}}/>
+                                        <div className="fechaContainer">
+ 
+                                        </div>
 
                                     </ModalBody>
                                     <ModalFooter>
