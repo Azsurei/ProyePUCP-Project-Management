@@ -26,6 +26,7 @@ import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication
 import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/PopUpEliminateMC";
 import { set } from "date-fns";
 import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringMC";
+import RouteringRegisterMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringRegisterMC";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -40,6 +41,7 @@ export default function MatrizDeComunicaciones(props){
     const [data, setData] = useState([]);
     const [objectMC, setObjectMC] = useState(null);
     const [navegate, setNavegate] = useState(false);
+    const [navegateRegister, setNavegateRegister] = useState(false);
     const [idMatriz, setIdMatriz] = useState(null);
     function DataTable(){
         const fetchData = async () => {
@@ -84,6 +86,9 @@ export default function MatrizDeComunicaciones(props){
         console.log("El id del objeto MC es: ", objectMC);
         setNavegate(!navegate);
     };
+    const setRouteringRegisterMC = () => {
+        setNavegateRegister(!navegateRegister);
+    }
     const columns = [
         {
             name: 'Informacion Requerida',
@@ -308,7 +313,7 @@ export default function MatrizDeComunicaciones(props){
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button color="primary" endContent={<PlusIcon />} className="btnAddComunicacion">
+                        <Button color="primary" endContent={<PlusIcon />} className="btnAddComunicacion" onClick={() => setRouteringRegisterMC()}>
                             <Link href={"/dashboard/"+projectName+"="+projectId+"/matrizDeComunicaciones/registerMC"}>
                             Agregar
                             </Link> 
@@ -417,6 +422,7 @@ export default function MatrizDeComunicaciones(props){
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.sumillaInformacion}
                     idComunicacion = {selectedTask.idComunicacion}
+                    refresh={DataTable}
                 />
             )}
             {navegate && objectMC.idComunicacion && (
@@ -424,6 +430,13 @@ export default function MatrizDeComunicaciones(props){
                     proy_name = {projectName}
                     proy_id = {projectId}
                     idMC = {objectMC.idComunicacion}
+                />
+            )
+            }
+            {navegateRegister  && (
+                <RouteringRegisterMC
+                    proy_name = {projectName}
+                    proy_id = {projectId}
                 />
             )
             }
