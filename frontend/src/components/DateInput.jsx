@@ -19,8 +19,8 @@ export default function DateInput({
         width: "100%",
         overflowY: "auto",
         borderColor: isInvalid ? "red" : "rgb(211, 211, 211)",
-        borderWidth: "1px",
-        borderRadius: "4px",
+        borderWidth: "2px",
+        borderRadius: "8px",
         padding: "0 .4rem",
         resize: "none",
     };

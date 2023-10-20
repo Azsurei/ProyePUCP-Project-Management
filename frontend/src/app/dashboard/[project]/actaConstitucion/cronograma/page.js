@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     Table,
     TableHeader,
@@ -17,70 +17,83 @@ import {
     Chip,
     User,
     Pagination,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+    Textarea,
 } from "@nextui-org/react";
+import "@/styles/dashboardStyles/projectStyles/actaConstStyles/cronogramaACPage.css";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
+import DateInput from "@/components/DateInput";
 axios.defaults.withCredentials = true;
+
 const columns = [
-    { name: "Hito", uid: "name", sortable: true},
-    { name: "Estado", uid: "state", sortable: true },
+    { name: "Hito", uid: "name", sortable: true },
+    //{ name: "Estado", uid: "state", sortable: true },
     { name: "Fecha Tope", uid: "dateModified", sortable: true },
-    { name: "Acciones", uid: "actions"},
+    { name: "Acciones", uid: "actions" },
 ];
 
-const toolsOptions = [
-
-    { name: "Sebastian Chira", uid: "paused" },
-];
+const toolsOptions = [{ name: "Sebastian Chira", uid: "paused" }];
 
 const templates = [
     {
         id: 1,
-        name: 'Descripcion Hito 1',
+        name: "Descripcion Hito 1",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 2,
-        name: 'Descripcion Hito 2',
+        name: "Descripcion Hito 2",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 3,
-        name: 'Descripcion Hito 3',
+        name: "Descripcion Hito 3",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 4,
-        name: 'Descripcion Hito 4',
+        name: "Descripcion Hito 4",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 5,
-        name: 'Descripcion Hito 5',
+        name: "Descripcion Hito 5",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 6,
-        name: 'Descripcion Hito 6',
+        name: "Descripcion Hito 6",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
 ];
 
-export default function CronogramaActa() {
+export default function CronogramaActa(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    //const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     // Estados generales
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -120,27 +133,32 @@ export default function CronogramaActa() {
     // Initialize hito on page load
     useEffect(() => {
         initializeHito();
-    }, []); // Empty dependency array ensures this effect runs only once on page load
+    }, []);
 
-    const initializeHito = async () => {
-        try {
-            // Fetch the initial hito value from your API or set it to a default value
-            const response = await axios.get('/api/listarHito'); // Replace with the correct API endpoint
-            setHito(response.data); // Assuming response.data contains the initial hito value
-        } catch (error) {
-            console.error('Error initializing hito:', error);
-        }
+    const initializeHito = () => {
+        const listHitoURL =
+            "http://localhost:8080/api/proyecto/ActaConstitucion/listarHito/" +
+            projectId;
+        axios
+            .get(listHitoURL)
+            .then((response) => {
+                console.log(response.data.message);
+                console.log(
+                    "LISTA DE INTERESADOS ==== " +
+                        JSON.stringify(response.data.hitoAC)
+                );
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
     // Function to insert a new hito
     const insertarHito = async () => {
         try {
-            // Make a POST request to insert a new hito
-            const response = await axios.post('/api/insertarHito', { hito }); // Replace with the correct API endpoint
-            // Handle the response as needed
-            // After successful insertion, you can optionally refresh the hito value
+            const response = await axios.post("/api/insertarHito", { hito });
         } catch (error) {
-            console.error('Error inserting hito:', error);
+            console.error("Error inserting hito:", error);
         }
     };
 
@@ -235,13 +253,17 @@ export default function CronogramaActa() {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
                         <Button color="secondary" endContent={<PlusIcon />}>
                             Exportar
                         </Button>
-                        <Button color="primary" endContent={<PlusIcon />}>
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            onPress={onOpen}
+                        >
                             Añadir Interesado
                         </Button>
                     </div>
@@ -312,6 +334,11 @@ export default function CronogramaActa() {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
+    const [newName, setNewName] = useState("");
+    const [validName, setValidName] = useState(true);
+    const [newDate, setNewDate] = useState("");
+    const [validDate, setValidDate] = useState(true);
+
     return (
         <>
             <div className="flex flex-row space-x-4 mb-4">
@@ -364,6 +391,109 @@ export default function CronogramaActa() {
                     )}
                 </TableBody>
             </Table>
+
+            <Modal
+                onOpenChange={onOpenChange}
+                isDismissable={false}
+                isOpen={isOpen}
+                classNames={{
+                    header: "pb-1",
+                    body: "pb-0",
+                    footer: "pt-3",
+                }}
+                size="lg"
+            >
+                <ModalContent>
+                    {(onClose) => {
+                        const cancelarModal = () => {
+                            //setFieldToDelete(null);
+                            onClose();
+                        };
+                        const cerrarModal = () => {
+                            let allValid = true;
+                            if (newName === "") {
+                                setValidName(false);
+                                allValid = false;
+                            }
+                            if (newDate === "") {
+                                setValidDate(false);
+                                allValid = false;
+                            }
+                            if (allValid === true) {
+                                onClose();
+                            }
+                        };
+                        return (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">
+                                    Eliminar campo
+                                </ModalHeader>
+                                <ModalBody>
+                                    <div className="modalContentContainer">
+                                        <div className="fieldAndHeaderCont">
+                                            <p className="modalFieldHeader">
+                                                Nombre del hito
+                                            </p>
+                                            <Textarea
+                                                isInvalid={!validName}
+                                                errorMessage={
+                                                    !validName
+                                                        ? "Debe introducir un nombre"
+                                                        : ""
+                                                }
+                                                //key={"bordered"}
+                                                aria-label="custom-txt"
+                                                variant={"bordered"}
+                                                labelPlacement="outside"
+                                                placeholder={"Escribe aquí!"}
+                                                classNames={{ label: "pb-0" }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
+                                                value={newName}
+                                                onValueChange={setNewName}
+                                                minRows={1}
+                                                size="sm"
+                                                onChange={() => {
+                                                    setValidName(true);
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className="fieldAndHeaderCont">
+                                            <p className="modalFieldHeader">
+                                                Fecha tope
+                                            </p>
+                                            <DateInput
+                                                className={""}
+                                                isInvalid={!validDate}
+                                                onChangeHandler={(e) => {
+                                                    setValidDate(true);
+                                                }}
+                                            ></DateInput>
+                                            {!validDate && (
+                                                <p>Debe elegir una fecha</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button
+                                        color="danger"
+                                        variant="light"
+                                        onPress={cancelarModal}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        onPress={cerrarModal}
+                                    >
+                                        Agregar
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        );
+                    }}
+                </ModalContent>
+            </Modal>
         </>
     );
 }
