@@ -10,5 +10,6 @@ routerMatrizComunicaciones.get("/listarMatrizComunicacion/:idProyecto",verifyTok
 routerMatrizComunicaciones.post("/insertarMatrizComunicacion",verifyToken, matrizComunicacionesController.insertarMatrizComunicacion);
 routerMatrizComunicaciones.put("/modificarMatrizComunicacion",verifyToken, matrizComunicacionesController.modificarMatrizComunicacion);
 routerMatrizComunicaciones.get("/listarComunicacion/:idComunicacion",verifyToken, matrizComunicacionesController.listarComunicacion);
+routerMatrizComunicaciones.delete("/eliminarComunicacion",verifyToken, matrizComunicacionesController.eliminarComunicacion);
 
 module.exports.routerMatrizComunicaciones = routerMatrizComunicaciones;

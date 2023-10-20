@@ -98,7 +98,22 @@ async function listarComunicacion(req,res,next){
         console.log(error);
         next(error);
     }
-}   
+} 
+async function eliminarComunicacion(req,res,next){
+    const{idComunicacion} = req.body;
+    const query = `CALL ELIMINAR_COMUNICACION(?);`;
+    try {
+        const [results] = await connection.query(query,[idComunicacion]);
+        const id_comunicacion = results[0][0].idComunicacion;
+        console.log(`Se eliminó la comunicacion ${id_comunicacion}!`);
+        res.status(200).json({
+            id_comunicacion,
+            message: "Comunicacion modificada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}  
 
 module.exports = {
     listarCanales,
@@ -107,5 +122,6 @@ module.exports = {
     listarMatrizComunicacion,
     insertarMatrizComunicacion,
     modificarMatrizComunicacion,
-    listarComunicacion
+    listarComunicacion,
+    eliminarComunicacion
 };
