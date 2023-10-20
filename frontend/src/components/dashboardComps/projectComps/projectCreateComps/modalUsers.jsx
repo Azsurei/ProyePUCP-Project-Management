@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/modalUser.css";
+import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/modalUser.css";
 import ListUsers from "./ListUsers";
 import axios from "axios";
 axios.defaults.withCredentials = true;
