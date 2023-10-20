@@ -17,8 +17,8 @@ import {
     id,
     nombre,
     coordinador,
-    bgcolor,
-    completed,
+    //bgcolor
+    //completed
     miembros,
   }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -30,7 +30,10 @@ import {
     const closeModal = () => {
       setModalIsOpen(false);
     }
-  
+
+    //Temporal
+    let completed = 0;
+    let bgcolor = "#ef6c00";
 
     return (
       <div>

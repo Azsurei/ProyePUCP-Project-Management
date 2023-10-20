@@ -46,7 +46,8 @@ async function crearCampos(req,res,next){
     try {
         const query1 = `CALL CREAR_CAMPO_AC(?,?,?);`;
         const [results] = await connection.query(query1,[idProyecto, nombreCampo, detalleCampo]);
-        res.status(200).json({message: "CampoAC Creado"});
+        campoCreado = results[0];
+        res.status(200).json({results[0], message: "CampoAC Creado"});
     } catch (error) {
         next(error);
     }
