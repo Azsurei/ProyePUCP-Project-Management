@@ -119,7 +119,7 @@ export default function ContainerScenario({
                 value={scenario.entonces}
             />  
             <img
-                src="/icons/icon-cross.svg"
+                src="/icons/icon-trash.svg"
                 alt="Eliminar"
                 className="iconDelete2"
                 onClick={() => {
