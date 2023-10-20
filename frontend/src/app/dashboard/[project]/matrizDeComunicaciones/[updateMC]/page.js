@@ -37,6 +37,9 @@ export default function MatrizComunicacionesRegister(props) {
     const [canal, setCanal] = useState(null); //id
     const [frecuency, setFrecuency] = useState(null); //id
     const [format, setFormat] = useState(null); //id
+    const [selectedNameCanal, setSelectedNameCanal] = useState("");
+    const [selectedNameFrecuency, setSelectedNameFrecuency] = useState("");
+    const [selectedNameFormat, setSelectedNameFormat] = useState("");
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
     const isTextTooLong1 = sumilla.length > 400;
@@ -44,9 +47,50 @@ export default function MatrizComunicacionesRegister(props) {
     const isTextTooLong3 = groupReceiver.length > 400;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
+    const [matrizComunicaciones, setMatrizComunicaciones] = useState(null);
 
     useEffect(() => {
-        setIsLoadingSmall(false);
+        if (matrizComunicaciones && matrizComunicaciones.comunicacion) {
+            const mcData = matrizComunicaciones.comunicacion[0];
+            console.log("F: La data es:",mcData);
+            setSumilla(mcData.sumillaInformacion);
+            setDetail(mcData.detalleInformacion);
+            setGroupReceiver(mcData.grupoReceptor);
+            setSelectedNameCanal(mcData.nombreCanal);
+            setCanal(mcData.idCanal);
+            setSelectedNameFrecuency(mcData.nombreFrecuencia);
+            setFrecuency(mcData.idFrecuencia);
+            setSelectedNameFormat(mcData.nombreFormato);
+            setFormat(mcData.idFormato);
+            const miembro = {
+                email: mcData.correoElectronico,
+                id: mcData.responsableDeComunicar, 
+                lastName: mcData.apellidos,
+                name: mcData.nombres
+            };
+            setSelectedMiembrosList([miembro]);
+            console.log("Terminó de cargar los datos");
+            //setIsLoading(false);
+            setIsLoadingSmall(false);
+        }
+    }, [matrizComunicaciones]);
+
+    useEffect(() => {
+        const stringURLMC = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        axios
+            .get(stringURLMC)
+            .then(function (response) {
+                const mcData = response.data;
+                console.log("ID MC:", props.params.updateMC);
+                console.log("DATA:", mcData);
+                setMatrizComunicaciones(mcData);
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .finally(() => {
+                setIsLoadingSmall(false);
+            });
     }, []);
 
     const handleSelectedValueChangeCanal = (value) => {
@@ -74,14 +118,6 @@ export default function MatrizComunicacionesRegister(props) {
         setModal2(false);
     };
 
-    const removeMiembro = (miembro) => {
-        const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
-        );
-        setSelectedMiembrosList(newMembrsList);
-        console.log(newMembrsList);
-    };
-
     function verifyFieldsEmpty() {
         return (
             sumilla === "" ||
@@ -103,45 +139,48 @@ export default function MatrizComunicacionesRegister(props) {
     }
 
     const onSubmit = () => {
-        const postData = {
-            responsableDeComunicar: selectedMiembrosList[0].id,
-            sumillaInformacion: sumilla,
-            detalleInformacion: detail,
+        console.log("Que data estoy enviando:", selectedMiembrosList);
+        const putData = {
+            idComunicacion: props.params.updateMC,
             idCanal: canal,
             idFrecuencia: frecuency,
             idFormato: format,
-            grupoReceptor: groupReceiver,
-            idProyecto: projectId
+            sumillaInformacion: sumilla,
+            detalleInformacion: detail,
+            responsableDeComunicar: selectedMiembrosList[0].id,
+            grupoReceptor: groupReceiver
         };
-        console.log("El postData es :", postData);
+        console.log("Actualizado correctamente");
+        console.log(putData);
         axios
-            .post(
-                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
-                postData
+            .put(
+                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/modificarMatrizComunicacion",
+                putData
             )
             .then((response) => {
-                // Manejar la respuesta de la solicitud POST
+                // Manejar la respuesta de la solicitud PUT
                 console.log("Respuesta del servidor:", response.data);
-                console.log("Registro correcto");
+                console.log("Actualización correcta");
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
-                // Manejar errores si la solicitud POST falla
-                console.error("Error al realizar la solicitud POST:", error);
-            });
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            }); 
     };
 
     return (
         <div className="containerRegisterMC">
             <div className="headerRegisterMC">
                 Inicio / Proyectos / Nombre del proyecto / Matriz de
-                Comunicaciones/ Registrar elemento
+                Comunicaciones/ Actualizar elemento
             </div>
             <div className="backlogRegisterMC">
                 <div className="titleBacklogRegisterMC">
                     Crear nueva información requerida
                 </div>
                 <div>
+                {matrizComunicaciones?(
                     <Textarea
                         label="Sumilla de la información requerida"
                         variant="bordered"
@@ -159,6 +198,9 @@ export default function MatrizComunicacionesRegister(props) {
                                 : ""
                         }
                     />
+                ):(
+                    <div>Cargando datos...</div>
+                )}
                 </div>
                 <div className="comboMC">
                     <div className="containerComboMC">
@@ -174,6 +216,7 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCanal}
                             idParam="idCanal"
+                            initialName={selectedNameCanal}
                         />
                     </div>
                     <div className="containerComboMC">
@@ -189,6 +232,7 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeFrecuency}
                             idParam="idFrecuencia"
+                            initialName={selectedNameFrecuency}
                         />
                     </div>
                     <div className="containerComboMC">
@@ -204,22 +248,10 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeFormat}
                             idParam="idFormato"
+                            initialName={selectedNameFormat}
                         />
                     </div>
                     <div className="containerComboMC">
-                        {/*                         <IconLabel
-                            icon="/icons/priorityPB.svg"
-                            label="Responsable de comunicar"
-                            className="iconLabel"
-                        />
-                        <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
-                            property="historiasPrioridad"
-                            nameDisplay="nombre"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeCanal}
-                            idParam="idHistoriaPrioridad"
-                        /> */}
                         <div onClick={toggleModal2}>
                             <IconLabel
                                 icon="/icons/icon-searchBar.svg"
