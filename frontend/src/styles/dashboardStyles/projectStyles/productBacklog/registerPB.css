@@ -56,7 +56,7 @@
 .dateOfCreation{
     display: flex;
     align-items: center;
-    font-weight: 400;
+    font-weight: 600;
 }
 
 .titleButton{
@@ -132,7 +132,7 @@
 }
 
 .profilePic{
-    
+    font-weight: 600;
     border-radius: 100%;
     background-color: rgb(212, 212, 212);
     height: 50px;
@@ -146,10 +146,11 @@
     display: flex;
     align-items: center;
     gap: 10%;
-    font-weight: 400;
+    
 }
 
 .labelDatoUsuario{
+    font-weight: 600;
     flex: 1;
 }
 

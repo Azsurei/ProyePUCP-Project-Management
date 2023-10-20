@@ -383,6 +383,9 @@ function ProjectSidebar(props) {
                         ></MemberIcon>
                     );
                 })}
+                <div className="addNewMContainer">
+                    +
+                </div>
             </ul>
 
             {/* <DropDownMenu info={listTools1}></DropDownMenu>
