@@ -19,6 +19,7 @@ function PopUpEliminateMC({ modal, toggle, taskName, idComunicacion, refresh}) {
                 console.log("Eliminado correcto");
                 // Llamar a refresh() aquí después de la solicitud HTTP exitosa
                 refresh();
+                toggle();
             })
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
