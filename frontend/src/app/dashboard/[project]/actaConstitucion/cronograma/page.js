@@ -281,7 +281,17 @@ export default function CronogramaActa(props) {
                                 >
                                     Editar
                                 </DropdownItem>
-                                <DropdownItem>Eliminar</DropdownItem>
+                                <DropdownItem
+                                    className="text-danger"
+                                    color="danger"
+                                    onPress={()=>{
+                                        console.log("vas a eliminar el de id " + template.id);
+                                        setModalContentState(3);
+                                        onOpen();
+                                    }}
+                                >
+                                    Eliminar
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -461,6 +471,27 @@ export default function CronogramaActa(props) {
             });
     };
 
+    const deleteHito = (idSelected) => {
+        const deleteURL = "http://localhost:8080/api/proyecto/ActaConstitucion/eliminarHito";
+        axios
+            .put(deleteURL, {
+                idHito: idSelected,
+            })
+            .then((response) => {
+                console.log(response.data.message);
+                //eliminamos de lista segun el id
+
+                const newList = listHito.filter(
+                    (hito) => hito.id !== idSelected
+                );
+
+                setListHito(newList);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
     return (
         <>
             <div className="flex flex-row space-x-4 mb-4">
@@ -555,7 +586,7 @@ export default function CronogramaActa(props) {
                         };
                         return (
                             <>
-                                <ModalHeader className="flex flex-col gap-1">
+                                <ModalHeader className={modalContentState===3 ? "flex flex-col gap-1 text-danger" : "flex flex-col gap-1"}>
                                     {modalContentState === 1 &&
                                         "Agregar nuevo hito"}
                                     {modalContentState === 2 && "Editar hito"}
@@ -672,6 +703,9 @@ export default function CronogramaActa(props) {
                                             </div>
                                         </div>
                                     )}
+                                    {modalContentState===3 && (
+                                        <p>Seguro que desea eliminar este hito?</p>
+                                    )}
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button
@@ -687,6 +721,7 @@ export default function CronogramaActa(props) {
                                     >
                                         {modalContentState === 1 && "Agregar"}
                                         {modalContentState === 2 && "Aceptar"}
+                                        {modalContentState === 3 && "Eliminar"}
                                     </Button>
                                 </ModalFooter>
                             </>
