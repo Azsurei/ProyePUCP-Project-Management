@@ -18,7 +18,7 @@ BEGIN
 	INSERT INTO Usuario(nombres,apellidos,correoElectronico,password,activo,Privilegios_idPrivilegios) VALUES(_nombres, _apellidos, _correoElectronico, md5(_password), true, 1);
     SELECT @@last_insert_id AS idUsuario;
 END$
-
+SELECT * FROM Usuario;
 /*LOGIN*/
 DELIMITER $
 CREATE PROCEDURE VERIFICAR_CUENTA_USUARIO(
