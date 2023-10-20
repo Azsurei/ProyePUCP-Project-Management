@@ -210,8 +210,8 @@ export default function Ingresos(props) {
                                                 hasColor={false}
                                                 onSelect={handleSelectedValueMoneda}
                                                 idParam="idMoneda"
-                                                initialName="Seleccione una moneda"
-                                                inputWidth="1/3"
+                                                initialName="Tipo Moneda"
+                                                inputWidth="2/3"
                                             />
 
                                             </div>
@@ -246,7 +246,7 @@ export default function Ingresos(props) {
 
 
 
-                                         <div className="comboBoxMoneda">
+                                         <div className="comboBoxTipo">
                                             
                                             <MyCombobox
                                                 urlApi={stringUrlTipoTransaccion}
@@ -263,7 +263,7 @@ export default function Ingresos(props) {
                                          
                                         <p className="textIngreso">Tipo Transacción</p>
 
-                                        <div className="comboBoxMoneda">
+                                        <div className="comboBoxTipo">
                                             
                                             <MyCombobox
                                                 urlApi={stringUrlTipoIngreso}
