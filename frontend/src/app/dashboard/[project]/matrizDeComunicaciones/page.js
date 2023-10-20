@@ -230,12 +230,21 @@ export default function MatrizDeComunicaciones(props){
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
+        const imageOptions = {
+            "WORD": "/icons/icon-word.svg",
+            "Documento Excel": "/icons/icon-excel.svg",
+            "PDF": "/icons/icon-pdf.svg",
+            "Informe Escrito": "/icons/icon-information.svg",
+            "Informe Verbal": "/icons/icon-verbal.svg",
+            "Otros": "/icons/icon-other.svg",
+            // Agrega más opciones según sea necesario
+        };
         
         switch (columnKey) {
                 
             case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
-                return <img src={cellValue === "WORD" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
+                return <img src={imageOptions[cellValue]} alt={`Icono de ${cellValue}`} />;
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
