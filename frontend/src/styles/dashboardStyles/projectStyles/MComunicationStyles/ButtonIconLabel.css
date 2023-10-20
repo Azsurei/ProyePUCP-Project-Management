@@ -16,4 +16,5 @@
     display: flex;
     flex-wrap: wrap;
     text-align: center;
+    font-weight: 600;
 }

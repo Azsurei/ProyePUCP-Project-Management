@@ -84,7 +84,7 @@
 }
 
 .profilePicMC{
-    
+    font-weight: 600;
     border-radius: 100%;
     background-color: rgb(212, 212, 212);
     height: 50px;
@@ -98,4 +98,5 @@
     flex: 1;
     display: flex;
     flex-wrap: wrap;
+    font-weight: 600;
 }
