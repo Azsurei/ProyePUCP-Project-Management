@@ -59,7 +59,9 @@ export default function Ingresos(props) {
 
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+    const [modalContentState, setModalContentState] = useState(0);
+    //1 es estado de anadir nuevo hito
+    //2 es estado de editar hito
 
     
     const insertarLineaIngreso = () => {
@@ -73,7 +75,7 @@ export default function Ingresos(props) {
             idTransaccionTipo:selectedTipoTransaccion,
             idIngresoTipo:selectedTipo,
             descripcion:descripcionLinea,
-            monto:parseFloat(montoLinea),
+            monto:parseFloat(monto),
             cantidad:1,
             fechaTransaccion:selectedDate,
         })
@@ -96,8 +98,6 @@ export default function Ingresos(props) {
     
     const [descripcionLinea, setdescripcionLinea] = useState("");
 
-    const [montoLinea, setMontoLinea] = useState("");
-
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
@@ -118,9 +118,8 @@ export default function Ingresos(props) {
         setselectedTipoTransacciono(value);
     };
 
+    const [monto, setMonto] = useState("");
 
-
-    //const {idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} 
     
     return (
 
@@ -175,7 +174,7 @@ export default function Ingresos(props) {
                         />
 
                     <div className="buttonContainer">
-                        <Button color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                        <Button onPress={onOpen} color="primary" startContent={<TuneIcon />} className="btnFiltro">
                             Filtrar
                         </Button>
 
@@ -222,6 +221,8 @@ export default function Ingresos(props) {
                                             </div>
                                         
                                             <Input
+                                            value={monto}
+                                            onValueChange={setMonto}
                                             placeholder="0.00"
                                             labelPlacement="outside"
                                             startContent={
