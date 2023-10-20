@@ -1,0 +1,61 @@
+.newMeetingArticle{
+  padding: 0 20px; /* Aplica un padding de 20px a los lados */
+  box-sizing: border-box; /* Incluye el padding en el cálculo del tamaño total */
+  flex: 1;
+  font-family: Montserrat;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.header{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-top: 1rem;
+  font-family: Montserrat;
+}
+
+.title{
+  display: flex;
+  font-size: 1.5rem;
+  align-items: center;
+  color: #172B4D;
+  font-weight: 700;
+  font-family: Montserrat;
+}
+
+/*
+.addButton {
+    background-color: #F0AE19;
+    border: none;
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    cursor: pointer;
+  }
+  
+  */
+  /*
+  .plus {
+    font-size: 24px; /* Ajusta el tamaño de fuente según tus necesidades *//*
+    font-weight: bold;
+    color: white; /* Cambia el color del "+" si es necesario */ /*
+  }
+
+.h3 {
+  padding: 2px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #172B4D;
+  font-family: 'Montserrat', sans-serif;
+}
+
+*/
+  

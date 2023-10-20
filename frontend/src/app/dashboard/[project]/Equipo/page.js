@@ -6,6 +6,7 @@ import ProgressBar from "@/components/equipoComps/ProgressBar";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { useState, useEffect, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
+import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
@@ -107,43 +108,35 @@ export default function Equipo(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     setIsLoadingSmall(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [ListComps, setListComps] = useState([]);
 
     useEffect(() => {
         let teamsArray;
-        const stringURL = "http://localhost:8080/api/proyecto/equipo/listarEquiposYParticipantes/${projectId}";
-        console.log(stringURL);
-
+        const stringURL = "http://localhost:8080/api/proyecto/equipo/listarEquiposYParticipantes/" + projectId;
+        console.log("La URL es" + stringURL);
         axios
             .get(stringURL)
-            .then((response) => {
-                // Verificar si la solicitud fue exitosa
-                if (response.data && response.data.equipos) {
-                  // Establecer la lista de equipos en el estado
-                  setListComps(response.data.equipos);
-                }
-              })
-            /*
-            .then(function (response) {
-                console.log(response);
-                teamsArray = response.data.equipos;
 
+            .then((response) => {
+                teamsArray = response.data.equipos;
                 teamsArray = teamsArray.map((team) => {
                     return {
                         idEquipo: team.idEquipo,
                         idProyecto: team.idProyecto,
                         nombre: team.nombre,
                         descripcion: team.descripcion,
-                        activo: 1,
+                        fechaCreacion: team.fechaCreacion,
+                        activo: team.activo,
                         participantes: team.participantes,
                     };
-                });
+                })
 
+                console.log("Los arreglos son " + teamsArray);
                 setListComps(teamsArray);
-                console.log(teamsArray);
                 setIsLoading(false);
-            })
-            */
+              })
+            
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos",error);
             });
@@ -198,6 +191,8 @@ export default function Equipo(props) {
                     </div>
                 </div>
             )}  
+
+            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </div>
     );
 }

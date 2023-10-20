@@ -8,15 +8,28 @@ import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
 
 import { useRouter } from "next/navigation";
-import {Input} from "@nextui-org/react";
+import {
+    Input,
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    Button,
+} from "@nextui-org/react";
 
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
+import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunion.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
+
+import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 
 axios.defaults.withCredentials = true;
 
 export default function crearActaReunion(props) {
+// *********************************************************************************************
+// Various Variables
+// *********************************************************************************************
     const router = useRouter();
     
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -25,6 +38,20 @@ export default function crearActaReunion(props) {
 
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     setIsLoadingSmall(false);
+
+    const [value, setValue] = useState("");
+
+    const [inFechaHora, setInFechaHora] = useState('');
+    const handleChangeFechaHora = () => {
+        const datepickerInput = document.getElementById("datepickerFechaHora");
+        const selectedDate = datepickerInput.value;
+        console.log(selectedDate);
+        setInFechaHora(selectedDate);
+    }
+
+    const [listTemas, setlistTemas] = useState([{index: 1, data: ''}]);
+    const [listAcuerdos, setlistAcuerdos] = useState([{index: 1, data: ''}]);
+    const [listComentarios, setlistComentarios] = useState([{index: 1, data: ''}]);
 
 // *********************************************************************************************
 // About User Information
@@ -95,24 +122,35 @@ export default function crearActaReunion(props) {
                     <BreadcrumbsItem href="/dashboard/Proyectos" text="Proyecto" />
                     <BreadcrumbsItem href="/dashboard/Proyectos/Proyecto" text="Equipos" />
                 </Breadcrumbs>
-                <div className="title">Crear Acta de Reunión</div>
-                <button className="backButton"> Volver </button>
             </div>
-            <div className="body">
+            <div className="titleAndBack flex justify-between items-center">
+                <div className="title">Crear Acta de Reunión</div>
+                <button className="backButton ml-2"> Volver </button>
+            </div>
+            
+            <div className="body m-5 mt-3">
                 <div className="mainInfo">
                     <Input 
+                        className="max-w-[600px]"
                         isRequired
                         key="outside"
                         size="lg" 
                         type="title" 
                         label="Título de Reunión" 
                         labelPlacement="outside"
-                        placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)" 
+                        placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
+                        value={value}
+                        onValueChange={setValue} 
                     />
                     <p>Reunión convocada por: {datosUsuario.nombres} {datosUsuario.apellidos}</p>
                     <div className="dateAndTimeLine">
                         <p>Fecha y Hora de la Reunión</p>
-                        <input type="datetime-local" id="datetimePicker" name="datetimePicker"></input>
+                        <input 
+                            type="datetime-local" 
+                            id="datetimePicker" 
+                            name="datetimePicker" 
+                            onChange={handleChangeFechaHora}>
+                        </input>
                     </div>
                     <p>Motivo</p>
                     <input
@@ -124,53 +162,137 @@ export default function crearActaReunion(props) {
                 </div>
                 <br /><br />
                 <div className="invitedPeople">
-                    <h3>Personas Convocadas</h3>
-                    <p>Miembro</p>
-                    {/**** Selector de Miembros ***** */}
-                    <div className="SelectedUsersContainer">
-                        <div
-                            className="containerToPopUpUsrSearch"
-                            style={{ width: '60%', padding: '0.2rem 0' }}
-                            onClick={toggleModal2}
-                        >
-                            <p>Buscar nuevo participante</p>
-                            <img
-                                src="/icons/icon-searchBar.svg"
-                                alt=""
-                                className="icnSearch"
-                                style={{ width: '20px' }}
-                            />
-                        </div>
+                    <Card className="max-w-[600px]">
+                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg 
+                            font-bold text-blue-950 font-sans">
+                            <h3>Personas Convocadas</h3>
+                        </CardHeader>
+                        <CardBody className="py-0 mt-0 ml-2">
+                            <p>Miembro</p>
+                            {/**** Selector de Miembros ***** */}
+                            <div className="SelectedUsersContainer">
+                                <div
+                                    className="containerToPopUpUsrSearch"
+                                    style={{ width: '60%', padding: '0.2rem 0' }}
+                                    onClick={toggleModal2}
+                                >
+                                    <p>Buscar nuevo participante</p>
+                                    <img
+                                        src="/icons/icon-searchBar.svg"
+                                        alt=""
+                                        className="icnSearch"
+                                        style={{ width: '20px' }}
+                                    />
+                                </div>
 
-                        <ul className="listUsersContainer"
-                        style={{ width: '60%', padding: '0.2rem 0' }}>
-                            {selectedMiembrosList.map((component) => {
-                                return (
-                                    <CardSelectedUser
-                                        key={component.id}
-                                        name={component.name}
-                                        lastName={component.lastName}
-                                        usuarioObject={component}
-                                        email={component.email}
-                                        removeHandler={removeMiembro}
-                                    ></CardSelectedUser>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                    {modal2 && (
-                        <ModalUser
-                            handlerModalClose={toggleModal2}
-                            handlerModalFinished={returnListOfMiembros}
-                            excludedUsers={selectedMiembrosList}
-                        ></ModalUser>
-                    )}   
-                    {/* Fin del selector de miembros */}
+                                <ul className="listUsersContainer"
+                                style={{ width: '60%', padding: '0.2rem 0' }}>
+                                    {selectedMiembrosList.map((component) => {
+                                        return (
+                                            <CardSelectedUser
+                                                key={component.id}
+                                                name={component.name}
+                                                lastName={component.lastName}
+                                                usuarioObject={component}
+                                                email={component.email}
+                                                removeHandler={removeMiembro}
+                                            ></CardSelectedUser>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                            {modal2 && (
+                                <ModalUser
+                                    handlerModalClose={toggleModal2}
+                                    handlerModalFinished={returnListOfMiembros}
+                                    excludedUsers={selectedMiembrosList}
+                                ></ModalUser>
+                            )}   
+                            {/* Fin del selector de miembros */}
+                        </CardBody>
+                        <CardFooter></CardFooter>
+                    </Card>
                 </div>
+
                 <div className="meetingTopics"> 
-                    <h3>Temas a tratar</h3>
-                
+                    <Card className="max-w-[600px]"> 
+                        <CardHeader>
+                            <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
+                                Temas a tratar
+                            </h3>
+                            <button 
+                                className="bg-[#f0ae19] text-white w-8 h-8
+                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                transform transition-transform hover:-translate-y-1 hover:shadow-md">
+                                <span className="text-xl">+</span>
+                            </button>
+                        </CardHeader>
+                        <CardBody className="mt-0 py-0 pl-8">
+                            <div className="topicsContainer">
+                                <ListEditableInput 
+                                    ListInputs={listTemas} 
+                                    typeName="Tema">
+                                </ListEditableInput>
+                            </div>
+                        </CardBody>
+                        <CardFooter></CardFooter>
+                    </Card>
                 </div>
+
+                <div className="agreements"> 
+                    <Card className="max-w-[600px]"> 
+                        <CardHeader>
+                            <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
+                                Acuerdos
+                            </h3>
+                            <button 
+                                className="bg-[#f0ae19] text-white w-8 h-8
+                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                transform transition-transform hover:-translate-y-1 hover:shadow-md">
+                                <span className="text-xl">+</span>
+                            </button>
+                        </CardHeader>
+                        <CardBody className="mt-0 py-0 pl-8">
+                            <div className="topicsContainer">
+                                <ListEditableInput 
+                                    ListInputs={listAcuerdos} 
+                                    typeName="Acuerdo">
+                                </ListEditableInput>
+                            </div>
+                        </CardBody>
+                        <CardFooter></CardFooter>
+                    </Card>
+                </div>
+                
+                <div className="pendingComments"> 
+                    <Card className="max-w-[600px]"> 
+                        <CardHeader>
+                            <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
+                                Comentarios Pendientes
+                            </h3>
+                            <button 
+                                className="bg-[#f0ae19] text-white w-8 h-8
+                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                transform transition-transform hover:-translate-y-1 hover:shadow-md">
+                                <span className="text-xl">+</span>
+                            </button>
+                        </CardHeader>
+                        <CardBody className="mt-0 py-0 pl-8">
+                            <div className="topicsContainer">
+                                <ListEditableInput 
+                                    ListInputs={listComentarios} 
+                                    typeName="Comentario">
+                                </ListEditableInput>
+                            </div>
+                        </CardBody>
+                        <CardFooter></CardFooter>
+                    </Card>
+                </div>
+
+            </div>
+
+            <div className="footer">
+
             </div>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
