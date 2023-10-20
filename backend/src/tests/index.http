@@ -478,7 +478,8 @@ Content-Type:  application/json
 
 {
   "idProyecto": 50,
-  "nombreCampo": "Prueba"
+  "nombreCampo": "Prueba",
+  "detalleCampo": "Prueba"
 }
 ###LISTAR INTERESADOS AC
 GET http://localhost:8080/api/proyecto/ActaConstitucion/listarInteresados/50 HTTP/1.1

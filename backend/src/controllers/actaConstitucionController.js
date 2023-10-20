@@ -42,11 +42,12 @@ async function modificarCampos(req,res,next){
 }
 
 async function crearCampos(req,res,next){
-    const{idProyecto, nombreCampo} = req.body;
+    const{idProyecto, nombreCampo, detalleCampo} = req.body;
     try {
-        const query1 = `CALL CREAR_CAMPO_AC(?,?);`;
-        const [results] = await connection.query(query1,[idProyecto, nombreCampo]);
-        res.status(200).json({message: "CampoAC Creado"});
+        const query1 = `CALL CREAR_CAMPO_AC(?,?,?);`;
+        const [results] = await connection.query(query1,[idProyecto, nombreCampo, detalleCampo]);
+        campoCreado = results[0];
+        res.status(200).json({campoCreado, message: "CampoAC Creado"});
     } catch (error) {
         next(error);
     }

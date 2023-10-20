@@ -1233,15 +1233,16 @@ DROP PROCEDURE CREAR_CAMPO_AC;
 DELIMITER $
 CREATE PROCEDURE CREAR_CAMPO_AC(
 	IN  _idProyecto INT,
-    IN _nombre VARCHAR(500)
+    IN _nombre VARCHAR(500),
+    IN _detalle VARCHAR(500)
 )
 BEGIN
 	DECLARE _idDetalle INT;
     SET @_idActaConstitucion = (SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto AND activo = 1);
-	INSERT INTO DetalleAC(idActaConstitucion,nombre,activo) 
-    VALUES(@_idActaConstitucion,_nombre,1);
+	INSERT INTO DetalleAC(idActaConstitucion,nombre,detalle,activo) 
+    VALUES(@_idActaConstitucion,_nombre,_detalle,1);
     SET _idDetalle = @@last_insert_id;
-    SELECT _idDetalle AS idDetalle;
+    SELECT * FROM DetalleAC WHERE idDetalle = _idDetalle;
 END$
 
 DROP PROCEDURE ELIMINAR_CAMPO_AC;
@@ -1629,12 +1630,13 @@ DELIMITER $
 CREATE PROCEDURE LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO(IN _idProyecto INT)
 BEGIN
     SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, c.idMatrizComunicacion, mc.idProyecto, 
-    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, c.grupoReceptor, c.activo
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correo, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
     JOIN MatrizComunicacion AS mc ON c.idMatrizComunicacion = mc.idMatrizComunicacion
     JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
     JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
     JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+    JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
 	WHERE mc.idProyecto = _idProyecto AND c.activo=1;
 END$
 
