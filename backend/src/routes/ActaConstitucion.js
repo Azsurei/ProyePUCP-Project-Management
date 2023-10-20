@@ -16,6 +16,6 @@ routerActaConstitucion.put("/eliminarHito",verifyToken, actaConstitucionControll
 routerActaConstitucion.get("/listarInteresados/:idProyecto",verifyToken, actaConstitucionController.listarInteresados);
 routerActaConstitucion.post("/insertarInteresado",verifyToken, actaConstitucionController.insertarInteresado);
 routerActaConstitucion.put("/modificarInteresado", actaConstitucionController.modificarInteresado);
-routerActaConstitucion.delete("/eliminarInteresado",verifyToken, actaConstitucionController.eliminarInteresado);
+routerActaConstitucion.put("/eliminarInteresado",verifyToken, actaConstitucionController.eliminarInteresado);
 
 module.exports.routerActaConstitucion = routerActaConstitucion;

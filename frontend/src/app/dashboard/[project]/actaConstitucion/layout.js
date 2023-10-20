@@ -27,9 +27,6 @@ export default function RootLayout({ children, params }) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    useEffect(() => {
-        setIsLoadingSmall(false);
-    }, []);
     return (
         <div
             style={{
@@ -64,7 +61,7 @@ export default function RootLayout({ children, params }) {
                         ></BreadcrumbsItem>
                         <BreadcrumbsItem
                             href={"/dashboard/" + projectName + "=" + projectId}
-                            text={"Nombre del proyecto"}
+                            text={projectName}
                         ></BreadcrumbsItem>
                         <BreadcrumbsItem
                             href={
@@ -81,7 +78,7 @@ export default function RootLayout({ children, params }) {
                 <h1 className="montserrat text-[#172B4D] font-bold text-3xl">
                     Acta de Constitución
                 </h1>
-                <ButtonPanel margin="20px 20px 20px" align="left">
+                <ButtonPanel margin="10px 0 10px" align="left">
                     <Button
                         appearance="primary"
                         state="default"
@@ -98,7 +95,7 @@ export default function RootLayout({ children, params }) {
                                     "/actaConstitucion/info"
                                 }
                             >
-                                Informacion
+                                <p style={{color: 'white'}}>Informacion</p>
                             </Link>
                         </div>
                     </Button>
@@ -118,7 +115,7 @@ export default function RootLayout({ children, params }) {
                                     "/actaConstitucion/cronograma"
                                 }
                             >
-                                Cronograma
+                                <p style={{color: 'white'}}>Cronograma</p>
                             </Link>
                         </div>
                     </Button>
@@ -138,11 +135,11 @@ export default function RootLayout({ children, params }) {
                                     "/actaConstitucion/interesados"
                                 }
                             >
-                                Interesados
+                                <p style={{color: 'white'}}>Interesados</p>
                             </Link>
                         </div>
                     </Button>
-                    <Button
+                    {/* <Button
                         appearance="primary"
                         state="default"
                         spacing="compact"
@@ -161,7 +158,7 @@ export default function RootLayout({ children, params }) {
                                 Aprobacion
                             </Link>
                         </div>
-                    </Button>
+                    </Button> */}
                 </ButtonPanel>
                 {children}
             </div>

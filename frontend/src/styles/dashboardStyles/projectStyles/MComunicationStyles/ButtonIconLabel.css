@@ -1,0 +1,19 @@
+.iconLabelButtonMC {
+    display: flex;
+    align-items: center;
+    gap: 10%;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 10px;
+    width: 122px;
+}
+
+.iconoMC {
+    width: 20px;
+}
+
+.labelMC {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+}

@@ -60,7 +60,7 @@
 
 .title{
     display: flex;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     align-items: center;
     color: #172B4D;
     font-weight: 700;
@@ -219,4 +219,79 @@
   color: #767676;
   font-weight: 500;
   margin-top: 8px;
+  margin-left: 20px;
+}
+
+.coordinator_card {
+  font-size: 14px;
+  color: #767676;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.member {
+  font-size: 15px;
+  color: #000000;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.memberMail {
+  font-size: 12px;
+  color: #767676;
+  font-weight: 500;
+  margin-left: 2px;
+  margin-bottom: 5px;
+}
+
+.divPictures{
+  list-style: none;
+  display: grid;
+  gap: 0px;
+  grid-template-columns: repeat(auto-fill, minmax(45px,1fr));
+  margin-top: 10px;
+
+}
+
+.membersIcon{
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 100%;
+  margin-left: 1.5rem;
+  font-size: 15px;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.memberInfo {
+  display: flex; /* Hace que los elementos dentro se muestren en línea */
+  align-items: center; /* Centra verticalmente los elementos internos */
+}
+
+
+.cardTitle {
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 0px;
+  color: #172B4D;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.membersIconContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px; /* Ajusta el espacio horizontal según tus preferencias */
+}
+
+.memberDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinea el contenido a la izquierda */
+  gap: 1px; /* Ajusta el espacio vertical entre el nombre y el correo según tus preferencias */
+  margin-top: 2px;
+  margin-left: 10px;
 }

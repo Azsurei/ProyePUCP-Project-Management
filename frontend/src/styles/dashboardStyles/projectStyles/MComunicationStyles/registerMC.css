@@ -50,6 +50,12 @@
     align-items: center;
 }
 
+.containerButtonMC{
+    display: flex;
+    align-items: center;
+    gap: 15%;
+}
+
 .containerBottomMC{
     display: flex;
     justify-content: space-between;
@@ -71,8 +77,10 @@
 .iconLabel2MC{
     display: flex;
     align-items: center;
-    gap: 10%;
+    gap: 5%;
     font-weight: 400;
+    font-size: 14px;
+    width: 218px;
 }
 
 .profilePicMC{
@@ -88,4 +96,6 @@
 
 .labelDatoUsuarioMC{
     flex: 1;
+    display: flex;
+    flex-wrap: wrap;
 }

@@ -10,7 +10,7 @@ import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
-
+/*
 const grupos = [
     
     {
@@ -100,6 +100,7 @@ const grupos = [
     },
     
 ];
+*/
 
 export default function Equipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -119,6 +120,7 @@ export default function Equipo(props) {
             .get(stringURL)
 
             .then((response) => {
+                console.log("Respuesta del servidor:", response.data);
                 teamsArray = response.data.equipos;
                 teamsArray = teamsArray.map((team) => {
                     return {
@@ -155,7 +157,7 @@ export default function Equipo(props) {
             <div className="title">Equipos</div>
             <div className="titleAndOptions">
                 <div className="subtitle">Divide tu trabajo en los equipos que consideres necesarios</div>
-                {grupos.length > 0 && (
+                {ListComps.length > 0 && (
                     <div className="buttonAddTeam">
                         <a href={"/dashboard/"+projectName+"="+projectId+"/Equipo/nuevo_equipo"}>
                             <button className="addTeambtn">Crear Equipo</button>
@@ -164,8 +166,8 @@ export default function Equipo(props) {
                 )} 
             </div>
             {/*<div className="flex flex-row items-start justify-between w-500">*/}
-            {grupos.length > 0 ? (
-                <div className="grid grid-cols-3 gap-4 mt-2">
+            {ListComps.length > 0 ? (
+                <div className="grid grid-cols-3 gap-3 mt-1">
                 {/* Usar ListComps en vez de grupos*/}
                 {ListComps.map((team) => (
                     <CardEquipo
@@ -176,6 +178,7 @@ export default function Equipo(props) {
                         //completed={grupo.completed}
                         miembros={team.participantes}
                     />
+                    
                 ))}
                 </div>
             ) : (
@@ -191,7 +194,21 @@ export default function Equipo(props) {
                     </div>
                 </div>
             )}  
-
+            {/* Prueba para ver a los participantes
+            <div className="grid grid-cols-3 gap-4 mt-2">
+                {ListComps.map((team) => (
+                    <div key={team.idEquipo}>
+                        <p>Participantes en el equipo {team.nombre}:</p>
+                        {team.participantes.map((participante) => (
+                            <div key={participante.idUsuario}>
+                                <p>{participante.nombres} {participante.apellidos}</p>
+                                <p>{participante.correoElectronico}</p>
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+            */}
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </div>
     );

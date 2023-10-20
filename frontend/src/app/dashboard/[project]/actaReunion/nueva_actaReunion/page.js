@@ -23,6 +23,7 @@ import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunio
 import CardSelectedUser from "@/components/CardSelectedUser";
 
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
+import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 
 axios.defaults.withCredentials = true;
 
@@ -39,7 +40,19 @@ export default function crearActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     setIsLoadingSmall(false);
 
-    const [value, setValue] = useState("");
+    const [titleValue, setTitleValue] = useState("");
+    const [motiveValue, setMotiveValue] = useState("");
+
+    const [fecha, setFecha] = useState(""); // Estado para la fecha
+    const [hora, setHora] = useState(""); // Estado para la hora
+
+    const handleChangeFecha = (event) => {
+        setFecha(event.target.value);
+    };
+
+    const handleChangeHora = (event) => {
+        setHora(event.target.value);
+    };
 
     const [inFechaHora, setInFechaHora] = useState('');
     const handleChangeFechaHora = () => {
@@ -52,6 +65,39 @@ export default function crearActaReunion(props) {
     const [listTemas, setlistTemas] = useState([{index: 1, data: ''}]);
     const [listAcuerdos, setlistAcuerdos] = useState([{index: 1, data: ''}]);
     const [listComentarios, setlistComentarios] = useState([{index: 1, data: ''}]);
+
+    const handleAddTema = ()=>{
+        const newList_T =  [
+            ...listTemas, 
+            {
+            index: listTemas.length + 1,
+            data: ''
+            }
+        ];
+        setlistTemas(newList_T);
+    }
+
+    const handleAddAcuerdo = ()=>{
+        const newList_A =  [
+            ...listAcuerdos, 
+            {
+            index: listAcuerdos.length + 1,
+            data: ''
+            }
+        ];
+        setlistAcuerdos(newList_A);
+    }
+
+    const handleAddComentario = ()=>{
+        const newList_C =  [
+            ...listComentarios, 
+            {
+            index: listComentarios.length + 1,
+            data: ''
+            }
+        ];
+        setlistComentarios(newList_C);
+    }
 
 // *********************************************************************************************
 // About User Information
@@ -139,30 +185,53 @@ export default function crearActaReunion(props) {
                         label="Título de Reunión" 
                         labelPlacement="outside"
                         placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
-                        value={value}
-                        onValueChange={setValue} 
+                        value={titleValue}
+                        onValueChange={setTitleValue} 
                     />
-                    <p>Reunión convocada por: {datosUsuario.nombres} {datosUsuario.apellidos}</p>
+                    <p className="mt-5 mb-1 text-black text-sm font-medium">Reunión convocada por</p>
+                    <p className="ml-2 font-medium text-gray-400 ">{datosUsuario.nombres} {datosUsuario.apellidos} (tú)</p>
+                        
                     <div className="dateAndTimeLine">
-                        <p>Fecha y Hora de la Reunión</p>
+                        <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha y Hora de la Reunión</p>
+                        {/*}
                         <input 
                             type="datetime-local" 
                             id="datetimePicker" 
                             name="datetimePicker" 
                             onChange={handleChangeFechaHora}>
                         </input>
+                        */}
+                        <input
+                            type="date"
+                            id="datePicker"
+                            name="datePicker"
+                            value={fecha}
+                            onChange={handleChangeFecha}
+                        ></input>
+                        <input
+                            type="time"
+                            id="timePicker"
+                            name="timePicker"
+                            value={hora}
+                            onChange={handleChangeHora}
+                        ></input>
                     </div>
-                    <p>Motivo</p>
-                    <input
-                        type="text"
-                        id="motivo"
-                        name="motivo"
-                        placeholder="Ingrese el motivo de su reunión (máx 200 caracteres)"
+                    <Input 
+                        className="max-w-[600px] mt-5"
+                        isRequired
+                        key="outside"
+                        size="lg" 
+                        type="title" 
+                        label="Motivo" 
+                        labelPlacement="outside"
+                        placeholder="Ingrese el motivo de la reunion"
+                        value={motiveValue}
+                        onValueChange={setMotiveValue} 
                     />
                 </div>
                 <br /><br />
                 <div className="invitedPeople">
-                    <Card className="max-w-[600px]">
+                    <Card className="max-w-[600px] mb-5">
                         <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg 
                             font-bold text-blue-950 font-sans">
                             <h3>Personas Convocadas</h3>
@@ -215,12 +284,13 @@ export default function crearActaReunion(props) {
                 </div>
 
                 <div className="meetingTopics"> 
-                    <Card className="max-w-[600px]"> 
+                    <Card className="max-w-[600px] mb-5"> 
                         <CardHeader>
                             <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
                                 Temas a tratar
                             </h3>
                             <button 
+                                onClick={handleAddTema}
                                 className="bg-[#f0ae19] text-white w-8 h-8
                                 rounded-full absolute right-4 top-4 cursor-pointer 
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
@@ -240,12 +310,13 @@ export default function crearActaReunion(props) {
                 </div>
 
                 <div className="agreements"> 
-                    <Card className="max-w-[600px]"> 
+                    <Card className="max-w-[600px] mb-5"> 
                         <CardHeader>
                             <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
                                 Acuerdos
                             </h3>
                             <button 
+                                onClick={handleAddAcuerdo}
                                 className="bg-[#f0ae19] text-white w-8 h-8
                                 rounded-full absolute right-4 top-4 cursor-pointer 
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
@@ -265,12 +336,13 @@ export default function crearActaReunion(props) {
                 </div>
                 
                 <div className="pendingComments"> 
-                    <Card className="max-w-[600px]"> 
+                    <Card className="max-w-[600px] mb-5"> 
                         <CardHeader>
                             <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
                                 Comentarios Pendientes
                             </h3>
                             <button 
+                                onClick={handleAddComentario}
                                 className="bg-[#f0ae19] text-white w-8 h-8
                                 rounded-full absolute right-4 top-4 cursor-pointer 
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
@@ -296,6 +368,11 @@ export default function crearActaReunion(props) {
             </div>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+
+            <div className="ButtonsContainer">
+                <ButtonAddNew>Cancelar</ButtonAddNew>
+                <ButtonAddNew>Guardar elemento</ButtonAddNew>
+            </div>
         </div>
     )
 }
