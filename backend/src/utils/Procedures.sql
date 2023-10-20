@@ -1343,10 +1343,9 @@ BEGIN
 	DECLARE _idPresupuesto INT;
 	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,fechaCreacion,activo) 
     VALUES(13,_idProyecto,_idMoneda,_presupuestoInicial,_cantidadMeses,curdate(),1);
+    SET _idPresupuesto = @@last_insert_id;
     
     INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,activo) VALUES(_idProyecto,13,1);
-    
-    SET _idPresupuesto = @@last_insert_id;
     SELECT _idPresupuesto AS idPresupuesto;
 END$
 
@@ -1393,6 +1392,7 @@ CALL INSERTAR_LINEA_INGRESO(4,1,1,1,"Segundo ingreso realizado",200,1,CURDATE())
 UPDATE LineaEstimacionCosto SET idProyecto = 50 WHERE idLineaEstimacion >0;
 UPDATE LineaIngreso SET idProyecto = 50 WHERE idLineaIngreso >0;
 UPDATE LineaEgreso SET idProyecto = 50 WHERE idLineaEgreso >0;
+
 
 
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PROYECTO;
@@ -1604,7 +1604,7 @@ BEGIN
 	UPDATE LineaEstimacionCosto SET activo = 0 WHERE idLineaEstimacionCosto =  _idLineaEstimacionCosto AND activo = 1;
 END$
 
-CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
+
 SELECT * FROM Ingreso;
 SELECT * FROM LineaIngreso;
 
