@@ -89,7 +89,8 @@ export default function MatrizComunicacionesRegister(props) {
                 console.log(error);
             })
             .finally(() => {
-                setIsLoadingSmall(false);
+                //setIsLoadingSmall(false);
+                console.log("Finalizó la carga de datos");
             });
     }, []);
 
@@ -356,7 +357,7 @@ export default function MatrizComunicacionesRegister(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar Historia de Usuario"
+                                textHeader="Registrar información"
                                 textBody="¿Seguro que quiere registrar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}

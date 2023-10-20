@@ -2,8 +2,9 @@
 import { Fragment, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { SmallLoadingScreen } from  "@/app/dashboard/[project]/layout"
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 
 export default function Example({
     urlApi,
@@ -15,12 +16,13 @@ export default function Example({
     idParam,
     initialName,
     reloadData,
-    inputWidth=64,
+    inputWidth = 64,
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
     const [data, setData] = useState([]);
     const [dataWithId, setDataWithId] = useState([]);
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -33,6 +35,7 @@ export default function Example({
                 );
                 setDataWithId(dataWithId);
                 setData(response.data[property]);
+                setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
@@ -41,7 +44,7 @@ export default function Example({
         fetchData();
         if (reloadData) {
             fetchData();
-          }
+        }
     }, [reloadData]);
 
     // const initiaValue = data.find((element) => element[idParam] === initialID);
@@ -75,7 +78,6 @@ export default function Example({
             >
                 <div className="relative mt-1">
                     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-
                         <Combobox.Input
                             className={`w-${inputWidth} border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
                             style={

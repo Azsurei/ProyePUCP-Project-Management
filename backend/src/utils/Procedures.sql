@@ -1726,6 +1726,18 @@ BEGIN
     SELECT _idComunicacion AS idComunicacion;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_COMUNICACION;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_COMUNICACION(
+    IN _idComunicacion INT
+)
+BEGIN
+	UPDATE Comunicacion 
+    SET activo = 0
+    WHERE idComunicacion = _idComunicacion;
+    SELECT _idComunicacion AS idComunicacion;
+END$
+
 
 ------------
 -- Equipos
@@ -1749,3 +1761,7 @@ BEGIN
     LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
+
+------------
+-- AUTOEVALUACION
+------------

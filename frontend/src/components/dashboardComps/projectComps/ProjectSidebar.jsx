@@ -240,7 +240,7 @@ function ProjectSidebar(props) {
             position: 1,
             optIcon: "/icons/sideBarDropDown_icons/sbdd1.svg",
             optName: "Autoevaluacion",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/autoevaluacionEquipo`,
         },
         {
             id: 10,
