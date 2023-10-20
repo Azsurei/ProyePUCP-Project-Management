@@ -1,13 +1,11 @@
-.iconDelete{
-    position: absolute;
-    right: -3rem;
-    top: 50%;
-    cursor: pointer;
+.containerBack{
+    position: relative;
 }
+
 
 .iconDelete2{
     position: absolute;
-    right: -2rem;
+    right: -1.8rem;
     top: 50%;
     cursor: pointer;
 }
@@ -17,6 +15,6 @@
 }
 
 .custom-label label {
-    font-weight: 600; /* Cambia el peso de la fuente a bold (600) */
+    font-weight: 500; /* Cambia el peso de la fuente a bold (600) */
     font-size: 1rem;
 }
