@@ -21,7 +21,10 @@ const PopUpDetEquipo = ({ closeModal, teamName, coordinador, miembros }) => {
     };
   }, [closeModal]);
 
+  console.log("Estos son los miembros: " + miembros);
+
   return (
+    
     <div className='modalBackground'>
         <div className='modalContainer'>
             <div className='titleCloseBtn'>
@@ -32,17 +35,24 @@ const PopUpDetEquipo = ({ closeModal, teamName, coordinador, miembros }) => {
                 <p className="coordinator">Coordinador: {coordinador}</p>
             </div>
             <div className="modalBody_detEq">
-              {miembros.map((miembros) => (
-                    <div className="flex flex-col items-start justify-between w-full" key={miembros.id}>
-                        <Card>
-                            <CardParticipantes
-                                iconSrc={miembros.iconSrc}
-                                nombre={miembros.nombre}
-                                correo={miembros.correo}
-                            />
-                        </Card>
-                    </div>
-                ))}
+              {miembros.map((miembro) => (
+                <div className="flex items-center w-full ml-4" key={miembro.idUsuario}>
+                  <div className="membersIconContainer">
+                    <p className="membersIcon">
+                      {miembro.nombres[0]}
+                      {miembro.apellidos[0]}
+                    </p>
+                  </div>
+                  <div className="memberDetails">
+                    <p className="member">
+                      {miembro.nombres} {miembro.apellidos}
+                    </p>
+                    <p className="memberMail">
+                      {miembro.correoElectronico}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
         </div>
     </div>    
