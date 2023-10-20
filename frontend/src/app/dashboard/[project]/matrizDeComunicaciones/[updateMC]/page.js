@@ -135,7 +135,7 @@ export default function MatrizComunicacionesRegister(props) {
         <div className="containerRegisterMC">
             <div className="headerRegisterMC">
                 Inicio / Proyectos / Nombre del proyecto / Matriz de
-                Comunicaciones/ Registrar elemento
+                Comunicaciones/ Actualizar elemento
             </div>
             <div className="backlogRegisterMC">
                 <div className="titleBacklogRegisterMC">

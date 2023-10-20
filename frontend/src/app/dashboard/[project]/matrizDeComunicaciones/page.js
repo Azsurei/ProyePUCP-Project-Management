@@ -25,6 +25,7 @@ import { useRouter } from 'next/navigation';
 import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication.css";
 import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/PopUpEliminateMC";
 import { set } from "date-fns";
+import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringMC";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -37,6 +38,8 @@ export default function MatrizDeComunicaciones(props){
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [data, setData] = useState([]);
+    const [objectMC, setObjectMC] = useState(null);
+    const [navegate, setNavegate] = useState(false);
     const [idMatriz, setIdMatriz] = useState(null);
     function DataTable(){
         const fetchData = async () => {
@@ -48,8 +51,8 @@ export default function MatrizDeComunicaciones(props){
             const response = await axios.get(stringURL);
     
             // Actualiza el estado 'data' con los datos recibidos
-            setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
-            setData(response.data.matrizComunicacion.matrizComunicacionData);
+            // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+            setData(response.data.matrizComunicacion);
             setIsLoadingSmall(false);
             console.log(`Esta es la data:`, data);
             console.log(`Datos obtenidos exitosamente:`, response.data.matrizComunicacion);
@@ -73,7 +76,13 @@ export default function MatrizDeComunicaciones(props){
 
     const toggleModal = (task) => {
         setSelectedTask(task);
+        console.log("El id del objeto es: ", selectedTask);
         setModal1(!modal1);
+    };
+    const setRoutering = (objectID) => {
+        setObjectMC(objectID);
+        console.log("El id del objeto MC es: ", objectMC);
+        setNavegate(!navegate);
     };
     const columns = [
         {
@@ -149,7 +158,7 @@ export default function MatrizDeComunicaciones(props){
     // Variables adicionales
     const pages = Math.ceil(data.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
-
+    
     const filteredItems = React.useMemo(() => {
         let filteredTemplates = [...data]
 
@@ -226,7 +235,7 @@ export default function MatrizDeComunicaciones(props){
                 
             case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
-                return <img src={cellValue === "Word" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
+                return <img src={cellValue === "WORD" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -237,12 +246,13 @@ export default function MatrizDeComunicaciones(props){
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem >
+                            <DropdownItem onClick={() => 
+                                    setRoutering(data)
+                                }>
                                 {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
                                         Editar 
                                 {/* </Link> */}
                                 </DropdownItem>
-
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -397,9 +407,17 @@ export default function MatrizDeComunicaciones(props){
                     modal = {modal1} 
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.sumillaInformacion}
-                    idHistoriaDeUsuario = {selectedTask.id}
+                    idComunicacion = {selectedTask.idComunicacion}
                 />
             )}
+            {navegate && objectMC.idComunicacion && (
+                <RouteringMC
+                    proy_name = {projectName}
+                    proy_id = {projectId}
+                    idMC = {objectMC.idComunicacion}
+                />
+            )
+            }
         </div>
         
     );
