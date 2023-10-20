@@ -23,7 +23,7 @@ export default function ContainerRequirement({
     };
 
     return (
-        <div>
+        <div  className="containerBack">
             <Textarea
                 className="paddingTop custom-label"
                 label={`Requerimiento ${indice}`}
@@ -47,7 +47,7 @@ export default function ContainerRequirement({
             <img
                 src="/icons/icon-cross.svg"
                 alt="Eliminar"
-                className="iconDelete"
+                className="iconDelete2"
                 onClick={() => {
                     functionRemove(indice-1);
                 }}

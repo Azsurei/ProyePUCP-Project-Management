@@ -1,13 +1,11 @@
-.iconDelete{
-    position: absolute;
-    right: -3rem;
-    top: 50%;
-    cursor: pointer;
+.containerBack{
+    position: relative;
 }
+
 
 .iconDelete2{
     position: absolute;
-    right: -2rem;
+    right: -1.8rem;
     top: 50%;
     cursor: pointer;
 }

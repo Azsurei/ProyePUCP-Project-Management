@@ -37,7 +37,7 @@ export default function ContainerScenario({
     };
 
     return (
-        <div>
+        <div  className="containerBack">
             <Textarea
                 className="paddingTop custom-label"
                 label={`Escenario ${indice}:`}
