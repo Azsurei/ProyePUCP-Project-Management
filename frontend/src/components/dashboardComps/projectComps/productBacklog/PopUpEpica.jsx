@@ -35,7 +35,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
     const [newEpicName, setNewEpicName] = useState("");
-    const [addError, setAddError] = useState("");
+    const [addErrorEpic, setAddErrorEpic] = useState("");
     const [eliminateError, setEliminateError] = useState("");
     const [noEpic, setNoEpic] = useState("");
     const [isSelected, setIsSelected] = useState(false);
@@ -70,14 +70,14 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
       };
     const handleInsertEpic = () => {
         if (newEpicName.trim() === "") {
-            setAddError("El nombre de la épica no puede estar vacío.");
-        } else if (listEpics.some((epic) => epic.name === newEpicName)) {
-            setAddError("El nombre de la épica ya existe en la lista.");
+            setAddErrorEpic("El nombre de la épica no puede estar vacío.");
+        } else if (listEpics.some((epic) => epic.nombre === newEpicName)) {
+            setAddErrorEpic("El nombre de la épica ya existe en la lista.");
         } else {
             // Realiza la inserción de la nueva épica aquí, por ejemplo, con una solicitud axios.
             // Luego, limpia el campo de entrada y el mensaje de error.
             setNewEpicName("");
-            setAddError("");
+            setAddErrorEpic("");
             const data = {
                 idProductBacklog: backlogID, // Reemplaza con el valor deseado
                 nombre: newEpicName // Reemplaza con el valor deseado
@@ -103,6 +103,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
     const EliminateEpic = (name) => {
         console.log(name);
         setEliminateError("");
+        
         const data = {
             nombreEpica: name // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
@@ -134,7 +135,10 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
         setIsSelected(false);
     };
 
-    
+    const handleEliminateError = (nameError) => {
+        setEliminateError(nameError);
+        setAddErrorEpic("");
+    }
 
     useEffect(() => {
         
@@ -155,7 +159,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                                 Agregar Epica
                             </Button>
                             <Button color="danger"  onClick={() => {
-                                                    isSelected ? setEliminateError("Seguro desea eliminar la epica?") : setNoEpic("Falta seleccionar una epica");
+                                                    isSelected ? handleEliminateError("Seguro desea eliminar la epica?") : setNoEpic("Falta seleccionar una epica");
                                                     }} endContent={<PlusIcon />} className="btnElimanteEpic" >
                                 Eliminar
                             </Button>
@@ -202,11 +206,11 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                             value={newEpicName}
                             onChange={(e) => {
                                 setNewEpicName(e.target.value);
-                                setAddError("");
+                                setAddErrorEpic("");
                             }}
                             ></input>
                         ):null}
-                        {addError && <p className="error-message">{addError}</p>}
+                        {addErrorEpic && <p className="error-message">{addErrorEpic}</p>}
                         {noEpic && <p className="error-message">{noEpic}</p>}
                         {eliminateError ? (
                             <div>
