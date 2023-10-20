@@ -127,9 +127,9 @@ export default function ModalUser({
                             variant="faded"
                         />
                     </div>
-                    <div className="botonBuscar" onClick={refreshList}>
+                    <Button className="bg-indigo-950 text-slate-50" onClick={refreshList}>
                         Buscar
-                    </div>
+                    </Button>
                 </div>
 
                 <div className="divUsers">
@@ -140,20 +140,21 @@ export default function ModalUser({
                     </UserCardsContext.Provider>
                 </div>
                 <div className="endButtons">
-                    <button
-                        className="buttonTwoUser"
+                <Button
+                        color="danger"
+                        variant="light"
                         onClick={handlerModalClose}
                     >
-                        Cancelar
-                    </button>
-                    <button
-                        className="buttonOneUser"
+                        Cerrar
+                    </Button>
+                    <Button
+                        className="bg-indigo-950 text-slate-50"
                         onClick={() => {
                             handlerModalFinished(listUsersSelect);
                         }}
                     >
-                        Confirmar
-                    </button>
+                        Continuar
+                    </Button>
                 </div>
             </div>
         </div>
