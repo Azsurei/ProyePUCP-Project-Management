@@ -1242,7 +1242,7 @@ BEGIN
 	INSERT INTO DetalleAC(idActaConstitucion,nombre,detalle,activo) 
     VALUES(@_idActaConstitucion,_nombre,_detalle,1);
     SET _idDetalle = @@last_insert_id;
-    SELECT _idDetalle AS idDetalle;
+    SELECT * FROM DetalleAC WHERE idDetalle = _idDetalle;
 END$
 
 DROP PROCEDURE ELIMINAR_CAMPO_AC;

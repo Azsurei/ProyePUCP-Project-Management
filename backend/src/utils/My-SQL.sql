@@ -913,3 +913,30 @@ CREATE TABLE Comunicacion(
     FOREIGN KEY (idMatrizComunicacion) REFERENCES MatrizComunicacion(idMatrizComunicacion)
 )
 ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- AUTOEVALUACION
+-- -----------------------------------------------------
+
+CREATE TABLE autoEvaluacion(
+	idAutoEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    fechaCreacion DATE,
+    fechaLimite DATE,
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+CREATE TABLE UsuarioXRolXProyecto (
+    idUsuarioRolProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT ,
+    idProyecto INT ,
+    idRol INT,
+    fechaAsignacion DATE,
+    activo TINYINT NOT NULL DEFAULT 1,
+    UNIQUE KEY (idUsuario, idProyecto, idRol),
+    FOREIGN KEY (idRol) REFERENCES Rol (idRol) ,
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto (idProyecto),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario (idUsuario) 
+)
+ENGINE = InnoDB;
