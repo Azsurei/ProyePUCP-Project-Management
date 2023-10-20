@@ -63,36 +63,9 @@ async function eliminarCampo(req,res,next){
         next(error);
     }
 }
-
-async function listarInteresados(req,res,next){
-    const {idProyecto} = req.params;
-    try {
-        const query = `CALL LISTAR_INTERESADOAC_AC(?);`;
-        const [results] = await connection.query(query,[idProyecto]);
-        const interesadoAC = results[0];
-        res.status(200).json({interesadoAC, message: "InteresadoAC listado"});
-    } catch (error) {
-        next(error);
-    }
-}
-async function insertarInteresado(req,res,next){
-    const{idProyecto, nombre, cargo, organizacion} = req.body;
-    const query = `
-        CALL INSERTAR_INTERESADOAC(?,?,?,?);
-    `;
-    try {
-        const [results] = await connection.query(query,[idProyecto,nombre,cargo,organizacion]);
-        const idInteresado = results[0][0].idInteresado;
-        console.log(`Se insertó el interesado ${idInteresado}!`);
-        res.status(200).json({
-            idInteresado,
-            message: "InteresadoAC insertada exitosamente",
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
+////////
+//HITO//
+////////
 async function listarHito(req,res,next){
     const {idProyecto} = req.params;
     try {
@@ -122,6 +95,106 @@ async function insertarHito(req,res,next){
     }
 }
 
+async function modificarHito(req,res,next){
+    const{ idHito, descripcion, fechaLimite} = req.body;
+    const query = `
+        CALL MODIFICAR_HITOAC(?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idHito,descripcion,fechaLimite]);
+        const idHitoNew = results[0][0].idHito;
+        console.log(`Se modifico el hito ${idHitoNew}!`);
+        res.status(200).json({
+            message: "Hito modificado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarHito(req,res,next){
+    const{idHito} = req.body;
+    const query = `CALL ELIMINAR_HITOAC(?);`;
+    try {
+        const [results] = await connection.query(query,[idHito]);
+        const idHitoEliminado = results[0][0].idHito;
+        console.log(`Se elimino el hito ${idHitoEliminado}!`);
+        res.status(200).json({
+            idHitoEliminado,
+            message: "Hito eliminado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+//////////////
+//INTERESADO//
+//////////////
+async function listarInteresados(req,res,next){
+    const {idProyecto} = req.params;
+    try {
+        const query = `CALL LISTAR_INTERESADOAC_AC(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
+        const interesadoAC = results[0];
+        res.status(200).json({interesadoAC, message: "InteresadoAC listado"});
+    } catch (error) {
+        next(error);
+    }
+}
+async function insertarInteresado(req,res,next){
+    const{idProyecto, nombre, cargo, organizacion} = req.body;
+    const query = `
+        CALL INSERTAR_INTERESADOAC(?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idProyecto,nombre,cargo,organizacion]);
+        const idInteresado = results[0][0].idInteresado;
+        console.log(`Se insertó el interesado ${idInteresado}!`);
+        res.status(200).json({
+            idInteresado,
+            message: "InteresadoAC insertada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function modificarInteresado(req,res,next){
+    const{idInteresado, nombre, cargo, organizacion} = req.body;
+    const query = `
+        CALL MODIFICAR_INTERESADOAC(?,?,?,?);
+    `;
+    try {
+        const [results] = await connection.query(query,[idInteresado,nombre,cargo,organizacion]);
+        const idInteresadoNew = results[0][0].idInteresado;
+        console.log(`Se modifico el interesado ${idInteresadoNew}!`);
+        res.status(200).json({
+            idInteresadoNew,
+            message: "Interesado modificado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarInteresado(req,res,next){
+    const{idInteresado} = req.body;
+    const query = `CALL ELIMINAR_INTERESADOAC(?);`;
+    try {
+        const [results] = await connection.query(query,[idInteresado]);
+        const idInteresadoEliminado = results[0][0].idInteresado;
+        console.log(`Se elimino el interesado ${idInteresadoEliminado}!`);
+        res.status(200).json({
+            idInteresadoEliminado,
+            message: "Interesado eliminado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
 module.exports = {
     listar,
     modificarCampos,
@@ -130,5 +203,9 @@ module.exports = {
     listarInteresados,
     insertarInteresado,
     listarHito,
-    insertarHito
+    insertarHito,
+    modificarHito,
+    eliminarHito,
+    modificarInteresado,
+    eliminarInteresado
 };

@@ -3,11 +3,18 @@
     flex-direction: row;
     gap: 2rem;
     justify-content: space-between;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
 
 }
 
 .comboBoxMoneda{
+    max-width: 40%;
+    align-items: center;   
+    flex-direction: row;
+    margin-bottom: 0.6rem;
+}
+
+.comboBoxTipo{
     max-width: 60%;
     align-items: center;   
     flex-direction: row;
@@ -24,7 +31,7 @@
 }
 
 #inputFechaPresupuesto{
-    width: 80%;
+    width: 50%;
     border-color: rgb(211, 211, 211);
     border-width: 1px;
     border-radius: 4px;

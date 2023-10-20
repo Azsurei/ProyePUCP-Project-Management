@@ -45,52 +45,7 @@ export default function ProductBacklog(props) {
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
 
-    
-
-   //const stringURL1 = "http://localhost:8080/api/proyecto/backlog/42/listarHistorias";
-
-/*axios.get(stringURL1)
-  .then(response => {
-    console.log(response.data); // Maneja la respuesta aquí
-  })
-  .catch(error => {
-    console.error(error);
-  });*/
   
-
-  
-
-    
-
-
-    
-
-    /*function DataTable() {
-        console.log(projectId);
-    
-        const stringURL =
-            "http://localhost:8080/api/proyecto/backlog/" +
-            projectId +
-            "/listarHistorias";
-    
-            axios
-            .get(stringURL)
-            .then(function (response) {
-                const componentsArray = response.data.historias;
-                console.log(componentsArray);
-                setData(componentsArray);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-    useEffect(() => {
-        DataTable();
-    }, []);
-
-    
-
-    console.log(data.idHistoriaDeUsuario);*/
     const [data, setData] = useState([]);
     const [objectID, setObjectID] = useState(null);
     const [navegate, setNavegate] = useState(false);
@@ -185,113 +140,6 @@ export default function ProductBacklog(props) {
         }
     ];
 
-    /*const data = [
-        {
-            id: 1,
-            descripcion: 'Historia 1',
-            epic: 'Epic 1',
-            priority: 'Must',
-            state: 'No iniciado'
-        },
-        {
-            id: 2,
-            descripcion: 'Historia 2',
-            epic: 'Epic 2',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 3,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 4,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 5,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 6,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 7,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 8,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 9,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 10,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 11,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 12,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 13,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 14,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        },
-        {
-            id: 15,
-            descripcion: 'Historia 3',
-            epic: 'Epic 3',
-            priority: 'Could',
-            state: 'En progreso'
-        }
-    ];*/
     
 
     const toolsOptions = [
@@ -516,7 +364,7 @@ export default function ProductBacklog(props) {
 
     const bottomContent = React.useMemo(() => {
         return (
-            <div className="py-2 px-2 flex justify-between items-center gap-4">
+            <div className="py-2 px-2 flex justify-between items-center">
                 <span className="w-[30%] text-small text-default-400">
                     {selectedKeys === "all"
                         ? "Todos los items seleccionados"

@@ -1,6 +1,7 @@
 export default function DateInput({
     className,
     isInvalid,
+    value,
     onChangeHandler,
 }) {
     // #inputBoxGeneric{
@@ -32,6 +33,7 @@ export default function DateInput({
             id="inputBoxGeneric"
             style={inputStyle}
             name="datepicker"
+            defaultValue={value}
             onChange={onChangeHandler}
         ></input>
     );
