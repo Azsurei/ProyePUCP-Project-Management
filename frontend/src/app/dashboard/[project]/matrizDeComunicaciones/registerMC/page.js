@@ -74,14 +74,6 @@ export default function MatrizComunicacionesRegister(props) {
         setModal2(false);
     };
 
-    const removeMiembro = (miembro) => {
-        const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
-        );
-        setSelectedMiembrosList(newMembrsList);
-        console.log(newMembrsList);
-    };
-
     function verifyFieldsEmpty() {
         return (
             sumilla === "" ||
@@ -207,19 +199,6 @@ export default function MatrizComunicacionesRegister(props) {
                         />
                     </div>
                     <div className="containerComboMC">
-                        {/*                         <IconLabel
-                            icon="/icons/priorityPB.svg"
-                            label="Responsable de comunicar"
-                            className="iconLabel"
-                        />
-                        <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
-                            property="historiasPrioridad"
-                            nameDisplay="nombre"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeCanal}
-                            idParam="idHistoriaPrioridad"
-                        /> */}
                         <div onClick={toggleModal2}>
                             <IconLabel
                                 icon="/icons/icon-searchBar.svg"
