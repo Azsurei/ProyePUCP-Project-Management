@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useContext } from "react";
 import {
     Table,
     TableHeader,
@@ -31,6 +31,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 import DateInput from "@/components/DateInput";
+import { SmallLoadingScreen } from "../../layout";
 axios.defaults.withCredentials = true;
 
 const columns = [
@@ -91,7 +92,7 @@ export default function CronogramaActa(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    //const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [listHito, setListHito] = useState([]);
@@ -142,6 +143,7 @@ export default function CronogramaActa(props) {
     }, []);
 
     const initializeHito = () => {
+        setIsLoadingSmall(true);
         const listHitoURL =
             "http://localhost:8080/api/proyecto/ActaConstitucion/listarHito/" +
             projectId;
@@ -164,6 +166,7 @@ export default function CronogramaActa(props) {
                     };
                 });
                 setListHito(hitosArray);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -499,7 +502,7 @@ export default function CronogramaActa(props) {
 
     return (
         <>
-            <div className="flex flex-row space-x-4 mb-4">
+            <div className="flex flex-row space-x-4 mb-4 mt-4">
                 <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
                     Lista de Hitos
                 </h2>

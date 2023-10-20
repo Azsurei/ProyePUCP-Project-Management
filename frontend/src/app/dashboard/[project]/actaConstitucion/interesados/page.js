@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+    useState,
+    useEffect,
+    useCallback,
+    useMemo,
+    useContext,
+} from "react";
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import {
     Table,
@@ -32,6 +38,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import axios from "axios";
+import { SmallLoadingScreen } from "../../layout";
 axios.defaults.withCredentials = true;
 const columns = [
     { name: "Nombre", uid: "name", sortable: true },
@@ -101,6 +108,7 @@ export default function Interesados(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     // Estados generales
@@ -127,6 +135,7 @@ export default function Interesados(props) {
     const [validOrganization, setValidOrganization] = useState(true);
 
     useEffect(() => {
+        setIsLoadingSmall(true);
         const listIntrURL =
             "http://localhost:8080/api/proyecto/ActaConstitucion/listarInteresados/" +
             projectId;
@@ -150,6 +159,7 @@ export default function Interesados(props) {
                     }
                 );
                 setInteresados(interesadosArray);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -228,6 +238,28 @@ export default function Interesados(props) {
                     return intr;
                 });
                 setInteresados(updatedInteresados);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    const deleteInteresado = (idSelected) => {
+        const deleteURL =
+            "http://localhost:8080/api/proyecto/ActaConstitucion/eliminarInteresado";
+        axios
+            .put(deleteURL, {
+                idInteresado: idSelected,
+            })
+            .then((response) => {
+                console.log(response.data.message);
+                //eliminamos de lista segun el id
+
+                const newList = interesados.filter(
+                    (intr) => intr.id !== idSelected
+                );
+
+                setInteresados(newList);
             })
             .catch(function (error) {
                 console.log(error);
@@ -353,6 +385,15 @@ export default function Interesados(props) {
                                     aria-label="eliminar"
                                     className="text-danger"
                                     color="danger"
+                                    onPress={() => {
+                                        console.log(
+                                            "vas a eliminar el de id " +
+                                                template.id
+                                        );
+                                        setModalContentState(3);
+                                        setIdSelected(template.id);
+                                        onOpen();
+                                    }}
                                 >
                                     Eliminar
                                 </DropdownItem>
@@ -463,7 +504,7 @@ export default function Interesados(props) {
 
     return (
         <>
-            <div className="flex flex-row space-x-4 mb-4">
+            <div className="flex flex-row space-x-4 mb-4 mt-4">
                 <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
                     Lista de Interesados (StakeHolders)
                 </h2>
@@ -513,13 +554,13 @@ export default function Interesados(props) {
                     )}
                 </TableBody>
             </Table>
-            <div className="flex flex-row space-x-4 mb-4">
+            {/* <div className="flex flex-row space-x-4 mb-4">
                 <TextInfoCard
                     key={1}
                     title={"Otros Interesados"}
                     data={[{ label: "", value: "Sebastian Chira (20191088)" }]}
                 />
-            </div>
+            </div> */}
 
             <Modal
                 onOpenChange={onOpenChange}
@@ -545,7 +586,7 @@ export default function Interesados(props) {
                         };
                         const cerrarModal = () => {
                             if (modalContentState === 3) {
-                                deleteHito(idSelected);
+                                deleteInteresado(idSelected);
                                 onClose();
                             }
                             if (
