@@ -153,6 +153,8 @@ export default function newProject() {
     const [listHerramientas, setListHerramientas] = useState([]);
 
     const [estadoProgress, setEstadoProgress] = useState(1);
+
+
     const cambiarEstadoAdelante = () => {
         if (estadoProgress != 3) {
             setEstadoProgress(estadoProgress + 1);
@@ -273,6 +275,7 @@ export default function newProject() {
     //     console.log(newToolsList);
     // };
 
+    
     return (
         <div className="mainDivNewProject">
             <div className="headerDiv">
