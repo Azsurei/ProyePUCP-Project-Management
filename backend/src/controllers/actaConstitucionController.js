@@ -139,6 +139,22 @@ async function modificarHito(req,res,next){
     }
 }
 
+async function eliminarHito(req,res,next){
+    const{idHito} = req.body;
+    const query = `CALL ELIMINAR_HITOAC(?);`;
+    try {
+        const [results] = await connection.query(query,[idHito]);
+        const idHitoEliminado = results[0][0].idHito;
+        console.log(`Se elimino el hito ${idHitoEliminado}!`);
+        res.status(200).json({
+            idHitoEliminado,
+            message: "Hito eliminado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     listar,
     modificarCampos,
@@ -149,4 +165,5 @@ module.exports = {
     listarHito,
     insertarHito,
     modificarHito,
+    eliminarHito
 };

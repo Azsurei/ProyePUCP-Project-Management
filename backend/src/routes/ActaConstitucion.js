@@ -13,6 +13,7 @@ routerActaConstitucion.post("/insertarInteresado",verifyToken, actaConstitucionC
 routerActaConstitucion.get("/listarHito/:idProyecto",verifyToken, actaConstitucionController.listarHito);
 routerActaConstitucion.post("/insertarHito",verifyToken, actaConstitucionController.insertarHito);
 routerActaConstitucion.put("/modificarHito",verifyToken, actaConstitucionController.modificarHito);
+routerActaConstitucion.delete("/eliminarHito", actaConstitucionController.eliminarHito);
 
 
 module.exports.routerActaConstitucion = routerActaConstitucion;

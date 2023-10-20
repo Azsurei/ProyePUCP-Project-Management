@@ -1257,6 +1257,18 @@ BEGIN
     SELECT _idDetalle AS idDetalle;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_HITOAC;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HITOAC(
+    IN _idHito INT
+)
+BEGIN
+	UPDATE HitoAC 
+    SET activo = 0
+    WHERE idHito = _idHito;
+    SELECT _idHito AS idHito;
+END$
+
 ---------------
 -- Presupuesto
 ---------------
