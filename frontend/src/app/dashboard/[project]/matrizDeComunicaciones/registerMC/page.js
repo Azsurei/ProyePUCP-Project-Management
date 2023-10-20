@@ -303,7 +303,7 @@ export default function MatrizComunicacionesRegister(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar Historia de Usuario"
+                                textHeader="Registrar información"
                                 textBody="¿Seguro que quiere registrar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}

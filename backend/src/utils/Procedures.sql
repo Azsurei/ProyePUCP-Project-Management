@@ -1257,6 +1257,46 @@ BEGIN
     SELECT _idDetalle AS idDetalle;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_HITOAC;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_HITOAC(
+    IN _idHito INT
+)
+BEGIN
+	UPDATE HitoAC 
+    SET activo = 0
+    WHERE idHito = _idHito;
+    SELECT _idHito AS idHito;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_INTERESADOAC;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_INTERESADOAC(
+    IN _idInteresado INT
+)
+BEGIN
+	UPDATE InteresadoAC 
+    SET activo = 0
+    WHERE idInteresado = _idInteresado;
+    SELECT _idInteresado AS idInteresado;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_INTERESADOAC;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_INTERESADOAC(
+    IN _idInteresado INT,
+    IN _nombre VARCHAR(255),
+    IN _cargo VARCHAR(255),
+    IN _organizacion VARCHAR(255)
+)
+BEGIN
+	UPDATE InteresadoAC 
+    SET nombre = _nombre,
+        cargo = _cargo,
+        organizacion = _organizacion
+    WHERE idInteresado = _idInteresado;
+    SELECT _idInteresado AS idInteresado;
+END$
 ---------------
 -- Presupuesto
 ---------------
@@ -1326,7 +1366,8 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_LINEA_INGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
-	IN _idIngreso INT,
+	IN _idPresupuesto INT,
+    IN _idProyecto INT,
     IN _idMoneda INT,
 	IN _idTransaccionTipo INT,
     IN _idIngresoTipo INT,
@@ -1337,8 +1378,8 @@ CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
 )
 BEGIN
 	DECLARE _idLineaIngreso INT;
-	INSERT INTO LineaIngreso(idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
-    VALUES(_idIngreso,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
+	INSERT INTO LineaIngreso(idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
+    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
     SET _idLineaIngreso = @@last_insert_id;
     SELECT _idLineaIngreso AS idLineaIngreso;
 END$
@@ -1416,7 +1457,8 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_LINEA_EGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
-	IN _idEgreso INT,
+	IN _idPresupuesto INT,
+    IN _idProyecto INT,
     IN _idMoneda INT,
 	IN _descripcion  VARCHAR(255),
     IN _costoReal DECIMAL(10,2),
@@ -1425,11 +1467,13 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 )
 BEGIN
 	DECLARE _idLineaEgreso INT;
-	INSERT INTO LineaEgreso(idEgreso,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
-    VALUES(_idEgreso,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
+	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
+    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
     SET _idLineaEgreso = @@last_insert_id;
     SELECT _idLineaEgreso AS idLineaEgreso;
 END$
+
+SELECT * FROM Presupuesto;
 
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO;
 DELIMITER $
@@ -1724,6 +1768,18 @@ BEGIN
     SELECT _idComunicacion AS idComunicacion;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_COMUNICACION;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_COMUNICACION(
+    IN _idComunicacion INT
+)
+BEGIN
+	UPDATE Comunicacion 
+    SET activo = 0
+    WHERE idComunicacion = _idComunicacion;
+    SELECT _idComunicacion AS idComunicacion;
+END$
+
 
 ------------
 -- Equipos
@@ -1747,4 +1803,27 @@ BEGIN
     LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
+<<<<<<< HEAD
 >>>>>>> 88a7fbcfbafbaa54dc2938c90e2132c09489ccfd
+=======
+
+------------
+-- AUTOEVALUACION
+------------
+DROP PROCEDURE CREAR_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE CREAR_AUTOEVALUACION(
+    _idProyecto INT,
+    _fechaCreacion DATE,
+    _fechaLimite DATE,
+    _activo TINYINT
+)
+BEGIN
+	DECLARE _idAutoEvaluacion INT;
+	INSERT INTO autoEvaluacion(idProyecto,fechaCreacion,fechaLimite,activo) 
+    VALUES(_idProyecto,_fechaCreacion,_fechaLimite,1);
+    SET _idAutoEvaluacion = @@last_insert_id;
+    SELECT _idAutoEvaluacion AS idAutoEvaluacion;
+END$
+
+>>>>>>> 6145fcdbf7b45ed2a8ad1f0d5c8f6221e8ac1485

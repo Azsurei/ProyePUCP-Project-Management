@@ -3,15 +3,23 @@
     flex-direction: row;
     gap: 2rem;
     justify-content: space-between;
+    margin-bottom: 0.8rem;
 
 }
 
 .comboBoxMoneda{
+    max-width: 40%;
+    align-items: center;   
+    flex-direction: row;
+    margin-bottom: 1rem;
+    margin-top:4px;
+}
 
-    display: flex;
+.comboBoxTipo{
     max-width: 60%;
     align-items: center;   
     flex-direction: row;
+    margin-bottom: 1rem;
 }
 
 .textIngreso{
@@ -22,3 +30,52 @@
     font-weight: 300;
     line-height: 16px; /* 123.077% */
 }
+
+#inputFechaPresupuesto{
+    width: 50%;
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+    font-size: 14px;
+    resize: none;
+    font-family: Montserrat;
+    padding: 8px 16px;
+
+    border-radius: 5px;
+    border: 2px solid var(--color-border-input, rgba(9, 30, 66, 0.14));
+}
+
+.textFecha{
+    color: var(--color-text-subtle, #44546F);
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 16px; /* 123.077% */
+    margin-bottom: 0.8rem;
+}
+
+.fechaContainer {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los elementos */
+    align-items: center; /* Alinea verticalmente en el centro */
+}
+
+.fechaInput {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos a la izquierda */
+}
+
+.textPresuLast {
+    color: var(--color-text-subtle, #44546F);
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 16px; /* 123.077% */
+    margin-bottom: 0.8rem;
+
+}
+

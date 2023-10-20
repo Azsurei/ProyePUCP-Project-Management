@@ -1,0 +1,17 @@
+.modalContentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.fieldAndHeaderCont{
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+
+.modalFieldHeader {
+    font-weight: 600;
+    color: #172B4D;
+    font-family: "Montserrat";
+}

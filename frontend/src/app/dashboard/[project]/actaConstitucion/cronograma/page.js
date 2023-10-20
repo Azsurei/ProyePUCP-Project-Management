@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     Table,
     TableHeader,
@@ -17,70 +17,89 @@ import {
     Chip,
     User,
     Pagination,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+    Textarea,
 } from "@nextui-org/react";
+import "@/styles/dashboardStyles/projectStyles/actaConstStyles/cronogramaACPage.css";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
+import DateInput from "@/components/DateInput";
 axios.defaults.withCredentials = true;
+
 const columns = [
-    { name: "Hito", uid: "name", sortable: true},
-    { name: "Estado", uid: "state", sortable: true },
+    { name: "Hito", uid: "name", sortable: true },
+    //{ name: "Estado", uid: "state", sortable: true },
     { name: "Fecha Tope", uid: "dateModified", sortable: true },
-    { name: "Acciones", uid: "actions"},
+    { name: "Acciones", uid: "actions" },
 ];
 
-const toolsOptions = [
-
-    { name: "Sebastian Chira", uid: "paused" },
-];
+const toolsOptions = [{ name: "Sebastian Chira", uid: "paused" }];
 
 const templates = [
     {
         id: 1,
-        name: 'Descripcion Hito 1',
+        name: "Descripcion Hito 1",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 2,
-        name: 'Descripcion Hito 2',
+        name: "Descripcion Hito 2",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 3,
-        name: 'Descripcion Hito 3',
+        name: "Descripcion Hito 3",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 4,
-        name: 'Descripcion Hito 4',
+        name: "Descripcion Hito 4",
         dateCreated: "2021-10-01",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 5,
-        name: 'Descripcion Hito 5',
+        name: "Descripcion Hito 5",
         dateCreated: "2021-10-02",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
     {
         id: 6,
-        name: 'Descripcion Hito 6',
+        name: "Descripcion Hito 6",
         dateCreated: "2021-10-03",
         dateModified: "2021-10-01",
         state: "No iniciado",
     },
 ];
 
-export default function CronogramaActa() {
+export default function CronogramaActa(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    //const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const [listHito, setListHito] = useState([]);
+    const [modalContentState, setModalContentState] = useState(0);
+    //1 es estado de anadir nuevo hito
+    //2 es estado de editar hito
+    //3 es estado de eliminar hito
+
     // Estados generales
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -93,12 +112,12 @@ export default function CronogramaActa() {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(templates.length / rowsPerPage);
+    const pages = Math.ceil(listHito.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...templates];
+        let filteredTemplates = [...listHito];
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((template) =>
@@ -115,33 +134,40 @@ export default function CronogramaActa() {
         }
 
         return filteredTemplates;
-    }, [templates, filterValue, toolsFilter]);
+    }, [listHito, filterValue, toolsFilter]);
 
     // Initialize hito on page load
     useEffect(() => {
         initializeHito();
-    }, []); // Empty dependency array ensures this effect runs only once on page load
+    }, []);
 
-    const initializeHito = async () => {
-        try {
-            // Fetch the initial hito value from your API or set it to a default value
-            const response = await axios.get('/api/listarHito'); // Replace with the correct API endpoint
-            setHito(response.data); // Assuming response.data contains the initial hito value
-        } catch (error) {
-            console.error('Error initializing hito:', error);
-        }
-    };
-
-    // Function to insert a new hito
-    const insertarHito = async () => {
-        try {
-            // Make a POST request to insert a new hito
-            const response = await axios.post('/api/insertarHito', { hito }); // Replace with the correct API endpoint
-            // Handle the response as needed
-            // After successful insertion, you can optionally refresh the hito value
-        } catch (error) {
-            console.error('Error inserting hito:', error);
-        }
+    const initializeHito = () => {
+        const listHitoURL =
+            "http://localhost:8080/api/proyecto/ActaConstitucion/listarHito/" +
+            projectId;
+        axios
+            .get(listHitoURL)
+            .then((response) => {
+                console.log(response.data.message);
+                console.log(
+                    "LISTA DE INTERESADOS ==== " +
+                        JSON.stringify(response.data.hitoAC)
+                );
+                const hitosArray = response.data.hitoAC.map((hito) => {
+                    const formattedDate = new Date(hito.fechaLimite);
+                    return {
+                        id: hito.idHito,
+                        name: hito.descripcion,
+                        dateCreated: formattedDate.toLocaleDateString(),
+                        dateModified: formattedDate.toLocaleDateString(),
+                        state: "esto es inutil",
+                    };
+                });
+                setListHito(hitosArray);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
     // Items de tabla paginados
@@ -205,14 +231,56 @@ export default function CronogramaActa() {
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
-                            <DropdownTrigger>
+                        <Dropdown aria-label="dropdownmain">
+                            <DropdownTrigger aria-label="dropdowntrig">
                                 <Button isIconOnly size="sm" variant="light">
                                     <VerticalDotsIcon className="text-default-300" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem>Editar</DropdownItem>
+                            <DropdownMenu aria-label="dropdownmenu">
+                                <DropdownItem
+                                    onPress={() => {
+                                        console.log(
+                                            "editar con id " +
+                                                template.id +
+                                                ", nombre " +
+                                                template.name +
+                                                " y fecha " +
+                                                template.dateCreated +
+                                                "."
+                                        );
+
+                                        const parts =
+                                            template.dateCreated.split("/");
+                                        console.log(
+                                            "part 1 = " +
+                                                parts[0] +
+                                                " part 2 = " +
+                                                parts[1] +
+                                                " part 3 = " +
+                                                parts[2]
+                                        );
+                                        if (parts[0].length === 1) {
+                                            parts[0] = "0" + parts[0];
+                                        }
+                                        if (parts[1].length === 1) {
+                                            parts[1] = "0" + parts[0];
+                                        }
+                                        const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                        console.log(
+                                            "NUEVA FECHA INICIO:" +
+                                                formattedDate
+                                        );
+
+                                        setModalContentState(2);
+                                        setIdSelected(template.id);
+                                        setNewDate(formattedDate);
+                                        setNewName(template.name);
+                                        onOpen();
+                                    }}
+                                >
+                                    Editar
+                                </DropdownItem>
                                 <DropdownItem>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -235,20 +303,27 @@ export default function CronogramaActa() {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
                         <Button color="secondary" endContent={<PlusIcon />}>
                             Exportar
                         </Button>
-                        <Button color="primary" endContent={<PlusIcon />}>
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            onPress={() => {
+                                setModalContentState(1);
+                                onOpen();
+                            }}
+                        >
                             Añadir Interesado
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {templates.length} interesados
+                        Total: {listHito.length} interesados
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -268,7 +343,7 @@ export default function CronogramaActa() {
         filterValue,
         toolsFilter,
         onRowsPerPageChange,
-        templates.length,
+        listHito.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -312,6 +387,80 @@ export default function CronogramaActa() {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
+    const [newName, setNewName] = useState("");
+    const [validName, setValidName] = useState(true);
+    const [newDate, setNewDate] = useState("");
+    const [validDate, setValidDate] = useState(true);
+    //para updates
+    const [idSelected, setIdSelected] = useState(null);
+
+    const addNewHito = (hitoName, hitoDate) => {
+        const addURL =
+            "http://localhost:8080/api/proyecto/ActaConstitucion/insertarHito";
+        axios
+            .post(addURL, {
+                idProyecto: projectId,
+                descripcion: hitoName,
+                fechaLimite: hitoDate,
+            })
+            .then((response) => {
+                console.log(response.data);
+
+                //aqui recibimos el id, por lo que podemos armar el objeto y agregarlo a la lista
+                console.log("el date es " + hitoDate);
+                const parts = hitoDate.split("-");
+                const year = parts[0];
+                const month = parseInt(parts[1], 10).toString();
+                const day = parseInt(parts[2], 10).toString();
+                const newHito = {
+                    id: response.data.idHito,
+                    name: hitoName,
+                    dateCreated: `${day}/${month}/${year}`,
+                    dateModified: `${day}/${month}/${year}`,
+                    state: "esto es inutil",
+                };
+
+                setListHito([...listHito, newHito]);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    const updateHito = (idSelected, hName, hDate) => {
+        const addURL =
+            "http://localhost:8080/api/proyecto/ActaConstitucion/modificarHito";
+        axios
+            .put(addURL, {
+                idHito: idSelected,
+                descripcion: hName,
+                fechaLimite: hDate,
+            })
+            .then((response) => {
+                console.log(response.data);
+                //actualizamos lista en id de modificado
+                const updatedHitos = listHito.map((hito) => {
+                    if (hito.id === idSelected) {
+                        const parts = hDate.split("-");
+                        const year = parts[0];
+                        const month = parseInt(parts[1], 10).toString();
+                        const day = parseInt(parts[2], 10).toString();
+                        return {
+                            ...hito,
+                            name: hName,
+                            dateCreated: `${day}/${month}/${year}`,
+                            dateModified: `${day}/${month}/${year}`,
+                        };
+                    }
+                    return hito;
+                });
+                setListHito(updatedHitos);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
     return (
         <>
             <div className="flex flex-row space-x-4 mb-4">
@@ -350,7 +499,7 @@ export default function CronogramaActa() {
                     )}
                 </TableHeader>
                 <TableBody
-                    emptyContent={"Sin plantillas registradas"}
+                    emptyContent={"Aun no has agregado ningun hito."}
                     items={sortedItems}
                 >
                     {(item) => (
@@ -364,6 +513,187 @@ export default function CronogramaActa() {
                     )}
                 </TableBody>
             </Table>
+
+            <Modal
+                onOpenChange={onOpenChange}
+                isDismissable={false}
+                isOpen={isOpen}
+                classNames={{
+                    header: "pb-1",
+                    body: "pb-0",
+                    footer: "pt-3",
+                }}
+                size="lg"
+            >
+                <ModalContent>
+                    {(onClose) => {
+                        const cancelarModal = () => {
+                            //setFieldToDelete(null);
+                            setNewName("");
+                            setNewDate("");
+                            onClose();
+                        };
+                        const cerrarModal = () => {
+                            let allValid = true;
+                            if (newName === "") {
+                                setValidName(false);
+                                allValid = false;
+                            }
+                            if (newDate === "") {
+                                setValidDate(false);
+                                allValid = false;
+                            }
+                            if (allValid === true) {
+                                if (modalContentState === 1) {
+                                    addNewHito(newName, newDate);
+                                }
+                                if (modalContentState === 2) {
+                                    updateHito(idSelected, newName, newDate);
+                                }
+                                onClose();
+                            }
+                        };
+                        return (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">
+                                    {modalContentState === 1 &&
+                                        "Agregar nuevo hito"}
+                                    {modalContentState === 2 && "Editar hito"}
+                                    {modalContentState === 3 && "Eliminar hito"}
+                                </ModalHeader>
+                                <ModalBody>
+                                    {modalContentState === 1 && (
+                                        <div className="modalContentContainer">
+                                            <div className="fieldAndHeaderCont">
+                                                <p className="modalFieldHeader">
+                                                    Nombre del hito
+                                                </p>
+                                                <Textarea
+                                                    isInvalid={!validName}
+                                                    errorMessage={
+                                                        !validName
+                                                            ? "Debe introducir un nombre"
+                                                            : ""
+                                                    }
+                                                    //key={"bordered"}
+                                                    aria-label="custom-txt"
+                                                    variant={"bordered"}
+                                                    labelPlacement="outside"
+                                                    placeholder={
+                                                        "Escribe aquí!"
+                                                    }
+                                                    classNames={{
+                                                        label: "pb-0",
+                                                    }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
+                                                    onValueChange={setNewName}
+                                                    minRows={1}
+                                                    size="sm"
+                                                    onChange={() => {
+                                                        setValidName(true);
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="fieldAndHeaderCont">
+                                                <p className="modalFieldHeader">
+                                                    Fecha tope
+                                                </p>
+                                                <DateInput
+                                                    className={""}
+                                                    isInvalid={!validDate}
+                                                    onChangeHandler={(e) => {
+                                                        setNewDate(
+                                                            e.target.value
+                                                        );
+                                                        setValidDate(true);
+                                                    }}
+                                                ></DateInput>
+                                                {!validDate && (
+                                                    <p className="text-tiny text-danger pl-1">
+                                                        Debe elegir una fecha
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {modalContentState === 2 && (
+                                        <div className="modalContentContainer">
+                                            <div className="fieldAndHeaderCont">
+                                                <p className="modalFieldHeader">
+                                                    Nombre del hito
+                                                </p>
+                                                <Textarea
+                                                    isInvalid={!validName}
+                                                    errorMessage={
+                                                        !validName
+                                                            ? "Debe introducir un nombre"
+                                                            : ""
+                                                    }
+                                                    //key={"bordered"}
+                                                    aria-label="custom-txt"
+                                                    variant={"bordered"}
+                                                    labelPlacement="outside"
+                                                    placeholder={
+                                                        "Escribe aquí!"
+                                                    }
+                                                    classNames={{
+                                                        label: "pb-0",
+                                                    }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
+                                                    value={newName}
+                                                    onValueChange={setNewName}
+                                                    minRows={1}
+                                                    size="sm"
+                                                    onChange={() => {
+                                                        setValidName(true);
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="fieldAndHeaderCont">
+                                                <p className="modalFieldHeader">
+                                                    Fecha tope
+                                                </p>
+                                                <DateInput
+                                                    className={""}
+                                                    isInvalid={!validDate}
+                                                    value={newDate}
+                                                    onChangeHandler={(e) => {
+                                                        setNewDate(
+                                                            e.target.value
+                                                        );
+                                                        setValidDate(true);
+                                                    }}
+                                                ></DateInput>
+                                                {!validDate && (
+                                                    <p className="text-tiny text-danger pl-1">
+                                                        Debe elegir una fecha
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button
+                                        color="danger"
+                                        variant="light"
+                                        onPress={cancelarModal}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        onPress={cerrarModal}
+                                    >
+                                        {modalContentState === 1 && "Agregar"}
+                                        {modalContentState === 2 && "Aceptar"}
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        );
+                    }}
+                </ModalContent>
+            </Modal>
         </>
     );
 }

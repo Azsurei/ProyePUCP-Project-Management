@@ -26,6 +26,7 @@ import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/MComunication
 import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/PopUpEliminateMC";
 import { set } from "date-fns";
 import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringMC";
+import RouteringRegisterMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringRegisterMC";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -40,6 +41,7 @@ export default function MatrizDeComunicaciones(props){
     const [data, setData] = useState([]);
     const [objectMC, setObjectMC] = useState(null);
     const [navegate, setNavegate] = useState(false);
+    const [navegateRegister, setNavegateRegister] = useState(false);
     const [idMatriz, setIdMatriz] = useState(null);
     function DataTable(){
         const fetchData = async () => {
@@ -84,6 +86,9 @@ export default function MatrizDeComunicaciones(props){
         console.log("El id del objeto MC es: ", objectMC);
         setNavegate(!navegate);
     };
+    const setRouteringRegisterMC = () => {
+        setNavegateRegister(!navegateRegister);
+    }
     const columns = [
         {
             name: 'Informacion Requerida',
@@ -230,12 +235,21 @@ export default function MatrizDeComunicaciones(props){
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
+        const imageOptions = {
+            "WORD": "/icons/icon-word.svg",
+            "Documento Excel": "/icons/icon-excel.svg",
+            "PDF": "/icons/icon-pdf.svg",
+            "Informe Escrito": "/icons/icon-information.svg",
+            "Informe Verbal": "/icons/icon-verbal.svg",
+            "Otros": "/icons/icon-other.svg",
+            // Agrega más opciones según sea necesario
+        };
         
         switch (columnKey) {
                 
             case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
-                return <img src={cellValue === "WORD" ? "/icons/icon-word.svg" : "/icons/icon-excel.svg"} alt="Icono de plantilla"></img>;
+                return <img src={imageOptions[cellValue]} alt={`Icono de ${cellValue}`} />;
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -299,7 +313,7 @@ export default function MatrizDeComunicaciones(props){
                                 ))}
                             </DropdownMenu>
                         </Dropdown> */}
-                        <Button color="primary" endContent={<PlusIcon />} className="btnAddComunicacion">
+                        <Button color="primary" endContent={<PlusIcon />} className="btnAddComunicacion" onClick={() => setRouteringRegisterMC()}>
                             <Link href={"/dashboard/"+projectName+"="+projectId+"/matrizDeComunicaciones/registerMC"}>
                             Agregar
                             </Link> 
@@ -408,6 +422,7 @@ export default function MatrizDeComunicaciones(props){
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.sumillaInformacion}
                     idComunicacion = {selectedTask.idComunicacion}
+                    refresh={DataTable}
                 />
             )}
             {navegate && objectMC.idComunicacion && (
@@ -415,6 +430,13 @@ export default function MatrizDeComunicaciones(props){
                     proy_name = {projectName}
                     proy_id = {projectId}
                     idMC = {objectMC.idComunicacion}
+                />
+            )
+            }
+            {navegateRegister  && (
+                <RouteringRegisterMC
+                    proy_name = {projectName}
+                    proy_id = {projectId}
                 />
             )
             }

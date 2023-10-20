@@ -1,0 +1,49 @@
+.ACInfoContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.fieldsBigContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.newFieldContainer{
+    border: 1px red solid;
+    display: flex;
+    flex-direction: column;
+
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    padding: 1rem;
+    gap: .3rem;
+}
+
+.newFieldHeader{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    gap: 1.2rem;
+}
+
+.newFieldImgsContainer{
+    display: flex;
+    flex-direction: row;
+    gap: .3rem;
+}
+
+.newFieldConfirm, .newFieldCancel{
+    height: 48px;
+    width: 40px;
+    transition: transform 0.1s;
+}
+
+.newFieldConfirm:hover, .newFieldCancel:hover{
+    transform: scale(1.2);
+}

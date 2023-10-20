@@ -12,10 +12,10 @@ async function crear(req,res,next){
 }
 
 async function crearLineaEgreso(req,res,next){
-    const {idEgreso,idMoneda,descripcion,costoReal,fechaRegistro,cantidad} = req.body;
+    const {idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad} = req.body;
     try {
-        const query = `CALL INSERTAR_LINEA_EGRESO(?,?,?,?,?,?);`;
-        await connection.query(query,[idEgreso,idMoneda,descripcion,costoReal,fechaRegistro,cantidad]);
+        const query = `CALL INSERTAR_LINEA_EGRESO(?,?,?,?,?,?,?);`;
+        await connection.query(query,[idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad]);
         res.status(200).json({message: "Linea egreso creada"});
     } catch (error) {
         next(error);

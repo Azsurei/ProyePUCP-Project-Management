@@ -36,9 +36,9 @@ export default function ContainerScenario({
     };
 
     return (
-        <div>
+        <div className="containerBack">
             <Textarea
-                className="paddingTop"
+                className="paddingTop  custom-label"
                 label={`Escenario ${indice}:`}
                 labelPlacement="outside"
                 type="text"
@@ -101,7 +101,7 @@ export default function ContainerScenario({
             />
 
             <Textarea
-                className="paddingTop custom-label"
+                className="paddingTop"
                 label="Entonces..."
                 labelPlacement="outside"
                 id={inputId4}
@@ -122,7 +122,7 @@ export default function ContainerScenario({
             />
 
             <img
-                src="/icons/icon-cross.svg"
+                src="/icons/icon-trash.svg"
                 alt="Eliminar"
                 className="iconDelete2"
                 onClick={() => {
