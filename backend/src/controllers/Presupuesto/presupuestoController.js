@@ -1,10 +1,10 @@
 const connection = require("../../config/db");
 
 async function crear(req,res,next){
-    const {idProyecto,presupuestoInicial} = req.body;
+    const {idProyecto,idMoneda,presupuestoInicial,cantidadMeses} = req.body;
     try {
         const query = `CALL INSERTAR_PRESUPUESTO(?,?);`;
-        await connection.query(query,[idProyecto,presupuestoInicial]);
+        await connection.query(query,[idProyecto,idMoneda,presupuestoInicial,cantidadMeses]);
         res.status(200).json({message: "Presupuesto creada"});
     } catch (error) {
         next(error);

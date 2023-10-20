@@ -1335,12 +1335,14 @@ DROP PROCEDURE INSERTAR_PRESUPUESTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRESUPUESTO(
 	IN  _idProyecto INT,
-    IN _presupuestoInicial DECIMAL(10,2)
+    IN _idMoneda INT,
+    IN _presupuestoInicial DECIMAL(10,2),
+    IN _cantidadMeses INT
 )
 BEGIN
 	DECLARE _idPresupuesto INT;
-	INSERT INTO Presupuesto(idHerramienta,idProyecto,presupuestoInicial,fechaCreacion,activo) 
-    VALUES(13,_idProyecto,_presupuestoInicial,curdate(),1);
+	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,fechaCreacion,activo) 
+    VALUES(13,_idProyecto,_idMoneda,_presupuestoInicial,_cantidadMeses,curdate(),1);
     
     INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,activo) VALUES(_idProyecto,13,1);
     
