@@ -1326,7 +1326,8 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_LINEA_INGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
-	IN _idIngreso INT,
+	IN _idPresupuesto INT,
+    IN _idProyecto INT,
     IN _idMoneda INT,
 	IN _idTransaccionTipo INT,
     IN _idIngresoTipo INT,
@@ -1337,8 +1338,8 @@ CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
 )
 BEGIN
 	DECLARE _idLineaIngreso INT;
-	INSERT INTO LineaIngreso(idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
-    VALUES(_idIngreso,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
+	INSERT INTO LineaIngreso(idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
+    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
     SET _idLineaIngreso = @@last_insert_id;
     SELECT _idLineaIngreso AS idLineaIngreso;
 END$
@@ -1416,7 +1417,8 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_LINEA_EGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
-	IN _idEgreso INT,
+	IN _idPresupuesto INT,
+    IN _idProyecto INT,
     IN _idMoneda INT,
 	IN _descripcion  VARCHAR(255),
     IN _costoReal DECIMAL(10,2),
@@ -1425,11 +1427,13 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 )
 BEGIN
 	DECLARE _idLineaEgreso INT;
-	INSERT INTO LineaEgreso(idEgreso,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
-    VALUES(_idEgreso,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
+	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
+    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
     SET _idLineaEgreso = @@last_insert_id;
     SELECT _idLineaEgreso AS idLineaEgreso;
 END$
+
+SELECT * FROM Presupuesto;
 
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO;
 DELIMITER $
