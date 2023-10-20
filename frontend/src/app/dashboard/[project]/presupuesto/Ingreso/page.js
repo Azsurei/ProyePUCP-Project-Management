@@ -61,9 +61,6 @@ export default function Ingresos(props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
 
-    const [descripcionLinea, setdescripcionLinea] = useState("");
-
-    const [montoLinea, setMontoLinea] = useState("");
     
     const insertarLineaIngreso = () => {
         const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
@@ -95,6 +92,12 @@ export default function Ingresos(props) {
     const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
     
     const [selectedMoneda, setselectedMoneda] = useState("");
+
+    
+    const [descripcionLinea, setdescripcionLinea] = useState("");
+
+    const [montoLinea, setMontoLinea] = useState("");
+
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
@@ -114,6 +117,8 @@ export default function Ingresos(props) {
     const handleSelectedValueTipoTransaccion = (value) => {
         setselectedTipoTransacciono(value);
     };
+
+
 
     //const {idIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} 
     
@@ -199,7 +204,7 @@ export default function Ingresos(props) {
                                         Completar Campos
                                     </ModalHeader>
                                     <ModalBody>
-                                        <p className="textIngreso">Monto Entrante</p>
+                                        <p className="textIngreso">Monto Recibido</p>
                                         
                                         <div className="modalAddIngreso">
                                             <div className="comboBoxMoneda">
@@ -215,15 +220,23 @@ export default function Ingresos(props) {
                                             />
 
                                             </div>
+                                        
+                                            <Input
+                                            placeholder="0.00"
+                                            labelPlacement="outside"
+                                            startContent={
+                                                <div className="pointer-events-none flex items-center">
+                                                <span className="text-default-400 text-small">{selectedMoneda===2 ? "S/" : "$"}</span>
+                                                </div>
+                                            }
+                                            endContent={
+                                                <div className="flex items-center">
 
-                                            <Textarea
-                                                label=""
-                                                labelPlacement="outside"
-                                                placeholder=""
-                                                className="max-w-x"
-                                                maxRows="1"
-                                                onValueChange={setselectedTipo}
-                                            />
+                                                </div>
+                                                }
+                                                type="number"
+                                        />
+                                        
                                         
                                         </div>
                                         <p className="textIngreso">Descripción</p>
@@ -237,7 +250,7 @@ export default function Ingresos(props) {
                                             placeholder=""
                                             className="max-w-x"
                                             maxRows="2"
-                                            onValueChange={montoLinea}
+                                            onValueChange={setdescripcionLinea}
                                             />
                                          </div>
 
