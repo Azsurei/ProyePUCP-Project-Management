@@ -5,7 +5,7 @@ async function crear(req,res,next){
         descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,
         horasPlaneadas,usuarios,subTareas,tareasPosteriores} = req.body;
     try {
-        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?);`;
+        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?);`;
         const [results] =await connection.query(query,[idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas]);
         const idTarea = results[0][0].idTarea;
         

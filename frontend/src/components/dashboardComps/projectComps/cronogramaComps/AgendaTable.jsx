@@ -27,7 +27,7 @@ const columns = [
     { name: "TAREA", uid: "name" },
     { name: "ASIGNADO (S)", uid: "usuarios" },
     { name: "ESTADO", uid: "status" },
-    { name: "FECHA FIN", uid: "fechaFin" },
+    { name: "DURACION", uid: "fechaFin" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -167,9 +167,9 @@ export default function AgendaTable({ listTareas }) {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem>View</DropdownItem>
-                                <DropdownItem>Edit</DropdownItem>
-                                <DropdownItem>Delete</DropdownItem>
+                                <DropdownItem>Ver detalle</DropdownItem>
+                                <DropdownItem>Editar</DropdownItem>
+                                <DropdownItem>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
