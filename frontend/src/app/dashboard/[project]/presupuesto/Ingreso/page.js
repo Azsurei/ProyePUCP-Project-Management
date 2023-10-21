@@ -86,7 +86,7 @@ export default function Ingresos(props) {
 
         axios.post(stringUrlTipoTransaccion, {
             idProyecto: projectId,
-            idPresupuesto:59,
+            idPresupuesto:8,
             idMoneda: selectedMoneda,
             idTransaccionTipo:selectedTipoTransaccion,
             idIngresoTipo:selectedTipo,
