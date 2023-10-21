@@ -11,6 +11,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import {ExportIcon} from "@/../public/icons/ExportIcon";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -64,34 +65,9 @@ export default function Ingresos(props) {
     //2 es estado de editar hito
 
     
-    const insertarLineaIngreso = () => {
-        const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
 
-        console.log(projectId);
-
-        axios.post(stringUrlTipoTransaccion, {
-            idProyecto: projectId,
-            idMoneda: selectedMoneda,
-            idTransaccionTipo:selectedTipoTransaccion,
-            idIngresoTipo:selectedTipo,
-            descripcion:descripcionLinea,
-            monto:parseFloat(monto),
-            cantidad:1,
-            fechaTransaccion:selectedDate,
-        })
-
-        .then(function (response) {
-            console.log(response);
-            console.log("Linea Ingresada");
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
 
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
-    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
-    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
     
     const [selectedMoneda, setselectedMoneda] = useState("");
 
@@ -103,12 +79,6 @@ export default function Ingresos(props) {
         setselectedMoneda(value);
     };
 
-    const [selectedTipo, setselectedTipo] = useState("");
-    
-    const handleSelectedValueTipo = (value) => {
-        setselectedTipo(value);
-    };
-
     const [inFechaInicio, setInFechaInicio] = useState('');
     const handleChangeFechaInicio = () => {
         const datepickerInput = document.getElementById("inputFechaPresupuesto");
@@ -116,7 +86,6 @@ export default function Ingresos(props) {
         console.log(selectedDate);
         setInFechaInicio(selectedDate);
     }
-
 
     const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
     
@@ -138,12 +107,12 @@ export default function Ingresos(props) {
                     <BreadcrumbsItem href="/dashboard" text="Proyectos" />
                     <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
                     <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}  text="Presupuesto"/>
-                    <BreadcrumbsItem href="" text="Ingresos" />
+                    <BreadcrumbsItem href="" text="Historial" />
 
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Ingresos</div>
+                    <div className="titlePresupuesto">Historial</div>
 
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
@@ -151,11 +120,11 @@ export default function Ingresos(props) {
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
-                                <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
+                                <button className="btnCommon btnHistorial btnDisabled btnSelected sm:w-1 sm:h-1" disabled type="button">Historial</button> 
                         </Link>
                         
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Ingreso"}>
-                                <button className="btnCommon btnIngreso btnDisabled btnSelected sm:w-1 sm:h-1"  disabled type="button">Ingresos</button>
+                                <button className="btnCommon btnIngreso  sm:w-1 sm:h-1"   type="button">Ingresos</button>
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Egresos"}>
@@ -163,8 +132,12 @@ export default function Ingresos(props) {
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
-                                <button className="btnCommon btnEstimacion sm:w-1 sm:h-1" type="button">Estimacion</button>
+                                <button className="btnCommon btnEstimacion  sm:w-1 sm:h-1"  type="button">Estimacion</button>
                         </Link>
+
+                        <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
+                            Exportar
+                        </Button>
 
 
                     </div>
@@ -180,13 +153,8 @@ export default function Ingresos(props) {
                         />
 
                     <div className="buttonContainer">
-                        <Button  color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
 
-                        <Button onPress={onOpen} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
-                            Agregar
-                        </Button>
+
                        
                         </div>
                     </div>
@@ -206,10 +174,10 @@ export default function Ingresos(props) {
                                 <>
                                     <ModalHeader className="flex flex-col gap-1" 
                                         style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                        Completar Campos
+                                        Nueva Estimación
                                     </ModalHeader>
                                     <ModalBody>
-                                        <p className="textIngreso">Monto Recibido</p>
+                                        <p className="textIngreso">Tarifa</p>
                                         
                                         <div className="modalAddIngreso">
                                             <div className="comboBoxMoneda">
@@ -262,41 +230,10 @@ export default function Ingresos(props) {
                                          </div>
 
                                          <p className="textIngreso">Tipo Ingreso</p>
-                                        
+                                    
 
 
-
-                                         <div className="comboBoxTipo">
-                                            
-                                            <MyCombobox
-                                                urlApi={stringUrlTipoTransaccion}
-                                                property="tiposTransaccion"
-                                                nameDisplay="descripcion"
-                                                hasColor={false}
-                                                onSelect={handleSelectedValueTipoTransaccion}
-                                                idParam="idTransaccionTipo"
-                                                initialName="Seleccione Transaccion"
-                                                inputWidth="64"
-                                            />
-
-                                        </div>
-                                         
-                                        <p className="textIngreso">Tipo Transacción</p>
-
-                                        <div className="comboBoxTipo">
-                                            
-                                            <MyCombobox
-                                                urlApi={stringUrlTipoIngreso}
-                                                property="tiposIngreso"
-                                                nameDisplay="descripcion"
-                                                hasColor={false}
-                                                onSelect={handleSelectedValueTipo}
-                                                idParam="idIngresoTipo"
-                                                initialName="Seleccione Ingreso"
-                                                inputWidth="64"
-                                            />
-
-                                        </div>
+                                       
                                         <p className="textPresuLast">Fecha Transacción</p>
                                                 <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFechaInicio}/>
                                         <div className="fechaContainer">
