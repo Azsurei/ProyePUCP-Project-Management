@@ -38,6 +38,10 @@ export default function Presupuesto(props) {
     console.log(projectName);
     //const router=userRouter();
 
+    //States from Cronograma
+    const [presupuestoId, serPresupuestoId] = useState(null);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     useEffect(() => {
         const stringURL =
             "http://localhost:8080/api/proyecto/cronograma/listarPresupuesto";
@@ -45,16 +49,17 @@ export default function Presupuesto(props) {
         axios
             .post(stringURL, { idProyecto: projectId })
             .then(function (response) {
-                const cronogramaData = response.data.cronograma;
-                console.log(cronogramaData);
-                setCronogramaId(cronogramaData.idCronograma);
+                const presupuestoData = response.data.cronograma;
+                console.log(presupuestoData);
+                serPresupuestoId(presupuestoData.idCronograma);
                 if (
-                    cronogramaData.fechaInicio === null ||
-                    cronogramaData.fechaFin === null
+                    presupuestoData.fechaInicio === null ||
+                    presupuestoData.fechaFin === null
                 ) {
-                    //setModalFirstTime(true);
+            
                     onOpen();
-                } else {
+                } 
+                /*else {
                     const tareasURL =
                         "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
@@ -68,7 +73,7 @@ export default function Presupuesto(props) {
                         .catch(function (error) {
                             console.log(error);
                         });
-                }
+                }*/
 
                 //setIsLoadingSmall(false);
             })
@@ -76,10 +81,6 @@ export default function Presupuesto(props) {
                 console.log(error);
             });
     }, []);
-
-
-
-
 
 
 
@@ -129,8 +130,6 @@ export default function Presupuesto(props) {
 
                     <div className="subtitlePresupuesto">Flujo de Caja Enero - Junio</div>
                     
-
-
                     <TableBudget> </TableBudget>
 
 
