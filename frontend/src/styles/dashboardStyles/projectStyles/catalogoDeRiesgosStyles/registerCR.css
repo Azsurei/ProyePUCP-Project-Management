@@ -20,7 +20,7 @@
 .riskRegisterCR{
     width: 100%;
     display: grid;
-    grid-template-rows: repeat(6,auto);
+    grid-template-rows: repeat(8,auto);
     gap: 2rem;
 }
 
@@ -99,4 +99,35 @@
     display: flex;
     gap: 10px;
     padding: 1rem;
+}
+
+.titleButtonCR{
+    display: flex;
+    gap: 3%;
+}
+
+.twoButtonsCR{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.buttonContainerCR{
+    display: flex;
+    gap: 10px;
+    padding: 1rem;
+}
+
+.buttonTitleCR{
+    border-radius: 10px;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
+    height: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    width: 100px;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    margin: 1rem 0;
 }

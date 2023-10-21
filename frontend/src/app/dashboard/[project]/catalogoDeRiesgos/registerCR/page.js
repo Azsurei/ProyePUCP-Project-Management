@@ -12,6 +12,7 @@ import { Switch } from "@nextui-org/react";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
@@ -30,6 +31,7 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
     const [cause, setCause] = useState("");
     const [impactDetail, setImpactDetail] = useState("");
+    const [responsePlans, setResponsePlans] = useState([]);
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
@@ -37,6 +39,7 @@ export default function CatalogoDeRiesgosRegister(props) {
     const isTextTooLong4 = detail.length > 400;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
+    const [quantity1, setQuantity1] = useState(0);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -78,6 +81,35 @@ export default function CatalogoDeRiesgosRegister(props) {
 
         // Unimos las palabras nuevamente en una cadena
         return capitalizedWords.join(" ");
+    }
+
+    function addContainer1() {
+        setResponsePlans([
+            ...responsePlans,
+            {
+                idPlanRespuesta: `a${quantity1}`,
+                responsePlans: "",
+            },
+        ]);
+        setQuantity1(quantity1 + 1);
+    }
+
+    const updateResponsePlansField = (index, value) => {
+        setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index - 1].requirement = value;
+            return updatedFields;
+        });
+    };
+
+    function removeContainer1(indice) {
+        setQuantity1(quantity1 - 1);
+        setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            // Elimina el elemento con el índice proporcionado
+            updatedFields.splice(indice, 1);
+            return updatedFields;
+        });
     }
 
     function verifyFieldsEmpty() {
@@ -320,6 +352,39 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 : ""
                         }
                     />
+                </div>
+                <div>
+                    <div className="titleButtonCR">
+                        <h4 style={{ fontWeight: 600 }}>
+                            Medidas a tomar
+                        </h4>
+                    </div>
+                    {quantity1 === 0 ? (
+                        <div className="flex justify-center items-center">
+                            <div>¡Puede agregar algunos planes de respuesta!</div>
+                        </div>
+                    ) : (
+                        responsePlans.map((requirement, index) => (
+                            <ContainerResponsePlans
+                                key={index}
+                                indice={index + 1}
+                                updateResponsePlansField={updateResponsePlansField}
+                                responsePlans={responsePlans}
+                                functionRemove={removeContainer1}
+                            />
+                        ))
+                    )}
+                    <div className="twoButtonsCR">
+                        <div className="buttonContainerCR">
+                            <button
+                                onClick={addContainer1}
+                                className="buttonTitleCR"
+                                type="button"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div className="containerBottomCR">
                     {fieldsEmpty && !fieldsExcessive && (
