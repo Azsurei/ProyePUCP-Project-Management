@@ -13,6 +13,7 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import ModalUsersOne from "@/components/ModalUsersOne";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
+import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/containerContingencyPlans";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
@@ -32,6 +33,7 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [cause, setCause] = useState("");
     const [impactDetail, setImpactDetail] = useState("");
     const [responsePlans, setResponsePlans] = useState([]);
+    const [contingencyPlans, setContingencyPlans] = useState([]);
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
@@ -40,6 +42,7 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
+    const [quantity2, setQuantity2] = useState(0);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -94,10 +97,29 @@ export default function CatalogoDeRiesgosRegister(props) {
         setQuantity1(quantity1 + 1);
     }
 
+    function addContainer2() {
+        setContingencyPlans([
+            ...contingencyPlans,
+            {
+                idPlanContingencia: `a${quantity2}`,
+                contingencyPlans: "",
+            },
+        ]);
+        setQuantity2(quantity2 + 1);
+    }
+
     const updateResponsePlansField = (index, value) => {
         setResponsePlans((prevFields) => {
             const updatedFields = [...prevFields];
-            updatedFields[index - 1].requirement = value;
+            updatedFields[index - 1].responsePlans = value;
+            return updatedFields;
+        });
+    };
+
+    const updateContingencyPlansField = (index, value) => {
+        setContingencyPlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index - 1].contingencyPlans = value;
             return updatedFields;
         });
     };
@@ -105,6 +127,16 @@ export default function CatalogoDeRiesgosRegister(props) {
     function removeContainer1(indice) {
         setQuantity1(quantity1 - 1);
         setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            // Elimina el elemento con el índice proporcionado
+            updatedFields.splice(indice, 1);
+            return updatedFields;
+        });
+    }
+
+    function removeContainer2(indice) {
+        setQuantity2(quantity2 - 1);
+        setContingencyPlans((prevFields) => {
             const updatedFields = [...prevFields];
             // Elimina el elemento con el índice proporcionado
             updatedFields.splice(indice, 1);
@@ -181,7 +213,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         value={name}
                         onValueChange={setName}
                         maxLength="450"
@@ -200,7 +232,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         minRows="5"
                         value={detail}
                         onValueChange={setDetail}
@@ -319,7 +351,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         minRows="5"
                         value={cause}
                         onValueChange={setCause}
@@ -340,7 +372,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         minRows="5"
                         value={impactDetail}
                         onValueChange={setImpactDetail}
@@ -356,7 +388,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                 <div>
                     <div className="titleButtonCR">
                         <h4 style={{ fontWeight: 600 }}>
-                            Medidas a tomar
+                            Planes de respuesta
                         </h4>
                     </div>
                     {quantity1 === 0 ? (
@@ -364,7 +396,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             <div>¡Puede agregar algunos planes de respuesta!</div>
                         </div>
                     ) : (
-                        responsePlans.map((requirement, index) => (
+                        responsePlans.map((responsePlans, index) => (
                             <ContainerResponsePlans
                                 key={index}
                                 indice={index + 1}
@@ -378,6 +410,39 @@ export default function CatalogoDeRiesgosRegister(props) {
                         <div className="buttonContainerCR">
                             <button
                                 onClick={addContainer1}
+                                className="buttonTitleCR"
+                                type="button"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div className="titleButtonCR">
+                        <h4 style={{ fontWeight: 600 }}>
+                            Planes de contingencia
+                        </h4>
+                    </div>
+                    {quantity2 === 0 ? (
+                        <div className="flex justify-center items-center">
+                            <div>¡Puede agregar algunos planes de contingencia!</div>
+                        </div>
+                    ) : (
+                        contingencyPlans.map((contingencyPlans, index) => (
+                            <ContainerContingencyPlans
+                                key={index}
+                                indice={index + 1}
+                                updateContingencyPlansField={updateContingencyPlansField}
+                                contingencyPlans={contingencyPlans}
+                                functionRemove={removeContainer2}
+                            />
+                        ))
+                    )}
+                    <div className="twoButtonsCR">
+                        <div className="buttonContainerCR">
+                            <button
+                                onClick={addContainer2}
                                 className="buttonTitleCR"
                                 type="button"
                             >

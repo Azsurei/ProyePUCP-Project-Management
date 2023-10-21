@@ -32,7 +32,7 @@
     font-weight: 600;
 }
 
-.custom-label label {
+.custom-labelCR label {
     font-weight: 600; /* Cambia el peso de la fuente a bold (600) */
     font-size: 1rem;
 }
