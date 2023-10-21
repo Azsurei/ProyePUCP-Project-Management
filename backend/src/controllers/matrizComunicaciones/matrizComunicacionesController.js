@@ -100,7 +100,7 @@ async function listarComunicacion(req,res,next){
     }
 } 
 async function eliminarComunicacion(req,res,next){
-    const{idComunicacion} = req.body;
+    const {idComunicacion} = req.body;
     const query = `CALL ELIMINAR_COMUNICACION(?);`;
     try {
         const [results] = await connection.query(query,[idComunicacion]);

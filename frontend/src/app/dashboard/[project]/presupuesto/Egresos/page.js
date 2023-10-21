@@ -12,6 +12,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -96,6 +97,7 @@ export default function Ingresos(props) {
     const [monto, setMonto] = useState("");
 
     
+    
     return (
 
         
@@ -148,11 +150,11 @@ export default function Ingresos(props) {
                             variant="faded"
                         />
 
-                    <div className="buttonContainer">
+                         <div className="buttonContainer">
 
-                           </div>
+                        </div>
                     </div>
-
+                    
 
                 
                 </div>
