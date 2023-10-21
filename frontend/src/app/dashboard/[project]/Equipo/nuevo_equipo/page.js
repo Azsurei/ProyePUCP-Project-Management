@@ -12,7 +12,7 @@ import ChoiceUser from "@/components/dashboardComps/projectComps/projectCreateCo
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
 
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
 

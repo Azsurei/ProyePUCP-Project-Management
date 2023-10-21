@@ -6,7 +6,7 @@ import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.c
 import { useContext, useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
 import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 

@@ -1,65 +1,56 @@
 "use client";
-import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/registerMC.css";
+import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerCR.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
-import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import { useRouter } from "next/navigation";
-import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import { Input } from "@nextui-org/react";
+import { Switch } from "@nextui-org/react";
+import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
 axios.defaults.withCredentials = true;
 
-function capitalizeWords(str) {
-    // Dividimos la cadena en palabras usando el espacio como separador
-    const words = str.split(" ");
-
-    // Iteramos por cada palabra y aplicamos la capitalización
-    const capitalizedWords = words.map((word) => {
-        // Convierte la primera letra a mayúscula y el resto a minúscula
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    });
-
-    // Unimos las palabras nuevamente en una cadena
-    return capitalizedWords.join(" ");
-}
-
-export default function MatrizComunicacionesRegister(props) {
+export default function CatalogoDeRiesgosRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
-    const [sumilla, setSumilla] = useState("");
+    const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
-    const [groupReceiver, setGroupReceiver] = useState("");
-    const [canal, setCanal] = useState(null); //id
-    const [frecuency, setFrecuency] = useState(null); //id
-    const [format, setFormat] = useState(null); //id
+    const [probability, setProbability] = useState(null);
+    const [impact, setImpact] = useState(null);
+    const [fechaInicio, setFechaInicio] = useState(null);
+    const [isSelected, setIsSelected] = useState(true);
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
-    const isTextTooLong1 = sumilla.length > 400;
+    const [cause, setCause] = useState("");
+    const [impactDetail, setImpactDetail] = useState("");
+    const [responsePlans, setResponsePlans] = useState([]);
+
+    const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
-    const isTextTooLong3 = groupReceiver.length > 400;
+    const isTextTooLong3 = detail.length > 400;
+    const isTextTooLong4 = detail.length > 400;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
+    const [quantity1, setQuantity1] = useState(0);
 
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
 
-    const handleSelectedValueChangeCanal = (value) => {
-        setCanal(value);
+    const handleSelectedValueChangeProbability = (value) => {
+        setProbability(value);
     };
 
-    const handleSelectedValueChangeFrecuency = (value) => {
-        setFrecuency(value);
-    };
-
-    const handleSelectedValueChangeFormat = (value) => {
-        setFormat(value);
+    const handleSelectedValueChangeImpact = (value) => {
+        setImpact(value);
     };
 
     const toggleModal2 = () => {
@@ -78,39 +69,86 @@ export default function MatrizComunicacionesRegister(props) {
         setModal2(false);
     };
 
+    function capitalizeWords(str) {
+        // Dividimos la cadena en palabras usando el espacio como separador
+        const words = str.split(" ");
+
+        // Iteramos por cada palabra y aplicamos la capitalización
+        const capitalizedWords = words.map((word) => {
+            // Convierte la primera letra a mayúscula y el resto a minúscula
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+
+        // Unimos las palabras nuevamente en una cadena
+        return capitalizedWords.join(" ");
+    }
+
+    function addContainer1() {
+        setResponsePlans([
+            ...responsePlans,
+            {
+                idPlanRespuesta: `a${quantity1}`,
+                responsePlans: "",
+            },
+        ]);
+        setQuantity1(quantity1 + 1);
+    }
+
+    const updateResponsePlansField = (index, value) => {
+        setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index - 1].requirement = value;
+            return updatedFields;
+        });
+    };
+
+    function removeContainer1(indice) {
+        setQuantity1(quantity1 - 1);
+        setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            // Elimina el elemento con el índice proporcionado
+            updatedFields.splice(indice, 1);
+            return updatedFields;
+        });
+    }
+
     function verifyFieldsEmpty() {
         return (
-            sumilla === "" ||
+            name === "" ||
             detail === "" ||
-            groupReceiver === "" ||
-            canal === null ||
-            frecuency === null ||
-            format === null ||
+            probability === null ||
+            impact === null ||
+            fechaInicio === null ||
+            cause === "" ||
+            impactDetail === "" ||
             selectedMiembrosList.length === 0
         );
     }
 
     function verifyFieldsExcessive() {
         return (
-            sumilla.length > 400 ||
+            name.length > 400 ||
             detail.length > 400 ||
-            groupReceiver.length > 400
+            cause.length > 400 ||
+            impactDetail.length > 400
         );
     }
 
     const onSubmit = () => {
         const postData = {
             idProyecto: parseInt(projectId),
-            idCanal: canal,
-            idFrecuencia: frecuency,
-            idFormato: format,
-            sumillaInformacion: sumilla,
-            detalleInformacion: detail,
-            responsableDeComunicar: selectedMiembrosList[0].id,
-            grupoReceptor: groupReceiver,
+            nombreRiesgo: name,
+            detalleRiesgo: detail,
+            fechaIdentificada: fechaInicio,
+            idProbabilidad: probability,
+            idImpacto: impact,
+            causa: cause,
+            impacto: impactDetail,
+            estado: isSelected ? "Activo" : "Inactivo",
+            idResponsable: selectedMiembrosList[0].id,
         };
         console.log("El postData es :", postData);
-        axios
+        /*         axios
             .post(
                 "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
                 postData
@@ -124,29 +162,28 @@ export default function MatrizComunicacionesRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            });
+            }); */
     };
 
     return (
-        <div className="containerRegisterMC">
-            <div className="headerRegisterMC">
-                Inicio / Proyectos / Nombre del proyecto / Matriz de
-                Comunicaciones/ Registrar elemento
+        <div className="containerRegisterCR">
+            <div className="headerRegisterCR">
+                Inicio / Proyectos / Nombre del proyecto / Catálogo de Riesgos/
+                Registrar riesgo
             </div>
-            <div className="backlogRegisterMC">
-                <div className="titleBacklogRegisterMC">
-                    Crear nueva información requerida
-                </div>
+            <div className="riskRegisterCR">
+                <div className="titleRiskRegisterCR">Crear nuevo riesgo</div>
                 <div>
                     <Textarea
-                        label="Sumilla de la información requerida"
+                        isClearable
+                        label="Nombre del riesgo"
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
                         className="custom-label"
-                        value={sumilla}
-                        onValueChange={setSumilla}
+                        value={name}
+                        onValueChange={setName}
                         maxLength="450"
                         isInvalid={isTextTooLong1}
                         errorMessage={
@@ -156,80 +193,9 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
-                <div className="comboMC">
-                    <div className="containerComboMC">
-                        <IconLabel
-                            icon="/icons/priorityPB.svg"
-                            label="Canal"
-                            className="iconLabel"
-                        />
-                        <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
-                            property="canales"
-                            nameDisplay="nombreCanal"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeCanal}
-                            idParam="idCanal"
-                        />
-                    </div>
-                    <div className="containerComboMC">
-                        <IconLabel
-                            icon="/icons/priorityPB.svg"
-                            label="Frecuencia"
-                            className="iconLabel"
-                        />
-                        <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
-                            property="frecuencias"
-                            nameDisplay="nombreFrecuencia"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeFrecuency}
-                            idParam="idFrecuencia"
-                        />
-                    </div>
-                    <div className="containerComboMC">
-                        <IconLabel
-                            icon="/icons/priorityPB.svg"
-                            label="Formato"
-                            className="iconLabel"
-                        />
-                        <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato"
-                            property="formatos"
-                            nameDisplay="nombreFormato"
-                            hasColor={false}
-                            onSelect={handleSelectedValueChangeFormat}
-                            idParam="idFormato"
-                        />
-                    </div>
-                    <div className="containerButtonMC">
-                        <ButtonIconLabel
-                            icon="/icons/icon-searchBar.svg"
-                            label1="Responsable"
-                            label2="de comunicar"
-                            className="iconLabelButtonMC"
-                            onClickFunction={toggleModal2}
-                        />
-                        {selectedMiembrosList.map((component) => {
-                            return (
-                                <div className="iconLabel2MC">
-                                    <p className="profilePicMC">
-                                        {component.name[0] +
-                                            component.lastName[0]}
-                                    </p>
-                                    <div className="labelDatoUsuarioMC">
-                                        {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
                 <div>
                     <Textarea
-                        label="Detalle de la información requerida"
+                        label="Detalle del riesgo"
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
@@ -247,16 +213,116 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
+                <div className="comboCR">
+                    <div className="containerComboCR">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Probabilidad"
+                            className="iconLabel"
+                        />
+                        <MyCombobox
+                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            property="canales"
+                            nameDisplay="nombreCanal"
+                            hasColor={false}
+                            onSelect={handleSelectedValueChangeProbability}
+                            idParam="idCanal"
+                        />
+                    </div>
+                    <div className="containerComboCR">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Impacto"
+                            className="iconLabel"
+                        />
+                        <MyCombobox
+                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            property="frecuencias"
+                            nameDisplay="nombreFrecuencia"
+                            hasColor={false}
+                            onSelect={handleSelectedValueChangeImpact}
+                            idParam="idFrecuencia"
+                        />
+                    </div>
+                    <div className="containerComboCR">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Fecha identificada"
+                            className="iconLabel"
+                        />
+                        <Input
+                            type="date"
+                            isRequired
+                            variant="bordered"
+                            radius="sm"
+                            className="w-64"
+                            name="datepicker"
+                            value={fechaInicio}
+                            onValueChange={setFechaInicio}
+                            isReadOnly={false}
+                        ></Input>
+                    </div>
+                    <div className="containerComboCR">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Severidad"
+                            className="iconLabel"
+                        />
+                    </div>
+                    <div className="containerComboCR">
+                        <IconLabel
+                            icon="/icons/priorityPB.svg"
+                            label="Estado"
+                            className="iconLabel"
+                        />
+                        <Switch
+                            isSelected={isSelected}
+                            onValueChange={setIsSelected}
+                        >
+                            {isSelected ? "Activo" : "Inactivo"}
+                        </Switch>
+                    </div>
+                    <div className="containerComboCR">
+                        <ButtonIconLabel
+                            icon="/icons/icon-searchBar.svg"
+                            label1="Buscar"
+                            label2="responsable"
+                            className="iconLabelButtonMC"
+                            onClickFunction={toggleModal2}
+                        />
+                        {selectedMiembrosList.length > 0 ? (
+                            selectedMiembrosList.map((component) => (
+                                <div className="iconLabel2CR">
+                                    <p className="profilePicCR">
+                                        {component.name[0] +
+                                            component.lastName[0]}
+                                    </p>
+                                    <div className="labelDatoUsuarioCR">
+                                        {capitalizeWords(
+                                            `${component.name} ${component.lastName}`
+                                        )}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="labelSinDataUsuarioCR">
+                                ¡Seleccione un responsable de comunicar!
+                            </div>
+                        )}
+                    </div>
+                </div>
                 <div>
                     <Textarea
-                        label="Grupo receptor"
+                        isClearable
+                        label="Causa"
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
                         className="custom-label"
-                        value={groupReceiver}
-                        onValueChange={setGroupReceiver}
+                        minRows="5"
+                        value={cause}
+                        onValueChange={setCause}
                         maxLength="450"
                         isInvalid={isTextTooLong3}
                         errorMessage={
@@ -266,7 +332,61 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
-                <div className="containerBottomMC">
+                <div>
+                    <Textarea
+                        isClearable
+                        label="Impacto"
+                        variant="bordered"
+                        labelPlacement="outside"
+                        placeholder="Escriba aquí"
+                        isRequired
+                        className="custom-label"
+                        minRows="5"
+                        value={impactDetail}
+                        onValueChange={setImpactDetail}
+                        maxLength="450"
+                        isInvalid={isTextTooLong4}
+                        errorMessage={
+                            isTextTooLong4
+                                ? "El texto debe ser como máximo de 400 caracteres."
+                                : ""
+                        }
+                    />
+                </div>
+                <div>
+                    <div className="titleButtonCR">
+                        <h4 style={{ fontWeight: 600 }}>
+                            Medidas a tomar
+                        </h4>
+                    </div>
+                    {quantity1 === 0 ? (
+                        <div className="flex justify-center items-center">
+                            <div>¡Puede agregar algunos planes de respuesta!</div>
+                        </div>
+                    ) : (
+                        responsePlans.map((requirement, index) => (
+                            <ContainerResponsePlans
+                                key={index}
+                                indice={index + 1}
+                                updateResponsePlansField={updateResponsePlansField}
+                                responsePlans={responsePlans}
+                                functionRemove={removeContainer1}
+                            />
+                        ))
+                    )}
+                    <div className="twoButtonsCR">
+                        <div className="buttonContainerCR">
+                            <button
+                                onClick={addContainer1}
+                                className="buttonTitleCR"
+                                type="button"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div className="containerBottomCR">
                     {fieldsEmpty && !fieldsExcessive && (
                         <IconLabel
                             icon="/icons/alert.svg"
@@ -288,8 +408,8 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel3"
                         />
                     )}
-                    <div className="twoButtonsMC">
-                        <div className="buttonContainerMC">
+                    <div className="twoButtonsCR">
+                        <div className="buttonContainerCR">
                             <Modal
                                 nameButton="Descartar"
                                 textHeader="Descartar Registro"
@@ -301,7 +421,7 @@ export default function MatrizComunicacionesRegister(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar información"
+                                textHeader="Registrar Información"
                                 textBody="¿Seguro que quiere registrar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}

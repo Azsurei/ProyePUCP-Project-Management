@@ -41,7 +41,7 @@ export default function CardCreateProject({
                     type="date"
                     id="inputBoxGeneric"
                     className="NewProjectDatePickerInicio"
-                    name="datepicker"
+                    name="datepicker"   
                     onChange={handleChangesFechaInicio}
                 ></input>
             </div>

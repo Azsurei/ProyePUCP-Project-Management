@@ -17,7 +17,7 @@ import {
     Button,
 } from "@nextui-org/react";
 
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunion.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
