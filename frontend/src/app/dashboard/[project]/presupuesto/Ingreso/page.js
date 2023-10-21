@@ -11,6 +11,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -126,6 +127,23 @@ export default function Ingresos(props) {
 
     const [monto, setMonto] = useState("");
 
+    const data = [
+        {
+            id: 1,
+            tipoIngreso: 'Ingreso por Efectivo',
+            tipoPago: 'Pago de Cliente',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        {
+            id: 2,
+            tipoIngreso: 'Ingreso por Transferencia',
+            tipoPago: 'Donacion',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        
+    ];
     
     return (
 
@@ -190,7 +208,12 @@ export default function Ingresos(props) {
                        
                         </div>
                     </div>
-
+                    <div className="divListaIngreso">
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                    </div>
 
                 
                 </div>
@@ -206,7 +229,7 @@ export default function Ingresos(props) {
                                 <>
                                     <ModalHeader className="flex flex-col gap-1" 
                                         style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                        Completar Campos
+                                        Nuevo Ingreso
                                     </ModalHeader>
                                     <ModalBody>
                                         <p className="textIngreso">Monto Recibido</p>
