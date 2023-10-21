@@ -1,0 +1,46 @@
+.containerRegisterCR{
+    flex: 1;
+    font-family: Montserrat;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.headerRegisterCR{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 0.8rem;
+}
+
+.riskRegisterCR{
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(6,auto);
+    gap: 2rem;
+}
+
+.titleRiskRegisterCR{
+    display: flex;
+    font-size: 1.3rem;
+    align-items: center;
+    color: #172B4D;
+    font-weight: 600;
+}
+
+.comboCR{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(432px,1fr));
+    row-gap: 2rem;
+}
+
+.containerComboCR{
+    display: flex;
+    gap: 15%;
+    margin-right: 15px;
+    align-items: center;
+}

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/ListUsers.css";
-import { UserCardsContext } from "./modalUsers";
+import { UserCardsContext } from "./ModalUsers";
 
 axios.defaults.withCredentials = true;
 

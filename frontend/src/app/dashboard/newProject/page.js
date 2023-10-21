@@ -7,7 +7,7 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import ListTools from "@/components/dashboardComps/projectComps/projectCreateComps/ListTools";
 import CardCreateProject from "@/components/dashboardComps/projectComps/projectCreateComps/CardCreateProject";
 import ChoiceUser from "@/components/dashboardComps/projectComps/projectCreateComps/ChoiceUser";
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 
 import Link from "next/link";
 import { useState } from "react";

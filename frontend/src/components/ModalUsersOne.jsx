@@ -28,10 +28,11 @@ import ListUsersOne from "./ListUsersOne";
 export const UserCardsContext = React.createContext();
 
 export default function ModalUsersOne({
+    listAllUsers,
     handlerModalClose,
     handlerModalFinished,
     excludedUsers,
-    idProyecto
+    idProyecto,
 }) {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
@@ -72,40 +73,89 @@ export default function ModalUsersOne({
     };
 
     const refreshList = () => {
-        const stringURL = `http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
-        axios
-            .get(stringURL)
-            .then(function (response) {
-                console.log(response);
-                const usersArray = response.data.usuarios.map((user) => {
-                    return {
-                        id: user.idUsuario,
-                        name: user.nombres,
-                        lastName: user.apellidos,
-                        email: user.correoElectronico,
-                    };
+        if (listAllUsers === false) {
+            const stringURL = `http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
+
+            axios
+                .get(stringURL)
+                .then(function (response) {
+                    console.log(response);
+                    const usersArray = response.data.usuarios.map((user) => {
+                        return {
+                            id: user.idUsuario,
+                            name: user.nombres,
+                            lastName: user.apellidos,
+                            email: user.correoElectronico,
+                        };
+                    });
+
+                    console.log(
+                        "se recibio el arreglo desde db: " + usersArray
+                    );
+                    console.log(
+                        "arreglo a previo ya seleccionado: " + excludedUsers
+                    );
+
+                    //quitamos los usuarios que ya fueron seleccionados
+                    const excludedUserIds = excludedUsers.map(
+                        (user) => user.id
+                    );
+                    const filteredUsers = usersArray.filter(
+                        (user) => !excludedUserIds.includes(user.id)
+                    );
+
+                    setListUsers(filteredUsers);
+                    console.log(filteredUsers);
+
+                    //setListUsers(usersArray);
+                    //console.log(usersArray);
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
+        } else {
+            const stringURL2 =
+                "http://localhost:8080/api/usuario/listarUsuarios";
+            axios
+                .post(stringURL2, {
+                    nombreCorreo: filterValue,
+                })
+                .then(function (response) {
+                    console.log(response);
+                    const usersArray = response.data.usuarios.map((user) => {
+                        return {
+                            id: user.idUsuario,
+                            name: user.nombres,
+                            lastName: user.apellidos,
+                            email: user.correoElectronico,
+                        };
+                    });
 
-                console.log("se recibio el arreglo desde db: " + usersArray);
-                console.log(
-                    "arreglo a previo ya seleccionado: " + excludedUsers
-                );
+                    console.log(
+                        "se recibio el arreglo desde db: " + usersArray
+                    );
+                    console.log(
+                        "arreglo a previo ya seleccionado: " + JSON.stringify(excludedUsers)
+                    );
 
-                //quitamos los usuarios que ya fueron seleccionados
-                const excludedUserIds = excludedUsers.map((user) => user.id);
-                const filteredUsers = usersArray.filter(
-                    (user) => !excludedUserIds.includes(user.id)
-                );
+                    //quitamos los usuarios que ya fueron seleccionados
+                    const excludedUserIds = excludedUsers.map(
+                        (user) => user.id
+                    );
+                    const filteredUsers = usersArray.filter(
+                        (user) => !excludedUserIds.includes(user.id)
+                    );
 
-                setListUsers(filteredUsers);
-                console.log(filteredUsers);
+                    setListUsers(filteredUsers);
+                    console.log(filteredUsers);
 
-                //setListUsers(usersArray);
-                //console.log(usersArray);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                    //setListUsers(usersArray);
+                    //console.log(usersArray);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     };
 
     //useEffect(() => {
@@ -138,7 +188,10 @@ export default function ModalUsersOne({
                             variant="faded"
                         />
                     </div>
-                    <Button className="bg-indigo-950 text-slate-50" onClick={refreshList}>
+                    <Button
+                        className="bg-indigo-950 text-slate-50"
+                        onClick={refreshList}
+                    >
                         Buscar
                     </Button>
                 </div>
