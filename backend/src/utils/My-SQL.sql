@@ -226,12 +226,14 @@ CREATE TABLE HerramientaXProyecto(
 	idHerramientaXProyecto INT AUTO_INCREMENT PRIMARY KEY,
     idProyecto INT,
     idHerramienta INT,
+    idHerramientaCreada INT,
     activo tinyint NOT NULL,
 	UNIQUE(idProyecto,idHerramienta),
 	FOREIGN KEY(idProyecto) REFERENCES Proyecto(idProyecto),
     FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
 )
 ENGINE = InnoDB;
+
 
 ------------
 -- Cronograma

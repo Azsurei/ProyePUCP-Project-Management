@@ -86,7 +86,7 @@ DROP PROCEDURE IF EXISTS LISTAR_COMPONENTES_EDT_X_ID_EDT;
 DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_NOMBRE_CORREO;
 CREATE PROCEDURE LISTAR_HERRAMIENTAS;
 
-
+DROP PROCEDURE IF EXISTS INSERTAR_PRODUCT_BACKLOG;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRODUCT_BACKLOG(
 	IN  _id_Proyecto INT
@@ -95,6 +95,7 @@ BEGIN
 	DECLARE _id_backlog INT;
 	INSERT INTO ProductBacklog(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(1,_id_Proyecto,NOW(),1);
     SET _id_backlog = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,1,_id_backlog,1);
     SELECT _id_backlog AS idProductBacklog;
 END$
 
@@ -171,6 +172,8 @@ BEGIN
 END$
 
 ------------------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_EDT;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_EDT(
 	IN  _idProyecto INT,
@@ -180,11 +183,12 @@ CREATE PROCEDURE INSERTAR_EDT(
     IN _hayResponsable TINYINT
 )
 BEGIN
-	DECLARE _id_EDT INT;
+	DECLARE _idEDT INT;
 	INSERT INTO EDT(idHerramienta,idProyecto,nombre,descripcion,idUsuarioCreacion,fechaCreacion,hayResponsable,activo) 
     VALUES(2,_idProyecto,_nombre,_descripcion,_idUsuarioCreacion,NOW(),_hayResponsable,1);
-    SET _id_EDT = @@last_insert_id;
-    SELECT _id_EDT AS idEDT;
+    SET _idEDT = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,2,_idEDT,1);
+    SELECT _idEDT AS idEDT;
 END$
 
 DELIMITER $
@@ -374,52 +378,58 @@ BEGIN
     AND p.activo =1;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_ACTA_CONSTITUCION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ACTA_CONSTITUCION(
     IN _idProyecto INT
 )
 BEGIN
 	DECLARE _idActaConstitucion INT;
-	INSERT INTO ActaConstitucion(idHerramienta,idProyecto,fechaCreacion,activo) 
-    VALUES(3,_idProyecto,curdate(),1);
+	INSERT INTO ActaConstitucion(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(3,_idProyecto,curdate(),1);
     SET _idActaConstitucion = @@last_insert_id;
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,3,_idActaConstitucion,1);
     SELECT _idActaConstitucion AS idActaConstitucion;
 END$
 
+
+
+SELECT * FROM Herramienta;
+DROP PROCEDURE IF EXISTS INSERTAR_ACTA_REUNION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ACTA_REUNION(
     IN _idProyecto INT
 )
 BEGIN
 	DECLARE _idActaReunion INT;
-	INSERT INTO ActaReunion(idHerramienta,idProyecto,fechaCreacion,activo) 
-    VALUES(11,_idProyecto,curdate(),1);
+	INSERT INTO ActaReunion(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(11,_idProyecto,curdate(),1);
     SET _idActaReunion = @@last_insert_id;
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,11,_idActaReunion,1);
     SELECT _idActaReunion AS idActaReunion;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_RETROSPECTIVA;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_RETROSPECTIVA(
     IN _idProyecto INT
 )
 BEGIN
 	DECLARE _idRetrospectiva INT;
-	INSERT INTO Retrospectiva(idHerramienta,idProyecto,fechaCreacion,activo) 
-    VALUES(10,_idProyecto,curdate(),1);
+	INSERT INTO Retrospectiva(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(10,_idProyecto,curdate(),1);
     SET _idRetrospectiva = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,10,_idRetrospectiva,1);
     SELECT _idRetrospectiva AS idRetrospectiva;
 END$
 
-
+DROP PROCEDURE IF EXISTS INSERTAR_AUTOEVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_AUTOEVALUACION(
     IN _idProyecto INT
 )
 BEGIN
 	DECLARE _idAutoevaluacion INT;
-	INSERT INTO Autoevaluacion(idHerramienta,idProyecto,fechaCreacion,activo) 
-    VALUES(9,_idProyecto,curdate(),1);
+	INSERT INTO Autoevaluacion(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(9,_idProyecto,curdate(),1);
     SET _idAutoevaluacion = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,9,_idAutoevaluacion,1);
     SELECT _idAutoevaluacion AS idAutoevaluacion;
 END$
 
@@ -427,12 +437,13 @@ DROP PROCEDURE IF EXISTS INSERTAR_HERRAMIENTA_X_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_HERRAMIENTA_X_PROYECTO(
     IN _idProyecto INT,
-    IN _idHerramienta INT
+    IN _idHerramienta INT,
+    IN _idHerramientaCreada INT
 )
 BEGIN
 	DECLARE _idHerramientaXProyecto INT;
-	INSERT INTO HerramientaXProyecto(idProyecto, idHerramienta, activo) 
-    VALUES(_idProyecto,_idHerramienta,1);
+	INSERT INTO HerramientaXProyecto(idProyecto, idHerramienta,idHerramientaCreada, activo) 
+    VALUES(_idProyecto,_idHerramienta,_idHerramientaCreada,1);
     SET _idHerramientaXProyecto = @@last_insert_id;
     SELECT _idHerramientaXProyecto AS idHerramientaXProyecto;
 END$
@@ -447,6 +458,7 @@ BEGIN
 	DECLARE _idCronograma INT;
 	INSERT INTO Cronograma(idHerramienta,fechaInicio,fechaFin,activo,idProyecto) VALUES(4,NULL,NULL,1,_idProyecto);		#Luego, al darle click por primera vez al cronograma, se debera solicitar estos datos
     SET _idCronograma = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,4,_idCronograma,1);
     SELECT _idCronograma AS idCronograma;
 END$
 
@@ -604,6 +616,7 @@ BEGIN
 	DECLARE _idCatalogo INT;
 	INSERT INTO CatalogoRiesgo(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(5,_idProyecto,curdate(),1);		
     SET _idCatalogo = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,5,_idCatalogo,1);
     SELECT _idCatalogo AS idCatalogo;
 END$
 
@@ -616,6 +629,7 @@ BEGIN
 	DECLARE _idCatalogoInteresado INT;
 	INSERT INTO CatalogoInteresado(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(6,_idProyecto,curdate(),1);		
     SET _idCatalogoInteresado = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,6,_idCatalogoInteresado,1);
     SELECT _idCatalogoInteresado AS idCatalogoInteresado;
 END$
 
@@ -627,8 +641,9 @@ CREATE PROCEDURE INSERTAR_MATRIZ_RESPONSABILIDAD(
 )
 BEGIN
 	DECLARE _idMatrizResponsabilidad INT;
-	INSERT INTO MatrizResponsabilidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(7,_idProyecto,curdate(),1);		
+	INSERT INTO MatrizResponsabilidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(7,_idProyecto,curdate(),1);	
     SET _idMatrizResponsabilidad = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,7,_idMatrizResponsabilidad,1);
     SELECT _idMatrizResponsabilidad AS idMatrizResponsabilidad;
 END$
 
@@ -642,6 +657,7 @@ BEGIN
 	DECLARE _idMatrizComunicacion INT;
 	INSERT INTO MatrizComunicacion(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(8,_idProyecto,curdate(),1);		
     SET _idMatrizComunicacion = @@last_insert_id;
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,8,_idMatrizComunicacion,1);
     SELECT _idMatrizComunicacion AS idMatrizComunicacion;
 END$
 
@@ -724,12 +740,14 @@ CREATE PROCEDURE LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT idHerramienta 
+	SELECT idHerramienta ,idHerramientaCreada
     FROM HerramientaXProyecto 
     WHERE idProyecto = _idProyecto 
     AND activo=1
     ORDER BY idHerramienta;
 END$
+
+CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(50);
 
 DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO;
 DELIMITER $
@@ -1331,7 +1349,7 @@ BEGIN
 END$
 
 
-DROP PROCEDURE INSERTAR_PRESUPUESTO;
+DROP PROCEDURE IF EXISTS INSERTAR_PRESUPUESTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRESUPUESTO(
 	IN  _idProyecto INT,
@@ -1344,8 +1362,7 @@ BEGIN
 	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,fechaCreacion,activo) 
     VALUES(13,_idProyecto,_idMoneda,_presupuestoInicial,_cantidadMeses,curdate(),1);
     SET _idPresupuesto = @@last_insert_id;
-    
-    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,activo) VALUES(_idProyecto,13,1);
+	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,13,_idPresupuesto,1);
     SELECT _idPresupuesto AS idPresupuesto;
 END$
 
