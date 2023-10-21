@@ -203,7 +203,7 @@ export default function Ingresos(props) {
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
-                                insertarLineaIngreso();
+                                //insertarLineaIngreso();
                                 onClose();
                             };
                             return (
