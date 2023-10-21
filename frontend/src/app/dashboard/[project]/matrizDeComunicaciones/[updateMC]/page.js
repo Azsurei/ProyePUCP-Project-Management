@@ -399,6 +399,7 @@ export default function MatrizComunicacionesRegister(props) {
             </div>
             {modal2 && (
                 <ModalUsersOne
+                    listAllUsers={false}
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
                     excludedUsers={selectedMiembrosList}

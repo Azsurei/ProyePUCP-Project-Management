@@ -32,6 +32,11 @@
     font-weight: 600;
 }
 
+.custom-label label {
+    font-weight: 600; /* Cambia el peso de la fuente a bold (600) */
+    font-size: 1rem;
+}
+
 .comboCR{
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(432px,1fr));
@@ -43,4 +48,55 @@
     gap: 15%;
     margin-right: 15px;
     align-items: center;
+}
+
+.iconLabel2CR{
+    display: flex;
+    align-items: center;
+    gap: 5%;
+    font-weight: 400;
+    font-size: 14px;
+    width: 218px;
+}
+
+.profilePicCR{
+    font-weight: 600;
+    border-radius: 100%;
+    background-color: rgb(212, 212, 212);
+    height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.labelDatoUsuarioCR{
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    font-weight: 600;
+}
+
+.labelSinDataUsuarioCR{
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.containerBottomCR{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.twoButtonsCR{
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.buttonContainerCR{
+    display: flex;
+    gap: 10px;
+    padding: 1rem;
 }
