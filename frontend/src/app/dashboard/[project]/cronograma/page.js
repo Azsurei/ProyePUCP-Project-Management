@@ -19,12 +19,14 @@ import {
     Button,
     useDisclosure,
 } from "@nextui-org/react";
+import { Toaster, toast } from "sonner";
 
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 import BtnToModal from "@/components/BtnToModal";
 import { useRouter } from "next/navigation";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import { resolve } from "styled-jsx/css";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -54,7 +56,11 @@ export default function Cronograma(props) {
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
 
-    const [tareaEstado , setTareaEstado] = useState({id:0,texto:"",color:""});
+    const [tareaEstado, setTareaEstado] = useState({
+        id: 0,
+        texto: "",
+        color: "",
+    });
     const [dropBoxColor, setDropBoxColor] = useState(null);
 
     const [tareaDescripcion, setTareaDescripcion] = useState("");
@@ -126,66 +132,91 @@ export default function Cronograma(props) {
             });
     };
 
-    const registrarTarea = () => {
-        const updateURL =
-            "http://localhost:8080/api/proyecto/cronograma/insertarTarea";
-        axios
-            .post(updateURL, {
-                idCronograma: cronogramaId,
-                idTareaEstado: 1, //No iniciado
-                idSubGrupo: null,
-                idPadre: null,
-                idTareaAnterior: null,
-                sumillaTarea: tareaName,
-                descripcion: tareaDescripcion,
-                fechaInicio: fechaInicio,
-                fechaFin: fechaFin,
-                cantSubtareas: 0,
-                cantPosteriores: 0,
-                horasPlaneadas: null,
-                usuarios: null,
-                subTareas: null,
-                tareasPosteriores: null
-            })
-            .then(function (response) {
-                console.log(response.data.message);
-                router.refresh();
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    };
+    function promiseRegistrarTarea() {
+        return new Promise((resolve, reject) => {
+            setToggleNew(false);
+            const newURL =
+                "http://localhost:8080/api/proyecto/cronograma/insertarTarea";
+            axios
+                .post(newURL, {
+                    idCronograma: cronogramaId,
+                    idTareaEstado: 1, //No iniciado
+                    idSubGrupo: null,
+                    idPadre: null,
+                    idTareaAnterior: null,
+                    sumillaTarea: tareaName,
+                    descripcion: tareaDescripcion,
+                    fechaInicio: fechaInicio,
+                    fechaFin: fechaFin,
+                    cantSubtareas: 0,
+                    cantPosteriores: 0,
+                    horasPlaneadas: null,
+                    usuarios: null,
+                    subTareas: null,
+                    tareasPosteriores: null,
+                })
+                .then(function (response) {
+                    console.log(response.data.message);
+                    //actualizamos lista de tareas
 
+                    const tareasURL =
+                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            setListTareas(response.data.tareas);
+                            console.log(response.data.tareas);
+                            
+                            resolve(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            reject(error);
+                        });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                });
+        });
+    }
+
+    const registrarTarea = () => {
+        toast.promise(promiseRegistrarTarea, {
+            loading: "Registrando la tarea...",
+            success: (data) => {
+                return "La tarea se agrego con exito!";
+            },
+            error: "Error al registrar la tarea",
+            position: "top-center",
+        });
+    };
 
     const dropBoxItems = [
         {
             id: 1,
             texto: "No iniciado",
-            color: "default"
+            color: "default",
         },
         {
             id: 2,
             texto: "En progreso",
-            color: "primary"
+            color: "primary",
         },
         {
             id: 3,
             texto: "Atrasado",
-            color: "warning"
+            color: "warning",
         },
         {
             id: 4,
             texto: "Finalizado",
-            color: "success"
-        }
+            color: "success",
+        },
     ];
 
-    const colorDropbox = [
-        "default",
-        "primary",
-        "warning",
-        "success"
-    ];
+    const colorDropbox = ["default", "primary", "warning", "success"];
 
     // useEffect(() => {
     //     setSelectedSubteam(null);
@@ -359,14 +390,14 @@ export default function Cronograma(props) {
                             <p>Nombre de tarea</p>
 
                             <Textarea
+                                aria-label="name-lbl"
                                 isInvalid={!validName}
                                 errorMessage={!validName ? msgEmptyField : ""}
-                                key={"bordered"}
                                 variant={"bordered"}
                                 labelPlacement="outside"
                                 label=""
                                 placeholder="Escriba aquí"
-                                classNames={{label: "pb-0"}}
+                                classNames={{ label: "pb-0" }}
                                 value={tareaName}
                                 onValueChange={setTareaName}
                                 minRows={1}
@@ -380,13 +411,14 @@ export default function Cronograma(props) {
                             <p>Estado</p>
                             <Select
                                 //variant="bordered"
+                                aria-label="cbo-lbl"
                                 label=""
                                 placeholder="Selecciona"
                                 labelPlacement="outside"
-                                classNames={{trigger:"h-10"}}
+                                classNames={{ trigger: "h-10" }}
                                 size="sm"
-                                color={colorDropbox[tareaEstado-1]}
-                                onChange={(e)=>{
+                                color={colorDropbox[tareaEstado - 1]}
+                                onChange={(e) => {
                                     setTareaEstado(e.target.value);
                                     console.log(tareaEstado);
                                 }}
@@ -399,8 +431,7 @@ export default function Cronograma(props) {
                                     >
                                         {items.texto}
                                     </SelectItem>
-                                ))
-                                }
+                                ))}
                             </Select>
                         </div>
                     </div>
@@ -409,15 +440,15 @@ export default function Cronograma(props) {
                         <p>Descripcion</p>
 
                         <Textarea
+                            aria-label="desc-lbl"
                             isInvalid={!validDescripcion}
                             errorMessage={
                                 !validDescripcion ? msgEmptyField : ""
                             }
-                            key={"bordered"}
                             variant={"bordered"}
                             labelPlacement="outside"
                             placeholder="Escriba aquí"
-                            classNames={{label: "pb-0"}}
+                            classNames={{ label: "pb-0" }}
                             value={tareaDescripcion}
                             onValueChange={setTareaDescripcion}
                             minRows={4}
@@ -434,7 +465,9 @@ export default function Cronograma(props) {
                                 <p className="headerFInicio">Fecha de inicio</p>
                                 <DateInput
                                     className={""}
-                                    isInvalid={validFechas===true ? false : true}
+                                    isInvalid={
+                                        validFechas === true ? false : true
+                                    }
                                     onChangeHandler={(e) => {
                                         setFechaInicio(e.target.value);
                                         setValidFechas(true);
@@ -446,7 +479,9 @@ export default function Cronograma(props) {
                                 <p className="headerFFin">Fecha de fin</p>
                                 <DateInput
                                     className={""}
-                                    isInvalid={validFechas===true ? false : true}
+                                    isInvalid={
+                                        validFechas === true ? false : true
+                                    }
                                     onChangeHandler={(e) => {
                                         setFechaFin(e.target.value);
                                         setValidFechas(true);
@@ -474,8 +509,10 @@ export default function Cronograma(props) {
                     <div className="containerSubtareas">
                         <div className="subTareasHeader">
                             <p>
-                                { "Subtareas" /*(Aqui se abrira un modal para
-                                introducir nombre, desc, fechaI y fechaF) */}
+                                {
+                                    "Subtareas" /*(Aqui se abrira un modal para
+                                introducir nombre, desc, fechaI y fechaF) */
+                                }
                             </p>
                             <div className="btnToPopUp">
                                 <p>Añadir</p>
@@ -572,18 +609,26 @@ export default function Cronograma(props) {
                             nameButton="Descartar"
                             textHeader="Descartar Tarea"
                             textBody="¿Seguro que quiere descartar el registro de esta tarea?"
-                            textColor="red"
+                            headerColor="red"
                             colorButton="w-36 bg-slate-100 text-black"
                             oneButton={false}
-                            //secondAction={handlerReturn}
+                            leftBtnText="Cancelar"
+                            rightBtnText="Confirmar"
+                            doBeforeClosing={() => {
+                                setToggleNew(false);
+                            }}
+                            //verifyFunction = {}       sin verificacion
                         />
                         <BtnToModal
                             nameButton="Aceptar"
                             textHeader="Registrar Tarea"
                             textBody="¿Seguro que quiere desea registrar esta tarea?"
+                            //headerColor
                             colorButton="w-36 bg-blue-950 text-white"
                             oneButton={false}
-                            secondAction={registrarTarea}
+                            leftBtnText="Cancelar"
+                            rightBtnText="Confirmar"
+                            doBeforeClosing={registrarTarea}
                             verifyFunction={() => {
                                 let allValid = true;
                                 if (tareaName === "") {
@@ -620,6 +665,8 @@ export default function Cronograma(props) {
                     idProyecto={projectId}
                 ></ModalUser>
             )}
+
+            <Toaster richColors/>
         </div>
     );
 }
