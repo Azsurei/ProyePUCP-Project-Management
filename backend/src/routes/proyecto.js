@@ -228,7 +228,16 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const idActaReunion = results[0][0].idActaReunion;
                     }
 
-                    //12 seria registro de equipos (este no se agrega de esta manera, solo se crean subequipos)
+                    if (herramienta.idHerramienta === 13){
+                        //Presupeusto
+                        query = "CALL INSERTAR_PRESUPUESTO(?)";
+                        const [results] = await connection.query(query,[
+                            idProyecto
+                        ]);
+
+                        const idPrespuesto = results[0][0].idPresupuesto
+                    }
+
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
                     //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
 
