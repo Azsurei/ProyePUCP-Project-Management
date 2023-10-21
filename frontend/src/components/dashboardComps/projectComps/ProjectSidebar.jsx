@@ -5,9 +5,20 @@ import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
 import Link from "next/link";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import {
+    Accordion,
+    AccordionItem,
+    Button,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    useDisclosure,
+} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
+import ModalUsersOne from "@/components/ModalUsersOne";
 axios.defaults.withCredentials = true;
 
 const memberData = [
@@ -67,15 +78,15 @@ function DropDownItem(props) {
     const prenderLoadYPush = () => {
         setIsLoadingSmall(true);
         router.push(props.goTo);
-    }
+    };
     return (
         <li className="DropDownItem" onClick={prenderLoadYPush}>
             {/* <Link
                 href={props.goTo}
                 style={{ display: "flex", alignItems: "center", gap: ".7rem" }}
             > */}
-                <img src={props.icon} alt="icon" className="" />
-                <p>{props.name}</p>
+            <img src={props.icon} alt="icon" className="" />
+            <p>{props.name}</p>
             {/* </Link> */}
         </li>
     );
@@ -129,6 +140,7 @@ function DropDownMenu(props) {
 }
 
 function ProjectSidebar(props) {
+    const [isModalUserOpen, setIsModalUserOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(true);
     const [isTriangleBlue, setIsTriangleBlue] = useState(false);
     const [listTools1, setListTools1] = useState({
@@ -351,6 +363,30 @@ function ProjectSidebar(props) {
         dataItems: sideBar2Array,
     };
 
+    const addUserToProject = (newMiembrosList) => {
+        const addNewURL =
+            "http://localhost:8080/api/usuario/insertarUsuariosAProyecto";
+
+        const formatedMiembrosList = newMiembrosList.map((user) => ({
+            ...user, // Copy the existing properties
+            numRol: 3,
+        }));
+
+        axios
+            .post(addNewURL, {
+                formatedMiembrosList,
+                idProyecto: props.projectId,
+            })
+            .then(function (response) {
+                console.log(response.data.message);
+
+                //refrescamos lista
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
     return (
         <nav
             className={`ProjectSidebar ${
@@ -383,14 +419,19 @@ function ProjectSidebar(props) {
                         ></MemberIcon>
                     );
                 })}
-                <div className="addNewMContainer">
+                <div
+                    className="addNewMContainer"
+                    onClick={() => {
+                        setIsModalUserOpen(true);
+                    }}
+                >
                     +
                 </div>
             </ul>
 
             {/* <DropDownMenu info={listTools1}></DropDownMenu>
             <DropDownMenu info={listTools2}></DropDownMenu> */}
-            <Accordion selectionMode="multiple"  variant="bordered">
+            <Accordion selectionMode="multiple" variant="bordered">
                 <AccordionItem
                     key="1"
                     aria-label="Accordion 1"
@@ -426,6 +467,27 @@ function ProjectSidebar(props) {
             </Accordion>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+
+            {isModalUserOpen && 
+                <ModalUsersOne
+                    listAllUsers={true}
+                    handlerModalClose={() => {
+                        setIsModalUserOpen(false);
+                    }}
+                    handlerModalFinished={(newMiembrosList) => {
+                        //agregamos usuario a proyecto
+                        setIsModalUserOpen(false);
+                        addUserToProject(newMiembrosList);
+                    }}
+                    excludedUsers={memberData.map(item => ({
+                        id: item.idUsuario,
+                        name: item.nombres,
+                        lastName: item.apellidos,
+                        email: item.correoElectronico,
+                    }))}
+                    idProyecto={props.projectId}
+                ></ModalUsersOne>
+            }
         </nav>
     );
 }
