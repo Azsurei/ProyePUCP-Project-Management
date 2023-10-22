@@ -24,19 +24,51 @@ import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
+import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/RouteringCR";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+    const stringPrueba = "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/100"
     console.log(projectId);
     console.log(projectName);
     
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [data, setData] = useState([]);
+    const [objectRC, setObjectRC] = useState(null);
+    const [navegate, setNavegate] = useState(false);
+    const [navegateRegister, setNavegateRegister] = useState(false);
+
+    function DataTable(){
+        const fetchData = async () => {
+          try {
+            // Realiza la solicitud HTTP al endpoint del router
+            const stringURL =
+            "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/" +
+            projectId;
+            const response = await axios.get(stringURL);
     
+            // Actualiza el estado 'data' con los datos recibidos
+            // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+            setData(response.data.riesgos);
+            setIsLoadingSmall(false);
+            console.log(`Esta es la data:`, data);
+            console.log(`Datos obtenidos exitosamente:`, response.data.riesgos);
+          } catch (error) {
+            console.error('Error al obtener datos:', error);
+          }
+        };
+    
+        fetchData();
+      };
+    
+    useEffect(() => {
+        DataTable();
+    }, []);
+
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
@@ -44,6 +76,11 @@ export default function MatrizDeComunicaciones(props){
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
+    };
+    const setRoutering = (objectID) => {
+        setObjectRC(objectID);
+        console.log("El id del objeto MC es: ", objectRC);
+        setNavegate(!navegate);
     };
     const columns = [
         {
@@ -54,25 +91,25 @@ export default function MatrizDeComunicaciones(props){
         },
         {
             name: 'Fecha identificacion',
-            uid: 'fechaRiesgo',
+            uid: 'fechaIdentificacion',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
-            name: 'Severidad',
-            uid: 'severidadRiesgo',
+            name: 'Probabilidad',
+            uid: 'nombreProbabilidad',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Dueño del riesgo',
-            uid: 'dueñoRiesgo',
+            uid: 'nombres',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
         {
             name: 'Estado',
-            uid: 'estadoRiesgo',
+            uid: 'estado',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -83,17 +120,17 @@ export default function MatrizDeComunicaciones(props){
             sortable: false
         }
     ];
-    const data = [
-        {
-            id: 1,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaRiesgo: '07/09/2023',
-            severidadRiesgo: 'Baja',
-            dueñoRiesgo: 'Anthony Estrada',
-            estadoRiesgo: 'Estado',
-        },
+    // const data = [
+    //     {
+    //         id: 1,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaRiesgo: '07/09/2023',
+    //         severidadRiesgo: 'Baja',
+    //         dueñoRiesgo: 'Anthony Estrada',
+    //         estadoRiesgo: 'Estado',
+    //     },
         
-    ];
+    // ];
     const toolsOptions = [
         { name: "Herramienta 1", uid: "active" },
         { name: "Herramienta 2", uid: "paused" },
@@ -187,7 +224,14 @@ export default function MatrizDeComunicaciones(props){
         
         switch (columnKey) {
                 
-            
+            case "fechaIdentificacion":
+                const date = new Date(cellValue);
+                if (!isNaN(date)) {
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -198,7 +242,9 @@ export default function MatrizDeComunicaciones(props){
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem >
+                                <DropdownItem onClick={() => 
+                                    setRoutering(data)
+                                }>
                                 {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
                                         Editar 
                                 {/* </Link> */}
@@ -229,35 +275,11 @@ export default function MatrizDeComunicaciones(props){
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex .roboto">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto'] color-['#172B4D']"
-                                >
-                                    Herramienta
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={toolsFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setToolsFilter}
-                            >
-                                {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
+                        <Button color="primary" endContent={<PlusIcon />} className="btnAddRiesgo" >
+                            <Link href={"/dashboard/"+projectName+"="+projectId+"/catalogoDeRiesgos/registerCR"}>
+                            Agregar
+                            </Link> 
+                        </Button>
                         <Button color="primary" endContent={<PlusIcon />} className="btnRiesgosExport">
                             Exportar
                         </Button>
@@ -351,11 +373,19 @@ export default function MatrizDeComunicaciones(props){
                             columns={columns}
                             sortedItems={sortedItems}
                             renderCell={renderCell}
-                            idKey="id"
+                            idKey="idRiesgo"
                         />
                 
                 </div>
             </div>
+            {navegate && objectRC.idRiesgo && (
+                <RouteringRC
+                    proy_name = {projectName}
+                    proy_id = {projectId}
+                    idRC = {objectRC.idRiesgo}
+                />
+            )
+            }
         </div>
         
     );

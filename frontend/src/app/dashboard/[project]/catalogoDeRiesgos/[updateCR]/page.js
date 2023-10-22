@@ -49,31 +49,31 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoRiesgos, setCatalogoRiesgos] = useState(null);
 
-    useEffect(() => {
-        if (catalogoRiesgos && catalogoRiesgos.comunicacion) {
-            const mcData = matrizComunicaciones.comunicacion[0];
-            console.log("F: La data es:", mcData);
-            setSumilla(mcData.sumillaInformacion);
-            setDetail(mcData.detalleInformacion);
-            setGroupReceiver(mcData.grupoReceptor);
-            setSelectedNameCanal(mcData.nombreCanal);
-            setCanal(mcData.idCanal);
-            setSelectedNameFrecuency(mcData.nombreFrecuencia);
-            setFrecuency(mcData.idFrecuencia);
-            setSelectedNameFormat(mcData.nombreFormato);
-            setFormat(mcData.idFormato);
-            const miembro = {
-                email: mcData.correoElectronico,
-                id: mcData.responsableDeComunicar,
-                lastName: mcData.apellidos,
-                name: mcData.nombres,
-            };
-            setSelectedMiembrosList([miembro]);
-            console.log("Terminó de cargar los datos");
-            //setIsLoading(false);
-            setIsLoadingSmall(false);
-        }
-    }, [matrizComunicaciones]);
+    // useEffect(() => {
+    //     if (catalogoRiesgos && catalogoRiesgos.comunicacion) {
+    //         const mcData = matrizComunicaciones.comunicacion[0];
+    //         console.log("F: La data es:", mcData);
+    //         setSumilla(mcData.sumillaInformacion);
+    //         setDetail(mcData.detalleInformacion);
+    //         setGroupReceiver(mcData.grupoReceptor);
+    //         setSelectedNameCanal(mcData.nombreCanal);
+    //         setCanal(mcData.idCanal);
+    //         setSelectedNameFrecuency(mcData.nombreFrecuencia);
+    //         setFrecuency(mcData.idFrecuencia);
+    //         setSelectedNameFormat(mcData.nombreFormato);
+    //         setFormat(mcData.idFormato);
+    //         const miembro = {
+    //             email: mcData.correoElectronico,
+    //             id: mcData.responsableDeComunicar,
+    //             lastName: mcData.apellidos,
+    //             name: mcData.nombres,
+    //         };
+    //         setSelectedMiembrosList([miembro]);
+    //         console.log("Terminó de cargar los datos");
+    //         //setIsLoading(false);
+    //         setIsLoadingSmall(false);
+    //     }
+    // }, [matrizComunicaciones]);
 
     useEffect(() => {
         const stringURLCR = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
