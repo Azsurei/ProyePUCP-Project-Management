@@ -45,7 +45,6 @@ export default function Cronograma(props) {
         onOpenChange: onModalSubEOpenChange,
     } = useDisclosure();
 
-
     const [toggleNew, setToggleNew] = useState(false);
     const handlerGoToNew = () => {
         setToggleNew(!toggleNew);
@@ -82,10 +81,7 @@ export default function Cronograma(props) {
     const [modal, setModal] = useState(false);
 
     const [selectedUsers, setSelectedUsers] = useState([]);
-    const [selectedSubteam, setSelectedSubteam] = useState({
-        idSubequipo: 1,
-        nombre: "Backend Team",
-    });
+    const [selectedSubteam, setSelectedSubteam] = useState(null);
 
     const returnListOfUsers = (newUsersList) => {
         const newList = [...selectedUsers, ...newUsersList];
@@ -226,13 +222,13 @@ export default function Cronograma(props) {
 
     const colorDropbox = ["default", "primary", "warning", "success"];
 
-    // useEffect(() => {
-    //     setSelectedSubteam(null);
-    // }, [selectedUsers]);
+    useEffect(() => {
+        setSelectedSubteam(null);
+    }, [selectedUsers]);
 
-    // useEffect(() => {
-    //     setSelectedUsers([]);
-    // }, [selectedSubteam]);
+    useEffect(() => {
+        setSelectedUsers([]);
+    }, [selectedSubteam]);
 
     useEffect(() => {
         const stringURL =
@@ -377,6 +373,7 @@ export default function Cronograma(props) {
                 isOpen={isModalSubEOpen}
                 onOpenChange={onModalSubEOpenChange}
                 projectId={projectId}
+                getSelectedSubteam={setSelectedSubteam}
             ></ModalSubequipos>
 
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
@@ -567,7 +564,7 @@ export default function Cronograma(props) {
                         {tabSelected === "users" ? (
                             <div
                                 className="btnToPopUp"
-                                onClick={()=>{
+                                onClick={() => {
                                     setModal(true);
                                 }}
                             >
@@ -613,16 +610,42 @@ export default function Cronograma(props) {
                             )
                         ) : selectedSubteam !== null ? (
                             <div className="cardSubteam">
-                                <div className="cardLeftSide">
-                                    <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>
-                                    <p>{selectedSubteam.nombre}</p>
+                                <div className="cardSubteam_Header">
+                                    <div className="cardLeftSide">
+                                        <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>
+                                        <p>{selectedSubteam.nombre}</p>
+                                    </div>
+
+                                    <img
+                                        src="/icons/icon-crossBlack.svg"
+                                        onClick={() => {
+                                            setSelectedSubteam(null);
+                                        }}
+                                    ></img>
                                 </div>
-                                <img
-                                    src="/icons/icon-crossBlack.svg"
-                                    onClick={() => {
-                                        setSelectedSubteam(null);
-                                    }}
-                                ></img>
+
+                                <div className="SubTeamUsersContainer">
+                                    {selectedSubteam.participantes.map(
+                                        (user) => {
+                                            return (
+                                                <div
+                                                    className="SingleUserIconContainer"
+                                                    key={user.idUsuario}
+                                                >
+                                                    <div className="SingleUserIcon">
+                                                        {user.nombres[0] +
+                                                            user.apellidos[0]}
+                                                    </div>
+                                                    <div className="SingleUserName">
+                                                        {user.nombres +
+                                                            " " +
+                                                            user.apellidos}
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                    )}
+                                </div>
                             </div>
                         ) : (
                             <p className="noUsersMsg">

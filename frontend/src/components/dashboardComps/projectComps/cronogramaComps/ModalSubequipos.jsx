@@ -16,7 +16,7 @@ import { useState } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-function CardSubequipo({ subequipo, isSelected, onSelection }) {
+function CardSubequipo({ subequipo, isSelected, onSelection, showNames }) {
     //const [isSelected, setIsSelected] = useState(false);
 
     return (
@@ -32,8 +32,15 @@ function CardSubequipo({ subequipo, isSelected, onSelection }) {
             <div className="SubTeamUsersContainer">
                 {subequipo.participantes.map((user) => {
                     return (
-                        <div className="SingleUserIcon">
-                            {user.nombres[0] + user.apellidos[0]}
+                        <div className="SingleUserIconContainer" key={user.idUsuario}>
+                            <div className="SingleUserIcon">
+                                {user.nombres[0] + user.apellidos[0]}
+                            </div>
+                            {showNames && (
+                                <p className="SingleUserName">
+                                    {user.nombres + " " + user.apellidos}
+                                </p>
+                            )}
                         </div>
                     );
                 })}
@@ -42,9 +49,9 @@ function CardSubequipo({ subequipo, isSelected, onSelection }) {
     );
 }
 
-function ListSubequipos({ lista }) {
-    const [selectedUser, setSelectedUser] = useState(null); //contiene el id del seleccionado
-
+function ListSubequipos({ lista, showNames, selectedSubteam, setSelectedSubteam }) {
+    
+    const id_equipo = selectedSubteam === null ? null : selectedSubteam.idEquipo
     if (lista.length === 0) {
         return (
             <p className="noResultsMessage">No se encontraron resultados.</p>
@@ -57,11 +64,12 @@ function ListSubequipos({ lista }) {
                     <CardSubequipo
                         key={subequipo.idEquipo}
                         subequipo={subequipo}
-                        isSelected={selectedUser === subequipo.idEquipo}
+                        isSelected={id_equipo === subequipo.idEquipo}
                         onSelection={() => {
-                            setSelectedUser(subequipo.idEquipo);
+                            setSelectedSubteam(subequipo);
                             //addUserList(subequipo);
                         }}
+                        showNames={showNames}
                     ></CardSubequipo>
                 );
             })}
@@ -69,10 +77,11 @@ function ListSubequipos({ lista }) {
     );
 }
 
-export default function ModalSubequipos({ isOpen, onOpenChange, projectId }) {
+export default function ModalSubequipos({ isOpen, onOpenChange, projectId, getSelectedSubteam }) {
     const [filterValue, onSearchChange] = useState("");
     const [listSubequipos, setListSubequipos] = useState([]);
     const [showNames, setShowNames] = useState(false);
+    const [selectedSubteam, setSelectedSubteam] = useState(null); //contiene el id del seleccionado
 
     const refreshList = () => {
         const searchURL =
@@ -101,66 +110,102 @@ export default function ModalSubequipos({ isOpen, onOpenChange, projectId }) {
             }}
         >
             <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            <div className="ModalHeaderSubteams">
-                                Busca
-                                    <Switch
-                                        isSelected={showNames}
-                                        onValueChange={setShowNames}
+                {(onClose) => {
+                    const finalizarModal = () => {
+                        getSelectedSubteam(selectedSubteam)
+                        console.log(selectedSubteam);
+                        setSelectedSubteam(null);
+                        setListSubequipos([]);
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col">
+                                <div className="ModalHeaderSubteams">
+                                    <p style={{ minWidth: "180px" }}>
+                                        Buscar un subequipo
+                                    </p>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            gap: "0",
+                                        }}
                                     >
-                                    </Switch>
-                            </div>
-                        </ModalHeader>
-                        <ModalBody>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    gap: ".6rem",
-                                }}
-                            >
-                                <div className="divBuscador">
-                                    <Input
-                                        isClearable
-                                        className="w-full sm:max-w-[100%]"
-                                        placeholder="Ingresa un miembro..."
-                                        startContent={<SearchIcon />}
-                                        value={filterValue}
-                                        onValueChange={onSearchChange}
-                                        variant="faded"
-                                    />
+                                        <p
+                                            style={{
+                                                minWidth: "140px",
+                                                fontWeight: "400",
+                                                fontSize: "16px",
+                                            }}
+                                        >
+                                            Mostrar nombres
+                                        </p>
+                                        <Switch
+                                            isSelected={showNames}
+                                            onValueChange={setShowNames}
+                                            color="success"
+                                            size="sm"
+                                        ></Switch>
+                                    </div>
                                 </div>
-                                <Button
-                                    className="bg-indigo-950 text-slate-50"
-                                    onClick={refreshList}
+                            </ModalHeader>
+                            <ModalBody>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        width: "100%",
+                                        gap: ".6rem",
+                                    }}
                                 >
-                                    Buscar
-                                </Button>
-                            </div>
+                                    <div className="divBuscador">
+                                        <Input
+                                            isClearable
+                                            className="w-full sm:max-w-[100%]"
+                                            placeholder="Ingresa un miembro..."
+                                            startContent={<SearchIcon />}
+                                            value={filterValue}
+                                            onValueChange={onSearchChange}
+                                            variant="faded"
+                                        />
+                                    </div>
+                                    <Button
+                                        className="bg-indigo-950 text-slate-50"
+                                        onClick={refreshList}
+                                    >
+                                        Buscar
+                                    </Button>
+                                </div>
 
-                            <ListSubequipos
-                                lista={listSubequipos}
-                            ></ListSubequipos>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button
-                                color="danger"
-                                variant="light"
-                                onPress={onClose}
-                            >
-                                Close
-                            </Button>
-                            <Button color="primary" onPress={onClose}>
-                                Action
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
+                                <ListSubequipos
+                                    lista={listSubequipos}
+                                    showNames={showNames}
+                                    selectedSubteam={selectedSubteam}
+                                    setSelectedSubteam={setSelectedSubteam}
+                                ></ListSubequipos>
+                                
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    onPress={finalizarModal}
+                                >
+                                    Aceptar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
             </ModalContent>
         </Modal>
     );
