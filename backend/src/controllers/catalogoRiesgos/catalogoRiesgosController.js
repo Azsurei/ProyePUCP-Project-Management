@@ -13,21 +13,21 @@ async function insertarRiesgo(req,res,next){
             await connection.execute(`
                 CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
-                ${responsable.idResponsable});
+                ${responsable.id});
             `);
         }
         for(const planRespuesta of planesRespuesta){
             await connection.execute(`
                 CALL INSERTAR_PLANRESPUESTA(
                 ${idRiesgo},
-                '${planRespuesta.descripcion}');
+                '${planRespuesta.responsePlans}');
             `);
         }
         for(const planContigencia of planesContigencia){
             await connection.execute(`
                 CALL INSERTAR_PLANCONTIGENCIA(
                 ${idRiesgo},
-                '${planContigencia.descripcion}');
+                '${planContigencia.contingencyPlans}');
             `);
         }
         res.status(200).json({

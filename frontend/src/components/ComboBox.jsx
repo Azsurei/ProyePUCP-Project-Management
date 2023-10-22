@@ -17,6 +17,8 @@ export default function Example({
     initialName,
     reloadData,
     inputWidth = 64,
+    onSelectValor,
+    valorParam
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
@@ -73,6 +75,7 @@ export default function Example({
                     setSelected(selectedItem);
                     if (typeof onSelect === "function") {
                         onSelect(selectedItem[idParam]);
+                        onSelectValor(selectedItem[valorParam])
                     }
                 }}
             >
