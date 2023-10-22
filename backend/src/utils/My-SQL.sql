@@ -226,12 +226,14 @@ CREATE TABLE HerramientaXProyecto(
 	idHerramientaXProyecto INT AUTO_INCREMENT PRIMARY KEY,
     idProyecto INT,
     idHerramienta INT,
+    idHerramientaCreada INT,
     activo tinyint NOT NULL,
 	UNIQUE(idProyecto,idHerramienta),
 	FOREIGN KEY(idProyecto) REFERENCES Proyecto(idProyecto),
     FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
 )
 ENGINE = InnoDB;
+
 
 ------------
 -- Cronograma
@@ -430,6 +432,68 @@ CREATE TABLE ActaReunion(
     activo TINYINT,
     FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE LineaActaReunion(
+	idLineaActaReunion INT AUTO_INCREMENT PRIMARY KEY,
+    idActaReunion INT,
+	nombreReunion VARCHAR(255),
+    fechaReunion DATE,
+    horaReunion TIME,
+    nombreConvocante VARCHAR(255),
+    motivo VARCHAR(500),
+    activo TINYINT,
+    FOREIGN KEY (idActaReunion) REFERENCES ActaReunion(idActaReunion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ComentarioReunion (
+	idComentarioReunion INT AUTO_INCREMENT PRIMARY KEY,
+    idLineaActaReunion INT,
+    descripcion VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idLineaActaReunion) REFERENCES LineaActaReunion(idLineaActaReunion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE TemaReunion (
+	idTemaReunion INT AUTO_INCREMENT PRIMARY KEY,
+    idLineaActaReunion INT,
+    descripcion VARCHAR(500),
+    activo TINYINT,
+    FOREIGN KEY (idLineaActaReunion) REFERENCES LineaActaReunion(idLineaActaReunion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ParticipanteXReunion (
+	idParticipanteXReunion INT AUTO_INCREMENT PRIMARY KEY,
+	idLineaActaReunion INT,
+    idUsuarioXRolXProyecto INT,
+	asistio TINYINT,
+    activo TINYINT,
+    FOREIGN KEY (idLineaActaReunion) REFERENCES LineaActaReunion(idLineaActaReunion),
+    FOREIGN KEY (idUsuarioXRolXProyecto) REFERENCES UsuarioXRolXProyecto(idUsuarioRolProyecto)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE Acuerdo (
+	idAcuerdo INT AUTO_INCREMENT PRIMARY KEY,
+    idTemaReunion INT,
+	descripcion VARCHAR(500),
+    fechaObjetivo DATE,
+    activo TINYINT,
+    FOREIGN KEY (idTemaReunion) REFERENCES TemaReunion(idTemaReunion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE AcuerdoXUsuarioXRolXProyecto (
+	idAcuerdoXUsuarioXRolXProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idAcuerdo 	INT,
+    idUsuarioXRolXProyecto INT,
+    activo TINYINT,
+    FOREIGN KEY (idAcuerdo) REFERENCES Acuerdo(idAcuerdo),
+    FOREIGN KEY (idUsuarioXRolXProyecto) REFERENCES UsuarioXRolXProyecto(idUsuarioRolProyecto)
 )
 ENGINE = InnoDB;
 

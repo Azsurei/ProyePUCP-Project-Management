@@ -1,4 +1,7 @@
 const connection = require("../../config/db");
+const ingresoController = require("./ingresoController");
+const egresoController = require("./egresoController");
+const estimacionCostoController = require("./estimacionCostoController");
 
 async function crear(req,res,next){
     const {idProyecto,idMoneda,presupuestoInicial,cantidadMeses} = req.body;
@@ -11,30 +14,49 @@ async function crear(req,res,next){
     }
 }
 
-
-async function listarLineasTodas(req,res,next){
-    const {idProyecto} = req.params;
+async function modificar(req,res,next){
+    const {idMoneda,presupuestoInicial,cantidadMeses,idPresupuesto} = req.body;
     try {
-        const query = `CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(?);`;
-        const [resultsLineasIngreso] = await connection.query(query,[idProyecto]);
-        lineasIngreso = resultsLineasIngreso[0];
+        const query = `CALL MODIFICAR_PRESUPUESTO(?,?,?,?);`;
+        await connection.query(query,[idMoneda,presupuestoInicial,cantidadMeses,idPresupuesto]);
+        res.status(200).json({message: "Presupuesto modificado"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarXIdPresupuesto(req,res,next){
+    const {idPresupuesto} = req.params;
+    try {
+        const query = `CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
+        const [results] = await connection.query(query,[idPresupuesto]);
+        presupuesto = results[0];
         
-        const query2 = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(?);`;
-        const [resultsLineasEgreso] = await connection.query(query2,[idProyecto]);
-        lineasEgreso = resultsLineasEgreso[0];
+        res.status(200).json({
+            presupuesto,
+            message: "Presupuesto listado correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 
-        const query3 = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
-        const [resultsLineasEstimacionCosto] = await connection.query(query3,[idProyecto]);
-        lineasEstimacionCosto = resultsLineasEstimacionCosto[0];
+async function listarLineasTodas(req, res, next) {
+    const { idProyecto } = req.params;
+    try {
+        const lineasIngreso = ingresoController.listarLineasXIdProyecto(idProyecto);
+        const lineasEgreso = egresoController.listarLineasXIdProyecto(idProyecto);
+        const lineasEstimacionCosto = estimacionCostoController.listarLineasXIdProyecto(idProyecto);
 
-        const lineasPresupuesto = {};
-        lineasPresupuesto.lineasIngreso = lineasIngreso;
-        lineasPresupuesto.lineasEgreso = lineasEgreso;
-        lineasPresupuesto.lineasEstimacionCosto = lineasEstimacionCosto;
+        const lineasPresupuesto = {
+            lineasIngreso,
+            lineasEgreso,
+            lineasEstimacionCosto
+        };
 
         res.status(200).json({
             lineasPresupuesto,
-            message: "Lineas del presupuesto listadas correctamente"
+            message: "Líneas del presupuesto listadas correctamente"
         });
     } catch (error) {
         next(error);
@@ -42,7 +64,10 @@ async function listarLineasTodas(req,res,next){
 }
 
 
+
 module.exports = {
     crear,
-    listarLineasTodas
+    modificar,
+    listarLineasTodas,
+    listarXIdPresupuesto
 };
