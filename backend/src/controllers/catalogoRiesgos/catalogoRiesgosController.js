@@ -39,6 +39,70 @@ async function insertarRiesgo(req,res,next){
     }
 }
 
+async function listarRiesgos(req,res,next){
+    const {idProyecto} = req.params;
+    const query = `CALL LISTAR_CATALOGORIESGO_X_IDPROYECTO(?);`;
+    try {
+        const [results] = await connection.query(query,[idProyecto]);
+        const riesgos = results[0];
+        for (const riesgo of riesgos){
+            const query1 = `CALL LISTAR_RESPONSABLE_X_IDRIESGO(?);`;
+            const [responsables] = await connection.query(query1,[riesgo.idRiesgo]);
+            riesgo.responsables = responsables[0];
+        }
+        for (const riesgo1 of riesgos){
+            const query2 = `CALL LISTAR_PLANRESPUESTA_X_IDRIESGO(?);`;
+            const [planRespuesta] = await connection.query(query2,[riesgo1.idRiesgo]);
+            riesgo1.planRespuesta = planRespuesta[0];
+        }
+        for (const riesgo2 of riesgos){
+            const query3 = `CALL LISTAR_PLANCONTINGENCIA_X_IDRIESGO(?);`;
+            const [planContigencia] = await connection.query(query3,[riesgo2.idRiesgo]);
+            riesgo2.planContigencia = planContigencia[0];
+        }
+        res.status(200).json({
+            riesgos,
+            message: "Riesgos obtenidos exitosamente"
+        });
+        console.log('Se listaron los riesgos correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function listarunRiesgo(req,res,next){
+    const {idRiesgo} = req.params;
+    const query = `CALL LISTAR_CATALOGORIESGO_X_IDPROYECTO(?);`;
+    try {
+        const [results] = await connection.query(query,[idProyecto]);
+        const riesgos = results[0];
+        for (const riesgo of riesgos){
+            const query1 = `CALL LISTAR_RESPONSABLE_X_IDRIESGO(?);`;
+            const [responsables] = await connection.query(query1,[riesgo.idRiesgo]);
+            riesgo.responsables = responsables[0];
+        }
+        for (const riesgo1 of riesgos){
+            const query2 = `CALL LISTAR_PLANRESPUESTA_X_IDRIESGO(?);`;
+            const [planRespuesta] = await connection.query(query2,[riesgo1.idRiesgo]);
+            riesgo1.planRespuesta = planRespuesta[0];
+        }
+        for (const riesgo2 of riesgos){
+            const query3 = `CALL LISTAR_PLANCONTINGENCIA_X_IDRIESGO(?);`;
+            const [planContigencia] = await connection.query(query3,[riesgo2.idRiesgo]);
+            riesgo2.planContigencia = planContigencia[0];
+        }
+        res.status(200).json({
+            riesgos,
+            message: "Riesgos obtenidos exitosamente"
+        });
+        console.log('Se listaron los riesgos correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function listarProbabilidades(req,res,next){
     try {
         const query = `CALL LISTAR_PROBABILIDAD;`;
@@ -65,6 +129,7 @@ async function listarImpacto(req,res,next){
 
 module.exports = {
     insertarRiesgo,
+    listarRiesgos,
     listarProbabilidades,
     listarImpacto
 };

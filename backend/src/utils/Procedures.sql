@@ -1670,8 +1670,6 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
-<<<<<<< HEAD
-=======
 
 DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
@@ -1937,4 +1935,59 @@ BEGIN
     VALUES(_idRiesgo,_descripcion,1);
     SET _idPlanContingencia = @@last_insert_id;
     SELECT _idPlanContingencia AS idPlanContingencia;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CATALOGORIESGO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CATALOGORIESGO_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, r.detalleRiesgo,
+    r.causaRiesgo, r.impactoRiesgo, r.estado, r.activo, r.idProbabilidad, rp.nombreProbabilidad, rp.valorProbabilidad, r.idImpacto, ri.nombreImpacto, ri.valorImpacto
+	FROM Riesgo AS r
+    LEFT JOIN CatalogoRiesgo AS cr ON r.idCatalogo = cr.idCatalogo
+    LEFT JOIN Usuario AS u ON r.duenoRiesgo = u.idUsuario
+    LEFT JOIN RiesgoProbabilidad AS rp ON r.idProbabilidad = rp.idProbabilidad
+    LEFT JOIN RiesgoImpacto AS ri ON r.idImpacto = ri.idImpacto
+	WHERE cr.idProyecto = _idProyecto AND r.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RESPONSABLE_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM RiesgoXResponsable AS rr
+    LEFT JOIN Usuario AS u ON rr.idResponsable = u.idUsuario
+	WHERE rr.idRiesgo = _idRiesgo AND rr.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANRESPUESTA_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANRESPUESTA_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT pr.idPlanRespuesta, pr.descripcion, pr.activo
+	FROM PlanRespuesta AS pr
+	WHERE pr.idRiesgo = _idRiesgo AND pr.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANCONTINGENCIA_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANCONTINGENCIA_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT pc.idPlanContingencia, pc.descripcion, pc.activo
+	FROM PlanContingencia AS pc
+	WHERE pc.idRiesgo = _idRiesgo AND pc.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_RIESGO_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RIESGO_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, r.detalleRiesgo,
+    r.causaRiesgo, r.impactoRiesgo, r.estado, r.activo, r.idProbabilidad, rp.nombreProbabilidad, rp.valorProbabilidad, r.idImpacto, ri.nombreImpacto, ri.valorImpacto
+	FROM Riesgo AS r
+    LEFT JOIN Usuario AS u ON r.duenoRiesgo = u.idUsuario
+    LEFT JOIN RiesgoProbabilidad AS rp ON r.idProbabilidad = rp.idProbabilidad
+    LEFT JOIN RiesgoImpacto AS ri ON r.idImpacto = ri.idImpacto
+	WHERE r.idRiesgo = _idRiesgo AND r.activo=1;
 END$
