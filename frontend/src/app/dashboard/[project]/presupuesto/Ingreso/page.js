@@ -42,16 +42,16 @@ export default function Ingresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
+    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
+    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
+
 
     //const router=userRouter();
-    const [listUsers, setListUsers] = useState([]);
 
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
-
-    const [modal1, setModal1] = useState(false);
 
     const [filterValue, setFilterValue] = React.useState("");
 
@@ -78,15 +78,38 @@ export default function Ingresos(props) {
         setFecha(selectedDate);
     }
     
-    
+    let idHerramientaCreada;
+
     const insertarLineaIngreso = () => {
         const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
-
+        
         console.log(projectId);
+        const stringURLListaHerramientas="http://localhost:8080/api/herramientas/"+projectId+"/listarHerramientasDeProyecto";
+
+
+        axios.get(stringURLListaHerramientas)
+        .then(function (response) {
+            const herramientas = response.data.herramientas;
+    
+            // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 4
+            for (const herramienta of herramientas) {
+            if (herramienta.idHerramienta === 13) {
+                idHerramientaCreada = herramienta.idHerramientaCreada;
+                console.log("idPresupuesto es:", idHerramientaCreada);
+                break; // Puedes salir del bucle si has encontrado la herramienta
+            }
+            }
+        })
+        .catch(function (error) {
+            console.error('Error al hacer Listado Herramienta', error);
+        });
+
+
+
 
         axios.post(stringUrlTipoTransaccion, {
             idProyecto: projectId,
-            idPresupuesto:8,
+            idPresupuesto:idHerramientaCreada,
             idMoneda: selectedMoneda,
             idTransaccionTipo:selectedTipoTransaccion,
             idIngresoTipo:selectedTipo,
@@ -105,15 +128,11 @@ export default function Ingresos(props) {
         });
     }
 
-    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
-    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
-    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
+
+
     
     const [selectedMoneda, setselectedMoneda] = useState("");
-
-    
     const [descripcionLinea, setdescripcionLinea] = useState("");
-
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
@@ -124,9 +143,6 @@ export default function Ingresos(props) {
     const handleSelectedValueTipo = (value) => {
         setselectedTipo(value);
     };
-
-
-
 
     const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
     
