@@ -169,7 +169,24 @@ export default function Cronograma(props) {
                     axios
                         .get(tareasURL)
                         .then(function (response) {
-                            setListTareas(response.data.tareas);
+                            console.log(response);
+
+                            const updatedArray = response.data.tareas.map(
+                                (item, index) => ({
+                                    ...item,
+                                    tareasHijas:
+                                        index === 0
+                                            ? [
+                                                  {
+                                                      ...item,
+                                                      idTarea: 9999,
+                                                      tareasHijas: null,
+                                                  },
+                                              ]
+                                            : null,
+                                })
+                            );
+                            setListTareas(updatedArray);
                             console.log(response.data.tareas);
 
                             resolve(response);
