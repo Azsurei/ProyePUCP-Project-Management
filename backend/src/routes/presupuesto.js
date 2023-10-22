@@ -23,7 +23,8 @@ routerPresupuesto.get("/listarTipoTransaccionTodos",verifyToken, tipoTransaccion
 // Ingresos
 routerPresupuesto.post("/insertarIngreso",ingresoController.crear);
 routerPresupuesto.post("/insertarLineaIngreso",ingresoController.crearLineaIngreso);
-routerPresupuesto.get("/listarLineaIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasXIdProyecto);
+routerPresupuesto.get("/listarLineaIngresoXIdProyecto/:idProyecto",ingresoController.listarLineaIngresoXIdProyecto);
+routerPresupuesto.get("/listarLineaXIdProyecto/:idProyecto",ingresoController.listarLineaXIdProyecto);
 routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
 
