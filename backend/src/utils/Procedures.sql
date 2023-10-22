@@ -1828,4 +1828,88 @@ BEGIN
     SELECT _idAutoEvaluacion AS idAutoEvaluacion;
 END$
 
->>>>>>> 6145fcdbf7b45ed2a8ad1f0d5c8f6221e8ac1485
+------------
+-- Catalogo de Riesgos
+------------
+DROP PROCEDURE IF EXISTS INSERTAR_RIESGO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RIESGO_X_IDPROYECTO(
+    IN _idProyecto INT,
+	IN _nombreRiesgo VARCHAR(500),
+    IN _fechaIdentificacion DATE,
+    IN _duenoRiesgo INT,
+    IN _detalleRiesgo VARCHAR(500),
+    IN _causaRiesgo VARCHAR(500),
+    IN _impactoRiesgo VARCHAR(500),
+    IN _planRespuesta VARCHAR(500),
+    IN _estado VARCHAR(100)
+)
+BEGIN
+	DECLARE _idRiesgo INT;
+    SET @_idCatalogo = (SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO Riesgo(nombreRiesgo,idCatalogo,fechaIdentificacion,duenoRiesgo,detalleRiesgo,causaRiesgo,impactoRiesgo,planRespuesta,estado,activo) 
+    VALUES(_nombreRiesgo,@_idCatalogo,_fechaIdentificacion,duenoRiesgo,_detalleRiesgo,_causaRiesgo,_impactoRiesgo,_planRespuesta,_estado,1);
+    SET _idRiesgo = @@last_insert_id;
+    SELECT _idRiesgo AS idRiesgo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABLE_RIESGO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABLE_RIESGO(
+    IN _idRiesgo INT,
+	IN _idResponsable INT
+)
+BEGIN
+	DECLARE _idRiesgoXResponsable INT;
+	INSERT INTO RiesgoXResponsable(idRiesgo,idResponsable,activo) 
+    VALUES(_idRiesgo,_idResponsable,1);
+    SET _idRiesgoXResponsable = @@last_insert_id;
+    SELECT _idRiesgoXResponsable AS idRiesgoXResponsable;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PROBABILIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PROBABILIDAD(
+    IN _nombreProbabilidad VARCHAR(200),
+	IN _valorProbabilidad DOUBLE
+)
+BEGIN
+	DECLARE _idProbabilidad INT;
+	INSERT INTO RiesgoProbabilidad(nombreProbabilidad, valorProbabilidad, activo) 
+    VALUES(_nombreProbabilidad, _valorProbabilidad, 1);
+    SET _idProbabilidad = @@last_insert_id;
+    SELECT _idProbabilidad AS idProbabilidad;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_IMPACTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_IMPACTO(
+    IN _nombreImpacto VARCHAR(200),
+	IN _valorImpacto DOUBLE
+)
+BEGIN
+	DECLARE _idImpacto INT;
+	INSERT INTO RiesgoImpacto(nombreImpacto, valorImpacto, activo) 
+    VALUES(_nombreImpacto, _valorImpacto, 1);
+    SET _idImpacto = @@last_insert_id;
+    SELECT _idImpacto AS idImpacto;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_IMPACTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_IMPACTO()
+BEGIN
+	SELECT *
+    FROM RiesgoImpacto
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PROBABILIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PROBABILIDAD()
+BEGIN
+	SELECT *
+    FROM RiesgoProbabilidad
+    WHERE activo = 1;
+END$
+
