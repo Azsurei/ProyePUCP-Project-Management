@@ -2145,3 +2145,12 @@ BEGIN
     LEFT JOIN RiesgoImpacto AS ri ON r.idImpacto = ri.idImpacto
 	WHERE r.idRiesgo = _idRiesgo AND r.activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_RIESGO_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_RIESGO_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+	UPDATE Riesgo SET activo = 0 WHERE idRiesgo = _idRiesgo;
+    UPDATE PlanRespuesta SET activo = 0 WHERE idRiesgo = _idRiesgo;
+    UPDATE PlanContingencia SET activo = 0 WHERE idRiesgo = _idRiesgo;
+END$

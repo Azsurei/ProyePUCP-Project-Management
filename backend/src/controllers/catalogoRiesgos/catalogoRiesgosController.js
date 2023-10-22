@@ -99,6 +99,20 @@ async function listarunRiesgo(req,res,next){
         next(error);
     }
 }
+async function eliminarunRiesgo(req,res,next){
+    const {idRiesgo} = req.body;
+    const query = `CALL ELIMINAR_RIESGO_X_IDRIESGO(?);`;
+    try {
+        await connection.query(query,[idRiesgo]);
+        res.status(200).json({
+            message: "Riesgo eliminado exitosamente"
+        });
+        console.log('Se elimino el riesgo correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 
 async function listarProbabilidades(req,res,next){
     try {
@@ -128,6 +142,7 @@ module.exports = {
     insertarRiesgo,
     listarRiesgos,
     listarunRiesgo,
+    eliminarunRiesgo,
     listarProbabilidades,
     listarImpacto
 };

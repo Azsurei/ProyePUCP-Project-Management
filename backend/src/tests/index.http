@@ -686,3 +686,11 @@ Content-Type:  application/json
 ###LISTAR UN RIESGO
 GET http://localhost:8080/api/proyecto/catalogoRiesgos/listarunRiesgo/7 HTTP/1.1
 Content-Type:  application/json
+
+###ELIMINAR UN RIESGO
+DELETE http://localhost:8080/api/proyecto/catalogoRiesgos/eliminarunRiesgo HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idRiesgo": 7
+}
