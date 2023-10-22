@@ -1,14 +1,14 @@
 .newMeetingArticle{
-  padding: 0 20px; /* Aplica un padding de 20px a los lados */
+  /* Aplica un padding de 20px a los lados */
   box-sizing: border-box; /* Incluye el padding en el cálculo del tamaño total */
-  flex: 1;
-  font-family: Montserrat;
+
+  font-family: Montserrat, serif;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: auto;
   height: auto;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding: 0 2rem;
+  align-self: center;
 }
 
 .header{
@@ -62,7 +62,7 @@
 }
 
 #timePicker {
-  width: 100px; /* Personaliza el ancho según tus necesidades */
+  width: auto; /* Personaliza el ancho según tus necesidades */
   height: 50px; /* Personaliza la altura según tus necesidades */
    /* Agrega un borde de 1 píxel sólido con color gris (#ccc) */
   border-radius: 15px; /* Agrega esquinas redondeadas */
