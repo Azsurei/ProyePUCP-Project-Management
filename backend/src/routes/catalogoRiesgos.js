@@ -5,6 +5,7 @@ const catalogoRiesgosController = require("../controllers/catalogoRiesgos/catalo
 
 routerCatalagoRiesgos.post("/insertarRiesgo", catalogoRiesgosController.insertarRiesgo);
 routerCatalagoRiesgos.get("/listarRiesgos/:idProyecto", catalogoRiesgosController.listarRiesgos);
+routerCatalagoRiesgos.get("/listarunRiesgo/:idRiesgo", catalogoRiesgosController.listarunRiesgo);
 
 routerCatalagoRiesgos.get("/listarProbabilidades", catalogoRiesgosController.listarProbabilidades);
 routerCatalagoRiesgos.get("/listarImpacto", catalogoRiesgosController.listarImpacto);
