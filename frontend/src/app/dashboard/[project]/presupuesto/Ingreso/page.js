@@ -12,6 +12,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -80,7 +81,9 @@ export default function Ingresos(props) {
     
     let idHerramientaCreada;
 
-    const insertarLineaIngreso = () => {
+    function insertarLineaIngreso() {
+        return new Promise((resolve, reject) => {
+        let flag=0;
         const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
         
         console.log(projectId);
@@ -91,42 +94,61 @@ export default function Ingresos(props) {
         .then(function (response) {
             const herramientas = response.data.herramientas;
     
-            // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 4
+            // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 13
             for (const herramienta of herramientas) {
-            if (herramienta.idHerramienta === 13) {
-                idHerramientaCreada = herramienta.idHerramientaCreada;
-                console.log("idPresupuesto es:", idHerramientaCreada);
-                break; // Puedes salir del bucle si has encontrado la herramienta
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag=1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
             }
+
+            if(flag===1){
+                axios.post(stringUrlTipoTransaccion, {
+                    idProyecto: projectId,
+                    idPresupuesto:idHerramientaCreada,
+                    idMoneda: selectedMoneda,
+                    idTransaccionTipo:selectedTipoTransaccion,
+                    idIngresoTipo:selectedTipo,
+                    descripcion:descripcionLinea,
+                    monto:parseFloat(monto),
+                    cantidad:1,
+                    fechaTransaccion:fecha,
+                })
+        
+                .then(function (response) {
+                    console.log(response);
+                    console.log("Linea Ingresada");
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                });
+            }else{
+                console.log("No se encontró la herramienta");
             }
+
         })
         .catch(function (error) {
             console.error('Error al hacer Listado Herramienta', error);
+            reject(error);
         });
 
-
-
-
-        axios.post(stringUrlTipoTransaccion, {
-            idProyecto: projectId,
-            idPresupuesto:idHerramientaCreada,
-            idMoneda: selectedMoneda,
-            idTransaccionTipo:selectedTipoTransaccion,
-            idIngresoTipo:selectedTipo,
-            descripcion:descripcionLinea,
-            monto:parseFloat(monto),
-            cantidad:1,
-            fechaTransaccion:fecha,
-        })
-
-        .then(function (response) {
-            console.log(response);
-            console.log("Linea Ingresada");
-        })
-        .catch(function (error) {
-            console.log(error);
         });
     }
+
+    const registrarLineaIngreso = () => {
+        toast.promise(insertarLineaIngreso, {
+            loading: "Registrando Ingreso...",
+            success: (data) => {
+                return "El ingreso se agregó con éxito!";
+            },
+            error: "Error al agregar ingreso",
+            position: "bottom-right",
+        });
+    };
 
 
 
@@ -169,12 +191,15 @@ export default function Ingresos(props) {
         },
         
     ];
+
+
     
     return (
 
         
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
+            <Toaster richColors/>
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -247,7 +272,7 @@ export default function Ingresos(props) {
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
-                                insertarLineaIngreso();
+                                registrarLineaIngreso();
                                 onClose();
                             };
                             return (
