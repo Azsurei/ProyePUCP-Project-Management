@@ -27,17 +27,24 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
     const [probability, setProbability] = useState(null);
+    const [valorProbability, setValorProbability] = useState(null);
     const [impact, setImpact] = useState(null);
+    const [valorImpact, setValorImpact] = useState(null);
+    const [selectedNameProbability, setSelectedNameProbability] = useState("");
+    const [selectedNameImpact, setSelectedNameImpact] = useState("");
     const [fechaInicio, setFechaInicio] = useState(null);
     const [isSelected, setIsSelected] = useState(true);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
     const [selectedMiembrosList1, setSelectedMiembrosList1] = useState([]);
+    const [selectedMiembrosList1Originales, setSelectedMiembrosList1Originales] = useState([]);
     const [cause, setCause] = useState("");
     const [impactDetail, setImpactDetail] = useState("");
     const [responsePlans, setResponsePlans] = useState([]);
+    const [responsePlansOriginales, setResponsePlansOriginales] = useState([]);
     const [contingencyPlans, setContingencyPlans] = useState([]);
+    const [contingencyPlansOriginales, setContingencyPlansOriginales] = useState([]);
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
@@ -49,34 +56,69 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoRiesgos, setCatalogoRiesgos] = useState(null);
 
-    // useEffect(() => {
-    //     if (catalogoRiesgos && catalogoRiesgos.comunicacion) {
-    //         const mcData = matrizComunicaciones.comunicacion[0];
-    //         console.log("F: La data es:", mcData);
-    //         setSumilla(mcData.sumillaInformacion);
-    //         setDetail(mcData.detalleInformacion);
-    //         setGroupReceiver(mcData.grupoReceptor);
-    //         setSelectedNameCanal(mcData.nombreCanal);
-    //         setCanal(mcData.idCanal);
-    //         setSelectedNameFrecuency(mcData.nombreFrecuencia);
-    //         setFrecuency(mcData.idFrecuencia);
-    //         setSelectedNameFormat(mcData.nombreFormato);
-    //         setFormat(mcData.idFormato);
-    //         const miembro = {
-    //             email: mcData.correoElectronico,
-    //             id: mcData.responsableDeComunicar,
-    //             lastName: mcData.apellidos,
-    //             name: mcData.nombres,
-    //         };
-    //         setSelectedMiembrosList([miembro]);
-    //         console.log("Terminó de cargar los datos");
-    //         //setIsLoading(false);
-    //         setIsLoadingSmall(false);
-    //     }
-    // }, [matrizComunicaciones]);
+    useEffect(() => {
+        if (catalogoRiesgos && catalogoRiesgos.riesgo) {
+            const crData = catalogoRiesgos.riesgo;
+            console.log("F: La data es:", crData);
+            setProbability(crData.idProbabilidad);
+            setValorProbability(crData.valorProbabilidad);
+            setSelectedNameProbability(crData.nombreProbabilidad);
+            setImpact(crData.idImpacto);
+            setValorImpact(crData.valorImpacto);
+            setSelectedNameImpact(crData.nombreImpacto);
+            setName(crData.nombreRiesgo);
+            setFechaInicio(new Date(crData.fechaIdentificacion).toISOString().split('T')[0]);
+            const miembro = {
+                email: crData.correoElectronico,
+                id: crData.duenoRiesgo,
+                lastName: crData.apellidos,
+                name: crData.nombres,
+            };
+            setSelectedMiembrosList([miembro]);
+            setDetail(crData.detalleRiesgo);
+            setCause(crData.causaRiesgo);
+            setImpactDetail(crData.impactoRiesgo);
+            setIsSelected(crData.estado === "Activo" ? true : false);
+            const selectedMiembrosList1Original=crData.responsables;
+            const selectedMiembrosList1Actualizados = selectedMiembrosList1Original.map(
+                (selectedMiembrosList1) => ({
+                    email: selectedMiembrosList1.correoElectronico || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    id: selectedMiembrosList1.idUsuario || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    lastName: selectedMiembrosList1.apellidos || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    name: selectedMiembrosList1.nombres || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setSelectedMiembrosList1(selectedMiembrosList1Actualizados);
+            setSelectedMiembrosList1Originales(selectedMiembrosList1Actualizados);
+            const responsesPlansOriginal = crData.planRespuesta;
+            const responsesPlansActualizados = responsesPlansOriginal.map(
+                (responsesPlans) => ({
+                    idPlanRespuesta:
+                    responsesPlans.idPlanRespuesta || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    responsePlans: responsesPlans.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setResponsePlans(responsesPlansActualizados);
+            setResponsePlansOriginales(responsesPlansActualizados);
+            setQuantity1(responsesPlansActualizados.length);
+            const contingencyPlansOriginal = crData.planContigencia;
+            const contingencyPlansActualizados = contingencyPlansOriginal.map(
+                (contingencyPlans) => ({
+                    idPlanContingencia:
+                    contingencyPlans.idPlanContingencia || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    contingencyPlans: contingencyPlans.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setContingencyPlans(contingencyPlansActualizados);
+            setContingencyPlansOriginales(contingencyPlansActualizados)
+            setQuantity2(contingencyPlansActualizados.length);
+            console.log("Terminó de cargar los datos");
+            setIsLoadingSmall(false);
+        }
+    }, [catalogoRiesgos]);
 
     useEffect(() => {
-        const stringURLCR = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        const stringURLCR = `http://localhost:8080/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
         axios
             .get(stringURLCR)
             .then(function (response) {
@@ -98,8 +140,16 @@ export default function CatalogoDeRiesgosUpdate(props) {
         setProbability(value);
     };
 
+    const handleSelectedValorChangeProbability = (value) => {
+        setValorProbability(value);
+    };
+
     const handleSelectedValueChangeImpact = (value) => {
         setImpact(value);
+    };
+
+    const handleSelectedValorChangeImpact = (value) => {
+        setValorImpact(value);
     };
 
     const toggleModal1 = () => {
@@ -130,7 +180,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
     };
 
     const removeUser = (user) => {
-        const newList = selectedMiembrosList1.filter((item) => item.id !== user.id);
+        const newList = selectedMiembrosList1.filter(
+            (item) => item.id !== user.id
+        );
         setSelectedMiembrosList1(newList);
         console.log(newList);
     };
@@ -217,6 +269,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             cause === "" ||
             impactDetail === "" ||
             selectedMiembrosList.length === 0 ||
+            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans === ""
             ) ||
@@ -245,23 +298,23 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const onSubmit = () => {
         const postData = {
             idProyecto: parseInt(projectId),
-            nombreRiesgo: name,
-            detalleRiesgo: detail,
-            fechaIdentificada: fechaInicio,
             idProbabilidad: probability,
             idImpacto: impact,
+            nombreRiesgo: name,
+            fechaIdentificacion: fechaInicio,
+            duenoRiesgo: selectedMiembrosList[0].id,
+            detalleRiesgo: detail,
+            causaRiesgo: cause,
+            impactoRiesgo: impactDetail,
             estado: isSelected ? "Activo" : "Inactivo",
-            idDueño: selectedMiembrosList[0].id,
-            causa: cause,
-            impacto: impactDetail,
-            responsePlans: responsePlans,
-            contingencyPlans: contingencyPlans,
-            responsablesRiesgos: selectedMiembrosList1
+            responsables: selectedMiembrosList1,
+            planesRespuesta: responsePlans,
+            planesContigencia: contingencyPlans,
         };
         console.log("El postData es :", postData);
-        /*         axios
+        axios
             .post(
-                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
+                "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
             )
             .then((response) => {
@@ -273,7 +326,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
     };
 
     return (
@@ -332,12 +385,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
-                            property="canales"
-                            nameDisplay="nombreCanal"
+                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            property="probabilidades"
+                            nameDisplay="nombreProbabilidad"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeProbability}
-                            idParam="idCanal"
+                            onSelectValor={handleSelectedValorChangeProbability}
+                            idParam="idProbabilidad"
+                            valorParam="valorProbabilidad"
+                            initialName={selectedNameProbability}
                         />
                     </div>
                     <div className="containerComboCR">
@@ -347,12 +403,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
-                            property="frecuencias"
-                            nameDisplay="nombreFrecuencia"
+                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto"
+                            property="impacto"
+                            nameDisplay="nombreImpacto"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeImpact}
-                            idParam="idFrecuencia"
+                            onSelectValor={handleSelectedValorChangeImpact}
+                            idParam="idImpacto"
+                            valorParam="valorImpacto"
+                            initialName={selectedNameImpact}
                         />
                     </div>
                     <div className="containerComboCR">
@@ -379,6 +438,23 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             label="Severidad"
                             className="iconLabel"
                         />
+                        <div className="labelSinDataUsuarioCR">
+                            {probability === null || impact === null ? (
+                                "Severidad = Probabilidad x Impacto"
+                            ) : valorProbability * valorImpact >= 0.18 ? (
+                                <div className="text-red-500 font-semibold">
+                                    Alta
+                                </div>
+                            ) : valorProbability * valorImpact >= 0.05 ? (
+                                <div className="text-orange-500 font-semibold">
+                                    Media
+                                </div>
+                            ) : (
+                                <div className="text-green-500 font-semibold">
+                                    Baja
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
@@ -422,7 +498,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         )}
                     </div>
                 </div>
-                <div className="containerComboCR">
+                <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
                         label1="Buscar"
@@ -430,26 +506,37 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    {selectedMiembrosList1.length > 0 ? (
-                        <ul className="listUsersContainer">
-                            {selectedMiembrosList1.map((component) => {
-                                return (
-                                    <CardSelectedUser
-                                        key={component.id}
-                                        name={component.name}
-                                        lastName={component.lastName}
-                                        usuarioObject={component}
-                                        email={component.email}
-                                        removeHandler={removeUser}
-                                    ></CardSelectedUser>
-                                );
-                            })}
-                        </ul>
-                    ) : (
-                        <div className="labelSinDataUsuarioCR">
-                            ¡Seleccione los responsables del riesgo!
-                        </div>
-                    )}
+                    <div className="flex flex-wrap">
+                        {selectedMiembrosList1.length > 0 ? (
+                            selectedMiembrosList1.map((component) => (
+                                <div className="containerUserMultiple">
+                                    <div className="iconLabel3CR">
+                                        <p className="profilePicCR">
+                                            {component.name[0] +
+                                                component.lastName[0]}
+                                        </p>
+                                        <div className="labelDatoUsuarioCR">
+                                            {capitalizeWords(
+                                                `${component.name} ${component.lastName}`
+                                            )}
+                                        </div>
+                                    </div>
+                                    <img
+                                        src="/icons/icon-trash.svg"
+                                        alt="delete"
+                                        className="mb-4 cursor-pointer mr-2"
+                                        onClick={() => {
+                                            removeUser(component);
+                                        }}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="labelSinDataUsuarioCR">
+                                ¡Seleccione los responsables del riesgo!
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div>
                     <Textarea
@@ -606,7 +693,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
@@ -644,9 +731,11 @@ export default function CatalogoDeRiesgosUpdate(props) {
             </div>
             {modal1 && (
                 <ModalUser
+                    listAllUsers={false}
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedMiembrosList1}
+                    idProyecto={projectId}
                 ></ModalUser>
             )}
             {modal2 && (

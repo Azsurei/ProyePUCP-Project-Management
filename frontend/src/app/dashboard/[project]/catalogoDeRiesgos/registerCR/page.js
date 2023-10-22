@@ -187,6 +187,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             cause === "" ||
             impactDetail === "" ||
             selectedMiembrosList.length === 0 ||
+            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans === ""
             ) ||
@@ -421,19 +422,29 @@ export default function CatalogoDeRiesgosRegister(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    <div className="flex">
+                    <div className="flex flex-wrap">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
-                                <div className="iconLabel2CR">
-                                    <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
-                                    </p>
-                                    <div className="labelDatoUsuarioCR">
-                                        {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
-                                        )}
+                                <div className="containerUserMultiple">
+                                    <div className="iconLabel3CR">
+                                        <p className="profilePicCR">
+                                            {component.name[0] +
+                                                component.lastName[0]}
+                                        </p>
+                                        <div className="labelDatoUsuarioCR">
+                                            {capitalizeWords(
+                                                `${component.name} ${component.lastName}`
+                                            )}
+                                        </div>
                                     </div>
+                                    <img
+                                        src="/icons/icon-trash.svg"
+                                        alt="delete"
+                                        className="mb-4 cursor-pointer mr-2"
+                                        onClick={() => {
+                                            removeUser(component);
+                                        }}
+                                    />
                                 </div>
                             ))
                         ) : (
@@ -598,7 +609,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
