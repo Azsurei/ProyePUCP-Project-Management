@@ -229,7 +229,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             planesContigencia: contingencyPlans,
         };
         console.log("El postData es :", postData);
-/*         axios
+        axios
             .post(
                 "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
@@ -243,7 +243,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
     };
 
     return (

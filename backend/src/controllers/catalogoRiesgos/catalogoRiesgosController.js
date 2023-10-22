@@ -8,7 +8,7 @@ async function insertarRiesgo(req,res,next){
         console.log(`Se recibio de datos ${idProyecto}, ${idProbabilidad}, ${idImpacto}, '${nombreRiesgo}', '${fechaIdentificacion}', ${duenoRiesgo},
         '${detalleRiesgo}', '${causaRiesgo}', '${impactoRiesgo}', '${estado}`);
         const [results] = await connection.query(query,[idProyecto,idProbabilidad,idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo,
-            detalleRiesgo, detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
+            detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
         const idRiesgo = results[0][0].idRiesgo;
         console.log(`Se generó el riesgo ${idRiesgo}!`);
         for(const responsable of responsables){
