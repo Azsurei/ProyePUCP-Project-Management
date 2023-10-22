@@ -12,7 +12,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-
+import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -97,6 +97,24 @@ export default function Ingresos(props) {
     const [monto, setMonto] = useState("");
 
     
+    const data = [
+        {
+            id: 1,
+            tipoIngreso: 'Ingeniero Industrial',
+            tipoPago: 'cant 4. ',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        {
+            id: 2,
+            tipoIngreso: 'Ingeniero Industrial',
+            tipoPago: 'cant 4.',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        
+    ];
+
     
     return (
 
@@ -154,7 +172,12 @@ export default function Ingresos(props) {
 
                         </div>
                     </div>
-                    
+                    <div className="divListaIngreso">
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                    </div>
 
                 
                 </div>

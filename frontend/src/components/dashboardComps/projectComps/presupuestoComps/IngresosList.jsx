@@ -4,18 +4,28 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
-
+import ModalEliminateIngreso from "./ModalEliminateIngreso";
 
 axios.defaults.withCredentials = true;
 
 function CardIngresos({
     tipoIngreso,
-    usuarioObject,
+    IngresoObject,
     tipoPago,
     montoIngreso,
     horaIngreso,
+    toggle,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
+    const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const toggleModal = (task) => {
+        setSelectedTask(task);
+        setModal1(!modal1);
+        console.log("Esta es la tarea", selectedTask);
+    };
+
 
     const imageIngresoOptions = {
         "Ingreso por Efectivo": "/icons/icon-Efectivo.svg",
@@ -46,16 +56,24 @@ function CardIngresos({
                     <button className="" type="button">
                         <img src="/icons/editar.svg"/>
                     </button>
-                    <button className="" type="button">
+                    <button className="" type="button" onClick={() => toggleModal(IngresoObject)}>
                         <img src="/icons/eliminar.svg"/>
                     </button>
                 </div>
             </div>
+            {modal1 && selectedTask && (
+                <ModalEliminateIngreso
+                    modal={modal1} 
+                    toggle={() => toggleModal(selectedTask)}
+                    taskName={selectedTask.tipoIngreso}
+                />
+            )}
+
         </li>
     );
 }
 
-export default function IngresosList(props) {
+export default function IngresosList(props, toggle) {
     const router = useRouter();
 
 
@@ -80,6 +98,7 @@ export default function IngresosList(props) {
                             tipoPago={component.tipoPago}
                             montoIngreso={component.montoIngreso}
                             horaIngreso={component.horaIngreso}
+                            toggle={toggle}
                         ></CardIngresos>
                     );
                 })}

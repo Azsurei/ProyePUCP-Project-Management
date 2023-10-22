@@ -46,7 +46,7 @@ export default function Ingresos(props) {
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
-
+    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXIdProyecto/100`;
 
     //const router=userRouter();
 
@@ -88,7 +88,7 @@ export default function Ingresos(props) {
         
         console.log(projectId);
         const stringURLListaHerramientas="http://localhost:8080/api/herramientas/"+projectId+"/listarHerramientasDeProyecto";
-
+        
 
         axios.get(stringURLListaHerramientas)
         .then(function (response) {
@@ -191,8 +191,20 @@ export default function Ingresos(props) {
         },
         
     ];
-
-
+    const [lineasIngreso, setLineasIngreso] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXIdProyecto/${idProyecto}`);
+            const data = response.data;
+            setLineasIngreso(data);
+          } catch (error) {
+            console.error('Error al obtener las líneas de ingreso:', error);
+          }
+        };
+    
+        fetchData();
+      }, [idProyecto]);
     
     return (
 
