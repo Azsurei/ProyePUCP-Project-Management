@@ -202,23 +202,22 @@ export default function Presupuesto(props) {
                                             </div>
                                         
                                             <Input
-                                            value={monto}
-                                            onValueChange={setMonto}
-                                            placeholder="0.00"
-                                            labelPlacement="outside"
-                                            startContent={
-                                                <div className="pointer-events-none flex items-center">
-                                                    <span className="text-default-400 text-small">{selectedMoneda===2 ? "S/" : "$"}</span>
-                                                </div>
-                                            }
-                                            endContent={
-                                                <div className="flex items-center">
-
-                                                </div>
+                                                value={monto}
+                                                onValueChange={setMonto}
+                                                placeholder="0.00"
+                                                labelPlacement="outside"
+                                                startContent={
+                                                    <div className="pointer-events-none flex items-center">
+                                                        <span className="text-default-400 text-small">{selectedMoneda===2 ? "S/" : "$"}</span>
+                                                    </div>
                                                 }
-                                                type="number"
-                                        />
-                                        
+                                                endContent={
+                                                    <div className="flex items-center">
+
+                                                    </div>
+                                                    }
+                                                    type="number"
+                                            />
                                     
                                     </div>
 

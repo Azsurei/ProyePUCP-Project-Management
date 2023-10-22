@@ -199,7 +199,7 @@ export default function Ingresos(props) {
         
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
-            <Toaster richColors/>
+            <Toaster richColors closeButton={true}/>
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
