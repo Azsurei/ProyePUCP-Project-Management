@@ -637,19 +637,19 @@ Content-Type:  application/json
   "estado": "Activo",
   "responsables": [
     {
-      "idResponsable": 84,
+      "id": 84,
       "nombres": "Victor",
       "apellidos": "Tong",
       "correoElectronico": "a20192310@pucp.edu.pe"
     },
     {
-      "idResponsable": 77,
+      "id": 77,
       "nombres": "Renzo Gabriel",
       "apellidos": "Pinto Quiroz",
       "correoElectronico": "admin.com"
     },
     {
-      "idResponsable": 81,
+      "id": 81,
       "nombres": "Andrea",
       "apellidos": "Gonzales",
       "correoElectronico": "andrea@pucp.edu.pe"
@@ -657,24 +657,24 @@ Content-Type:  application/json
   ],
   "planesRespuesta": [
     {
-      "descripcion": "Prbando"
+      "responsePlans": "Prbando"
     },
     {
-      "descripcion": "Tengo sueño xd"
+      "responsePlans": "Tengo sueño xd"
     },
     {
-      "descripcion": "Son la 1AM"
+      "responsePlans": "Son la 1AM"
     }
   ],
   "planesContigencia": [
     {
-      "descripcion": "Holaaa"
+      "contingencyPlans": "Holaaa"
     },
     {
-      "descripcion": "Tengo sueño xd"
+      "contingencyPlans": "Tengo sueño xd"
     },
     {
-      "descripcion": "Son la 1AM"
+      "contingencyPlans": "Son la 1AM"
     }
   ]
 }
