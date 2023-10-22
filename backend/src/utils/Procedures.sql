@@ -89,11 +89,11 @@ CREATE PROCEDURE LISTAR_HERRAMIENTAS;
 DROP PROCEDURE IF EXISTS INSERTAR_PRODUCT_BACKLOG;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRODUCT_BACKLOG(
-	IN  _id_Proyecto INT
+	IN  _idProyecto INT
 )
 BEGIN
 	DECLARE _id_backlog INT;
-	INSERT INTO ProductBacklog(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(1,_id_Proyecto,NOW(),1);
+	INSERT INTO ProductBacklog(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(1,_idProyecto,NOW(),1);
     SET _id_backlog = @@last_insert_id;
 	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,1,_id_backlog,1);
     SELECT _id_backlog AS idProductBacklog;
@@ -394,6 +394,14 @@ END$
 
 
 SELECT * FROM Herramienta;
+#######################################################################
+## ACTA REUNION
+#######################################################################
+
+-----------------------------------------------------------------------
+-- ACTA REUNION
+-----------------------------------------------------------------------
+
 DROP PROCEDURE IF EXISTS INSERTAR_ACTA_REUNION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ACTA_REUNION(
@@ -407,6 +415,108 @@ BEGIN
     SELECT _idActaReunion AS idActaReunion;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_ACTA_REUNION_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTA_REUNION_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT idActaReunion,fechaCreacion
+    FROM ActaReunion 
+    WHERE idProyecto = _idProyecto 
+    AND activo=1;
+END$
+
+SELECT * FROM ActaReunion;
+
+--------------------------
+--   LINEA ACTA REUNION
+--------------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_LINEA_ACTA_REUNION(
+    IN _idActaReunion INT,
+    IN _nombreReunion VARCHAR(255),
+    IN _fechaReunion DATE,
+    IN _horaReunion TIME,
+    IN _nombreConvocante VARCHAR(255),
+    IN _motivo 	VARCHAR(255)
+)
+BEGIN
+	DECLARE _idLineaActaReunion INT;
+    
+	INSERT INTO LineaActaReunion(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,activo)
+    VALUES(_idActaReunion,_nombreReunion,_fechaReunion,_horaReunion,_nombreConvocante,_motivo,1);
+    
+    SET _idLineaActaReunion = @@last_insert_id;
+    SELECT _idLineaActaReunion AS LineaActaReunion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION(
+    IN _idActaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM LineaActaReunion 
+    WHERE idActaReunion = _idActaReunion 
+    AND activo=1;
+END$
+
+CALL LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION(1)
+--------------------------
+--  TEMA REUNION
+--------------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_TEMA_REUNION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_TEMA_REUNION(
+    IN _idLineaActaReunion INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idTemaReunion INT;
+    
+	INSERT INTO TemaReunion(idLineaActaReunion,descripcion,activo)
+    VALUES(_idLineaActaReunion,_descripcion,1);
+    
+    SET _idTemaReunion = @@last_insert_id;
+    SELECT _idTemaReunion AS TemaReunion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM TemaReunion 
+    WHERE idLineaActaReunion = _idLineaActaReunion 
+    AND activo=1;
+END$
+
+CALL INSERTAR_TEMA_REUNION(1, 'Discusión sobre el plan de proyecto');
+CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(1)
+
+----------------------
+-- Acuerdo
+----------------------
+
+#####################
+## RESTANTE: COMPLETAR LOS INSERT Y LISTAR DE TODA LA LOGICA DE ACTA REUNION Y CREAR LOS CONTROLLERS POR CADA TABLA
+#####################
+
+
+
+######################
+## RETROSPECTIVA
+######################
+-----------------
+-- RETROSPECTIVA
+-----------------
 DROP PROCEDURE IF EXISTS INSERTAR_RETROSPECTIVA;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_RETROSPECTIVA(
@@ -518,16 +628,15 @@ BEGIN
 END $
 
 DROP PROCEDURE IF EXISTS LISTAR_TAREAS_X_ID_PROYECTO;
-DELIMITER $
-CREATE PROCEDURE  LISTAR_TAREAS_X_ID_PROYECTO(
+CREATE DEFINER=`admin`@`%` PROCEDURE `LISTAR_TAREAS_X_ID_PROYECTO`(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado
     FROM Tarea t, TareaEstado te
     WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto) AND t.idTareaEstado = te.idTareaEstado
     AND t.activo=1;
-END$
+END
 
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
@@ -1348,23 +1457,51 @@ BEGIN
     WHERE activo = 1;
 END$
 
-
+SELECT * FROM Herramienta;
 DROP PROCEDURE IF EXISTS INSERTAR_PRESUPUESTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRESUPUESTO(
 	IN  _idProyecto INT,
-    IN _idMoneda INT,
+	IN _idMoneda INT,
     IN _presupuestoInicial DECIMAL(10,2),
     IN _cantidadMeses INT
 )
 BEGIN
 	DECLARE _idPresupuesto INT;
 	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,fechaCreacion,activo) 
-    VALUES(13,_idProyecto,_idMoneda,_presupuestoInicial,_cantidadMeses,curdate(),1);
+    VALUES(13,_idProyecto,2,NULL,NULL,curdate(),1);
     SET _idPresupuesto = @@last_insert_id;
-	INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,13,_idPresupuesto,1);
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo) VALUES(_idProyecto,13,_idPresupuesto,1);
     SELECT _idPresupuesto AS idPresupuesto;
 END$
+
+SELECT * FROM Proyecto;
+CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(1);
+
+DROP PROCEDURE IF EXISTS MODIFICAR_PRESUPUESTO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PRESUPUESTO(
+    IN _idMoneda INT,
+    IN _presupuestoInicial DECIMAL(10,2),
+    IN _cantidadMeses INT,
+    IN _idPresupuesto INT
+)
+BEGIN
+    UPDATE Presupuesto 
+    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses,activo = 1
+    WHERE idPresupuesto = _idPresupuesto;
+    SELECT _idPresupuesto AS idPresupuesto;
+END$
+
+
+DROP PROCEDURE IF EXISTS LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
+BEGIN
+	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+END$
+
+
 
 DROP PROCEDURE INSERTAR_INGRESO
 DELIMITER $
