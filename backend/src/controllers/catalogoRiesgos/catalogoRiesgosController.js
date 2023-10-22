@@ -208,6 +208,21 @@ async function eliminarPlanContingencia(req,res,next){
     }
 }
 
+async function eliminarResponsables(req,res,next){
+    const {idPlanContingencia} = req.body;
+    const query = `CALL ELIMINAR_PLANCONTINGENCIA(?);`;
+    try {
+        await connection.query(query,[idPlanContingencia]);
+        res.status(200).json({
+            message: "Plan de Contingencia eliminado exitosamente"
+        });
+        console.log('Se elimino el Plan de Contingencia correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 
 module.exports = {
     insertarRiesgo,
@@ -219,5 +234,6 @@ module.exports = {
     insertarPlanRespuesta,
     eliminarPlanRespuesta,
     insertarPlanContingencia,
-    eliminarPlanContingencia
+    eliminarPlanContingencia,
+    eliminarResponsables
 };

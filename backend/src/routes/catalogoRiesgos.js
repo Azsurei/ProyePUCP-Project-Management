@@ -17,6 +17,9 @@ routerCatalagoRiesgos.delete("/eliminarPlanRespuesta", catalogoRiesgosController
 
 //Plan Contingencia
 routerCatalagoRiesgos.post("/insertarPlanContingencia", catalogoRiesgosController.insertarPlanContingencia);
-routerCatalagoRiesgos.post("/insertarRiesgo", catalogoRiesgosController.insertarRiesgo);
+routerCatalagoRiesgos.delete("/eliminarPlanContingencia", catalogoRiesgosController.eliminarPlanContingencia);
+
+//Responsables
+
 
 module.exports.routerCatalagoRiesgos = routerCatalagoRiesgos;
