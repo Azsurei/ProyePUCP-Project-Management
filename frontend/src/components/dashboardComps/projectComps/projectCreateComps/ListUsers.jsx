@@ -7,18 +7,18 @@ import { UserCardsContextNormal } from "./ModalUsers";
 
 axios.defaults.withCredentials = true;
 
-function CardUser(props) {
+function CardUser({usuarioObject}) {
     const [isSelected, setIsSelected] = useState(false);
 
     const { addUserList, removeUserInList } = useContext(UserCardsContextNormal);
 
     const handleSelectedOn = () => {
-        addUserList(props.usuarioObject);
+        addUserList(usuarioObject);
         setIsSelected(true);
     };
 
     const handleSelectedOff = () => {
-        removeUserInList(props.usuarioObject);
+        removeUserInList(usuarioObject);
         setIsSelected(false);
     };
 
@@ -33,9 +33,9 @@ function CardUser(props) {
             />
             <div style={{ marginTop: "12px", marginLeft: "15px" }}>
                 <p className="titleUserName">
-                    {props.name + " " + props.lastName}
+                    {usuarioObject.nombres + " " + usuarioObject.apellidos}
                 </p>
-                <p className="titleUserEmail">{props.email}</p>
+                <p className="titleUserEmail">{usuarioObject.correoElectronico}</p>
             </div>
         </li>
     );
@@ -54,11 +54,8 @@ export default function ListUsers(props) {
             {props.lista.map((component) => {
                 return (
                     <CardUser
-                        key={component.id}
-                        name={component.name}
-                        lastName={component.lastName}
+                        key={component.idUsuario}
                         usuarioObject={component}
-                        email={component.email}
                     ></CardUser>
                 );
             })}

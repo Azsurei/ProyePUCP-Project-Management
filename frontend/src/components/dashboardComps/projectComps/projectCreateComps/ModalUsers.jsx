@@ -45,12 +45,7 @@ export default function ModalUser({
     const addUserList = (user) => {
         const newUserList = [
             ...listUsersSelect,
-            {
-                id: user.id,
-                name: user.name,
-                lastName: user.lastName,
-                email: user.email,
-            },
+            user
         ];
         setlistUsersSelected(newUserList);
         console.log(newUserList);
@@ -58,7 +53,7 @@ export default function ModalUser({
 
     const removeUserInList = (user) => {
         const newUserList = listUsersSelect.filter(
-            (item) => item.id !== user.id
+            (item) => item.idUsuario !== user.idUsuario
         );
         setlistUsersSelected(newUserList);
         console.log(newUserList);
@@ -72,17 +67,17 @@ export default function ModalUser({
                 .get(stringURL)
                 .then(function (response) {
                     console.log(response);
-                    const usersArray = response.data.usuarios.map((user) => {
-                        return {
-                            id: user.idUsuario,
-                            name: user.nombres,
-                            lastName: user.apellidos,
-                            email: user.correoElectronico,
-                        };
-                    });
+                    // const usersArray = response.data.usuarios.map((user) => {
+                    //     return {
+                    //         id: user.idUsuario,
+                    //         name: user.nombres,
+                    //         lastName: user.apellidos,
+                    //         email: user.correoElectronico,
+                    //     };
+                    // });
 
                     console.log(
-                        "se recibio el arreglo desde db: " + usersArray
+                        "se recibio el arreglo desde db: " + response.data.usuarios
                     );
                     console.log(
                         "arreglo a previo ya seleccionado: " + excludedUsers
@@ -90,10 +85,10 @@ export default function ModalUser({
 
                     //quitamos los usuarios que ya fueron seleccionados
                     const excludedUserIds = excludedUsers.map(
-                        (user) => user.id
+                        (user) => user.idUsuario
                     );
-                    const filteredUsers = usersArray.filter(
-                        (user) => !excludedUserIds.includes(user.id)
+                    const filteredUsers = response.data.usuarios.filter(
+                        (user) => !excludedUserIds.includes(user.idUsuario)
                     );
 
                     setListUsers(filteredUsers);
@@ -114,17 +109,17 @@ export default function ModalUser({
                 })
                 .then(function (response) {
                     console.log(response);
-                    const usersArray = response.data.usuarios.map((user) => {
-                        return {
-                            id: user.idUsuario,
-                            name: user.nombres,
-                            lastName: user.apellidos,
-                            email: user.correoElectronico,
-                        };
-                    });
+                    // const usersArray = response.data.usuarios.map((user) => {
+                    //     return {
+                    //         id: user.idUsuario,
+                    //         name: user.nombres,
+                    //         lastName: user.apellidos,
+                    //         email: user.correoElectronico,
+                    //     };
+                    // });
 
                     console.log(
-                        "se recibio el arreglo desde db: " + usersArray
+                        "se recibio el arreglo desde db: " + response.data.usuarios
                     );
                     console.log(
                         "arreglo a previo ya seleccionado: " + excludedUsers
@@ -132,10 +127,10 @@ export default function ModalUser({
 
                     //quitamos los usuarios que ya fueron seleccionados
                     const excludedUserIds = excludedUsers.map(
-                        (user) => user.id
+                        (user) => user.idUsuario
                     );
-                    const filteredUsers = usersArray.filter(
-                        (user) => !excludedUserIds.includes(user.id)
+                    const filteredUsers = response.data.usuarios.filter(
+                        (user) => !excludedUserIds.includes(user.idUsuario)
                     );
 
                     setListUsers(filteredUsers);
