@@ -451,7 +451,7 @@ export default function Info(props) {
             </div>
 
             {isEditActive && (
-                <ButtonPanel margin="20px 0 30px" align="right">
+                <ButtonPanel margin="1.5rem 0 0" align="right">
                     <Button
                         appearance="primary"
                         state="default"

@@ -9,6 +9,7 @@ const routerCronograma = require('./cronograma').routerCronograma;
 const routerPresupuesto = require('./presupuesto').routerPresupuesto;
 const routerMatrizComunicaciones = require('./matrizDeComunicaciones').routerMatrizComunicaciones;
 const routerAutoEvaluacion = require('./autoEvaluacion').routerAutoEvaluacion;
+const routerCatalagoRiesgos = require('./catalogoRiesgos').routerCatalagoRiesgos;
 const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
@@ -19,6 +20,7 @@ routerProyecto.use('/cronograma', routerCronograma);
 routerProyecto.use("/presupuesto", routerPresupuesto);
 routerProyecto.use("/matrizDeComunicaciones", routerMatrizComunicaciones);
 routerProyecto.use("/autoEvaluacion", routerAutoEvaluacion);
+routerProyecto.use("/catalogoRiesgos", routerCatalagoRiesgos);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token
@@ -63,7 +65,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
 
         try {
             //sirve para registrar en la tabla HerramientaXProyecto, de esta reconoceremos facilmente que herramientas se deben mostrar listas a uso en el proyecto
-            for (const herramienta of herramientas) {
+            /*for (const herramienta of herramientas) {
                 const query = `
                             CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?);
                         `;
@@ -80,7 +82,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                 console.log(
                     `Se creo el idHerramientaXProyecto ${idHerramientaXProyecto}!`
                 );
-            }
+            }*/
 
             try {
                 ///ahora, por cada herramienta, se creara en la DB y se asignara a proyecto
@@ -230,9 +232,9 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
 
                     if (herramienta.idHerramienta === 13){
                         //Presupeusto
-                        query = "CALL INSERTAR_PRESUPUESTO(?)";
+                        query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
                         const [results] = await connection.query(query,[
-                            idProyecto
+                            idProyecto,2,0,0
                         ]);
 
                         const idPrespuesto = results[0][0].idPresupuesto

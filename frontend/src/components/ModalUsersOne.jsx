@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/modalUser.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ModalUsers.css";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import {
@@ -25,7 +25,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import ListUsers from "./dashboardComps/projectComps/projectCreateComps/ListUsers";
 import ListUsersOne from "./ListUsersOne";
 
-export const UserCardsContext = React.createContext();
+export const UserCardsContextOne = React.createContext();
 
 export default function ModalUsersOne({
     listAllUsers,
@@ -135,7 +135,8 @@ export default function ModalUsersOne({
                         "se recibio el arreglo desde db: " + usersArray
                     );
                     console.log(
-                        "arreglo a previo ya seleccionado: " + JSON.stringify(excludedUsers)
+                        "arreglo a previo ya seleccionado: " +
+                            JSON.stringify(excludedUsers)
                     );
 
                     //quitamos los usuarios que ya fueron seleccionados
@@ -197,11 +198,11 @@ export default function ModalUsersOne({
                 </div>
 
                 <div className="divUsers">
-                    <UserCardsContext.Provider
+                    <UserCardsContextOne.Provider
                         value={{ addUserList, removeUserInList }}
                     >
                         <ListUsersOne lista={listUsers}></ListUsersOne>
-                    </UserCardsContext.Provider>
+                    </UserCardsContextOne.Provider>
                 </div>
                 <div className="endButtons">
                     <Button

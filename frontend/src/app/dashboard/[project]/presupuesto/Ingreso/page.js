@@ -11,6 +11,8 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -41,16 +43,16 @@ export default function Ingresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
+    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
+    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
+
 
     //const router=userRouter();
-    const [listUsers, setListUsers] = useState([]);
 
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
-
-    const [modal1, setModal1] = useState(false);
 
     const [filterValue, setFilterValue] = React.useState("");
 
@@ -63,41 +65,96 @@ export default function Ingresos(props) {
     //1 es estado de anadir nuevo hito
     //2 es estado de editar hito
 
+    const [fecha, setFecha] = useState("");
+
+    const handleChangeFecha = (event) => {
+        setFecha(event.target.value);
+    };
+
+
+    const handleChangeFechaInicio = () => {
+        const datepickerInput = document.getElementById("inputFechaPresupuesto");
+        const selectedDate = datepickerInput.value;
+        console.log(selectedDate);
+        setFecha(selectedDate);
+    }
     
-    const insertarLineaIngreso = () => {
+    let idHerramientaCreada;
+
+    function insertarLineaIngreso() {
+        return new Promise((resolve, reject) => {
+        let flag=0;
         const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
-
+        
         console.log(projectId);
+        const stringURLListaHerramientas="http://localhost:8080/api/herramientas/"+projectId+"/listarHerramientasDeProyecto";
 
-        axios.post(stringUrlTipoTransaccion, {
-            idProyecto: projectId,
-            idMoneda: selectedMoneda,
-            idTransaccionTipo:selectedTipoTransaccion,
-            idIngresoTipo:selectedTipo,
-            descripcion:descripcionLinea,
-            monto:parseFloat(monto),
-            cantidad:1,
-            fechaTransaccion:selectedDate,
-        })
 
+        axios.get(stringURLListaHerramientas)
         .then(function (response) {
-            console.log(response);
-            console.log("Linea Ingresada");
+            const herramientas = response.data.herramientas;
+    
+            // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 13
+            for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag=1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+
+            if(flag===1){
+                axios.post(stringUrlTipoTransaccion, {
+                    idProyecto: projectId,
+                    idPresupuesto:idHerramientaCreada,
+                    idMoneda: selectedMoneda,
+                    idTransaccionTipo:selectedTipoTransaccion,
+                    idIngresoTipo:selectedTipo,
+                    descripcion:descripcionLinea,
+                    monto:parseFloat(monto),
+                    cantidad:1,
+                    fechaTransaccion:fecha,
+                })
+        
+                .then(function (response) {
+                    console.log(response);
+                    console.log("Linea Ingresada");
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                });
+            }else{
+                console.log("No se encontró la herramienta");
+            }
+
         })
         .catch(function (error) {
-            console.log(error);
+            console.error('Error al hacer Listado Herramienta', error);
+            reject(error);
+        });
+
         });
     }
 
-    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
-    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
-    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
+    const registrarLineaIngreso = () => {
+        toast.promise(insertarLineaIngreso, {
+            loading: "Registrando Ingreso...",
+            success: (data) => {
+                return "El ingreso se agregó con éxito!";
+            },
+            error: "Error al agregar ingreso",
+            position: "bottom-right",
+        });
+    };
+
+
+
     
     const [selectedMoneda, setselectedMoneda] = useState("");
-
-    
     const [descripcionLinea, setdescripcionLinea] = useState("");
-
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
@@ -109,15 +166,6 @@ export default function Ingresos(props) {
         setselectedTipo(value);
     };
 
-    const [inFechaInicio, setInFechaInicio] = useState('');
-    const handleChangeFechaInicio = () => {
-        const datepickerInput = document.getElementById("inputFechaPresupuesto");
-        const selectedDate = datepickerInput.value;
-        console.log(selectedDate);
-        setInFechaInicio(selectedDate);
-    }
-
-
     const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
     
     const handleSelectedValueTipoTransaccion = (value) => {
@@ -126,12 +174,32 @@ export default function Ingresos(props) {
 
     const [monto, setMonto] = useState("");
 
+    const data = [
+        {
+            id: 1,
+            tipoIngreso: 'Ingreso por Efectivo',
+            tipoPago: 'Pago de Cliente',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        {
+            id: 2,
+            tipoIngreso: 'Ingreso por Transferencia',
+            tipoPago: 'Donacion',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        
+    ];
+
+
     
     return (
 
         
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
+            <Toaster richColors closeButton={true}/>
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -190,7 +258,12 @@ export default function Ingresos(props) {
                        
                         </div>
                     </div>
-
+                    <div className="divListaIngreso">
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                    </div>
 
                 
                 </div>
@@ -199,14 +272,14 @@ export default function Ingresos(props) {
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
-                                insertarLineaIngreso();
+                                registrarLineaIngreso();
                                 onClose();
                             };
                             return (
                                 <>
                                     <ModalHeader className="flex flex-col gap-1" 
                                         style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                        Completar Campos
+                                        Nuevo Ingreso
                                     </ModalHeader>
                                     <ModalBody>
                                         <p className="textIngreso">Monto Recibido</p>
@@ -275,7 +348,7 @@ export default function Ingresos(props) {
                                                 hasColor={false}
                                                 onSelect={handleSelectedValueTipoTransaccion}
                                                 idParam="idTransaccionTipo"
-                                                initialName="Seleccione Transaccion"
+                                                initialName="Seleccione Ingreso"
                                                 inputWidth="64"
                                             />
 
@@ -292,13 +365,13 @@ export default function Ingresos(props) {
                                                 hasColor={false}
                                                 onSelect={handleSelectedValueTipo}
                                                 idParam="idIngresoTipo"
-                                                initialName="Seleccione Ingreso"
+                                                initialName="Seleccione Transacción"
                                                 inputWidth="64"
                                             />
 
                                         </div>
                                         <p className="textPresuLast">Fecha Transacción</p>
-                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFechaInicio}/>
+                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
                                         <div className="fechaContainer">
  
                                         </div>

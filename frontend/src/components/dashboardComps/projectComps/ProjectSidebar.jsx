@@ -468,6 +468,8 @@ function ProjectSidebar(props) {
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
 
+
+            {/* ESTO ESTA PENDIENTEEEE ================================================= */}
             {isModalUserOpen && 
                 <ModalUsersOne
                     listAllUsers={true}
@@ -477,7 +479,7 @@ function ProjectSidebar(props) {
                     handlerModalFinished={(newMiembrosList) => {
                         //agregamos usuario a proyecto
                         setIsModalUserOpen(false);
-                        addUserToProject(newMiembrosList);
+                        //addUserToProject(newMiembrosList);
                     }}
                     excludedUsers={memberData.map(item => ({
                         id: item.idUsuario,

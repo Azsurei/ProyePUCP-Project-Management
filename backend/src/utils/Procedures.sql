@@ -1824,8 +1824,6 @@ BEGIN
     FROM ComFormato
     WHERE activo = 1;
 END$
-<<<<<<< HEAD
-=======
 
 DROP PROCEDURE IF EXISTS LISTAR_MATRIZCOMUNICACIONES_X_IDPROYECTO;
 DELIMITER $
@@ -1959,9 +1957,6 @@ BEGIN
     LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
-<<<<<<< HEAD
->>>>>>> 88a7fbcfbafbaa54dc2938c90e2132c09489ccfd
-=======
 
 ------------
 -- AUTOEVALUACION
@@ -1982,4 +1977,171 @@ BEGIN
     SELECT _idAutoEvaluacion AS idAutoEvaluacion;
 END$
 
->>>>>>> 6145fcdbf7b45ed2a8ad1f0d5c8f6221e8ac1485
+------------
+-- Catalogo de Riesgos
+------------
+DROP PROCEDURE IF EXISTS INSERTAR_RIESGO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RIESGO_X_IDPROYECTO(
+    IN _idProyecto INT,
+    IN _idProbabilidad INT,
+    IN _idImpacto INT,
+	IN _nombreRiesgo VARCHAR(500),
+    IN _fechaIdentificacion DATE,
+    IN _duenoRiesgo INT,
+    IN _detalleRiesgo VARCHAR(500),
+    IN _causaRiesgo VARCHAR(500),
+    IN _impactoRiesgo VARCHAR(500),
+    IN _estado VARCHAR(100)
+)
+BEGIN
+	DECLARE _idRiesgo INT;
+    SET @_idCatalogo = (SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO Riesgo(idProbabilidad,idImpacto, nombreRiesgo,idCatalogo,fechaIdentificacion,duenoRiesgo,detalleRiesgo,causaRiesgo,impactoRiesgo,estado,activo) 
+    VALUES(_idProbabilidad,_idImpacto, _nombreRiesgo,@_idCatalogo,_fechaIdentificacion,_duenoRiesgo,_detalleRiesgo,_causaRiesgo,_impactoRiesgo,_estado,1);
+    SET _idRiesgo = @@last_insert_id;
+    SELECT _idRiesgo AS idRiesgo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABLE_RIESGO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABLE_RIESGO(
+    IN _idRiesgo INT,
+	IN _idResponsable INT
+)
+BEGIN
+	DECLARE _idRiesgoXResponsable INT;
+	INSERT INTO RiesgoXResponsable(idRiesgo,idResponsable,activo) 
+    VALUES(_idRiesgo,_idResponsable,1);
+    SET _idRiesgoXResponsable = @@last_insert_id;
+    SELECT _idRiesgoXResponsable AS idRiesgoXResponsable;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PROBABILIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PROBABILIDAD(
+    IN _nombreProbabilidad VARCHAR(200),
+	IN _valorProbabilidad DOUBLE
+)
+BEGIN
+	DECLARE _idProbabilidad INT;
+	INSERT INTO RiesgoProbabilidad(nombreProbabilidad, valorProbabilidad, activo) 
+    VALUES(_nombreProbabilidad, _valorProbabilidad, 1);
+    SET _idProbabilidad = @@last_insert_id;
+    SELECT _idProbabilidad AS idProbabilidad;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_IMPACTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_IMPACTO(
+    IN _nombreImpacto VARCHAR(200),
+	IN _valorImpacto DOUBLE
+)
+BEGIN
+	DECLARE _idImpacto INT;
+	INSERT INTO RiesgoImpacto(nombreImpacto, valorImpacto, activo) 
+    VALUES(_nombreImpacto, _valorImpacto, 1);
+    SET _idImpacto = @@last_insert_id;
+    SELECT _idImpacto AS idImpacto;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_IMPACTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_IMPACTO()
+BEGIN
+	SELECT *
+    FROM RiesgoImpacto
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PROBABILIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PROBABILIDAD()
+BEGIN
+	SELECT *
+    FROM RiesgoProbabilidad
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANRESPUESTA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANRESPUESTA(
+    IN _idRiesgo INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idPlanRespuesta INT;
+	INSERT INTO PlanRespuesta(idRiesgo,descripcion,activo) 
+    VALUES(_idRiesgo,_descripcion,1);
+    SET _idPlanRespuesta = @@last_insert_id;
+    SELECT _idPlanRespuesta AS idPlanRespuesta;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANCONTIGENCIA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANCONTIGENCIA(
+    IN _idRiesgo INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idPlanContingencia INT;
+	INSERT INTO PlanContingencia(idRiesgo,descripcion,activo) 
+    VALUES(_idRiesgo,_descripcion,1);
+    SET _idPlanContingencia = @@last_insert_id;
+    SELECT _idPlanContingencia AS idPlanContingencia;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CATALOGORIESGO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CATALOGORIESGO_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, r.detalleRiesgo,
+    r.causaRiesgo, r.impactoRiesgo, r.estado, r.activo, r.idProbabilidad, rp.nombreProbabilidad, rp.valorProbabilidad, r.idImpacto, ri.nombreImpacto, ri.valorImpacto
+	FROM Riesgo AS r
+    LEFT JOIN CatalogoRiesgo AS cr ON r.idCatalogo = cr.idCatalogo
+    LEFT JOIN Usuario AS u ON r.duenoRiesgo = u.idUsuario
+    LEFT JOIN RiesgoProbabilidad AS rp ON r.idProbabilidad = rp.idProbabilidad
+    LEFT JOIN RiesgoImpacto AS ri ON r.idImpacto = ri.idImpacto
+	WHERE cr.idProyecto = _idProyecto AND r.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RESPONSABLE_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM RiesgoXResponsable AS rr
+    LEFT JOIN Usuario AS u ON rr.idResponsable = u.idUsuario
+	WHERE rr.idRiesgo = _idRiesgo AND rr.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANRESPUESTA_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANRESPUESTA_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT pr.idPlanRespuesta, pr.descripcion, pr.activo
+	FROM PlanRespuesta AS pr
+	WHERE pr.idRiesgo = _idRiesgo AND pr.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANCONTINGENCIA_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANCONTINGENCIA_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT pc.idPlanContingencia, pc.descripcion, pc.activo
+	FROM PlanContingencia AS pc
+	WHERE pc.idRiesgo = _idRiesgo AND pc.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_RIESGO_X_IDRIESGO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RIESGO_X_IDRIESGO(IN _idRiesgo INT)
+BEGIN
+    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, r.detalleRiesgo,
+    r.causaRiesgo, r.impactoRiesgo, r.estado, r.activo, r.idProbabilidad, rp.nombreProbabilidad, rp.valorProbabilidad, r.idImpacto, ri.nombreImpacto, ri.valorImpacto
+	FROM Riesgo AS r
+    LEFT JOIN Usuario AS u ON r.duenoRiesgo = u.idUsuario
+    LEFT JOIN RiesgoProbabilidad AS rp ON r.idProbabilidad = rp.idProbabilidad
+    LEFT JOIN RiesgoImpacto AS ri ON r.idImpacto = ri.idImpacto
+	WHERE r.idRiesgo = _idRiesgo AND r.activo=1;
+END$

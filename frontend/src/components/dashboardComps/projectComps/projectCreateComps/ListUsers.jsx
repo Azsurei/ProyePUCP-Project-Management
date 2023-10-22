@@ -3,14 +3,14 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/ListUsers.css";
-import { UserCardsContext } from "./ModalUsers";
+import { UserCardsContextNormal } from "./ModalUsers";
 
 axios.defaults.withCredentials = true;
 
 function CardUser(props) {
     const [isSelected, setIsSelected] = useState(false);
 
-    const { addUserList, removeUserInList } = useContext(UserCardsContext);
+    const { addUserList, removeUserInList } = useContext(UserCardsContextNormal);
 
     const handleSelectedOn = () => {
         addUserList(props.usuarioObject);

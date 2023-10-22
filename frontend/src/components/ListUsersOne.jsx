@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListUsers.css";
-import { UserCardsContext } from "./ModalUsersOne";
+import { UserCardsContextOne } from "./ModalUsersOne";
 
 axios.defaults.withCredentials = true;
 
@@ -18,7 +18,6 @@ function CardUser({
 }) {
     //const [isSelected, setIsSelected] = useState(false);
 
-    const { addUserList, removeUserInList } = useContext(UserCardsContext);
 
     return (
         <li
@@ -40,7 +39,7 @@ function CardUser({
 export default function ListUsersOne(props) {
     const router = useRouter();
 
-    const { addUserList, removeUserInList } = useContext(UserCardsContext);
+    const { addUserList, removeUserInList } = useContext(UserCardsContextOne);
 
     const [selectedUser, setSelectedUser] = useState(null); //contiene el id del seleccionado
 

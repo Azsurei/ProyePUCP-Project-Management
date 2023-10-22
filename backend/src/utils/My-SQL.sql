@@ -530,21 +530,6 @@ ENGINE = InnoDB;
 
 
 
------------------------
--- Catalogo de riesgos
------------------------
-
-DROP TABLE IF EXISTS CatalogoRiesgo;
-CREATE TABLE CatalogoRiesgo(
-    idCatalogo INT AUTO_INCREMENT PRIMARY KEY,
-    idHerramienta INT,
-    idProyecto INT,
-    fechaCreacion DATE,
-    activo tinyint NOT NULL,
-    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
-    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
-)
-ENGINE = InnoDB;
 
 -----------------------------
 -- Catalogo de interesados
@@ -1020,3 +1005,106 @@ CREATE TABLE CriterioEvaluacion (
     FOREIGN KEY (idUsuarioEvaluacion) REFERENCES UsuarioXEvaluacion (idUsuarioEvaluacion) 
 )
 ENGINE = InnoDB;
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------
+DROP TABLE IF EXISTS CatalogoRiesgo;
+CREATE TABLE CatalogoRiesgo(
+    idCatalogo INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS Riesgo;
+CREATE TABLE Riesgo(
+    idRiesgo INT AUTO_INCREMENT PRIMARY KEY,
+    nombreRiesgo VARCHAR(500),
+    idCatalogo INT,
+    fechaIdentificacion DATE,
+    duenoRiesgo INT,
+    detalleRiesgo VARCHAR(500),
+    causaRiesgo VARCHAR(500),
+    impactoRiesgo VARCHAR(500),
+    planRespuesta VARCHAR(500),
+    estado VARCHAR(100),
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idCatalogo) REFERENCES CatalogoRiesgo(idCatalogo)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS Riesgo;
+CREATE TABLE Riesgo(
+    idRiesgo INT AUTO_INCREMENT PRIMARY KEY,
+    nombreRiesgo VARCHAR(500),
+    idCatalogo INT,
+    idProbabilidad INT,
+    idImpacto INT,
+    fechaIdentificacion DATE,
+    duenoRiesgo INT,
+    detalleRiesgo VARCHAR(500),
+    causaRiesgo VARCHAR(500),
+    impactoRiesgo VARCHAR(500),
+    estado VARCHAR(100),
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idCatalogo) REFERENCES CatalogoRiesgo(idCatalogo),
+    FOREIGN KEY (idProbabilidad) REFERENCES RiesgoProbabilidad (idProbabilidad),
+    FOREIGN KEY (idImpacto) REFERENCES RiesgoProbabilidad (idImpacto)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS RiesgoXResponsable;
+CREATE TABLE RiesgoXResponsable(
+    idRiesgoXResponsable INT AUTO_INCREMENT PRIMARY KEY,
+    idRiesgo INT,
+    idResponsable INT,
+    activo tinyint NOT NULL,
+    UNIQUE KEY (idRiesgo, idResponsable),
+    FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo),
+    FOREIGN KEY (idResponsable) REFERENCES Usuario (idUsuario)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS PlanRespuesta;
+CREATE TABLE PlanRespuesta(
+    idPlanRespuesta INT AUTO_INCREMENT PRIMARY KEY,
+    idRiesgo INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS PlanContingencia;
+CREATE TABLE PlanContingencia(
+    idPlanContingencia INT AUTO_INCREMENT PRIMARY KEY,
+    idRiesgo INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS RiesgoProbabilidad;
+CREATE TABLE RiesgoProbabilidad(
+    idProbabilidad INT AUTO_INCREMENT PRIMARY KEY,
+    nombreProbabilidad VARCHAR(200),
+    valorProbabilidad DOUBLE,
+    activo tinyint NOT NULL
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS RiesgoImpacto;
+CREATE TABLE RiesgoImpacto(
+    idImpacto INT AUTO_INCREMENT PRIMARY KEY,
+    nombreImpacto VARCHAR(200),
+    valorImpacto DOUBLE,
+    activo tinyint NOT NULL
+)
+ENGINE = InnoDB;
+

@@ -1,0 +1,93 @@
+.ModalHeaderSubteams{
+    display: flex;
+    flex-direction: row;
+    padding-right: -10px;
+    gap: 166px;
+}
+
+.noResultsMessage{
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ListSubequiposContainer{
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    overflow-y: scroll;
+    padding-right: 5px;
+}
+
+.ListSubequiposContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ListSubequiposContainer::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.ListSubequiposContainer::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+}
+
+.SubteamCard{
+    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+    border: 2px rgb(211, 211, 211) solid;
+    border-radius: 10px;
+
+    padding: .5rem .5rem;
+    padding-bottom: .8rem;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    cursor: pointer;
+}
+
+.SubteamCard:hover{
+    background-color: #f5f5f5;
+}
+
+.SubteamCard.active{
+    background-color: #9bffb7;
+}
+
+.SubTeamHeader{
+    display: flex;
+    flex-direction: row;
+    gap: .3rem;
+    font-size: 22px;
+    font-family: 'Montserrat';
+    font-weight: 500;
+    color: #172b4d;
+}
+
+
+.SubTeamUsersContainer{
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    padding-left: 1.6rem;
+    flex-wrap: wrap;
+}
+
+.SingleUserIconContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .3rem;
+}
+
+.SingleUserIcon{
+    background-color: rgb(212, 212, 212);
+    border-radius: 100%;
+    height: 35px;
+    width: 35px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
