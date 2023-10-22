@@ -205,9 +205,9 @@ export default function Cronograma(props) {
 
     const registrarTarea = () => {
         toast.promise(promiseRegistrarTarea, {
-            loading: "Registrando la tarea...",
+            loading: "Registrando tu nueva tarea...",
             success: (data) => {
-                return "La tarea se agrego con exito!";
+                return "La tarea se creó con exito!";
             },
             error: "Error al registrar la tarea",
             position: "top-center",
@@ -239,13 +239,13 @@ export default function Cronograma(props) {
 
     const colorDropbox = ["default", "primary", "warning", "success"];
 
-    useEffect(() => {
-        setSelectedSubteam(null);
-    }, [selectedUsers]);
+    // useEffect(() => {
+    //     setSelectedSubteam(null);
+    // }, [selectedUsers]);
 
-    useEffect(() => {
-        setSelectedUsers([]);
-    }, [selectedSubteam]);
+    // useEffect(() => {
+    //     setSelectedUsers([]);
+    // }, [selectedSubteam]);
 
     useEffect(() => {
         const stringURL =
@@ -630,7 +630,7 @@ export default function Cronograma(props) {
                                 <div className="cardSubteam_Header">
                                     <div className="cardLeftSide">
                                         <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>
-                                        <p>{selectedSubteam.nombre}</p>
+                                        <p style={{fontFamily: 'Roboto'}}>{selectedSubteam.nombre}</p>
                                     </div>
 
                                     <img
@@ -733,7 +733,9 @@ export default function Cronograma(props) {
                 ></ModalUser>
             )}
 
-            <Toaster richColors />
+            <Toaster richColors theme={"light"} closeButton={true} toastOptions={{
+                style: {fontSize: '1.2rem'}
+            }}/>
         </div>
     );
 }
