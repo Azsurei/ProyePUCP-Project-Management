@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { resolve } from "styled-jsx/css";
 import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
+import ModalSubequipos from "@/components/dashboardComps/projectComps/cronogramaComps/ModalSubequipos";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -37,7 +38,13 @@ export default function Cronograma(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const router = useRouter();
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    //const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const {
+        isOpen: isModalSubEOpen,
+        onOpen: onModalSubEOpen,
+        onOpenChange: onModalSubEOpenChange,
+    } = useDisclosure();
+
 
     const [toggleNew, setToggleNew] = useState(false);
     const handlerGoToNew = () => {
@@ -168,7 +175,7 @@ export default function Cronograma(props) {
                         .then(function (response) {
                             setListTareas(response.data.tareas);
                             console.log(response.data.tareas);
-                            
+
                             resolve(response);
                         })
                         .catch(function (error) {
@@ -242,7 +249,7 @@ export default function Cronograma(props) {
                     cronogramaData.fechaFin === null
                 ) {
                     //setModalFirstTime(true);
-                    onOpen();
+                    //onOpen();
                 } else {
                     const tareasURL =
                         "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
@@ -250,10 +257,21 @@ export default function Cronograma(props) {
                     axios
                         .get(tareasURL)
                         .then(function (response) {
-                            const updatedArray = response.data.tareas.map((item, index) => ({
-                                ...item,
-                                tareasHijas: index === 0 ? [{...item,idTarea:9999,tareasHijas:null}] : null,
-                              }));
+                            const updatedArray = response.data.tareas.map(
+                                (item, index) => ({
+                                    ...item,
+                                    tareasHijas:
+                                        index === 0
+                                            ? [
+                                                  {
+                                                      ...item,
+                                                      idTarea: 9999,
+                                                      tareasHijas: null,
+                                                  },
+                                              ]
+                                            : null,
+                                })
+                            );
                             //setListTareas(response.data.tareas);
                             //console.log(response.data.tareas);
 
@@ -277,7 +295,7 @@ export default function Cronograma(props) {
 
     return (
         <div className="cronogramaDiv">
-            {
+            {/* {
                 <Modal
                     onOpenChange={onOpenChange}
                     isDismissable={false}
@@ -354,7 +372,12 @@ export default function Cronograma(props) {
                         }}
                     </ModalContent>
                 </Modal>
-            }
+            } */}
+            <ModalSubequipos
+                isOpen={isModalSubEOpen}
+                onOpenChange={onModalSubEOpenChange}
+                projectId={projectId}
+            ></ModalSubequipos>
 
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
                 <div className="containerGeneralLeft">
@@ -370,7 +393,10 @@ export default function Cronograma(props) {
                     </HeaderWithButtonsSamePage>
 
                     {/* <AgendaTable listTareas={listTareas}></AgendaTable> */}
-                    <ListTareas listTareas={listTareas} leftMargin={"0px"}></ListTareas>
+                    <ListTareas
+                        listTareas={listTareas}
+                        leftMargin={"0px"}
+                    ></ListTareas>
                 </div>
             </div>
 
@@ -515,25 +541,6 @@ export default function Cronograma(props) {
                         )}
                     </div>
 
-                    <div className="containerSubtareas">
-                        <div className="subTareasHeader">
-                            <p>
-                                {
-                                    "Subtareas" /*(Aqui se abrira un modal para
-                                introducir nombre, desc, fechaI y fechaF) */
-                                }
-                            </p>
-                            <div className="btnToPopUp">
-                                <p>Añadir</p>
-                            </div>
-                        </div>
-                        <div className="subTareasViewContainer">
-                            <p className="noUsersMsg">
-                                No ha seleccionado subtareas
-                            </p>
-                        </div>
-                    </div>
-
                     <div className="containerPosteriores">
                         <div className="posterioresHeader">
                             <p>Tareas posteriores</p>
@@ -556,23 +563,34 @@ export default function Cronograma(props) {
                             selectedKey={tabSelected}
                             onSelectionChange={setTabSelected}
                         ></TabUserSelect>
-                        <div
-                            className="btnToPopUp"
-                            onClick={() => {
-                                setModal(true);
-                            }}
-                        >
-                            <p>
-                                {tabSelected === "users"
-                                    ? "Buscar un miembro"
-                                    : "Buscar un subequipo"}
-                            </p>
-                            <img
-                                src="/icons/icon-searchBar.svg"
-                                alt=""
-                                className="icnSearch"
-                            />
-                        </div>
+
+                        {tabSelected === "users" ? (
+                            <div
+                                className="btnToPopUp"
+                                onClick={()=>{
+                                    setModal(true);
+                                }}
+                            >
+                                <p>Buscar un miembro</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                />
+                            </div>
+                        ) : (
+                            <div
+                                className="btnToPopUp"
+                                onClick={onModalSubEOpen}
+                            >
+                                <p>Buscar un subequipo</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <ul className="contUsers">
@@ -675,7 +693,7 @@ export default function Cronograma(props) {
                 ></ModalUser>
             )}
 
-            <Toaster richColors/>
+            <Toaster richColors />
         </div>
     );
 }

@@ -1,0 +1,35 @@
+.ModalHeaderSubteams{
+    border: 1px red solid;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ListSubequiposContainer{
+    border: 1px red solid;
+}
+
+.SubteamCard{
+    border: 1px green solid;
+}
+
+.SubTeamHeader{
+    display: flex;
+    flex-direction: row;
+    font-size: 22px;
+    font-family: 'Montserrat';
+    font-weight: 500;
+    color: #172b4d;
+}
+
+
+.SubTeamUsersContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.SingleUserIcon{
+    background-color: gray;
+    border-radius: 100%;
+}

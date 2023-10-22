@@ -1,12 +1,17 @@
 .containerCardYHijo{
     display: flex;
     flex-direction: column;
+    gap: .5rem;
 }
 
 .tareasListContainer{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: .5rem;
+}
+
+.ReactCollapse--collapse {
+    transition: height 250ms;
 }
 
 

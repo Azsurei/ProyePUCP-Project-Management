@@ -1,3 +1,4 @@
+"use client"
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/ListTareas.css";
 import GroupUserIcons from "./GroupUserIcons";
 import {
@@ -9,6 +10,8 @@ import {
     DropdownTrigger,
 } from "@nextui-org/react";
 import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
+import { Collapse } from "react-collapse";
+import { useState } from "react";
 
 function CardTarea({ tarea, leftMargin }) {
     const tieneHijos = true;
@@ -19,11 +22,18 @@ function CardTarea({ tarea, leftMargin }) {
         formattedStartDate.toLocaleDateString() +
         " - " +
         formattedEndDate.toLocaleDateString();
+
+    const [hijosIsOpen, setHijosIsOpen] = useState(false);
+
+    const toggleOpen = () => {
+        setHijosIsOpen(!hijosIsOpen);
+    }
+
     return (
         <div className="containerCardYHijo">
             <div className="tareaCard">
-                {tieneHijos && (
-                    <div className="containerChevron">
+                {tarea.tareasHijas !== null && (
+                    <div className="containerChevron" onClick={toggleOpen}>
                         <img src="/icons/chevron-down.svg" />
                     </div>
                 )}
@@ -33,7 +43,7 @@ function CardTarea({ tarea, leftMargin }) {
                         <p>{tarea.sumillaTarea}</p>
                         {tarea.cantPosteriores !== 0 && (
                             <p className="text-bold text-sm capitalize text-default-400">
-                                3 tareas posteriores
+                                {tarea.cantPosteriores} tareas posteriores
                             </p>
                         )}
                     </div>
@@ -81,19 +91,22 @@ function CardTarea({ tarea, leftMargin }) {
                     </Dropdown>
                 </div>
             </div>
-            {tarea.tareasHijas !== null && (
-                <ListTareas
-                    listTareas={tarea.tareasHijas}
-                    leftMargin={"20px"}
-                ></ListTareas>
-            )}
+
+            <Collapse isOpened={hijosIsOpen}>
+                {tarea.tareasHijas !== null && (
+                    <ListTareas
+                        listTareas={tarea.tareasHijas}
+                        leftMargin={"40px"}
+                    ></ListTareas>
+                )}
+            </Collapse>
         </div>
     );
 }
 
 export default function ListTareas({ listTareas, leftMargin }) {
     return (
-        <div className="tareasListContainer" style={{marginLeft: leftMargin}}>
+        <div className="tareasListContainer" style={{ marginLeft: leftMargin}}>
             {listTareas.map((tarea) => {
                 return (
                     <CardTarea

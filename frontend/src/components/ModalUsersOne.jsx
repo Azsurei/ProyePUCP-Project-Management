@@ -135,7 +135,8 @@ export default function ModalUsersOne({
                         "se recibio el arreglo desde db: " + usersArray
                     );
                     console.log(
-                        "arreglo a previo ya seleccionado: " + JSON.stringify(excludedUsers)
+                        "arreglo a previo ya seleccionado: " +
+                            JSON.stringify(excludedUsers)
                     );
 
                     //quitamos los usuarios que ya fueron seleccionados
