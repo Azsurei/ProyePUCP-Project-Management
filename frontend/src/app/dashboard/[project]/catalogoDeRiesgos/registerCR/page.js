@@ -11,7 +11,10 @@ import { Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
+import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/containerContingencyPlans";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
@@ -26,10 +29,14 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [impact, setImpact] = useState(null);
     const [fechaInicio, setFechaInicio] = useState(null);
     const [isSelected, setIsSelected] = useState(true);
+    const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
+    const [selectedMiembrosList1, setSelectedMiembrosList1] = useState([]);
     const [cause, setCause] = useState("");
     const [impactDetail, setImpactDetail] = useState("");
+    const [responsePlans, setResponsePlans] = useState([]);
+    const [contingencyPlans, setContingencyPlans] = useState([]);
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
@@ -37,6 +44,8 @@ export default function CatalogoDeRiesgosRegister(props) {
     const isTextTooLong4 = detail.length > 400;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
+    const [quantity1, setQuantity1] = useState(0);
+    const [quantity2, setQuantity2] = useState(0);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -48,6 +57,10 @@ export default function CatalogoDeRiesgosRegister(props) {
 
     const handleSelectedValueChangeImpact = (value) => {
         setImpact(value);
+    };
+
+    const toggleModal1 = () => {
+        setModal1(!modal1);
     };
 
     const toggleModal2 = () => {
@@ -66,6 +79,13 @@ export default function CatalogoDeRiesgosRegister(props) {
         setModal2(false);
     };
 
+    const returnListOfMiembros1 = (newMiembrosList1) => {
+        const newMembrsList = [...selectedMiembrosList1, ...newMiembrosList1];
+
+        setSelectedMiembrosList1(newMembrsList);
+        setModal1(!modal1);
+    };
+
     function capitalizeWords(str) {
         // Dividimos la cadena en palabras usando el espacio como separador
         const words = str.split(" ");
@@ -80,6 +100,64 @@ export default function CatalogoDeRiesgosRegister(props) {
         return capitalizedWords.join(" ");
     }
 
+    function addContainer1() {
+        setResponsePlans([
+            ...responsePlans,
+            {
+                idPlanRespuesta: `a${quantity1}`,
+                responsePlans: "",
+            },
+        ]);
+        setQuantity1(quantity1 + 1);
+    }
+
+    function addContainer2() {
+        setContingencyPlans([
+            ...contingencyPlans,
+            {
+                idPlanContingencia: `a${quantity2}`,
+                contingencyPlans: "",
+            },
+        ]);
+        setQuantity2(quantity2 + 1);
+    }
+
+    const updateResponsePlansField = (index, value) => {
+        setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index - 1].responsePlans = value;
+            return updatedFields;
+        });
+    };
+
+    const updateContingencyPlansField = (index, value) => {
+        setContingencyPlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index - 1].contingencyPlans = value;
+            return updatedFields;
+        });
+    };
+
+    function removeContainer1(indice) {
+        setQuantity1(quantity1 - 1);
+        setResponsePlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            // Elimina el elemento con el índice proporcionado
+            updatedFields.splice(indice, 1);
+            return updatedFields;
+        });
+    }
+
+    function removeContainer2(indice) {
+        setQuantity2(quantity2 - 1);
+        setContingencyPlans((prevFields) => {
+            const updatedFields = [...prevFields];
+            // Elimina el elemento con el índice proporcionado
+            updatedFields.splice(indice, 1);
+            return updatedFields;
+        });
+    }
+
     function verifyFieldsEmpty() {
         return (
             name === "" ||
@@ -89,7 +167,13 @@ export default function CatalogoDeRiesgosRegister(props) {
             fechaInicio === null ||
             cause === "" ||
             impactDetail === "" ||
-            selectedMiembrosList.length === 0
+            selectedMiembrosList.length === 0 ||
+            responsePlans.some(
+                (responsePlans) => responsePlans.responsePlans === ""
+            ) ||
+            contingencyPlans.some(
+                (contingencyPlans) => contingencyPlans.contingencyPlans === ""
+            )
         );
     }
 
@@ -98,7 +182,14 @@ export default function CatalogoDeRiesgosRegister(props) {
             name.length > 400 ||
             detail.length > 400 ||
             cause.length > 400 ||
-            impactDetail.length > 400
+            impactDetail.length > 400 ||
+            responsePlans.some(
+                (responsePlans) => responsePlans.responsePlans.length > 400
+            ) ||
+            contingencyPlans.some(
+                (contingencyPlans) =>
+                    contingencyPlans.contingencyPlans.length > 400
+            )
         );
     }
 
@@ -110,10 +201,12 @@ export default function CatalogoDeRiesgosRegister(props) {
             fechaIdentificada: fechaInicio,
             idProbabilidad: probability,
             idImpacto: impact,
-            causa: cause,
-            impacto: impactDetail,
             estado: isSelected ? "Activo" : "Inactivo",
             idResponsable: selectedMiembrosList[0].id,
+            causa: cause,
+            impacto: impactDetail,
+            responsePlans: responsePlans,
+            contingencyPlans: contingencyPlans,
         };
         console.log("El postData es :", postData);
         /*         axios
@@ -149,7 +242,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         value={name}
                         onValueChange={setName}
                         maxLength="450"
@@ -168,7 +261,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         minRows="5"
                         value={detail}
                         onValueChange={setDetail}
@@ -254,7 +347,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         <ButtonIconLabel
                             icon="/icons/icon-searchBar.svg"
                             label1="Buscar"
-                            label2="responsable"
+                            label2="dueño"
                             className="iconLabelButtonMC"
                             onClickFunction={toggleModal2}
                         />
@@ -274,10 +367,39 @@ export default function CatalogoDeRiesgosRegister(props) {
                             ))
                         ) : (
                             <div className="labelSinDataUsuarioCR">
-                                ¡Seleccione un responsable de comunicar!
+                                ¡Seleccione un dueño del riesgo!
                             </div>
                         )}
                     </div>
+                </div>
+                <div className="containerComboCR">
+                    <ButtonIconLabel
+                        icon="/icons/icon-searchBar.svg"
+                        label1="Buscar"
+                        label2="responsables"
+                        className="iconLabelButtonMC"
+                        onClickFunction={toggleModal1}
+                    />
+                    {selectedMiembrosList1.length > 0 ? (
+                        <ul className="listUsersContainer">
+                            {selectedMiembrosList1.map((component) => {
+                                return (
+                                    <CardSelectedUser
+                                        key={component.id}
+                                        name={component.name}
+                                        lastName={component.lastName}
+                                        usuarioObject={component}
+                                        email={component.email}
+                                        removeHandler={removeMiembro}
+                                    ></CardSelectedUser>
+                                );
+                            })}
+                        </ul>
+                    ) : (
+                        <div className="labelSinDataUsuarioCR">
+                            ¡Seleccione los responsables del riesgo!
+                        </div>
+                    )}
                 </div>
                 <div>
                     <Textarea
@@ -287,7 +409,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         minRows="5"
                         value={cause}
                         onValueChange={setCause}
@@ -308,7 +430,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
-                        className="custom-label"
+                        className="custom-labelCR"
                         minRows="5"
                         value={impactDetail}
                         onValueChange={setImpactDetail}
@@ -320,6 +442,78 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 : ""
                         }
                     />
+                </div>
+                <div>
+                    <div className="titleButtonCR">
+                        <h4 style={{ fontWeight: 600 }}>Planes de respuesta</h4>
+                    </div>
+                    {quantity1 === 0 ? (
+                        <div className="flex justify-center items-center">
+                            <div>
+                                ¡Puede agregar algunos planes de respuesta!
+                            </div>
+                        </div>
+                    ) : (
+                        responsePlans.map((responsePlans, index) => (
+                            <ContainerResponsePlans
+                                key={index}
+                                indice={index + 1}
+                                updateResponsePlansField={
+                                    updateResponsePlansField
+                                }
+                                responsePlans={responsePlans}
+                                functionRemove={removeContainer1}
+                            />
+                        ))
+                    )}
+                    <div className="twoButtonsCR">
+                        <div className="buttonContainerCR">
+                            <button
+                                onClick={addContainer1}
+                                className="buttonTitleCR"
+                                type="button"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div className="titleButtonCR">
+                        <h4 style={{ fontWeight: 600 }}>
+                            Planes de contingencia
+                        </h4>
+                    </div>
+                    {quantity2 === 0 ? (
+                        <div className="flex justify-center items-center">
+                            <div>
+                                ¡Puede agregar algunos planes de contingencia!
+                            </div>
+                        </div>
+                    ) : (
+                        contingencyPlans.map((contingencyPlans, index) => (
+                            <ContainerContingencyPlans
+                                key={index}
+                                indice={index + 1}
+                                updateContingencyPlansField={
+                                    updateContingencyPlansField
+                                }
+                                contingencyPlans={contingencyPlans}
+                                functionRemove={removeContainer2}
+                            />
+                        ))
+                    )}
+                    <div className="twoButtonsCR">
+                        <div className="buttonContainerCR">
+                            <button
+                                onClick={addContainer2}
+                                className="buttonTitleCR"
+                                type="button"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div className="containerBottomCR">
                     {fieldsEmpty && !fieldsExcessive && (
@@ -362,7 +556,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    router.back();
+                                    //router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
@@ -398,6 +592,13 @@ export default function CatalogoDeRiesgosRegister(props) {
                     </div>
                 </div>
             </div>
+            {modal1 && (
+                <ModalUser
+                    handlerModalClose={toggleModal1}
+                    handlerModalFinished={returnListOfMiembros1}
+                    excludedUsers={selectedMiembrosList1}
+                ></ModalUser>
+            )}
             {modal2 && (
                 <ModalUsersOne
                     listAllUsers={false}

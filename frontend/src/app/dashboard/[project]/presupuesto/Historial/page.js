@@ -34,7 +34,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
-
+import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
 
 export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -95,6 +95,37 @@ export default function Ingresos(props) {
 
     const [monto, setMonto] = useState("");
 
+    const data = [
+        {
+            id: 1,
+            tipoIngreso: 'Ingreso por Efectivo',
+            tipoPago: 'Pago de Cliente',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        {
+            id: 2,
+            tipoIngreso: 'Ingreso por Transferencia',
+            tipoPago: 'Donacion',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        {
+            id: 3,
+            tipoIngreso: 'Licencia de Software',
+            tipoPago: 'Cant 1.',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        {
+            id: 4,
+            tipoIngreso: 'Ingeniero Industrial',
+            tipoPago: 'Cant 1.',
+            montoIngreso: 'S/ 1000.00',
+            horaIngreso: '12:00 PM',
+        },
+        
+    ];
     
     return (
 
@@ -158,7 +189,12 @@ export default function Ingresos(props) {
                        
                         </div>
                     </div>
-
+                    <div className="divListaIngreso">
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                    </div>
 
                 
                 </div>
@@ -167,7 +203,7 @@ export default function Ingresos(props) {
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
-                                insertarLineaIngreso();
+                                //insertarLineaIngreso();
                                 onClose();
                             };
                             return (

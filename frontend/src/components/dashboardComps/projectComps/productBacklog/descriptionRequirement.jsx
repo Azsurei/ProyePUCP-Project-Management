@@ -19,7 +19,7 @@ export default function DescriptionRequeriment({ name, onNameChange }) {
                 variant="bordered" 
                 id="customPlaceholderInput9"
                 placeholder="Escribe aquí"
-                className="custom-label"
+                className="nombreLabel"
                 maxLength="450"
                 value={name} // Mostrar el valor proporcionado en la prop
                 onChange={(e) => onNameChange(e.target.value)} // Manejar cambios en el textarea

@@ -38,6 +38,51 @@ export default function Presupuesto(props) {
     console.log(projectName);
     //const router=userRouter();
 
+    //States from Cronograma
+    const [presupuestoId, serPresupuestoId] = useState(null);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    useEffect(() => {
+        const stringURL =
+            "http://localhost:8080/api/proyecto/cronograma/listarPresupuesto";
+
+        axios
+            .post(stringURL, { idProyecto: projectId })
+            .then(function (response) {
+                const presupuestoData = response.data.cronograma;
+                console.log(presupuestoData);
+                serPresupuestoId(presupuestoData.idCronograma);
+                if (
+                    presupuestoData.fechaInicio === null ||
+                    presupuestoData.fechaFin === null
+                ) {
+            
+                    onOpen();
+                } 
+                /*else {
+                    const tareasURL =
+                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            setListTareas(response.data.tareas);
+                            console.log(response.data.tareas);
+                            setIsLoadingSmall(false);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }*/
+
+                //setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
+
 
     const [filterValue, setFilterValue] = React.useState("");
 
@@ -85,8 +130,6 @@ export default function Presupuesto(props) {
 
                     <div className="subtitlePresupuesto">Flujo de Caja Enero - Junio</div>
                     
-
-
                     <TableBudget> </TableBudget>
 
 
