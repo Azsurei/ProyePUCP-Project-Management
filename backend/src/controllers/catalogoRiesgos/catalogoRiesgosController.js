@@ -5,29 +5,31 @@ async function insertarRiesgo(req,res,next){
         impactoRiesgo, estado, responsables, planesRespuesta, planesContigencia} = req.body;
     const query = `CALL INSERTAR_RIESGO_X_IDPROYECTO(?,?,?,?,?,?,?,?,?,?);`;
     try {
+        console.log(`Se recibio de datos ${idProyecto}, ${idProbabilidad}, ${idImpacto}, '${nombreRiesgo}', '${fechaIdentificacion}', ${duenoRiesgo},
+        '${detalleRiesgo}', '${causaRiesgo}', '${impactoRiesgo}', '${estado}`);
         const [results] = await connection.query(query,[idProyecto,idProbabilidad,idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo,
-            detalleRiesgo, detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
+            detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
         const idRiesgo = results[0][0].idRiesgo;
         console.log(`Se generó el riesgo ${idRiesgo}!`);
         for(const responsable of responsables){
             await connection.execute(`
                 CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
-                ${responsable.idResponsable});
+                ${responsable.id});
             `);
         }
         for(const planRespuesta of planesRespuesta){
             await connection.execute(`
                 CALL INSERTAR_PLANRESPUESTA(
                 ${idRiesgo},
-                '${planRespuesta.descripcion}');
+                '${planRespuesta.responsePlans}');
             `);
         }
         for(const planContigencia of planesContigencia){
             await connection.execute(`
                 CALL INSERTAR_PLANCONTIGENCIA(
                 ${idRiesgo},
-                '${planContigencia.descripcion}');
+                '${planContigencia.contingencyPlans}');
             `);
         }
         res.status(200).json({
