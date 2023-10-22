@@ -238,6 +238,41 @@ async function eliminarResponsable(req,res,next){
     }
 }
 
+//Eliminar Responsables, Planes de Respuesta, Planes de Contingencia
+async function eliminarRRC(req,res,next){
+    //Insertar query aca
+    const {idRiesgo, responsables,planesRespuesta,planesContingencia} = req.body;
+    try {
+        // Iteracion Eliminar Responsables
+        for (const responsable of responsables) {
+            await connection.execute(`
+            CALL ELIMINAR_RESPONSABLE(${idRiesgo},${responsable.idUsuario});
+            `);
+            console.log(`Se logró eliminar el responsable: ${responsable.idUsuario}`);
+        }
+        // Iteracion Eliminar Planes de Respuesta
+        for (const planRespuesta of planesRespuesta) {
+            await connection.execute(`
+            CALL ELIMINAR_PLANRESPUESTA(${planRespuesta.idPlanRespuesta});
+            `);
+            console.log(`Se elimino el plan de respuesta: ${planRespuesta.idPlanRespuesta}`);
+        }
+        // Iteracion Eliminar Planes de Contingencia
+        for (const planContingencia of planesContingencia) {
+            await connection.execute(`
+            CALL ELIMINAR_PLANCONTINGENCIA(${planContingencia.idPlanContingencia});
+            `);
+            console.log(`Se elimino el plan de contingencia: ${planContingencia.idPlanContingencia}`);
+        }        
+        res.status(200).json({
+            message: "Se ha eliminado exitosamente"
+        });
+    } catch (error) {
+        console.error("Error en la eliminacion:", error);
+        res.status(500).send("Error en la eliminacion: " + error.message);
+    }
+}
+
 
 module.exports = {
     insertarRiesgo,
@@ -251,5 +286,6 @@ module.exports = {
     insertarPlanContingencia,
     eliminarPlanContingencia,
     insertarResponsable,
-    eliminarResponsable
+    eliminarResponsable,
+    eliminarRRC
 };
