@@ -1010,7 +1010,7 @@ DROP TABLE IF EXISTS PlanRespuesta;
 CREATE TABLE PlanRespuesta(
     idPlanRespuesta INT AUTO_INCREMENT PRIMARY KEY,
     idRiesgo INT,
-    descripcion INT,
+    descripcion VARCHAR(500),
     activo tinyint NOT NULL,
     FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo)
 )
@@ -1020,7 +1020,7 @@ DROP TABLE IF EXISTS PlanContingencia;
 CREATE TABLE PlanContingencia(
     idPlanContingencia INT AUTO_INCREMENT PRIMARY KEY,
     idRiesgo INT,
-    descripcion INT,
+    descripcion VARCHAR(500),
     activo tinyint NOT NULL,
     FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo)
 )

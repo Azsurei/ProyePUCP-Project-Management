@@ -1805,9 +1805,6 @@ BEGIN
     LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
-<<<<<<< HEAD
->>>>>>> 88a7fbcfbafbaa54dc2938c90e2132c09489ccfd
-=======
 
 ------------
 -- AUTOEVALUACION
@@ -1835,20 +1832,21 @@ DROP PROCEDURE IF EXISTS INSERTAR_RIESGO_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_RIESGO_X_IDPROYECTO(
     IN _idProyecto INT,
+    IN _idProbabilidad INT,
+    IN _idImpacto INT,
 	IN _nombreRiesgo VARCHAR(500),
     IN _fechaIdentificacion DATE,
     IN _duenoRiesgo INT,
     IN _detalleRiesgo VARCHAR(500),
     IN _causaRiesgo VARCHAR(500),
     IN _impactoRiesgo VARCHAR(500),
-    IN _planRespuesta VARCHAR(500),
     IN _estado VARCHAR(100)
 )
 BEGIN
 	DECLARE _idRiesgo INT;
     SET @_idCatalogo = (SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto AND activo = 1);
-	INSERT INTO Riesgo(nombreRiesgo,idCatalogo,fechaIdentificacion,duenoRiesgo,detalleRiesgo,causaRiesgo,impactoRiesgo,planRespuesta,estado,activo) 
-    VALUES(_nombreRiesgo,@_idCatalogo,_fechaIdentificacion,duenoRiesgo,_detalleRiesgo,_causaRiesgo,_impactoRiesgo,_planRespuesta,_estado,1);
+	INSERT INTO Riesgo(idProbabilidad,idImpacto, nombreRiesgo,idCatalogo,fechaIdentificacion,duenoRiesgo,detalleRiesgo,causaRiesgo,impactoRiesgo,estado,activo) 
+    VALUES(_idProbabilidad,_idImpacto, _nombreRiesgo,@_idCatalogo,_fechaIdentificacion,_duenoRiesgo,_detalleRiesgo,_causaRiesgo,_impactoRiesgo,_estado,1);
     SET _idRiesgo = @@last_insert_id;
     SELECT _idRiesgo AS idRiesgo;
 END$
@@ -1913,3 +1911,30 @@ BEGIN
     WHERE activo = 1;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_PLANRESPUESTA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANRESPUESTA(
+    IN _idRiesgo INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idPlanRespuesta INT;
+	INSERT INTO PlanRespuesta(idRiesgo,descripcion,activo) 
+    VALUES(_idRiesgo,_descripcion,1);
+    SET _idPlanRespuesta = @@last_insert_id;
+    SELECT _idPlanRespuesta AS idPlanRespuesta;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANCONTIGENCIA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANCONTIGENCIA(
+    IN _idRiesgo INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idPlanContingencia INT;
+	INSERT INTO PlanContingencia(idRiesgo,descripcion,activo) 
+    VALUES(_idRiesgo,_descripcion,1);
+    SET _idPlanContingencia = @@last_insert_id;
+    SELECT _idPlanContingencia AS idPlanContingencia;
+END$

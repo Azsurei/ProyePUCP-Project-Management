@@ -1,21 +1,34 @@
 const connection = require("../../config/db");
 
 async function insertarRiesgo(req,res,next){
-    const{idProyecto, nombreRiesgo, fechaIdentificacion, duenoRiesgo, detalleRiesgo, causaRiesgo, 
-        impactoRiesgo, planRespuesta, estado, responsables} = req.body;
-    const query = `CALL INSERTAR_COMUNICACION_X_IDPROYECTO(?,?,?,?,?,?,?,?,?);`;
+    const{idProyecto, idProbabilidad, idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo, detalleRiesgo, causaRiesgo, 
+        impactoRiesgo, estado, responsables, planesRespuesta, planesContigencia} = req.body;
+    const query = `CALL INSERTAR_RIESGO_X_IDPROYECTO(?,?,?,?,?,?,?,?,?,?);`;
     try {
-        const [results] = await connection.query(query,[idProyecto, nombreRiesgo, fechaIdentificacion, duenoRiesgo,
-            detalleRiesgo, detalleRiesgo, causaRiesgo, impactoRiesgo, planRespuesta, estado]);
+        const [results] = await connection.query(query,[idProyecto,idProbabilidad,idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo,
+            detalleRiesgo, detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
         const idRiesgo = results[0][0].idRiesgo;
         console.log(`Se generó el riesgo ${idRiesgo}!`);
         for(const responsable of responsables){
-            const [results1] = await connection.execute(`
-            CALL INSERTAR_RESPONSABLE_RIESGO(
+            await connection.execute(`
+                CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
                 ${responsable.idResponsable});
             `);
-            console.log(`Se inserto el responsable ${responsable.idResponsable} al riesgo ${idRiesgo}`);
+        }
+        for(const planRespuesta of planesRespuesta){
+            await connection.execute(`
+                CALL INSERTAR_PLANRESPUESTA(
+                ${idRiesgo},
+                '${planRespuesta.descripcion}');
+            `);
+        }
+        for(const planContigencia of planesContigencia){
+            await connection.execute(`
+                CALL INSERTAR_PLANCONTIGENCIA(
+                ${idRiesgo},
+                '${planContigencia.descripcion}');
+            `);
         }
         res.status(200).json({
             idRiesgo,

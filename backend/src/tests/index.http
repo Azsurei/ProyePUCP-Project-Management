@@ -619,3 +619,62 @@ Content-Type:  application/json
 ###LISTAR IMPACTO
 GET http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto HTTP/1.1
 Content-Type:  application/json
+
+###INSERTAR RIESGO
+POST http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProyecto": 64,
+  "idProbabilidad": 3,
+  "idImpacto": 3,
+  "nombreRiesgo": "Hola123",
+  "fechaIdentificacion": "2023-10-20",
+  "duenoRiesgo": 88,
+  "detalleRiesgo": "Hola123",
+  "causaRiesgo": "Hola123",
+  "impactoRiesgo": "Hola123",
+  "estado": "Activo",
+  "responsables": [
+    {
+      "idResponsable": 84,
+      "nombres": "Victor",
+      "apellidos": "Tong",
+      "correoElectronico": "a20192310@pucp.edu.pe"
+    },
+    {
+      "idResponsable": 77,
+      "nombres": "Renzo Gabriel",
+      "apellidos": "Pinto Quiroz",
+      "correoElectronico": "admin.com"
+    },
+    {
+      "idResponsable": 81,
+      "nombres": "Andrea",
+      "apellidos": "Gonzales",
+      "correoElectronico": "andrea@pucp.edu.pe"
+    }
+  ],
+  "planesRespuesta": [
+    {
+      "descripcion": "Prbando"
+    },
+    {
+      "descripcion": "Tengo sueño xd"
+    },
+    {
+      "descripcion": "Son la 1AM"
+    }
+  ],
+  "planesContigencia": [
+    {
+      "descripcion": "Holaaa"
+    },
+    {
+      "descripcion": "Tengo sueño xd"
+    },
+    {
+      "descripcion": "Son la 1AM"
+    }
+  ]
+}
