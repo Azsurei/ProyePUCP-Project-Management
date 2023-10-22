@@ -64,6 +64,20 @@ export default function Ingresos(props) {
     //1 es estado de anadir nuevo hito
     //2 es estado de editar hito
 
+    const [fecha, setFecha] = useState("");
+
+    const handleChangeFecha = (event) => {
+        setFecha(event.target.value);
+    };
+
+
+    const handleChangeFechaInicio = () => {
+        const datepickerInput = document.getElementById("inputFechaPresupuesto");
+        const selectedDate = datepickerInput.value;
+        console.log(selectedDate);
+        setFecha(selectedDate);
+    }
+    
     
     const insertarLineaIngreso = () => {
         const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaIngreso`;
@@ -72,13 +86,14 @@ export default function Ingresos(props) {
 
         axios.post(stringUrlTipoTransaccion, {
             idProyecto: projectId,
+            idPresupuesto:8,
             idMoneda: selectedMoneda,
             idTransaccionTipo:selectedTipoTransaccion,
             idIngresoTipo:selectedTipo,
             descripcion:descripcionLinea,
             monto:parseFloat(monto),
             cantidad:1,
-            fechaTransaccion:selectedDate,
+            fechaTransaccion:fecha,
         })
 
         .then(function (response) {
@@ -110,13 +125,7 @@ export default function Ingresos(props) {
         setselectedTipo(value);
     };
 
-    const [inFechaInicio, setInFechaInicio] = useState('');
-    const handleChangeFechaInicio = () => {
-        const datepickerInput = document.getElementById("inputFechaPresupuesto");
-        const selectedDate = datepickerInput.value;
-        console.log(selectedDate);
-        setInFechaInicio(selectedDate);
-    }
+
 
 
     const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
@@ -298,7 +307,7 @@ export default function Ingresos(props) {
                                                 hasColor={false}
                                                 onSelect={handleSelectedValueTipoTransaccion}
                                                 idParam="idTransaccionTipo"
-                                                initialName="Seleccione Transaccion"
+                                                initialName="Seleccione Ingreso"
                                                 inputWidth="64"
                                             />
 
@@ -315,13 +324,13 @@ export default function Ingresos(props) {
                                                 hasColor={false}
                                                 onSelect={handleSelectedValueTipo}
                                                 idParam="idIngresoTipo"
-                                                initialName="Seleccione Ingreso"
+                                                initialName="Seleccione Transacción"
                                                 inputWidth="64"
                                             />
 
                                         </div>
                                         <p className="textPresuLast">Fecha Transacción</p>
-                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFechaInicio}/>
+                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
                                         <div className="fechaContainer">
  
                                         </div>
