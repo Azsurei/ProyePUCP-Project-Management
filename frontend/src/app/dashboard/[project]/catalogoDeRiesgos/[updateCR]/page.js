@@ -75,17 +75,18 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 new Date(crData.fechaIdentificacion).toISOString().split("T")[0]
             );
             const miembro = {
-                email: crData.correoElectronico,
-                id: crData.duenoRiesgo,
-                lastName: crData.apellidos,
-                name: crData.nombres,
+                correoElectronico: crData.correoElectronico,
+                idUsuario: crData.duenoRiesgo,
+                apellidos: crData.apellidos,
+                nombres: crData.nombres,
             };
             setSelectedMiembrosList([miembro]);
             setDetail(crData.detalleRiesgo);
             setCause(crData.causaRiesgo);
             setImpactDetail(crData.impactoRiesgo);
             setIsSelected(crData.estado === "Activo" ? true : false);
-            const selectedMiembrosList1Original = crData.responsables;
+            //CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+/*             const selectedMiembrosList1Original = crData.responsables;
             const selectedMiembrosList1Actualizados =
                 selectedMiembrosList1Original.map((selectedMiembrosList1) => ({
                     email: selectedMiembrosList1.correoElectronico || "", // Puedes agregar un valor predeterminado en caso de que falte
@@ -96,6 +97,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
             setSelectedMiembrosList1(selectedMiembrosList1Actualizados);
             setSelectedMiembrosList1Originales(
                 selectedMiembrosList1Actualizados
+            ); */
+            setSelectedMiembrosList1(crData.responsables);
+            setSelectedMiembrosList1Originales(
+                crData.responsables
             );
             const responsesPlansOriginal = crData.planRespuesta;
             const responsesPlansActualizados = responsesPlansOriginal.map(
@@ -187,7 +192,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
 
     const removeUser = (user) => {
         const newList = selectedMiembrosList1.filter(
-            (item) => item.id !== user.id
+            (item) => item.idUsuario !== user.idUsuario
         );
         setSelectedMiembrosList1(newList);
         console.log(newList);
@@ -383,7 +388,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
         } = findModifiedDeletedAdded(
             selectedMiembrosList1Original,
             selectedMiembroList1,
-            "id"
+            "idUsuario"
         );
 
         console.log("Modified:", modifiedArray);
@@ -402,7 +407,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             idImpacto: impact,
             nombreRiesgo: name,
             fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].id,
+            duenoRiesgo: selectedMiembrosList[0].idUsuario,
             detalleRiesgo: detail,
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
@@ -429,7 +434,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
         };
         console.log("Eliminado correctamente");
         console.log(deleteData);
-/*         axios
+        /*         axios
             .put(
                 "http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
                 putData
@@ -630,12 +635,12 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
@@ -661,12 +666,12 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 <div className="containerUserMultiple">
                                     <div className="iconLabel3CR">
                                         <p className="profilePicCR">
-                                            {component.name[0] +
-                                                component.lastName[0]}
+                                            {component.nombres[0] +
+                                                component.apellidos[0]}
                                         </p>
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
-                                                `${component.name} ${component.lastName}`
+                                                `${component.nombres} ${component.apellidos}`
                                             )}
                                         </div>
                                     </div>

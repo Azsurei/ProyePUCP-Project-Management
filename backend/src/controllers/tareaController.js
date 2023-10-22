@@ -64,6 +64,12 @@ async function listarXIdProyecto(req,res,next){
                  const [equipo] = await connection.query(query2, [tarea.idEquipo]);
                  tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
                  tarea.usuarios = [];
+
+                 //listamos los participantes de dicho equipo
+                 const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+                 const [participantes] = await connection.query(query4, [tarea.idEquipo]);
+                 tarea.equipo.participantes = participantes[0]; 
+                 
              }else {
                  const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
                  const [usuarios] = await connection.query(query3, [tarea.idTarea]);

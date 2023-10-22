@@ -99,7 +99,7 @@ export default function CatalogoDeRiesgosRegister(props) {
 
     const removeUser = (user) => {
         const newList = selectedMiembrosList1.filter(
-            (item) => item.id !== user.id
+            (item) => item.idUsuario !== user.idUsuario
         );
         setSelectedMiembrosList1(newList);
         console.log(newList);
@@ -220,7 +220,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             idImpacto: impact,
             nombreRiesgo: name,
             fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].id,
+            duenoRiesgo: selectedMiembrosList[0].idUsuario,
             detalleRiesgo: detail,
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
@@ -397,12 +397,12 @@ export default function CatalogoDeRiesgosRegister(props) {
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
@@ -428,12 +428,12 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 <div className="containerUserMultiple">
                                     <div className="iconLabel3CR">
                                         <p className="profilePicCR">
-                                            {component.name[0] +
-                                                component.lastName[0]}
+                                            {component.nombres[0] +
+                                                component.apellidos[0]}
                                         </p>
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
-                                                `${component.name} ${component.lastName}`
+                                                `${component.nombres} ${component.apellidos}`
                                             )}
                                         </div>
                                     </div>

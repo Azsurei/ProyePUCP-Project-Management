@@ -106,7 +106,7 @@ export default function MatrizComunicacionesRegister(props) {
             idFormato: format,
             sumillaInformacion: sumilla,
             detalleInformacion: detail,
-            responsableDeComunicar: selectedMiembrosList[0].id,
+            responsableDeComunicar: selectedMiembrosList[0].idUsuario,
             grupoReceptor: groupReceiver,
         };
         console.log("El postData es :", postData);
@@ -214,12 +214,12 @@ export default function MatrizComunicacionesRegister(props) {
                             return (
                                 <div className="iconLabel2MC">
                                     <p className="profilePicMC">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
