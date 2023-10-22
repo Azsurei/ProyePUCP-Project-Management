@@ -11,5 +11,12 @@ routerCatalagoRiesgos.delete("/eliminarunRiesgo", catalogoRiesgosController.elim
 routerCatalagoRiesgos.get("/listarProbabilidades", catalogoRiesgosController.listarProbabilidades);
 routerCatalagoRiesgos.get("/listarImpacto", catalogoRiesgosController.listarImpacto);
 
+//Plan Respuesta
+routerCatalagoRiesgos.post("/insertarPlanRespuesta", catalogoRiesgosController.insertarPlanRespuesta);
+routerCatalagoRiesgos.delete("/eliminarPlanRespuesta", catalogoRiesgosController.eliminarPlanRespuesta);
+
+//Plan Contingencia
+routerCatalagoRiesgos.post("/insertarPlanContingencia", catalogoRiesgosController.insertarPlanContingencia);
+routerCatalagoRiesgos.post("/insertarRiesgo", catalogoRiesgosController.insertarRiesgo);
 
 module.exports.routerCatalagoRiesgos = routerCatalagoRiesgos;
