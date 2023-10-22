@@ -273,6 +273,44 @@ async function eliminarRRC(req,res,next){
     }
 }
 
+//Eliminar Responsables, Planes de Respuesta, Planes de Contingencia
+async function insertarRRC(req,res,next){
+    //Insertar query aca
+    const {idRiesgo, responsables,planesRespuesta,planesContingencia} = req.body;
+    try {
+        // Iteracion Insertar Responsables
+        for(const responsable of responsables){
+            await connection.execute(`
+                CALL INSERTAR_RESPONSABLE_RIESGO(
+                ${idRiesgo},
+                ${responsable.idUsuario});
+            `);
+        }
+        // Iteracion Insertar Planes de Respuesta
+        for(const planRespuesta of planesRespuesta){
+            await connection.execute(`
+                CALL INSERTAR_PLANRESPUESTA(
+                ${idRiesgo},
+                '${planRespuesta.responsePlans}');
+            `);
+        }
+        // Iteracion Insertar Planes de Contingencia
+        for(const planContigencia of planesContingencia){
+            await connection.execute(`
+                CALL INSERTAR_PLANCONTIGENCIA(
+                ${idRiesgo},
+                '${planContigencia.contingencyPlans}');
+            `);
+        }     
+        res.status(200).json({
+            message: "Se ha insertado exitosamente"
+        });
+    } catch (error) {
+        console.error("Error en la inserción:", error);
+        res.status(500).send("Error en la inserción: " + error.message);
+    }
+}
+
 
 module.exports = {
     insertarRiesgo,
@@ -287,5 +325,6 @@ module.exports = {
     eliminarPlanContingencia,
     insertarResponsable,
     eliminarResponsable,
-    eliminarRRC
+    eliminarRRC,
+    insertarRRC
 };

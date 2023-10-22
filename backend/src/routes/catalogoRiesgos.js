@@ -24,5 +24,6 @@ routerCatalagoRiesgos.post("/insertarResponsable", catalogoRiesgosController.ins
 routerCatalagoRiesgos.delete("/eliminarResponsable", catalogoRiesgosController.eliminarResponsable);
 
 routerCatalagoRiesgos.delete("/eliminarRRC", catalogoRiesgosController.eliminarRRC);
+routerCatalagoRiesgos.post("/insertarRRC", catalogoRiesgosController.insertarRRC);
 
 module.exports.routerCatalagoRiesgos = routerCatalagoRiesgos;
