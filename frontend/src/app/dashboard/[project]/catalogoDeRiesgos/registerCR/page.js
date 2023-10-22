@@ -413,7 +413,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         )}
                     </div>
                 </div>
-                <div className="containerComboCR">
+                <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
                         label1="Buscar"
@@ -421,7 +421,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    <ul>
+                    <div className="flex">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
                                 <div className="iconLabel2CR">
@@ -441,7 +441,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 ¡Seleccione los responsables del riesgo!
                             </div>
                         )}
-                    </ul>
+                    </div>
                 </div>
                 <div>
                     <Textarea

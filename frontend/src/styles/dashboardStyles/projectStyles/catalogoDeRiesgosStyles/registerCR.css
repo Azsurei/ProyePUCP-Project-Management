@@ -90,6 +90,11 @@
     align-items: center;
 }
 
+.containerResponsables{
+    display: flex;
+    gap: 2rem;
+}
+
 .twoButtonsCR{
     display: flex;
     justify-content: flex-end;
