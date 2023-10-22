@@ -226,10 +226,10 @@ export default function CatalogoDeRiesgosRegister(props) {
             estado: isSelected ? "Activo" : "Inactivo",
             responsables: selectedMiembrosList1,
             planesRespuesta: responsePlans,
-            planesContigencia: contingencyPlans
+            planesContigencia: contingencyPlans,
         };
         console.log("El postData es :", postData);
-        axios
+/*         axios
             .post(
                 "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
@@ -243,7 +243,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); 
+            }); */
     };
 
     return (
@@ -598,7 +598,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    router.back();
+                                    //router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

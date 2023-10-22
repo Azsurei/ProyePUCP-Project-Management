@@ -75,7 +75,9 @@ export default function Example({
                     setSelected(selectedItem);
                     if (typeof onSelect === "function") {
                         onSelect(selectedItem[idParam]);
-                        onSelectValor(selectedItem[valorParam])
+                    }
+                    if(typeof onSelectValor === "function"){
+                        onSelectValor(selectedItem[valorParam]);
                     }
                 }}
             >
