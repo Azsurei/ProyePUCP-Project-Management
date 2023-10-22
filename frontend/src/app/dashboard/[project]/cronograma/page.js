@@ -27,6 +27,7 @@ import BtnToModal from "@/components/BtnToModal";
 import { useRouter } from "next/navigation";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { resolve } from "styled-jsx/css";
+import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -249,8 +250,15 @@ export default function Cronograma(props) {
                     axios
                         .get(tareasURL)
                         .then(function (response) {
-                            setListTareas(response.data.tareas);
-                            console.log(response.data.tareas);
+                            const updatedArray = response.data.tareas.map((item, index) => ({
+                                ...item,
+                                tareasHijas: index === 0 ? [{...item,idTarea:9999,tareasHijas:null}] : null,
+                              }));
+                            //setListTareas(response.data.tareas);
+                            //console.log(response.data.tareas);
+
+                            setListTareas(updatedArray);
+                            console.log(updatedArray);
                             setIsLoadingSmall(false);
                         })
                         .catch(function (error) {
@@ -361,7 +369,8 @@ export default function Cronograma(props) {
                         Cronograma
                     </HeaderWithButtonsSamePage>
 
-                    <AgendaTable listTareas={listTareas}></AgendaTable>
+                    {/* <AgendaTable listTareas={listTareas}></AgendaTable> */}
+                    <ListTareas listTareas={listTareas} leftMargin={"0px"}></ListTareas>
                 </div>
             </div>
 
