@@ -15,7 +15,7 @@ async function insertarRiesgo(req,res,next){
             await connection.execute(`
                 CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
-                ${responsable.id});
+                ${responsable.idUsuario});
             `);
         }
         for(const planRespuesta of planesRespuesta){

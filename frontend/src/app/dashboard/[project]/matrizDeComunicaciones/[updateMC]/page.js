@@ -64,10 +64,10 @@ export default function MatrizComunicacionesUpdate(props) {
             setSelectedNameFormat(mcData.nombreFormato);
             setFormat(mcData.idFormato);
             const miembro = {
-                email: mcData.correoElectronico,
-                id: mcData.responsableDeComunicar,
-                lastName: mcData.apellidos,
-                name: mcData.nombres,
+                correoElecronico: mcData.correoElectronico,
+                idUsuario: mcData.responsableDeComunicar,
+                apellidos: mcData.apellidos,
+                nombres: mcData.nombres,
             };
             setSelectedMiembrosList([miembro]);
             console.log("Terminó de cargar los datos");
@@ -152,7 +152,7 @@ export default function MatrizComunicacionesUpdate(props) {
             idFormato: format,
             sumillaInformacion: sumilla,
             detalleInformacion: detail,
-            responsableDeComunicar: selectedMiembrosList[0].id,
+            responsableDeComunicar: selectedMiembrosList[0].idUsuario,
             grupoReceptor: groupReceiver,
         };
         console.log("Actualizado correctamente");
@@ -268,12 +268,12 @@ export default function MatrizComunicacionesUpdate(props) {
                             return (
                                 <div className="iconLabel2MC">
                                     <p className="profilePicMC">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
