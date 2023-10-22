@@ -11,10 +11,11 @@ import { Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/modalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/containerContingencyPlans";
+import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
@@ -79,11 +80,17 @@ export default function CatalogoDeRiesgosRegister(props) {
         setModal2(false);
     };
 
-    const returnListOfMiembros1 = (newMiembrosList1) => {
-        const newMembrsList = [...selectedMiembrosList1, ...newMiembrosList1];
+    const returnListOfUsers = (newUsersList) => {
+        const newList = [...selectedMiembrosList1, ...newUsersList];
 
-        setSelectedMiembrosList1(newMembrsList);
-        setModal1(!modal1);
+        setSelectedMiembrosList1(newList);
+        setModal1(false);
+    };
+
+    const removeUser = (user) => {
+        const newList = selectedMiembrosList1.filter((item) => item.id !== user.id);
+        setSelectedMiembrosList1(newList);
+        console.log(newList);
     };
 
     function capitalizeWords(str) {
@@ -390,7 +397,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                         lastName={component.lastName}
                                         usuarioObject={component}
                                         email={component.email}
-                                        removeHandler={removeMiembro}
+                                        removeHandler={removeUser}
                                     ></CardSelectedUser>
                                 );
                             })}
@@ -595,7 +602,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             {modal1 && (
                 <ModalUser
                     handlerModalClose={toggleModal1}
-                    handlerModalFinished={returnListOfMiembros1}
+                    handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedMiembrosList1}
                 ></ModalUser>
             )}

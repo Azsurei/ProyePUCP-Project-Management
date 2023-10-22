@@ -25,7 +25,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import ListUsers from "./dashboardComps/projectComps/projectCreateComps/ListUsers";
 import ListUsersOne from "./ListUsersOne";
 
-export const UserCardsContext = React.createContext();
+export const UserCardsContextOne = React.createContext();
 
 export default function ModalUsersOne({
     listAllUsers,
@@ -198,11 +198,11 @@ export default function ModalUsersOne({
                 </div>
 
                 <div className="divUsers">
-                    <UserCardsContext.Provider
+                    <UserCardsContextOne.Provider
                         value={{ addUserList, removeUserInList }}
                     >
                         <ListUsersOne lista={listUsers}></ListUsersOne>
-                    </UserCardsContext.Provider>
+                    </UserCardsContextOne.Provider>
                 </div>
                 <div className="endButtons">
                     <Button
