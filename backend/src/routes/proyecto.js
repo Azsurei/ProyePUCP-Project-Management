@@ -252,7 +252,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         `;
                     for (const participante of participantesSupervisores) {
                         const [results] = await connection.query(query, [
-                            participante.id,
+                            participante.idUsuario,
                             2,
                             idProyecto,
                         ]);
@@ -260,7 +260,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                             results[0][0].idUsuarioXRolProyecto;
                         console.log(
                             `Se agrego el usuario ${
-                                participante.id
+                                participante.idUsuario
                             } al proyecto ${idProyecto} con el rol ${2}`
                         );
                     }
@@ -272,7 +272,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                             `;
                         for (const participante of participantesMiembros) {
                             const [results] = await connection.query(query, [
-                                participante.id,
+                                participante.idUsuario,
                                 3,
                                 idProyecto,
                             ]);
@@ -280,7 +280,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                                 results[0][0].idUsuarioXRolProyecto;
                             console.log(
                                 `Se agrego el usuario ${
-                                    participante.id
+                                    participante.idUsuario
                                 } al proyecto ${idProyecto} con el rol ${3}`
                             );
                         }
@@ -292,13 +292,13 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     } catch (error) {
                         console.error(
                             `Error en el registro del usuario ${
-                                participante.id
+                                participante.idUsuario
                             } al proyecto ${idProyecto} con el rol ${2}`,
                             error
                         );
                         res.status(500).send(
                             `Error en el registro del usuario ${
-                                participante.id
+                                participante.idUsuario
                             } al proyecto ${idProyecto} con el rol ${2}` +
                                 error.message
                         );
@@ -306,13 +306,13 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                 } catch (error) {
                     console.error(
                         `Error en el registro del usuario ${
-                            participante.id
+                            participante.idUsuario
                         } al proyecto ${idProyecto} con el rol ${2}`,
                         error
                     );
                     res.status(500).send(
                         `Error en el registro del usuario ${
-                            participante.id
+                            participante.idUsuario
                         } al proyecto ${idProyecto} con el rol ${2}` +
                             error.message
                     );
