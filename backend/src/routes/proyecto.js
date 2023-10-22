@@ -236,7 +236,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const [results] = await connection.query(query,[
                             idProyecto,2,0,0
                         ]);
-
+                        //Esos dos 0s están por justo xdxd
                         const idPrespuesto = results[0][0].idPresupuesto
                     }
 
