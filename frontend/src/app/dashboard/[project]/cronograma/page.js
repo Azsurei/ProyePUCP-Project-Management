@@ -82,11 +82,13 @@ export default function Cronograma(props) {
 
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [selectedSubteam, setSelectedSubteam] = useState(null);
+    const [validAsigned, setValidAsigned] = useState(true);
 
     const returnListOfUsers = (newUsersList) => {
         const newList = [...selectedUsers, ...newUsersList];
 
         setSelectedUsers(newList);
+        setSelectedSubteam(null);
         setModal(false);
     };
 
@@ -145,7 +147,10 @@ export default function Cronograma(props) {
                 .post(newURL, {
                     idCronograma: cronogramaId,
                     idTareaEstado: 1, //No iniciado
-                    idSubGrupo: null,
+                    idSubGrupo:
+                        selectedSubteam === null
+                            ? null
+                            : selectedSubteam.idEquipo,
                     idPadre: null,
                     idTareaAnterior: null,
                     sumillaTarea: tareaName,
@@ -155,7 +160,7 @@ export default function Cronograma(props) {
                     cantSubtareas: 0,
                     cantPosteriores: 0,
                     horasPlaneadas: null,
-                    usuarios: null,
+                    usuarios: selectedUsers.length === 0 ? null : selectedUsers,
                     subTareas: null,
                     tareasPosteriores: null,
                 })
@@ -239,14 +244,6 @@ export default function Cronograma(props) {
 
     const colorDropbox = ["default", "primary", "warning", "success"];
 
-    // useEffect(() => {
-    //     setSelectedSubteam(null);
-    // }, [selectedUsers]);
-
-    // useEffect(() => {
-    //     setSelectedUsers([]);
-    // }, [selectedSubteam]);
-
     useEffect(() => {
         const stringURL =
             "http://localhost:8080/api/proyecto/cronograma/listarCronograma";
@@ -305,6 +302,14 @@ export default function Cronograma(props) {
     }, []);
 
     const msgEmptyField = "Este campo no puede estar vacio";
+
+    useEffect(() => {
+        setValidAsigned(true);
+    }, [selectedSubteam]);
+
+    useEffect(() => {
+        setValidAsigned(true);
+    }, [selectedUsers]);
 
     return (
         <div className="cronogramaDiv">
@@ -390,7 +395,10 @@ export default function Cronograma(props) {
                 isOpen={isModalSubEOpen}
                 onOpenChange={onModalSubEOpenChange}
                 projectId={projectId}
-                getSelectedSubteam={setSelectedSubteam}
+                getSelectedSubteam={(sele_Subteam) => {
+                    setSelectedUsers([]);
+                    setSelectedSubteam(sele_Subteam);
+                }}
             ></ModalSubequipos>
 
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
@@ -607,69 +615,81 @@ export default function Cronograma(props) {
                         )}
                     </div>
 
-                    <ul className="contUsers">
-                        {tabSelected === "users" ? (
-                            selectedUsers.length !== 0 ? (
-                                selectedUsers.map((component) => (
-                                    <CardSelectedUser
-                                        key={component.id}
-                                        name={component.name}
-                                        lastName={component.lastName}
-                                        usuarioObject={component}
-                                        email={component.email}
-                                        removeHandler={removeUser}
-                                    ></CardSelectedUser>
-                                ))
-                            ) : (
-                                <p className="noUsersMsg">
-                                    No ha seleccionado ningun usuario
-                                </p>
-                            )
-                        ) : selectedSubteam !== null ? (
-                            <div className="cardSubteam">
-                                <div className="cardSubteam_Header">
-                                    <div className="cardLeftSide">
-                                        <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>
-                                        <p style={{fontFamily: 'Roboto'}}>{selectedSubteam.nombre}</p>
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        <ul className={validAsigned ? "contUsers" : "contUsers invalid"}>
+                            {tabSelected === "users" ? (
+                                selectedUsers.length !== 0 ? (
+                                    selectedUsers.map((component) => (
+                                        <CardSelectedUser
+                                            key={component.id}
+                                            name={component.name}
+                                            lastName={component.lastName}
+                                            usuarioObject={component}
+                                            email={component.email}
+                                            removeHandler={removeUser}
+                                        ></CardSelectedUser>
+                                    ))
+                                ) : (
+                                    <p className="noUsersMsg">
+                                        No ha seleccionado ningun usuario
+                                    </p>
+                                )
+                            ) : selectedSubteam !== null ? (
+                                <div className="cardSubteam">
+                                    <div className="cardSubteam_Header">
+                                        <div className="cardLeftSide">
+                                            <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>
+                                            <p style={{ fontFamily: "Roboto" }}>
+                                                {selectedSubteam.nombre}
+                                            </p>
+                                        </div>
+
+                                        <img
+                                            src="/icons/icon-crossBlack.svg"
+                                            onClick={() => {
+                                                setSelectedSubteam(null);
+                                            }}
+                                        ></img>
                                     </div>
 
-                                    <img
-                                        src="/icons/icon-crossBlack.svg"
-                                        onClick={() => {
-                                            setSelectedSubteam(null);
-                                        }}
-                                    ></img>
-                                </div>
-
-                                <div className="SubTeamUsersContainer">
-                                    {selectedSubteam.participantes.map(
-                                        (user) => {
-                                            return (
-                                                <div
-                                                    className="SingleUserIconContainer"
-                                                    key={user.idUsuario}
-                                                >
-                                                    <div className="SingleUserIcon">
-                                                        {user.nombres[0] +
-                                                            user.apellidos[0]}
+                                    <div className="SubTeamUsersContainer">
+                                        {selectedSubteam.participantes.map(
+                                            (user) => {
+                                                return (
+                                                    <div
+                                                        className="SingleUserIconContainer"
+                                                        key={user.idUsuario}
+                                                    >
+                                                        <div className="SingleUserIcon">
+                                                            {user.nombres[0] +
+                                                                user
+                                                                    .apellidos[0]}
+                                                        </div>
+                                                        <div className="SingleUserName">
+                                                            {user.nombres +
+                                                                " " +
+                                                                user.apellidos}
+                                                        </div>
                                                     </div>
-                                                    <div className="SingleUserName">
-                                                        {user.nombres +
-                                                            " " +
-                                                            user.apellidos}
-                                                    </div>
-                                                </div>
-                                            );
-                                        }
-                                    )}
+                                                );
+                                            }
+                                        )}
+                                    </div>
                                 </div>
+                            ) : (
+                                <p className="noUsersMsg">
+                                    No ha seleccionado ningun subequipo
+                                </p>
+                            )}
+                        </ul>
+                        {!validAsigned && (
+                            <div className="flex relative flex-col gap-1.5 pt-1 px-1">
+                                <p className="text-tiny text-danger">
+                                    Debe asignar la tarea a un usuario o equipo!
+                                </p>
                             </div>
-                        ) : (
-                            <p className="noUsersMsg">
-                                No ha seleccionado ningun subequipo
-                            </p>
                         )}
-                    </ul>
+                    </div>
 
                     <div className="twoButtonsEnd">
                         <BtnToModal
@@ -714,7 +734,20 @@ export default function Cronograma(props) {
                                     setValidFechas("isEmpty");
                                     allValid = false;
                                 }
+                                if (
+                                    selectedSubteam === null &&
+                                    selectedUsers.length === 0
+                                ) {
+                                    setValidAsigned(false);
+                                    allValid = false;
+                                }
                                 if (allValid) {
+                                    if(selectedSubteam===null){
+                                        setTabSelected("users");
+                                    }
+                                    else{
+                                        setTabSelected("subteams");
+                                    }
                                     return true;
                                 }
                             }}
@@ -733,9 +766,14 @@ export default function Cronograma(props) {
                 ></ModalUser>
             )}
 
-            <Toaster richColors theme={"light"} closeButton={true} toastOptions={{
-                style: {fontSize: '1.2rem'}
-            }}/>
+            <Toaster
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1.2rem" },
+                }}
+            />
         </div>
     );
 }

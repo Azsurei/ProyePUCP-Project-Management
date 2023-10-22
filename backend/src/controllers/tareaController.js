@@ -63,12 +63,14 @@ async function listarXIdProyecto(req,res,next){
                  const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
                  const [equipo] = await connection.query(query2, [tarea.idEquipo]);
                  tarea.equipo = equipo[0];
+                 tarea.usuarios = [];
              }else {
                  const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
                  const [usuarios] = await connection.query(query3, [tarea.idTarea]);
                  if(usuarios != null){
                      tarea.usuarios = usuarios[0];
                  }
+                 tarea.equipo = null;
              }
          }
          console.log(tareas);

@@ -248,10 +248,14 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-
+    border: 2px transparent solid;
 
     padding: .8rem .8rem;
     gap: 10px;
+}
+
+.contUsers.invalid{
+    border-color: red;
 }
 
 .cardSubteam{
