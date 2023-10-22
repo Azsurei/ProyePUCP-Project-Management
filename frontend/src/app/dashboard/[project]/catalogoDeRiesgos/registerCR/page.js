@@ -88,7 +88,9 @@ export default function CatalogoDeRiesgosRegister(props) {
     };
 
     const removeUser = (user) => {
-        const newList = selectedMiembrosList1.filter((item) => item.id !== user.id);
+        const newList = selectedMiembrosList1.filter(
+            (item) => item.id !== user.id
+        );
         setSelectedMiembrosList1(newList);
         console.log(newList);
     };
@@ -209,11 +211,12 @@ export default function CatalogoDeRiesgosRegister(props) {
             idProbabilidad: probability,
             idImpacto: impact,
             estado: isSelected ? "Activo" : "Inactivo",
-            idResponsable: selectedMiembrosList[0].id,
+            idDueño: selectedMiembrosList[0].id,
             causa: cause,
             impacto: impactDetail,
             responsePlans: responsePlans,
             contingencyPlans: contingencyPlans,
+            responsablesRiesgos: selectedMiembrosList1,
         };
         console.log("El postData es :", postData);
         /*         axios
@@ -289,7 +292,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
                             property="canales"
                             nameDisplay="nombreCanal"
                             hasColor={false}
@@ -304,7 +307,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto"
                             property="frecuencias"
                             nameDisplay="nombreFrecuencia"
                             hasColor={false}
@@ -387,26 +390,27 @@ export default function CatalogoDeRiesgosRegister(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    {selectedMiembrosList1.length > 0 ? (
-                        <ul className="listUsersContainer">
-                            {selectedMiembrosList1.map((component) => {
-                                return (
-                                    <CardSelectedUser
-                                        key={component.id}
-                                        name={component.name}
-                                        lastName={component.lastName}
-                                        usuarioObject={component}
-                                        email={component.email}
-                                        removeHandler={removeUser}
-                                    ></CardSelectedUser>
-                                );
-                            })}
-                        </ul>
-                    ) : (
-                        <div className="labelSinDataUsuarioCR">
-                            ¡Seleccione los responsables del riesgo!
-                        </div>
-                    )}
+                    <ul>
+                        {selectedMiembrosList1.length > 0 ? (
+                            selectedMiembrosList1.map((component) => (
+                                <div className="iconLabel2CR">
+                                    <p className="profilePicCR">
+                                        {component.name[0] +
+                                            component.lastName[0]}
+                                    </p>
+                                    <div className="labelDatoUsuarioCR">
+                                        {capitalizeWords(
+                                            `${component.name} ${component.lastName}`
+                                        )}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="labelSinDataUsuarioCR">
+                                ¡Seleccione los responsables del riesgo!
+                            </div>
+                        )}
+                    </ul>
                 </div>
                 <div>
                     <Textarea
