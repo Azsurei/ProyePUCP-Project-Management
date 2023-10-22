@@ -293,11 +293,11 @@ export default function CatalogoDeRiesgosRegister(props) {
                         />
                         <MyCombobox
                             urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
-                            property="canales"
-                            nameDisplay="nombreCanal"
+                            property="probabilidades"
+                            nameDisplay="nombreProbabilidad"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeProbability}
-                            idParam="idCanal"
+                            idParam="idProbabilidad"
                         />
                     </div>
                     <div className="containerComboCR">
@@ -308,11 +308,11 @@ export default function CatalogoDeRiesgosRegister(props) {
                         />
                         <MyCombobox
                             urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto"
-                            property="frecuencias"
-                            nameDisplay="nombreFrecuencia"
+                            property="impacto"
+                            nameDisplay="nombreImpacto"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeImpact}
-                            idParam="idFrecuencia"
+                            idParam="idImpacto"
                         />
                     </div>
                     <div className="containerComboCR">
@@ -339,6 +339,11 @@ export default function CatalogoDeRiesgosRegister(props) {
                             label="Severidad"
                             className="iconLabel"
                         />
+                        <div className="labelSinDataUsuarioCR">
+                            {probability === null || impact === null
+                                ? "Severidad = Probabilidad x Impacto"
+                                : "Bien hecho"}
+                        </div>
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
