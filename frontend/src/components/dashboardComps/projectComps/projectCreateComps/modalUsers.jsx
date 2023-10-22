@@ -24,7 +24,7 @@ import {
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 
-export const UserCardsContext = React.createContext();
+export const UserCardsContextNormal = React.createContext();
 
 export default function ModalUser({
     handlerModalClose,
@@ -133,11 +133,11 @@ export default function ModalUser({
                 </div>
 
                 <div className="divUsers">
-                    <UserCardsContext.Provider
+                    <UserCardsContextNormal.Provider
                         value={{ addUserList, removeUserInList }}
                     >
                         <ListUsers lista={listUsers}></ListUsers>
-                    </UserCardsContext.Provider>
+                    </UserCardsContextNormal.Provider>
                 </div>
                 <div className="endButtons">
                 <Button
