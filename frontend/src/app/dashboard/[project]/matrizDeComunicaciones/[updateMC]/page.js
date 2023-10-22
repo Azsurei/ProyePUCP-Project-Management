@@ -26,7 +26,7 @@ function capitalizeWords(str) {
     return capitalizedWords.join(" ");
 }
 
-export default function MatrizComunicacionesRegister(props) {
+export default function MatrizComunicacionesUpdate(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
