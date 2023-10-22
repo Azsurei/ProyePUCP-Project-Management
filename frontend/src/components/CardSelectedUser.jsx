@@ -1,24 +1,23 @@
 import "@/styles/CardSelectedUser.css";
 export default function CardSelectedUser({
-    name,
-    lastName,
     usuarioObject,
-    email,
     removeHandler,
     ...props
 }) {
 
+    const nombres = usuarioObject.nombres;
+    const apellidos = usuarioObject.apellidos===null ? "" : usuarioObject.apellidos;
     return (
         <div className="CardSelectedUser">
             <div className="containerLeft">
                 <p className="profilePic">
-                    {name[0] + lastName[0]}
+                    {nombres[0] + apellidos[0]}
                 </p>
                 <div className="containerInfo">
                     <p className="usrNames">
-                        {name + " " + lastName}
+                        {nombres + " " + apellidos}
                     </p>
-                    <p className="usrMail">{email}</p>
+                    <p className="usrMail">{usuarioObject.correoElectronico}</p>
                 </div>
             </div>
             <img
