@@ -132,7 +132,7 @@ export default function newProject() {
 
     const removeSupervisor = (supervisor) => {
         const newSupervsList = selectedSupervisoresList.filter(
-            (item) => item.id !== supervisor.idUsuario
+            (item) => item.idUsuario !== supervisor.idUsuario
         );
         setSelectedSupervisoresList(newSupervsList);
         console.log(newSupervsList);
@@ -140,7 +140,7 @@ export default function newProject() {
 
     const removeMiembro = (miembro) => {
         const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.idUsuario
+            (item) => item.idUsuario !== miembro.idUsuario
         );
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
