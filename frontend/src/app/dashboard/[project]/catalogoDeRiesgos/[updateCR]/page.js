@@ -27,17 +27,28 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
     const [probability, setProbability] = useState(null);
+    const [valorProbability, setValorProbability] = useState(null);
     const [impact, setImpact] = useState(null);
+    const [valorImpact, setValorImpact] = useState(null);
+    const [selectedNameProbability, setSelectedNameProbability] = useState("");
+    const [selectedNameImpact, setSelectedNameImpact] = useState("");
     const [fechaInicio, setFechaInicio] = useState(null);
     const [isSelected, setIsSelected] = useState(true);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
     const [selectedMiembrosList1, setSelectedMiembrosList1] = useState([]);
+    const [
+        selectedMiembrosList1Originales,
+        setSelectedMiembrosList1Originales,
+    ] = useState([]);
     const [cause, setCause] = useState("");
     const [impactDetail, setImpactDetail] = useState("");
     const [responsePlans, setResponsePlans] = useState([]);
+    const [responsePlansOriginales, setResponsePlansOriginales] = useState([]);
     const [contingencyPlans, setContingencyPlans] = useState([]);
+    const [contingencyPlansOriginales, setContingencyPlansOriginales] =
+        useState([]);
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
@@ -49,34 +60,76 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoRiesgos, setCatalogoRiesgos] = useState(null);
 
-    // useEffect(() => {
-    //     if (catalogoRiesgos && catalogoRiesgos.comunicacion) {
-    //         const mcData = matrizComunicaciones.comunicacion[0];
-    //         console.log("F: La data es:", mcData);
-    //         setSumilla(mcData.sumillaInformacion);
-    //         setDetail(mcData.detalleInformacion);
-    //         setGroupReceiver(mcData.grupoReceptor);
-    //         setSelectedNameCanal(mcData.nombreCanal);
-    //         setCanal(mcData.idCanal);
-    //         setSelectedNameFrecuency(mcData.nombreFrecuencia);
-    //         setFrecuency(mcData.idFrecuencia);
-    //         setSelectedNameFormat(mcData.nombreFormato);
-    //         setFormat(mcData.idFormato);
-    //         const miembro = {
-    //             email: mcData.correoElectronico,
-    //             id: mcData.responsableDeComunicar,
-    //             lastName: mcData.apellidos,
-    //             name: mcData.nombres,
-    //         };
-    //         setSelectedMiembrosList([miembro]);
-    //         console.log("Terminó de cargar los datos");
-    //         //setIsLoading(false);
-    //         setIsLoadingSmall(false);
-    //     }
-    // }, [matrizComunicaciones]);
+    useEffect(() => {
+        if (catalogoRiesgos && catalogoRiesgos.riesgo) {
+            const crData = catalogoRiesgos.riesgo;
+            console.log("F: La data es:", crData);
+            setProbability(crData.idProbabilidad);
+            setValorProbability(crData.valorProbabilidad);
+            setSelectedNameProbability(crData.nombreProbabilidad);
+            setImpact(crData.idImpacto);
+            setValorImpact(crData.valorImpacto);
+            setSelectedNameImpact(crData.nombreImpacto);
+            setName(crData.nombreRiesgo);
+            setFechaInicio(
+                new Date(crData.fechaIdentificacion).toISOString().split("T")[0]
+            );
+            const miembro = {
+                correoElectronico: crData.correoElectronico,
+                idUsuario: crData.duenoRiesgo,
+                apellidos: crData.apellidos,
+                nombres: crData.nombres,
+            };
+            setSelectedMiembrosList([miembro]);
+            setDetail(crData.detalleRiesgo);
+            setCause(crData.causaRiesgo);
+            setImpactDetail(crData.impactoRiesgo);
+            setIsSelected(crData.estado === "Activo" ? true : false);
+            //CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+/*             const selectedMiembrosList1Original = crData.responsables;
+            const selectedMiembrosList1Actualizados =
+                selectedMiembrosList1Original.map((selectedMiembrosList1) => ({
+                    email: selectedMiembrosList1.correoElectronico || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    id: selectedMiembrosList1.idUsuario || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    lastName: selectedMiembrosList1.apellidos || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    name: selectedMiembrosList1.nombres || "", // Puedes agregar un valor predeterminado en caso de que falte
+                }));
+            setSelectedMiembrosList1(selectedMiembrosList1Actualizados);
+            setSelectedMiembrosList1Originales(
+                selectedMiembrosList1Actualizados
+            ); */
+            setSelectedMiembrosList1(crData.responsables);
+            setSelectedMiembrosList1Originales(
+                crData.responsables
+            );
+            const responsesPlansOriginal = crData.planRespuesta;
+            const responsesPlansActualizados = responsesPlansOriginal.map(
+                (responsesPlans) => ({
+                    idPlanRespuesta: responsesPlans.idPlanRespuesta || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    responsePlans: responsesPlans.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setResponsePlans(responsesPlansActualizados);
+            setResponsePlansOriginales(responsesPlansActualizados);
+            setQuantity1(responsesPlansActualizados.length);
+            const contingencyPlansOriginal = crData.planContigencia;
+            const contingencyPlansActualizados = contingencyPlansOriginal.map(
+                (contingencyPlans) => ({
+                    idPlanContingencia:
+                        contingencyPlans.idPlanContingencia || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    contingencyPlans: contingencyPlans.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setContingencyPlans(contingencyPlansActualizados);
+            setContingencyPlansOriginales(contingencyPlansActualizados);
+            setQuantity2(contingencyPlansActualizados.length);
+            console.log("Terminó de cargar los datos");
+            setIsLoadingSmall(false);
+        }
+    }, [catalogoRiesgos]);
 
     useEffect(() => {
-        const stringURLCR = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        const stringURLCR = `http://localhost:8080/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
         axios
             .get(stringURLCR)
             .then(function (response) {
@@ -98,8 +151,16 @@ export default function CatalogoDeRiesgosUpdate(props) {
         setProbability(value);
     };
 
+    const handleSelectedValorChangeProbability = (value) => {
+        setValorProbability(value);
+    };
+
     const handleSelectedValueChangeImpact = (value) => {
         setImpact(value);
+    };
+
+    const handleSelectedValorChangeImpact = (value) => {
+        setValorImpact(value);
     };
 
     const toggleModal1 = () => {
@@ -130,7 +191,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
     };
 
     const removeUser = (user) => {
-        const newList = selectedMiembrosList1.filter((item) => item.id !== user.id);
+        const newList = selectedMiembrosList1.filter(
+            (item) => item.idUsuario !== user.idUsuario
+        );
         setSelectedMiembrosList1(newList);
         console.log(newList);
     };
@@ -217,6 +280,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             cause === "" ||
             impactDetail === "" ||
             selectedMiembrosList.length === 0 ||
+            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans === ""
             ) ||
@@ -242,37 +306,180 @@ export default function CatalogoDeRiesgosUpdate(props) {
         );
     }
 
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        // Encuentra elementos modificados y eliminados
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                    modifiedArray.push(newItem);
+                } */
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
+    };
+
     const onSubmit = () => {
-        const postData = {
-            idProyecto: parseInt(projectId),
-            nombreRiesgo: name,
-            detalleRiesgo: detail,
-            fechaIdentificada: fechaInicio,
+        const responsePlansOriginal = responsePlansOriginales;
+        const responsePlan = responsePlans;
+        const contingencyPlansOriginal = contingencyPlansOriginales;
+        const contingencyPlan = contingencyPlans;
+        const selectedMiembrosList1Original = selectedMiembrosList1Originales;
+        const selectedMiembroList1 = selectedMiembrosList1;
+        console.log("Original:", responsePlansOriginal);
+        console.log("Nuevo:", responsePlan);
+        console.log("Original1:", contingencyPlansOriginal);
+        console.log("Nuevo1:", contingencyPlan);
+        console.log("Original2:", selectedMiembrosList1Original);
+        console.log("Nuevo2:", selectedMiembroList1);
+        const {
+            modifiedArray: modifiedArray,
+            deletedArray: deletedArray,
+            addedArray: addedArray,
+        } = findModifiedDeletedAdded(
+            responsePlansOriginal,
+            responsePlan,
+            "idPlanRespuesta"
+        );
+
+        const {
+            modifiedArray: modifiedArray1,
+            deletedArray: deletedArray1,
+            addedArray: addedArray1,
+        } = findModifiedDeletedAdded(
+            contingencyPlansOriginal,
+            contingencyPlan,
+            "idPlanContingencia"
+        );
+
+        const {
+            modifiedArray: modifiedArray2,
+            deletedArray: deletedArray2,
+            addedArray: addedArray2,
+        } = findModifiedDeletedAdded(
+            selectedMiembrosList1Original,
+            selectedMiembroList1,
+            "idUsuario"
+        );
+
+        console.log("Modified:", modifiedArray);
+        console.log("Deleted:", deletedArray);
+        console.log("Added:", addedArray);
+        console.log("Modified1:", modifiedArray1);
+        console.log("Deleted1:", deletedArray1);
+        console.log("Added1:", addedArray1);
+        console.log("Modified2:", modifiedArray2);
+        console.log("Deleted2:", deletedArray2);
+        console.log("Added2:", addedArray2);
+
+        const putData = {
+            idRiesgo: parseInt(props.params.updatePB),
             idProbabilidad: probability,
             idImpacto: impact,
+            nombreRiesgo: name,
+            fechaIdentificacion: fechaInicio,
+            duenoRiesgo: selectedMiembrosList[0].idUsuario,
+            detalleRiesgo: detail,
+            causaRiesgo: cause,
+            impactoRiesgo: impactDetail,
             estado: isSelected ? "Activo" : "Inactivo",
-            idDueño: selectedMiembrosList[0].id,
-            causa: cause,
-            impacto: impactDetail,
-            responsePlans: responsePlans,
-            contingencyPlans: contingencyPlans,
-            responsablesRiesgos: selectedMiembrosList1
+            planRespuesta: modifiedArray,
+            planContigencia: modifiedArray1,
+            responsables: modifiedArray2,
         };
-        console.log("El postData es :", postData);
+        console.log("Actualizado correctamente");
+        console.log(putData);
+        const postData = {
+            idRiesgo: parseInt(props.params.updatePB),
+            planRespuesta: addedArray,
+            planContigencia: addedArray1,
+            responsables: addedArray2,
+        };
+        console.log("Agregado correctamente");
+        console.log(postData);
+        const deleteData = {
+            idRiesgo: parseInt(props.params.updatePB),
+            planRespuesta: deletedArray,
+            planContigencia: deletedArray1,
+            responsables: deletedArray2,
+        };
+        console.log("Eliminado correctamente");
+        console.log(deleteData);
         /*         axios
-            .post(
-                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
-                postData
+            .put(
+                "http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
+                putData
             )
             .then((response) => {
-                // Manejar la respuesta de la solicitud POST
+                // Manejar la respuesta de la solicitud PUT
                 console.log("Respuesta del servidor:", response.data);
                 console.log("Registro correcto");
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            });
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/backlog/hu/insertarCriterioRequisito",
+                postData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
+            });
+        axios
+            .delete(
+                "http://localhost:8080/api/proyecto/backlog/hu/eliminarCriterioRequisito",
+                {
+                    data: deleteData,
+                }
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
             }); */
     };
 
@@ -332,12 +539,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
-                            property="canales"
-                            nameDisplay="nombreCanal"
+                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            property="probabilidades"
+                            nameDisplay="nombreProbabilidad"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeProbability}
-                            idParam="idCanal"
+                            onSelectValor={handleSelectedValorChangeProbability}
+                            idParam="idProbabilidad"
+                            valorParam="valorProbabilidad"
+                            initialName={selectedNameProbability}
                         />
                     </div>
                     <div className="containerComboCR">
@@ -347,12 +557,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
-                            property="frecuencias"
-                            nameDisplay="nombreFrecuencia"
+                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto"
+                            property="impacto"
+                            nameDisplay="nombreImpacto"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeImpact}
-                            idParam="idFrecuencia"
+                            onSelectValor={handleSelectedValorChangeImpact}
+                            idParam="idImpacto"
+                            valorParam="valorImpacto"
+                            initialName={selectedNameImpact}
                         />
                     </div>
                     <div className="containerComboCR">
@@ -379,6 +592,23 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             label="Severidad"
                             className="iconLabel"
                         />
+                        <div className="labelSinDataUsuarioCR">
+                            {probability === null || impact === null ? (
+                                "Severidad = Probabilidad x Impacto"
+                            ) : valorProbability * valorImpact >= 0.18 ? (
+                                <div className="text-red-500 font-semibold">
+                                    Alta
+                                </div>
+                            ) : valorProbability * valorImpact >= 0.05 ? (
+                                <div className="text-orange-500 font-semibold">
+                                    Media
+                                </div>
+                            ) : (
+                                <div className="text-green-500 font-semibold">
+                                    Baja
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
@@ -405,12 +635,12 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
@@ -422,7 +652,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         )}
                     </div>
                 </div>
-                <div className="containerComboCR">
+                <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
                         label1="Buscar"
@@ -430,26 +660,37 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    {selectedMiembrosList1.length > 0 ? (
-                        <ul className="listUsersContainer">
-                            {selectedMiembrosList1.map((component) => {
-                                return (
-                                    <CardSelectedUser
-                                        key={component.id}
-                                        name={component.name}
-                                        lastName={component.lastName}
-                                        usuarioObject={component}
-                                        email={component.email}
-                                        removeHandler={removeUser}
-                                    ></CardSelectedUser>
-                                );
-                            })}
-                        </ul>
-                    ) : (
-                        <div className="labelSinDataUsuarioCR">
-                            ¡Seleccione los responsables del riesgo!
-                        </div>
-                    )}
+                    <div className="flex flex-wrap">
+                        {selectedMiembrosList1.length > 0 ? (
+                            selectedMiembrosList1.map((component) => (
+                                <div className="containerUserMultiple">
+                                    <div className="iconLabel3CR">
+                                        <p className="profilePicCR">
+                                            {component.nombres[0] +
+                                                component.apellidos[0]}
+                                        </p>
+                                        <div className="labelDatoUsuarioCR">
+                                            {capitalizeWords(
+                                                `${component.nombres} ${component.apellidos}`
+                                            )}
+                                        </div>
+                                    </div>
+                                    <img
+                                        src="/icons/icon-trash.svg"
+                                        alt="delete"
+                                        className="mb-4 cursor-pointer mr-2"
+                                        onClick={() => {
+                                            removeUser(component);
+                                        }}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="labelSinDataUsuarioCR">
+                                ¡Seleccione los responsables del riesgo!
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div>
                     <Textarea
@@ -606,7 +847,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
@@ -644,9 +885,11 @@ export default function CatalogoDeRiesgosUpdate(props) {
             </div>
             {modal1 && (
                 <ModalUser
+                    listAllUsers={false}
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedMiembrosList1}
+                    idProyecto={projectId}
                 ></ModalUser>
             )}
             {modal2 && (

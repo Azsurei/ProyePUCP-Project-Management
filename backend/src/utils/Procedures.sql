@@ -2154,3 +2154,28 @@ BEGIN
     UPDATE PlanRespuesta SET activo = 0 WHERE idRiesgo = _idRiesgo;
     UPDATE PlanContingencia SET activo = 0 WHERE idRiesgo = _idRiesgo;
 END$
+
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANRESPUESTA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANRESPUESTA(IN _idPlanRespuesta INT)
+BEGIN
+    UPDATE PlanRespuesta SET activo = 0 WHERE idPlanRespuesta = _idPlanRespuesta;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANCONTINGENCIA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANCONTINGENCIA(IN _idPlanContingencia INT)
+BEGIN
+    UPDATE PlanContingencia SET activo = 0 WHERE idPlanContingencia = _idPlanContingencia;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_RESPONSABLE;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_RESPONSABLE(
+    IN _idRiesgo INT,
+    IN _idResponsable INT
+)
+BEGIN
+    UPDATE RiesgoXResponsable SET activo = 0 WHERE idRiesgo = _idRiesgo AND idResponsable = _idResponsable;
+END$

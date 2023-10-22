@@ -99,7 +99,7 @@ export default function CatalogoDeRiesgosRegister(props) {
 
     const removeUser = (user) => {
         const newList = selectedMiembrosList1.filter(
-            (item) => item.id !== user.id
+            (item) => item.idUsuario !== user.idUsuario
         );
         setSelectedMiembrosList1(newList);
         console.log(newList);
@@ -187,6 +187,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             cause === "" ||
             impactDetail === "" ||
             selectedMiembrosList.length === 0 ||
+            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans === ""
             ) ||
@@ -219,7 +220,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             idImpacto: impact,
             nombreRiesgo: name,
             fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].id,
+            duenoRiesgo: selectedMiembrosList[0].idUsuario,
             detalleRiesgo: detail,
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
@@ -229,7 +230,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             planesContigencia: contingencyPlans,
         };
         console.log("El postData es :", postData);
-/*         axios
+        axios
             .post(
                 "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
@@ -243,7 +244,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
     };
 
     return (
@@ -396,12 +397,12 @@ export default function CatalogoDeRiesgosRegister(props) {
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
@@ -413,7 +414,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         )}
                     </div>
                 </div>
-                <div className="containerComboCR">
+                <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
                         label1="Buscar"
@@ -421,19 +422,29 @@ export default function CatalogoDeRiesgosRegister(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    <ul>
+                    <div className="flex flex-wrap">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
-                                <div className="iconLabel2CR">
-                                    <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
-                                    </p>
-                                    <div className="labelDatoUsuarioCR">
-                                        {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
-                                        )}
+                                <div className="containerUserMultiple">
+                                    <div className="iconLabel3CR">
+                                        <p className="profilePicCR">
+                                            {component.nombres[0] +
+                                                component.apellidos[0]}
+                                        </p>
+                                        <div className="labelDatoUsuarioCR">
+                                            {capitalizeWords(
+                                                `${component.nombres} ${component.apellidos}`
+                                            )}
+                                        </div>
                                     </div>
+                                    <img
+                                        src="/icons/icon-trash.svg"
+                                        alt="delete"
+                                        className="mb-4 cursor-pointer mr-2"
+                                        onClick={() => {
+                                            removeUser(component);
+                                        }}
+                                    />
                                 </div>
                             ))
                         ) : (
@@ -441,7 +452,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 ¡Seleccione los responsables del riesgo!
                             </div>
                         )}
-                    </ul>
+                    </div>
                 </div>
                 <div>
                     <Textarea
@@ -598,7 +609,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

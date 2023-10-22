@@ -59,6 +59,22 @@
     width: 218px;
 }
 
+.iconLabel3CR{
+    display: flex;
+    align-items: center;
+    gap: 5%;
+    font-weight: 400;
+    font-size: 14px;
+    width: 218px;
+    margin-bottom: 1rem;
+}
+
+.containerUserMultiple{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .profilePicCR{
     font-weight: 600;
     border-radius: 100%;
@@ -88,6 +104,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.containerResponsables{
+    display: flex;
+    gap: 2rem;
 }
 
 .twoButtonsCR{

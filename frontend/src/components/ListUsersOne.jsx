@@ -9,10 +9,7 @@ import { UserCardsContextOne } from "./ModalUsersOne";
 axios.defaults.withCredentials = true;
 
 function CardUser({
-    name,
-    lastName,
     usuarioObject,
-    email,
     isSelected,
     onSelection,
 }) {
@@ -29,8 +26,8 @@ function CardUser({
                 src="/images/userDefaultList.png"
             />
             <div style={{ marginTop: "12px", marginLeft: "15px" }}>
-                <p className="titleUserName">{name + " " + lastName}</p>
-                <p className="titleUserEmail">{email}</p>
+                <p className="titleUserName">{usuarioObject.nombres + " " + usuarioObject.apellidos}</p>
+                <p className="titleUserEmail">{usuarioObject.correoElectronico}</p>
             </div>
         </li>
     );
@@ -53,14 +50,11 @@ export default function ListUsersOne(props) {
             {props.lista.map((component) => {
                 return (
                     <CardUser
-                        key={component.id}
-                        name={component.name}
-                        lastName={component.lastName}
+                        key={component.idUsuario}
                         usuarioObject={component}
-                        email={component.email}
-                        isSelected={selectedUser === component.id}
+                        isSelected={selectedUser === component.idUsuario}
                         onSelection={() => {
-                            setSelectedUser(component.id);
+                            setSelectedUser(component.idUsuario);
                             addUserList(component);
                         }}
                     ></CardUser>

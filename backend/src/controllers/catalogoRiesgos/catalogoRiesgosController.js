@@ -15,7 +15,7 @@ async function insertarRiesgo(req,res,next){
             await connection.execute(`
                 CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
-                ${responsable.id});
+                ${responsable.idUsuario});
             `);
         }
         for(const planRespuesta of planesRespuesta){
@@ -140,11 +140,116 @@ async function listarImpacto(req,res,next){
 }
 
 
+async function insertarPlanRespuesta(req,res,next){
+    const{idRiesgo, responsePlans} = req.body;
+    try {
+        const [results] = await connection.execute(`
+        CALL INSERTAR_PLANRESPUESTA(
+            ${idRiesgo},
+            '${responsePlans}');
+        `);
+        const idPlanRespuesta = results[0].idPlanRespuesta;
+        console.log(`Se insertó el plan de respuesta ${idPlanRespuesta}!`);
+        res.status(200).json({
+            idPlanRespuesta,
+            message: "Plan de respuesta insertada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarPlanRespuesta(req,res,next){
+    const {idPlanRespuesta} = req.body;
+    const query = `CALL ELIMINAR_PLANRESPUESTA(?);`;
+    try {
+        await connection.query(query,[idPlanRespuesta]);
+        res.status(200).json({
+            message: "Plan de Respuesta eliminado exitosamente"
+        });
+        console.log('Se elimino el Plan de Respuesta correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function insertarPlanContingencia(req,res,next){
+    const{idRiesgo, contingencyPlans} = req.body;
+    try {
+        const [results] = await connection.execute(`
+        CALL INSERTAR_PLANCONTIGENCIA(
+            ${idRiesgo},
+            '${contingencyPlans}');
+        `);
+        const idPlanContingencia = results[0].idPlanContingencia;
+        console.log(`Se insertó el plan de contingencia ${idPlanContingencia}!`);
+        res.status(200).json({
+            idPlanContingencia,
+            message: "Plan de contingencia insertada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarPlanContingencia(req,res,next){
+    const {idPlanContingencia} = req.body;
+    const query = `CALL ELIMINAR_PLANCONTINGENCIA(?);`;
+    try {
+        await connection.query(query,[idPlanContingencia]);
+        res.status(200).json({
+            message: "Plan de Contingencia eliminado exitosamente"
+        });
+        console.log('Se elimino el Plan de Contingencia correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function insertarResponsable(req,res,next){
+    const {idRiesgo,idUsuario} = req.body;
+    const query = `CALL INSERTAR_RESPONSABLE_RIESGO(?,?);`;
+    try {
+        await connection.query(query,[idRiesgo,idUsuario]);
+        res.status(200).json({
+            message: "Responsable insertardo"
+        });
+        console.log('Se inserto el responsable correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function eliminarResponsable(req,res,next){
+    const {idRiesgo,idUsuario} = req.body;
+    const query = `CALL ELIMINAR_RESPONSABLE(?,?);`;
+    try {
+        await connection.query(query,[idRiesgo,idUsuario]);
+        res.status(200).json({
+            message: "Responsable eliminado"
+        });
+        console.log('Se elimino el responsable correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+
 module.exports = {
     insertarRiesgo,
     listarRiesgos,
     listarunRiesgo,
     eliminarunRiesgo,
     listarProbabilidades,
-    listarImpacto
+    listarImpacto,
+    insertarPlanRespuesta,
+    eliminarPlanRespuesta,
+    insertarPlanContingencia,
+    eliminarPlanContingencia,
+    insertarResponsable,
+    eliminarResponsable
 };

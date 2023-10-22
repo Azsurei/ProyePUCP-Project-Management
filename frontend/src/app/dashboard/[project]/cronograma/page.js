@@ -5,10 +5,9 @@ import AgendaTable from "@/components/dashboardComps/projectComps/cronogramaComp
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
 import { useContext, useEffect, useState } from "react";
 import DateInput from "@/components/DateInput";
-import TabUserSelect from "@/components/dashboardComps/projectComps/cronogramaComps/TabUserSelect";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import CardSelectedUser from "@/components/CardSelectedUser";
-import { Select, SelectItem, Textarea } from "@nextui-org/react";
+import { Select, SelectItem, Tab, Tabs, Textarea } from "@nextui-org/react";
 
 import {
     Modal,
@@ -46,9 +45,6 @@ export default function Cronograma(props) {
     } = useDisclosure();
 
     const [toggleNew, setToggleNew] = useState(false);
-    const handlerGoToNew = () => {
-        setToggleNew(!toggleNew);
-    };
 
     //States from firstTimeModal
     const [firstFechaInicio, setFirstFechaInicio] = useState("");
@@ -80,9 +76,30 @@ export default function Cronograma(props) {
     const [tabSelected, setTabSelected] = useState("users");
     const [modal, setModal] = useState(false);
 
+    //para definir estado de segunda pantalla
+    const [stateSecond, setStateSecond] = useState(0);
+    //1 sera para nueva tarea
+    //2 para visualizar una tarea
+    //3 para editar una tarea
+    //4 si es que esta agregando una tarea hija
+
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [selectedSubteam, setSelectedSubteam] = useState(null);
     const [validAsigned, setValidAsigned] = useState(true);
+
+    const handlerGoToNew = () => {
+        //limpiamos data por si acaso
+        setTareaName("");
+        setTareaDescripcion("");
+        //setear combo box
+        setFechaInicio("");
+        setFechaFin("");
+        setSelectedSubteam(null);
+        setSelectedUsers([]);
+
+        setStateSecond(1);
+        setToggleNew(!toggleNew);
+    };
 
     const returnListOfUsers = (newUsersList) => {
         const newList = [...selectedUsers, ...newUsersList];
@@ -140,7 +157,14 @@ export default function Cronograma(props) {
 
     function promiseRegistrarTarea() {
         return new Promise((resolve, reject) => {
+            const remappedUserList = selectedUsers.map((user) => {
+                return {
+                    ...user,
+                    idUsuario: user.id,
+                };
+            });
             setToggleNew(false);
+            resolve(true);
             const newURL =
                 "http://localhost:8080/api/proyecto/cronograma/insertarTarea";
             axios
@@ -160,7 +184,8 @@ export default function Cronograma(props) {
                     cantSubtareas: 0,
                     cantPosteriores: 0,
                     horasPlaneadas: null,
-                    usuarios: selectedUsers.length === 0 ? null : selectedUsers,
+                    usuarios:
+                        selectedUsers.length === 0 ? null : remappedUserList,
                     subTareas: null,
                     tareasPosteriores: null,
                 })
@@ -311,6 +336,23 @@ export default function Cronograma(props) {
         setValidAsigned(true);
     }, [selectedUsers]);
 
+    const handleVerDetalle = (tarea) => {
+        //toma una tarea, deberemos setear el estado de la pantalla en todo no editable y con los nuevos valores
+        setTareaName(tarea.sumillaTarea);
+        setTareaDescripcion(tarea.descripcion);
+        if (tarea.idEquipo === null) {
+            setSelectedUsers(tarea.usuarios);
+            setSelectedSubteam(null);
+        } else {
+            setSelectedSubteam(tarea.equipo);
+            setSelectedUsers([]);
+        }
+
+        setStateSecond(1);
+        setToggleNew(true);
+        //falta setear las fechas, lo mas complicado del mundo pipipi
+    };
+
     return (
         <div className="cronogramaDiv">
             {/* {
@@ -418,6 +460,7 @@ export default function Cronograma(props) {
                     <ListTareas
                         listTareas={listTareas}
                         leftMargin={"0px"}
+                        handleVerDetalle={handleVerDetalle}
                     ></ListTareas>
                 </div>
             </div>
@@ -439,7 +482,10 @@ export default function Cronograma(props) {
                         }
                         btnText={"Nueva tarea"}
                     >
-                        Nueva tarea
+                        {stateSecond === 1 && "Nueva tarea"}
+                        {stateSecond === 2 && "Ver detalle de tarea"}
+                        {stateSecond === 3 && "Editar tarea"}
+                        {stateSecond === 4 && "Agregar tarea hija"}
                     </HeaderWithButtonsSamePage>
 
                     <div className="contFirstRow">
@@ -581,10 +627,21 @@ export default function Cronograma(props) {
                         Asigna miembros a tu tarea!
                     </p>
                     <div className="containerTab">
-                        <TabUserSelect
-                            selectedKey={tabSelected}
-                            onSelectionChange={setTabSelected}
-                        ></TabUserSelect>
+                        <div className="flex flex-wrap gap-4">
+                            <Tabs
+                                color={"primary"}
+                                aria-label="Tabs colors"
+                                radius="full"
+                                classNames={{
+                                    cursor: "w-full bg-[#F0AE19]",
+                                }}
+                                selectedKey={tabSelected}
+                                onSelectionChange={setTabSelected}
+                            >
+                                <Tab key="users" title="Usuarios" />
+                                <Tab key="subteams" title="Subequipos" />
+                            </Tabs>
+                        </div>
 
                         {tabSelected === "users" ? (
                             <div
@@ -615,17 +672,18 @@ export default function Cronograma(props) {
                         )}
                     </div>
 
-                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                        <ul className={validAsigned ? "contUsers" : "contUsers invalid"}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <ul
+                            className={
+                                validAsigned ? "contUsers" : "contUsers invalid"
+                            }
+                        >
                             {tabSelected === "users" ? (
                                 selectedUsers.length !== 0 ? (
                                     selectedUsers.map((component) => (
                                         <CardSelectedUser
-                                            key={component.id}
-                                            name={component.name}
-                                            lastName={component.lastName}
+                                            key={component.idUsuario}
                                             usuarioObject={component}
-                                            email={component.email}
                                             removeHandler={removeUser}
                                         ></CardSelectedUser>
                                     ))
@@ -741,13 +799,20 @@ export default function Cronograma(props) {
                                     setValidAsigned(false);
                                     allValid = false;
                                 }
+
+                                if (
+                                    selectedSubteam === null &&
+                                    selectedUsers.length !== 0
+                                ) {
+                                    setTabSelected("users");
+                                } else if (
+                                    selectedSubteam !== null &&
+                                    selectedUsers.length === 0
+                                ) {
+                                    setTabSelected("subteams");
+                                }
+
                                 if (allValid) {
-                                    if(selectedSubteam===null){
-                                        setTabSelected("users");
-                                    }
-                                    else{
-                                        setTabSelected("subteams");
-                                    }
                                     return true;
                                 }
                             }}

@@ -44,9 +44,9 @@ async function listarXIdPresupuesto(req,res,next){
 async function listarLineasTodas(req, res, next) {
     const { idProyecto } = req.params;
     try {
-        const lineasIngreso = ingresoController.listarLineasXIdProyecto(idProyecto);
-        const lineasEgreso = egresoController.listarLineasXIdProyecto(idProyecto);
-        const lineasEstimacionCosto = estimacionCostoController.listarLineasXIdProyecto(idProyecto);
+        const lineasIngreso = await ingresoController.listarLineasXIdProyecto(idProyecto);
+        const lineasEgreso = await egresoController.listarLineasXIdProyecto(idProyecto);
+        const lineasEstimacionCosto = await estimacionCostoController.listarLineasXIdProyecto(idProyecto);
 
         const lineasPresupuesto = {
             lineasIngreso,
