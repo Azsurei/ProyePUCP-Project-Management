@@ -107,11 +107,11 @@ function structureData(data) {
   
     // Función para agregar hijos a las tareas
     function addChildren(task) {
-      task.hijos = result[task.idTarea] || [];
-      if (task.hijos.length === 0) {
+      task.tareasHijas  = result[task.idTarea] || [];
+      if (task.tareasHijas .length === 0) {
         return;
       }
-      task.hijos.forEach(addChildren);
+      task.tareasHijas .forEach(addChildren);
     }
   
     // Agregar hijos a las tareas principales (con idPadre null)
