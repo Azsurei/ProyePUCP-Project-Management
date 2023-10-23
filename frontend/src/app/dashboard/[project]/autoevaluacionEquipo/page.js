@@ -58,20 +58,19 @@ export default function autoevaluacionEquipo(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const [formState, setFormState] = useState("initial"); // "initial", "modified"
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     setIsLoadingSmall(false);
 
-    // Reemplazar por un Axios para obtener la data de los usuarios relacionados al proyecto
     const initialEvaluations = users.map((user) => ({
         userId: user.idUsuario,
         criteria: {
-            technicalDomain: 0, // Estados iniciales para cada criterio
+            technicalDomain: 0,
             workCommitment: 0,
             teamCommunication: 0,
             projectComprehension: 0,
         },
-        observations: "", // Initialize with an empty comment
+        observations: "",
     }));
 
     const [usersEvaluation, setUsersEvaluation] = useState(initialEvaluations);
@@ -107,31 +106,35 @@ export default function autoevaluacionEquipo(props) {
     const handleSave = () => {
         setFormState("loading");
 
-        // Realizar el guardado con un post de axios
-        try{
-
-        }
-        catch(error){
+        try {
+        } catch (error) {
             console.log(error);
-        }
-        finally{
+        } finally {
             onOpenChange(true);
             setFormState("initial");
-        }   
+        }
     };
 
-    // agregar funcion para comparar el estado inicial con el estado cambiado de la variaable de usersEvaluation
     useEffect(() => {
-        if(JSON.stringify(usersEvaluation) !== JSON.stringify(initialEvaluations)){
+        if (
+            JSON.stringify(usersEvaluation) !==
+            JSON.stringify(initialEvaluations)
+        ) {
             setFormState("modified");
         }
     }, [usersEvaluation]);
-
 
     const renderMember = (member) => {
         const userEvaluationData = usersEvaluation.find(
             (item) => item.userId === member.idUsuario
         );
+
+        const criteria = [
+            { name: "Dominio técnico", key: "technicalDomain" },
+            { name: "Compromiso con los trabajos", key: "workCommitment" },
+            { name: "Comunicación con los compañeros", key: "teamCommunication" },
+            { name: "Comprensión del proyecto", key: "projectComprehension" },
+        ];
 
         return (
             <Card className="w-full">
@@ -145,145 +148,67 @@ export default function autoevaluacionEquipo(props) {
                         <h4 className="montserrat font-semibold">
                             Criterios de evaluación:
                         </h4>
-                        <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
-                            <div>
-                                <label className="w-full font-medium break-words">
-                                    Dominio técnico:
-                                </label>
-                            </div>
-                            <RadioGroup
-                                orientation="horizontal"
-                                defaultValue={userEvaluationData.criteria.technicalDomain.toString()}
-                                onChange={(e) =>
-                                    handleCriterionRatingChange(
-                                        member.idUsuario,
-                                        "technicalDomain",
-                                        parseInt(e.target.value)
-                                    )
-                                }
+                        {criteria.map((criterion) => (
+                            <div
+                                key={criterion.key}
+                                className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8"
                             >
-                                <Radio value="1" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    1
-                                </Radio>
-                                <Radio value="2" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    2
-                                </Radio>
-                                <Radio value="3" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    3
-                                </Radio>
-                                <Radio value="4" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    4
-                                </Radio>
-                                <Radio value="5" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    5
-                                </Radio>
-                            </RadioGroup>
-                        </div>
-                        <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
-                            <div className="w-">
-                                <label className="w-full font-medium break-words">
-                                    Compromiso con los trabajos:
-                                </label>
+                                <div>
+                                    <label className="w-full font-medium break-words">
+                                        {criterion.name}:
+                                    </label>
+                                </div>
+                                <RadioGroup
+                                    orientation="horizontal"
+                                    defaultValue={userEvaluationData.criteria[
+                                        criterion.key
+                                    ].toString()}
+                                    onChange={(e) =>
+                                        handleCriterionRatingChange(
+                                            member.idUsuario,
+                                            criterion.key,
+                                            parseInt(e.target.value)
+                                        )
+                                    }
+                                >
+                                    <Radio
+                                        value="1"
+                                        className="2xl:mr-20 xl:mr-12 lg:mr-8"
+                                    >
+                                        1
+                                    </Radio>
+                                    <Radio
+                                        value="2"
+                                        className="2xl:mr-20 xl:mr-12 lg:mr-8"
+                                    >
+                                        2
+                                    </Radio>
+                                    <Radio
+                                        value="3"
+                                        className="2xl:mr-20 xl:mr-12 lg:mr-8"
+                                    >
+                                        3
+                                    </Radio>
+                                    <Radio
+                                        value="4"
+                                        className="2xl:mr-20 xl:mr-12 lg:mr-8"
+                                    >
+                                        4
+                                    </Radio>
+                                    <Radio
+                                        value="5"
+                                        className="2xl:mr-20 xl:mr-12 lg:mr-8"
+                                    >
+                                        5
+                                    </Radio>
+                                </RadioGroup>
                             </div>
-                            <RadioGroup
-                                orientation="horizontal"
-                                defaultValue={userEvaluationData.criteria.workCommitment.toString()}
-                                onChange={(e) =>
-                                    handleCriterionRatingChange(
-                                        member.idUsuario,
-                                        "workCommitment",
-                                        parseInt(e.target.value)
-                                    )
-                                }
-                            >
-                                <Radio value="1" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    1
-                                </Radio>
-                                <Radio value="2" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    2
-                                </Radio>
-                                <Radio value="3" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    3
-                                </Radio>
-                                <Radio value="4" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    4
-                                </Radio>
-                                <Radio value="5" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    5
-                                </Radio>
-                            </RadioGroup>
-                        </div>
-                        <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
-                            <div>
-                                <label className="w-full font-medium break-words">
-                                    Comunicación con los compañeros:
-                                </label>
-                            </div>
-                            <RadioGroup
-                                orientation="horizontal"
-                                defaultValue={userEvaluationData.criteria.teamCommunication.toString()}
-                                onChange={(e) =>
-                                    handleCriterionRatingChange(
-                                        member.idUsuario,
-                                        "teamCommunication",
-                                        parseInt(e.target.value)
-                                    )
-                                }
-                            >
-                                <Radio value="1" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    1
-                                </Radio>
-                                <Radio value="2" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    2
-                                </Radio>
-                                <Radio value="3" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    3
-                                </Radio>
-                                <Radio value="4" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    4
-                                </Radio>
-                                <Radio value="5" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    5
-                                </Radio>
-                            </RadioGroup>
-                        </div>
-                        <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
-                            <div>
-                                <label className="w-full font-medium break-words">
-                                    Comprensión del proyecto:
-                                </label>
-                            </div>
-                            <RadioGroup
-                                orientation="horizontal"
-                                defaultValue={userEvaluationData.criteria.projectComprehension.toString()}
-                                onChange={(e) =>
-                                    handleCriterionRatingChange(
-                                        member.idUsuario,
-                                        "projectComprehension",
-                                        parseInt(e.target.value)
-                                    )
-                                }
-                            >
-                                <Radio value="1" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    1
-                                </Radio>
-                                <Radio value="2" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    2
-                                </Radio>
-                                <Radio value="3" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    3
-                                </Radio>
-                                <Radio value="4" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    4
-                                </Radio>
-                                <Radio value="5" className="2xl:mr-20 xl:mr-12 lg:mr-8">
-                                    5
-                                </Radio>
-                            </RadioGroup>
-                        </div>
+                        ))}
                     </div>
                     <div className="flex flex-col">
-                        <h4 className="montserrat font-semibold">Observaciones:</h4>
+                        <h4 className="montserrat font-semibold">
+                            Observaciones:
+                        </h4>
                         <Textarea
                             variant="faded"
                             placeholder="Registre algunas observaciones..."
@@ -304,14 +229,9 @@ export default function autoevaluacionEquipo(props) {
         <div className="flex flex-col p-8 w-full h-full">
             <div className="space-x-4 mb-2">
                 <Breadcrumbs>
-                    <BreadcrumbsItem
-                        href="/dashboard"
-                        text={"Inicio"}
-                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem href="/dashboard" text={"Inicio"}></BreadcrumbsItem>
                     <BreadcrumbsItem text={"Proyectos"}></BreadcrumbsItem>
-                    <BreadcrumbsItem
-                        text={"[Nombre del proyecto]"}
-                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem text={"[Nombre del proyecto]"}></BreadcrumbsItem>
                 </Breadcrumbs>
             </div>
             <h2 className="space-x-4 mb-2 montserrat text-[#172B4D] font-bold text-3xl text-gray-700">
@@ -338,9 +258,7 @@ export default function autoevaluacionEquipo(props) {
                                 Guardar cambios
                             </ModalHeader>
                             <ModalBody>
-                                <p>
-                                    ¿Seguro que deseas guardar los cambios?
-                                </p> 
+                                <p>¿Seguro que deseas guardar los cambios?</p>
                             </ModalBody>
                             <ModalFooter>
                                 <Button
@@ -350,7 +268,11 @@ export default function autoevaluacionEquipo(props) {
                                 >
                                     Cerrar
                                 </Button>
-                                <Button color="primary" onPress={handleSave} isLoading={formState === "loading"}>
+                                <Button
+                                    color="primary"
+                                    onPress={handleSave}
+                                    isLoading={formState === "loading"}
+                                >
                                     Guardar
                                 </Button>
                             </ModalFooter>
@@ -359,5 +281,5 @@ export default function autoevaluacionEquipo(props) {
                 </ModalContent>
             </Modal>
         </div>
-    );  
+    );
 }
