@@ -88,35 +88,7 @@ async function listarXIdProyecto(req,res,next){
     }
 }
 
-function fullyRestructureArray(arregloOriginal){
-    const topLevelParents = arregloOriginal.filter(
-        (component) => component.idElementoPadre === 1
-    );
-    const restructuredArray = topLevelParents.map((parent) => {
-        const componentesHijos = restructureArray(arregloOriginal, parent.idComponente);
-
-        let nextSon;
-        if (componentesHijos != null) {
-            let stringCodigo = componentesHijos[componentesHijos.length - 1].codigo;
-            const lastDigit = parseInt(stringCodigo[stringCodigo.length - 1]) + 1;
-            stringCodigo = stringCodigo.slice(0, -1) + lastDigit;
-            nextSon = stringCodigo;
-        } else {
-            nextSon = parent.codigo + '.1';
-        }
-
-        return {
-            ...parent,
-            componentesHijos,
-            nextSon,
-        };
-    });
-    
-
-    return restructuredArray;
-}
-
-// Función para estructurar los datos en un arreglo jerárquico
+// Función para estructurar los datos en un arreglo
 function structureData(data) {
     const result = {};
   
