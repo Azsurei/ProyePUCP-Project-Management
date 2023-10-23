@@ -13,7 +13,7 @@ import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import { Collapse } from "react-collapse";
 import { useState } from "react";
 
-function CardTarea({ tarea, leftMargin, handleVerDetalle }) {
+function CardTarea({ tarea, leftMargin, handleVerDetalle, handleAddNewSon }) {
     const tieneHijos = true;
 
     const formattedStartDate = new Date(tarea.fechaInicio);
@@ -32,7 +32,7 @@ function CardTarea({ tarea, leftMargin, handleVerDetalle }) {
     return (
         <div className="containerCardYHijo">
             <div className="tareaCard">
-                {false && (
+                {tarea.tareasHijas.length !== 0 && (
                     <div className="containerChevron" onClick={toggleOpen}>
                         <img src="/icons/chevron-down.svg" />
                     </div>
@@ -95,7 +95,12 @@ function CardTarea({ tarea, leftMargin, handleVerDetalle }) {
                             </Button>
                         </DropdownTrigger>
                         <DropdownMenu aria-label="droMenTareas">
-                            <DropdownItem aria-label="addSon">
+                            <DropdownItem
+                                aria-label="addSon"
+                                onClick={() => {
+                                    handleAddNewSon(tarea);
+                                }}
+                            >
                                 Agregar hijo
                             </DropdownItem>
                             <DropdownItem
@@ -122,10 +127,12 @@ function CardTarea({ tarea, leftMargin, handleVerDetalle }) {
             </div>
 
             <Collapse isOpened={hijosIsOpen}>
-                {tarea.tareasHijas !== null && (
+                {tarea.tareasHijas.length !== 0 && (
                     <ListTareas
                         listTareas={tarea.tareasHijas}
                         leftMargin={"40px"}
+                        handleVerDetalle={handleVerDetalle}
+                        handleAddNewSon={handleAddNewSon}
                     ></ListTareas>
                 )}
             </Collapse>
@@ -137,6 +144,7 @@ export default function ListTareas({
     listTareas,
     leftMargin,
     handleVerDetalle,
+    handleAddNewSon,
 }) {
     return (
         <div className="tareasListContainer" style={{ marginLeft: leftMargin }}>
@@ -147,6 +155,7 @@ export default function ListTareas({
                         tarea={tarea}
                         leftMargin={leftMargin}
                         handleVerDetalle={handleVerDetalle}
+                        handleAddNewSon={handleAddNewSon}
                     ></CardTarea>
                 );
             })}
