@@ -15,6 +15,7 @@ routerPresupuesto.post("/insertarPresupuesto",presupuestoController.crear);
 routerPresupuesto.get("/listarLineasTodas/:idProyecto",presupuestoController.listarLineasTodas);
 routerPresupuesto.get("/listarPresupuesto/:idPresupuesto",presupuestoController.listarXIdPresupuesto);
 routerPresupuesto.put("/modificarPresupuesto",presupuestoController.modificar);
+
 //Listado monedas y tipos de transaccion e ingresos
 routerPresupuesto.get("/listarMonedasTodas",verifyToken, monedaController.listarTodas);
 routerPresupuesto.get("/listarTipoIngresosTodos",verifyToken, tipoIngresoController.listarTodos);    
@@ -23,7 +24,7 @@ routerPresupuesto.get("/listarTipoTransaccionTodos",verifyToken, tipoTransaccion
 // Ingresos
 routerPresupuesto.post("/insertarIngreso",ingresoController.crear);
 routerPresupuesto.post("/insertarLineaIngreso",ingresoController.crearLineaIngreso);
-routerPresupuesto.get("/listarLineaIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasXIdProyecto);
+routerPresupuesto.get("/listarLineaIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasGETXIdProyecto);
 routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
 

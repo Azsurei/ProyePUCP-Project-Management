@@ -686,3 +686,9 @@ Content-Type:  application/json
 ###LISTAR UN RIESGO
 GET http://localhost:8080/api/proyecto/catalogoRiesgos/listarunRiesgo/7 HTTP/1.1
 Content-Type:  application/json
+
+###LISTAR UN RIESGO
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXIdProyecto/50 HTTP/1.1
+Content-Type:  application/json
+
+
