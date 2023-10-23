@@ -88,6 +88,21 @@ async function listarXIdProyecto(req,res,next){
     }
 }
 
+async function eliminarTarea(req,res,next){
+    const {idTarea} = req.body;
+    const query = `CALL ELIMINAR_TAREA(?);`;
+    try {
+        await connection.query(query,[idTarea]);
+        res.status(200).json({
+            message: "Tarea eliminada e hijas tambien si tuviera"
+        });
+        console.log('Se elimino la tarea correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 // Función para estructurar los datos en un arreglo
 function structureData(data) {
     const result = {};
@@ -122,5 +137,6 @@ function structureData(data) {
 
 module.exports = {
     crear,
-    listarXIdProyecto
+    listarXIdProyecto,
+    eliminarTarea
 };

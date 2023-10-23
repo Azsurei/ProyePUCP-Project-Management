@@ -2232,3 +2232,13 @@ BEGIN
     SET descripcion = _descripcion
     WHERE idPlanContingencia = _idPlanContingencia;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_TAREA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_TAREA(
+    IN _idTarea INT
+)
+BEGIN
+    UPDATE Tarea SET activo = 0 WHERE idTarea = _idTarea;
+    UPDATE UsuarioXTarea SET activo = 0 WHERE idTarea = _idTarea;
+END$
