@@ -54,14 +54,15 @@ async function listarLineasXNombreFechas(req,res,next){
 }
 
 // Definir una función para obtener líneas de estimación de costo
-async function listarLineasXIdProyecto(idProyecto) {
-    const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
-    const [results] = await connection.query(query, [idProyecto]);
-    return results[0];
-}
+// async function listarLineasXIdProyecto(req,res,next) {
+//     const { idProyecto } = req.params;
+//     const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
+//     const [results] = await connection.query(query, [idProyecto]);
+//     return results[0];
+// }
 
 // Corregido
-async function listarEstimacionXIdProyecto(req,res,next) {
+async function listarLineasXIdProyecto(req,res,next) {
     const { idProyecto } = req.params;
     try {
         const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
@@ -90,6 +91,5 @@ module.exports = {
     crearLineaEstimacionCosto,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
-    eliminarLineaEstimacionCosto,
-    listarEstimacionXIdProyecto
+    eliminarLineaEstimacionCosto
 };
