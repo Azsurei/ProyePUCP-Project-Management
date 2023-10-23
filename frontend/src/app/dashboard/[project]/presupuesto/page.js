@@ -325,7 +325,7 @@ export default function Presupuesto(props) {
                                                                 ? "Cantidad inválida"
                                                                 : ""
                                                         }
-                                                        placeholder="1"
+                                                        placeholder="0"
                                                         labelPlacement="inside"
 
                                             />
