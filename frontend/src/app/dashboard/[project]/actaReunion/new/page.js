@@ -14,7 +14,7 @@ import {
     CardHeader,
     CardBody,
     CardFooter,
-    Button,
+    Button, Spacer,
 } from "@nextui-org/react";
 
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
@@ -24,6 +24,7 @@ import CardSelectedUser from "@/components/CardSelectedUser";
 
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
+import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 
 axios.defaults.withCredentials = true;
 
@@ -161,19 +162,13 @@ export default function crearActaReunion(props) {
 // *********************************************************************************************
     return (
         <div className="newMeetingArticle">
-            <div className="header">
-                <Breadcrumbs>
-                    <BreadcrumbsItem href="/" text="Inicio" />
-                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
-                    <BreadcrumbsItem href="/dashboard/Proyectos" text="Proyecto" />
-                    <BreadcrumbsItem href="/dashboard/Proyectos/Proyecto" text="Equipos" />
-                </Breadcrumbs>
-            </div>
-            <div className="titleAndBack flex justify-between items-center">
-                <div className="title">Crear Acta de Reunión</div>
-                <button className="backButton ml-2"> Volver </button>
-            </div>
-            
+            <Spacer y={4}></Spacer>
+            <HeaderWithButtons haveReturn={true}
+                               haveAddNew={false}
+                               hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
+                               hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
+                               breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Nueva Reunion'}
+                               btnText={'Volver'}>Crear Acta de Reunion</HeaderWithButtons>
             <div className="body m-5 mt-3">
                 <div className="mainInfo">
                     <Input 
