@@ -2109,7 +2109,7 @@ DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_X_IDRIESGO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RESPONSABLE_X_IDRIESGO(IN _idRiesgo INT)
 BEGIN
-    SELECT u.nombres, u.apellidos, u.correoElectronico, u.activo
+    SELECT u.correoElectronico, u.idUsuario, u.apellidos, u.nombres
 	FROM RiesgoXResponsable AS rr
     LEFT JOIN Usuario AS u ON rr.idResponsable = u.idUsuario
 	WHERE rr.idRiesgo = _idRiesgo AND rr.activo=1;
@@ -2178,4 +2178,58 @@ CREATE PROCEDURE ELIMINAR_RESPONSABLE(
 )
 BEGIN
     UPDATE RiesgoXResponsable SET activo = 0 WHERE idRiesgo = _idRiesgo AND idResponsable = _idResponsable;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_RIESGO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_RIESGO(
+    IN _idRiesgo INT,
+    IN _idProbabilidad INT,
+    IN _idImpacto INT,
+    IN _nombreRiesgo VARCHAR(500),
+    IN _fechaIdentificacion DATE,
+    IN _duenoRiesgo INT,
+    IN _detalleRiesgo VARCHAR(500),
+    IN _causaRiesgo VARCHAR(500),
+    IN _impactoRiesgo VARCHAR(500),
+    IN _estado VARCHAR(100)
+)
+BEGIN
+    UPDATE Riesgo 
+    SET idProbabilidad = _idProbabilidad,
+        idImpacto = _idImpacto,
+        nombreRiesgo = _nombreRiesgo,
+        idCatalogo = _idCatalogo,
+        fechaIdentificacion = _fechaIdentificacion,
+        duenoRiesgo = _duenoRiesgo,
+        detalleRiesgo = _detalleRiesgo,
+        causaRiesgo = _causaRiesgo,
+        impactoRiesgo = _impactoRiesgo,
+        estado = _estado
+    WHERE idRiesgo = _idRiesgo 
+    AND idResponsable = _idResponsable;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_PLANESRESPUESTA;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PLANESRESPUESTA(
+    IN _idPlanRespuesta INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+    UPDATE PlanRespuesta 
+    SET descripcion = _descripcion
+    WHERE idPlanRespuesta = _idPlanRespuesta;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_PLANESCONTINGENCIA;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PLANESCONTINGENCIA(
+    IN _idPlanContingencia INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+    UPDATE PlanContingencia 
+    SET descripcion = _descripcion
+    WHERE idPlanContingencia = _idPlanContingencia;
 END$

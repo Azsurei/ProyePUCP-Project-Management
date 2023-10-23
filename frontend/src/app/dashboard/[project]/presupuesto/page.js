@@ -5,10 +5,11 @@ import React from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-
+import MyCombobox from "@/components/ComboBox";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import TableBudget from "@/components/tableBudget";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 import {
@@ -41,6 +42,12 @@ export default function Presupuesto(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
+    const router = useRouter();
+
+    const volverMainDashboard = () => {
+        router.push("/dashboard/" + projectName + "=" + projectId);
+    };
     
     console.log(projectId);
     console.log(projectName);
@@ -50,71 +57,112 @@ export default function Presupuesto(props) {
     const [presupuestoId, setPresupuestoId] = useState(null);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+
+    let idHerramientaCreada;
+    let flag=0;
     useEffect(() => {
-        const stringURL =
-            "http://localhost:8080/api/proyecto/cronograma/listarPresupuesto";
-
-        axios
-            .post(stringURL, { idProyecto: projectId })
+        console.log(projectId);
+    
+        const stringURLListaHerramientas = `http://localhost:8080/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
+        
+    
+        axios.get(stringURLListaHerramientas)
             .then(function (response) {
-                const presupuestoData = response.data.cronograma;
-                console.log(presupuestoData);
-                setPresupuestoId(presupuestoData.idCronograma);
-                if (
-                    Math.abs(presupuestoData.presupuestoInicial - 0) < 0.001
-                
-                ) {
+                const herramientas = response.data.herramientas;
+    
+                // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 13
+                for (const herramienta of herramientas) {
+                    if (herramienta.idHerramienta === 13) {
+                        idHerramientaCreada = herramienta.idHerramientaCreada;
+                        console.log("idPresupuesto es:", idHerramientaCreada);
+                        flag = 1;
+                        break; // Puedes salir del bucle si has encontrado la herramienta
+                    }
+                }
+    
             
-                    onOpen();
-                } 
-                /*else {
-                    const tareasURL =
-                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                        projectId;
-                    axios
-                        .get(tareasURL)
-                        .then(function (response) {
-                            setListTareas(response.data.tareas);
-                            console.log(response.data.tareas);
-                            setIsLoadingSmall(false);
+                if (flag === 1) {
+    
+                    // Aquí encadenamos el segundo axios
+                    const stringURLListarPresupuesto = "http://localhost:8080/api/proyecto/presupuesto/listarPresupuesto/"+idHerramientaCreada;
+                    axios.get(stringURLListarPresupuesto)
+                        .then(response => {
+                            const presupuesto = response.data.presupuesto;
+                            if (presupuesto[0] && parseFloat(presupuesto[0].presupuestoInicial) === 0.00) {
+                                console.log("Presupuesto Nuevo");
+                                onOpen();
+                            } else {
+                                console.log("Si tiene presupuesto inicial");
+                            }
                         })
-                        .catch(function (error) {
-                            console.log(error);
+                        .catch(error => {
+                            console.error("Error al llamar a la API:", error);
                         });
-                }*/
-
-                setIsLoadingSmall(false);
-            })
-            .catch(function (error) {
-                console.log(error);
+                }
             });
     }, []);
+    
+
+
+    const [selectedMoneda, setselectedMoneda] = useState("");
+    const handleSelectedValueMoneda = (value) => {
+        setselectedMoneda(value);
+    };
+
+    const [monto, setMonto] = useState("");
 
 
 
-
-
-    const modificarPresupuesto = () => {
-        //Revisar Api cuando esté lista
-        const stringUrlmodificaPresupuesto = `http://localhost:8080/api/proyecto/presupuesto/modificarPresupuesto`;
-
-        console.log(projectId);
-
-        axios.post(stringUrlmodificaPresupuesto, {
-            idProyecto: projectId,
-            idMoneda: selectedMoneda,
-            monto:parseFloat(monto),
-            cantidadMeses:1,
-        })
-
-        .then(function (response) {
-            console.log(response);
-            console.log("Presupuesto modificado");
-        })
-        .catch(function (error) {
-            console.log(error);
+    function modificarPresupuesto() {
+        return new Promise((resolve, reject) => {
+            const stringUrlmodificaPresupuesto = `http://localhost:8080/api/proyecto/presupuesto/modificarPresupuesto`;
+            const stringURLListaHerramientas = `http://localhost:8080/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
+    
+            axios.get(stringURLListaHerramientas)
+                .then(function (response) {
+                    const herramientas = response.data.herramientas;
+                    let idPresupuestoCreado;
+    
+                    // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 13
+                    for (const herramienta of herramientas) {
+                        if (herramienta.idHerramienta === 13) {
+                            idPresupuestoCreado = herramienta.idHerramientaCreada;
+                            console.log("idPresupuesto es:", idPresupuestoCreado);
+                            break; // Puedes salir del bucle si has encontrado la herramienta
+                        }
+                    }
+    
+                    const data = {
+                        idMoneda: selectedMoneda,
+                        presupuestoInicial: parseFloat(monto),
+                        cantidadMeses: 3,
+                        idPresupuesto: idPresupuestoCreado
+                    };
+    
+                    axios.put(stringUrlmodificaPresupuesto, data)
+                        .then(response => {
+                            console.log(response.data.message); // Debería mostrar "Presupuesto modificado"
+                            console.log("Presupuesto SI Modificado");
+                            resolve(response);
+                        })
+                        .catch(error => {
+                            console.error('Error al modificar el presupuesto:', error);
+                            reject(error);
+                        });
+                });
         });
     }
+
+    const nuevoPresupuestoInicial = () => {
+        toast.promise(modificarPresupuesto, {
+            loading: "Registrando nuevo presupuesto...",
+            success: (data) => {
+                return "El presupuesto se agregó con éxito!";
+            },
+            error: "Error al agregar presupuesto",
+            position: "bottom-right",
+        });
+    };
 
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -123,6 +171,8 @@ export default function Presupuesto(props) {
     return (
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
+
+            <Toaster richColors closeButton={true}/>
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -171,7 +221,7 @@ export default function Presupuesto(props) {
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
-                                modificarPresupuesto();
+                                nuevoPresupuestoInicial();
                                 onClose();
                             };
                             return (
@@ -208,7 +258,9 @@ export default function Presupuesto(props) {
                                                 labelPlacement="outside"
                                                 startContent={
                                                     <div className="pointer-events-none flex items-center">
-                                                        <span className="text-default-400 text-small">{selectedMoneda===2 ? "S/" : "$"}</span>
+                                                        <span className="text-default-400 text-small">
+                                                            {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                        </span>
                                                     </div>
                                                 }
                                                 endContent={
@@ -226,7 +278,8 @@ export default function Presupuesto(props) {
                                         <Button
                                             color="danger"
                                             variant="light"
-                                            onPress={onClose}
+                                            onPress={volverMainDashboard}
+                                            
                                         >
                                             Cancelar
                                         </Button>

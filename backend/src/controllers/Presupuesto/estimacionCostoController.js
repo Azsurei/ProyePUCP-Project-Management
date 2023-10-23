@@ -60,6 +60,20 @@ async function listarLineasXIdProyecto(idProyecto) {
     return results[0];
 }
 
+// Corregido
+async function listarEstimacionXIdProyecto(req,res,next) {
+    const { idProyecto } = req.params;
+    try {
+        const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
+        const [results] = await connection.query(query, [idProyecto]);
+        const lineas = results[0];
+        res.status(200).json({lineas, message: "Estimacion costo listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function eliminarLineaEstimacionCosto(req,res,next){
     const {idLineaEstimacionCosto} = req.body;
     try {
@@ -76,5 +90,6 @@ module.exports = {
     crearLineaEstimacionCosto,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
-    eliminarLineaEstimacionCosto
+    eliminarLineaEstimacionCosto,
+    listarEstimacionXIdProyecto
 };
