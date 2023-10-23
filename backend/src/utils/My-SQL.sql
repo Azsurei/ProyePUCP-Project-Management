@@ -1064,7 +1064,6 @@ CREATE TABLE RiesgoXResponsable(
     idRiesgo INT,
     idResponsable INT,
     activo tinyint NOT NULL,
-    UNIQUE KEY (idRiesgo, idResponsable),
     FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo),
     FOREIGN KEY (idResponsable) REFERENCES Usuario (idUsuario)
 )

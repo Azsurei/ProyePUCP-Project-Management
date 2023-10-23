@@ -695,6 +695,49 @@ Content-Type:  application/json
   "idRiesgo": 7
 }
 
-###LISTAR UN RIESGO
-GET http://localhost:8080/api/proyecto/presupuesto/listarLineaXIdProyecto/100 HTTP/1.1
+###ACTUALIZAR RCC UN RIESGO
+DELETE http://localhost:8080/api/proyecto/catalogoRiesgos/eliminarRRC HTTP/1.1
 Content-Type:  application/json
+
+{
+  "idRiesgo": 20,
+  "idProbabilidad": 5,
+  "idImpacto": 5,
+  "nombreRiesgo": "Prueba1",
+  "fechaIdentificacion": "2023-10-20",
+  "duenoRiesgo": 97,
+  "detalleRiesgo": "Prueba2",
+  "causaRiesgo": "Prueba3",
+  "impactoRiesgo": "Prueba4",
+  "estado": "Activo",
+  "responsables": [],
+  "planesRespuesta": [
+    {
+      "idPlanRespuesta": 25,
+      "responsePlans": "PruebaInsertar1"
+    },
+    {
+      "idPlanRespuesta": 26,
+      "responsePlans": "PruebaInsertar2"
+    },
+    {
+      "idPlanRespuesta": 27,
+      "responsePlans": "PruebaInsertar3"
+    }
+  ],
+  "planesContingencia": [
+    {
+      "idPlanContingencia": 23,
+      "contingencyPlans": "PruebaInsertar1"
+    },
+    {
+      "idPlanContingencia": 24,
+      "contingencyPlans": "PruebaInsertar2"
+    },
+    {
+      "idPlanContingencia": 25,
+      "contingencyPlans": "PruebaInsertar3"
+    }
+  ]
+}
+

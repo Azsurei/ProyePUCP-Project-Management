@@ -33,6 +33,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../layout";
 import {ExportIcon} from "@/../public/icons/ExportIcon";
+import { set } from "date-fns";
 
 
 
@@ -56,7 +57,8 @@ export default function Presupuesto(props) {
     //States from Cronograma
     const [presupuestoId, setPresupuestoId] = useState(null);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+    const [validMonto, setValidMonto] = useState(true);
+    const [validcantMeses, setValidcantMeses] = useState(true);
 
     let idHerramientaCreada;
     let flag=0;
@@ -110,11 +112,12 @@ export default function Presupuesto(props) {
     };
 
     const [monto, setMonto] = useState("");
-
+    const [cantMeses,setCantMeses]=useState("");
 
 
     function modificarPresupuesto() {
         return new Promise((resolve, reject) => {
+            setIsLoadingSmall(true);
             const stringUrlmodificaPresupuesto = `http://localhost:8080/api/proyecto/presupuesto/modificarPresupuesto`;
             const stringURLListaHerramientas = `http://localhost:8080/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
     
@@ -135,7 +138,7 @@ export default function Presupuesto(props) {
                     const data = {
                         idMoneda: selectedMoneda,
                         presupuestoInicial: parseFloat(monto),
-                        cantidadMeses: 3,
+                        cantidadMeses: cantMeses,
                         idPresupuesto: idPresupuestoCreado
                     };
     
@@ -217,12 +220,31 @@ export default function Presupuesto(props) {
 
                 </div>
 
-                <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+                <Modal size='xl' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
-                                nuevoPresupuestoInicial();
-                                onClose();
+
+                                let Isvalid = true;
+                                if (parseFloat(monto) < 0 || isNaN(parseFloat(monto))) {
+                                    setValidMonto(false);
+                                    Isvalid = false;
+                                }
+
+                                if(parseInt(cantMeses) < 0 || isNaN(parseInt(cantMeses))){
+                                    setValidcantMeses(false);
+                                    Isvalid = false;
+
+                                }
+
+                                if(Isvalid === true){
+                                    nuevoPresupuestoInicial();     
+                                    onClose();
+                                    setIsLoadingSmall(false);
+                                }
+
+
+
                             };
                             return (
                                 <>
@@ -233,11 +255,19 @@ export default function Presupuesto(props) {
                                     <ModalBody>
                                         <p className="textIngreso">
                                                 Se creará el presupuesto para el Proyecto: 
-                                                <span className="nombreProyecto">{projectName}</span>
+                                                <span className="nombreProyecto">{" "+projectName}</span>
                                         </p>
+
+
+                                        <div className="modalPresupuestoTitulos">
+                                            <p>Moneda</p>
+                                            <p>Presupuesto Inicial</p>
+                                            <p className="cantMeses">Cantidad Meses</p>
+                                        </div>
                                         
                                         <div className="modalAddIngreso">
-                                            <div className="comboBoxMoneda">
+                                            <div className="comboBoxMoneda" style={{width: '9rem'}}>
+
                                             <MyCombobox
                                                 urlApi={stringUrlMonedas}
                                                 property="monedas"
@@ -246,31 +276,65 @@ export default function Presupuesto(props) {
                                                 onSelect={handleSelectedValueMoneda}
                                                 idParam="idMoneda"
                                                 initialName="Tipo Moneda"
-                                                inputWidth="2/3"
+                                                inputWidth="16"
+                                                widthCombo="9"
                                             />
 
                                             </div>
-                                        
-                                            <Input
-                                                value={monto}
-                                                onValueChange={setMonto}
-                                                placeholder="0.00"
-                                                labelPlacement="outside"
-                                                startContent={
-                                                    <div className="pointer-events-none flex items-center">
-                                                        <span className="text-default-400 text-small">
-                                                            {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
-                                                        </span>
-                                                    </div>
-                                                }
-                                                endContent={
-                                                    <div className="flex items-center">
 
-                                                    </div>
-                                                    }
+
+                                           <div style={{ flex: '100%' }}>
+
+                                                <Input
+                                                    value={monto}
+                                                    onValueChange={setMonto}
+                                                    placeholder="0"
+                                                    labelPlacement="outside"
                                                     type="number"
+                                                    isInvalid={!validMonto}
+                                                    onChange={()=>{setValidMonto(true)}}
+                                                    errorMessage={
+                                                        !validMonto
+                                                            ? "Monto inválido"
+                                                            : ""
+                                                    }
+                                                    
+                                                    startContent={
+                                                        <div className="pointer-events-none flex items-center">
+                                                            <span className="text-default-400 text-small">
+                                                                {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                            </span>
+                                                        </div>
+                                                    }
+        
+                                                    
+                                                />
+ 
+                                            </div>
+
+                                            <div style={{ flex: '55%' }}>
+
+                                                    <Input
+                                                        type="number"
+                                                        value={cantMeses}
+                                                        onValueChange={setCantMeses}
+                                                        isInvalid={!validcantMeses}
+                                                        onChange={()=>{setValidcantMeses(true)}}
+                                                        errorMessage={
+                                                            !validcantMeses
+                                                                ? "Cantidad inválida"
+                                                                : ""
+                                                        }
+                                                        placeholder="0"
+                                                        labelPlacement="inside"
+
                                             />
+                                            </div>
                                     
+                                    </div>
+
+                                    <div>
+                                        
                                     </div>
 
                                     </ModalBody>
