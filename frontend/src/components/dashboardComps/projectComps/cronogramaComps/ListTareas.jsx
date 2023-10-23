@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/ListTareas.css";
 import GroupUserIcons from "./GroupUserIcons";
 import {
@@ -13,7 +13,7 @@ import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import { Collapse } from "react-collapse";
 import { useState } from "react";
 
-function CardTarea({ tarea, leftMargin }) {
+function CardTarea({ tarea, leftMargin, handleVerDetalle, handleAddNewSon }) {
     const tieneHijos = true;
 
     const formattedStartDate = new Date(tarea.fechaInicio);
@@ -27,12 +27,12 @@ function CardTarea({ tarea, leftMargin }) {
 
     const toggleOpen = () => {
         setHijosIsOpen(!hijosIsOpen);
-    }
+    };
 
     return (
         <div className="containerCardYHijo">
             <div className="tareaCard">
-                {tarea.tareasHijas !== null && (
+                {tarea.tareasHijas.length !== 0 && (
                     <div className="containerChevron" onClick={toggleOpen}>
                         <img src="/icons/chevron-down.svg" />
                     </div>
@@ -49,7 +49,18 @@ function CardTarea({ tarea, leftMargin }) {
                     </div>
 
                     <div className="containerSelectedUsers">
-                        <GroupUserIcons></GroupUserIcons>
+                        {tarea.idEquipo !== null ? (
+                            <div className="tareaContainerSubteam">
+                                <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>
+                                <p>{tarea.equipo.nombre}</p>
+                            </div>
+                        ) : (
+                            <GroupUserIcons
+                                idTarea={tarea.idTarea}
+                                listUsers={tarea.usuarios}
+                                beImg={tarea.idTarea === 51}
+                            ></GroupUserIcons>
+                        )}
                     </div>
 
                     <div className="containerTareaState">
@@ -72,8 +83,8 @@ function CardTarea({ tarea, leftMargin }) {
                 </div>
 
                 <div className="relative flex justify-end items-center gap-2">
-                    <Dropdown>
-                        <DropdownTrigger>
+                    <Dropdown aria-label="droMenTareasMain">
+                        <DropdownTrigger aria-label="droMenTareasTrigger">
                             <Button
                                 size="md"
                                 radius="sm"
@@ -83,20 +94,45 @@ function CardTarea({ tarea, leftMargin }) {
                                 Ver opciones
                             </Button>
                         </DropdownTrigger>
-                        <DropdownMenu>
-                            <DropdownItem>Ver detalle</DropdownItem>
-                            <DropdownItem>Editar</DropdownItem>
-                            <DropdownItem>Eliminar</DropdownItem>
+                        <DropdownMenu aria-label="droMenTareas">
+                            <DropdownItem
+                                aria-label="addSon"
+                                onClick={() => {
+                                    handleAddNewSon(tarea);
+                                }}
+                            >
+                                Agregar hijo
+                            </DropdownItem>
+                            <DropdownItem
+                                aria-label="seeDetail"
+                                onClick={() => {
+                                    handleVerDetalle(tarea);
+                                }}
+                            >
+                                Ver detalle
+                            </DropdownItem>
+                            <DropdownItem aria-label="edit">
+                                Editar
+                            </DropdownItem>
+                            <DropdownItem
+                                aria-label="delete"
+                                className="text-danger"
+                                color="danger"
+                            >
+                                Eliminar
+                            </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
             </div>
 
             <Collapse isOpened={hijosIsOpen}>
-                {tarea.tareasHijas !== null && (
+                {tarea.tareasHijas.length !== 0 && (
                     <ListTareas
                         listTareas={tarea.tareasHijas}
                         leftMargin={"40px"}
+                        handleVerDetalle={handleVerDetalle}
+                        handleAddNewSon={handleAddNewSon}
                     ></ListTareas>
                 )}
             </Collapse>
@@ -104,15 +140,22 @@ function CardTarea({ tarea, leftMargin }) {
     );
 }
 
-export default function ListTareas({ listTareas, leftMargin }) {
+export default function ListTareas({
+    listTareas,
+    leftMargin,
+    handleVerDetalle,
+    handleAddNewSon,
+}) {
     return (
-        <div className="tareasListContainer" style={{ marginLeft: leftMargin}}>
+        <div className="tareasListContainer" style={{ marginLeft: leftMargin }}>
             {listTareas.map((tarea) => {
                 return (
                     <CardTarea
                         key={tarea.idTarea}
                         tarea={tarea}
                         leftMargin={leftMargin}
+                        handleVerDetalle={handleVerDetalle}
+                        handleAddNewSon={handleAddNewSon}
                     ></CardTarea>
                 );
             })}

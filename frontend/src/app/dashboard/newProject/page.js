@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
-import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/projectMenu.css";
-import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/newProjects.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/newProjects.css";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 import ListTools from "@/components/dashboardComps/projectComps/projectCreateComps/ListTools";
@@ -132,7 +132,7 @@ export default function newProject() {
 
     const removeSupervisor = (supervisor) => {
         const newSupervsList = selectedSupervisoresList.filter(
-            (item) => item.id !== supervisor.id
+            (item) => item.idUsuario !== supervisor.idUsuario
         );
         setSelectedSupervisoresList(newSupervsList);
         console.log(newSupervsList);
@@ -140,7 +140,7 @@ export default function newProject() {
 
     const removeMiembro = (miembro) => {
         const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
+            (item) => item.idUsuario !== miembro.idUsuario
         );
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);

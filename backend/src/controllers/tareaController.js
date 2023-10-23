@@ -56,24 +56,31 @@ async function listarXIdProyecto(req,res,next){
         const [resultsTareas] = await connection.query(query,[idProyecto]);
         tareas = resultsTareas[0];
         
+        
         for(const tarea of tareas){
             if (tarea.idEquipo != null){
                  //usuarios completo menos password
                  //nombre e id de subequipo
                  const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
                  const [equipo] = await connection.query(query2, [tarea.idEquipo]);
-                 tarea.equipo = equipo[0];
+                 tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
+                 tarea.usuarios = null;
+                 //listamos los participantes de dicho equipo
+                 const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+                 const [participantes] = await connection.query(query4, [tarea.idEquipo]);
+                 tarea.equipo.participantes = participantes[0]; 
              }else {
                  const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
                  const [usuarios] = await connection.query(query3, [tarea.idTarea]);
                  if(usuarios != null){
                      tarea.usuarios = usuarios[0];
                  }
+                 tarea.equipo = null;
              }
          }
-         console.log(tareas);
+         tareasOrdenadas = structureData(tareas);
          res.status(200).json({
-             tareas,
+            tareasOrdenadas,
              message: "Tareas listadas correctamente"
          });
     } catch (error) {
@@ -81,7 +88,55 @@ async function listarXIdProyecto(req,res,next){
     }
 }
 
+async function eliminarTarea(req,res,next){
+    const {idTarea} = req.body;
+    const query = `CALL ELIMINAR_TAREA(?);`;
+    try {
+        await connection.query(query,[idTarea]);
+        res.status(200).json({
+            message: "Tarea eliminada e hijas tambien si tuviera"
+        });
+        console.log('Se elimino la tarea correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+// Función para estructurar los datos en un arreglo
+function structureData(data) {
+    const result = {};
+  
+    // Organizar las tareas por idPadre
+    data.forEach((task) => {
+      const parentId = task.idPadre;
+      if (!result[parentId]) {
+        result[parentId] = [];
+      }
+      result[parentId].push(task);
+    });
+  
+    if (!result[null]) {
+      return [];
+    }
+  
+    // Función para agregar hijos a las tareas
+    function addChildren(task) {
+      task.tareasHijas  = result[task.idTarea] || [];
+      if (task.tareasHijas .length === 0) {
+        return;
+      }
+      task.tareasHijas .forEach(addChildren);
+    }
+  
+    // Agregar hijos a las tareas principales (con idPadre null)
+    result[null].forEach(addChildren);
+  
+    return result[null];
+  }
+
 module.exports = {
     crear,
-    listarXIdProyecto
+    listarXIdProyecto,
+    eliminarTarea
 };

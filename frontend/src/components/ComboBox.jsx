@@ -17,6 +17,9 @@ export default function Example({
     initialName,
     reloadData,
     inputWidth = 64,
+    onSelectValor,
+    valorParam,
+    widthCombo
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
@@ -74,20 +77,21 @@ export default function Example({
                     if (typeof onSelect === "function") {
                         onSelect(selectedItem[idParam]);
                     }
+                    if(typeof onSelectValor === "function"){
+                        onSelectValor(selectedItem[valorParam]);
+                    }
                 }}
             >
                 <div className="relative mt-1">
                     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                         <Combobox.Input
                             className={`w-${inputWidth} border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
-                            style={
-                                hasColor
-                                    ? {
-                                          backgroundColor:
-                                              selected[colorProperty],
-                                      }
-                                    : {}
-                            }
+                            style={{
+                                ...(widthCombo ? { width: `${widthCombo}rem` } : {}), 
+                                ...(hasColor
+                                    ? { backgroundColor: selected[colorProperty] }
+                                    : {})
+                            }}
                             displayValue={(object) => object[nameDisplay]} //lo que se muestra en el input
                             onChange={(event) => {
                                 setQuery(event.target.value);

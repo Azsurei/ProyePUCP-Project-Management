@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/ModalUsers.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ModalUsers.css";
 import ListUsers from "./ListUsers";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -27,9 +27,11 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 export const UserCardsContextNormal = React.createContext();
 
 export default function ModalUser({
+    listAllUsers,
     handlerModalClose,
     handlerModalFinished,
     excludedUsers,
+    idProyecto,
 }) {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
@@ -43,12 +45,7 @@ export default function ModalUser({
     const addUserList = (user) => {
         const newUserList = [
             ...listUsersSelect,
-            {
-                id: user.id,
-                name: user.name,
-                lastName: user.lastName,
-                email: user.email,
-            },
+            user
         ];
         setlistUsersSelected(newUserList);
         console.log(newUserList);
@@ -56,45 +53,96 @@ export default function ModalUser({
 
     const removeUserInList = (user) => {
         const newUserList = listUsersSelect.filter(
-            (item) => item.id !== user.id
+            (item) => item.idUsuario !== user.idUsuario
         );
         setlistUsersSelected(newUserList);
         console.log(newUserList);
     };
 
     const refreshList = () => {
-        const stringURL = "http://localhost:8080/api/usuario/listarUsuarios";
-        axios
-            .post(stringURL, {
-                nombreCorreo: filterValue,
-            })
-            .then(function (response) {
-                console.log(response);
-                const usersArray = response.data.usuarios.map((user) => {
-                    return {
-                        id: user.idUsuario,
-                        name: user.nombres,
-                        lastName: user.apellidos,
-                        email: user.correoElectronico,
-                    };
+        if (listAllUsers === false) {
+            const stringURL = `http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
+
+            axios
+                .get(stringURL)
+                .then(function (response) {
+                    console.log(response);
+                    // const usersArray = response.data.usuarios.map((user) => {
+                    //     return {
+                    //         id: user.idUsuario,
+                    //         name: user.nombres,
+                    //         lastName: user.apellidos,
+                    //         email: user.correoElectronico,
+                    //     };
+                    // });
+
+                    console.log(
+                        "se recibio el arreglo desde db: " + response.data.usuarios
+                    );
+                    console.log(
+                        "arreglo a previo ya seleccionado: " + excludedUsers
+                    );
+
+                    //quitamos los usuarios que ya fueron seleccionados
+                    const excludedUserIds = excludedUsers.map(
+                        (user) => user.idUsuario
+                    );
+                    const filteredUsers = response.data.usuarios.filter(
+                        (user) => !excludedUserIds.includes(user.idUsuario)
+                    );
+
+                    setListUsers(filteredUsers);
+                    console.log(filteredUsers);
+
+                    //setListUsers(usersArray);
+                    //console.log(usersArray);
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
+        } else {
+            const stringURL =
+                "http://localhost:8080/api/usuario/listarUsuarios";
+            axios
+                .post(stringURL, {
+                    nombreCorreo: filterValue,
+                })
+                .then(function (response) {
+                    console.log(response);
+                    // const usersArray = response.data.usuarios.map((user) => {
+                    //     return {
+                    //         id: user.idUsuario,
+                    //         name: user.nombres,
+                    //         lastName: user.apellidos,
+                    //         email: user.correoElectronico,
+                    //     };
+                    // });
 
-                console.log("se recibio el arreglo desde db: "+ usersArray);
-                console.log("arreglo a previo ya seleccionado: "+ excludedUsers);
+                    console.log(
+                        "se recibio el arreglo desde db: " + response.data.usuarios
+                    );
+                    console.log(
+                        "arreglo a previo ya seleccionado: " + excludedUsers
+                    );
 
-                //quitamos los usuarios que ya fueron seleccionados
-                const excludedUserIds = excludedUsers.map(user => user.id);
-                const filteredUsers = usersArray.filter(user => !excludedUserIds.includes(user.id));
+                    //quitamos los usuarios que ya fueron seleccionados
+                    const excludedUserIds = excludedUsers.map(
+                        (user) => user.idUsuario
+                    );
+                    const filteredUsers = response.data.usuarios.filter(
+                        (user) => !excludedUserIds.includes(user.idUsuario)
+                    );
 
-                setListUsers(filteredUsers);
-                console.log(filteredUsers);
+                    setListUsers(filteredUsers);
+                    console.log(filteredUsers);
 
-                //setListUsers(usersArray);
-                //console.log(usersArray);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                    //setListUsers(usersArray);
+                    //console.log(usersArray);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     };
 
     //useEffect(() => {
@@ -127,7 +175,10 @@ export default function ModalUser({
                             variant="faded"
                         />
                     </div>
-                    <Button className="bg-indigo-950 text-slate-50" onClick={refreshList}>
+                    <Button
+                        className="bg-indigo-950 text-slate-50"
+                        onClick={refreshList}
+                    >
                         Buscar
                     </Button>
                 </div>
@@ -140,7 +191,7 @@ export default function ModalUser({
                     </UserCardsContextNormal.Provider>
                 </div>
                 <div className="endButtons">
-                <Button
+                    <Button
                         color="danger"
                         variant="light"
                         onClick={handlerModalClose}

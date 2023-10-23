@@ -27,7 +27,9 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
     const [probability, setProbability] = useState(null);
+    const [valorProbability, setValorProbability] = useState(null);
     const [impact, setImpact] = useState(null);
+    const [valorImpact, setValorImpact] = useState(null);
     const [fechaInicio, setFechaInicio] = useState(null);
     const [isSelected, setIsSelected] = useState(true);
     const [modal1, setModal1] = useState(false);
@@ -56,8 +58,16 @@ export default function CatalogoDeRiesgosRegister(props) {
         setProbability(value);
     };
 
+    const handleSelectedValorChangeProbability = (value) => {
+        setValorProbability(value);
+    };
+
     const handleSelectedValueChangeImpact = (value) => {
         setImpact(value);
+    };
+
+    const handleSelectedValorChangeImpact = (value) => {
+        setValorImpact(value);
     };
 
     const toggleModal1 = () => {
@@ -89,7 +99,7 @@ export default function CatalogoDeRiesgosRegister(props) {
 
     const removeUser = (user) => {
         const newList = selectedMiembrosList1.filter(
-            (item) => item.id !== user.id
+            (item) => item.idUsuario !== user.idUsuario
         );
         setSelectedMiembrosList1(newList);
         console.log(newList);
@@ -177,6 +187,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             cause === "" ||
             impactDetail === "" ||
             selectedMiembrosList.length === 0 ||
+            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans === ""
             ) ||
@@ -205,23 +216,23 @@ export default function CatalogoDeRiesgosRegister(props) {
     const onSubmit = () => {
         const postData = {
             idProyecto: parseInt(projectId),
-            nombreRiesgo: name,
-            detalleRiesgo: detail,
-            fechaIdentificada: fechaInicio,
             idProbabilidad: probability,
             idImpacto: impact,
+            nombreRiesgo: name,
+            fechaIdentificacion: fechaInicio,
+            duenoRiesgo: selectedMiembrosList[0].idUsuario,
+            detalleRiesgo: detail,
+            causaRiesgo: cause,
+            impactoRiesgo: impactDetail,
             estado: isSelected ? "Activo" : "Inactivo",
-            idDueño: selectedMiembrosList[0].id,
-            causa: cause,
-            impacto: impactDetail,
-            responsePlans: responsePlans,
-            contingencyPlans: contingencyPlans,
-            responsablesRiesgos: selectedMiembrosList1,
+            responsables: selectedMiembrosList1,
+            planesRespuesta: responsePlans,
+            planesContigencia: contingencyPlans,
         };
         console.log("El postData es :", postData);
-        /*         axios
+        axios
             .post(
-                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
+                "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
             )
             .then((response) => {
@@ -233,7 +244,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
     };
 
     return (
@@ -297,7 +308,9 @@ export default function CatalogoDeRiesgosRegister(props) {
                             nameDisplay="nombreProbabilidad"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeProbability}
+                            onSelectValor={handleSelectedValorChangeProbability}
                             idParam="idProbabilidad"
+                            valorParam="valorProbabilidad"
                         />
                     </div>
                     <div className="containerComboCR">
@@ -312,7 +325,9 @@ export default function CatalogoDeRiesgosRegister(props) {
                             nameDisplay="nombreImpacto"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeImpact}
+                            onSelectValor={handleSelectedValorChangeImpact}
                             idParam="idImpacto"
+                            valorParam="valorImpacto"
                         />
                     </div>
                     <div className="containerComboCR">
@@ -340,9 +355,21 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <div className="labelSinDataUsuarioCR">
-                            {probability === null || impact === null
-                                ? "Severidad = Probabilidad x Impacto"
-                                : "Bien hecho"}
+                            {probability === null || impact === null ? (
+                                "Severidad = Probabilidad x Impacto"
+                            ) : valorProbability * valorImpact >= 0.18 ? (
+                                <div className="text-red-500 font-semibold">
+                                    Alta
+                                </div>
+                            ) : valorProbability * valorImpact >= 0.05 ? (
+                                <div className="text-orange-500 font-semibold">
+                                    Media
+                                </div>
+                            ) : (
+                                <div className="text-green-500 font-semibold">
+                                    Baja
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="containerComboCR">
@@ -370,12 +397,12 @@ export default function CatalogoDeRiesgosRegister(props) {
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
+                                        {component.nombres[0] +
+                                            component.apellidos[0]}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
+                                            `${component.nombres} ${component.apellidos}`
                                         )}
                                     </div>
                                 </div>
@@ -387,7 +414,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                         )}
                     </div>
                 </div>
-                <div className="containerComboCR">
+                <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
                         label1="Buscar"
@@ -395,19 +422,29 @@ export default function CatalogoDeRiesgosRegister(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    <ul>
+                    <div className="flex flex-wrap">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
-                                <div className="iconLabel2CR">
-                                    <p className="profilePicCR">
-                                        {component.name[0] +
-                                            component.lastName[0]}
-                                    </p>
-                                    <div className="labelDatoUsuarioCR">
-                                        {capitalizeWords(
-                                            `${component.name} ${component.lastName}`
-                                        )}
+                                <div className="containerUserMultiple">
+                                    <div className="iconLabel3CR">
+                                        <p className="profilePicCR">
+                                            {component.nombres[0] +
+                                                component.apellidos[0]}
+                                        </p>
+                                        <div className="labelDatoUsuarioCR">
+                                            {capitalizeWords(
+                                                `${component.nombres} ${component.apellidos}`
+                                            )}
+                                        </div>
                                     </div>
+                                    <img
+                                        src="/icons/icon-trash.svg"
+                                        alt="delete"
+                                        className="mb-4 cursor-pointer mr-2"
+                                        onClick={() => {
+                                            removeUser(component);
+                                        }}
+                                    />
                                 </div>
                             ))
                         ) : (
@@ -415,7 +452,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 ¡Seleccione los responsables del riesgo!
                             </div>
                         )}
-                    </ul>
+                    </div>
                 </div>
                 <div>
                     <Textarea
@@ -572,7 +609,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
@@ -610,9 +647,11 @@ export default function CatalogoDeRiesgosRegister(props) {
             </div>
             {modal1 && (
                 <ModalUser
+                    listAllUsers={false}
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedMiembrosList1}
+                    idProyecto={projectId}
                 ></ModalUser>
             )}
             {modal2 && (

@@ -8,6 +8,7 @@
     overflow-y: hidden;
 
     position: relative;
+    
 }
 
 .modalMainContainer{
@@ -57,11 +58,10 @@
     display: flex;
     justify-content: center;
 
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .containerGeneralLeft{
-    height: 100%;
     width: 100%;
     display: flex;
     padding: 2.5rem 2.5rem;
@@ -248,10 +248,14 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-
+    border: 2px transparent solid;
 
     padding: .8rem .8rem;
     gap: 10px;
+}
+
+.contUsers.invalid{
+    border-color: red;
 }
 
 .cardSubteam{

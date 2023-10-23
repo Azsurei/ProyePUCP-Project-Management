@@ -12,7 +12,7 @@ const estimacionCostoController = require("../controllers/Presupuesto/estimacion
 
 //Presupuesto
 routerPresupuesto.post("/insertarPresupuesto",presupuestoController.crear);
-routerPresupuesto.get("/listarLineasTodas/:idProyecto",presupuestoController.listarLineasTodas);
+routerPresupuesto.get("/listarLineasTodasXIdProyecto/:idProyecto",presupuestoController.listarLineasTodas);
 routerPresupuesto.get("/listarPresupuesto/:idPresupuesto",presupuestoController.listarXIdPresupuesto);
 routerPresupuesto.put("/modificarPresupuesto",presupuestoController.modificar);
 
@@ -24,14 +24,15 @@ routerPresupuesto.get("/listarTipoTransaccionTodos",verifyToken, tipoTransaccion
 // Ingresos
 routerPresupuesto.post("/insertarIngreso",ingresoController.crear);
 routerPresupuesto.post("/insertarLineaIngreso",ingresoController.crearLineaIngreso);
-routerPresupuesto.get("/listarLineaIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasGETXIdProyecto);
+routerPresupuesto.get("/listarLineasIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasXIdProyecto);
+//routerPresupuesto.get("/listarLineaXIdProyecto/:idProyecto",ingresoController.listarLineaXIdProyecto); //Corregido (Augusto)
 routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
 
 // Egresos
 routerPresupuesto.post("/insertarEgreso",egresoController.crear);
 routerPresupuesto.post("/insertarLineaEgreso",egresoController.crearLineaEgreso);
-routerPresupuesto.get("/listarLineaEgresoXIdProyecto/:idProyecto",egresoController.listarLineasXIdProyecto);
+routerPresupuesto.get("/listarLineasEgresoXIdProyecto/:idProyecto",egresoController.listarLineasXIdProyecto); //Corregido (Augusto)
 routerPresupuesto.get("/listarLineaEgresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",egresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEgreso);    
 
@@ -39,7 +40,8 @@ routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEg
 //Estimacion de costos
 routerPresupuesto.post("/insertarEstimacionCosto",estimacionCostoController.crear);
 routerPresupuesto.post("/insertarLineaEstimacionCosto",estimacionCostoController.crearLineaEstimacionCosto);
-routerPresupuesto.get("/listarLineaEstimacionCostoXIdProyecto/:idProyecto",estimacionCostoController.listarLineasXIdProyecto);
+routerPresupuesto.get("/listarLineasEstimacionCostoXIdProyecto/:idProyecto",estimacionCostoController.listarLineasXIdProyecto);
+//routerPresupuesto.get("/listarEstimacionXIdProyecto/:idProyecto",estimacionCostoController.listarEstimacionXIdProyecto); //Corregido (Augusto)
 routerPresupuesto.get("/listarLineaEstimacionCostoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",estimacionCostoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaCosto",estimacionCostoController.eliminarLineaEstimacionCosto);
 

@@ -207,3 +207,37 @@
     align-items: center; /* Alinea verticalmente si es necesario */
     gap: 2rem;
 }
+.nombreProyecto{
+    color: #000;
+    font-family: Montserrat;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+
+}
+
+.modalAddIngreso {
+    display: flex; /* Make it a flex container */
+    align-items: flex-start; /* Vertically center the children */
+    gap: 20px; /* Add some spacing between the elements */
+}
+
+.comboBoxMoneda {
+    flex: 1; /* Allow the combo box to grow and take available space */
+    transform: translateY(-9%);
+}
+
+/* Adjust Input styles as needed */
+.modalPresupuestoTitulos{
+    margin-top: 15px;
+    padding-left: 6px;
+    display: flex; /* Make it a flex container */
+    align-items: center; /* Vertically center the children */
+    justify-content: space-between; /* Espacio entre los elementos */
+
+    color: #000;
+    font-family: Montserrat;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+}

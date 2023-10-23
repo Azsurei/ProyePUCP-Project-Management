@@ -12,7 +12,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-
+import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -154,7 +154,12 @@ export default function Ingresos(props) {
 
                         </div>
                     </div>
-                    
+                    <div className="divListaIngreso">
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data}></IngresosList>
+                    </div>
 
                 
                 </div>

@@ -35,6 +35,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
 import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
+import ModalEliminateIngreso from "@/components/dashboardComps/projectComps/presupuestoComps/ModalEliminateIngreso";
 
 export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -47,11 +48,18 @@ export default function Ingresos(props) {
     //const router=userRouter();
     const [listUsers, setListUsers] = useState([]);
 
+    const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const toggleModal = (task) => {
+        setSelectedTask(task);
+        setModal1(!modal1);
+    };
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
 
-    const [modal1, setModal1] = useState(false);
+    
 
     const [filterValue, setFilterValue] = React.useState("");
 
@@ -126,7 +134,7 @@ export default function Ingresos(props) {
         },
         
     ];
-    
+
     return (
 
         
@@ -190,10 +198,10 @@ export default function Ingresos(props) {
                         </div>
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
+                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
+                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
+                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
                     </div>
 
                 
@@ -297,6 +305,7 @@ export default function Ingresos(props) {
                         }}
                     </ModalContent>
                 </Modal>
+                
         </div>
     );
 }

@@ -1,42 +1,85 @@
 import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link} from "@nextui-org/react";
-
-
-export default function ModalEliminateIngreso(modal, toggle, taskName) {
+import {useEffect, useState} from "react";
+import "@/styles/PopUpEliminateHU.css";
+import { set } from "date-fns";
+import axios from "axios";
+axios.defaults.withCredentials = true;
+export default function ModalEliminateIngreso({ modal, toggle, taskName , idLineaIngreso, refresh}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const [startModal, setStartModal] = useState(false);
 
+  useEffect(() => {
+    if (modal) {
+      setStartModal(true);
+      onOpen();
+      console.log(taskName);
+    }
+  }, []);
+  const Eliminate = (idLineaIngreso, onClose) => {
+    console.log(idLineaIngreso);
+    
+    const data = {
+      idLineaIngreso: idLineaIngreso // Ajusta el nombre del campo según la estructura esperada por el servidor
+    };
+
+    axios.delete("http://localhost:8080/api/proyecto/presupuesto/eliminarLineaIngreso", { data })
+        .then((response) => {
+            // Manejar la respuesta de la solicitud POST
+            console.log("Respuesta del servidor:", response.data);
+            console.log("Eliminado correcto");
+            // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+            const handleRefresh = async () => {
+              refresh();
+              console.log("refreshed");
+            };
+            handleRefresh();
+            onClose();
+        })
+        .catch((error) => {
+            // Manejar errores si la solicitud POST falla
+            console.error("Error al realizar la solicitud POST:", error);
+        });
+
+        
+       
+};
   return (
     <>
-      <Modal 
-        isOpen={modal} 
-        onOpenChange={toggle}
-        placement="top-center"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">¿Estás seguro que desea eliminar el siguiente ingreso?</ModalHeader>
-              <ModalBody>
-                <input
+    {startModal && (
+            <Modal 
+            isOpen={isOpen} 
+            onOpenChange={onOpenChange}
+            placement="top-center"
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">¿Estás seguro que desea eliminar el siguiente ingreso?</ModalHeader>
+                  <ModalBody>
+                  <input
                     type="text"
                     className="input-field"
-                    readonly
-                    value={taskName}
-                ></input>
-                
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
-                  Cancelar
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Aceptar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                    defaultValue={taskName} // Cambiar de value a defaultValue
+                    readOnly
+                  ></input>
+    
+                    
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="flat" onPress={onClose}>
+                      Cancelar
+                    </Button>
+                    <Button color="primary" onPress={() => Eliminate(idLineaIngreso, onClose)}>
+                      Aceptar
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+    )}
+
     </>
   );
 }

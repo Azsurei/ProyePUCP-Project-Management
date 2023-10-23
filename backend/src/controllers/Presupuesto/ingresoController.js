@@ -23,13 +23,8 @@ async function crearLineaIngreso(req,res,next){
 }
 
 // Definir una función para obtener líneas de ingreso
-async function listarLineasGETXIdProyecto(req,res,next){
-    const idProyecto = req.params.idProyecto;
-    const [results] = await listarLineasXIdProyecto(idProyecto);
-    return results[0];
-}
-
-async function listarLineasXIdProyecto(idProyecto) {
+async function listarLineasXIdProyecto(req,res,next){
+    const { idProyecto } = req.params;
     const query = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(?);`;
     const [results] = await connection.query(query, [idProyecto]);
     lineasIngreso = results[0];
@@ -66,6 +61,7 @@ async function eliminarLineaIngreso(req,res,next){
     try {
         const query = `CALL ELIMINAR_LINEA_INGRESO(?);`;
         await connection.query(query,[idLineaIngreso]);
+        console.log(`Se eliminó la comunicacion ${idLineaIngreso}!`);
         res.status(200).json({message: "Linea ingreso eliminada"});
     } catch (error) {
         next(error);
@@ -76,7 +72,6 @@ module.exports = {
     crear,
     crearLineaIngreso,
     listarLineasXNombreFechas,
-    listarLineasXIdProyecto,
-    listarLineasGETXIdProyecto,
-    eliminarLineaIngreso
+    eliminarLineaIngreso,
+    listarLineasXIdProyecto
 };

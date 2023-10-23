@@ -61,11 +61,25 @@
 
 }
 
+
+
 .containerSelectedUsers{
     width: 40%;
     padding: .5rem 0;
-
+    display: flex;
+    justify-content: center;
 }
+
+.tareaContainerSubteam{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: .5rem 0;
+}
+
+
 
 .containerTareaState{
     width: 20%;
