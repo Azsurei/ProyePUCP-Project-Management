@@ -97,24 +97,6 @@ export default function Ingresos(props) {
     const [monto, setMonto] = useState("");
 
     
-    const data = [
-        {
-            id: 1,
-            tipoIngreso: 'Ingeniero Industrial',
-            tipoPago: 'cant 4. ',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        {
-            id: 2,
-            tipoIngreso: 'Ingeniero Industrial',
-            tipoPago: 'cant 4.',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        
-    ];
-
     
     return (
 

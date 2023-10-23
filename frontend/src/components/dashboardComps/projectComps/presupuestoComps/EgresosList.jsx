@@ -8,7 +8,7 @@ import ModalEliminateIngreso from "./ModalEliminateIngreso";
 
 axios.defaults.withCredentials = true;
 
-function CardIngresos({
+function CardEgreso({
     tipoIngreso,
     IngresoObject,
     cantidad,
@@ -30,7 +30,6 @@ function CardIngresos({
     const imageIngresoOptions = {
         "Efectivo": "/icons/icon-Efectivo.svg",
         "Transferencia": "/icons/icon-transferencia.svg",
-        "Cheque": "/icons/icon-cheque.svg",
         "Licencia de Software": "/icons/icon-licencia.svg",
         "Ingeniero Industrial": "/icons/icon-ingeniero.svg",
         // Agrega más opciones según sea necesario
@@ -77,7 +76,7 @@ function CardIngresos({
     );
 }
 
-export default function IngresosList(props) {
+export default function EgresosList(props) {
     const router = useRouter();
 
     const { lista, refresh } = props;
@@ -127,7 +126,7 @@ export default function IngresosList(props) {
                         </div>
                         <ul className="ListIngresosProject">
                             {fechaGroups[fechaKey].map((component) => (
-                                <CardIngresos
+                                <CardEgreso
                                     key={component.idLineaIngreso}
                                     tipoIngreso={component.descripcion}
                                     IngresoObject={component}

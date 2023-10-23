@@ -35,6 +35,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
+import { set } from "date-fns";
 
 
 export default function Ingresos(props) {
@@ -46,7 +47,7 @@ export default function Ingresos(props) {
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
-    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXIdProyecto/100`;
+    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineaXIdProyecto/100`;
 
     //const router=userRouter();
 
@@ -66,7 +67,7 @@ export default function Ingresos(props) {
     //2 es estado de editar hito
 
     const [fecha, setFecha] = useState("");
-
+    const [activeRefresh, setactiveRefresh] = useState(false);
     const handleChangeFecha = (event) => {
         setFecha(event.target.value);
     };
@@ -129,6 +130,7 @@ export default function Ingresos(props) {
             }else{
                 console.log("No se encontró la herramienta");
             }
+            DataTable();
 
         })
         .catch(function (error) {
@@ -139,15 +141,28 @@ export default function Ingresos(props) {
         });
     }
 
-    const registrarLineaIngreso = () => {
-        toast.promise(insertarLineaIngreso, {
-            loading: "Registrando Ingreso...",
-            success: (data) => {
-                return "El ingreso se agregó con éxito!";
-            },
-            error: "Error al agregar ingreso",
-            position: "bottom-right",
-        });
+    const registrarLineaIngreso = async () => {
+        // toast.promise(insertarLineaIngreso, {
+        //     loading: "Registrando Ingreso...",
+        //     success: (data) => {
+        //         return "El ingreso se agregó con éxito!";
+        //     },
+        //     error: "Error al agregar ingreso",
+        //     position: "bottom-right",
+        // });
+        try {
+            toast.promise(insertarLineaIngreso, {
+                loading: "Registrando Ingreso...",
+                success: (data) => {
+                    return "El ingreso se agregó con éxito!";
+                },
+                error: "Error al agregar ingreso",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; // Lanza el error para que se propague
+        }
     };
 
 
@@ -155,6 +170,7 @@ export default function Ingresos(props) {
     
     const [selectedMoneda, setselectedMoneda] = useState("");
     const [descripcionLinea, setdescripcionLinea] = useState("");
+    
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
@@ -173,38 +189,29 @@ export default function Ingresos(props) {
     };
 
     const [monto, setMonto] = useState("");
-
-    const data = [
-        {
-            id: 1,
-            tipoIngreso: 'Ingreso por Efectivo',
-            tipoPago: 'Pago de Cliente',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        {
-            id: 2,
-            tipoIngreso: 'Ingreso por Transferencia',
-            tipoPago: 'Donacion',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        
-    ];
-    const [lineasIngreso, setLineasIngreso] = useState([]);
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineaIngresoXIdProyecto/${idProyecto}`);
-            const data = response.data;
-            setLineasIngreso(data);
-          } catch (error) {
-            console.error('Error al obtener las líneas de ingreso:', error);
-          }
-        };
     
-        fetchData();
-      }, [idProyecto]);
+    const [lineasIngreso, setLineasIngreso] = useState([]);
+
+    const DataTable = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineaXIdProyecto/${projectId}`);
+              const data = response.data.lineas;
+              setLineasIngreso(data);
+              console.log(`Esta es la data:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineas);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };
+
+        
+    useEffect(() => {
+    
+        DataTable();
+      }, [projectId]);
     
     return (
 
@@ -271,10 +278,7 @@ export default function Ingresos(props) {
                         </div>
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
+                        <IngresosList lista = {lineasIngreso} refresh ={DataTable}></IngresosList>
                     </div>
 
                 
@@ -283,9 +287,18 @@ export default function Ingresos(props) {
                 <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
                 <ModalContent>
                         {(onClose) => {
-                            const cerrarModal = () => {
-                                registrarLineaIngreso();
+                            const cerrarModal = async () => {
+                                try {
+                                    await registrarLineaIngreso();
+
+                                    
+                                } catch (error) {
+                                    console.error('Error al registrar la línea de ingreso o al obtener los datos:', error);
+                                }
+
                                 onClose();
+                                
+                                
                             };
                             return (
                                 <>

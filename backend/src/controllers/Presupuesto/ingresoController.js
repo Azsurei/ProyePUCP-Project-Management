@@ -71,6 +71,7 @@ async function eliminarLineaIngreso(req,res,next){
     try {
         const query = `CALL ELIMINAR_LINEA_INGRESO(?);`;
         await connection.query(query,[idLineaIngreso]);
+        console.log(`Se eliminó la comunicacion ${idLineaIngreso}!`);
         res.status(200).json({message: "Linea ingreso eliminada"});
     } catch (error) {
         next(error);
