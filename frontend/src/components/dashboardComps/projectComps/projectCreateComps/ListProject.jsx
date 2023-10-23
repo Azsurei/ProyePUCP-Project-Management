@@ -1,6 +1,6 @@
 "use client";
 
-import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/ListProject.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListProject.css";
 import { useEffect, useState } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";

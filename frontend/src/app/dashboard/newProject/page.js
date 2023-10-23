@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
-import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/projectMenu.css";
-import "@/styles/dashboardStyles/projectStyles/ProjectCreateStyles/newProjects.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.css";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/newProjects.css";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 import ListTools from "@/components/dashboardComps/projectComps/projectCreateComps/ListTools";
