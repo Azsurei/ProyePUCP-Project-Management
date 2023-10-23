@@ -56,6 +56,7 @@ async function listarXIdProyecto(req,res,next){
         const [resultsTareas] = await connection.query(query,[idProyecto]);
         tareas = resultsTareas[0];
         
+        
         for(const tarea of tareas){
             if (tarea.idEquipo != null){
                  //usuarios completo menos password
@@ -63,13 +64,11 @@ async function listarXIdProyecto(req,res,next){
                  const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
                  const [equipo] = await connection.query(query2, [tarea.idEquipo]);
                  tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
-                 tarea.usuarios = [];
-
+                 tarea.usuarios = null;
                  //listamos los participantes de dicho equipo
                  const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
                  const [participantes] = await connection.query(query4, [tarea.idEquipo]);
                  tarea.equipo.participantes = participantes[0]; 
-                 
              }else {
                  const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
                  const [usuarios] = await connection.query(query3, [tarea.idTarea]);
@@ -79,15 +78,75 @@ async function listarXIdProyecto(req,res,next){
                  tarea.equipo = null;
              }
          }
-         console.log(tareas);
+         tareasOrdenadas = structureData(tareas);
          res.status(200).json({
-             tareas,
+            tareasOrdenadas,
              message: "Tareas listadas correctamente"
          });
     } catch (error) {
         next(error);
     }
 }
+
+function fullyRestructureArray(arregloOriginal){
+    const topLevelParents = arregloOriginal.filter(
+        (component) => component.idElementoPadre === 1
+    );
+    const restructuredArray = topLevelParents.map((parent) => {
+        const componentesHijos = restructureArray(arregloOriginal, parent.idComponente);
+
+        let nextSon;
+        if (componentesHijos != null) {
+            let stringCodigo = componentesHijos[componentesHijos.length - 1].codigo;
+            const lastDigit = parseInt(stringCodigo[stringCodigo.length - 1]) + 1;
+            stringCodigo = stringCodigo.slice(0, -1) + lastDigit;
+            nextSon = stringCodigo;
+        } else {
+            nextSon = parent.codigo + '.1';
+        }
+
+        return {
+            ...parent,
+            componentesHijos,
+            nextSon,
+        };
+    });
+    
+
+    return restructuredArray;
+}
+
+// Función para estructurar los datos en un arreglo jerárquico
+function structureData(data) {
+    const result = {};
+  
+    // Organizar las tareas por idPadre
+    data.forEach((task) => {
+      const parentId = task.idPadre;
+      if (!result[parentId]) {
+        result[parentId] = [];
+      }
+      result[parentId].push(task);
+    });
+  
+    if (!result[null]) {
+      return [];
+    }
+  
+    // Función para agregar hijos a las tareas
+    function addChildren(task) {
+      task.hijos = result[task.idTarea] || [];
+      if (task.hijos.length === 0) {
+        return;
+      }
+      task.hijos.forEach(addChildren);
+    }
+  
+    // Agregar hijos a las tareas principales (con idPadre null)
+    result[null].forEach(addChildren);
+  
+    return result[null];
+  }
 
 module.exports = {
     crear,
