@@ -2206,8 +2206,7 @@ BEGIN
         causaRiesgo = _causaRiesgo,
         impactoRiesgo = _impactoRiesgo,
         estado = _estado
-    WHERE idRiesgo = _idRiesgo 
-    AND idResponsable = _idResponsable;
+    WHERE idRiesgo = _idRiesgo;
 END$
 
 DROP PROCEDURE IF EXISTS MODIFICAR_PLANESRESPUESTA;
