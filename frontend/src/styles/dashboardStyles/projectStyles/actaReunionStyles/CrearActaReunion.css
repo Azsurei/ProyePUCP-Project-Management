@@ -77,6 +77,20 @@
   background-color: #e0e0e0; /* Cambia el color de fondo en hover */
 }
 
+.ButtonsContainer {
+  display: flex; /* Utilizar flexbox para alinear elementos */
+  justify-content: flex-end; /* Alinear elementos al extremo derecho */
+  gap: 10px; /* Espacio entre los botones (ajusta el valor según lo necesites) */
+}
+
+.error-text {
+  color: red;
+  margin: 0; /* Para eliminar cualquier margen predeterminado */
+  padding: 0; /* Para eliminar cualquier relleno predeterminado */
+  font-size: 14px; /* Tamaño de fuente */
+  margin-right: 10px; /* Espacio entre el mensaje y los botones */
+}
+
 /*
 .addButton {
     background-color: #F0AE19;
