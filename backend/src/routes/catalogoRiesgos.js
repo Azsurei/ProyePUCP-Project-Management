@@ -23,7 +23,8 @@ routerCatalagoRiesgos.delete("/eliminarPlanContingencia", catalogoRiesgosControl
 routerCatalagoRiesgos.post("/insertarResponsable", catalogoRiesgosController.insertarResponsable);
 routerCatalagoRiesgos.delete("/eliminarResponsable", catalogoRiesgosController.eliminarResponsable);
 
-routerCatalagoRiesgos.delete("/eliminarRRC", catalogoRiesgosController.eliminarRRC);
 routerCatalagoRiesgos.post("/insertarRRC", catalogoRiesgosController.insertarRRC);
+routerCatalagoRiesgos.put("/modificarRiesgoRRC", catalogoRiesgosController.modificarRiesgoRRC);
+routerCatalagoRiesgos.delete("/eliminarRRC", catalogoRiesgosController.eliminarRRC);
 
 module.exports.routerCatalagoRiesgos = routerCatalagoRiesgos;

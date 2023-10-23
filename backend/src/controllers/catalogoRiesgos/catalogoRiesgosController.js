@@ -311,6 +311,40 @@ async function insertarRRC(req,res,next){
     }
 }
 
+//Modificar Riesgo, Responsables, Planes de Respuesta, Planes de Contingencia
+async function modificarRiesgoRRC(req,res,next){
+    //Insertar query aca
+    const {idRiesgo, idProbabilidad, idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo, detalleRiesgo, causaRiesgo, 
+        impactoRiesgo, estado,planesRespuesta,planesContingencia} = req.body;
+    const query = `CALL MODIFICAR_RIESGO(?,?,?,?,?,?,?,?,?,?);`;
+    try {
+        //Datos fijos de modificar
+        const [results] = await connection.query(query,[idRiesgo,idProbabilidad,idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo,
+            detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
+        // Iteracion modificar Planes de Respuesta
+        for(const planRespuesta of planesRespuesta){
+            await connection.execute(`
+                CALL MODIFICAR_PLANESRESPUESTA(
+                ${planRespuesta.idPlanRespuesta},
+                '${planRespuesta.responsePlans}');
+            `);
+        }
+        // Iteracion modificar Planes de Contingencia
+        for(const planContigencia of planesContingencia){
+            await connection.execute(`
+                CALL MODIFICAR_PLANESCONTINGENCIA(
+                ${planContigencia.idPlanContingencia},
+                '${planContigencia.contingencyPlans}');
+            `);
+        }     
+        res.status(200).json({
+            message: "Se ha modificado exitosamente"
+        });
+    } catch (error) {
+        console.error("Error en la modificación:", error);
+        res.status(500).send("Error en la modificación: " + error.message);
+    }
+}
 
 module.exports = {
     insertarRiesgo,
@@ -326,5 +360,6 @@ module.exports = {
     insertarResponsable,
     eliminarResponsable,
     eliminarRRC,
-    insertarRRC
+    insertarRRC,
+    modificarRiesgoRRC
 };
