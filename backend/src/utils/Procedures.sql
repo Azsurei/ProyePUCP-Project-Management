@@ -2109,7 +2109,7 @@ DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_X_IDRIESGO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RESPONSABLE_X_IDRIESGO(IN _idRiesgo INT)
 BEGIN
-    SELECT u.nombres, u.apellidos, u.correoElectronico, u.activo
+    SELECT u.correoElectronico, u.idUsuario, u.apellidos, u.nombres
 	FROM RiesgoXResponsable AS rr
     LEFT JOIN Usuario AS u ON rr.idResponsable = u.idUsuario
 	WHERE rr.idRiesgo = _idRiesgo AND rr.activo=1;
