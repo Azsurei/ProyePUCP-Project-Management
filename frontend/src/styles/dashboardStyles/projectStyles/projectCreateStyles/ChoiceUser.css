@@ -1,0 +1,66 @@
+.containerBusquedaUsuarios{
+    display: flex;
+    flex-direction: row;
+    padding: 2rem 2rem;
+    gap: 5%;
+}
+
+.SelectedUsersContainer{
+    flex: 1;
+
+    font-family: 'Montserrat';
+    color: #172B4D;
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
+
+.SelectedUsersContainer .containerToPopUpUsrSearch{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    background-color: rgba(9, 30, 66, 0.06);
+    width: 100%;
+    border-radius: 3px;
+    font-weight: 600;
+
+    padding: .2rem 0;
+
+    gap: .3rem;
+
+    cursor: pointer;
+}
+
+.SelectedUsersContainer .containerToPopUpUsrSearch p{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.SelectedUsersContainer .selectedUsersHeader{
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+
+
+/* SOBRE CARD */
+.listUsersContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    width: 100%;
+}
+
+
+
+
+@media (max-width: 1022px){
+    .containerBusquedaUsuarios{
+        flex-direction: column;
+        row-gap: 1.5rem;
+    }
+}

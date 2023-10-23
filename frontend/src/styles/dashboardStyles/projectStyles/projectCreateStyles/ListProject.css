@@ -1,0 +1,117 @@
+.ListProject .ProjectCard{
+
+    border-radius: 10px;
+    background: #FFF;
+    
+    
+    width: 100%; /* Ajusta el ancho según tus necesidades */
+    height: 250px;
+    
+    border-radius: 16px;
+    overflow: right;
+	
+}
+
+.ProjectCard{
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
+    padding: 2rem 2rem;
+}
+
+.ProjectCard:hover{
+
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
+    background-color: #5088e9c5; /* Cambia el color de fondo */
+    color: white;
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.ProjectCard:hover{
+    color: white;
+    transition: background-color 0.15s ease-in;
+
+}
+
+.ProjectCard:hover .cardDates{
+    color: white;
+}
+
+.ProjectCard:hover .membersIcon{
+    background-color: gray;
+    transition: background-color 0.15s ease;
+}
+
+.ListProject .ProjectCard .cardTitleProject{
+    font-size: 16px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-style: normal;
+}
+
+.divPictures{
+    list-style: none;
+    display: grid;
+    gap: 0px;
+    grid-template-columns: repeat(auto-fill, minmax(45px,1fr));
+    row-gap: 5px;
+    margin-top: 10px;
+
+}
+
+.ListProject{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-top: 1.8rem;
+    padding-bottom: 2.5rem;
+
+    display: grid;
+    row-gap: 1.5rem;
+    column-gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    height: auto;
+    
+}
+.cardDates{
+    color: #767676;
+    font-family: Montserrat;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 2rem; /* 177.778% */
+}
+
+.membersIcon{
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 100%;
+
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.teamTag{
+    margin-top: 1rem;
+    margin-bottom: 1.3rem;
+    border-radius: 5px;
+    background-color:#8DFFA6;
+    width: 12rem;
+    height: 2rem;
+    display: inline-block;
+    padding: 5px 5px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.teamTag p {
+    font-size: 14px;
+    margin: 0;
+    color: black;
+    font-style: normal;
+    font-weight: 600;
+    text-align: center;
+    font-family: Montserrat;
+  }

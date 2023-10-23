@@ -1,0 +1,127 @@
+.popUp, .overlay {
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    bottom: 0;
+    position: fixed;
+    font-family: Montserrat-Medium, sans-serif;
+    
+    
+}
+
+.overlay {
+    background: rgba(49,49,49,0.8);
+
+    
+}
+
+
+.modalUser{
+    z-index: 99999;
+    display: flex;
+    width: 29rem;
+    height: 568px;
+    padding: 30px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+    border-radius: 20px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: 1px solid #DFDFDF;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.buscarSup{
+
+    color: #172B4D;
+    /* Heading/H600 */
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 120% */
+}
+
+.divBuscador{
+
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.buttonOneUser{
+    border-radius: 5px;
+    background-color: #172B4D;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    height: 35px;
+    width: 6rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+
+
+    color: var(--color-text-inverse, #FFF);
+    text-align: center;
+    /* Heading/H400 */
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 114.286% */
+    margin-top: 2px;
+
+}
+
+.buttonTwoUser{
+    border-radius: 5px;
+    background-color: white;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    height: 35px;
+    width: 5rem;
+    color: red;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+    text-align: center;
+    /* Heading/H400 */
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 114.286% */
+    margin-top: 2px;
+
+
+}
+.divUsers{
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    /* padding-right: 4px;
+    padding-bottom: 10px; */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+
+
+.endButtons{
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 5px;
+}
