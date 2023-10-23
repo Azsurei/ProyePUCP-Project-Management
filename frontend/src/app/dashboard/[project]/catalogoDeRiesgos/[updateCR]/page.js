@@ -402,7 +402,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
         console.log("Added2:", addedArray2);
 
         const putData = {
-            idRiesgo: parseInt(props.params.updatePB),
+            idRiesgo: parseInt(props.params.updateCR),
             idProbabilidad: probability,
             idImpacto: impact,
             nombreRiesgo: name,
@@ -412,31 +412,30 @@ export default function CatalogoDeRiesgosUpdate(props) {
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
             estado: isSelected ? "Activo" : "Inactivo",
-            planRespuesta: modifiedArray,
-            planContigencia: modifiedArray1,
-            responsables: modifiedArray2,
+            planesRespuesta: modifiedArray,
+            planesContingencia: modifiedArray1,
         };
         console.log("Actualizado correctamente");
         console.log(putData);
         const postData = {
-            idRiesgo: parseInt(props.params.updatePB),
-            planRespuesta: addedArray,
-            planContigencia: addedArray1,
+            idRiesgo: parseInt(props.params.updateCR),
+            planesRespuesta: addedArray,
+            planesContingencia: addedArray1,
             responsables: addedArray2,
         };
         console.log("Agregado correctamente");
         console.log(postData);
         const deleteData = {
-            idRiesgo: parseInt(props.params.updatePB),
-            planRespuesta: deletedArray,
-            planContigencia: deletedArray1,
+            idRiesgo: parseInt(props.params.updateCR),
+            planesRespuesta: deletedArray,
+            planesContingencia: deletedArray1,
             responsables: deletedArray2,
         };
         console.log("Eliminado correctamente");
         console.log(deleteData);
-        /*         axios
+        axios
             .put(
-                "http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
+                "http://localhost:8080/api/proyecto/catalogoRiesgos/modificarRiesgoRRC",
                 putData
             )
             .then((response) => {
@@ -451,7 +450,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             });
         axios
             .post(
-                "http://localhost:8080/api/proyecto/backlog/hu/insertarCriterioRequisito",
+                "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRRC",
                 postData
             )
             .then((response) => {
@@ -466,7 +465,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             });
         axios
             .delete(
-                "http://localhost:8080/api/proyecto/backlog/hu/eliminarCriterioRequisito",
+                "http://localhost:8080/api/proyecto/catalogoRiesgos/eliminarRRC",
                 {
                     data: deleteData,
                 }
@@ -480,7 +479,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
-            }); */
+            }); 
     };
 
     return (
@@ -847,7 +846,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    router.back();
+                                    //router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
