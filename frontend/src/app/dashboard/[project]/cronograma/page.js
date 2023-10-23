@@ -56,6 +56,8 @@ export default function Cronograma(props) {
     //States from Tareas table
     const [listTareas, setListTareas] = useState([]);
 
+    const [tareaPadre, setTareaPadre] = useState(null);
+
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
 
@@ -89,6 +91,7 @@ export default function Cronograma(props) {
 
     const handlerGoToNew = () => {
         //limpiamos data por si acaso
+        setTareaPadre(null);
         setTareaName("");
         setTareaDescripcion("");
         //setear combo box
@@ -98,7 +101,41 @@ export default function Cronograma(props) {
         setSelectedUsers([]);
 
         setStateSecond(1);
-        setToggleNew(!toggleNew);
+        setToggleNew(true);
+    };
+
+    const handleVerDetalle = (tarea) => {
+        //toma una tarea, deberemos setear el estado de la pantalla en todo no editable y con los nuevos valores
+        setTareaPadre(tarea.idPadre); //VERIFICAR POSIBLE ERROR???????????????????????????????????????????????????????
+        setTareaName(tarea.sumillaTarea);
+        setTareaDescripcion(tarea.descripcion);
+        if (tarea.idEquipo === null) {
+            setSelectedUsers(tarea.usuarios);
+            setSelectedSubteam(null);
+        } else {
+            setSelectedSubteam(tarea.equipo);
+            setSelectedUsers([]);
+        }
+
+        setStateSecond(2);
+        setToggleNew(true);
+        //falta setear las fechas, lo mas complicado del mundo pipipi
+        //
+        //
+    };
+
+    const handleAddNewSon = (tareaPadre) => {
+        setTareaPadre(tareaPadre);
+        setTareaName("");
+        setTareaDescripcion("");
+        //setear combo box
+        setFechaInicio("");
+        setFechaFin("");
+        setSelectedSubteam(null);
+        setSelectedUsers([]);
+
+        setStateSecond(4);
+        setToggleNew(true);
     };
 
     const returnListOfUsers = (newUsersList) => {
@@ -157,14 +194,7 @@ export default function Cronograma(props) {
 
     function promiseRegistrarTarea() {
         return new Promise((resolve, reject) => {
-            const remappedUserList = selectedUsers.map((user) => {
-                return {
-                    ...user,
-                    idUsuario: user.id,
-                };
-            });
             setToggleNew(false);
-            resolve(true);
             const newURL =
                 "http://localhost:8080/api/proyecto/cronograma/insertarTarea";
             axios
@@ -175,7 +205,7 @@ export default function Cronograma(props) {
                         selectedSubteam === null
                             ? null
                             : selectedSubteam.idEquipo,
-                    idPadre: null,
+                    idPadre: tareaPadre !== null ? tareaPadre.idTarea : null,
                     idTareaAnterior: null,
                     sumillaTarea: tareaName,
                     descripcion: tareaDescripcion,
@@ -185,7 +215,7 @@ export default function Cronograma(props) {
                     cantPosteriores: 0,
                     horasPlaneadas: null,
                     usuarios:
-                        selectedUsers.length === 0 ? null : remappedUserList,
+                        selectedUsers.length === 0 ? null : selectedUsers,
                     subTareas: null,
                     tareasPosteriores: null,
                 })
@@ -200,24 +230,8 @@ export default function Cronograma(props) {
                         .get(tareasURL)
                         .then(function (response) {
                             console.log(response);
-
-                            const updatedArray = response.data.tareas.map(
-                                (item, index) => ({
-                                    ...item,
-                                    tareasHijas:
-                                        index === 0
-                                            ? [
-                                                  {
-                                                      ...item,
-                                                      idTarea: 9999,
-                                                      tareasHijas: null,
-                                                  },
-                                              ]
-                                            : null,
-                                })
-                            );
-                            setListTareas(updatedArray);
-                            console.log(response.data.tareas);
+                            setListTareas(response.data.tareasOrdenadas);
+                            console.log(response.data.tareasOrdenadas);
 
                             resolve(response);
                         })
@@ -292,26 +306,8 @@ export default function Cronograma(props) {
                     axios
                         .get(tareasURL)
                         .then(function (response) {
-                            const updatedArray = response.data.tareas.map(
-                                (item, index) => ({
-                                    ...item,
-                                    tareasHijas:
-                                        index === 0
-                                            ? [
-                                                  {
-                                                      ...item,
-                                                      idTarea: 9999,
-                                                      tareasHijas: null,
-                                                  },
-                                              ]
-                                            : null,
-                                })
-                            );
-                            //setListTareas(response.data.tareas);
-                            //console.log(response.data.tareas);
-
-                            setListTareas(updatedArray);
-                            console.log(updatedArray);
+                            setListTareas(response.data.tareasOrdenadas);
+                            console.log(response.data.tareasOrdenadas);
                             setIsLoadingSmall(false);
                         })
                         .catch(function (error) {
@@ -336,22 +332,7 @@ export default function Cronograma(props) {
         setValidAsigned(true);
     }, [selectedUsers]);
 
-    const handleVerDetalle = (tarea) => {
-        //toma una tarea, deberemos setear el estado de la pantalla en todo no editable y con los nuevos valores
-        setTareaName(tarea.sumillaTarea);
-        setTareaDescripcion(tarea.descripcion);
-        if (tarea.idEquipo === null) {
-            setSelectedUsers(tarea.usuarios);
-            setSelectedSubteam(null);
-        } else {
-            setSelectedSubteam(tarea.equipo);
-            setSelectedUsers([]);
-        }
-
-        setStateSecond(1);
-        setToggleNew(true);
-        //falta setear las fechas, lo mas complicado del mundo pipipi
-    };
+    
 
     return (
         <div className="cronogramaDiv">
@@ -461,6 +442,7 @@ export default function Cronograma(props) {
                         listTareas={listTareas}
                         leftMargin={"0px"}
                         handleVerDetalle={handleVerDetalle}
+                        handleAddNewSon={handleAddNewSon}
                     ></ListTareas>
                 </div>
             </div>
@@ -473,7 +455,9 @@ export default function Cronograma(props) {
                         haveReturn={true}
                         haveAddNew={false}
                         //handlerAddNew={handlerGoToNew}
-                        handlerReturn={handlerGoToNew}
+                        handlerReturn={()=>{
+                            setToggleNew(false);
+                        }}
                         //newPrimarySon={ListComps.length + 1}
                         breadcrump={
                             "Inicio / Proyectos / " +
@@ -487,6 +471,8 @@ export default function Cronograma(props) {
                         {stateSecond === 3 && "Editar tarea"}
                         {stateSecond === 4 && "Agregar tarea hija"}
                     </HeaderWithButtonsSamePage>
+
+                    {stateSecond === 4 && (<p>Esta tarea sera hija de la tarea "{tareaPadre.sumillaTarea}"</p>)}
 
                     <div className="contFirstRow">
                         <div className="contNombre">

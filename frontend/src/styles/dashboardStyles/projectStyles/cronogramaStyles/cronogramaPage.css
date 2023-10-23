@@ -8,6 +8,7 @@
     overflow-y: hidden;
 
     position: relative;
+    
 }
 
 .modalMainContainer{
@@ -57,11 +58,10 @@
     display: flex;
     justify-content: center;
 
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .containerGeneralLeft{
-    height: 100%;
     width: 100%;
     display: flex;
     padding: 2.5rem 2.5rem;
