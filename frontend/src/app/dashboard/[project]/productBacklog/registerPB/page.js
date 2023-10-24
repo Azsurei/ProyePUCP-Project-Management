@@ -1,10 +1,10 @@
 "use client";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
-import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/FContainerAsWantFor";
+import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/ContainerAsWantFor";
 import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/FContainerScenario";
-import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/FContainerRequirement";
-import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/FDescriptionRequirement";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/FIconLabel";
+import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/ContainerRequirement";
+import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/DescriptionRequirement";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";

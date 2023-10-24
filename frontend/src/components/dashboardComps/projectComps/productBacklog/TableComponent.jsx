@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 axios.defaults.withCredentials = true;
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/FIconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import ButtonEliminateIcon from './ButtonEliminateIcon';
 function TableComponent({ /*urlApi*/ data , columns, toggleModal, rowComponent}) {
 
