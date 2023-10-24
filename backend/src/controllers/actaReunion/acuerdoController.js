@@ -1,12 +1,13 @@
 const connection = require("../../config/db");
-
+const responsableAcuerdoController = require("./responsableAcuerdoController");
 
 async function crear(req,res,next){
-    const {idTemaReunion,descripcion,fechaObjetivo} = req.body;
+    const {idTemaReunion,descripcion,fechaObjetivo,responsables} = req.body;
     try {
-        const query = `CALL INSERTAR_ACUERDO(?,?,?);`;
-        await connection.query(query,[idTemaReunion,descripcion,fechaObjetivo]);
-        res.status(200).json({message: "Acuerdo creado"});
+        idAcuerdo = await funcCrear(idTemaReunion,descripcion,fechaObjetivo,responsables);
+        res.status(200).json({
+            idAcuerdo,
+            message: "Acuerdo creado"});
     } catch (error) {
         next(error);
     }
@@ -15,9 +16,8 @@ async function crear(req,res,next){
 async function listarXIdTemaReunion(req,res,next){
     const {idTemaReunion} = req.params;
     try {
-        const query = `CALL LISTAR_ACUERDO_X_ID_TEMA_REUNION(?);`;
-        const [results] = await connection.query(query,[idTemaReunion]);
-        const acuerdos = results[0];
+        
+        const acuerdos = await funcListarXIdTemaReunion(idTemaReunion);
         res.status(200).json({
             acuerdos,
             message: "Acuerdos listados"});
@@ -26,8 +26,38 @@ async function listarXIdTemaReunion(req,res,next){
     }
 }
 
+async function funcCrear(idTemaReunion,descripcion,fechaObjetivo,responsables){
+    try {
+        const query = `CALL INSERTAR_ACUERDO(?,?,?);`;
+        const [results]=await connection.query(query,[idTemaReunion,descripcion,fechaObjetivo]);
+        idAcuerdo = results[0][0].idAcuerdo;
+        for(responsable of responsables){
+            responsableAcuerdoController.funcCrear(idAcuerdo,responsable.idUsuarioXRolXProyecto);
+        }
+    } catch (error) {
+        next(error);
+    }
+    return idAcuerdo;
+}
+
+async function funcListarXIdTemaReunion(idTemaReunion){
+    let acuerdos;
+    try {
+        const query = `CALL LISTAR_ACUERDO_X_ID_TEMA_REUNION(?);`;
+        const [results] = await connection.query(query,[idTemaReunion]);
+        acuerdos = results[0];
+    } catch (error) {
+        console.error("Error al listar comentarios de reunion:", error);
+        throw error; // Reenviar el error para ser manejado por el middleware de manejo de errores
+    }
+    return acuerdos;
+}
+
+
 
 module.exports = {
     crear,
-    listarXIdTemaReunion
+    listarXIdTemaReunion,
+    funcCrear,
+    funcListarXIdTemaReunion
 }
