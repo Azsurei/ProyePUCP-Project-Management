@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { SmallLoadingScreen } from "../layout";
 import axios from "axios";
 
@@ -12,91 +13,88 @@ import {
     Textarea,
     Radio,
     RadioGroup,
-    Modal, 
-    ModalContent, 
-    ModalHeader, 
-    ModalBody, 
-    ModalFooter, 
-    useDisclosure
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 axios.defaults.withCredentials = true;
 
-const users = [
-    {
-        idUsuario: 1,
-        nombres: "Juan",
-        apellidos: "Perez",
-    },
-    {
-        idUsuario: 2,
-        nombres: "Juan",
-        apellidos: "Perez",
-    },
-    {
-        idUsuario: 3,
-        nombres: "Juan",
-        apellidos: "Perez",
-    },
-    {
-        idUsuario: 4,
-        nombres: "Juan",
-        apellidos: "Perez",
-    },
-    {
-        idUsuario: 5,
-        nombres: "Juan",
-        apellidos: "Perez",
-    },
-];
-
 export default function autoevaluacionEquipo(props) {
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { data: session } = useSession();
+    const userId = session?.user?.id.toString();
+
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+
+    const [initialEvaluations, setInitialEvaluations] = useState([]);
     const [formState, setFormState] = useState("initial"); // "initial", "modified"
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    setIsLoadingSmall(false);
-
-    const initialEvaluations = users.map((user) => ({
-        userId: user.idUsuario,
-        criteria: {
-            technicalDomain: 0,
-            workCommitment: 0,
-            teamCommunication: 0,
-            projectComprehension: 0,
-        },
-        observations: "",
-    }));
+    useEffect(() => {
+        axios
+            .get(
+                `http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/` +
+                    projectId +
+                    `/` +
+                    userId
+            )
+            .then((response) => {
+                const evaluaciones = response.data.evaluados;
+                setInitialEvaluations(evaluaciones);
+                setUsersEvaluation(evaluaciones);
+            })
+            .catch((error) => {
+                console.error("Error al obtener las evaluaciones.", error);
+            });
+        setIsLoadingSmall(false);
+    }, []);
 
     const [usersEvaluation, setUsersEvaluation] = useState(initialEvaluations);
 
-    const handleCriterionRatingChange = (userId, criterionName, newRating) => {
+    const handleCriterionRatingChange = (
+        idUsuarioEvaluado,
+        idCriterioEvaluacion,
+        nuevoPuntaje
+    ) => {
         setUsersEvaluation((prevState) => {
             return prevState.map((item) => {
-                if (item.userId === userId) {
-                    return {
-                        ...item,
-                        criteria: {
-                            ...item.criteria,
-                            [criterionName]: newRating,
-                        },
-                    };
+                if (item.idUsuarioEvaluado === idUsuarioEvaluado) {
+                    const criterioIndex = item.criterios.findIndex(
+                        (criterio) =>
+                            criterio.idCriterioEvaluacion ===
+                            idCriterioEvaluacion
+                    );
+
+                    if (criterioIndex !== -1) {
+                        const newCriterios = [...item.criterios];
+                        newCriterios[criterioIndex] = {
+                            ...newCriterios[criterioIndex],
+                            nota: nuevoPuntaje,
+                        };
+
+                        return {
+                            ...item,
+                            criterios: newCriterios,
+                        };
+                    }
                 }
                 return item;
             });
         });
     };
 
-    const handleCommentChange = (userId, newComment) => {
+    const handleCommentChange = (idUsuarioEvaluado, nuevaObservacion) => {
         setUsersEvaluation((prevState) => {
             return prevState.map((item) => {
-                if (item.userId === userId) {
-                    return { ...item, comment: newComment };
+                if (item.idUsuarioEvaluado === idUsuarioEvaluado) {
+                    return { ...item, observaciones: nuevaObservacion };
                 }
                 return item;
             });
@@ -125,22 +123,11 @@ export default function autoevaluacionEquipo(props) {
     }, [usersEvaluation]);
 
     const renderMember = (member) => {
-        const userEvaluationData = usersEvaluation.find(
-            (item) => item.userId === member.idUsuario
-        );
-
-        const criteria = [
-            { name: "Dominio técnico", key: "technicalDomain" },
-            { name: "Compromiso con los trabajos", key: "workCommitment" },
-            { name: "Comunicación con los compañeros", key: "teamCommunication" },
-            { name: "Comprensión del proyecto", key: "projectComprehension" },
-        ];
-
         return (
             <Card className="w-full">
                 <CardHeader className="bg-[#172B4D] text-[#FFFFFF] montserrat text-2xl font-medium p-4">
                     <h3>
-                        {member.nombres} {member.apellidos}
+                        {member.nombreEvaluado} {member.apellidoEvaluado}
                     </h3>
                 </CardHeader>
                 <CardBody className="bg-[#EAEAEA]">
@@ -148,25 +135,23 @@ export default function autoevaluacionEquipo(props) {
                         <h4 className="montserrat font-semibold">
                             Criterios de evaluación:
                         </h4>
-                        {criteria.map((criterion) => (
+                        {member.criterios.map((criterio) => (
                             <div
-                                key={criterion.key}
+                                key={criterio.idCriterioEvaluacion}
                                 className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8"
                             >
                                 <div>
                                     <label className="w-full font-medium break-words">
-                                        {criterion.name}:
+                                        {criterio.criterio}:
                                     </label>
                                 </div>
                                 <RadioGroup
                                     orientation="horizontal"
-                                    defaultValue={userEvaluationData.criteria[
-                                        criterion.key
-                                    ].toString()}
+                                    defaultValue={criterio.nota.toString()}
                                     onChange={(e) =>
                                         handleCriterionRatingChange(
-                                            member.idUsuario,
-                                            criterion.key,
+                                            member.idUsuarioEvaluado,
+                                            criterio.idCriterioEvaluacion,
                                             parseInt(e.target.value)
                                         )
                                     }
@@ -214,7 +199,7 @@ export default function autoevaluacionEquipo(props) {
                             placeholder="Registre algunas observaciones..."
                             onChange={(e) =>
                                 handleCommentChange(
-                                    member.idUsuario,
+                                    member.idUsuarioEvaluado,
                                     e.target.value
                                 )
                             }
@@ -229,9 +214,14 @@ export default function autoevaluacionEquipo(props) {
         <div className="flex flex-col p-8 w-full h-full">
             <div className="space-x-4 mb-2">
                 <Breadcrumbs>
-                    <BreadcrumbsItem href="/dashboard" text={"Inicio"}></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
                     <BreadcrumbsItem text={"Proyectos"}></BreadcrumbsItem>
-                    <BreadcrumbsItem text={"[Nombre del proyecto]"}></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"[Nombre del proyecto]"}
+                    ></BreadcrumbsItem>
                 </Breadcrumbs>
             </div>
             <h2 className="space-x-4 mb-2 montserrat text-[#172B4D] font-bold text-3xl text-gray-700">
@@ -248,7 +238,11 @@ export default function autoevaluacionEquipo(props) {
                 </Button>
             </div>
             <div className="flex flex-col justify-between items-center gap-8 mb-4">
-                {users.map((user) => renderMember(user))}
+                {usersEvaluation.map((user) => (
+                    <div key={user.idUsuarioEvaluado} className="w-full">
+                        {renderMember(user)}
+                    </div>
+                ))}
             </div>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
