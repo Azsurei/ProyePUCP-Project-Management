@@ -487,8 +487,9 @@ CREATE TABLE Acuerdo (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE AcuerdoXUsuarioXRolXProyecto (
-	idAcuerdoXUsuarioXRolXProyecto INT AUTO_INCREMENT PRIMARY KEY,
+DROP TABLE IF EXISTS ResponsableAcuerdo;
+CREATE TABLE ResponsableAcuerdo (
+	idResponsableAcuerdo INT AUTO_INCREMENT PRIMARY KEY,
     idAcuerdo 	INT,
     idUsuarioXRolXProyecto INT,
     activo TINYINT,
