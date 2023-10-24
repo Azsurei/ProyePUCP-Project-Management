@@ -170,6 +170,7 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCanal}
                             idParam="idCanal"
+                            initialName="Seleccione un canal"
                         />
                     </div>
                     <div className="containerComboMC">
@@ -185,6 +186,7 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeFrecuency}
                             idParam="idFrecuencia"
+                            initialName="Seleccione una frecuencia"
                         />
                     </div>
                     <div className="containerComboMC">
@@ -200,18 +202,19 @@ export default function MatrizComunicacionesRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeFormat}
                             idParam="idFormato"
+                            initialName="Seleccione un formato"
                         />
                     </div>
                     <div className="containerButtonMC">
                         <ButtonIconLabel
                             icon="/icons/icon-searchBar.svg"
-                            label1="Responsable"
-                            label2="de comunicar"
+                            label1="Buscar"
+                            label2="responsable"
                             className="iconLabelButtonMC"
                             onClickFunction={toggleModal2}
                         />
-                        {selectedMiembrosList.map((component) => {
-                            return (
+                        {selectedMiembrosList.length > 0 ? (
+                            selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2MC">
                                     <p className="profilePicMC">
                                         {component.nombres[0] +
@@ -223,8 +226,12 @@ export default function MatrizComunicacionesRegister(props) {
                                         )}
                                     </div>
                                 </div>
-                            );
-                        })}
+                            ))
+                        ) : (
+                            <div className="labelSinDataUsuarioMC">
+                                ¡Seleccione un responsable de comunicar!
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div>

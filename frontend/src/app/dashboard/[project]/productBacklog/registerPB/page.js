@@ -311,6 +311,7 @@ export default function ProductBacklogRegister(props) {
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
                                 reloadData={reloadData}
+                                initialName="Seleccione una épica"
                             />
                             <button
                                 className="w-20 h-20"
@@ -346,6 +347,7 @@ export default function ProductBacklogRegister(props) {
                             colorProperty="RGB"
                             onSelect={handleSelectedValueChangePriority}
                             idParam="idHistoriaPrioridad"
+                            initialName="Seleccione una prioridad"
                         />
                     </div>
                     <div className="createdBy containerCombo">
@@ -382,6 +384,7 @@ export default function ProductBacklogRegister(props) {
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}
                             idParam="idHistoriaEstado"
+                            initialName="Seleccione un estado"
                         />
                     </div>
                 </div>

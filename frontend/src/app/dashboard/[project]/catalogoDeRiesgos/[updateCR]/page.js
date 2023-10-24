@@ -659,7 +659,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    <div className="flex flex-wrap">
+                    <div className="containerUserMultipleGrid">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
                                 <div className="containerUserMultiple">

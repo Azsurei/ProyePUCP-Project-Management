@@ -69,6 +69,12 @@
     margin-bottom: 1rem;
 }
 
+.containerUserMultipleGrid{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+}
+
 .containerUserMultiple{
     display: flex;
     align-items: center;
