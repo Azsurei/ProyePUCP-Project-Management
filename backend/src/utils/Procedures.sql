@@ -509,6 +509,158 @@ CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(1)
 ## RESTANTE: COMPLETAR LOS INSERT Y LISTAR DE TODA LA LOGICA DE ACTA REUNION Y CREAR LOS CONTROLLERS POR CADA TABLA
 #####################
 
+DROP PROCEDURE IF EXISTS INSERTAR_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ACUERDO(
+    IN _idTemaReunion INT,
+    IN _descripcion VARCHAR(500),
+    IN _fechaObjetivo  DATE
+)
+BEGIN
+	DECLARE _idAcuerdo INT;
+    
+	INSERT INTO Acuerdo(idTemaReunion,descripcion,fechaObjetivo,activo)
+    VALUES(_idTemaReunion,_descripcion,_fechaObjetivo,1);
+    
+    SET _idAcuerdo = @@last_insert_id;
+    SELECT _idAcuerdo AS idAcuerdo;
+END$
+
+CALL INSERTAR_ACUERDO(1, 'Ejemplo de descripción', '2023-10-23');
+
+
+DROP PROCEDURE IF EXISTS LISTAR_ACUERDO_X_ID_TEMA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACUERDO_X_ID_TEMA_REUNION(
+    IN _idTemaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM Acuerdo 
+    WHERE idTemaReunion = _idTemaReunion 
+    AND activo=1;
+END$
+
+CALL LISTAR_ACUERDO_X_ID_TEMA_REUNION(1);
+
+--------------------------
+-- Responsables de acuerdo
+--------------------------
+
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABLE_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABLE_ACUERDO(
+    IN _idAcuerdo INT,
+    IN _idUsuarioXRolXProyecto INT
+)
+BEGIN
+	DECLARE _idResponsableAcuerdo INT;
+    
+	INSERT INTO ResponsableAcuerdo(idAcuerdo,idUsuarioXRolXProyecto,activo)
+    VALUES(_idAcuerdo,_idUsuarioXRolXProyecto,1);
+    
+    SET _idResponsableAcuerdo = @@last_insert_id;
+    SELECT _idResponsableAcuerdo AS idResponsableAcuerdo;
+END$
+SELECT * FROM UsuarioXRolXProyecto;
+CALL INSERTAR_RESPONSABLE_ACUERDO(1, 60);
+
+SELECT * FROM UsuarioXRolXProyecto;
+
+DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(
+    IN _idAcuerdo INT
+)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico
+    FROM ResponsableAcuerdo ra INNER JOIN UsuarioXRolXProyecto urp ON ra.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto 
+    INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario
+    WHERE ra.idAcuerdo = _idAcuerdo 
+    AND ra.activo=1;
+END$
+
+CALL LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(1)
+
+##############################################################
+## FALTA EL LISTAR USUARIOS X ROL X PROYECTO PREGUNTAR LOGICA
+##############################################################
+
+-------------------------
+-- Comentario Reunion
+-------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_COMENTARIO_REUNION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMENTARIO_REUNION(
+    IN _idLineaActaReunion INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idComentarioReunion INT;
+    
+	INSERT INTO ComentarioReunion(idLineaActaReunion,descripcion,activo)
+    VALUES(_idLineaActaReunion,_descripcion,1);
+    
+    SET _idComentarioReunion = @@last_insert_id;
+    SELECT _idComentarioReunion AS idComentarioReunion;
+END$
+
+CALL INSERTAR_COMENTARIO_REUNION(1,'Primer comentario')
+
+DROP PROCEDURE IF EXISTS LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM ComentarioReunion 
+    WHERE idLineaActaReunion = _idLineaActaReunion 
+    AND activo=1;
+END$
+
+CALL LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION(1);
+
+--------------------------------------
+-- PARTICIPANTE X REUNION
+--------------------------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_PARTICIPANTE_X_REUNION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PARTICIPANTE_X_REUNION(
+    IN _idLineaActaReunion INT,
+    IN _idUsuarioXRolXProyecto INT,
+    IN _asistio TINYINT
+)
+BEGIN
+	DECLARE _idParticipanteXReunion INT;
+    
+	INSERT INTO ParticipanteXReunion(idLineaActaReunion,idUsuarioXRolXProyecto,asistio,activo)
+    VALUES(_idLineaActaReunion,_idUsuarioXRolXProyecto,_asistio,1);
+    
+    SET _idParticipanteXReunion = @@last_insert_id;
+    SELECT _idParticipanteXReunion AS idParticipanteXReunion;
+END$
+
+CALL INSERTAR_PARTICIPANTE_X_REUNION(1, 2, 1);
+CALL INSERTAR_PARTICIPANTE_X_REUNION(1, 20, 1);
+
+DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.usuario
+    FROM ParticipanteXReunion pr INNER JOIN UsuarioXRolXProyecto urp ON pr.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto
+    INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario 
+    WHERE pr.idLineaActaReunion = _idLineaActaReunion AND pr.activo=1;
+END$
+
+CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(1)
+
+
 
 
 ######################

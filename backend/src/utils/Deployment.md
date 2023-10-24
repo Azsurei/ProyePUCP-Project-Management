@@ -73,8 +73,18 @@ npm install
 pm2 start ecosystem.config.js
 ```
 
+FrontEnd
+
+pm2 start npm --name "PROYEPUCP-CLIENT" -- run start -p 3000
+
+Backend
+pm2 start server.js --name "PROYEPUCP-SERVER"
+
+
 Con estos pasos, tu aplicación estará desplegada y ejecutándose en la instancia EC2.
 
 # Nota
 
 El ecosystem.config.js ya esta configurado con la ejecucion de el pm2 tanto para back como para front.
+
+git clone git@github.com:Gabo52/INGESOFT-LosDibujitos.git

@@ -10,6 +10,7 @@ const routerPresupuesto = require('./presupuesto').routerPresupuesto;
 const routerMatrizComunicaciones = require('./matrizDeComunicaciones').routerMatrizComunicaciones;
 const routerAutoEvaluacion = require('./autoEvaluacion').routerAutoEvaluacion;
 const routerCatalagoRiesgos = require('./catalogoRiesgos').routerCatalagoRiesgos;
+const routerActaReunion = require('./actaReunion').routerActaReunion;
 const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
@@ -21,6 +22,7 @@ routerProyecto.use("/presupuesto", routerPresupuesto);
 routerProyecto.use("/matrizDeComunicaciones", routerMatrizComunicaciones);
 routerProyecto.use("/autoEvaluacion", routerAutoEvaluacion);
 routerProyecto.use("/catalogoRiesgos", routerCatalagoRiesgos);
+routerProyecto.use("/actaReunion", routerActaReunion);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token
