@@ -233,14 +233,13 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                     }
 
                     if (herramienta.idHerramienta === 12) {
-                        //Acta de reunion
-                        const {idProyecto,nombre,descripcion,usuarios} = req.body;
+                        //Equipo
                         console.log("Llegue a recibir solicitud insertar equipo");
                         const query = `
-                            CALL INSERTAR_EQUIPO(?,?,?);
+                            CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?,?);
                         `;
                         
-                            const [results] = await connection.query(query,[idProyecto, null, null]);
+                            const [results] = await connection.query(query,[idProyecto, 12, null]);
                             const idEquipo = results[0][0].idEquipo;
                             console.log(`Se creo el equipo${idEquipo}!`);
     
