@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import CardEquipo from "@/components/equipoComps/CardEquipo";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
@@ -9,6 +10,9 @@ import { SmallLoadingScreen } from "../layout";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import axios from "axios";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import { Button } from "@nextui-org/react";
+import { CrossWhite } from "@/components/equipoComps/CrossWhite";
+import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 
 axios.defaults.withCredentials = true;
 
@@ -162,14 +166,36 @@ export default function Equipo(props) {
                     </div>
 
                     <div className="containerMembers">
-                        <div className="headerGroup">
-                            {`Miembros (${selectedTeam.participantes.length})`}
+                        <div className="flex items-center justify-between">
+                            <div className="headerGroup">
+                                {`Miembros (${selectedTeam.participantes.length})`}
+                            </div>
+                            <div className="flex gap-4 items-center mb-4">
+                                <Button
+                                    color="primary"
+                                    startContent={<SaveIcon />}
+                                >
+                                    Guardar
+                                </Button>
+                                <Button
+                                    color="danger"
+                                    startContent={<CrossWhite />}
+                                >
+                                    Cancelar
+                                </Button>
+                            </div>
                         </div>
                         <div className="grid grid-cols-10">
-                            <div className="col-span-6 font-bold border-b-2 border-gray-300">Nombre</div>
-                            <div className="col-span-3 font-bold border-b-2 border-gray-300">Rol</div>
-                            <div className="col-span-1 font-bold border-b-2 border-gray-300">Eliminar</div>
-                        
+                            <div className="col-span-6 font-bold border-b-2 border-gray-300">
+                                Nombre
+                            </div>
+                            <div className="col-span-3 font-bold border-b-2 border-gray-300">
+                                Rol
+                            </div>
+                            <div className="col-span-1 font-bold border-b-2 border-gray-300">
+                                Eliminar
+                            </div>
+
                             {selectedTeam.participantes.map((member) => (
                                 <div className="col-span-6 flex mt-4">
                                     <p className="membersIcon1">
