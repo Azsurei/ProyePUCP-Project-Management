@@ -7,7 +7,7 @@ export default function IconLabel({icon,label1,label2,className,onClickFunction}
         <Button className={className} onClick={onClickFunction}>
             <img src={icon} className="iconoMC"/>
             <div className="labelMC">
-                {label1}<span>{label2}</span>
+                {label1}{/* <span>{label2}</span> */}
             </div>
         </Button>
     )

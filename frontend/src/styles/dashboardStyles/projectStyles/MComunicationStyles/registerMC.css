@@ -52,8 +52,9 @@
 
 .containerButtonMC{
     display: flex;
-    align-items: center;
     gap: 15%;
+    margin-right: 15px;
+    align-items: center;
 }
 
 .containerBottomMC{
@@ -99,4 +100,11 @@
     display: flex;
     flex-wrap: wrap;
     font-weight: 600;
+}
+
+.labelSinDataUsuarioMC{
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import "@/styles/PopUpEliminateHU.css";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 
 export default function ButtonEliminateIcon (task) {
 

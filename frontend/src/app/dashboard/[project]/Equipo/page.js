@@ -10,97 +10,7 @@ import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
-/*
-const grupos = [
-    
-    {
-        id: 1,
-        nombre: "Módulo 1 - Front End",
-        coordinador: "Diego Iwasaki",
-        bgcolor: "#ef6c00", 
-        completed: 53, 
-        miembros: [
-            {
-              id: 1,
-              nombre: "Sebastian Chira",
-              correo: "s.chira@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            },
-            {
-              id: 2,
-              nombre: "Augusto Tong",
-              correo: "avtong@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            }
-          ],
-    },
-    {
-        id: 2,
-        nombre: "Módulo 2 - Back End",
-        coordinador: "Diego Iwasaki",
-        bgcolor: "#ef6c00", 
-        completed: 25, 
-        miembros: [
-            {
-              id: 1,
-              nombre: "Sebastian Chira 2",
-              correo: "s.chira@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            },
-            {
-              id: 2,
-              nombre: "Augusto Tong 2",
-              correo: "avtong@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            }
-          ],
-    },
-    {
-        id: 3,
-        nombre: "Módulo 3 - Front End",
-        coordinador: "Diego Iwasaki",
-        bgcolor: "#ef6c00", 
-        completed: 67, 
-        miembros: [
-            {
-              id: 1,
-              nombre: "Sebastian Chira 3",
-              correo: "s.chira@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            },
-            {
-              id: 2,
-              nombre: "Augusto Tong 3",
-              correo: "avtong@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            }
-          ],
-    },
-    
-    {
-        id: 4,
-        nombre: "Módulo 4 - El Equipo Dinamita Papá",
-        coordinador: "Diego Iwasaki",
-        bgcolor: "#ef6c00", 
-        completed: 60, 
-        miembros: [
-            {
-              id: 1,
-              nombre: "Sebastian Chira 4",
-              correo: "s.chira@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            },
-            {
-              id: 2,
-              nombre: "Augusto Tong 4",
-              correo: "avtong@pucp.edu.pe",
-              iconSrc: "/icons/usr-img.svg",
-            }
-          ],
-    },
-    
-];
-*/
+
 
 export default function Equipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -108,11 +18,11 @@ export default function Equipo(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    setIsLoadingSmall(false);
-    const [isLoading, setIsLoading] = useState(true);
+    //setIsLoadingSmall(false);
     const [ListComps, setListComps] = useState([]);
 
     useEffect(() => {
+        setIsLoadingSmall(true);
         let teamsArray;
         const stringURL = "http://localhost:8080/api/proyecto/equipo/listarEquiposYParticipantes/" + projectId;
         console.log("La URL es" + stringURL);
@@ -136,7 +46,7 @@ export default function Equipo(props) {
 
                 console.log("Los arreglos son " + teamsArray);
                 setListComps(teamsArray);
-                setIsLoading(false);
+                setIsLoadingSmall(false);
               })
             
             .catch(function (error) {
@@ -193,23 +103,7 @@ export default function Equipo(props) {
                         </a>
                     </div>
                 </div>
-            )}  
-            {/* Prueba para ver a los participantes
-            <div className="grid grid-cols-3 gap-4 mt-2">
-                {ListComps.map((team) => (
-                    <div key={team.idEquipo}>
-                        <p>Participantes en el equipo {team.nombre}:</p>
-                        {team.participantes.map((participante) => (
-                            <div key={participante.idUsuario}>
-                                <p>{participante.nombres} {participante.apellidos}</p>
-                                <p>{participante.correoElectronico}</p>
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
-            */}
-            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+            )} 
         </div>
     );
 }

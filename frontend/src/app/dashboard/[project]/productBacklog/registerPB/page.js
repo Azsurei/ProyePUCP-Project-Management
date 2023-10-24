@@ -1,10 +1,10 @@
 "use client";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
-import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/containerAsWantFor";
-import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/containerScenario";
-import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/containerRequirement";
-import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/descriptionRequirement";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/ContainerScenario";
+import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/ContainerAsWantFor";
+import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/ContainerRequirement";
+import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/DescriptionRequirement";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
@@ -311,6 +311,7 @@ export default function ProductBacklogRegister(props) {
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
                                 reloadData={reloadData}
+                                initialName="Seleccione una épica"
                             />
                             <button
                                 className="w-20 h-20"
@@ -346,6 +347,7 @@ export default function ProductBacklogRegister(props) {
                             colorProperty="RGB"
                             onSelect={handleSelectedValueChangePriority}
                             idParam="idHistoriaPrioridad"
+                            initialName="Seleccione una prioridad"
                         />
                     </div>
                     <div className="createdBy containerCombo">
@@ -382,6 +384,7 @@ export default function ProductBacklogRegister(props) {
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}
                             idParam="idHistoriaEstado"
+                            initialName="Seleccione un estado"
                         />
                     </div>
                 </div>
