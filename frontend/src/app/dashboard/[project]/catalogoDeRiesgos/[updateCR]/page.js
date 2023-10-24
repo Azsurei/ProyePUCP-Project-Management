@@ -13,7 +13,7 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/FContainerResponsePlans";
+import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 axios.defaults.withCredentials = true;
 
