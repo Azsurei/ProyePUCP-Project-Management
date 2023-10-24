@@ -6,7 +6,7 @@ import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
@@ -14,8 +14,7 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
-import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/containerContingencyPlans";
-import CardSelectedUser from "@/components/CardSelectedUser";
+import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosUpdate(props) {
