@@ -13,6 +13,8 @@ import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/
 import { Button } from "@nextui-org/react";
 import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
+import { ExportIcon } from "@/components/equipoComps/ExportIcon";
+import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 
 axios.defaults.withCredentials = true;
 
@@ -30,6 +32,7 @@ export default function Equipo(props) {
     //1 es vista de un equipo particular
 
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [updateState, setUpdateState] = useState(false);
 
     const handleSeeTeam = (team) => {
         setSelectedTeam(team);
@@ -171,18 +174,47 @@ export default function Equipo(props) {
                                 {`Miembros (${selectedTeam.participantes.length})`}
                             </div>
                             <div className="flex gap-4 items-center mb-4">
-                                <Button
-                                    color="primary"
-                                    startContent={<SaveIcon />}
-                                >
-                                    Guardar
-                                </Button>
-                                <Button
-                                    color="danger"
-                                    startContent={<CrossWhite />}
-                                >
-                                    Cancelar
-                                </Button>
+                                {updateState ? (
+                                    <>
+                                        <Button
+                                            color="primary"
+                                            startContent={<SaveIcon />}
+                                            onPress={()=> setUpdateState(false)}
+                                        >
+                                            Guardar
+                                        </Button>
+                                        <Button
+                                            color="danger"
+                                            startContent={<CrossWhite />}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            color="success"
+                                            startContent={<ExportIcon />}
+                                            className="text-white"
+                                        >
+                                            Exportar
+                                        </Button>
+                                        <Button
+                                            color="warning"
+                                            startContent={<UpdateIcon />}
+                                            className="text-white"
+                                            onPress={()=> setUpdateState(true)}
+                                        >
+                                            Editar
+                                        </Button>
+                                        <Button
+                                            color="danger"
+                                            startContent={<CrossWhite />}
+                                        >
+                                            Eliminar
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <div className="grid grid-cols-10">
