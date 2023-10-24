@@ -16,7 +16,6 @@ async function crearAutoEvaluacion(req,res,next){
                 const query1 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
                 const results1 = await connection.query(query1,[idProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
                 const idUsuarioEvaluacion = results1[0][0][0].idUsuarioEvaluacion;
-                console.log(idUsuarioEvaluacion);
                 const query2 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?);`;
                 const results2 = await connection.query(query2,[idUsuarioEvaluacion]);
             }
@@ -34,7 +33,6 @@ async function crearAutoEvaluacion(req,res,next){
 
 async function listarAutoEvaluacion(req,res,next){
     const {idProyecto, idUsuario} = req.params;
-    console.log(idProyecto, idUsuario);
     const query = `CALL LISTAR_AUTOEVALUACION_X_USUARIO(?,?);`;
     try {
         const results = await connection.query(query,[idProyecto,idUsuario]);
