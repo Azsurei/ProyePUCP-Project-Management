@@ -234,12 +234,22 @@ export default function Equipo(props) {
                             <div className="col-span-6 font-bold border-b-2 border-gray-300">
                                 Nombre
                             </div>
-                            <div className="col-span-3 font-bold border-b-2 border-gray-300">
-                                Rol
-                            </div>
-                            <div className="col-span-1 font-bold border-b-2 border-gray-300 text-center">
-                                Eliminar
-                            </div>
+                            {updateState ? (
+                                <>
+                                    <div className="col-span-3 font-bold border-b-2 border-gray-300">
+                                        Rol
+                                    </div>
+                                    <div className="col-span-1 font-bold border-b-2 border-gray-300 text-center">
+                                        Eliminar
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="col-span-4 font-bold border-b-2 border-gray-300">
+                                        Rol
+                                    </div>
+                                </>
+                            )}
 
                             {selectedTeam.participantes.map((member) => (
                                 <>
@@ -258,17 +268,29 @@ export default function Equipo(props) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-span-3 flex mt-4"></div>
-                                    <div className="col-span-1 flex mt-4 justify-center">
-                                        <img
-                                            src="/icons/icon-trash.svg"
-                                            alt="delete"
-                                            className="mb-4 cursor-pointer "
-                                            onClick={() => {
-                                                removeUser(member);
-                                            }}
-                                        />
-                                    </div>
+                                    {updateState ? (
+                                        <>
+                                            <div className="col-span-3 flex mt-4">
+                                                Miembro
+                                            </div>
+                                            <div className="col-span-1 flex mt-4 justify-center">
+                                                <img
+                                                    src="/icons/icon-trash.svg"
+                                                    alt="delete"
+                                                    className="mb-4 cursor-pointer "
+                                                    onClick={() => {
+                                                        removeUser(member);
+                                                    }}
+                                                />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="col-span-4 flex mt-4">
+                                                Miembro
+                                            </div>
+                                        </>
+                                    )}
                                 </>
                             ))}
                         </div>
