@@ -60,7 +60,7 @@ import {
                     )}
                 </div>
               ) : (
-                  <p className="ml-4">Este equipo no cuenta con miembros</p>
+                  <p className="ml-4 h-[50px]">Este equipo no cuenta con miembros</p>
               )}
             
           </CardBody>
