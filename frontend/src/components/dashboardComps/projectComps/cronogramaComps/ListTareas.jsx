@@ -13,7 +13,13 @@ import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import { Collapse } from "react-collapse";
 import { useState } from "react";
 
-function CardTarea({ tarea, leftMargin, handleVerDetalle, handleAddNewSon }) {
+function CardTarea({
+    tarea,
+    leftMargin,
+    handleVerDetalle,
+    handleAddNewSon,
+    handleDelete,
+}) {
     const tieneHijos = true;
 
     const formattedStartDate = new Date(tarea.fechaInicio);
@@ -118,6 +124,9 @@ function CardTarea({ tarea, leftMargin, handleVerDetalle, handleAddNewSon }) {
                                 aria-label="delete"
                                 className="text-danger"
                                 color="danger"
+                                onClick={() => {
+                                    handleDelete(tarea.idTarea)
+                                }}
                             >
                                 Eliminar
                             </DropdownItem>
@@ -133,6 +142,7 @@ function CardTarea({ tarea, leftMargin, handleVerDetalle, handleAddNewSon }) {
                         leftMargin={"40px"}
                         handleVerDetalle={handleVerDetalle}
                         handleAddNewSon={handleAddNewSon}
+                        handleDelete={handleDelete}
                     ></ListTareas>
                 )}
             </Collapse>
@@ -145,6 +155,7 @@ export default function ListTareas({
     leftMargin,
     handleVerDetalle,
     handleAddNewSon,
+    handleDelete,
 }) {
     return (
         <div className="tareasListContainer" style={{ marginLeft: leftMargin }}>
@@ -156,6 +167,7 @@ export default function ListTareas({
                         leftMargin={leftMargin}
                         handleVerDetalle={handleVerDetalle}
                         handleAddNewSon={handleAddNewSon}
+                        handleDelete={handleDelete}
                     ></CardTarea>
                 );
             })}

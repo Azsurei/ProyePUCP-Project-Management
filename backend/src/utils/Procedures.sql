@@ -2242,3 +2242,69 @@ BEGIN
     UPDATE Tarea SET activo = 0 WHERE idTarea = _idTarea;
     UPDATE UsuarioXTarea SET activo = 0 WHERE idTarea = _idTarea;
 END$
+
+------------
+-- Autoevaluacion
+------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_USUARIO_EVALUACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_USUARIO_EVALUACION(
+    IN _idProyecto INT,
+    IN _idUsuario INT,
+    IN _idUsuarioEvaluado INT
+)
+BEGIN
+	DECLARE _idUsuarioEvaluacion INT;
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO UsuarioXEvaluacion(idUsuario,idAutoevaluacion,idUsuarioEvaluado,activo) 
+    VALUES(_idUsuario,@_idAutoevaluacion,_idUsuarioEvaluado,1);
+    SET _idUsuarioEvaluacion = @@last_insert_id;
+    SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CRITERIO_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CRITERIO_AUTOEVALUACION(
+    IN _idUsuarioEvaluacion INT
+)
+BEGIN
+	DECLARE _idCriterioEvaluacion INT;
+	INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Dominio Técnico",0,1);
+    INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Compromiso con los trabajos",0,1);
+    INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Comunicación con sus compañeros",0,1);
+    INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Comprensión del proyecto",0,1);
+    SET _idUsuarioEvaluacion = @@last_insert_id;
+    SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_X_USUARIO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACION_X_USUARIO(
+    IN _idProyecto INT,
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT ue.idUsuarioEvaluacion, ue.idUsuario, u.nombres as "nombreEvaluador", u.apellidos as "apellidoEvaluador", 
+    ue.idUsuarioEvaluado, ur.nombres as "nombreEvaluado", ur.apellidos as "apellidoEvaluado", ue.activo, ue.observaciones
+	FROM UsuarioXEvaluacion AS ue
+    LEFT JOIN Usuario AS u ON ue.idUsuario = u.idUsuario
+    LEFT JOIN Usuario AS ur ON ue.idUsuarioEvaluado = ur.idUsuario
+    LEFT JOIN Autoevaluacion AS ae ON ue.idAutoEvaluacion = ae.idAutoevaluacion
+	WHERE ae.idProyecto = _idProyecto AND ae.activo=1 AND ue.idUsuario = _idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRITERIO_AUTOEVALUACION(
+    IN _idUsuarioEvaluacion INT
+)
+BEGIN
+    SELECT *
+	FROM CriterioEvaluacion
+	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
+END$
