@@ -39,6 +39,14 @@ export default function Equipo(props) {
         setScreenState(1);
     };
 
+    const removeUser = (user) => {
+        const newList = selectedTeam.participantes.filter(
+            (item) => item.idUsuario !== user.idUsuario
+        );
+        selectedTeam.participantes = newList;
+        setSelectedTeam({ ...selectedTeam });
+    };
+
     useEffect(() => {
         setIsLoadingSmall(true);
         let teamsArray;
@@ -179,13 +187,18 @@ export default function Equipo(props) {
                                         <Button
                                             color="primary"
                                             startContent={<SaveIcon />}
-                                            onPress={()=> setUpdateState(false)}
+                                            onPress={() =>
+                                                setUpdateState(false)
+                                            }
                                         >
                                             Guardar
                                         </Button>
                                         <Button
                                             color="danger"
                                             startContent={<CrossWhite />}
+                                            onPress={() =>
+                                                setUpdateState(false)
+                                            }
                                         >
                                             Cancelar
                                         </Button>
@@ -203,7 +216,7 @@ export default function Equipo(props) {
                                             color="warning"
                                             startContent={<UpdateIcon />}
                                             className="text-white"
-                                            onPress={()=> setUpdateState(true)}
+                                            onPress={() => setUpdateState(true)}
                                         >
                                             Editar
                                         </Button>
@@ -224,23 +237,39 @@ export default function Equipo(props) {
                             <div className="col-span-3 font-bold border-b-2 border-gray-300">
                                 Rol
                             </div>
-                            <div className="col-span-1 font-bold border-b-2 border-gray-300">
+                            <div className="col-span-1 font-bold border-b-2 border-gray-300 text-center">
                                 Eliminar
                             </div>
 
                             {selectedTeam.participantes.map((member) => (
-                                <div className="col-span-6 flex mt-4">
-                                    <p className="membersIcon1">
-                                        {member.nombres[0] +
-                                            member.apellidos[0]}
-                                    </p>
-                                    <div>
-                                        <div className="text-lg">
-                                            {member.nombres} {member.apellidos}
+                                <>
+                                    <div className="col-span-6 flex mt-4">
+                                        <p className="membersIcon1">
+                                            {member.nombres[0] +
+                                                member.apellidos[0]}
+                                        </p>
+                                        <div>
+                                            <div className="text-lg">
+                                                {member.nombres}{" "}
+                                                {member.apellidos}
+                                            </div>
+                                            <div>
+                                                {member.correoElectronico}
+                                            </div>
                                         </div>
-                                        <div>{member.correoElectronico}</div>
                                     </div>
-                                </div>
+                                    <div className="col-span-3 flex mt-4"></div>
+                                    <div className="col-span-1 flex mt-4 justify-center">
+                                        <img
+                                            src="/icons/icon-trash.svg"
+                                            alt="delete"
+                                            className="mb-4 cursor-pointer "
+                                            onClick={() => {
+                                                removeUser(member);
+                                            }}
+                                        />
+                                    </div>
+                                </>
                             ))}
                         </div>
                     </div>
