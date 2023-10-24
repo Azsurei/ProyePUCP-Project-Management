@@ -981,6 +981,7 @@ CREATE TABLE UsuarioXEvaluacion (
     idUsuario INT,
     idAutoevaluacion INT,
     idUsuarioEvaluado INT,
+    observaciones VARCHAR(500),
     activo TINYINT NOT NULL DEFAULT 1,
     FOREIGN KEY (idAutoevaluacion) REFERENCES Autoevaluacion (idAutoevaluacion) ,
     FOREIGN KEY (idUsuario) REFERENCES Usuario (idUsuario),

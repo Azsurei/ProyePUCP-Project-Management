@@ -2290,7 +2290,7 @@ CREATE PROCEDURE LISTAR_AUTOEVALUACION_X_USUARIO(
 )
 BEGIN
     SELECT ue.idUsuarioEvaluacion, ue.idUsuario, u.nombres as "nombreEvaluador", u.apellidos as "apellidoEvaluador", 
-    ue.idUsuarioEvaluado, ur.nombres as "nombreEvaluado", ur.apellidos as "apellidoEvaluado", ue.activo
+    ue.idUsuarioEvaluado, ur.nombres as "nombreEvaluado", ur.apellidos as "apellidoEvaluado", ue.activo, ue.observaciones
 	FROM UsuarioXEvaluacion AS ue
     LEFT JOIN Usuario AS u ON ue.idUsuario = u.idUsuario
     LEFT JOIN Usuario AS ur ON ue.idUsuarioEvaluado = ur.idUsuario
@@ -2306,5 +2306,5 @@ CREATE PROCEDURE LISTAR_CRITERIO_AUTOEVALUACION(
 BEGIN
     SELECT *
 	FROM CriterioEvaluacion
-	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND ae.activo=1 AND ue.idUsuario = _idUsuario;
+	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
 END$
