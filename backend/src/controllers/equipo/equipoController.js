@@ -34,6 +34,7 @@ async function insertarEquipoYParticipantes(req,res,next){
         res.status(500).send("Error en el registro: " + error.message);
     }
 }
+
 async function listarXIdProyecto(req,res,next){
     const {idProyecto} = req.params;
     try {

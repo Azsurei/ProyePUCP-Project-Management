@@ -22,7 +22,7 @@ export default function DateInput({
         borderColor: isInvalid ? "red" : "rgb(211, 211, 211)",
         borderWidth: "2px",
         borderRadius: "8px",
-        padding: "0 .4rem",
+        padding: ".2rem .4rem",
         resize: "none",
     };
 

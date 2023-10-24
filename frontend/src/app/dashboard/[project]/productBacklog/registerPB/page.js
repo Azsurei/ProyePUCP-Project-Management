@@ -1,7 +1,7 @@
 "use client";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/registerPB.css";
+import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/ContainerScenario";
 import ContainerAsWantFor from "@/components/dashboardComps/projectComps/productBacklog/ContainerAsWantFor";
-import ContainerScenario from "@/components/dashboardComps/projectComps/productBacklog/FContainerScenario";
 import ContainerRequirement from "@/components/dashboardComps/projectComps/productBacklog/ContainerRequirement";
 import DescriptionRequeriment from "@/components/dashboardComps/projectComps/productBacklog/DescriptionRequirement";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";

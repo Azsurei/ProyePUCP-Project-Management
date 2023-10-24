@@ -29,6 +29,7 @@ import { resolve } from "styled-jsx/css";
 import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
 import ModalSubequipos from "@/components/dashboardComps/projectComps/cronogramaComps/ModalSubequipos";
 import ModalDeleteTarea from "@/components/dashboardComps/projectComps/cronogramaComps/ModalDeleteTarea";
+import ModalPosterior from "@/components/dashboardComps/projectComps/cronogramaComps/ModalPosterior";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -49,6 +50,12 @@ export default function Cronograma(props) {
         isOpen: isModalDeleteOpen,
         onOpen: onModalDeleteOpen,
         onOpenChange: onModalDeleteChange,
+    } = useDisclosure();
+
+    const {
+        isOpen: isModalPosteriorOpen,
+        onOpen: onModalPosteriorOpen,
+        onOpenChange: onModalPosteriorChange,
     } = useDisclosure();
 
     const [toggleNew, setToggleNew] = useState(false);
@@ -82,6 +89,8 @@ export default function Cronograma(props) {
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
     const [validFechas, setValidFechas] = useState(true);
+
+    const [listPosteriores, setListPosteriores] = useState([]);
 
     const [tabSelected, setTabSelected] = useState("users");
     const [modal, setModal] = useState(false);
@@ -158,13 +167,13 @@ export default function Cronograma(props) {
             const deleteURL =
                 "http://localhost:8080/api/proyecto/cronograma/eliminarTarea";
 
-            if(idTareaEliminar === null){
+            if (idTareaEliminar === null) {
                 reject("No se encontro la tarea");
-            }    
-            
+            }
+
             axios
                 .delete(deleteURL, {
-                    data: {idTarea: idTareaEliminar}
+                    data: { idTarea: idTareaEliminar },
                 })
                 .then(function (response) {
                     console.log(response.data.message);
@@ -323,6 +332,21 @@ export default function Cronograma(props) {
             position: "top-center",
         });
     };
+
+    const addTaraPosterior = (tareaPosterior) => {
+        let assignedUs;
+        if(selectedSubteam === null){
+            assignedUs = selectedUsers
+        }
+
+        const nuevaTarea = {
+            sumillaTarea: tareaPosterior.sumillaTarea,
+            fechaInicio: tareaPosterior.fechaInicio,
+            fechaFin: tareaPosterior.fechaFin,
+            idSubGrupo: selectedSubteam === null ? null : selectedSubteam.idEquipo,
+            
+        }
+    }
 
     const dropBoxItems = [
         {
@@ -493,6 +517,11 @@ export default function Cronograma(props) {
                 onOpenChange={onModalDeleteChange}
                 eliminarTarea={eliminarTarea}
             ></ModalDeleteTarea>
+
+            <ModalPosterior
+                isOpen={isModalPosteriorOpen}
+                onOpenChange={onModalPosteriorChange}
+            ></ModalPosterior>
 
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
                 <div className="containerGeneralLeft">
@@ -674,7 +703,7 @@ export default function Cronograma(props) {
                     <div className="containerPosteriores">
                         <div className="posterioresHeader">
                             <p>Tareas posteriores</p>
-                            <div className="btnToPopUp">
+                            <div className="btnToPopUp" onClick={onModalPosteriorOpen}>
                                 <p>Añadir</p>
                             </div>
                         </div>

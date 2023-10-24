@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
 /* Estilo para el contenedor principal */
-.container {
-    padding: 0 20px; /* Aplica un padding de 20px a los lados */
-    box-sizing: border-box; /* Incluye el padding en el cálculo del tamaño total */
+.containerTeamsPage {
+    padding: 2.5rem 2.5rem; /* Aplica un padding de 20px a los lados */
+    
 }
 
 /* Estilo para la tarjeta de equipo */

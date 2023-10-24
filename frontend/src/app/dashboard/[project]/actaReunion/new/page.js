@@ -17,6 +17,7 @@ import {
     Button, Spacer,
 } from "@nextui-org/react";
 
+import ListUsersOne from "@/components/ListUsersOne";
 import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunion.css";
@@ -25,6 +26,9 @@ import CardSelectedUser from "@/components/CardSelectedUser";
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
+
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 
 axios.defaults.withCredentials = true;
 
@@ -41,91 +45,34 @@ const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 setIsLoadingSmall(false);
 
-const [missingFields, setMissingFields] = useState([]); 
 
 const [titleValue, setTitleValue] = useState("");
 const [motiveValue, setMotiveValue] = useState("");
 
-const [fecha, setFecha] = useState(""); // Estado para la fecha
-const [hora, setHora] = useState(""); // Estado para la hora
+const [dateValue, setDateValue] = useState(""); // Estado para la fecha
+const [timeValue, setTimeValue] = useState(""); // Estado para la hora
 
-const handleChangeTitle = (event) => {
-    setTitleValue(event.target.value);
-    if (!event.target.value) {
-        setMissingFields((prevFields) => {
-            if (!prevFields.includes("título")) {
-                return [...prevFields, "título"];
-            }
-            return prevFields;
-        });
-    } else {
-        // Elimina "fecha" de la matriz de campos faltantes si ya está presente
-        setMissingFields((prevFields) => prevFields.filter((field) => field !== "título"));
-    }
+const handleChangeDate = (event) => {
+    setDateValue(event.target.value);
 };
 
-const handleChangeMotive = (event) => {
-    setMotiveValue(event.target.value);
-    if (!event.target.value) {
-        setMissingFields((prevFields) => {
-            if (!prevFields.includes("motivo")) {
-                return [...prevFields, "motivo"];
-            }
-            return prevFields;
-        });
-    } else {
-        // Elimina "fecha" de la matriz de campos faltantes si ya está presente
-        setMissingFields((prevFields) => prevFields.filter((field) => field !== "motivo"));
-    }
+const handleChangeTime = (event) => {
+    setTimeValue(event.target.value);
 };
 
-const handleChangeFecha = (event) => {
-    setFecha(event.target.value);
-    if (!event.target.value) {
-        setMissingFields((prevFields) => {
-            if (!prevFields.includes("fecha")) {
-                return [...prevFields, "fecha"];
-            }
-            return prevFields;
-        });
-    } else {
-        // Elimina "fecha" de la matriz de campos faltantes si ya está presente
-        setMissingFields((prevFields) => prevFields.filter((field) => field !== "fecha"));
-    }
-};
+// *********************************************************************************************
+// Validations
+// *********************************************************************************************
+const [fieldsEmpty, setFieldsEmpty] = useState(false);
 
-const handleChangeHora = (event) => {
-    setHora(event.target.value);
-    if (!event.target.value) {
-        setMissingFields((prevFields) => {
-            if (!prevFields.includes("hora")) {
-                return [...prevFields, "hora"];
-            }
-            return prevFields;
-        });
-    } else {
-        // Elimina "fecha" de la matriz de campos faltantes si ya está presente
-        setMissingFields((prevFields) => prevFields.filter((field) => field !== "hora"));
-    }
-};
-
-const handleCreateMeeting = () => {
-    if (titleValue === "") {
-        setMissingFields("Falta el título");
-    } else if (fecha === "") {
-        setMissingFields("Falta la fecha");
-    } else if (hora === "") {
-        setMissingFields("Falta la hora");
-    } else if (motiveValue === "") {
-        setMissingFields("Falta el motivo");
-    } else {
-        // Aquí puedes realizar la lógica de creación de la reunión
-        // Si se completaron todos los campos, borra cualquier mensaje de campo faltante
-        setMissingFields("");
-    }
-    // Resto del código...
-};
-
+function verifyFieldsEmpty() {
+    return (
+        titleValue === "" ||
+        dateValue === "" ||
+        timeValue === "" ||
+        motiveValue === "" 
+    );
+}
 
 function getMinDate() {
     const today = new Date();
@@ -139,34 +86,27 @@ function getMinDate() {
 
 function getMinTime() {
     const today = new Date();
-    const selectedDate = new Date(fecha); // Convierte la fecha seleccionada en un objeto Date
-    const currentTime = today.getHours() * 60 + today.getMinutes(); // Convierte la hora actual a minutos
+    const selectedDate = new Date(dateValue);
+    const currentTime = today.getHours() * 60 + today.getMinutes();
 
-    // Si la fecha seleccionada es hoy, la hora mínima permitida es la hora actual
     if (
         selectedDate.getDate() === today.getDate() &&
         selectedDate.getMonth() === today.getMonth() &&
         selectedDate.getFullYear() === today.getFullYear()
     ) {
-        const selectedTime = parseInt(hora.split(":")[0]) * 60 + parseInt(hora.split(":")[1]);
-        return `${Math.floor(currentTime / 60)
-            .toString()
-            .padStart(2, "0")}:${(currentTime % 60).toString().padStart(2, "0")}`;
+        const selectedTime = parseInt(timeValue.split(":")[0]) * 60 + parseInt(timeValue.split(":")[1]);
+        if (selectedTime < currentTime) {
+            // Muestra un mensaje de advertencia si la hora elegida es anterior a la hora actual
+            return "00:00";
+        }
     }
-
-    // Si la fecha seleccionada es posterior a hoy, no hay restricciones en la hora
+    // Si la fecha seleccionada es hoy y la hora es actual o posterior, o cualquier otra fecha, no hay restricciones
     return "00:00";
 }
 
-/*
-const [inFechaHora, setInFechaHora] = useState('');
-const handleChangeFechaHora = () => {
-    const datepickerInput = document.getElementById("datepickerFechaHora");
-    const selectedDate = datepickerInput.value;
-    console.log(selectedDate);
-    setInFechaHora(selectedDate);
-}
-*/
+// *********************************************************************************************
+// Handlers of Topics, Agreements and Comments
+// *********************************************************************************************
 const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
 const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
 const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
@@ -285,14 +225,28 @@ const handleRemoveComentario = (index) => {
     }, []);
 
 // *********************************************************************************************
-// About Metting Members
+// About Convenor and Metting Members
 // *********************************************************************************************
+    const [selectedConvocante, setSelectedConvocante] = useState(null);
+    const [modal1, setModal1] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
     const [modal2, setModal2] = useState(false);
+
+    const toogleModal1 = () => {
+        setModal1(!modal1);
+    }
 
     const toggleModal2 = () => {
         setModal2(!modal2);
     };
+
+    const returnConvocante = () => {
+        const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
+        setModal1(!modal1);
+        if (newMiembrosList.length > 0) {
+            setSelectedConvocante(newMiembrosList[0]); 
+        }
+    }
 
     const returnListOfMiembros = (newMiembrosList) => {
         const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
@@ -324,12 +278,12 @@ const handleRemoveComentario = (index) => {
                                hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
                                breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Nueva Reunion'}
                                btnText={'Volver'}>Crear Acta de Reunion</HeaderWithButtons>
-            <div className="body m-5 mt-3">
+            <div className="body m-5 mt-5">
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
                         <CardBody>
                             <Input 
-                                className="max-w-[600px]"
+                                className="max-w-[1000px]"
                                 isRequired
                                 key="outside"
                                 size="lg" 
@@ -341,7 +295,25 @@ const handleRemoveComentario = (index) => {
                                 onValueChange={setTitleValue} 
                             />
                             <p className="mt-5 mb-1 text-black text-sm font-medium">Reunión convocada por</p>
-                            <p className="ml-2 font-medium text-gray-400 ">{datosUsuario.nombres} {datosUsuario.apellidos} (tú)</p>
+                            <div className="userSelection flex items-center">
+                                <p className="ml-2 font-medium text-gray-400 ">
+                                    {datosUsuario.nombres} {datosUsuario.apellidos}
+                                </p>
+                                <button 
+                                    onClick={toggleModal2}
+                                    className="ml-3 bg-[#f0ae19] text-white w-8 h-8
+                                        rounded-full">
+                                    <img src="/icons/icon-searchBar.svg"/>
+                                </button>
+                                {modal1 && (
+                                <ModalUser
+                                    handlerModalClose={toggleModal1}
+                                    handlerModalFinished={returnListOfSupervisores}
+                                    excludedUsers={selectedSupervisoresList}
+                                ></ModalUser>
+                                )}
+                            </div>
+                            
                                 
                             <div className="dateAndTimeLine">
                                 <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha y Hora de la Reunión</p>
@@ -358,20 +330,20 @@ const handleRemoveComentario = (index) => {
                                     id="datePicker"
                                     name="datePicker"
                                     min={getMinDate()}
-                                    value={fecha}
-                                    onChange={handleChangeFecha}
+                                    value={dateValue}
+                                    onChange={handleChangeDate}
                                 ></input>
                                 <input
                                     type="time"
                                     id="timePicker"
                                     name="timePicker"
                                     min={getMinTime()}
-                                    value={hora}
-                                    onChange={handleChangeHora}
+                                    value={timeValue}
+                                    onChange={handleChangeTime}
                                 ></input>
                             </div>
                             <Input 
-                                className="max-w-[600px] mt-5"
+                                className="max-w-[1000px] mt-5"
                                 isRequired
                                 key="outside"
                                 size="lg" 
@@ -383,7 +355,12 @@ const handleRemoveComentario = (index) => {
                                 onValueChange={setMotiveValue} 
                             />
                         </CardBody>
-                        <CardFooter><p>Recuerda que todos estos datos son obligatorios</p></CardFooter>
+                        <CardFooter>
+                            <div className="mandatoryAdvise p-2">
+                                <img src="/icons/alert.svg"/>
+                                <p>Recuerda que todos estos campos son obligatorios para crear un Acta de Reunión</p>
+                            </div>
+                        </CardFooter>
                     </Card>
                     
                 </div>
@@ -395,12 +372,12 @@ const handleRemoveComentario = (index) => {
                             <h3>Personas Convocadas</h3>
                         </CardHeader>
                         <CardBody className="py-0 mt-0 ml-2">
-                            <p>Miembro</p>
+                            <p>Lista de Miembros</p>
                             {/**** Selector de Miembros ***** */}
                             <div className="SelectedUsersContainer">
                                 <div
                                     className="containerToPopUpUsrSearch"
-                                    style={{ width: '60%', padding: '0.2rem 0' }}
+                                    style={{ width: '80%', padding: '0.2rem 0' }}
                                     onClick={toggleModal2}
                                 >
                                     <p>Buscar nuevo participante</p>
@@ -413,7 +390,7 @@ const handleRemoveComentario = (index) => {
                                 </div>
 
                                 <ul className="listUsersContainer"
-                                style={{ width: '60%', padding: '0.2rem 0' }}>
+                                style={{ width: '80%', padding: '0.2rem 0' }}>
                                     {selectedMiembrosList.map((component) => {
                                         return (
                                             <CardSelectedUser
@@ -446,9 +423,14 @@ const handleRemoveComentario = (index) => {
                 <div className="meetingTopics p-5"> 
                     <Card className="mx-auto"> 
                         <CardHeader>
-                            <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
-                                Temas a tratar
-                            </h3>
+                            <div className="flex flex-col p-2">
+                                <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
+                                    Temas a tratar
+                                </h3>
+                                <p className="littleComment ml-2 text-small text-default-500">
+                                    ¿De qué temas se hablará en la reunión? ¡Asegúrate de ser claro!
+                                </p>
+                            </div>
                             <button 
                                 onClick={handleAddTema}
                                 className="bg-[#f0ae19] text-white w-8 h-8
@@ -456,6 +438,7 @@ const handleRemoveComentario = (index) => {
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
+                            
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
@@ -475,9 +458,14 @@ const handleRemoveComentario = (index) => {
                 <div className="agreements p-5"> 
                     <Card className="mx-auto"> 
                         <CardHeader>
-                            <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
-                                Acuerdos
-                            </h3>
+                            <div className="flex flex-col p-2">
+                                <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
+                                    Acuerdos
+                                </h3>
+                                <p className="littleComment ml-2 text-small text-default-500">
+                                    ¿A que acuerdos se llegaron en la reunión? ¡Recuerda ser responsable y razonable!
+                                </p>
+                            </div>
                             <button 
                                 onClick={handleAddAcuerdo}
                                 className="bg-[#f0ae19] text-white w-8 h-8
@@ -504,9 +492,14 @@ const handleRemoveComentario = (index) => {
                 <div className="pendingComments p-5"> 
                     <Card className="mx-auto"> 
                         <CardHeader>
-                            <h3 className="p-2 text-lg font-bold text-blue-950 font-sans">
-                                Comentarios Pendientes
-                            </h3>
+                            <div className="flex flex-col p-2">
+                                <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
+                                    Comentarios Pendientes
+                                </h3>
+                                <p className="littleComment ml-2 text-small text-default-500">
+                                    ¿Aún tienes algo que acotar?
+                                </p>
+                            </div>
                             <button 
                                 onClick={handleAddComentario}
                                 className="bg-[#f0ae19] text-white w-8 h-8
@@ -533,19 +526,72 @@ const handleRemoveComentario = (index) => {
             </div>
 
             <div className="footer">
+                <div className="containerBottom">
+                    {fieldsEmpty && (
+                        <IconLabel
+                            icon="/icons/alert.svg"
+                            label="Faltan completar campos"
+                            className="iconLabel3"
+                        />
+                    )}
+                    {/*}
+                    {getMinTime() === "00:00" && (
+                        <IconLabel
+                            icon="/icons/alert.svg"
+                            label="Elige una hora apropiada"
+                            className="iconLabel3"
+                        />
+                    )}
+                    */}
+                </div>
+                <div className="twoButtons1">
+                        <div className="buttonContainer">
+                            <Modal
+                                nameButton="Descartar"
+                                textHeader="Descartar Registro"
+                                textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
+                                colorButton="w-36 bg-slate-100 text-black font-semibold"
+                                oneButton={false}
+                                secondAction={() => router.back()}
+                                textColor="red"
+                            />
+                            <Modal
+                                nameButton="Aceptar"
+                                textHeader="Registrar Acta de Reunión"
+                                textBody="¿Seguro que quiere registrar el Acta de Reunión?"
+                                colorButton="w-36 bg-blue-950 text-white font-semibold"
+                                oneButton={false}
+                                secondAction={() => {
+                                    onSubmit();
+                                    router.back();
+                                }}
+                                textColor="blue"
+                                verifyFunction={() => {
+                                    if (verifyFieldsEmpty()) {
+                                        setFieldsEmpty(true);
+                                        return false;
+                                    } else {
+                                        setFieldsExcessive(false);
+                                        return true;
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
 
             </div>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
-
+            {/*}
             <div className="ButtonsContainer mb-5">
-                {(!titleValue || !motiveValue || !fecha || !hora) 
+                {verifyFieldsEmpty
                     && <p className="error-text mt-3">Faltan llenar campos</p>}
                 <Button color="primary" variant="bordered">Cancelar</Button>
                 <Button color="primary" 
-                    isDisabled={fecha==="" || hora==="" || titleValue==="" || motiveValue===""}
+                    isDisabled={verifyFieldsEmpty}
                     >Crear</Button>
             </div>
+                */}
         </div>
     )
 }

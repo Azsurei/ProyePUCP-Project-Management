@@ -91,6 +91,41 @@
   margin-right: 10px; /* Espacio entre el mensaje y los botones */
 }
 
+.mandatoryAdvise {
+  display: flex; 
+  align-items: center;
+}
+
+.mandatoryAdvise img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  filter: grayscale(100%) brightness(130%);
+  
+}
+
+.mandatoryAdvise p {
+  color: #949494;
+  font-size: 14px;
+}
+
+.twoButtons1{
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.buttonContainer{
+  display: flex;
+  gap: 10px;
+  padding: 1rem;
+}
+
+.userSelection img {
+  filter: brightness(0) invert(1); /* Aplica un filtro blanco (escala de grises) */
+  margin-left: 5px; /* Ajusta el margen izquierdo para posicionar a la derecha */
+}
+
 /*
 .addButton {
     background-color: #F0AE19;

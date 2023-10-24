@@ -4,21 +4,22 @@ import ButtonAddNew from "./ButtonAddNew";
 import Link from "next/link";
 
 
-export default function HeaderWithButtonsSamePage(props){
+export default function HeaderWithButtonsSamePage({ breadcrump, children, haveReturn, handlerReturn, haveAddNew, handlerAddNew, newPrimarySon, btnText}){
     return(
         <div id="HeaderWithButtons">
-            <p id="HeaderBreadcrumb">{props.breadcrump}</p>
+            <p id="HeaderBreadcrumb">{breadcrump}</p>
             <div id="HeaderXbuttonXBackContainer">
                 <div id="HeaderXBackContainer">
-                    <p id="MainHeader">{props.children}</p>
-                    {props.haveReturn &&
-                        <img src="/icons/icon-goBack.svg" alt="" id="HeaderIconGoBack" onClick={props.handlerReturn}/>
+                    <p id="MainHeader">{children}</p>
+                    {haveReturn &&
+                        <img src="/icons/icon-goBack.svg" alt="" id="HeaderIconGoBack" onClick={handlerReturn}/>
                     }
                 </div>
-                {props.haveAddNew &&
-                    <button onClick={()=>props.handlerAddNew(props.newPrimarySon,1)} className="ButtonAddNew">{props.btnText}</button>
+                {haveAddNew &&
+                    <button onClick={()=>handlerAddNew(newPrimarySon,1)} className="ButtonAddNew">{btnText}</button>
                 }
             </div>
         </div>
     );
 }
+
