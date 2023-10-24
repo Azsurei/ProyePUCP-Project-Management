@@ -60,7 +60,7 @@ import {
                     )}
                 </div>
               ) : (
-                  <p className="emptyMembers">Este equipo no cuenta con miembros</p>
+                  <p className="ml-4">Este equipo no cuenta con miembros</p>
               )}
             
           </CardBody>

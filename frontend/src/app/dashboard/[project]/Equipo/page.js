@@ -101,7 +101,7 @@ export default function Equipo(props) {
                         )}
                     </div>
                     {ListComps.length > 0 ? (
-                        <div className="grid grid-cols-3 gap-3 mt-1">
+                        <div className="containerEquiposCards">
                             {/* Usar ListComps en vez de grupos*/}
                             {ListComps.map((team) => (
                                 <CardEquipo
