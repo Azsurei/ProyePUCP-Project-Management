@@ -745,7 +745,6 @@ Content-Type:  application/json
   ]
 }
 
-<<<<<<< HEAD
 
 ###
 POST http://localhost:8080/api/proyecto/actaReunion/crearActaReunion HTTP/1.1
@@ -792,7 +791,12 @@ Content-Type: application/json
     ]
   }
 }
-=======
+
+
+###
+GET http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/82 HTTP/1.1
+Content-Type: application/json
+
 ////////////////////////////
 //  AUTOEVALUACION        //
 ////////////////////////////
@@ -807,4 +811,3 @@ Content-Type:  application/json
 ###LISTAR AUTOEVALUACION
 GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/58/95 HTTP/1.1
 Content-Type:  application/json
->>>>>>> c4fbd5ccd0dd9f8da90f8a892fda53cbabb3679b

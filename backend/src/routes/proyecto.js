@@ -232,6 +232,21 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const idActaReunion = results[0][0].idActaReunion;
                     }
 
+                    if (herramienta.idHerramienta === 12) {
+                        //Acta de reunion
+                        const {idProyecto,nombre,descripcion,usuarios} = req.body;
+                        console.log("Llegue a recibir solicitud insertar equipo");
+                        const query = `
+                            CALL INSERTAR_EQUIPO(?,?,?);
+                        `;
+                        
+                            const [results] = await connection.query(query,[idProyecto, null, null]);
+                            const idEquipo = results[0][0].idEquipo;
+                            console.log(`Se creo el equipo${idEquipo}!`);
+    
+                    }
+
+
                     if (herramienta.idHerramienta === 13){
                         //Presupeusto
                         query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
@@ -239,7 +254,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                             idProyecto,2,0,0
                         ]);
                         //Esos dos 0s están por justo xdxd
-                        const idPrespuesto = results[0][0].idPresupuesto
+                        const idPresupuesto = results[0][0].idPresupuesto
                     }
 
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto

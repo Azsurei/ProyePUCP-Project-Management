@@ -17,6 +17,10 @@ async function listarXIdLineaActaReunion(req,res,next){
         const query = `CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(?);`;
         const results = await connection.query(query,[idLineaActaReunion]);
         const participantesXReunion = results[0];
+
+
+        
+
         res.status(200).json({
             participantesXReunion,
             message: "Participantes x reunion listados"});
