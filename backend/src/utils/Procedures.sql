@@ -450,7 +450,7 @@ BEGIN
     VALUES(_idActaReunion,_nombreReunion,_fechaReunion,_horaReunion,_nombreConvocante,_motivo,1);
     
     SET _idLineaActaReunion = @@last_insert_id;
-    SELECT _idLineaActaReunion AS LineaActaReunion;
+    SELECT _idLineaActaReunion AS idLineaActaReunion;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION;
@@ -466,6 +466,18 @@ BEGIN
 END$
 
 CALL LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION(1)
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM LineaActaReunion 
+    WHERE idLineaActaReunion = _idLineaActaReunion 
+    AND activo=1;
+END$
 --------------------------
 --  TEMA REUNION
 --------------------------
@@ -483,7 +495,7 @@ BEGIN
     VALUES(_idLineaActaReunion,_descripcion,1);
     
     SET _idTemaReunion = @@last_insert_id;
-    SELECT _idTemaReunion AS TemaReunion;
+    SELECT _idTemaReunion AS idTemaReunion;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION;
