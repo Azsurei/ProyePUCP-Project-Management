@@ -86,7 +86,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             setImpactDetail(crData.impactoRiesgo);
             setIsSelected(crData.estado === "Activo" ? true : false);
             //CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-/*             const selectedMiembrosList1Original = crData.responsables;
+            /*             const selectedMiembrosList1Original = crData.responsables;
             const selectedMiembrosList1Actualizados =
                 selectedMiembrosList1Original.map((selectedMiembrosList1) => ({
                     email: selectedMiembrosList1.correoElectronico || "", // Puedes agregar un valor predeterminado en caso de que falte
@@ -99,9 +99,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 selectedMiembrosList1Actualizados
             ); */
             setSelectedMiembrosList1(crData.responsables);
-            setSelectedMiembrosList1Originales(
-                crData.responsables
-            );
+            setSelectedMiembrosList1Originales(crData.responsables);
             const responsesPlansOriginal = crData.planRespuesta;
             const responsesPlansActualizados = responsesPlansOriginal.map(
                 (responsesPlans) => ({
@@ -479,7 +477,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
-            }); 
+            });
     };
 
     return (
@@ -650,6 +648,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             </div>
                         )}
                     </div>
+                </div>
+                <div className="titleButtonCR">
+                    <h4 style={{ fontWeight: 600 }}>Responsables del riesgo<span className="text-red-500"> *</span></h4>
                 </div>
                 <div className="containerResponsables">
                     <ButtonIconLabel

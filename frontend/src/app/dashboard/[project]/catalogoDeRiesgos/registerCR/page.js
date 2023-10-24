@@ -416,6 +416,9 @@ export default function CatalogoDeRiesgosRegister(props) {
                         )}
                     </div>
                 </div>
+                <div className="titleButtonCR">
+                    <h4 style={{ fontWeight: 600 }}>Responsables del riesgo<span className="text-red-500"> *</span></h4>
+                </div>
                 <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
