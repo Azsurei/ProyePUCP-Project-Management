@@ -13,8 +13,8 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
+import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
