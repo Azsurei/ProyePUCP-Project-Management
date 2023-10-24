@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/FIconLabel";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";

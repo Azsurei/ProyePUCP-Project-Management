@@ -1,5 +1,5 @@
 import React from 'react';
-import IconLabel from './IconLabel';
+import IconLabel from './FIconLabel';
 
 function BacklogRow({ index, hu, toggleModal }) {
   return (
