@@ -1,0 +1,24 @@
+.posteriorModalContainer{
+    border: 1px red solid;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.postNombreContainer{
+
+}
+
+.postDatesContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.postDateStart{
+    width: 100%;
+}
+
+.postDateEnd{
+    width: 100%;
+}
