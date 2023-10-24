@@ -261,7 +261,7 @@
     height: 2.5rem;
     flex-shrink: 0;
     border-radius: 100%;
-    margin-left: 1.5rem;
+    margin-left: 1rem;
     font-size: 15px;
     background-color: lightgray;
     display: flex;
@@ -296,4 +296,35 @@
     gap: 1px; /* Ajusta el espacio vertical entre el nombre y el correo según tus preferencias */
     margin-top: 2px;
     margin-left: 10px;
+}
+
+.containerEquiposCards{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(286px,1fr));
+    row-gap: 2rem;
+    column-gap: 2rem;
+}
+
+.headerGroup{
+    font-weight: 700;
+    font-size: 28px;
+    color: #172B4D;
+    white-space: normal; /* Allow text to wrap when necessary */
+    overflow-wrap: break-word; /* Allow word breaking when necessary */
+    max-width: 100%; 
+    min-width: none;
+    margin-bottom: 1rem;
+}
+
+.membersIcon1{
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 100%;
+    margin-right: 1rem;
+    font-size: 15px;
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

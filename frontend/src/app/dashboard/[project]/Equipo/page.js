@@ -101,7 +101,7 @@ export default function Equipo(props) {
                         )}
                     </div>
                     {ListComps.length > 0 ? (
-                        <div className="grid grid-cols-3 gap-3 mt-1">
+                        <div className="containerEquiposCards">
                             {/* Usar ListComps en vez de grupos*/}
                             {ListComps.map((team) => (
                                 <CardEquipo
@@ -145,14 +145,46 @@ export default function Equipo(props) {
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
-                        handlerReturn={()=>{setScreenState(0)}}
+                        handlerReturn={() => {
+                            setScreenState(0);
+                        }}
                         //newPrimarySon={ListComps.length + 1}
-                        breadcrump={"Inicio / Proyectos / " + projectName + " / Equipos"}
+                        breadcrump={
+                            "Inicio / Proyectos / " + projectName + " / Equipos"
+                        }
                         btnText={"Nueva tarea"}
-                    >{selectedTeam.nombre}</HeaderWithButtonsSamePage>
+                    >
+                        {selectedTeam.nombre}
+                    </HeaderWithButtonsSamePage>
 
                     <div>
+                        <div className="headerGroup">Tareas</div>
+                    </div>
+
+                    <div className="containerMembers">
+                        <div className="headerGroup">
+                            {`Miembros (${selectedTeam.participantes.length})`}
+                        </div>
+                        <div className="grid grid-cols-10">
+                            <div className="col-span-6 font-bold border-b-2 border-gray-300">Nombre</div>
+                            <div className="col-span-3 font-bold border-b-2 border-gray-300">Rol</div>
+                            <div className="col-span-1 font-bold border-b-2 border-gray-300">Eliminar</div>
                         
+                            {selectedTeam.participantes.map((member) => (
+                                <div className="col-span-6 flex mt-4">
+                                    <p className="membersIcon1">
+                                        {member.nombres[0] +
+                                            member.apellidos[0]}
+                                    </p>
+                                    <div>
+                                        <div className="text-lg">
+                                            {member.nombres} {member.apellidos}
+                                        </div>
+                                        <div>{member.correoElectronico}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
