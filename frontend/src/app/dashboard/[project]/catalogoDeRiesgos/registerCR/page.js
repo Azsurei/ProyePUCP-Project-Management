@@ -14,7 +14,7 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/FContainerResponsePlans";
-import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/FContainerContingencyPlans";
+import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
