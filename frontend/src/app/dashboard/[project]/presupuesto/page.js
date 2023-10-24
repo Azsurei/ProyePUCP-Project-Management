@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import MyCombobox from "@/components/ComboBox";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
-import TableBudget from "@/components/TableBudget";
+import TableBudget from "@/components/FTableBudget";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { Toaster, toast } from "sonner";
 
