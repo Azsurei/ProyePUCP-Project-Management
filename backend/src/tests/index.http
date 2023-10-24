@@ -745,3 +745,17 @@ Content-Type:  application/json
   ]
 }
 
+////////////////////////////
+//  AUTOEVALUACION        //
+////////////////////////////
+###CREAR AUTOEVALUACION AC
+POST http://localhost:8080/api/proyecto/autoEvaluacion/crearAutoEvaluacion HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProyecto": 58
+}
+
+###LISTAR AUTOEVALUACION
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/58/95 HTTP/1.1
+Content-Type:  application/json
