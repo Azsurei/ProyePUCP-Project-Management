@@ -304,3 +304,13 @@
     row-gap: 2rem;
     column-gap: 2rem;
 }
+
+.headerGroup{
+    font-weight: 700;
+    font-size: 28px;
+    color: #172B4D;
+    white-space: normal; /* Allow text to wrap when necessary */
+    overflow-wrap: break-word; /* Allow word breaking when necessary */
+    max-width: 100%; 
+    min-width: none;
+}

@@ -145,14 +145,28 @@ export default function Equipo(props) {
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
-                        handlerReturn={()=>{setScreenState(0)}}
+                        handlerReturn={() => {
+                            setScreenState(0);
+                        }}
                         //newPrimarySon={ListComps.length + 1}
-                        breadcrump={"Inicio / Proyectos / " + projectName + " / Equipos"}
+                        breadcrump={
+                            "Inicio / Proyectos / " + projectName + " / Equipos"
+                        }
                         btnText={"Nueva tarea"}
-                    >{selectedTeam.nombre}</HeaderWithButtonsSamePage>
+                    >
+                        {selectedTeam.nombre}
+                    </HeaderWithButtonsSamePage>
 
                     <div>
-                        
+                        <div className="headerGroup">
+                            Tareas
+                        </div>
+                    </div>
+
+                    <div className="containerMembers">
+                        <div className="headerGroup">
+                            {`Miembros (${selectedTeam.participantes.length})`}
+                        </div>
                     </div>
                 </div>
             )}
