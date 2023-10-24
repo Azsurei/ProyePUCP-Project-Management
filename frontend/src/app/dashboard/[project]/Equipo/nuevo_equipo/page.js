@@ -91,7 +91,7 @@ export default function crear_equipo(props){
 
     const removeMiembro = (miembro) => {
         const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
+            (item) => item.idUsuario !== miembro.idUsuario
         );
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
@@ -138,7 +138,7 @@ export default function crear_equipo(props){
         const nombreProyecto = projectName;
         // Esto es porque el procedure solo acepta ID
         const selectedMiembrosListWithIDs = selectedMiembrosList.map((usuario) => {
-            return { idUsuario: usuario.id };
+            return { idUsuario: usuario.idUsuario };
         });
         console.log("ProjectoId: ", proyectoId);
         console.log("NombreTeam: ", nombreTeam);
@@ -209,11 +209,11 @@ export default function crear_equipo(props){
                         {selectedMiembrosList.map((component) => {
                             return (
                                 <CardSelectedUser
-                                    key={component.id}
-                                    name={component.name}
-                                    lastName={component.lastName}
+                                    key={component.idUsuario}
+                                    name={component.nombres}
+                                    lastName={component.apellidos}
                                     usuarioObject={component}
-                                    email={component.email}
+                                    email={component.correoElectronico}
                                     removeHandler={removeMiembro}
                                 ></CardSelectedUser>
                             );
