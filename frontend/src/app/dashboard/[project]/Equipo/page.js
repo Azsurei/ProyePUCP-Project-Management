@@ -15,6 +15,7 @@ import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { ExportIcon } from "@/components/equipoComps/ExportIcon";
 import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
+import CardTarea from "@/components/equipoComps/CardTarea";
 
 axios.defaults.withCredentials = true;
 
@@ -34,6 +35,9 @@ export default function Equipo(props) {
     const [selectedTeam, setSelectedTeam] = useState(null);
     const [selectedTeamTareas, setSelectedTeamTareas] = useState([]);
     const [updateState, setUpdateState] = useState(false);
+
+    const [cantNotStarted, setCantNotStarted] = useState(0);
+    const [cantFinished, setCantFinished] = useState(0);
 
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(
@@ -76,7 +80,16 @@ export default function Equipo(props) {
             .get(verTareasURL)
             .then((response) => {
                 console.log(response.data.message);
+                console.log(response.data.tareasEquipo);
                 setSelectedTeamTareas(response.data.tareasEquipo);
+                const tareasNoIniciado = response.data.tareasEquipo.filter(
+                    (tarea) => tarea.idTareaEstado === 1
+                ).length;
+                const tareasFinished = response.data.tareasEquipo.filter(
+                    (tarea) => tarea.idTareaEstado === 4
+                ).length;
+                setCantNotStarted(tareasNoIniciado);
+                setCantFinished(tareasFinished);
                 setIsLoadingSmall(false);
             })
 
@@ -219,22 +232,31 @@ export default function Equipo(props) {
                                 </div>
 
                                 {selectedTeamTareas.map((tarea) => (
-                                    <div>
-                                        {tarea.sumillaTarea}
-                                    </div>
+                                    <CardTarea
+                                        key={tarea.idTarea}
+                                        tarea={tarea}
+                                    ></CardTarea>
                                 ))}
                             </div>
                             <div className="rightTareasSection">
                                 <div className="containerNumeroIndicadorAmarillo">
-                                    <p className="bigNumberTareas">4</p>
+                                    <p className="bigNumberTareas">
+                                        {cantNotStarted}
+                                    </p>
                                     <p className="smallLblTareas">
-                                        Tareas asignadas pendientes
+                                        {cantNotStarted > 1
+                                            ? "Tareas asignadas pendientes"
+                                            : "Tarea asignada pendiente"}
                                     </p>
                                 </div>
                                 <div className="containerNumeroIndicadorVerde">
-                                    <p className="bigNumberTareas">5</p>
+                                    <p className="bigNumberTareas">
+                                        {cantFinished}
+                                    </p>
                                     <p className="smallLblTareas">
-                                        Tareas asignadas terminadas
+                                        {cantFinished > 1
+                                            ? "Tareas asignadas terminadas"
+                                            : "Tarea asignada terminada"}
                                     </p>
                                 </div>
                             </div>
