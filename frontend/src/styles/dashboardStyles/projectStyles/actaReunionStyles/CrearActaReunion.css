@@ -126,6 +126,19 @@
   margin-left: 5px; /* Ajusta el margen izquierdo para posicionar a la derecha */
 }
 
+.changeConvocanteText {
+  color: #f0ae19;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: none;
+  margin-left: 8px;
+  padding-top: 2px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 /*
 .addButton {
     background-color: #F0AE19;
