@@ -225,6 +225,9 @@
 .comboBoxMoneda {
     flex: 1; /* Allow the combo box to grow and take available space */
     transform: translateY(-9%);
+    z-index: 2;
+
+
 }
 
 /* Adjust Input styles as needed */
@@ -240,4 +243,13 @@
     font-size: 15px;
     font-style: normal;
     font-weight: 400;
+}
+
+.alertMoneda{
+
+    position: absolute; /* Añade esta línea para establecer una posición absoluta en el elemento de alerta */
+    top: 69%; /* Añade es7ta línea para colocar las alertas justo debajo del combo box */
+    z-index: 1; /* Asegura que las letras estén por debajo del combo box */
+    left: 25px;
+    
 }
