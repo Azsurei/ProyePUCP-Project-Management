@@ -36,6 +36,9 @@ export default function Equipo(props) {
     const [selectedTeamTareas, setSelectedTeamTareas] = useState([]);
     const [updateState, setUpdateState] = useState(false);
 
+    const [cantNotStarted, setCantNotStarted] = useState(0);
+    const [cantFinished, setCantFinished] = useState(0);
+
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(
             (item) => item.idUsuario !== user.idUsuario
@@ -79,6 +82,14 @@ export default function Equipo(props) {
                 console.log(response.data.message);
                 console.log(response.data.tareasEquipo);
                 setSelectedTeamTareas(response.data.tareasEquipo);
+                const tareasNoIniciado = response.data.tareasEquipo.filter(
+                    (tarea) => tarea.idTareaEstado === 1
+                ).length;
+                const tareasFinished = response.data.tareasEquipo.filter(
+                    (tarea) => tarea.idTareaEstado === 4
+                ).length;
+                setCantNotStarted(tareasNoIniciado);
+                setCantFinished(tareasFinished);
                 setIsLoadingSmall(false);
             })
 
@@ -230,15 +241,23 @@ export default function Equipo(props) {
                             </div>
                             <div className="rightTareasSection">
                                 <div className="containerNumeroIndicadorAmarillo">
-                                    <p className="bigNumberTareas">4</p>
+                                    <p className="bigNumberTareas">
+                                        {cantNotStarted}
+                                    </p>
                                     <p className="smallLblTareas">
-                                        Tareas asignadas pendientes
+                                        {cantNotStarted > 1
+                                            ? "Tareas asignadas pendientes"
+                                            : "Tarea asignada pendiente"}
                                     </p>
                                 </div>
                                 <div className="containerNumeroIndicadorVerde">
-                                    <p className="bigNumberTareas">5</p>
+                                    <p className="bigNumberTareas">
+                                        {cantFinished}
+                                    </p>
                                     <p className="smallLblTareas">
-                                        Tareas asignadas terminadas
+                                        {cantFinished > 1
+                                            ? "Tareas asignadas terminadas"
+                                            : "Tarea asignada terminada"}
                                     </p>
                                 </div>
                             </div>
