@@ -1,0 +1,30 @@
+#UsrNoIconTarea{
+    background-color: rgb(212, 212, 216);
+    /* border: 1px lightgray solid; */
+    cursor: pointer;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+
+    width: 48px;
+    height: 48px;
+    color: black
+}
+
+#MoreUsrsIcn{
+    background-color: rgb(0, 112, 240);
+    border-style: none;
+    border-width: 0px;
+    cursor: pointer;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+
+    width: 48px;
+    height: 48px;
+    color: white;
+}

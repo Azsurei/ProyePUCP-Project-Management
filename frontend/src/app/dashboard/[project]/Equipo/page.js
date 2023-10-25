@@ -15,6 +15,7 @@ import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { ExportIcon } from "@/components/equipoComps/ExportIcon";
 import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
+import CardTarea from "@/components/equipoComps/CardTarea";
 
 axios.defaults.withCredentials = true;
 
@@ -76,6 +77,7 @@ export default function Equipo(props) {
             .get(verTareasURL)
             .then((response) => {
                 console.log(response.data.message);
+                console.log(response.data.tareasEquipo);
                 setSelectedTeamTareas(response.data.tareasEquipo);
                 setIsLoadingSmall(false);
             })
@@ -220,9 +222,10 @@ export default function Equipo(props) {
                                 </div>
 
                                 {selectedTeamTareas.map((tarea) => (
-                                    <div>
-                                        {tarea.sumillaTarea}
-                                    </div>
+                                    <CardTarea
+                                        key={tarea.idTarea}
+                                        tarea={tarea}
+                                    ></CardTarea>
                                 ))}
                             </div>
                             <div className="rightTareasSection">
