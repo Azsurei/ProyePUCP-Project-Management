@@ -111,6 +111,8 @@ export default function Presupuesto(props) {
     const [selectedMoneda, setselectedMoneda] = useState("");
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
+        setValidTipoMoneda(true);
+        
     };
 
     const [monto, setMonto] = useState("");
@@ -222,7 +224,11 @@ export default function Presupuesto(props) {
 
                 </div>
 
-                <Modal size='xl' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+                <Modal size='xl' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} 
+                            classNames={{
+                                closeButton: "hidden",
+                            }}
+                >
                 <ModalContent>
                         {(onClose) => {
                             const cerrarModal = () => {
@@ -240,7 +246,11 @@ export default function Presupuesto(props) {
                                 }
                                 if(selectedMoneda!=1 || selectedMoneda!=2){
                                     setValidTipoMoneda(false);
-                                    Isvalid=false;
+                                    Isvalid= false;
+                                }
+
+                                if(selectedMoneda==1 || selectedMoneda==2){ 
+                                    setValidTipoMoneda(true);
                                 }
 
                                 if(Isvalid === true){
@@ -260,7 +270,7 @@ export default function Presupuesto(props) {
                                     </ModalHeader>
                                     <ModalBody>
                                         <p className="textIngreso">
-                                                Se creará el presupuesto para el Proyecto: 
+                                                Se creará un nuevo presupuesto para el Proyecto
                                         </p>
                                         <span className="nombreProyecto">{" "+projectName}</span>
 
@@ -282,7 +292,7 @@ export default function Presupuesto(props) {
                                                 onSelect={handleSelectedValueMoneda}
                                                 idParam="idMoneda"
                                                 initialName="Tipo Moneda"
-                                                inputWidth="16"
+                                                inputWidth="32"
                                                 widthCombo="9"
                                             />
 
@@ -336,24 +346,27 @@ export default function Presupuesto(props) {
 
                                             />
                                             </div>
+
+                                            <div className="alertMoneda" >
+                                                <p className="text-tiny text-danger"> 
+                                                            
+                                                            {
+                                                            !validTipoMoneda
+                                                                ? "Seleccione Moneda"
+                                                                : ""
+                                                            }                      
+                    
+                                                        </p>                  
+                                            </div>   
                                     
-                                    </div>
+                                         </div>
 
                                     <div>
                                         
                                     </div>
 
                                     </ModalBody>
-                                    <ModalFooter>
-                                    <p className="text-blue-600"> 
-                                                   
-                                        {
-                                        !validTipoMoneda
-                                            ? "Seleccione un tipo de Moneda"
-                                            : ""
-                                        }                      
-
-                                    </p>
+                                    <ModalFooter>                
                                         <Button
                                             color="danger"
                                             variant="light"
