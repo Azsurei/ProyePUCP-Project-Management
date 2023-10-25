@@ -284,8 +284,8 @@ export default function Ingresos(props) {
                 
                 </div>
 
-                <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
-                <ModalContent>
+                <Modal hideCloseButton={false} size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} >
+                <ModalContent >
                         {(onClose) => {
                             const cerrarModal = async () => {
                                 try {
