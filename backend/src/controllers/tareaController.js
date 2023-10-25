@@ -88,18 +88,39 @@ async function listarXIdProyecto(req,res,next){
     }
 }
 
+
 async function eliminarTarea(req,res,next){
-    const {idTarea} = req.body;
+    const {tarea} = req.body;
     const query = `CALL ELIMINAR_TAREA(?);`;
     try {
-        await connection.query(query,[idTarea]);
+        //await connection.query(query,[idTarea]);
+        eliminarRecursivo(tarea);
+
         res.status(200).json({
             message: "Tarea eliminada e hijas tambien si tuviera"
         });
         console.log('Se elimino la tarea correctamente');
+
     } catch (error) {
         console.log(error);
         next(error);
+    }
+}
+
+async function eliminarRecursivo(tarea){
+    //eliminamos tarea recibida
+    console.log("Eliminando tarea '" + tarea.sumillaTarea + "' con ID " + tarea.idTarea);
+    const query = `CALL ELIMINAR_TAREA(?);`;
+    await connection.query(query,[tarea.idTarea]);
+
+    //caso donde no se deba eliminar nada
+    if(tarea.tareasHijas.length === 0 ){
+        return;
+    }
+    
+    //eliminamos hija
+    for(const tareaHija of tarea.tareasHijas){
+        eliminarRecursivo(tareaHija);
     }
 }
 

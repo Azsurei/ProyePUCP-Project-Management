@@ -125,7 +125,7 @@ function CardTarea({
                                 className="text-danger"
                                 color="danger"
                                 onClick={() => {
-                                    handleDelete(tarea.idTarea)
+                                    handleDelete(tarea)
                                 }}
                             >
                                 Eliminar

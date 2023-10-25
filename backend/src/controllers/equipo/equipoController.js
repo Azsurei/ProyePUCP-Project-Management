@@ -73,8 +73,28 @@ async function listarEquiposYParticipantes(req,res,next){
     }
 }
 
+
+async function listarTareasDeXIdEquipo(req,res,next){
+    const {idEquipo} = req.params;
+    const query = `CALL LISTAR_TAREAS_X_IDEQUIPO(?);`;
+    try {
+        const [results] = await connection.query(query,[idEquipo]);
+        const tareasEquipo = results[0];
+        res.status(200).json({
+            tareasEquipo,
+            message: "Tareas de equipo "+idEquipo+" obtenidas exitosamente"
+        });
+        console.log('Se listaron las tareas correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
-    listarEquiposYParticipantes
+    listarEquiposYParticipantes,
+    listarTareasDeXIdEquipo
 };
