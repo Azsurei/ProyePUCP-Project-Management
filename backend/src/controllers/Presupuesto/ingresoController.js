@@ -15,7 +15,8 @@ async function crearLineaIngreso(req,res,next){
     const {idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} = req.body;
     try {
         const query = `CALL INSERTAR_LINEA_INGRESO(?,?,?,?,?,?,?,?,?);`;
-        await connection.query(query,[idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
+        const [result] =await connection.query(query,[idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
+        console.log(result[0][0].idLineaIngreso);
         res.status(200).json({message: "Linea ingreso creada"});
     } catch (error) {
         next(error);
