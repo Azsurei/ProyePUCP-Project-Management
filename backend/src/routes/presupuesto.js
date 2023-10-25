@@ -25,6 +25,7 @@ routerPresupuesto.get("/listarTipoTransaccionTodos",verifyToken, tipoTransaccion
 routerPresupuesto.post("/insertarIngreso",ingresoController.crear);
 routerPresupuesto.post("/insertarLineaIngreso",ingresoController.crearLineaIngreso);
 routerPresupuesto.get("/listarLineasIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasXIdProyecto);
+routerPresupuesto.put("/modificarLineaIngreso",ingresoController.modificarLineaIngreso);
 //routerPresupuesto.get("/listarLineaXIdProyecto/:idProyecto",ingresoController.listarLineaXIdProyecto); //Corregido (Augusto)
 routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
@@ -34,6 +35,7 @@ routerPresupuesto.post("/insertarEgreso",egresoController.crear);
 routerPresupuesto.post("/insertarLineaEgreso",egresoController.crearLineaEgreso);
 routerPresupuesto.get("/listarLineasEgresoXIdProyecto/:idProyecto",egresoController.listarLineasXIdProyecto); //Corregido (Augusto)
 routerPresupuesto.get("/listarLineaEgresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",egresoController.listarLineasXNombreFechas);
+routerPresupuesto.put("/modificarLineaEgreso",egresoController.modificarLineaEgreso);
 routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEgreso);    
 
 
@@ -41,6 +43,7 @@ routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEg
 routerPresupuesto.post("/insertarEstimacionCosto",estimacionCostoController.crear);
 routerPresupuesto.post("/insertarLineaEstimacionCosto",estimacionCostoController.crearLineaEstimacionCosto);
 routerPresupuesto.get("/listarLineasEstimacionCostoXIdProyecto/:idProyecto",estimacionCostoController.listarLineasXIdProyecto);
+routerPresupuesto.put("/modificarLineaEstimacionCosto",estimacionCostoController.modificarLineaEstimacionCosto);
 //routerPresupuesto.get("/listarEstimacionXIdProyecto/:idProyecto",estimacionCostoController.listarEstimacionXIdProyecto); //Corregido (Augusto)
 routerPresupuesto.get("/listarLineaEstimacionCostoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",estimacionCostoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaCosto",estimacionCostoController.eliminarLineaEstimacionCosto);

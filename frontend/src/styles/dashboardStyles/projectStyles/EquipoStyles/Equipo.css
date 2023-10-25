@@ -305,8 +305,15 @@
     column-gap: 2rem;
 }
 
+
+
+
+.containerTareasEquipo{
+}
+
+
 .headerGroup{
-    font-weight: 700;
+    font-weight: 400;
     font-size: 28px;
     color: #172B4D;
     white-space: normal; /* Allow text to wrap when necessary */
@@ -327,4 +334,50 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.tareasContainer{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+    gap: .5rem;
+}
+
+.leftTareasSection{
+    flex: 1;
+}
+
+.rightTareasSection{
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat';
+    gap: 1rem;
+}
+
+.containerNumeroIndicadorAmarillo, .containerNumeroIndicadorVerde{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+
+    border-radius: 10px;
+    padding: .7rem .7rem;
+}
+
+.containerNumeroIndicadorAmarillo{
+    background-color: rgb(245, 216, 52);
+}
+
+.containerNumeroIndicadorVerde{
+    background-color: rgb(143, 216, 48);
+}
+
+.bigNumberTareas{
+    font-size: 3rem;
+}
+
+.smallLblTareas{
+    max-width: 140px;
 }

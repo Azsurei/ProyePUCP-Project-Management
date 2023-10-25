@@ -924,10 +924,11 @@ CREATE PROCEDURE  LISTAR_EQUIPO_X_ID_EQUIPO(
     IN _idEquipo INT
 )
 BEGIN
-	SELECT idEquipo,nombre,descripcion,fechaCreacion
-    FROM Equipo
-    WHERE  idEquipo = _idEquipo
-    AND activo=1;
+    SELECT e.idEquipo, e.idProyecto, e.nombre, e.fechaCreacion, e.activo, e.idLider, 
+    u.nombres as "nombreLider", u.apellidos as "apellidoLider", u.correoElectronico as "correoLider"
+	FROM Equipo As e
+    LEFT JOIN Usuario AS u ON e.idLider = u.idUsuario
+	WHERE e.idEquipo = _idEquipo AND e.activo=1;
 END$
 
 
@@ -1093,16 +1094,16 @@ END$
 --------------------
 -- Equipo
 --------------------
-
+DROP PROCEDURE INSERTAR_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_EQUIPO(   
 	IN _idProyecto INT,
     IN _nombre VARCHAR(200),
-    IN _descripcion VARCHAR(500)
+    IN _idLider INT
 )
 BEGIN
 	DECLARE _idEquipo INT;
-	INSERT INTO Equipo(idProyecto,nombre,descripcion,fechaCreacion,activo) VALUES(_idProyecto,_nombre,_descripcion,CURDATE(),1);		
+	INSERT INTO Equipo(idProyecto,nombre,idLider,fechaCreacion,activo) VALUES(_idProyecto,_nombre,_idLider,CURDATE(),1);		
     SET _idEquipo = @@last_insert_id;
     SELECT _idEquipo AS idEquipo;
 END$
@@ -1771,6 +1772,33 @@ UPDATE LineaEstimacionCosto SET idProyecto = 50 WHERE idLineaEstimacion >0;
 UPDATE LineaIngreso SET idProyecto = 50 WHERE idLineaIngreso >0;
 UPDATE LineaEgreso SET idProyecto = 50 WHERE idLineaEgreso >0;
 
+DROP PROCEDURE IF EXISTS MODIFICAR_LINEA_INGRESO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_LINEA_INGRESO(
+    IN _idLineaIngreso INT,
+    IN _idMoneda INT,
+    IN _idTransaccionTipo INT,
+    IN _idIngresoTipo INT,
+    IN _descripcion VARCHAR(255),
+    IN _monto DECIMAL(10,2),
+    IN _cantidad INT,
+    IN _fechaTransaccion DATE
+)
+BEGIN
+    UPDATE LineaIngreso
+    SET
+        idMoneda = _idMoneda,
+        idTransaccionTipo = _idTransaccionTipo,
+        idIngresoTipo = _idIngresoTipo,
+        descripcion = _descripcion,
+        monto = _monto,
+        cantidad = _cantidad,
+        fechaTransaccion = _fechaTransaccion
+    WHERE
+        idLineaIngreso = _idLineaIngreso AND activo = 1;
+    SELECT _idLineaIngreso AS idLineaIngreso;
+END $
+
 
 
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PROYECTO;
@@ -1856,6 +1884,34 @@ END$
 ######
 COMPLETAR CAMBIO DE COLUMNA
 
+DROP PROCEDURE IF EXISTS MODIFICAR_LINEA_EGRESO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_LINEA_EGRESO(
+	IN _idLineaEgreso INT,
+    IN _idMoneda INT,
+    IN _idLineaEstimacionCosto INT,
+	IN _descripcion VARCHAR(255),
+    IN _costoReal DECIMAL(10,2),
+	IN _fechaRegistro DATE,
+    IN _cantidad INT
+)
+BEGIN
+    UPDATE LineaEgreso
+    SET
+        idMoneda = _idMoneda,
+        idLineaEstimacionCosto = _idLineaEstimacionCosto,
+        descripcion = _descripcion,
+        costoReal = _costoReal,
+        fechaRegistro = _fechaRegistro,
+        cantidad = _cantidad
+    WHERE
+        idLineaEgreso = _idLineaEgreso AND activo=1;
+    
+    SELECT _idLineaEgreso AS idLineaEgreso;
+END
+$
+
+
 
 SELECT * FROM Presupuesto;
 
@@ -1932,6 +1988,7 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
     IN _idMoneda INT,
     IN _idEstimacion INT,
+    IN _idProyecto INT,
     IN _descripcion VARCHAR(255),
     IN _tarifaUnitaria DECIMAL(10,2),
     IN _cantidadRecurso INT,
@@ -1940,11 +1997,39 @@ CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
 )
 BEGIN
 	DECLARE _idLineaEstimacionCosto INT;
-	INSERT INTO LineaEstimacionCosto(idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
-    VALUES(_idMoneda,_idEstimacion,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
+	INSERT INTO LineaEstimacionCosto(idMoneda,idEstimacion,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
+    VALUES(_idMoneda,_idEstimacion,_idProyecto,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
     SET _idLineaEstimacionCosto = @@last_insert_id;
     SELECT _idLineaEstimacionCosto AS idLineaEstimacionCosto;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_LINEA_ESTIMACION_COSTO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_LINEA_ESTIMACION_COSTO(
+    IN _idLineaEstimacionCosto INT,
+    IN _idMoneda INT,
+    IN _descripcion VARCHAR(255),
+    IN _tarifaUnitaria DECIMAL(10,2),
+    IN _cantidadRecurso INT,
+    IN _subtotal DECIMAL(10,2),
+    IN _fechaInicio DATE
+)
+BEGIN
+    UPDATE LineaEstimacionCosto
+    SET
+        idMoneda = _idMoneda,
+        descripcion = _descripcion,
+        tarifaUnitaria = _tarifaUnitaria,
+        cantidadRecurso = _cantidadRecurso,
+        subtotal = _subtotal,
+        fechaInicio = _fechaInicio
+    WHERE
+        idLineaEstimacionCosto = _idLineaEstimacionCosto;
+
+    SELECT _idLineaEstimacionCosto AS idLineaEstimacionCosto;
+END$
+
+
 
 CALL INSERTAR_LINEA_ESTIMACION_COSTO(1,1,1,"Primera linea de estimacion costo",20,2,40,CURDATE());
 
@@ -2170,9 +2255,11 @@ DROP PROCEDURE IF EXISTS LISTAR_EQUIPOS_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_EQUIPOS_X_IDPROYECTO(IN _idProyecto INT)
 BEGIN
-    SELECT *
-	FROM Equipo
-	WHERE idProyecto = _idProyecto AND activo=1;
+    SELECT e.idEquipo, e.idProyecto, e.nombre, e.fechaCreacion, e.activo, e.idLider, 
+    u.nombres as "nombreLider", u.apellidos as "apellidoLider", u.correoElectronico as "correoLider"
+	FROM Equipo As e
+    LEFT JOIN Usuario AS u ON e.idLider = u.idUsuario
+	WHERE e.idProyecto = _idProyecto AND e.activo=1;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTES_X_IDEQUIPO;
@@ -2534,4 +2621,30 @@ BEGIN
     SELECT *
 	FROM CriterioEvaluacion
 	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_OBSERVACION_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_OBSERVACION_X_ID(
+    IN _idUsuarioEvaluacion INT,
+    IN _observaciones VARCHAR(500)
+)
+BEGIN
+    UPDATE UsuarioXEvaluacion 
+    SET observaciones = _observaciones
+    WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_NOTACRITERIO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_NOTACRITERIO_X_ID(
+    IN _idCriterioEvaluacion INT,
+    IN _criterio VARCHAR(500),
+    IN _nota DOUBLE
+)
+BEGIN
+    UPDATE CriterioEvaluacion 
+    SET criterio = _criterio,
+        nota = _nota
+    WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
 END$

@@ -47,7 +47,7 @@ export default function Ingresos(props) {
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
-    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineaXIdProyecto/100`;
+    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
 
     //const router=userRouter();
 
@@ -195,11 +195,11 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineaXIdProyecto/${projectId}`);
-              const data = response.data.lineas;
+              const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
+              const data = response.data.lineasIngreso;
               setLineasIngreso(data);
               console.log(`Esta es la data:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.lineas);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasIngreso);
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
@@ -284,8 +284,8 @@ export default function Ingresos(props) {
                 
                 </div>
 
-                <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
-                <ModalContent>
+                <Modal hideCloseButton={false} size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} >
+                <ModalContent >
                         {(onClose) => {
                             const cerrarModal = async () => {
                                 try {
@@ -320,6 +320,7 @@ export default function Ingresos(props) {
                                                 idParam="idMoneda"
                                                 initialName="Tipo Moneda"
                                                 inputWidth="2/3"
+                                                widthCombo="9"
                                             />
 
                                             </div>
@@ -377,6 +378,7 @@ export default function Ingresos(props) {
                                                 idParam="idTransaccionTipo"
                                                 initialName="Seleccione Ingreso"
                                                 inputWidth="64"
+                                                widthCombo="15"
                                             />
 
                                         </div>
@@ -394,6 +396,7 @@ export default function Ingresos(props) {
                                                 idParam="idIngresoTipo"
                                                 initialName="Seleccione Transacción"
                                                 inputWidth="64"
+                                                widthCombo="15"
                                             />
 
                                         </div>

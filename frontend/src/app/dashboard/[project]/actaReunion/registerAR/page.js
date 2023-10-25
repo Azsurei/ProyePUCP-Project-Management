@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
@@ -17,7 +16,7 @@ import {
     Button, Spacer,
 } from "@nextui-org/react";
 
-import ListUsersOne from "@/components/ListUsersOne";
+import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunion.css";
@@ -36,21 +35,26 @@ export default function crearActaReunion(props) {
 // *********************************************************************************************
 // Various Variables
 // *********************************************************************************************
+// Router. Helps you to move between pages
 const router = useRouter();
-    
+
+// Project Info
 const decodedUrl = decodeURIComponent(props.params.project);
 const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
 const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
+// Loading Window
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 setIsLoadingSmall(false);
 
+// Edit Mode: False for New Meeting, True for Edit Meeting
+const [isEditMode, setIsEditMode] = useState(false);
 
+//Vital Data for Creating Meeting
 const [titleValue, setTitleValue] = useState("");
 const [motiveValue, setMotiveValue] = useState("");
-
-const [dateValue, setDateValue] = useState(""); // Estado para la fecha
-const [timeValue, setTimeValue] = useState(""); // Estado para la hora
+const [dateValue, setDateValue] = useState(""); 
+const [timeValue, setTimeValue] = useState(""); 
 
 const handleChangeDate = (event) => {
     setDateValue(event.target.value);
@@ -82,7 +86,6 @@ function getMinDate() {
 
     return `${year}-${month}-${day}`;
 }
-
 
 function getMinTime() {
     const today = new Date();
@@ -227,12 +230,20 @@ const handleRemoveComentario = (index) => {
 // *********************************************************************************************
 // About Convenor and Metting Members
 // *********************************************************************************************
-    const [selectedConvocante, setSelectedConvocante] = useState(null);
+    const [convocante, setConvocante] = useState(datosUsuario);
+
+    // For convocante to have datosUsuario
+    useEffect(() => {
+        setConvocante(datosUsuario);
+      }, [datosUsuario]);
+
+    // Modal1: Choose convenor. Modal2: Choose participants
     const [modal1, setModal1] = useState(false);
+    const [selectedConvocanteList, setSelectedConvocanteList] = useState([]);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
     const [modal2, setModal2] = useState(false);
 
-    const toogleModal1 = () => {
+    const toggleModal1 = () => {
         setModal1(!modal1);
     }
 
@@ -240,13 +251,22 @@ const handleRemoveComentario = (index) => {
         setModal2(!modal2);
     };
 
-    const returnConvocante = () => {
-        const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
+    // Modal1 returns a list of only one object
+    const returnListConvocante = (newMiembrosList) => {
+        const nuevoConvocante = newMiembrosList[0];
+  
+        const newMembrsList = [...selectedConvocanteList, ...newMiembrosList];
+        setSelectedConvocanteList(newMembrsList);
         setModal1(!modal1);
+        
         if (newMiembrosList.length > 0) {
-            setSelectedConvocante(newMiembrosList[0]); 
+            setConvocante(nuevoConvocante);
         }
     }
+
+    const resetConvocante = () => {
+        setConvocante(datosUsuario);
+    };
 
     const returnListOfMiembros = (newMiembrosList) => {
         const newMembrsList = [...selectedMiembrosList, ...newMiembrosList];
@@ -265,6 +285,57 @@ const handleRemoveComentario = (index) => {
 
     const [isLoading, setIsLoading] = useState(true);
 
+// *********************************************************************************************
+// Creating a Meeting Record
+// *********************************************************************************************
+    const create = () => {
+        console.log("Nombre del equipo = " + teamName);
+        console.log("Líder del equipo = " + teamLeader);
+
+        const nombreReunion = titleValue;
+        const fechaReunion = dateValue;
+        const horaReunion = timeValue;
+        const motivo = motiveValue;
+        const nombreConvocante = convocante.nombres + convocante.apellidos;
+        
+        // Esto es porque el procedure solo acepta ID
+        const selectedMiembrosListWithIDs = selectedMiembrosList.map(
+            (usuario) => {
+                return { idUsuario: usuario.idUsuario };
+            }
+        );
+        console.log("ProjectoId: ", proyectoId);
+        console.log("NombreTeam: ", nombreTeam);
+        console.log("LiderTeam: ", encargado);
+        console.log(
+            "IDs de Usuarios seleccionados:",
+            selectedMiembrosListWithIDs
+        );
+
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/actaReunion/crearActaReunionrr",
+                {
+                    //idActaReunion: proyectoId,
+                    nombreReunion: nombreReunion,
+                    fechaReunion: fechaReunion,
+                    horaReunion: horaReunion,
+                    nombreConvocante: nombreConvocante,
+                    motivo: motivo,
+                    temas: listTemas,
+                    participantes: selectedMiembrosList,
+                    comentarios: listComentarios,
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+                router.back();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
 
 // *********************************************************************************************
 // Page
@@ -297,23 +368,32 @@ const handleRemoveComentario = (index) => {
                             <p className="mt-5 mb-1 text-black text-sm font-medium">Reunión convocada por</p>
                             <div className="userSelection flex items-center">
                                 <p className="ml-2 font-medium text-gray-400 ">
-                                    {datosUsuario.nombres} {datosUsuario.apellidos}
+                                    {convocante.nombres} {convocante.apellidos}
                                 </p>
                                 <button 
-                                    onClick={toggleModal2}
+                                    onClick={toggleModal1}
                                     className="ml-3 bg-[#f0ae19] text-white w-8 h-8
                                         rounded-full">
                                     <img src="/icons/icon-searchBar.svg"/>
                                 </button>
+                                
                                 {modal1 && (
-                                <ModalUser
+                                <ModalUsersOne
+                                    listAllUsers={false}
                                     handlerModalClose={toggleModal1}
-                                    handlerModalFinished={returnListOfSupervisores}
-                                    excludedUsers={selectedSupervisoresList}
-                                ></ModalUser>
+                                    handlerModalFinished={returnListConvocante}
+                                    excludedUsers={selectedConvocanteList}
+                                    idProyecto={projectId}
+                                ></ModalUsersOne>
                                 )}
                             </div>
-                            
+                            <div>
+                                {convocante !== datosUsuario && (
+                                    <p className="changeConvocanteText" onClick={resetConvocante}>
+                                    Quiero ser el convocante
+                                    </p>
+                                )}
+                            </div>
                                 
                             <div className="dateAndTimeLine">
                                 <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha y Hora de la Reunión</p>
@@ -407,7 +487,6 @@ const handleRemoveComentario = (index) => {
                             </div>
                             {modal2 && (
                                 <ModalUsers
-                                    
                                     idProyecto={projectId}
                                     handlerModalClose={toggleModal2}
                                     handlerModalFinished={returnListOfMiembros}
