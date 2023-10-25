@@ -30,7 +30,6 @@ async function crearAutoEvaluacion(req,res,next){
     }
 }
 
-
 async function listarAutoEvaluacion(req,res,next){
     const {idProyecto, idUsuario} = req.params;
     const query = `CALL LISTAR_AUTOEVALUACION_X_USUARIO(?,?);`;
@@ -53,7 +52,29 @@ async function listarAutoEvaluacion(req,res,next){
     }
 }
 
+async function actualizarAutoEvaluacion(req,res,next){
+    const {evaluados} = req.body;
+    const query = `CALL ACTUALIZAR_OBSERVACION_X_ID(?,?);`;
+    const query1 = `CALL ACTUALIZAR_NOTACRITERIO_X_ID(?,?,?);`;
+    try {
+        for(const evaluado of evaluados){
+            await connection.query(query,[evaluado.idUsuarioEvaluacion, evaluado.observaciones]);
+            for(const criterio of evaluado.criterios){
+                await connection.query(query1,[criterio.idCriterioEvaluacion, criterio.criterio, criterio. nota]);
+            }
+        }
+        res.status(200).json({
+            message: "Autoevaluacion actualizada"
+        });
+        console.log('Se actualizo la autoevalaucion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 module.exports = {
     crearAutoEvaluacion,
-    listarAutoEvaluacion
+    listarAutoEvaluacion,
+    actualizarAutoEvaluacion
 };
