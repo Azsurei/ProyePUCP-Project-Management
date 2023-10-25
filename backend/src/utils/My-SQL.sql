@@ -641,7 +641,7 @@ CREATE TABLE LineaEgreso(
 )
 ENGINE = InnoDB;
 
-
+ALTER TABLE LineaEgreso ADD FOREIGN KEY (idLineaEstimacionCosto) REFERENCES LineaEstimacionCosto(idLineaEstimacion);
 ALTER TABLE LineaIngreso DROP COLUMN idIngreso;
 
 CREATE TABLE EstimacionCosto(
@@ -673,6 +673,14 @@ CREATE TABLE LineaEstimacionCosto(
     FOREIGN KEY (idEstimacion) REFERENCES EstimacionCosto(idEstimacion)
 )
 ENGINE = InnoDB;
+
+SELECT CONSTRAINT_NAME
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE TABLE_NAME = 'LineaEstimacionCosto'
+AND COLUMN_NAME = 'idLineaEgreso';
+
+ALTER TABLE LineaEstimacionCosto
+DROP COLUMN idLineaEgreso;
 
 -----------------------
 -- Product Backlog
