@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import CardEquipo from "@/components/equipoComps/CardEquipo";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
@@ -9,6 +10,11 @@ import { SmallLoadingScreen } from "../layout";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import axios from "axios";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import { Button } from "@nextui-org/react";
+import { CrossWhite } from "@/components/equipoComps/CrossWhite";
+import { SaveIcon } from "@/components/equipoComps/SaveIcon";
+import { ExportIcon } from "@/components/equipoComps/ExportIcon";
+import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 
 axios.defaults.withCredentials = true;
 
@@ -26,10 +32,19 @@ export default function Equipo(props) {
     //1 es vista de un equipo particular
 
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [updateState, setUpdateState] = useState(false);
 
     const handleSeeTeam = (team) => {
         setSelectedTeam(team);
         setScreenState(1);
+    };
+
+    const removeUser = (user) => {
+        const newList = selectedTeam.participantes.filter(
+            (item) => item.idUsuario !== user.idUsuario
+        );
+        selectedTeam.participantes = newList;
+        setSelectedTeam({ ...selectedTeam });
     };
 
     useEffect(() => {
@@ -145,14 +160,140 @@ export default function Equipo(props) {
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
-                        handlerReturn={()=>{setScreenState(0)}}
+                        handlerReturn={() => {
+                            setScreenState(0);
+                        }}
                         //newPrimarySon={ListComps.length + 1}
-                        breadcrump={"Inicio / Proyectos / " + projectName + " / Equipos"}
+                        breadcrump={
+                            "Inicio / Proyectos / " + projectName + " / Equipos"
+                        }
                         btnText={"Nueva tarea"}
-                    >{selectedTeam.nombre}</HeaderWithButtonsSamePage>
+                    >
+                        {selectedTeam.nombre}
+                    </HeaderWithButtonsSamePage>
 
                     <div>
-                        
+                        <div className="headerGroup">Tareas</div>
+                    </div>
+
+                    <div className="containerMembers">
+                        <div className="flex items-center justify-between">
+                            <div className="headerGroup">
+                                {`Miembros (${selectedTeam.participantes.length})`}
+                            </div>
+                            <div className="flex gap-4 items-center mb-4">
+                                {updateState ? (
+                                    <>
+                                        <Button
+                                            color="primary"
+                                            startContent={<SaveIcon />}
+                                            onPress={() =>
+                                                setUpdateState(false)
+                                            }
+                                        >
+                                            Guardar
+                                        </Button>
+                                        <Button
+                                            color="danger"
+                                            startContent={<CrossWhite />}
+                                            onPress={() =>
+                                                setUpdateState(false)
+                                            }
+                                        >
+                                            Cancelar
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            color="success"
+                                            startContent={<ExportIcon />}
+                                            className="text-white"
+                                        >
+                                            Exportar
+                                        </Button>
+                                        <Button
+                                            color="warning"
+                                            startContent={<UpdateIcon />}
+                                            className="text-white"
+                                            onPress={() => setUpdateState(true)}
+                                        >
+                                            Editar
+                                        </Button>
+                                        <Button
+                                            color="danger"
+                                            startContent={<CrossWhite />}
+                                        >
+                                            Eliminar
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-10">
+                            <div className="col-span-6 font-bold border-b-2 border-gray-300">
+                                Nombre
+                            </div>
+                            {updateState ? (
+                                <>
+                                    <div className="col-span-3 font-bold border-b-2 border-gray-300">
+                                        Rol
+                                    </div>
+                                    <div className="col-span-1 font-bold border-b-2 border-gray-300 text-center">
+                                        Eliminar
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="col-span-4 font-bold border-b-2 border-gray-300">
+                                        Rol
+                                    </div>
+                                </>
+                            )}
+
+                            {selectedTeam.participantes.map((member) => (
+                                <>
+                                    <div className="col-span-6 flex mt-4">
+                                        <p className="membersIcon1">
+                                            {member.nombres[0] +
+                                                member.apellidos[0]}
+                                        </p>
+                                        <div>
+                                            <div className="text-lg">
+                                                {member.nombres}{" "}
+                                                {member.apellidos}
+                                            </div>
+                                            <div>
+                                                {member.correoElectronico}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {updateState ? (
+                                        <>
+                                            <div className="col-span-3 flex mt-4">
+                                                Miembro
+                                            </div>
+                                            <div className="col-span-1 flex mt-4 justify-center">
+                                                <img
+                                                    src="/icons/icon-trash.svg"
+                                                    alt="delete"
+                                                    className="mb-4 cursor-pointer "
+                                                    onClick={() => {
+                                                        removeUser(member);
+                                                    }}
+                                                />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="col-span-4 flex mt-4">
+                                                Miembro
+                                            </div>
+                                        </>
+                                    )}
+                                </>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}

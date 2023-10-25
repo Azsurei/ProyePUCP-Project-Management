@@ -1,4 +1,3 @@
-import TextField from "@/components/TextField";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/ListEditableInput.css";
 import { Textarea } from "@nextui-org/react";
 
@@ -44,7 +43,6 @@ function EditableInput(props) {
                     size="sm"
                     readOnly={!props.beEditable}
                 />
-                {/* <TextField className="inputBox"></TextField> */}
                 {props.beEditable && (
                     <img
                         src="/icons/icon-cross.svg"
