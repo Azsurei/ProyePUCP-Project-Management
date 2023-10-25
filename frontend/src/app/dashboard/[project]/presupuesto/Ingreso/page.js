@@ -320,6 +320,7 @@ export default function Ingresos(props) {
                                                 idParam="idMoneda"
                                                 initialName="Tipo Moneda"
                                                 inputWidth="2/3"
+                                                widthCombo="9"
                                             />
 
                                             </div>
@@ -377,6 +378,7 @@ export default function Ingresos(props) {
                                                 idParam="idTransaccionTipo"
                                                 initialName="Seleccione Ingreso"
                                                 inputWidth="64"
+                                                widthCombo="15"
                                             />
 
                                         </div>
@@ -394,6 +396,7 @@ export default function Ingresos(props) {
                                                 idParam="idIngresoTipo"
                                                 initialName="Seleccione Transacción"
                                                 inputWidth="64"
+                                                widthCombo="15"
                                             />
 
                                         </div>
