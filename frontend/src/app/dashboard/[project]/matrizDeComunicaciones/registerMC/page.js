@@ -159,7 +159,7 @@ export default function MatrizComunicacionesRegister(props) {
                 <div className="comboMC">
                     <div className="containerComboMC">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/channelMC.svg"
                             label="Canal"
                             className="iconLabel"
                         />
@@ -175,7 +175,7 @@ export default function MatrizComunicacionesRegister(props) {
                     </div>
                     <div className="containerComboMC">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/frecuencyMC.svg"
                             label="Frecuencia"
                             className="iconLabel"
                         />
@@ -191,7 +191,7 @@ export default function MatrizComunicacionesRegister(props) {
                     </div>
                     <div className="containerComboMC">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/formatMC.svg"
                             label="Formato"
                             className="iconLabel"
                         />
