@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect, useContext } from "react";
 import Card from "@/components/Card";
@@ -11,7 +11,7 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import ChoiceUser from "@/components/dashboardComps/projectComps/projectCreateComps/ChoiceUser";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
-
+import { Input } from "@nextui-org/react";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
@@ -49,9 +49,9 @@ const miembros = [
 ];
 */
 
-export default function crear_equipo(props){
+export default function crear_equipo(props) {
     const router = useRouter();
-    
+
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -91,7 +91,7 @@ export default function crear_equipo(props){
 
     const removeMiembro = (miembro) => {
         const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
+            (item) => item.idUsuario !== miembro.idUsuario
         );
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
@@ -106,7 +106,6 @@ export default function crear_equipo(props){
 
     const [isLoading, setIsLoading] = useState(true);
 
-
     useEffect(() => {
         const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
 
@@ -118,7 +117,8 @@ export default function crear_equipo(props){
                 console.log("el nombre del usuario es ", userData.nombres);
                 console.log("el apellido del usuario es ", userData.apellidos);
                 setDatosUsuario(userData);
-                const leaderFullName = userData.nombres + " " + userData.apellidos;
+                const leaderFullName =
+                    userData.nombres + " " + userData.apellidos;
                 setTeamLeader(leaderFullName);
 
                 setIsLoading(false);
@@ -130,28 +130,36 @@ export default function crear_equipo(props){
 
     const checkData = () => {
         console.log("Nombre del equipo = " + teamName);
-        console.log("Líder del equipo = " + teamLeader)
+        console.log("Líder del equipo = " + teamLeader);
 
         const nombreTeam = teamName;
         const encargado = teamLeader;
         const proyectoId = projectId;
         const nombreProyecto = projectName;
         // Esto es porque el procedure solo acepta ID
-        const selectedMiembrosListWithIDs = selectedMiembrosList.map((usuario) => {
-            return { idUsuario: usuario.id };
-        });
+        const selectedMiembrosListWithIDs = selectedMiembrosList.map(
+            (usuario) => {
+                return { idUsuario: usuario.idUsuario };
+            }
+        );
         console.log("ProjectoId: ", proyectoId);
         console.log("NombreTeam: ", nombreTeam);
         console.log("LiderTeam: ", encargado);
-        console.log("IDs de Usuarios seleccionados:", selectedMiembrosListWithIDs);
+        console.log(
+            "IDs de Usuarios seleccionados:",
+            selectedMiembrosListWithIDs
+        );
 
         axios
-            .post("http://localhost:8080/api/proyecto/equipo/insertarEquipoYParticipantes", {
-                idProyecto: proyectoId,
-                nombre: nombreTeam,
-                descripcion: encargado,
-                usuarios: selectedMiembrosListWithIDs,
-            })
+            .post(
+                "http://localhost:8080/api/proyecto/equipo/insertarEquipoYParticipantes",
+                {
+                    idProyecto: proyectoId,
+                    nombre: nombreTeam,
+                    descripcion: encargado,
+                    usuarios: selectedMiembrosListWithIDs,
+                }
+            )
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
@@ -163,26 +171,33 @@ export default function crear_equipo(props){
             });
     };
 
-    return(
+    return (
         <div className="crear_equipo">
             <div className="header">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
                     <BreadcrumbsItem href="/dashboard" text="Proyectos" />
-                    <BreadcrumbsItem href="/dashboard/Proyectos" text="Proyecto" />
-                    <BreadcrumbsItem href="/dashboard/Proyectos/Proyecto" text="Equipos" />
+                    <BreadcrumbsItem
+                        href="/dashboard/Proyectos"
+                        text="Proyecto"
+                    />
+                    <BreadcrumbsItem
+                        href="/dashboard/Proyectos/Proyecto"
+                        text="Equipos"
+                    />
                 </Breadcrumbs>
             </div>
             <div className="title">Crear Equipo</div>
             <div className="nombreEquipo">
                 <h3>Nombre del equipo:</h3>
-                <TextField
+                <Input
+                    className="mt-4"
                     placeholder="Ingrese el nombre del equipo"
-                    width={600}
-                    handleChange={handleChangeTeamName}
+                    onChange={handleChangeTeamName}
+                    variant="bordered"
                 />
             </div>
-            <div style={{ marginBottom: '20px' }}></div>
+            <div style={{ marginBottom: "20px" }}></div>
             <div className="liderEquipo">
                 <h3>Líder del Equipo</h3>
                 <p>{teamLeader} (tú) </p>
@@ -192,7 +207,7 @@ export default function crear_equipo(props){
                 <div className="SelectedUsersContainer">
                     <div
                         className="containerToPopUpUsrSearch"
-                        style={{ width: '60%', padding: '0.2rem 0' }}
+                        style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal2}
                     >
                         <p>Buscar nuevo participante</p>
@@ -200,20 +215,22 @@ export default function crear_equipo(props){
                             src="/icons/icon-searchBar.svg"
                             alt=""
                             className="icnSearch"
-                            style={{ width: '20px' }}
+                            style={{ width: "20px" }}
                         />
                     </div>
 
-                    <ul className="listUsersContainer"
-                    style={{ width: '60%', padding: '0.2rem 0' }}>
+                    <ul
+                        className="listUsersContainer"
+                        style={{ width: "100%", padding: "0.2rem 0" }}
+                    >
                         {selectedMiembrosList.map((component) => {
                             return (
                                 <CardSelectedUser
-                                    key={component.id}
-                                    name={component.name}
-                                    lastName={component.lastName}
+                                    key={component.idUsuario}
+                                    name={component.nombres}
+                                    lastName={component.apellidos}
                                     usuarioObject={component}
-                                    email={component.email}
+                                    email={component.correoElectronico}
                                     removeHandler={removeMiembro}
                                 ></CardSelectedUser>
                             );
@@ -221,7 +238,7 @@ export default function crear_equipo(props){
                     </ul>
                 </div>
             </div>
-            <div style={{ marginBottom: '20px' }}></div>
+            <div style={{ marginBottom: "20px" }}></div>
             <div className="bottom">
                 <button className="addTeamBtn" onClick={checkData}>
                     Crear Equipo
@@ -238,6 +255,5 @@ export default function crear_equipo(props){
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </div>
-    )
+    );
 }
-

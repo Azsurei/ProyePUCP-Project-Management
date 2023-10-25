@@ -487,8 +487,9 @@ CREATE TABLE Acuerdo (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE AcuerdoXUsuarioXRolXProyecto (
-	idAcuerdoXUsuarioXRolXProyecto INT AUTO_INCREMENT PRIMARY KEY,
+DROP TABLE IF EXISTS ResponsableAcuerdo;
+CREATE TABLE ResponsableAcuerdo (
+	idResponsableAcuerdo INT AUTO_INCREMENT PRIMARY KEY,
     idAcuerdo 	INT,
     idUsuarioXRolXProyecto INT,
     activo TINYINT,
@@ -640,7 +641,7 @@ CREATE TABLE LineaEgreso(
 )
 ENGINE = InnoDB;
 
-
+ALTER TABLE LineaEgreso ADD FOREIGN KEY (idLineaEstimacionCosto) REFERENCES LineaEstimacionCosto(idLineaEstimacion);
 ALTER TABLE LineaIngreso DROP COLUMN idIngreso;
 
 CREATE TABLE EstimacionCosto(
@@ -672,6 +673,14 @@ CREATE TABLE LineaEstimacionCosto(
     FOREIGN KEY (idEstimacion) REFERENCES EstimacionCosto(idEstimacion)
 )
 ENGINE = InnoDB;
+
+SELECT CONSTRAINT_NAME
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE TABLE_NAME = 'LineaEstimacionCosto'
+AND COLUMN_NAME = 'idLineaEgreso';
+
+ALTER TABLE LineaEstimacionCosto
+DROP COLUMN idLineaEgreso;
 
 -----------------------
 -- Product Backlog
@@ -974,28 +983,22 @@ ENGINE = InnoDB;
 -- AUTOEVALUACION
 -- -----------------------------------------------------
 
-CREATE TABLE autoEvaluacion(
-	idAutoEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
-    idProyecto INT,
-    fechaCreacion DATE,
-    fechaLimite DATE,
-    activo TINYINT
-)
-ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS UsuarioXEvaluacion;
 CREATE TABLE UsuarioXEvaluacion (
     idUsuarioEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT,
-    idAutoEvaluacion INT,
+    idAutoevaluacion INT,
     idUsuarioEvaluado INT,
+    observaciones VARCHAR(500),
     activo TINYINT NOT NULL DEFAULT 1,
-    UNIQUE KEY (idAutoEvaluacion, idUsuario, idUsuarioEvaluado),
-    FOREIGN KEY (idAutoEvaluacion) REFERENCES autoEvaluacion (idAutoEvaluacion) ,
+    FOREIGN KEY (idAutoevaluacion) REFERENCES Autoevaluacion (idAutoevaluacion) ,
     FOREIGN KEY (idUsuario) REFERENCES Usuario (idUsuario),
     FOREIGN KEY (idUsuarioEvaluado) REFERENCES Usuario (idUsuario) 
 )
 ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS CriterioEvaluacion;
 CREATE TABLE CriterioEvaluacion (
     idCriterioEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
     idUsuarioEvaluacion INT,

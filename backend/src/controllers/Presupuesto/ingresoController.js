@@ -15,7 +15,8 @@ async function crearLineaIngreso(req,res,next){
     const {idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} = req.body;
     try {
         const query = `CALL INSERTAR_LINEA_INGRESO(?,?,?,?,?,?,?,?,?);`;
-        await connection.query(query,[idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
+        const [result] =await connection.query(query,[idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
+        console.log(result[0][0].idLineaIngreso);
         res.status(200).json({message: "Linea ingreso creada"});
     } catch (error) {
         next(error);
@@ -23,25 +24,15 @@ async function crearLineaIngreso(req,res,next){
 }
 
 // Definir una función para obtener líneas de ingreso
-async function listarLineaIngresoXIdProyecto(idProyecto) {
-    console.log(idProyecto);
+async function listarLineasXIdProyecto(req,res,next){
+    const { idProyecto } = req.params;
     const query = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(?);`;
     const [results] = await connection.query(query, [idProyecto]);
-    return results[0];
-}
-
-// Definir una función para obtener líneas de ingreso
-async function listarLineaXIdProyecto(req,res,next) {
-    const { idProyecto } = req.params;
-    try {
-        const query = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(?);`;
-        const [results] = await connection.query(query, [idProyecto]);
-        const lineas = results[0];
-        res.status(200).json({lineas, message: "Lineas de ingreso listado"});
-    } catch (error) {
-        console.log(error);
-        next(error);
-    }
+    lineasIngreso = results[0];
+    res.status(200).json({
+        lineasIngreso,
+        message: "Linea de ingreso listadas correctamente"
+    });
 }
 
 
@@ -82,7 +73,6 @@ module.exports = {
     crear,
     crearLineaIngreso,
     listarLineasXNombreFechas,
-    listarLineaIngresoXIdProyecto,
     eliminarLineaIngreso,
-    listarLineaXIdProyecto
+    listarLineasXIdProyecto
 };

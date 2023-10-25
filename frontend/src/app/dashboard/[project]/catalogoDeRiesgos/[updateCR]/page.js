@@ -6,16 +6,15 @@ import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
-import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/containerContingencyPlans";
-import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosUpdate(props) {
@@ -86,7 +85,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             setImpactDetail(crData.impactoRiesgo);
             setIsSelected(crData.estado === "Activo" ? true : false);
             //CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-/*             const selectedMiembrosList1Original = crData.responsables;
+            /*             const selectedMiembrosList1Original = crData.responsables;
             const selectedMiembrosList1Actualizados =
                 selectedMiembrosList1Original.map((selectedMiembrosList1) => ({
                     email: selectedMiembrosList1.correoElectronico || "", // Puedes agregar un valor predeterminado en caso de que falte
@@ -99,9 +98,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 selectedMiembrosList1Actualizados
             ); */
             setSelectedMiembrosList1(crData.responsables);
-            setSelectedMiembrosList1Originales(
-                crData.responsables
-            );
+            setSelectedMiembrosList1Originales(crData.responsables);
             const responsesPlansOriginal = crData.planRespuesta;
             const responsesPlansActualizados = responsesPlansOriginal.map(
                 (responsesPlans) => ({
@@ -479,7 +476,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
-            }); 
+            });
     };
 
     return (
@@ -533,7 +530,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 <div className="comboCR">
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/probabilityCR.svg"
                             label="Probabilidad"
                             className="iconLabel"
                         />
@@ -551,7 +548,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/impactCR.svg"
                             label="Impacto"
                             className="iconLabel"
                         />
@@ -569,7 +566,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/datePB.svg"
                             label="Fecha identificada"
                             className="iconLabel"
                         />
@@ -587,7 +584,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/severityCR.svg"
                             label="Severidad"
                             className="iconLabel"
                         />
@@ -611,7 +608,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/statePB.svg"
                             label="Estado"
                             className="iconLabel"
                         />
@@ -651,6 +648,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         )}
                     </div>
                 </div>
+                <div className="titleButtonCR">
+                    <h4 style={{ fontWeight: 600 }}>Responsables del riesgo<span className="text-red-500"> *</span></h4>
+                </div>
                 <div className="containerResponsables">
                     <ButtonIconLabel
                         icon="/icons/icon-searchBar.svg"
@@ -659,7 +659,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
                     />
-                    <div className="flex flex-wrap">
+                    <div className="containerUserMultipleGrid">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
                                 <div className="containerUserMultiple">

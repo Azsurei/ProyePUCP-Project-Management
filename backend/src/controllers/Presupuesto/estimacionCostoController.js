@@ -12,11 +12,14 @@ async function crear(req,res,next){
 }
 
 async function crearLineaEstimacionCosto(req,res,next){
-    const {idLineaEgreso,idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
+    const {idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
     try {
-        const query = `CALL INSERTAR_LINEA_ESTIMACION_COSTO(?,?,?,?,?,?,?,?);`;
-        await connection.query(query,[idLineaEgreso,idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
-        res.status(200).json({message: "Linea  estimacion costo"});
+        const query = `CALL INSERTAR_LINEA_ESTIMACION_COSTO(?,?,?,?,?,?,?);`;
+        const [results] = await connection.query(query,[idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
+        idLineaEstimacionCosto=results[0][0].idLineaEstimacionCosto;
+        res.status(200).json({
+            idLineaEstimacionCosto,
+            message: "Linea  estimacion costo creada"});
     } catch (error) {
         next(error);
     }
@@ -54,14 +57,15 @@ async function listarLineasXNombreFechas(req,res,next){
 }
 
 // Definir una función para obtener líneas de estimación de costo
-async function listarLineasXIdProyecto(idProyecto) {
-    const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
-    const [results] = await connection.query(query, [idProyecto]);
-    return results[0];
-}
+// async function listarLineasXIdProyecto(req,res,next) {
+//     const { idProyecto } = req.params;
+//     const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
+//     const [results] = await connection.query(query, [idProyecto]);
+//     return results[0];
+// }
 
 // Corregido
-async function listarEstimacionXIdProyecto(req,res,next) {
+async function listarLineasXIdProyecto(req,res,next) {
     const { idProyecto } = req.params;
     try {
         const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
@@ -90,6 +94,5 @@ module.exports = {
     crearLineaEstimacionCosto,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
-    eliminarLineaEstimacionCosto,
-    listarEstimacionXIdProyecto
+    eliminarLineaEstimacionCosto
 };

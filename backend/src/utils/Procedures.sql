@@ -429,6 +429,30 @@ END$
 
 SELECT * FROM ActaReunion;
 
+
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ACTA_REUNION_X_ID_ACTA_REUNION(_idActaReunion INT)
+BEGIN
+    -- Desactivar Acta de Reunión
+    UPDATE ActaReunion SET activo = 0 WHERE idActaReunion = _idActaReunion;
+
+    -- Desactivar Líneas de Acta relacionadas
+    UPDATE LineaActaReunion SET activo = 0 WHERE idActaReunion = _idActaReunion;
+
+    -- Desactivar Comentarios de Reunión relacionados
+    UPDATE ComentarioReunion SET activo = 0 
+    WHERE idComentarioReunion IN (SELECT idComentarioReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion);
+
+    -- Desactivar Temas de Reunión relacionados
+    UPDATE TemaReunion SET activo = 0 
+    WHERE idTemaReunion IN (SELECT idTemaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion);
+
+    -- Si hay otros registros relacionados, sigue el mismo patrón para desactivarlos.
+    -- Por ejemplo, desactivar Acuerdos, Responsables de Acuerdos, etc.
+    
+END //
+DELIMITER ;
+
 --------------------------
 --   LINEA ACTA REUNION
 --------------------------
@@ -450,7 +474,7 @@ BEGIN
     VALUES(_idActaReunion,_nombreReunion,_fechaReunion,_horaReunion,_nombreConvocante,_motivo,1);
     
     SET _idLineaActaReunion = @@last_insert_id;
-    SELECT _idLineaActaReunion AS LineaActaReunion;
+    SELECT _idLineaActaReunion AS idLineaActaReunion;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION;
@@ -466,6 +490,51 @@ BEGIN
 END$
 
 CALL LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION(1)
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM LineaActaReunion 
+    WHERE idLineaActaReunion = _idLineaActaReunion 
+    AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(_idLineaActaReunion INT)
+BEGIN
+    -- Desactivar Responsables de Acuerdos relacionados
+    UPDATE ResponsableAcuerdo ra
+    JOIN Acuerdo a ON ra.idAcuerdo = a.idAcuerdo
+    JOIN TemaReunion tr ON a.idTemaReunion = tr.idTemaReunion
+    SET ra.activo = 0
+    WHERE tr.idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Acuerdos relacionados
+    UPDATE Acuerdo a
+    JOIN TemaReunion tr ON a.idTemaReunion = tr.idTemaReunion
+    SET a.activo = 0
+    WHERE tr.idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Temas de Reunión relacionados
+    UPDATE TemaReunion SET activo = 0
+    WHERE idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Comentarios de Reunión relacionados
+    UPDATE ComentarioReunion SET activo = 0
+    WHERE idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Participantes por Reunión relacionados
+    UPDATE ParticipanteXReunion SET activo = 0
+    WHERE idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar la Línea de Acta
+    UPDATE LineaActaReunion SET activo = 0 WHERE idLineaActaReunion = _idLineaActaReunion;
+END $
 --------------------------
 --  TEMA REUNION
 --------------------------
@@ -483,7 +552,7 @@ BEGIN
     VALUES(_idLineaActaReunion,_descripcion,1);
     
     SET _idTemaReunion = @@last_insert_id;
-    SELECT _idTemaReunion AS TemaReunion;
+    SELECT _idTemaReunion AS idTemaReunion;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION;
@@ -508,6 +577,158 @@ CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(1)
 #####################
 ## RESTANTE: COMPLETAR LOS INSERT Y LISTAR DE TODA LA LOGICA DE ACTA REUNION Y CREAR LOS CONTROLLERS POR CADA TABLA
 #####################
+
+DROP PROCEDURE IF EXISTS INSERTAR_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ACUERDO(
+    IN _idTemaReunion INT,
+    IN _descripcion VARCHAR(500),
+    IN _fechaObjetivo  DATE
+)
+BEGIN
+	DECLARE _idAcuerdo INT;
+    
+	INSERT INTO Acuerdo(idTemaReunion,descripcion,fechaObjetivo,activo)
+    VALUES(_idTemaReunion,_descripcion,_fechaObjetivo,1);
+    
+    SET _idAcuerdo = @@last_insert_id;
+    SELECT _idAcuerdo AS idAcuerdo;
+END$
+
+CALL INSERTAR_ACUERDO(1, 'Ejemplo de descripción', '2023-10-23');
+
+
+DROP PROCEDURE IF EXISTS LISTAR_ACUERDO_X_ID_TEMA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACUERDO_X_ID_TEMA_REUNION(
+    IN _idTemaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM Acuerdo 
+    WHERE idTemaReunion = _idTemaReunion 
+    AND activo=1;
+END$
+
+CALL LISTAR_ACUERDO_X_ID_TEMA_REUNION(1);
+
+--------------------------
+-- Responsables de acuerdo
+--------------------------
+
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABLE_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABLE_ACUERDO(
+    IN _idAcuerdo INT,
+    IN _idUsuarioXRolXProyecto INT
+)
+BEGIN
+	DECLARE _idResponsableAcuerdo INT;
+    
+	INSERT INTO ResponsableAcuerdo(idAcuerdo,idUsuarioXRolXProyecto,activo)
+    VALUES(_idAcuerdo,_idUsuarioXRolXProyecto,1);
+    
+    SET _idResponsableAcuerdo = @@last_insert_id;
+    SELECT _idResponsableAcuerdo AS idResponsableAcuerdo;
+END$
+SELECT * FROM UsuarioXRolXProyecto;
+CALL INSERTAR_RESPONSABLE_ACUERDO(1, 60);
+
+SELECT * FROM UsuarioXRolXProyecto;
+
+DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(
+    IN _idAcuerdo INT
+)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico
+    FROM ResponsableAcuerdo ra INNER JOIN UsuarioXRolXProyecto urp ON ra.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto 
+    INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario
+    WHERE ra.idAcuerdo = _idAcuerdo 
+    AND ra.activo=1;
+END$
+
+CALL LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(1)
+
+##############################################################
+## FALTA EL LISTAR USUARIOS X ROL X PROYECTO PREGUNTAR LOGICA
+##############################################################
+
+-------------------------
+-- Comentario Reunion
+-------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_COMENTARIO_REUNION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COMENTARIO_REUNION(
+    IN _idLineaActaReunion INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idComentarioReunion INT;
+    
+	INSERT INTO ComentarioReunion(idLineaActaReunion,descripcion,activo)
+    VALUES(_idLineaActaReunion,_descripcion,1);
+    
+    SET _idComentarioReunion = @@last_insert_id;
+    SELECT _idComentarioReunion AS idComentarioReunion;
+END$
+
+CALL INSERTAR_COMENTARIO_REUNION(1,'Primer comentario')
+
+DROP PROCEDURE IF EXISTS LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT *
+    FROM ComentarioReunion 
+    WHERE idLineaActaReunion = _idLineaActaReunion 
+    AND activo=1;
+END$
+
+CALL LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION(1);
+
+--------------------------------------
+-- PARTICIPANTE X REUNION
+--------------------------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_PARTICIPANTE_X_REUNION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PARTICIPANTE_X_REUNION(
+    IN _idLineaActaReunion INT,
+    IN _idUsuarioXRolXProyecto INT,
+    IN _asistio TINYINT
+)
+BEGIN
+	DECLARE _idParticipanteXReunion INT;
+    
+	INSERT INTO ParticipanteXReunion(idLineaActaReunion,idUsuarioXRolXProyecto,asistio,activo)
+    VALUES(_idLineaActaReunion,_idUsuarioXRolXProyecto,_asistio,1);
+    
+    SET _idParticipanteXReunion = @@last_insert_id;
+    SELECT _idParticipanteXReunion AS idParticipanteXReunion;
+END$
+
+CALL INSERTAR_PARTICIPANTE_X_REUNION(1, 2, 1);
+CALL INSERTAR_PARTICIPANTE_X_REUNION(1, 20, 1);
+
+DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT
+)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.usuario
+    FROM ParticipanteXReunion pr INNER JOIN UsuarioXRolXProyecto urp ON pr.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto
+    INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario 
+    WHERE pr.idLineaActaReunion = _idLineaActaReunion AND pr.activo=1;
+END$
+
+CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(1)
+
 
 
 
@@ -1456,6 +1677,9 @@ BEGIN
     FROM TransaccionTipo
     WHERE activo = 1;
 END$
+#############################################
+## PRESUPUESTO
+#############################################
 
 SELECT * FROM Herramienta;
 DROP PROCEDURE IF EXISTS INSERTAR_PRESUPUESTO;
@@ -1616,6 +1840,7 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 	IN _idPresupuesto INT,
     IN _idProyecto INT,
     IN _idMoneda INT,
+    IN _idLineaEstimacionCosto INT,
 	IN _descripcion  VARCHAR(255),
     IN _costoReal DECIMAL(10,2),
 	IN _fechaRegistro DATE,
@@ -1623,11 +1848,14 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 )
 BEGIN
 	DECLARE _idLineaEgreso INT;
-	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
-    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
+	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad,activo) 
+    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_idLineaEstimacionCosto,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
     SET _idLineaEgreso = @@last_insert_id;
     SELECT _idLineaEgreso AS idLineaEgreso;
 END$
+######
+COMPLETAR CAMBIO DE COLUMNA
+
 
 SELECT * FROM Presupuesto;
 
@@ -1702,7 +1930,6 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_LINEA_ESTIMACION_COSTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
-	IN _idLineaEgreso INT,
     IN _idMoneda INT,
     IN _idEstimacion INT,
     IN _descripcion VARCHAR(255),
@@ -1713,8 +1940,8 @@ CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
 )
 BEGIN
 	DECLARE _idLineaEstimacionCosto INT;
-	INSERT INTO LineaEstimacionCosto(idLineaEgreso,idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
-    VALUES(_idLineaEgreso,_idMoneda,_idEstimacion,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
+	INSERT INTO LineaEstimacionCosto(idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
+    VALUES(_idMoneda,_idEstimacion,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
     SET _idLineaEstimacionCosto = @@last_insert_id;
     SELECT _idLineaEstimacionCosto AS idLineaEstimacionCosto;
 END$
@@ -2241,4 +2468,70 @@ CREATE PROCEDURE ELIMINAR_TAREA(
 BEGIN
     UPDATE Tarea SET activo = 0 WHERE idTarea = _idTarea;
     UPDATE UsuarioXTarea SET activo = 0 WHERE idTarea = _idTarea;
+END$
+
+------------
+-- Autoevaluacion
+------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_USUARIO_EVALUACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_USUARIO_EVALUACION(
+    IN _idProyecto INT,
+    IN _idUsuario INT,
+    IN _idUsuarioEvaluado INT
+)
+BEGIN
+	DECLARE _idUsuarioEvaluacion INT;
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO UsuarioXEvaluacion(idUsuario,idAutoevaluacion,idUsuarioEvaluado,activo) 
+    VALUES(_idUsuario,@_idAutoevaluacion,_idUsuarioEvaluado,1);
+    SET _idUsuarioEvaluacion = @@last_insert_id;
+    SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CRITERIO_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CRITERIO_AUTOEVALUACION(
+    IN _idUsuarioEvaluacion INT
+)
+BEGIN
+	DECLARE _idCriterioEvaluacion INT;
+	INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Dominio Técnico",0,1);
+    INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Compromiso con los trabajos",0,1);
+    INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Comunicación con sus compañeros",0,1);
+    INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,"Comprensión del proyecto",0,1);
+    SET _idUsuarioEvaluacion = @@last_insert_id;
+    SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_X_USUARIO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACION_X_USUARIO(
+    IN _idProyecto INT,
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT ue.idUsuarioEvaluacion, ue.idUsuario, u.nombres as "nombreEvaluador", u.apellidos as "apellidoEvaluador", 
+    ue.idUsuarioEvaluado, ur.nombres as "nombreEvaluado", ur.apellidos as "apellidoEvaluado", ue.activo, ue.observaciones
+	FROM UsuarioXEvaluacion AS ue
+    LEFT JOIN Usuario AS u ON ue.idUsuario = u.idUsuario
+    LEFT JOIN Usuario AS ur ON ue.idUsuarioEvaluado = ur.idUsuario
+    LEFT JOIN Autoevaluacion AS ae ON ue.idAutoEvaluacion = ae.idAutoevaluacion
+	WHERE ae.idProyecto = _idProyecto AND ae.activo=1 AND ue.idUsuario = _idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRITERIO_AUTOEVALUACION(
+    IN _idUsuarioEvaluacion INT
+)
+BEGIN
+    SELECT *
+	FROM CriterioEvaluacion
+	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
 END$

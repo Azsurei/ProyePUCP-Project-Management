@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
@@ -210,7 +210,7 @@ export default function MatrizComunicacionesUpdate(props) {
                 <div className="comboMC">
                     <div className="containerComboMC">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/channelMC.svg"
                             label="Canal"
                             className="iconLabel"
                         />
@@ -226,7 +226,7 @@ export default function MatrizComunicacionesUpdate(props) {
                     </div>
                     <div className="containerComboMC">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/frecuencyMC.svg"
                             label="Frecuencia"
                             className="iconLabel"
                         />
@@ -242,7 +242,7 @@ export default function MatrizComunicacionesUpdate(props) {
                     </div>
                     <div className="containerComboMC">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/formatMC.svg"
                             label="Formato"
                             className="iconLabel"
                         />
@@ -257,15 +257,15 @@ export default function MatrizComunicacionesUpdate(props) {
                         />
                     </div>
                     <div className="containerButtonMC">
-                        <ButtonIconLabel
+                    <ButtonIconLabel
                             icon="/icons/icon-searchBar.svg"
-                            label1="Responsable"
-                            label2="de comunicar"
+                            label1="Buscar"
+                            label2="responsable"
                             className="iconLabelButtonMC"
                             onClickFunction={toggleModal2}
                         />
-                        {selectedMiembrosList.map((component) => {
-                            return (
+                        {selectedMiembrosList.length > 0 ? (
+                            selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2MC">
                                     <p className="profilePicMC">
                                         {component.nombres[0] +
@@ -277,8 +277,12 @@ export default function MatrizComunicacionesUpdate(props) {
                                         )}
                                     </div>
                                 </div>
-                            );
-                        })}
+                            ))
+                        ) : (
+                            <div className="labelSinDataUsuarioMC">
+                                ¡Seleccione un responsable de comunicar!
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div>

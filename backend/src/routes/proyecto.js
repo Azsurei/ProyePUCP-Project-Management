@@ -10,6 +10,7 @@ const routerPresupuesto = require('./presupuesto').routerPresupuesto;
 const routerMatrizComunicaciones = require('./matrizDeComunicaciones').routerMatrizComunicaciones;
 const routerAutoEvaluacion = require('./autoEvaluacion').routerAutoEvaluacion;
 const routerCatalagoRiesgos = require('./catalogoRiesgos').routerCatalagoRiesgos;
+const routerActaReunion = require('./actaReunion').routerActaReunion;
 const routerProyecto = express.Router();
 
 routerProyecto.use("/backlog", routerBacklog);
@@ -21,6 +22,7 @@ routerProyecto.use("/presupuesto", routerPresupuesto);
 routerProyecto.use("/matrizDeComunicaciones", routerMatrizComunicaciones);
 routerProyecto.use("/autoEvaluacion", routerAutoEvaluacion);
 routerProyecto.use("/catalogoRiesgos", routerCatalagoRiesgos);
+routerProyecto.use("/actaReunion", routerActaReunion);
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token
@@ -230,6 +232,20 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const idActaReunion = results[0][0].idActaReunion;
                     }
 
+                    if (herramienta.idHerramienta === 12) {
+                        //Equipo
+                        console.log("Llegue a recibir solicitud insertar equipo");
+                        const query = `
+                            CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?,?);
+                        `;
+                        
+                            const [results] = await connection.query(query,[idProyecto, 12, null]);
+                            const idEquipo = results[0][0].idEquipo;
+                            console.log(`Se creo el equipo${idEquipo}!`);
+    
+                    }
+
+
                     if (herramienta.idHerramienta === 13){
                         //Presupeusto
                         query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
@@ -237,7 +253,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                             idProyecto,2,0,0
                         ]);
                         //Esos dos 0s están por justo xdxd
-                        const idPrespuesto = results[0][0].idPresupuesto
+                        const idPresupuesto = results[0][0].idPresupuesto
                     }
 
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto

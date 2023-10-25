@@ -28,6 +28,8 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import { resolve } from "styled-jsx/css";
 import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
 import ModalSubequipos from "@/components/dashboardComps/projectComps/cronogramaComps/ModalSubequipos";
+import ModalDeleteTarea from "@/components/dashboardComps/projectComps/cronogramaComps/ModalDeleteTarea";
+import ModalPosterior from "@/components/dashboardComps/projectComps/cronogramaComps/ModalPosterior";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -44,6 +46,18 @@ export default function Cronograma(props) {
         onOpenChange: onModalSubEOpenChange,
     } = useDisclosure();
 
+    const {
+        isOpen: isModalDeleteOpen,
+        onOpen: onModalDeleteOpen,
+        onOpenChange: onModalDeleteChange,
+    } = useDisclosure();
+
+    const {
+        isOpen: isModalPosteriorOpen,
+        onOpen: onModalPosteriorOpen,
+        onOpenChange: onModalPosteriorChange,
+    } = useDisclosure();
+
     const [toggleNew, setToggleNew] = useState(false);
 
     //States from firstTimeModal
@@ -56,6 +70,7 @@ export default function Cronograma(props) {
     //States from Tareas table
     const [listTareas, setListTareas] = useState([]);
 
+    const [idTareaEliminar, setIdTareaEliminar] = useState(null);
     const [tareaPadre, setTareaPadre] = useState(null);
 
     const [tareaName, setTareaName] = useState("");
@@ -74,6 +89,8 @@ export default function Cronograma(props) {
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
     const [validFechas, setValidFechas] = useState(true);
+
+    const [listPosteriores, setListPosteriores] = useState([]);
 
     const [tabSelected, setTabSelected] = useState("users");
     const [modal, setModal] = useState(false);
@@ -136,6 +153,65 @@ export default function Cronograma(props) {
 
         setStateSecond(4);
         setToggleNew(true);
+    };
+
+    const handleDelete = (idTarea) => {
+        //seteamos el id del padre a eliminar
+        setIdTareaEliminar(idTarea);
+        //prendemos modal de confirmacion
+        onModalDeleteOpen();
+    };
+
+    function promiseEliminarTarea() {
+        return new Promise((resolve, reject) => {
+            const deleteURL =
+                "http://localhost:8080/api/proyecto/cronograma/eliminarTarea";
+
+            if (idTareaEliminar === null) {
+                reject("No se encontro la tarea");
+            }
+
+            axios
+                .delete(deleteURL, {
+                    data: { idTarea: idTareaEliminar },
+                })
+                .then(function (response) {
+                    console.log(response.data.message);
+
+                    //actualizamos lista de tareas
+                    const tareasURL =
+                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            console.log(response);
+                            setListTareas(response.data.tareasOrdenadas);
+                            console.log(response.data.tareasOrdenadas);
+
+                            resolve(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            reject(error);
+                        });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                });
+        });
+    }
+
+    const eliminarTarea = () => {
+        toast.promise(promiseEliminarTarea, {
+            loading: "Eliminando la tarea...",
+            success: (data) => {
+                return "La tarea se eliminó con exito.";
+            },
+            error: "Error al eliminar la tarea",
+            position: "bottom-right",
+        });
     };
 
     const returnListOfUsers = (newUsersList) => {
@@ -214,8 +290,7 @@ export default function Cronograma(props) {
                     cantSubtareas: 0,
                     cantPosteriores: 0,
                     horasPlaneadas: null,
-                    usuarios:
-                        selectedUsers.length === 0 ? null : selectedUsers,
+                    usuarios: selectedUsers.length === 0 ? null : selectedUsers,
                     subTareas: null,
                     tareasPosteriores: null,
                 })
@@ -257,6 +332,21 @@ export default function Cronograma(props) {
             position: "top-center",
         });
     };
+
+    const addTaraPosterior = (tareaPosterior) => {
+        let assignedUs;
+        if(selectedSubteam === null){
+            assignedUs = selectedUsers
+        }
+
+        const nuevaTarea = {
+            sumillaTarea: tareaPosterior.sumillaTarea,
+            fechaInicio: tareaPosterior.fechaInicio,
+            fechaFin: tareaPosterior.fechaFin,
+            idSubGrupo: selectedSubteam === null ? null : selectedSubteam.idEquipo,
+            
+        }
+    }
 
     const dropBoxItems = [
         {
@@ -331,8 +421,6 @@ export default function Cronograma(props) {
     useEffect(() => {
         setValidAsigned(true);
     }, [selectedUsers]);
-
-    
 
     return (
         <div className="cronogramaDiv">
@@ -424,6 +512,17 @@ export default function Cronograma(props) {
                 }}
             ></ModalSubequipos>
 
+            <ModalDeleteTarea
+                isOpen={isModalDeleteOpen}
+                onOpenChange={onModalDeleteChange}
+                eliminarTarea={eliminarTarea}
+            ></ModalDeleteTarea>
+
+            <ModalPosterior
+                isOpen={isModalPosteriorOpen}
+                onOpenChange={onModalPosteriorChange}
+            ></ModalPosterior>
+
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
                 <div className="containerGeneralLeft">
                     <HeaderWithButtonsSamePage
@@ -443,6 +542,7 @@ export default function Cronograma(props) {
                         leftMargin={"0px"}
                         handleVerDetalle={handleVerDetalle}
                         handleAddNewSon={handleAddNewSon}
+                        handleDelete={handleDelete}
                     ></ListTareas>
                 </div>
             </div>
@@ -455,7 +555,7 @@ export default function Cronograma(props) {
                         haveReturn={true}
                         haveAddNew={false}
                         //handlerAddNew={handlerGoToNew}
-                        handlerReturn={()=>{
+                        handlerReturn={() => {
                             setToggleNew(false);
                         }}
                         //newPrimarySon={ListComps.length + 1}
@@ -472,7 +572,12 @@ export default function Cronograma(props) {
                         {stateSecond === 4 && "Agregar tarea hija"}
                     </HeaderWithButtonsSamePage>
 
-                    {stateSecond === 4 && (<p>Esta tarea sera hija de la tarea "{tareaPadre.sumillaTarea}"</p>)}
+                    {stateSecond === 4 && (
+                        <p>
+                            Esta tarea sera hija de la tarea "
+                            {tareaPadre.sumillaTarea}"
+                        </p>
+                    )}
 
                     <div className="contFirstRow">
                         <div className="contNombre">
@@ -598,7 +703,7 @@ export default function Cronograma(props) {
                     <div className="containerPosteriores">
                         <div className="posterioresHeader">
                             <p>Tareas posteriores</p>
-                            <div className="btnToPopUp">
+                            <div className="btnToPopUp" onClick={onModalPosteriorOpen}>
                                 <p>Añadir</p>
                             </div>
                         </div>

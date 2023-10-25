@@ -12,25 +12,21 @@ async function crear(req,res,next){
 }
 
 async function crearLineaEgreso(req,res,next){
-    const {idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad} = req.body;
+    const {idPresupuesto,idProyecto,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad} = req.body;
     try {
-        const query = `CALL INSERTAR_LINEA_EGRESO(?,?,?,?,?,?,?);`;
-        await connection.query(query,[idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad]);
-        res.status(200).json({message: "Linea egreso creada"});
+        const query = `CALL INSERTAR_LINEA_EGRESO(?,?,?,?,?,?,?,?);`;
+        const [results] =await connection.query(query,[idPresupuesto,idProyecto,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad]);
+        idLineaEgreso = results[0][0].idLineaEgreso;
+        res.status(200).json({
+            idLineaEgreso,
+            message: "Linea egreso creada"});
     } catch (error) {
         next(error);
     }
 }
 
 // Definir una función para obtener líneas de egreso
-async function listarLineasXIdProyecto(idProyecto) {
-    const query = `CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(?);`;
-    const [results] = await connection.query(query, [idProyecto]);
-    return results[0];
-}
-
-// Definir una función para obtener líneas de egreso
-async function listarLineasEgresosXIdProyecto(req,res,next) {
+async function listarLineasXIdProyecto(req,res,next) {
     const { idProyecto } = req.params;
     try {
         const query = `CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(?);`;
@@ -81,6 +77,5 @@ module.exports = {
     crearLineaEgreso,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
-    eliminarLineaEgreso,
-    listarLineasEgresosXIdProyecto
+    eliminarLineaEgreso
 };
