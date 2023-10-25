@@ -867,3 +867,46 @@ Content-Type:  application/json
 
 GET http://localhost:8080/api/proyecto/backlog/test/2 HTTP/1.1
 Content-Type:  application/json
+###
+PUT http://localhost:8080/api/proyecto/presupuesto/modificarLineaIngreso HTTP/1.1
+Content-Type: application/json
+
+{
+  "idLineaIngreso": 1,
+  "idMoneda": 2,
+  "idTransaccionTipo": 3,
+  "idIngresoTipo": 3,
+  "descripcion": "Descripción de la línea de ingreso modificada",
+  "monto": 2000.00,
+  "cantidad": 5,
+  "fechaTransaccion": "2023-10-25"
+}
+
+###
+
+PUT http://localhost:8080/api/proyecto/presupuesto/modificarLineaEgreso HTTP/1.1
+Content-Type: application/json
+
+{
+  "idLineaEgreso": 1,
+  "idMoneda": 2,
+  "idLineaEstimacionCosto": 3,
+  "descripcion": "Descripción de la línea de egreso modificada",
+  "costoReal": 1500.00,
+  "fechaRegistro": "2023-10-25",
+  "cantidad": 4
+}
+
+###
+PUT http://localhost:8080/api/proyecto/presupuesto/modificarLineaEstimacionCosto HTTP/1.1
+Content-Type: application/json
+
+{
+  "idLineaEstimacionCosto": 7,
+  "idMoneda": 2,
+  "descripcion": "Descripción de la línea de estimación de costo modificada",
+  "tarifaUnitaria": 500.00,
+  "cantidadRecurso": 3,
+  "subtotal": 1500.00,
+  "fechaInicio": "2023-10-25"
+}
