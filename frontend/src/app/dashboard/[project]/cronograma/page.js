@@ -70,7 +70,7 @@ export default function Cronograma(props) {
     //States from Tareas table
     const [listTareas, setListTareas] = useState([]);
 
-    const [idTareaEliminar, setIdTareaEliminar] = useState(null);
+    const [tareaEliminar, setTareaEliminar] = useState(null);
     const [tareaPadre, setTareaPadre] = useState(null);
 
     const [tareaName, setTareaName] = useState("");
@@ -155,9 +155,9 @@ export default function Cronograma(props) {
         setToggleNew(true);
     };
 
-    const handleDelete = (idTarea) => {
-        //seteamos el id del padre a eliminar
-        setIdTareaEliminar(idTarea);
+    const handleDelete = (tarea) => {
+        //seteamos la taera a eliminar
+        setTareaEliminar(tarea);
         //prendemos modal de confirmacion
         onModalDeleteOpen();
     };
@@ -167,13 +167,13 @@ export default function Cronograma(props) {
             const deleteURL =
                 "http://localhost:8080/api/proyecto/cronograma/eliminarTarea";
 
-            if (idTareaEliminar === null) {
+            if (tareaEliminar === null) {
                 reject("No se encontro la tarea");
             }
 
             axios
                 .delete(deleteURL, {
-                    data: { idTarea: idTareaEliminar },
+                    data: { tarea: tareaEliminar },
                 })
                 .then(function (response) {
                     console.log(response.data.message);

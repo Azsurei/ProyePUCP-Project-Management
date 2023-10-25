@@ -32,12 +32,8 @@ export default function Equipo(props) {
     //1 es vista de un equipo particular
 
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [selectedTeamTareas, setSelectedTeamTareas] = useState([]);
     const [updateState, setUpdateState] = useState(false);
-
-    const handleSeeTeam = (team) => {
-        setSelectedTeam(team);
-        setScreenState(1);
-    };
 
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(
@@ -69,6 +65,30 @@ export default function Equipo(props) {
                 console.log("Error al cargar la lista de equipos", error);
             });
     }, []);
+
+    const handleSeeTeam = (team) => {
+        setSelectedTeam(team);
+        setIsLoadingSmall(true);
+        const verTareasURL =
+            "http://localhost:8080/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
+            team.idEquipo;
+        axios
+            .get(verTareasURL)
+            .then((response) => {
+                console.log(response.data.message);
+                setSelectedTeamTareas(response.data.tareasEquipo);
+                setIsLoadingSmall(false);
+            })
+
+            .catch(function (error) {
+                console.log(
+                    "Error al cargar la lista de tareas del equipo: ",
+                    error
+                );
+            });
+
+        setScreenState(1);
+    };
 
     return (
         <div className="containerTeamsPage">
@@ -172,8 +192,54 @@ export default function Equipo(props) {
                         {selectedTeam.nombre}
                     </HeaderWithButtonsSamePage>
 
-                    <div>
-                        <div className="headerGroup">Tareas</div>
+                    <div className="containerTareasEquipo">
+                        <div className="flex justify-between">
+                            <div className="headerGroup">Tareas</div>
+                            <Button
+                                color="warning"
+                                //startContent={<SaveIcon />}
+                                //onPress={() => setUpdateState(false)}
+                                className="text-white h-9"
+                            >
+                                Añadir tarea
+                            </Button>
+                        </div>
+
+                        <div className="tareasContainer">
+                            <div className="leftTareasSection">
+                                <div className="flex">
+                                    <div className="w-[40%] border-b-2 border-gray-300">
+                                        Nombre de tarea
+                                    </div>
+                                    <div className="w-[30%] border-b-2 border-gray-300">
+                                        Fecha fin
+                                    </div>
+                                    <div className="w-[30%] border-b-2 border-gray-300">
+                                        Encargado
+                                    </div>
+                                </div>
+
+                                {selectedTeamTareas.map((tarea) => (
+                                    <div>
+                                        {tarea.sumillaTarea}
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="rightTareasSection">
+                                <div className="containerNumeroIndicadorAmarillo">
+                                    <p className="bigNumberTareas">4</p>
+                                    <p className="smallLblTareas">
+                                        Tareas asignadas pendientes
+                                    </p>
+                                </div>
+                                <div className="containerNumeroIndicadorVerde">
+                                    <p className="bigNumberTareas">5</p>
+                                    <p className="smallLblTareas">
+                                        Tareas asignadas terminadas
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="containerMembers">
@@ -252,8 +318,12 @@ export default function Equipo(props) {
                             )}
 
                             {selectedTeam.participantes.map((member) => (
+                                //falta un key aqui
                                 <>
-                                    <div className="col-span-6 flex mt-4">
+                                    <div
+                                        className="col-span-6 flex mt-4"
+                                        key={member.idUsuario}
+                                    >
                                         <p className="membersIcon1">
                                             {member.nombres[0] +
                                                 member.apellidos[0]}
@@ -285,11 +355,9 @@ export default function Equipo(props) {
                                             </div>
                                         </>
                                     ) : (
-                                        <>
-                                            <div className="col-span-4 flex mt-4">
-                                                Miembro
-                                            </div>
-                                        </>
+                                        <div className="col-span-4 flex mt-4">
+                                            Miembro
+                                        </div>
                                     )}
                                 </>
                             ))}
