@@ -86,7 +86,9 @@ function CardIngresos({
                     montoIngreso={selectedLinea.monto}
                     idLineaIngreso={selectedLinea.idLineaIngreso}
                     idIngresoTipo={selectedLinea.idIngresoTipo}
+                    nombreIngresoTipo={selectedLinea.descripcionIngresoTipo}
                     idTransaccionTipo={selectedLinea.idTransaccionTipo}
+                    nombreTransaccionTipo={selectedLinea.descripcionTransaccionTipo}
                     idMonedaIngreso={selectedLinea.idMoneda}
                     fechaTransaccionIngreso={selectedLinea.fechaTransaccion}
                     refresh={refresh}

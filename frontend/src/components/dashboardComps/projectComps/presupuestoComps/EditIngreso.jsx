@@ -5,10 +5,12 @@ import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDis
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import MyCombobox from "@/components/ComboBox";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
-export default function EditIngreso(modal, descripcionLineaIngreso, montoIngreso, idLineaIngreso, idIngresoTipo, idTransaccionTipo, idMonedaIngreso, fechaTransaccionIngreso, refresh) {
+export default function EditIngreso({modal, descripcionLineaIngreso, montoIngreso, idLineaIngreso, idIngresoTipo, nombreIngresoTipo, idTransaccionTipo, nombreTransaccionTipo, idMonedaIngreso, fechaTransaccionIngreso, refresh}) {
     const [selectedTipoMoneda, setSelectedTipoMoneda] = useState("");
     const [selectedTipoIngreso, setSelectedTipoIngreso] = useState("");
     const [selectedTipoTransaccion, setSelectedTipoTransaccion] = useState("");
+    const [selectedFecha, setSelectedFecha] = useState("");
+    const [selectedMonto, setSelectedMonto] = useState("");
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
@@ -62,14 +64,17 @@ export default function EditIngreso(modal, descripcionLineaIngreso, montoIngreso
     
     
     const handleSelectedValueTipoTransaccion = (value) => {
-        selectedTipoTransaccion(value);
+        setSelectedTipoTransaccion(value);
     };
 
     const [monto, setMonto] = useState("");
     useEffect(() => {
+        setSelectedMonto(montoIngreso);
         setSelectedTipoMoneda(idMonedaIngreso);
-        setSelectedTipoIngreso(idIngresoTipo);
-        setSelectedTipoTransaccion(idTransaccionTipo);
+        setSelectedTipoIngreso(nombreIngresoTipo);
+        setSelectedTipoTransaccion(nombreTransaccionTipo);
+        const formattedDate = new Date(fechaTransaccionIngreso).toISOString().split('T')[0];
+        setFecha(formattedDate);
         if (modal) {
             setStartModal(true);
             onOpen();
@@ -118,7 +123,8 @@ export default function EditIngreso(modal, descripcionLineaIngreso, montoIngreso
                                                         <Input
                                                         value={monto}
                                                         onValueChange={setMonto}
-                                                        placeholder="0.00"
+                                                        // placeholder="0.00"
+                                                        placeholder={selectedMonto}
                                                         labelPlacement="outside"
                                                         startContent={
                                                             <div className="pointer-events-none flex items-center">
@@ -131,7 +137,7 @@ export default function EditIngreso(modal, descripcionLineaIngreso, montoIngreso
                                                             </div>
                                                             }
                                                             type="number"
-                                                        defaultValue = {montoIngreso}
+                                                        
                                                     />
                                                     
                                                     
@@ -189,7 +195,7 @@ export default function EditIngreso(modal, descripcionLineaIngreso, montoIngreso
             
                                                     </div>
                                                     <p className="textPresuLast">Fecha Transacción</p>
-                                                            <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha} defaultValue={fechaTransaccionIngreso}/>
+                                                            <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha} defaultValue={selectedFecha}/>
                                                     <div className="fechaContainer">
              
                                                     </div>
