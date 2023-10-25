@@ -429,6 +429,30 @@ END$
 
 SELECT * FROM ActaReunion;
 
+
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ACTA_REUNION_X_ID_ACTA_REUNION(_idActaReunion INT)
+BEGIN
+    -- Desactivar Acta de Reunión
+    UPDATE ActaReunion SET activo = 0 WHERE idActaReunion = _idActaReunion;
+
+    -- Desactivar Líneas de Acta relacionadas
+    UPDATE LineaActaReunion SET activo = 0 WHERE idActaReunion = _idActaReunion;
+
+    -- Desactivar Comentarios de Reunión relacionados
+    UPDATE ComentarioReunion SET activo = 0 
+    WHERE idComentarioReunion IN (SELECT idComentarioReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion);
+
+    -- Desactivar Temas de Reunión relacionados
+    UPDATE TemaReunion SET activo = 0 
+    WHERE idTemaReunion IN (SELECT idTemaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion);
+
+    -- Si hay otros registros relacionados, sigue el mismo patrón para desactivarlos.
+    -- Por ejemplo, desactivar Acuerdos, Responsables de Acuerdos, etc.
+    
+END //
+DELIMITER ;
+
 --------------------------
 --   LINEA ACTA REUNION
 --------------------------
@@ -478,6 +502,39 @@ BEGIN
     WHERE idLineaActaReunion = _idLineaActaReunion 
     AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(_idLineaActaReunion INT)
+BEGIN
+    -- Desactivar Responsables de Acuerdos relacionados
+    UPDATE ResponsableAcuerdo ra
+    JOIN Acuerdo a ON ra.idAcuerdo = a.idAcuerdo
+    JOIN TemaReunion tr ON a.idTemaReunion = tr.idTemaReunion
+    SET ra.activo = 0
+    WHERE tr.idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Acuerdos relacionados
+    UPDATE Acuerdo a
+    JOIN TemaReunion tr ON a.idTemaReunion = tr.idTemaReunion
+    SET a.activo = 0
+    WHERE tr.idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Temas de Reunión relacionados
+    UPDATE TemaReunion SET activo = 0
+    WHERE idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Comentarios de Reunión relacionados
+    UPDATE ComentarioReunion SET activo = 0
+    WHERE idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar Participantes por Reunión relacionados
+    UPDATE ParticipanteXReunion SET activo = 0
+    WHERE idLineaActaReunion = _idLineaActaReunion;
+
+    -- Desactivar la Línea de Acta
+    UPDATE LineaActaReunion SET activo = 0 WHERE idLineaActaReunion = _idLineaActaReunion;
+END $
 --------------------------
 --  TEMA REUNION
 --------------------------
@@ -1620,6 +1677,9 @@ BEGIN
     FROM TransaccionTipo
     WHERE activo = 1;
 END$
+#############################################
+## PRESUPUESTO
+#############################################
 
 SELECT * FROM Herramienta;
 DROP PROCEDURE IF EXISTS INSERTAR_PRESUPUESTO;
@@ -1780,6 +1840,7 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 	IN _idPresupuesto INT,
     IN _idProyecto INT,
     IN _idMoneda INT,
+    IN _idLineaEstimacionCosto INT,
 	IN _descripcion  VARCHAR(255),
     IN _costoReal DECIMAL(10,2),
 	IN _fechaRegistro DATE,
@@ -1787,11 +1848,14 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 )
 BEGIN
 	DECLARE _idLineaEgreso INT;
-	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,descripcion,costoReal,fechaRegistro,cantidad,activo) 
-    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
+	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad,activo) 
+    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_idLineaEstimacionCosto,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
     SET _idLineaEgreso = @@last_insert_id;
     SELECT _idLineaEgreso AS idLineaEgreso;
 END$
+######
+COMPLETAR CAMBIO DE COLUMNA
+
 
 SELECT * FROM Presupuesto;
 
@@ -1866,7 +1930,6 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_LINEA_ESTIMACION_COSTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
-	IN _idLineaEgreso INT,
     IN _idMoneda INT,
     IN _idEstimacion INT,
     IN _descripcion VARCHAR(255),
@@ -1877,8 +1940,8 @@ CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
 )
 BEGIN
 	DECLARE _idLineaEstimacionCosto INT;
-	INSERT INTO LineaEstimacionCosto(idLineaEgreso,idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
-    VALUES(_idLineaEgreso,_idMoneda,_idEstimacion,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
+	INSERT INTO LineaEstimacionCosto(idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
+    VALUES(_idMoneda,_idEstimacion,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
     SET _idLineaEstimacionCosto = @@last_insert_id;
     SELECT _idLineaEstimacionCosto AS idLineaEstimacionCosto;
 END$
