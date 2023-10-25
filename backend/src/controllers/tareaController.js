@@ -58,17 +58,21 @@ async function listarXIdProyecto(req,res,next){
         
         
         for(const tarea of tareas){
-            if (tarea.idEquipo != null){
+            if (tarea.idEquipo !== null){
                  //usuarios completo menos password
                  //nombre e id de subequipo
                  const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
                  const [equipo] = await connection.query(query2, [tarea.idEquipo]);
                  tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
-                 tarea.usuarios = null;
                  //listamos los participantes de dicho equipo
                  const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
                  const [participantes] = await connection.query(query4, [tarea.idEquipo]);
                  tarea.equipo.participantes = participantes[0]; 
+
+                 const query5 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
+                 const [usuarios] = await connection.query(query5, [tarea.idTarea]);
+                 tarea.usuarios = usuarios[0]; 
+
              }else {
                  const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
                  const [usuarios] = await connection.query(query3, [tarea.idTarea]);
@@ -94,7 +98,7 @@ async function eliminarTarea(req,res,next){
     const query = `CALL ELIMINAR_TAREA(?);`;
     try {
         //await connection.query(query,[idTarea]);
-        eliminarRecursivo(tarea);
+        await eliminarRecursivo(tarea);
 
         res.status(200).json({
             message: "Tarea eliminada e hijas tambien si tuviera"
@@ -120,7 +124,7 @@ async function eliminarRecursivo(tarea){
     
     //eliminamos hija
     for(const tareaHija of tarea.tareasHijas){
-        eliminarRecursivo(tareaHija);
+        await eliminarRecursivo(tareaHija);
     }
 }
 
