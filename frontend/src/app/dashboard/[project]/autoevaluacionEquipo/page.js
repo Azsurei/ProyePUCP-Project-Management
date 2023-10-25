@@ -34,9 +34,11 @@ export default function autoevaluacionEquipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
     const [initialEvaluations, setInitialEvaluations] = useState([]);
+    const [usersEvaluation, setUsersEvaluation] = useState(initialEvaluations);
     const [formState, setFormState] = useState("initial"); // "initial", "modified"
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+    // Manejo de carga y guardado de datos
     useEffect(() => {
         axios
             .get(
@@ -55,9 +57,30 @@ export default function autoevaluacionEquipo(props) {
             });
         setIsLoadingSmall(false);
     }, []);
+    
+    console.log(usersEvaluation);
 
-    const [usersEvaluation, setUsersEvaluation] = useState(initialEvaluations);
+    const handleSave = async () => {
+        setFormState("loading");
+    
+        try {
+            const response = await axios.put(
+                `http://localhost:8080/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion`,
+                {
+                    evaluados: usersEvaluation,
+                }
+            );
+    
+            console.log(response);
+            setInitialEvaluations(usersEvaluation);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            onOpenChange(true);
+        }
+    };
 
+    // Manejo de cambios en los datos
     const handleCriterionRatingChange = (
         idUsuarioEvaluado,
         idCriterioEvaluacion,
@@ -101,18 +124,7 @@ export default function autoevaluacionEquipo(props) {
         });
     };
 
-    const handleSave = () => {
-        setFormState("loading");
-
-        try {
-        } catch (error) {
-            console.log(error);
-        } finally {
-            onOpenChange(true);
-            setFormState("initial");
-        }
-    };
-
+    // Verificaciones
     useEffect(() => {
         if (
             JSON.stringify(usersEvaluation) !==
@@ -120,8 +132,12 @@ export default function autoevaluacionEquipo(props) {
         ) {
             setFormState("modified");
         }
-    }, [usersEvaluation]);
+        else {
+            setFormState("initial");
+        }
+    }, [usersEvaluation, initialEvaluations]);
 
+    // Renderizado
     const renderMember = (member) => {
         return (
             <Card className="w-full">
@@ -197,6 +213,7 @@ export default function autoevaluacionEquipo(props) {
                         <Textarea
                             variant="faded"
                             placeholder="Registre algunas observaciones..."
+                            defaultValue={member.observaciones}
                             onChange={(e) =>
                                 handleCommentChange(
                                     member.idUsuarioEvaluado,
@@ -210,6 +227,7 @@ export default function autoevaluacionEquipo(props) {
         );
     };
 
+    // Componente
     return (
         <div className="flex flex-col p-8 w-full h-full">
             <div className="space-x-4 mb-2">
@@ -233,7 +251,11 @@ export default function autoevaluacionEquipo(props) {
                     incluyendo su propio trabajo. Siendo el 1 la calificación
                     más baja y 5 la calificación más alta
                 </p>
-                <Button onPress={onOpen} isDisabled={formState === "initial"}>
+                <Button
+                    className="bg-[#172B4D] text-[#FFFFFF]"
+                    onPress={onOpen}
+                    isDisabled={formState === "initial"}
+                >
                     Guardar
                 </Button>
             </div>
@@ -263,7 +285,7 @@ export default function autoevaluacionEquipo(props) {
                                     Cerrar
                                 </Button>
                                 <Button
-                                    color="primary"
+                                    className="bg-[#172B4D] text-[#FFFFFF]"
                                     onPress={handleSave}
                                     isLoading={formState === "loading"}
                                 >
