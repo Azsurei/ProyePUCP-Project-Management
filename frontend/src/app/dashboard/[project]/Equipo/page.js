@@ -117,7 +117,6 @@ export default function Equipo(props) {
                     </div>
                     {ListComps.length > 0 ? (
                         <div className="containerEquiposCards">
-                            {/* Usar ListComps en vez de grupos*/}
                             {ListComps.map((team) => (
                                 <CardEquipo
                                     key={team.idEquipo}
