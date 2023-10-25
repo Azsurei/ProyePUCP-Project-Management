@@ -298,6 +298,50 @@
     color: #172B4D;
 }
 
+.membersSelectAll{
+    font-weight: 500;
+    background-color: rgba(8, 22, 48, 0.096);
+    padding: 0 0.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.5 ease;
+}
+
+.membersSelectAll:hover{
+    background-color: rgba(8, 22, 48, 0.164);
+    transition: background-color 0.5 ease;
+}
+
+.SubTeamUsersContainerSelected{
+    display: flex;
+    flex-direction: row;
+    gap: 1.8rem;
+    padding-left: 1.6rem;
+    flex-wrap: wrap;
+
+}
+
+.SingleUserIconContainerSelected{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .3rem;
+}
+
+.SingleUserIconSelected{
+    background-color: rgb(212, 212, 212);
+    border-radius: 100%;
+    height: 35px;
+    width: 35px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
 
 
 

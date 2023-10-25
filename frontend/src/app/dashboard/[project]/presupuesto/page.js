@@ -60,6 +60,8 @@ export default function Presupuesto(props) {
     const [validMonto, setValidMonto] = useState(true);
     const [validcantMeses, setValidcantMeses] = useState(true);
 
+    const [validTipoMoneda, setValidTipoMoneda] = useState(true);
+
     let idHerramientaCreada;
     let flag=0;
     useEffect(() => {
@@ -236,6 +238,10 @@ export default function Presupuesto(props) {
                                     Isvalid = false;
 
                                 }
+                                if(selectedMoneda!=1 || selectedMoneda!=2){
+                                    setValidTipoMoneda(false);
+                                    Isvalid=false;
+                                }
 
                                 if(Isvalid === true){
                                     nuevoPresupuestoInicial();     
@@ -255,8 +261,8 @@ export default function Presupuesto(props) {
                                     <ModalBody>
                                         <p className="textIngreso">
                                                 Se creará el presupuesto para el Proyecto: 
-                                                <span className="nombreProyecto">{" "+projectName}</span>
                                         </p>
+                                        <span className="nombreProyecto">{" "+projectName}</span>
 
 
                                         <div className="modalPresupuestoTitulos">
@@ -339,6 +345,15 @@ export default function Presupuesto(props) {
 
                                     </ModalBody>
                                     <ModalFooter>
+                                    <p className="text-blue-600"> 
+                                                   
+                                        {
+                                        !validTipoMoneda
+                                            ? "Seleccione un tipo de Moneda"
+                                            : ""
+                                        }                      
+
+                                    </p>
                                         <Button
                                             color="danger"
                                             variant="light"
@@ -353,6 +368,8 @@ export default function Presupuesto(props) {
                                         >
                                             Guardar
                                         </Button>
+
+                                        
                                     </ModalFooter>
                                 </>
                             );

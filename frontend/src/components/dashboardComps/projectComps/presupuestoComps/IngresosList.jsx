@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
 import ModalEliminateIngreso from "./ModalEliminateIngreso";
+import EditIngreso from "./EditIngreso";
 
 axios.defaults.withCredentials = true;
 
@@ -20,12 +21,18 @@ function CardIngresos({
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [selectedLinea, setSelectedLinea] = useState(null);
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
         console.log("Esta es la tarea", selectedTask);
     };
 
+    const toggleModal2 = (task) => {
+        setSelectedLinea(task);
+        setModal2(!modal2);
+        console.log("Esta es la linea", selectedLinea);
+    };
 
     const imageIngresoOptions = {
         "Efectivo": "/icons/icon-Efectivo.svg",
@@ -55,7 +62,7 @@ function CardIngresos({
                     <p className="titleHoraIngreso">{horaIngreso}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <button className="" type="button">
+                    <button className="" type="button" onClick={()=>toggleModal2(IngresoObject)}>
                         <img src="/icons/editar.svg"/>
                     </button>
                     <button className="" type="button" onClick={() => toggleModal(IngresoObject)}>
@@ -69,6 +76,21 @@ function CardIngresos({
                     toggle={() => toggleModal(selectedTask)}
                     taskName={selectedTask.descripcion}
                     idLineaIngreso={selectedTask.idLineaIngreso}
+                    refresh={refresh}
+                />
+            )}
+            {modal2 && selectedLinea && (
+                <EditIngreso
+                    modal={modal2} 
+                    descripcionLineaIngreso={selectedLinea.descripcion}
+                    montoIngreso={selectedLinea.monto}
+                    idLineaIngreso={selectedLinea.idLineaIngreso}
+                    idIngresoTipo={selectedLinea.idIngresoTipo}
+                    nombreIngresoTipo={selectedLinea.descripcionIngresoTipo}
+                    idTransaccionTipo={selectedLinea.idTransaccionTipo}
+                    nombreTransaccionTipo={selectedLinea.descripcionTransaccionTipo}
+                    idMonedaIngreso={selectedLinea.idMoneda}
+                    fechaTransaccionIngreso={selectedLinea.fechaTransaccion}
                     refresh={refresh}
                 />
             )}

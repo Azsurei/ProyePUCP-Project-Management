@@ -924,10 +924,11 @@ CREATE PROCEDURE  LISTAR_EQUIPO_X_ID_EQUIPO(
     IN _idEquipo INT
 )
 BEGIN
-	SELECT idEquipo,nombre,descripcion,fechaCreacion
-    FROM Equipo
-    WHERE  idEquipo = _idEquipo
-    AND activo=1;
+    SELECT e.idEquipo, e.idProyecto, e.nombre, e.fechaCreacion, e.activo, e.idLider, 
+    u.nombres as "nombreLider", u.apellidos as "apellidoLider", u.correoElectronico as "correoLider"
+	FROM Equipo As e
+    LEFT JOIN Usuario AS u ON e.idLider = u.idUsuario
+	WHERE e.idEquipo = _idEquipo AND e.activo=1;
 END$
 
 
@@ -1093,16 +1094,16 @@ END$
 --------------------
 -- Equipo
 --------------------
-
+DROP PROCEDURE INSERTAR_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_EQUIPO(   
 	IN _idProyecto INT,
     IN _nombre VARCHAR(200),
-    IN _descripcion VARCHAR(500)
+    IN _idLider INT
 )
 BEGIN
 	DECLARE _idEquipo INT;
-	INSERT INTO Equipo(idProyecto,nombre,descripcion,fechaCreacion,activo) VALUES(_idProyecto,_nombre,_descripcion,CURDATE(),1);		
+	INSERT INTO Equipo(idProyecto,nombre,idLider,fechaCreacion,activo) VALUES(_idProyecto,_nombre,_idLider,CURDATE(),1);		
     SET _idEquipo = @@last_insert_id;
     SELECT _idEquipo AS idEquipo;
 END$
@@ -2254,9 +2255,11 @@ DROP PROCEDURE IF EXISTS LISTAR_EQUIPOS_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_EQUIPOS_X_IDPROYECTO(IN _idProyecto INT)
 BEGIN
-    SELECT *
-	FROM Equipo
-	WHERE idProyecto = _idProyecto AND activo=1;
+    SELECT e.idEquipo, e.idProyecto, e.nombre, e.fechaCreacion, e.activo, e.idLider, 
+    u.nombres as "nombreLider", u.apellidos as "apellidoLider", u.correoElectronico as "correoLider"
+	FROM Equipo As e
+    LEFT JOIN Usuario AS u ON e.idLider = u.idUsuario
+	WHERE e.idProyecto = _idProyecto AND e.activo=1;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTES_X_IDEQUIPO;
@@ -2618,4 +2621,30 @@ BEGIN
     SELECT *
 	FROM CriterioEvaluacion
 	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_OBSERVACION_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_OBSERVACION_X_ID(
+    IN _idUsuarioEvaluacion INT,
+    IN _observaciones VARCHAR(500)
+)
+BEGIN
+    UPDATE UsuarioXEvaluacion 
+    SET observaciones = _observaciones
+    WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_NOTACRITERIO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_NOTACRITERIO_X_ID(
+    IN _idCriterioEvaluacion INT,
+    IN _criterio VARCHAR(500),
+    IN _nota DOUBLE
+)
+BEGIN
+    UPDATE CriterioEvaluacion 
+    SET criterio = _criterio,
+        nota = _nota
+    WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
 END$
