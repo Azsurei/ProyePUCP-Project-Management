@@ -2535,3 +2535,29 @@ BEGIN
 	FROM CriterioEvaluacion
 	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_OBSERVACION_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_OBSERVACION_X_ID(
+    IN _idUsuarioEvaluacion INT,
+    IN _observaciones VARCHAR(500)
+)
+BEGIN
+    UPDATE UsuarioXEvaluacion 
+    SET observaciones = _observaciones
+    WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_NOTACRITERIO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_NOTACRITERIO_X_ID(
+    IN _idCriterioEvaluacion INT,
+    IN _criterio VARCHAR(500),
+    IN _nota DOUBLE
+)
+BEGIN
+    UPDATE CriterioEvaluacion 
+    SET criterio = _criterio,
+        nota = _nota
+    WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
+END$
