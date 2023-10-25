@@ -15,6 +15,8 @@ routerActaReunion.get("/listarActaReunionXIdProyecto/:idProyecto", actaReunionCo
 // Linea Acta Reunion
 routerActaReunion.post("/crearLineaActaReunion", lineaActaReunionController.crear);
 routerActaReunion.get("/listarLineaActaReunionXIdActaReunion/:idActaReunion", lineaActaReunionController.listarXIdActaReunion);
+routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion", lineaActaReunionController.listarXIdLineaActaReunion);
+routerActaReunion.delete("/eliminarLineaActaReunionXIdLineaActaReunion", lineaActaReunionController.eliminarXIdLineaActaReunion);
 
 // Comentario reunion
 routerActaReunion.post("/crearComentarioReunion", comentarioReunionController.crear);

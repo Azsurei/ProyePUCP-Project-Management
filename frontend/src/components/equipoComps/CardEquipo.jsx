@@ -35,7 +35,7 @@ import {
 
     return (
       <div>
-        <Card className="w-full max-w-[70rem] h-50 shadow-md 
+        <Card className="w-full max-w-[70rem] min-h-[205px] shadow-md 
           border border-gray-300 rounded-lg card-hover my-2 overflow-hidden" onClick={()=>{handleSeeTeam(team)}}>
           <CardBody className="pl-2 pr-2">
             <div className="mt-4 ml-4 mr-16 mb-2 flex items-center justify-between">
@@ -60,7 +60,7 @@ import {
                     )}
                 </div>
               ) : (
-                  <p className="emptyMembers">Este equipo no cuenta con miembros</p>
+                  <p className="ml-4 h-[50px]">Este equipo no cuenta con miembros</p>
               )}
             
           </CardBody>

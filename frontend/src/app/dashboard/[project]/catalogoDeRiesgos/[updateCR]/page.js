@@ -530,7 +530,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 <div className="comboCR">
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/probabilityCR.svg"
                             label="Probabilidad"
                             className="iconLabel"
                         />
@@ -548,7 +548,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/impactCR.svg"
                             label="Impacto"
                             className="iconLabel"
                         />
@@ -566,7 +566,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/datePB.svg"
                             label="Fecha identificada"
                             className="iconLabel"
                         />
@@ -584,7 +584,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/severityCR.svg"
                             label="Severidad"
                             className="iconLabel"
                         />
@@ -608,7 +608,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                     <div className="containerComboCR">
                         <IconLabel
-                            icon="/icons/priorityPB.svg"
+                            icon="/icons/statePB.svg"
                             label="Estado"
                             className="iconLabel"
                         />

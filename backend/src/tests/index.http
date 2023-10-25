@@ -378,6 +378,34 @@ Content-Type:  application/json
   "fechaTransaccion": "2023-10-19"
 }
 
+###
+POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaEstimacionCosto HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idMoneda": 1, 
+  "idEstimacion": 1,  
+  "descripcion": "Descripción de la línea de estimación de costo",
+  "tarifaUnitaria": 100.00,  
+  "cantidadRecurso": 3,  
+  "subtotal": 300.00,  
+  "fechaInicio": "2023-10-24" 
+}
+
+###
+POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaEgreso HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idPresupuesto": 1,  
+  "idProyecto": 50,  
+  "idMoneda": 1,  
+  "idLineaEstimacionCosto": 3,  
+  "descripcion": "Descripción de la línea de egreso",
+  "costoReal": 1000.00,  
+  "fechaRegistro": "2023-10-24",  
+  "cantidad": 2  
+}
 
 ###
 GET http://localhost:8080/api/proyecto/presupuesto/listarLineasTodas/50 HTTP/1.1
@@ -751,50 +779,64 @@ POST http://localhost:8080/api/proyecto/actaReunion/crearActaReunion HTTP/1.1
 Content-Type: application/json
 
 {
-  "actaReunion": {
-    "idProyecto": 82,
-    "lineasActaReunion": [
-      {
-        "nombreReunion": "Reunión de Planificación",
-        "fechaReunion": "2023-11-01",
-        "horaReunion": "10:00 AM",
-        "nombreConvocante": "Juan Pérez",
-        "motivo": "Discutir los detalles del proyecto",
-        "temas": [
-          {
-            "descripcion": "Tema 1: Planificación del proyecto",
-            "acuerdos": [
-              {
-                "descripcion": "Acuerdo 1: Definir los plazos del proyecto",
-                "fechaObjetivo": "2023-11-10",
-                "responsables": [
-                  {
-                    "idUsuarioXRolXProyecto": 2
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "participantes": [
-          {
-            "idUsuarioXRolXProyecto": 2,
-            "asistio": true
-          }
-        ],
-        "comentarios": [
-          {
-            "descripcion": "Comentario 1: La reunión fue productiva"
-          }
-        ]
-      }
-    ]
-  }
+  "idProyecto": 78
+}
+
+###
+POST http://localhost:8080/api/proyecto/actaReunion/crearLineaActaReunion HTTP/1.1
+Content-Type: application/json
+
+
+{
+  "idActaReunion": 29,
+  "nombreReunion": "Reunión de Planificación",
+  "fechaReunion": "2023-11-01",
+  "horaReunion": "10:00 AM",
+  "nombreConvocante": "Juan Pérez",
+  "motivo": "Discutir los detalles del proyecto",
+  "temas": [
+    {
+      "descripcion": "Tema 1: Planificación del proyecto 2",
+      "acuerdos": [
+        {
+          "descripcion": "Acuerdo 1: Definir los plazos del proyecto",
+          "fechaObjetivo": "2023-11-10",
+          "responsables": [
+            {
+              "idUsuarioXRolXProyecto": 2
+            },
+            {
+              "idUsuarioXRolXProyecto": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "participantes": [
+    {
+      "idUsuarioXRolXProyecto": 2,
+      "asistio": true
+    }
+  ],
+  "comentarios": [
+    {
+      "descripcion": "Comentario 1: La reunión fue productiva"
+    }
+  ]
 }
 
 
+
 ###
-GET http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/82 HTTP/1.1
+GET http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/78 HTTP/1.1
+Content-Type: application/json
+###
+GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/29 HTTP/1.1
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/5 HTTP/1.1
 Content-Type: application/json
 
 ////////////////////////////
@@ -810,4 +852,18 @@ Content-Type:  application/json
 
 ###LISTAR AUTOEVALUACION
 GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/58/95 HTTP/1.1
+Content-Type:  application/json
+
+###
+
+DELETE http://localhost:8080/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idLineaActaReunion": 5
+}
+
+### GET
+
+GET http://localhost:8080/api/proyecto/backlog/test/2 HTTP/1.1
 Content-Type:  application/json
