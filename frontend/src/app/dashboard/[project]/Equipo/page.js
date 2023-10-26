@@ -16,6 +16,8 @@ import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { ExportIcon } from "@/components/equipoComps/ExportIcon";
 import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 import CardTarea from "@/components/equipoComps/CardTarea";
+import MyCombobox from "@/components/ComboBox";
+import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 
 axios.defaults.withCredentials = true;
 
@@ -40,6 +42,53 @@ export default function Equipo(props) {
     const [cantFinished, setCantFinished] = useState(0);
 
     const [removeLider, setRemoveLider] = useState(false);
+
+    const [modal, setModal] = useState(false);
+    const [reloadData, setReloadData] = useState(false);
+    const [userRoleData, setUserRoleData] = useState([]); //Define un estado para almacenar los datos del usuario y el rol asociado
+
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
+
+    const toggleModal = () => {
+        handleReloadData();
+        setModal(!modal);
+    };
+
+    useEffect(() => {
+        if (modal) {
+            document.body.style.overflow = "hidden";
+            setReloadData(true);
+        } else {
+            document.body.style.overflow = "auto";
+            setReloadData(false);
+        }
+        setIsLoadingSmall(false);
+    }, [modal]);
+
+    const handleSelectedValueChangeRol = (value, userId) => {
+        // Crear un objeto para el nuevo rol del usuario
+        const newUserRole = {
+            idUsuario: userId, // El ID del usuario
+            idRolEquipo: value, // El ID del rol seleccionado
+        };
+
+        // Verificar si el usuario ya tiene un rol en el arreglo
+        const userIndex = userRoleData.findIndex(
+            (item) => item.idUsuario === userId
+        );
+
+        if (userIndex !== -1) {
+            // Si el usuario ya tiene un rol, actualiza el rol existente
+            const updatedUserRoleData = [...userRoleData];
+            updatedUserRoleData[userIndex] = newUserRole;
+            setUserRoleData(updatedUserRoleData);
+        } else {
+            // Si el usuario no tiene un rol, agrégalo al arreglo
+            setUserRoleData([...userRoleData, newUserRole]);
+        }
+    };
 
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(
@@ -268,9 +317,7 @@ export default function Equipo(props) {
                     <div className="containerMembers">
                         <div className="flex items-center justify-between">
                             <div className="headerGroup">
-                                {`Miembros (${
-                                    selectedTeam.participantes.length + 1
-                                })`}
+                                {`Miembros (${selectedTeam.participantes.length})`}
                             </div>
                             <div className="flex gap-4 items-center mb-4">
                                 {updateState ? (
@@ -343,7 +390,8 @@ export default function Equipo(props) {
                             )}
 
                             {/*Para el líder del equipo*/}
-                            {!removeLider && (
+                            {/*creo que ya no sirvirá */}
+                            {/*                             {!removeLider && (
                                 <>
                                     <div className="col-span-6 flex mt-4">
                                         <p className="membersIcon1">
@@ -371,7 +419,6 @@ export default function Equipo(props) {
                                                     alt="delete"
                                                     className="mb-4 cursor-pointer "
                                                     onClick={() => {
-                                                        /* removeUser(member); */
                                                         setRemoveLider(true);
                                                     }}
                                                 />
@@ -383,7 +430,7 @@ export default function Equipo(props) {
                                         </div>
                                     )}
                                 </>
-                            )}
+                            )} */}
 
                             {selectedTeam.participantes.map((member) => (
                                 //falta un key aqui
@@ -409,7 +456,21 @@ export default function Equipo(props) {
                                     {updateState ? (
                                         <>
                                             <div className="col-span-3 flex mt-4">
-                                                Miembro
+                                                <MyCombobox
+                                                    urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
+                                                    property="roles"
+                                                    nameDisplay="nombreRol"
+                                                    hasColor={false}
+                                                    onSelect={(value) =>
+                                                        handleSelectedValueChangeRol(
+                                                            value,
+                                                            member.idUsuario
+                                                        )
+                                                    }
+                                                    idParam="idRolEquipo"
+                                                    reloadData={reloadData}
+                                                    initialName="Seleccione un rol"
+                                                />
                                             </div>
                                             <div className="col-span-1 flex mt-4 justify-center">
                                                 <img
@@ -424,6 +485,7 @@ export default function Equipo(props) {
                                         </>
                                     ) : (
                                         <div className="col-span-4 flex mt-4">
+                                            {/*aca traeré la data del selectedTeam mejorado*/}
                                             Miembro
                                         </div>
                                     )}
@@ -431,6 +493,13 @@ export default function Equipo(props) {
                             ))}
                         </div>
                     </div>
+                    {modal && (
+                        <PopUpRolEquipo
+                            modal={modal}
+                            toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                            idEquipo={selectedTeam.idEquipo}
+                        />
+                    )}
                 </div>
             )}
         </div>
