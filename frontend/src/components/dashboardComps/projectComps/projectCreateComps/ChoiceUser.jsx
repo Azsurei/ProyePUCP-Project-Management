@@ -39,6 +39,7 @@ export default function ChoiceUser({
                                 usuarioObject={component}
                                 email={component.email}
                                 removeHandler={removeSupervisor}
+                                isEditable={true}
                             ></CardSelectedUser>
                         );
                     })}
@@ -68,6 +69,7 @@ export default function ChoiceUser({
                                 usuarioObject={component}
                                 email={component.email}
                                 removeHandler={removeMiembro}
+                                isEditable={true}
                             ></CardSelectedUser>
                         );
                     })}

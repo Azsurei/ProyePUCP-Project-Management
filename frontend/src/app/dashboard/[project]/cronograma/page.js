@@ -843,10 +843,9 @@ export default function Cronograma(props) {
                                     selectedUsers.map((component) => (
                                         <CardSelectedUser
                                             key={component.idUsuario}
+                                            isEditable={stateSecond === 2 ? false : true}
                                             usuarioObject={component}
                                             removeHandler={removeUser}
-
-                                            //falta agregar isEditable para renderizar la X
                                         ></CardSelectedUser>
                                     ))
                                 ) : (
