@@ -677,10 +677,12 @@ ENGINE = InnoDB;
 SELECT CONSTRAINT_NAME
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE TABLE_NAME = 'LineaEstimacionCosto'
-AND COLUMN_NAME = 'idLineaEgreso';
+AND COLUMN_NAME = 'idEstimacion';
 
 ALTER TABLE LineaEstimacionCosto
-DROP COLUMN idLineaEgreso;
+ADD COLUMN idPresupuesto INT;
+
+ALTER TABLE LineaEstimacionCosto ADD FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto);
 
 -----------------------
 -- Product Backlog

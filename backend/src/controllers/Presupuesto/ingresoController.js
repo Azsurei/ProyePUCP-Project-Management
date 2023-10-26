@@ -35,17 +35,34 @@ async function modificarLineaIngreso(req,res,next){
     }
 }
 
+// Definir una función para obtener líneas de ingreso
+async function funcListarLineasXIdProyecto(idProyecto){
+    let lineasIngreso = [];
+    try{
+        const query = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(?);`;
+        const [results] = await connection.query(query, [idProyecto]);
+        lineasIngreso = results[0];
+    }catch(error){
+        console.log(error);
+        next(error);
+    }
+    return lineasIngreso;
+}
+
 
 // Definir una función para obtener líneas de ingreso
 async function listarLineasXIdProyecto(req,res,next){
     const { idProyecto } = req.params;
-    const query = `CALL LISTAR_LINEA_INGRESO_X_ID_PROYECTO(?);`;
-    const [results] = await connection.query(query, [idProyecto]);
-    lineasIngreso = results[0];
-    res.status(200).json({
-        lineasIngreso,
-        message: "Linea de ingreso listadas correctamente"
-    });
+    try{
+        lineasIngreso = funcListarLineasXIdProyecto(idProyecto);
+        res.status(200).json({
+            lineasIngreso,
+            message: "Linea de ingreso listadas correctamente"
+        });
+    }catch(error){
+        console.log(error);
+        next(error);
+    }
 }
 
 
@@ -88,5 +105,6 @@ module.exports = {
     modificarLineaIngreso,
     listarLineasXNombreFechas,
     eliminarLineaIngreso,
-    listarLineasXIdProyecto
+    listarLineasXIdProyecto,
+    funcListarLineasXIdProyecto
 };
