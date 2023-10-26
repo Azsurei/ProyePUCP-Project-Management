@@ -6,7 +6,7 @@ const connection = require("../../config/db");
 //
 
 async function crearAutoEvaluacion(req,res,next){
-    const {idProyecto} = req.body;
+    const {idProyecto, criterio1, criterio2, criterio3, criterio4} = req.body;
     const query = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
     try {
         const results = await connection.query(query,[idProyecto]);
@@ -16,8 +16,8 @@ async function crearAutoEvaluacion(req,res,next){
                 const query1 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
                 const results1 = await connection.query(query1,[idProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
                 const idUsuarioEvaluacion = results1[0][0][0].idUsuarioEvaluacion;
-                const query2 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?);`;
-                const results2 = await connection.query(query2,[idUsuarioEvaluacion]);
+                const query2 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?,?,?,?,?);`;
+                const results2 = await connection.query(query2,[idUsuarioEvaluacion,criterio1,criterio2,criterio3,criterio4]);
             }
         }
         res.status(200).json({

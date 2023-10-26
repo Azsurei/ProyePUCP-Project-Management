@@ -2580,18 +2580,22 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_CRITERIO_AUTOEVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CRITERIO_AUTOEVALUACION(
-    IN _idUsuarioEvaluacion INT
+    IN _idUsuarioEvaluacion INT,
+    IN _criterio1 VARCHAR(500),
+    IN _criterio2 VARCHAR(500),
+    IN _criterio3 VARCHAR(500),
+    IN _criterio4 VARCHAR(500)
 )
 BEGIN
 	DECLARE _idCriterioEvaluacion INT;
 	INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Dominio Técnico",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio1,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Compromiso con los trabajos",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio2,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Comunicación con sus compañeros",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio3,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Comprensión del proyecto",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio4,0,1);
     SET _idUsuarioEvaluacion = @@last_insert_id;
     SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
 END$
