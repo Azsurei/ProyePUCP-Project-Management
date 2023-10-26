@@ -11,7 +11,9 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/presupuesto.css";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
-import {ExportIcon} from "@/../public/icons/ExportIcon";
+import HistorialList from "@/components/dashboardComps/projectComps/presupuestoComps/HistorialList";
+import { Toaster, toast } from "sonner";
+import { ExportIcon } from "@/../public/icons/ExportIcon";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -34,8 +36,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
-import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
-import ModalEliminateIngreso from "@/components/dashboardComps/projectComps/presupuestoComps/ModalEliminateIngreso";
+
 
 export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -103,36 +104,39 @@ export default function Ingresos(props) {
 
     const [monto, setMonto] = useState("");
 
-    const data = [
-        {
-            id: 1,
-            tipoIngreso: 'Ingreso por Efectivo',
-            tipoPago: 'Pago de Cliente',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        {
-            id: 2,
-            tipoIngreso: 'Ingreso por Transferencia',
-            tipoPago: 'Donacion',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        {
-            id: 3,
-            tipoIngreso: 'Licencia de Software',
-            tipoPago: 'Cant 1.',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
-        {
-            id: 4,
-            tipoIngreso: 'Ingeniero Industrial',
-            tipoPago: 'Cant 1.',
-            montoIngreso: 'S/ 1000.00',
-            horaIngreso: '12:00 PM',
-        },
+    const [lineasIngreso, setLineasIngreso] = useState([]);
+
+    const DataTable = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
+              const data = response.data.lineasIngreso;
+              setLineasIngreso(data);
+              console.log(`Esta es la data:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasIngreso);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };
+
         
+    useEffect(() => {
+    
+        DataTable();
+      }, [projectId]);
+      
+    const dataEgreso = [
+        {
+            idLineaEgreso: 1,
+            descripcion: "Licencia de Software",
+            costoReal: 1000,
+            fechaRegistro: "2023-10-15T05:00:00.000Z",
+            cantidad: 1,
+            idMoneda: 1,
+            nombreMoneda: "Dolar",
+        }
     ];
 
     return (
@@ -198,10 +202,8 @@ export default function Ingresos(props) {
                         </div>
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
-                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
-                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
-                        <IngresosList lista = {data} toggle={toggleModal}></IngresosList>
+                        <HistorialList listaIngresos={lineasIngreso} listaEgreso = {dataEgreso}></HistorialList>
+
                     </div>
 
                 

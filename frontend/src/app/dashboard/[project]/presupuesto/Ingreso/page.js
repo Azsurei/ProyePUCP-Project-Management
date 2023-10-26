@@ -52,7 +52,12 @@ export default function Ingresos(props) {
     //const router=userRouter();
 
     const onSearchChange = (value) => {
-        setFilterValue(value);
+        if(value) {
+            setFilterValue(value);
+        } else {
+            setFilterValue("");
+        }
+        
     };
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -166,7 +171,7 @@ export default function Ingresos(props) {
     };
 
 
-
+    
     
     const [selectedMoneda, setselectedMoneda] = useState("");
     const [descripcionLinea, setdescripcionLinea] = useState("");
@@ -187,6 +192,9 @@ export default function Ingresos(props) {
     const handleSelectedValueTipoTransaccion = (value) => {
         setselectedTipoTransacciono(value);
     };
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+    }, []);
 
     const [monto, setMonto] = useState("");
     
@@ -212,7 +220,18 @@ export default function Ingresos(props) {
     
         DataTable();
       }, [projectId]);
-    
+    const hasSearchFilter = Boolean(filterValue);
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...lineasIngreso]
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((item) =>
+            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+
+        return filteredTemplates;
+    }, [lineasIngreso, filterValue]);
     return (
 
         
@@ -262,6 +281,7 @@ export default function Ingresos(props) {
                             placeholder="Buscar Ingreso..."
                             startContent={<SearchIcon />}
                             value={filterValue}
+                            onClear={() => onClear("")}
                             onValueChange={onSearchChange}
                             variant="faded"
                         />
@@ -278,7 +298,7 @@ export default function Ingresos(props) {
                         </div>
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {lineasIngreso} refresh ={DataTable}></IngresosList>
+                        <IngresosList lista = {filteredItems} refresh ={DataTable}></IngresosList>
                     </div>
 
                 
