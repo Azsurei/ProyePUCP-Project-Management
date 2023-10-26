@@ -19,39 +19,11 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import MyCombobox from "@/components/ComboBox";
+import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo"
 
 axios.defaults.withCredentials = true;
 
-/*
-const miembros = [
-    {
-        id: 1,
-        iconSrc: "/icons/usr-img.svg",
-        nombre: "Augusto Victor Tong Yang",
-        correo: "avtong@pucp.edu.pe",
-    },
-    {
-        id: 2,
-        iconSrc: "/icons/usr-img.svg",
-        nombre: "Augusto Victor Tong Yang",
-        correo: "avtong@pucp.edu.pe",
-    },
-    {
-        id: 3,
-        iconSrc: "/icons/usr-img.svg",
-        nombre: "Augusto Victor Tong Yang",
-        correo: "avtong@pucp.edu.pe",
-    },
-    {
-        id: 4,
-        iconSrc: "/icons/usr-img.svg",
-        nombre: "Augusto Victor Tong Yang",
-        correo: "avtong@pucp.edu.pe",
-    },
-];
-*/
 
 export default function crear_equipo(props) {
     const router = useRouter();
@@ -85,6 +57,9 @@ export default function crear_equipo(props) {
     const [selectedValueRol, setSelectedValueRol] = useState("");
     const [reloadData, setReloadData] = useState(false);
 
+    const [roles, setRoles] = useState([]);
+    const [rol, setRol] = useState("");
+
     const handleReloadData = () => {
         setReloadData(true);
     };
@@ -104,6 +79,12 @@ export default function crear_equipo(props) {
 
     const toggleModal2 = () => {
         setModal2(!modal2);
+    };
+
+    //roles es un arreglo de roles, en este caso paso como parametro el conjunto de roles
+    const handleAddRoles = (roles) => {
+        setRoles(roles);
+        console.log("Roles: ", roles);
     };
 
     const returnUniqueListOfMiembros = (newMiembrosList) => {
@@ -198,7 +179,7 @@ export default function crear_equipo(props) {
         // Esto es porque el procedure solo acepta ID
         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
             (usuario) => {
-                return { idUsuario: usuario.idUsuario };
+                return { idUsuario: usuario.idUsuario};
             }
         );
 
@@ -274,21 +255,16 @@ export default function crear_equipo(props) {
                                 usuarioObject={component}
                                 email={component.correoElectronico}
                                 removeHandler={removeMiembroUnique}
+                                isEditable={true}
                             ></CardSelectedUser>
                         );
                     })}
                 </div>
-                <MyCombobox
-                    urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
-                    property="probabilidades"
-                    nameDisplay="nombreProbabilidad"
-                    hasColor={false}
-                    onSelect={handleSelectedValueChangeRol}
-                    idParam="idProbabilidad"
-                    reloadData={reloadData}
-                    initialName="Seleccione un rol"
-                    inputWidth="full"
+                <ComboBoxArray
+                    people={roles}
+                    onSelect={setRol}
                 />
+                {console.log("Rol: ", rol)}
                 <button
                     className="w-20 h-20"
                     type="button"
@@ -330,6 +306,7 @@ export default function crear_equipo(props) {
                                     usuarioObject={component}
                                     email={component.correoElectronico}
                                     removeHandler={removeMiembro}
+                                    isEditable={true}
                                 ></CardSelectedUser>
                             );
                         })}
@@ -384,6 +361,7 @@ export default function crear_equipo(props) {
                     <PopUpRolEquipo
                         modal={modal}
                         toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                        handleAddRoles={handleAddRoles}
                     />
                 )}
             {modal1 && (

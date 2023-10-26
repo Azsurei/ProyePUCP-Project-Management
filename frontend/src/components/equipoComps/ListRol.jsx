@@ -3,44 +3,44 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/LisEpic.css";
-import { UserCardsContext } from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
+import { UserCardsContext } from "@/components/equipoComps/PopUpRolEquipo";
 //import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 
 function CardEpic(props) {
   const [isSelected, setIsSelected] = useState(false);
-  const { selectEpic, deselectEpic } = useContext(UserCardsContext);
+  const { selectRol, deselectRol } = useContext(UserCardsContext);
+
 
   const handleSelectedOn = () => {
-    selectEpic(props.epicObject);
+    selectRol(props.roleName);
     setIsSelected(true);
   }
 
   const handleSelectedOff = () => {
-    deselectEpic(props.epicObject);
+    deselectRol(props.roleName);
     setIsSelected(false);
   }
 
   return (
     <li className={isSelected ? "UserCard active" : "UserCard"} onClick={isSelected ? handleSelectedOff : handleSelectedOn}>
       <div style={{ marginTop: '12px', marginLeft: '15px' }}>
-        <p className="titleUserName">{props.name}</p>
+        <p className="titleUserName">{props.roleName}</p>
       </div>
     </li>
   );
 }
 
-export default function ListEpic(props) {
+export default function ListRol(props) {
   const router = useRouter();
 
   return (
     <ul className="ListEpicsProject">
-      {props.lista.map((component) => {
+      {props.lista.map((roleName, index) => {
         return (
           <CardEpic
-            key={component.idEpica}
-            name={component.nombre}
-            epicObject={component}
+            key={index}
+            roleName={roleName}
           ></CardEpic>
         );
       })}
