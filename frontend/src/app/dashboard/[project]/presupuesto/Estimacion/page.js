@@ -12,6 +12,8 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Toaster, toast } from "sonner";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -42,65 +44,174 @@ export default function Ingresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+
+    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
 
     //const router=userRouter();
-    const [listUsers, setListUsers] = useState([]);
 
     const onSearchChange = (value) => {
-        setFilterValue(value);
+        if(value) {
+            setFilterValue(value);
+        } else {
+            setFilterValue("");
+        }
     };
-
-    const [modal1, setModal1] = useState(false);
 
     const [filterValue, setFilterValue] = React.useState("");
 
 
     useEffect(()=>{setIsLoadingSmall(false)},[])
 
-
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const [modalContentState, setModalContentState] = useState(0);
-    //1 es estado de anadir nuevo hito
-    //2 es estado de editar hito
+    
+    // Modales
+    const {
+        isOpen: isModalFechaOpen,
+        onOpen: onModalFecha,
+        onOpenChange: onModalFechachange,
+    } = useDisclosure();
 
     
-
-
-    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
+    const { 
+        isOpen: isModalCrearOpen, 
+        onOpen: onModalCrear, 
+        onOpenChange: onModalCrearChange 
     
+    
+    } = useDisclosure();
+
+    //Fin Modales
+
+    const [fecha, setFecha] = useState("");
+
+    const handleChangeFecha = (event) => {
+        setFecha(event.target.value);
+        setValidFecha(true);
+    };
+
+
+    //Filtro Fecha
+
+    const [fechaInicio, setFechaInicio] = useState("");
+    const [fechaFin, setFechaFin] = useState("");
+        
+        
+    const handleChangeFechaInicioFilter = (event) => {
+        setFechaInicio(event.target.value);
+    };
+        
+    const handleChangeFechaFinFilter = (event) => {
+        setFechaFin(event.target.value);
+    };
+        
+    
+    //Funciones
+
+    function insertarLineaEstimacion() {
+
+    }
+
+
+    //Toast
+    const registrarLineaEstimacion = async () => {
+        try {
+            toast.promise(insertarLineaEstimacion, {
+                loading: "Registrando Estimación...",
+                success: (data) => {
+                    //DataTable();
+                    return "La estimación se agregó con éxito!";
+                    
+                },
+                error: "Error al agregar estimación",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; // Lanza el error para que se propague
+        } 
+    };
+
+
+    //Validciones
+
+    const [validMonto, setValidMonto] = useState(true);
+    const [validTipoMoneda, setValidTipoMoneda] = useState(true);
+    const [validDescription, setValidDescription] = useState(true);
+    const [validFecha, setValidFecha] = useState(true);
+    const msgEmptyField = "Este campo no puede estar vacio";
+    
+    // Fin Validaciones
+
+
     const [selectedMoneda, setselectedMoneda] = useState("");
-
-    
     const [descripcionLinea, setdescripcionLinea] = useState("");
 
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
+        setValidTipoMoneda(true);
     };
 
-    const [inFechaInicio, setInFechaInicio] = useState('');
-    const handleChangeFechaInicio = () => {
-        const datepickerInput = document.getElementById("inputFechaPresupuesto");
-        const selectedDate = datepickerInput.value;
-        console.log(selectedDate);
-        setInFechaInicio(selectedDate);
-    }
+    //onClear
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+    }, []);
 
-    const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
-    
-    const handleSelectedValueTipoTransaccion = (value) => {
-        setselectedTipoTransacciono(value);
-    };
+
 
     const [monto, setMonto] = useState("");
+    const [lineasEstimacion, setLineasEstimacion] = useState([]);
 
+    //Aqui va el data table de Iwa
     
-    return (
+    /*
+    const DataTable = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
+              const data = response.data.lineasIngreso;
+              setLineasIngreso(data);
+              console.log(`Esta es la data:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasIngreso);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };
 
         
-        //Presupuesto/Ingreso
+    useEffect(() => {
+    
+        DataTable();
+      }, [projectId]);
+    const hasSearchFilter = Boolean(filterValue);
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...lineasIngreso]
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((item) =>
+            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+
+        return filteredTemplates;
+    }, [lineasIngreso, filterValue]);
+
+    */
+
+
+    return (
+
+        //Presupuesto/Estimacion
         <div className="mainDivPresupuesto">
+                 <Toaster 
+                    richColors 
+                    closeButton={true}
+                    toastOptions={{
+                        style: { fontSize: "1rem" },
+                    }}
+                />
+            
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -144,76 +255,263 @@ export default function Ingresos(props) {
                             placeholder="Buscar Ingreso..."
                             startContent={<SearchIcon />}
                             value={filterValue}
+                            onClear={() => onClear("")}
                             onValueChange={onSearchChange}
                             variant="faded"
                         />
 
                     <div className="buttonContainer">
+
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                            Filtrar
+                        </Button>
+
                         <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
                             Ver Tabla
                         </Button>
 
-                        <Button onPress={onOpen} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar
                         </Button>
                        
                         </div>
                     </div>
 
+                    <div className="divListaIngreso">
+                        Aqui va la Lista de Estimaciones
+                    </div>
 
-                
+
                 </div>
 
-                <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
-                <ModalContent>
+                <Modal size="xl" isOpen={isModalFechaOpen} onOpenChange={onModalFechachange}>
+                    <ModalContent>
                         {(onClose) => {
-                            const cerrarModal = () => {
-                                //insertarLineaIngreso();
-                                onClose();
+                        const finalizarModal = () => {
+                            //filtraFecha();
+                            onClose();
+                        };
+                        return (
+                            <>
+                            <ModalHeader>Filtra tus ingresos</ModalHeader>
+
+                            <ModalBody>
+                                <p
+                                style={{
+                                    color: "#494949",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 400,
+                                }}
+                                >
+                                Elige la fecha que deseas consultar
+                                </p>
+
+                                <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    marginTop: "1rem",
+                                }}
+                                >
+                                <p
+                                    style={{
+                                    color: "#002D74",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 500,
+                                    }}
+                                >
+                                    Desde
+                                </p>
+
+                                <p
+                                    style={{
+                                    color: "#002D74",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 500,
+                                    flex: 0.43,
+                                    }}
+                                >
+                                    Hasta
+                                </p>
+                                </div>
+
+                                <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    gap: "2rem",
+                                    marginBottom: "1.2rem",
+                                }}
+                                >
+                                <DateInput
+                                    isEditable={true}
+                                    value={fechaInicio}
+                                    onChangeHandler={handleChangeFechaInicioFilter}
+                                />
+
+                                <span style={{ margin: "0 10px" }}>
+                                    <ArrowRightAltIcon />
+                                </span>
+
+                                <DateInput
+                                    value={fechaFin}
+                                    isEditable={true}
+                                    onChangeHandler={handleChangeFechaFinFilter}
+                                />
+                                </div>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button
+                                className="text-white"
+                                variant="light"
+                                onPress={() => {
+                                    onClose(); // Cierra el modal
+                                    setFechaInicio("");
+                                    setFechaFin("");
+                                }}
+                                style={{ color: "#EA541D" }}
+                                >
+                                Limpiar Búsqueda
+                                </Button>
+                                <Button
+                                style={{ backgroundColor: "#EA541D" }}
+                                className="text-white"
+                                onPress={finalizarModal}
+                                >
+                                Filtrar
+                                </Button>
+                            </ModalFooter>
+                            </>
+                        );
+                        }}
+                    </ModalContent>
+                </Modal>
+
+
+
+
+                <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
+                <ModalContent >
+                        {(onClose) => {
+                            const cerrarModal = async () => {
+
+                                let Isvalid = true;
+
+                                if (parseFloat(monto) < 0 || isNaN(parseFloat(monto))) {
+                                    setValidMonto(false);
+                                    Isvalid = false;
+                                    console.log("aqui 1");
+                                }
+
+                                if(descripcionLinea===""){
+                                    setValidDescription(false);
+                                    Isvalid = false;
+                                }
+
+                                if(selectedMoneda!==1 && selectedMoneda!==2){
+                                    setValidTipoMoneda(false);
+                                    Isvalid= false;
+                                }
+
+                                if(selectedMoneda===1 || selectedMoneda===2){ 
+                                    setValidTipoMoneda(true);
+                                }
+
+                                if(fecha===""){
+                                    setValidFecha(false);
+                                    Isvalid = false;
+                                }
+
+
+                                if(Isvalid === true){
+                                    try {
+                                        await registrarLineaIngreso();
+                                        setMonto("");
+                                        setdescripcionLinea("");
+                                        setselectedMoneda("");
+                                        
+                                        setFecha("");
+                                        setValidTipoMoneda(true);
+                                        setValidMonto(true);
+                                        setValidDescription(true);
+                                        setValidFecha(true);
+
+                                        
+                                    } catch (error) {
+                                        console.error('Error al registrar la línea de estimación o al obtener los datos:', error);
+                                    }
+
+                                    onClose();
+                                
+                                }
                             };
                             return (
                                 <>
                                     <ModalHeader className="flex flex-col gap-1" 
                                         style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                        Nueva Estimación
+                                        Nuevo Ingreso
                                     </ModalHeader>
                                     <ModalBody>
-                                        <p className="textIngreso">Tarifa</p>
+                                        <p className="textIngreso">Monto Recibido</p>
                                         
                                         <div className="modalAddIngreso">
                                             <div className="comboBoxMoneda">
-                                            <MyCombobox
-                                                urlApi={stringUrlMonedas}
-                                                property="monedas"
-                                                nameDisplay="nombre"
-                                                hasColor={false}
-                                                onSelect={handleSelectedValueMoneda}
-                                                idParam="idMoneda"
-                                                initialName="Tipo Moneda"
-                                                inputWidth="2/3"
-                                            />
-
+                                                <MyCombobox
+                                                    urlApi={stringUrlMonedas}
+                                                    property="monedas"
+                                                    nameDisplay="nombre"
+                                                    hasColor={false}
+                                                    onSelect={handleSelectedValueMoneda}
+                                                    idParam="idMoneda"
+                                                    initialName="Tipo Moneda"
+                                                    inputWidth="2/3"
+                                                    widthCombo="9"
+                                                />
+                                                <div className="alertaMonedaIngreso" >
+                                                <p className="text-tiny text-danger">            
+                                                        {
+                                                        !validTipoMoneda
+                                                            ? "Seleccione una Moneda"
+                                                            : ""
+                                                        }                      
+                                                    </p>          
+                                                </div>
                                             </div>
-                                        
-                                            <Input
-                                            value={monto}
-                                            onValueChange={setMonto}
-                                            placeholder="0.00"
-                                            labelPlacement="outside"
-                                            startContent={
-                                                <div className="pointer-events-none flex items-center">
-                                                <span className="text-default-400 text-small">{selectedMoneda===2 ? "S/" : "$"}</span>
-                                                </div>
-                                            }
-                                            endContent={
-                                                <div className="flex items-center">
+                                            
+                                                <Input
+                                                    value={monto}
+                                                    onValueChange={setMonto}
+                                                    placeholder="0.00"
+                                                    labelPlacement="outside"
+                                                    isInvalid={!validMonto}
+                                                    onChange={()=>{setValidMonto(true)}}
+                                                    type="number"
+                                                    errorMessage={
+                                                        !validMonto
+                                                            ? "Monto inválido"
+                                                            : ""
+                                                    }
 
-                                                </div>
-                                                }
-                                                type="number"
-                                        />
-                                        
-                                        
+
+                                                    startContent={
+                                                        <div className="pointer-events-none flex items-center">
+                                                            <span className="text-default-400 text-small">
+                                                                    {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                            </span>
+                                                        </div>
+                                                    }
+                                                    endContent={
+                                                        <div className="flex items-center">
+
+                                                        </div>
+                                                        }                                                      
+                                                />                    
                                         </div>
                                         <p className="textIngreso">Descripción</p>
 
@@ -222,23 +520,48 @@ export default function Ingresos(props) {
 
                                         <Textarea
                                             label=""
+                                            isInvalid={!validDescription}
+                                            errorMessage={!validDescription ? msgEmptyField : ""}
+                                            maxLength={35}
+                                            variant={"bordered"}
+                                            
                                             labelPlacement="outside"
-                                            placeholder=""
+                                            placeholder="Escriba aquí..."
                                             className="max-w-x"
                                             maxRows="2"
+                                            value={descripcionLinea}
                                             onValueChange={setdescripcionLinea}
+                                            onChange={() => {
+                                                setValidDescription(true);
+                                            }}
+                                            
                                             />
                                          </div>
 
                                          <p className="textIngreso">Tipo Ingreso</p>
+                                
+
+
+
+                                         
+                                         
+                                        <p className="textIngreso">Tipo Transacción</p>
+
                                     
-
-
-                                       
                                         <p className="textPresuLast">Fecha Transacción</p>
-                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFechaInicio}/>
+                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
                                         <div className="fechaContainer">
- 
+
+                                            
+                                                <p className="text-tiny text-danger">            
+                                                        {
+                                                            !validFecha
+                                                            ? "Ingrese una fecha válida"
+                                                            : ""
+                                                        }                      
+                                                </p>        
+                                            
+
                                         </div>
 
                                     </ModalBody>
@@ -246,13 +569,26 @@ export default function Ingresos(props) {
                                         <Button
                                             color="danger"
                                             variant="light"
-                                            onPress={onClose}
+                                            onPress={() => {
+                                                onClose(); // Cierra el modal
+                                                setMonto("");
+                                                setdescripcionLinea("");
+                                                setselectedMoneda("");
+
+                                                setFecha("");
+                                                setValidTipoMoneda(true);
+                                                setValidMonto(true);
+                                                setValidDescription(true);
+
+                                                setValidFecha(true);
+                                              }}
                                         >
                                             Cancelar
                                         </Button>
                                         <Button
                                             color="primary"
                                             onPress={cerrarModal}
+                                            
                                         >
                                             Guardar
                                         </Button>
@@ -262,6 +598,7 @@ export default function Ingresos(props) {
                         }}
                     </ModalContent>
                 </Modal>
+
         </div>
     );
 }

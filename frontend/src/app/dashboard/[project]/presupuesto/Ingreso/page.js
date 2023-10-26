@@ -13,6 +13,7 @@ import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
 import { Toaster, toast } from "sonner";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -57,6 +58,7 @@ export default function Ingresos(props) {
 
     //const router=userRouter();
 
+
     const onSearchChange = (value) => {
         if(value) {
             setFilterValue(value);
@@ -65,8 +67,12 @@ export default function Ingresos(props) {
         }
         
     };
+    const [filterValue, setFilterValue] = React.useState("");
 
-    // Modal Fecha
+    useEffect(()=>{setIsLoadingSmall(false)},[])
+
+
+    // Modales
 
     const {
         isOpen: isModalFechaOpen,
@@ -84,30 +90,8 @@ export default function Ingresos(props) {
     } = useDisclosure();
 
 
-    //Filtrar aqui es distinto
-    const filtraFecha = () => {
-        toast.promise(promiseFiltrarFecha, {
-            loading: "Filtrando Fechas...",
-            success: (data) => {
-                return "Fechas filtradas correctamente.";
-            },
-            error: "Error al filtrar",
-            position: "bottom-right",
-        });
-    };
 
-
-
-
-    //Fin Modal Fecha
-
-    const [filterValue, setFilterValue] = React.useState("");
-
-
-    useEffect(()=>{setIsLoadingSmall(false)},[])
-
-
-    const [modalContentState, setModalContentState] = useState(0);
+    //Fin Modales
 
     const [fecha, setFecha] = useState("");
 
@@ -134,15 +118,10 @@ export default function Ingresos(props) {
     };
 
 
-    // Fin filtro fecha
 
-    /*const handleChangeFechaInicio = () => {
-        const datepickerInput = document.getElementById("inputFechaPresupuesto");
-        const selectedDate = datepickerInput.value;
-        console.log(selectedDate);
-        setFecha(selectedDate);
-    }*/
-    
+
+    //Funciones
+
     let idHerramientaCreada;
 
     function insertarLineaIngreso() {
@@ -224,6 +203,9 @@ export default function Ingresos(props) {
     };
 
 
+
+
+
     //Validciones
 
     const [validMonto, setValidMonto] = useState(true);
@@ -259,6 +241,7 @@ export default function Ingresos(props) {
         setselectedTipoTransacciono(value);
         setValidTipoTransacc(true)
     };
+
     const onClear = React.useCallback(() => {
         setFilterValue("");
     }, []);
@@ -379,84 +362,116 @@ export default function Ingresos(props) {
                 
                 </div>
 
-
-                <Modal  size='xl'
-                        isOpen={isModalFechaOpen}
-                        onOpenChange={onModalFechachange}
-                        classNames={
-                            {
-                                //closeButton: "hidden",
-                            }
-                        }
-        >
-            <ModalContent>
-                {(onClose) => {
-                    const finalizarModal = () => {
-                        //filtraFecha();
-                        onClose();
-                    };
-                    return (
-                        <>
-                            <ModalHeader >
-                                Filtra tus ingresos
-                            </ModalHeader>
+                <Modal size="xl" isOpen={isModalFechaOpen} onOpenChange={onModalFechachange}>
+                    <ModalContent>
+                        {(onClose) => {
+                        const finalizarModal = () => {
+                            //filtraFecha();
+                            onClose();
+                        };
+                        return (
+                            <>
+                            <ModalHeader>Filtra tus ingresos</ModalHeader>
 
                             <ModalBody>
-
-                            <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
+                                <p
+                                style={{
+                                    color: "#494949",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 400,
+                                }}
+                                >
                                 Elige la fecha que deseas consultar
-                            </p>
+                                </p>
 
-                            <div style={{ display: 'flex', alignItems: 'center' ,justifyContent: 'space-between' , gap:'2rem'}}>
-                                    <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
-                                        Fecha Inicio
-                                    </p>
+                                <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    marginTop: "1rem",
+                                }}
+                                >
+                                <p
+                                    style={{
+                                    color: "#002D74",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 500,
+                                    }}
+                                >
+                                    Desde
+                                </p>
 
-                                    <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
-                                        Fecha
-                                    </p>
-                            </div>
-
-
-                                <div style={{ display: 'flex', alignItems: 'center' ,justifyContent: 'space-between' , gap:'2rem'}}>
-
-                                    <DateInput isEditable={true} value={fechaInicio} onChangeHandler={handleChangeFechaInicioFilter}/>
-
-                                    <span style={{ margin: '0 10px' }}>hasta</span>
-
-                                    <DateInput value={fechaFin} isEditable={true} onChangeHandler={handleChangeFechaFinFilter} />
+                                <p
+                                    style={{
+                                    color: "#002D74",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 500,
+                                    flex: 0.43,
+                                    }}
+                                >
+                                    Hasta
+                                </p>
                                 </div>
 
-                                {fechaInicio}
-                            </ModalBody>
+                                <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    gap: "2rem",
+                                    marginBottom: "1.2rem",
+                                }}
+                                >
+                                <DateInput
+                                    isEditable={true}
+                                    value={fechaInicio}
+                                    onChangeHandler={handleChangeFechaInicioFilter}
+                                />
 
+                                <span style={{ margin: "0 10px" }}>
+                                    <ArrowRightAltIcon />
+                                </span>
+
+                                <DateInput
+                                    value={fechaFin}
+                                    isEditable={true}
+                                    onChangeHandler={handleChangeFechaFinFilter}
+                                />
+                                </div>
+                            </ModalBody>
 
                             <ModalFooter>
                                 <Button
-                                    className="text-white"
-                                    variant="light"
-                                    onPress={() => {
-                                        onClose(); // Cierra el modal
-                                        setFechaInicio("");
-                                        setFechaFin("");
-                                      }}
-                                    style={{ color: '#EA541D' }}
+                                className="text-white"
+                                variant="light"
+                                onPress={() => {
+                                    onClose(); // Cierra el modal
+                                    setFechaInicio("");
+                                    setFechaFin("");
+                                }}
+                                style={{ color: "#EA541D" }}
                                 >
-                                    Limpiar Búsqueda
+                                Limpiar Búsqueda
                                 </Button>
-                                <Button   style={{ backgroundColor: '#EA541D' }}
-                                    className="text-white"
-
-                                    onPress={finalizarModal}
+                                <Button
+                                style={{ backgroundColor: "#EA541D" }}
+                                className="text-white"
+                                onPress={finalizarModal}
                                 >
-                                    Filtrar
+                                Filtrar
                                 </Button>
                             </ModalFooter>
-                        </>
-                    );
-                }}
-            </ModalContent>
-        </Modal>
+                            </>
+                        );
+                        }}
+                    </ModalContent>
+                </Modal>
+
+                
 
                 <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
                 <ModalContent >
