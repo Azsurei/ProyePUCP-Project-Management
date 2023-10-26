@@ -116,6 +116,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                             idParam="idMoneda"
                                                             initialName={selectedTipoMoneda===1 ? "Dolar" : "Soles"}
                                                             inputWidth="2/3"
+                                                            widthCombo="9"
                                                         />
             
                                                         </div>
@@ -174,6 +175,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                             idParam="idTransaccionTipo"
                                                             initialName={selectedTipoIngreso}
                                                             inputWidth="64"
+                                                            widthCombo="15"
                                                         />
             
                                                     </div>
@@ -191,6 +193,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                             idParam="idIngresoTipo"
                                                             initialName={selectedTipoTransaccion}
                                                             inputWidth="64"
+                                                            widthCombo="15"
                                                         />
             
                                                     </div>
