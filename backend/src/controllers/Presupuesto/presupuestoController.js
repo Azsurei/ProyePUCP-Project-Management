@@ -42,10 +42,11 @@ async function listarXIdPresupuesto(req,res,next){
 }
 
 async function listarLineasTodas(req, res, next) {
+    const {idProyecto} = req.params;
     try {
-        const lineasIngreso = await ingresoController.listarLineasXIdProyecto(req, res, next);
-        const lineasEgreso = await egresoController.listarLineasXIdProyecto(req, res, next);
-        const lineasEstimacionCosto = await estimacionCostoController.listarLineasXIdProyecto(req, res, next);
+        const lineasIngreso = await ingresoController.funcListarLineasXIdProyecto(idProyecto);
+        const lineasEgreso = await egresoController.funcListarLineasXIdProyecto(idProyecto);
+        const lineasEstimacionCosto = await estimacionCostoController.funcListarLineasXIdProyecto(idProyecto);
 
         const lineasPresupuesto = {
             lineasIngreso,
@@ -62,11 +63,33 @@ async function listarLineasTodas(req, res, next) {
     }
 }
 
+async function listarLineasIngresoYEgresoXIdProyecto(req, res, next) {
+    const {idProyecto} = req.params;
+    try {
+        const lineasIngreso = await ingresoController.funcListarLineasXIdProyecto(idProyecto);
+        const lineasEgreso = await egresoController.funcListarLineasXIdProyecto(idProyecto);
+
+        const lineas= {
+            lineasIngreso,
+            lineasEgreso
+        };
+
+        res.status(200).json({
+            lineas,
+            message: "Líneas egreso e ingreso listadas correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 
 
 module.exports = {
     crear,
     modificar,
     listarLineasTodas,
-    listarXIdPresupuesto
+    listarXIdPresupuesto,
+    listarLineasIngresoYEgresoXIdProyecto
 };

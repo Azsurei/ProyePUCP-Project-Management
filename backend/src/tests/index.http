@@ -378,19 +378,36 @@ Content-Type:  application/json
   "fechaTransaccion": "2023-10-19"
 }
 
+
 ###
 POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaEstimacionCosto HTTP/1.1
 Content-Type:  application/json
 
 {
   "idMoneda": 1, 
-  "idEstimacion": 1,  
-  "descripcion": "Descripción de la línea de estimación de costo",
+  "idProyecto": 50,
+  "idPresupuesto": 4,  
+  "descripcion": "Toy probando cambio de dropeo de tabla estimacion costo",
   "tarifaUnitaria": 100.00,  
   "cantidadRecurso": 3,  
   "subtotal": 300.00,  
   "fechaInicio": "2023-10-24" 
 }
+
+###
+PUT http://localhost:8080/api/proyecto/presupuesto/modificarLineaEstimacionCosto HTTP/1.1
+Content-Type: application/json
+
+{
+  "idLineaEstimacionCosto": 7,
+  "idMoneda": 1, 
+  "descripcion": "Nueva descripción modificada",
+  "tarifaUnitaria": 150.00,  
+  "cantidadRecurso": 4,  
+  "subtotal": 600.00,  
+  "fechaInicio": "2023-10-25" 
+}
+
 
 ###
 POST http://localhost:8080/api/proyecto/presupuesto/insertarLineaEgreso HTTP/1.1
@@ -408,7 +425,11 @@ Content-Type:  application/json
 }
 
 ###
-GET http://localhost:8080/api/proyecto/presupuesto/listarLineasTodas/50 HTTP/1.1
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineasTodasXIdProyecto/50 HTTP/1.1
+Content-Type:  application/json
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/50 HTTP/1.1
 Content-Type:  application/json
 
 ###
@@ -871,7 +892,6 @@ Content-Type:  application/json
 
 GET http://localhost:8080/api/proyecto/backlog/test/2 HTTP/1.1
 Content-Type:  application/json
-<<<<<<< HEAD
 ###
 PUT http://localhost:8080/api/proyecto/presupuesto/modificarLineaIngreso HTTP/1.1
 Content-Type: application/json
@@ -915,7 +935,6 @@ Content-Type: application/json
   "subtotal": 1500.00,
   "fechaInicio": "2023-10-25"
 }
-=======
 
 ###ACTUALIZAR AUTOEVALUACION AC
 PUT http://localhost:8080/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion HTTP/1.1
@@ -1172,4 +1191,3 @@ Content-Type:  application/json
   ],
   "message": "Autoevaluacion listada"
 }
->>>>>>> 1e383db43d23587a8a1c900c65be33d7051a4ecb
