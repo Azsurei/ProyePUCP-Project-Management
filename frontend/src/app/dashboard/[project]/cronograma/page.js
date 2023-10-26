@@ -38,6 +38,12 @@ import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps
 import ModalSubequipos from "@/components/dashboardComps/projectComps/cronogramaComps/ModalSubequipos";
 import ModalDeleteTarea from "@/components/dashboardComps/projectComps/cronogramaComps/ModalDeleteTarea";
 import ModalPosterior from "@/components/dashboardComps/projectComps/cronogramaComps/ModalPosterior";
+import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
+import {
+    dbDateToDisplayDate,
+    dbDateToInputDate,
+    inputDateToDisplayDate,
+} from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -127,6 +133,9 @@ export default function Cronograma(props) {
         //setear combo box
         setFechaInicio("");
         setFechaFin("");
+
+        setListPosteriores([]);
+
         setSelectedSubteam(null);
         setSelectedUsers([]);
         setTabSelected("users");
@@ -140,6 +149,18 @@ export default function Cronograma(props) {
         setTareaPadre(tarea.idPadre);
         setTareaName(tarea.sumillaTarea);
         setTareaDescripcion(tarea.descripcion);
+
+        console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
+        console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
+
+        setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
+        setFechaFin(dbDateToInputDate(tarea.fechaFin));
+
+        setListPosteriores(tarea.tareasPosteriores);
+        for (const task of tarea.tareasPosteriores) {
+            task.fechaFin = dbDateToInputDate(task.fechaFin);
+        }
+
         if (tarea.idEquipo === null) {
             setSelectedUsers(tarea.usuarios);
             setSelectedSubteam(null);
@@ -159,11 +180,13 @@ export default function Cronograma(props) {
             setTabSelected("subteams");
         }
 
+        setValidName(true);
+        setValidDescripcion(true);
+        setValidFechas(true);
+        setValidAsigned(true);
+
         setStateSecond(2);
         setToggleNew(true);
-        //falta setear las fechas, lo mas complicado del mundo pipipi
-        //
-        //
     };
 
     const handleAddNewSon = (tareaPadre) => {
@@ -173,8 +196,11 @@ export default function Cronograma(props) {
         //setear combo box
         setFechaInicio("");
         setFechaFin("");
+        setListPosteriores([]);
+
         setSelectedSubteam(null);
         setSelectedUsers([]);
+        setTabSelected("users");
 
         setStateSecond(4);
         setToggleNew(true);
@@ -338,7 +364,7 @@ export default function Cronograma(props) {
                             ? selectedSubteamUsersWithId
                             : selectedUsers, //veriifcar posible error
                     subTareas: null,
-                    tareasPosteriores: null,
+                    tareasPosteriores: listPosteriores,
                 })
                 .then(function (response) {
                     console.log(response.data.message);
@@ -375,23 +401,64 @@ export default function Cronograma(props) {
                 return "La tarea se creó con exito!";
             },
             error: "Error al registrar la tarea",
-            position: "top-center",
+            position: "bottom-right",
         });
     };
 
-    const addTaraPosterior = (tareaPosterior) => {
-        let assignedUs;
-        if (selectedSubteam === null) {
-            assignedUs = selectedUsers;
-        }
+    function promiseEditarTarea() {
+        return new Promise((resolve, reject) => {
+            setToggleNew(false);
 
-        const nuevaTarea = {
-            sumillaTarea: tareaPosterior.sumillaTarea,
-            fechaInicio: tareaPosterior.fechaInicio,
-            fechaFin: tareaPosterior.fechaFin,
-            idSubGrupo:
-                selectedSubteam === null ? null : selectedSubteam.idEquipo,
-        };
+            setTimeout(() => {
+                resolve("Promise resolved successfully");
+            }, 2000);
+
+            const tareasURL =
+                "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                projectId;
+            axios
+                .get(tareasURL)
+                .then(function (response) {
+                    console.log(response);
+                    setListTareas(response.data.tareasOrdenadas);
+                    console.log(response.data.tareasOrdenadas);
+
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                });
+        });
+    }
+
+    const editarTarea = () => {
+        toast.promise(promiseEditarTarea, {
+            loading: "Actualizando la tarea...",
+            success: (data) => {
+                return "La tarea se actualizó con exito!";
+            },
+            error: "Error al actualizar la tarea",
+            position: "bottom-right",
+        });
+    };
+
+    const addTareaPosterior = (tareaPosterior) => {
+        tareaPosterior.index = listPosteriores.length + 1;
+        const newLista = [...listPosteriores, tareaPosterior];
+        console.log(newLista);
+        setListPosteriores(newLista);
+    };
+
+    const removeTareaPosterior = (index) => {
+        console.log("se esta eliminando el de index: " + index);
+        const updatedList = [...listPosteriores];
+        updatedList.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedList.length; i++) {
+            updatedList[i].index = updatedList[i].index - 1;
+        }
+        console.log(updatedList);
+        setListPosteriores(updatedList);
     };
 
     const dropBoxItems = [
@@ -577,8 +644,11 @@ export default function Cronograma(props) {
             ></ModalDeleteTarea>
 
             <ModalPosterior
+                idCronograma={cronogramaId}
                 isOpen={isModalPosteriorOpen}
                 onOpenChange={onModalPosteriorChange}
+                addTareaPosterior={addTareaPosterior}
+                startDate={fechaFin}
             ></ModalPosterior>
 
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
@@ -609,26 +679,44 @@ export default function Cronograma(props) {
 
             <div className={toggleNew ? "divRight open" : "divRight"}>
                 <div className="containerGeneralRight">
-                    <HeaderWithButtonsSamePage
-                        haveReturn={true}
-                        haveAddNew={false}
-                        //handlerAddNew={handlerGoToNew}
-                        handlerReturn={() => {
-                            setToggleNew(false);
-                        }}
-                        //newPrimarySon={ListComps.length + 1}
-                        breadcrump={
-                            "Inicio / Proyectos / " +
-                            projectName +
-                            " / Cronograma"
-                        }
-                        btnText={"Nueva tarea"}
-                    >
-                        {stateSecond === 1 && "Nueva tarea"}
-                        {stateSecond === 2 && "Ver detalle de tarea"}
-                        {stateSecond === 3 && "Editar tarea"}
-                        {stateSecond === 4 && "Agregar tarea hija"}
-                    </HeaderWithButtonsSamePage>
+                    <div className="flex flex-row items-end">
+                        <HeaderWithButtonsSamePage
+                            haveReturn={true}
+                            haveAddNew={false}
+                            handlerReturn={() => {
+                                setToggleNew(false);
+                            }}
+                            haveEditBtn={true}
+                            handlerEdit={handleEditar}
+                            editBtnText={"Editar"}
+                            breadcrump={
+                                "Inicio / Proyectos / " +
+                                projectName +
+                                " / Cronograma"
+                            }
+                            btnText={"Nueva tarea"}
+                        >
+                            {stateSecond === 1 && "Nueva tarea"}
+                            {stateSecond === 2 && "Ver detalle de tarea"}
+                            {stateSecond === 3 && "Editar tarea"}
+                            {stateSecond === 4 && "Agregar tarea hija"}
+                        </HeaderWithButtonsSamePage>
+
+                        {stateSecond === 2 && (
+                            <Button
+                                color="primary"
+                                size="md"
+                                radius="sm"
+                                onClick={() => {
+                                    handleEditar();
+                                }}
+                                className="bg-F0AE19 h-[35px] mb-1 w-[115px]"
+                                startContent={<UpdateIcon />}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </div>
 
                     {stateSecond === 4 && (
                         <p>
@@ -720,6 +808,10 @@ export default function Cronograma(props) {
                             <div className="contFechaInicio">
                                 <p className="headerFInicio">Fecha de inicio</p>
                                 <DateInput
+                                    value={fechaInicio}
+                                    isEditable={
+                                        stateSecond === 2 ? false : true
+                                    }
                                     className={""}
                                     isInvalid={
                                         validFechas === true ? false : true
@@ -734,6 +826,10 @@ export default function Cronograma(props) {
                             <div className="contFechaFin">
                                 <p className="headerFFin">Fecha de fin</p>
                                 <DateInput
+                                    value={fechaFin}
+                                    isEditable={
+                                        stateSecond === 2 ? false : true
+                                    }
                                     className={""}
                                     isInvalid={
                                         validFechas === true ? false : true
@@ -765,17 +861,60 @@ export default function Cronograma(props) {
                     <div className="containerPosteriores">
                         <div className="posterioresHeader">
                             <p>Tareas posteriores</p>
-                            <div
-                                className="btnToPopUp"
-                                onClick={onModalPosteriorOpen}
-                            >
-                                <p>Añadir</p>
-                            </div>
+                            {stateSecond !== 2 && (
+                                <div
+                                    className="btnToPopUp"
+                                    onClick={onModalPosteriorOpen}
+                                >
+                                    <p>Añadir</p>
+                                </div>
+                            )}
                         </div>
+                        <p className="text-sm">
+                            Esta tarea sera asignada a los mismos usuarios que
+                            la tarea previa y su fecha de inicio sera en la
+                            fecha fin de la previa.
+                        </p>
                         <div className="posterioresViewContainer">
-                            <p className="noUsersMsg">
-                                No ha seleccionado subtareas
-                            </p>
+                            {listPosteriores.length === 0 && (
+                                <p className="noUsersMsg">
+                                    No ha creado tareas posteriores
+                                </p>
+                            )}
+                            {listPosteriores.map((tPost, index) => {
+                                return (
+                                    <div
+                                        className="cardTareasPosteriores"
+                                        key={index}
+                                    >
+                                        <div className="flex flex-row justify-between">
+                                            <p>
+                                                {tPost.sumillaTarea}
+                                                {" | Concluirá el "}
+                                                {inputDateToDisplayDate(
+                                                    tPost.fechaFin
+                                                )}
+                                            </p>
+
+                                            {stateSecond !== 2 && (
+                                                <img
+                                                    src="/icons/icon-crossBlack.svg"
+                                                    onClick={() => {
+                                                        removeTareaPosterior(
+                                                            index + 1
+                                                        );
+                                                    }}
+                                                ></img>
+                                            )}
+                                        </div>
+
+                                        <p className="pl-5">
+                                            {"Descripción: " +
+                                                tPost.descripcion}
+                                        </p>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -800,33 +939,35 @@ export default function Cronograma(props) {
                             </Tabs>
                         </div>
 
-                        {tabSelected === "users" ? (
-                            <div
-                                className="btnToPopUp"
-                                onClick={() => {
-                                    setModal(true);
-                                }}
-                            >
-                                <p>Buscar un miembro</p>
-                                <img
-                                    src="/icons/icon-searchBar.svg"
-                                    alt=""
-                                    className="icnSearch"
-                                />
-                            </div>
-                        ) : (
-                            <div
-                                className="btnToPopUp"
-                                onClick={onModalSubEOpen}
-                            >
-                                <p>Buscar un subequipo</p>
-                                <img
-                                    src="/icons/icon-searchBar.svg"
-                                    alt=""
-                                    className="icnSearch"
-                                />
-                            </div>
-                        )}
+                        {tabSelected === "users"
+                            ? stateSecond !== 2 && (
+                                  <div
+                                      className="btnToPopUp"
+                                      onClick={() => {
+                                          setModal(true);
+                                      }}
+                                  >
+                                      <p>Buscar un miembro</p>
+                                      <img
+                                          src="/icons/icon-searchBar.svg"
+                                          alt=""
+                                          className="icnSearch"
+                                      />
+                                  </div>
+                              )
+                            : stateSecond !== 2 && (
+                                  <div
+                                      className="btnToPopUp"
+                                      onClick={onModalSubEOpen}
+                                  >
+                                      <p>Buscar un subequipo</p>
+                                      <img
+                                          src="/icons/icon-searchBar.svg"
+                                          alt=""
+                                          className="icnSearch"
+                                      />
+                                  </div>
+                              )}
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -843,7 +984,9 @@ export default function Cronograma(props) {
                                     selectedUsers.map((component) => (
                                         <CardSelectedUser
                                             key={component.idUsuario}
-                                            isEditable={stateSecond === 2 ? false : true}
+                                            isEditable={
+                                                stateSecond === 2 ? false : true
+                                            }
                                             usuarioObject={component}
                                             removeHandler={removeUser}
                                         ></CardSelectedUser>
@@ -989,82 +1132,90 @@ export default function Cronograma(props) {
                         )}
                     </div>
 
-                    <div className="twoButtonsEnd">
-                        <BtnToModal
-                            nameButton="Descartar"
-                            textHeader="Descartar Tarea"
-                            textBody="¿Seguro que quiere descartar el registro de esta tarea?"
-                            headerColor="red"
-                            colorButton="w-36 bg-slate-100 text-black"
-                            oneButton={false}
-                            leftBtnText="Cancelar"
-                            rightBtnText="Confirmar"
-                            doBeforeClosing={() => {
-                                setToggleNew(false);
-                            }}
-                            //verifyFunction = {}       sin verificacion
-                        />
-                        <BtnToModal
-                            nameButton="Aceptar"
-                            textHeader="Registrar Tarea"
-                            textBody="¿Seguro que quiere desea registrar esta tarea?"
-                            //headerColor
-                            colorButton="w-36 bg-blue-950 text-white"
-                            oneButton={false}
-                            leftBtnText="Cancelar"
-                            rightBtnText="Confirmar"
-                            doBeforeClosing={registrarTarea}
-                            verifyFunction={() => {
-                                let allValid = true;
-                                if (tareaName === "") {
-                                    setValidName(false);
-                                    allValid = false;
-                                }
-                                if (tareaDescripcion === "") {
-                                    setValidDescripcion(false);
-                                    allValid = false;
-                                }
-                                if (fechaFin < fechaInicio) {
-                                    setValidFechas("isFalse");
-                                    allValid = false;
-                                }
-                                if (fechaInicio === "" || fechaFin === "") {
-                                    setValidFechas("isEmpty");
-                                    allValid = false;
-                                }
-                                if (
-                                    selectedSubteam === null &&
-                                    selectedUsers.length === 0
-                                ) {
-                                    setValidAsigned(false);
-                                    allValid = false;
-                                }
-                                if (
-                                    selectedSubteam !== null &&
-                                    selectedSubteamUsers.length === 0
-                                ) {
-                                    setValidSelectedSubteamUsers(false);
-                                    allValid = false;
-                                }
+                    {stateSecond !== 2 && (
+                        <div className="twoButtonsEnd">
+                            <BtnToModal
+                                nameButton="Descartar"
+                                textHeader="Descartar Tarea"
+                                textBody="¿Seguro que quiere descartar el registro de esta tarea?"
+                                headerColor="red"
+                                colorButton="w-36 bg-slate-100 text-black"
+                                oneButton={false}
+                                leftBtnText="Cancelar"
+                                rightBtnText="Confirmar"
+                                doBeforeClosing={() => {
+                                    setToggleNew(false);
+                                }}
+                                //verifyFunction = {}       sin verificacion
+                            />
+                            <BtnToModal
+                                nameButton="Aceptar"
+                                textHeader="Registrar Tarea"
+                                textBody="¿Seguro que quiere desea registrar esta tarea?"
+                                //headerColor
+                                colorButton="w-36 bg-blue-950 text-white"
+                                oneButton={false}
+                                leftBtnText="Cancelar"
+                                rightBtnText="Confirmar"
+                                doBeforeClosing={() => {
+                                    if (stateSecond === 1 || stateSecond === 4) {
+                                        registrarTarea();
+                                    } else if( stateSecond === 3) { 
+                                        editarTarea();
+                                    }
+                                }}
+                                verifyFunction={() => {
+                                    let allValid = true;
+                                    if (tareaName === "") {
+                                        setValidName(false);
+                                        allValid = false;
+                                    }
+                                    if (tareaDescripcion === "") {
+                                        setValidDescripcion(false);
+                                        allValid = false;
+                                    }
+                                    if (fechaFin < fechaInicio) {
+                                        setValidFechas("isFalse");
+                                        allValid = false;
+                                    }
+                                    if (fechaInicio === "" || fechaFin === "") {
+                                        setValidFechas("isEmpty");
+                                        allValid = false;
+                                    }
+                                    if (
+                                        selectedSubteam === null &&
+                                        selectedUsers.length === 0
+                                    ) {
+                                        setValidAsigned(false);
+                                        allValid = false;
+                                    }
+                                    if (
+                                        selectedSubteam !== null &&
+                                        selectedSubteamUsers.length === 0
+                                    ) {
+                                        setValidSelectedSubteamUsers(false);
+                                        allValid = false;
+                                    }
 
-                                if (
-                                    selectedSubteam === null &&
-                                    selectedUsers.length !== 0
-                                ) {
-                                    setTabSelected("users");
-                                } else if (
-                                    selectedSubteam !== null &&
-                                    selectedUsers.length === 0
-                                ) {
-                                    setTabSelected("subteams");
-                                }
+                                    if (
+                                        selectedSubteam === null &&
+                                        selectedUsers.length !== 0
+                                    ) {
+                                        setTabSelected("users");
+                                    } else if (
+                                        selectedSubteam !== null &&
+                                        selectedUsers.length === 0
+                                    ) {
+                                        setTabSelected("subteams");
+                                    }
 
-                                if (allValid) {
-                                    return true;
-                                }
-                            }}
-                        />
-                    </div>
+                                    if (allValid) {
+                                        return true;
+                                    }
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
             {modal && (

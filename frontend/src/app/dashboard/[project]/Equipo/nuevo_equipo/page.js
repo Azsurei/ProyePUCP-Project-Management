@@ -19,7 +19,7 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
+import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 
 axios.defaults.withCredentials = true;
@@ -37,6 +37,7 @@ export default function crear_equipo(props) {
     const [teamName, setTeamName] = useState("");
     const [teamLeader, setTeamLeader] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
+    const [fieldsEmpty2, setFieldsEmpty2] = useState(false);
 
     const [isTeamNameFilled, setIsTeamNameFilled] = useState(false);
     const handleChangeTeamName = (e) => {
@@ -59,12 +60,14 @@ export default function crear_equipo(props) {
     const [roles, setRoles] = useState([]);
     const [rol, setRol] = useState("");
 
+    const [addParticipantesState, setAddParticipantesState] = useState(false);
+
+    const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
+
+    const [userRoleData, setUserRoleData] = useState([]); //Define un estado para almacenar los datos del usuario y el rol asociado
+
     const handleReloadData = () => {
         setReloadData(true);
-    };
-
-    const handleSelectedValueChangeRol = (value) => {
-        setSelectedValueRol(value);
     };
 
     const toggleModal = () => {
@@ -131,33 +134,15 @@ export default function crear_equipo(props) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
-
-        axios
-            .get(stringURL)
-            .then(function (response) {
-                const userData = response.data.usuario[0];
-                console.log(userData);
-                console.log("el nombre del usuario es ", userData.nombres);
-                console.log("el apellido del usuario es ", userData.apellidos);
-                setDatosUsuario(userData);
-                const leaderFullName =
-                    userData.nombres + " " + userData.apellidos;
-                setTeamLeader(leaderFullName);
-
-                setIsLoading(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        setIsLoading(false);
     }, []);
 
     function verifyFieldsEmpty() {
-        return (
-            teamName === "" ||
-            selectedMiembrosList.length === 0 ||
-            selectedUniqueMemberList.length === 0
-        );
+        return teamName === "" || selectedUniqueMemberList.length === 0;
+    }
+
+    function verifyFieldsEmpty2() {
+        return userRoleData.length === 0;
     }
 
     useEffect(() => {
@@ -174,30 +159,79 @@ export default function crear_equipo(props) {
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
-        // Esto es porque el procedure solo acepta ID
-        const selectedMiembrosListWithIDs = selectedMiembrosList.map(
-            (usuario) => {
-                return { idUsuario: usuario.idUsuario };
-            }
-        );
 
+        console.log("Post data: ", {
+            idProyecto: parseInt(proyectoId),
+            nombre: nombreTeam,
+            idLider: selectedUniqueMemberList[0].idUsuario,
+        });
         axios
-            .post(
-                "http://localhost:8080/api/proyecto/equipo/insertarEquipoYParticipantes",
-                {
-                    idProyecto: proyectoId,
-                    nombre: nombreTeam,
-                    idLider: selectedUniqueMemberList[0].idUsuario,
-                    usuarios: selectedMiembrosListWithIDs,
-                }
-            )
+            .post("http://localhost:8080/api/proyecto/equipo/insertarEquipo", {
+                idProyecto: parseInt(proyectoId),
+                nombre: nombreTeam,
+                idLider: selectedUniqueMemberList[0].idUsuario,
+            })
             .then(function (response) {
-                console.log(response);
+                setIdEquipoInsertado(response.data.idEquipo);
+                setAddParticipantesState(true);
+                console.log(
+                    "El id del equipo creado es:",
+                    response.data.idEquipo
+                );
+                console.log(response.data.message);
                 console.log("Conexion correcta");
             })
             .catch(function (error) {
                 console.log(error);
             });
+    };
+
+    const handleSelectedValueChangeRol = (value, userId) => {
+        // Crear un objeto para el nuevo rol del usuario
+        const newUserRole = {
+            idUsuario: userId, // El ID del usuario
+            idRolEquipo: value, // El ID del rol seleccionado
+        };
+
+        // Verificar si el usuario ya tiene un rol en el arreglo
+        const userIndex = userRoleData.findIndex(
+            (item) => item.idUsuario === userId
+        );
+
+        if (userIndex !== -1) {
+            // Si el usuario ya tiene un rol, actualiza el rol existente
+            const updatedUserRoleData = [...userRoleData];
+            updatedUserRoleData[userIndex] = newUserRole;
+            setUserRoleData(updatedUserRoleData);
+        } else {
+            // Si el usuario no tiene un rol, agrégalo al arreglo
+            setUserRoleData([...userRoleData, newUserRole]);
+        }
+    };
+
+    //ahora se registrara los participantes con su rol
+    const checkData2 = () => {
+        console.log("Post data participantes: ", {
+            idEquipo: idEquipoInsertado,
+            miembros: userRoleData,
+        });
+
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/equipo/insertarMiembros",
+                {
+                    idEquipo: idEquipoInsertado,
+                    miembros: userRoleData,
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+                router.back();
+            })
+            .catch(function (error) {
+                console.log(error);
+            }); 
     };
 
     return (
@@ -217,162 +251,246 @@ export default function crear_equipo(props) {
                 </Breadcrumbs>
             </div>
             <div className="title">Crear Equipo</div>
-            <div className="nombreEquipo">
-                <h3>Nombre del equipo:</h3>
-                <Input
-                    className="mt-4"
-                    placeholder="Ingrese el nombre del equipo"
-                    onChange={handleChangeTeamName}
-                    variant="bordered"
-                />
-            </div>
-            <div style={{ marginBottom: "20px" }}></div>
-            <div className="participantes">
-                <h3>Líder del Equipo</h3>
-                <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                        onClick={toggleModal1}
-                    >
-                        <p>Buscar nuevo líder</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
+
+            {!addParticipantesState ? (
+                <>
+                    <div className="nombreEquipo">
+                        <h3>
+                            Nombre del equipo
+                            <span className="text-red-500"> *</span>
+                        </h3>
+                        <Input
+                            className="mt-4"
+                            placeholder="Ingrese el nombre del equipo"
+                            onChange={handleChangeTeamName}
+                            variant="bordered"
                         />
                     </div>
+                    <div style={{ marginBottom: "20px" }}></div>
+                    <div className="participantes">
+                        <h3>
+                            Líder del Equipo
+                            <span className="text-red-500"> *</span>
+                        </h3>
+                        <div className="SelectedUsersContainer">
+                            <div
+                                className="containerToPopUpUsrSearch"
+                                style={{ width: "100%", padding: "0.2rem 0" }}
+                                onClick={toggleModal1}
+                            >
+                                <p>Buscar nuevo líder</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                    style={{ width: "20px" }}
+                                />
+                            </div>
 
-                    {selectedUniqueMemberList.map((component) => {
-                        return (
-                            <CardSelectedUser
-                                key={component.idUsuario}
-                                name={component.nombres}
-                                lastName={component.apellidos}
-                                usuarioObject={component}
-                                email={component.correoElectronico}
-                                removeHandler={removeMiembroUnique}
-                                isEditable={true}
-                            ></CardSelectedUser>
-                        );
-                    })}
-                </div>
-                <ComboBoxArray people={roles} onSelect={setRol} />
-                {console.log("Rol: ", rol)}
-                <button
-                    className="w-20 h-20"
-                    type="button"
-                    onClick={() => toggleModal()}
-                >
-                    <img
-                        src="/icons/btnEditImagen.svg"
-                        alt="Descripción de la imagen"
-                    />
-                </button>
-            </div>
-            <div className="participantes">
-                <h3>Participantes:</h3>
-                <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                        onClick={toggleModal2}
-                    >
-                        <p>Buscar nuevo participante</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
-                        />
-                    </div>
-
-                    <ul
-                        className="listUsersContainer"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                    >
-                        {selectedMiembrosList.map((component) => {
-                            return (
-                                <div className="flex gap-2">
-                                    <CardSelectedUser
-                                        key={component.idUsuario}
-                                        name={component.nombres}
-                                        lastName={component.apellidos}
-                                        usuarioObject={component}
-                                        email={component.correoElectronico}
-                                        removeHandler={removeMiembro}
-                                        isEditable={true}
-                                    ></CardSelectedUser>
-                                    <ComboBoxArray
-                                        people={roles}
-                                        onSelect={setRol}
-                                    />
-                                    <button
-                                        className="w-20 h-20"
-                                        type="button"
-                                        onClick={() => toggleModal()}
-                                    >
-                                        <img
-                                            src="/icons/btnEditImagen.svg"
-                                            alt="Descripción de la imagen"
-                                        />
-                                    </button>
-                                </div>
-                            );
-                        })}
-                    </ul>
-                </div>
-            </div>
-            <div style={{ marginBottom: "20px" }}></div>
-            <div>
-                {fieldsEmpty && (
-                    <IconLabel
-                        icon="/icons/alert.svg"
-                        label="Faltan completar campos"
-                        className="iconLabel3"
-                    />
-                )}
-                <div className="twoButtonsCE">
-                    <div className="buttonContainerCE">
-                        <Modal
-                            nameButton="Descartar"
-                            textHeader="Descartar Registro"
-                            textBody="¿Seguro que quiere descartar el registro del equipo?"
-                            colorButton="w-36 bg-slate-100 text-black"
-                            oneButton={false}
-                            secondAction={() => router.back()}
-                            textColor="red"
-                        />
-                        <Modal
-                            nameButton="Aceptar"
-                            textHeader="Registrar Equipo"
-                            textBody="¿Seguro que quiere registrar el nuevo equipo?"
-                            colorButton="w-36 bg-blue-950 text-white"
-                            oneButton={false}
-                            secondAction={() => {
-                                checkData();
-                                router.back();
-                            }}
-                            textColor="blue"
-                            verifyFunction={() => {
-                                if (verifyFieldsEmpty()) {
-                                    setFieldsEmpty(true);
-                                    return false;
-                                } else {
-                                    setFieldsEmpty(false);
-                                    return true;
+                            {selectedUniqueMemberList.map(
+                                (component, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="flex gap-2 items-center"
+                                        >
+                                            <CardSelectedUser
+                                                key={component.idUsuario}
+                                                name={component.nombres}
+                                                lastName={component.apellidos}
+                                                usuarioObject={component}
+                                                email={
+                                                    component.correoElectronico
+                                                }
+                                                removeHandler={
+                                                    removeMiembroUnique
+                                                }
+                                                isEditable={true}
+                                            ></CardSelectedUser>
+                                        </div>
+                                    );
                                 }
-                            }}
-                        />
+                            )}
+                        </div>
                     </div>
-                </div>
+                </>
+            ) : (
+                <>
+                    <div className="participantes">
+                        <h3>Participantes</h3>
+                        <div className="SelectedUsersContainer">
+                            <div
+                                className="containerToPopUpUsrSearch"
+                                style={{ width: "100%", padding: "0.2rem 0" }}
+                                onClick={toggleModal2}
+                            >
+                                <p>Buscar nuevo participante</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                    style={{ width: "20px" }}
+                                />
+                            </div>
+
+                            <ul
+                                className="listUsersContainer"
+                                style={{ width: "100%", padding: "0.2rem 0" }}
+                            >
+                                {selectedMiembrosList.map(
+                                    (component, index) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex gap-2 items-center"
+                                            >
+                                                <CardSelectedUser
+                                                    key={component.idUsuario}
+                                                    name={component.nombres}
+                                                    lastName={
+                                                        component.apellidos
+                                                    }
+                                                    usuarioObject={component}
+                                                    email={
+                                                        component.correoElectronico
+                                                    }
+                                                    removeHandler={
+                                                        removeMiembro
+                                                    }
+                                                    isEditable={true}
+                                                ></CardSelectedUser>
+                                                <MyCombobox
+                                                    urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${idEquipoInsertado}`}
+                                                    property="roles"
+                                                    nameDisplay="nombreRol"
+                                                    hasColor={false}
+                                                    onSelect={(value) =>
+                                                        handleSelectedValueChangeRol(
+                                                            value,
+                                                            component.idUsuario
+                                                        )
+                                                    }
+                                                    idParam="idRolEquipo"
+                                                    reloadData={reloadData}
+                                                    initialName="Seleccione un rol"
+                                                />
+                                                <button
+                                                    className="w-20 h-20"
+                                                    type="button"
+                                                    onClick={() =>
+                                                        toggleModal()
+                                                    }
+                                                >
+                                                    <img
+                                                        src="/icons/btnEditImagen.svg"
+                                                        alt="Descripción de la imagen"
+                                                    />
+                                                </button>
+                                            </div>
+                                        );
+                                    }
+                                )}
+                            </ul>
+                        </div>
+                    </div>
+                </>
+            )}
+            <div style={{ marginBottom: "20px" }}></div>
+            <div className="containerButtonsCE">
+                {!addParticipantesState ? (
+                    <>
+                        {fieldsEmpty && (
+                            <IconLabel
+                                icon="/icons/alert.svg"
+                                label="Faltan completar campos"
+                                className="iconLabel3"
+                            />
+                        )}
+                        <div className="twoButtonsCE">
+                            <div className="buttonContainerCE">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Registro"
+                                    textBody="¿Seguro que quiere descartar el registro del equipo?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() => router.back()}
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Registrar Equipo"
+                                    textBody="¿Seguro que quiere registrar el nuevo equipo?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        checkData();
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (verifyFieldsEmpty()) {
+                                            setFieldsEmpty(true);
+                                            return false;
+                                        } else {
+                                            setFieldsEmpty(false);
+                                            return true;
+                                        }
+                                    }}
+                                    closeSecondActionState={true}
+                                />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {fieldsEmpty2 && (
+                            <IconLabel
+                                icon="/icons/alert.svg"
+                                label="Faltan completar campos"
+                                className="iconLabel3"
+                            />
+                        )}
+                        <div className="twoButtonsCE">
+                            <div className="buttonContainerCE">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Registro"
+                                    textBody="¿Seguro que quiere descartar el registro de los participantes?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() => router.back()}
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Registrar Participantes"
+                                    textBody="¿Seguro que quiere registrar los participantes?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        checkData2();
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (verifyFieldsEmpty2()) {
+                                            setFieldsEmpty2(true);
+                                            return false;
+                                        } else {
+                                            setFieldsEmpty2(false);
+                                            return true;
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
             {modal && (
                 <PopUpRolEquipo
                     modal={modal}
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                    handleAddRoles={handleAddRoles}
+                    idEquipo={idEquipoInsertado}
                 />
             )}
             {modal1 && (

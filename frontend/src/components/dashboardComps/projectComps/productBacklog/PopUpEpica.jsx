@@ -199,7 +199,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         {addEpic ? (
                             <input
                             type="text" 
-                            autofocus 
+                            autoFocus 
                             className="inputEpica"
                             placeholder="Escribe la nueva epica"
                             value={newEpicName}

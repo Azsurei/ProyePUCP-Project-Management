@@ -1,5 +1,4 @@
 .posteriorModalContainer{
-    border: 1px red solid;
     display: flex;
     flex-direction: column;
     gap: .5rem;
