@@ -37,6 +37,7 @@ export default function crear_equipo(props) {
     const [teamName, setTeamName] = useState("");
     const [teamLeader, setTeamLeader] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
+    const [fieldsEmpty2, setFieldsEmpty2] = useState(false);
 
     const [isTeamNameFilled, setIsTeamNameFilled] = useState(false);
     const handleChangeTeamName = (e) => {
@@ -63,12 +64,10 @@ export default function crear_equipo(props) {
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
 
+    const [userRoleData, setUserRoleData] = useState([]); //Define un estado para almacenar los datos del usuario y el rol asociado
+
     const handleReloadData = () => {
         setReloadData(true);
-    };
-
-    const handleSelectedValueChangeRol = (value) => {
-        setSelectedValueRol(value);
     };
 
     const toggleModal = () => {
@@ -142,6 +141,10 @@ export default function crear_equipo(props) {
         return teamName === "" || selectedUniqueMemberList.length === 0;
     }
 
+    function verifyFieldsEmpty2() {
+        return userRoleData.length === 0;
+    }
+
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
@@ -205,6 +208,57 @@ export default function crear_equipo(props) {
                 console.log(error);
             });
     };
+
+    const handleSelectedValueChangeRol = (value, userId) => {
+        // Crear un objeto para el nuevo rol del usuario
+        const newUserRole = {
+            idUsuario: userId, // El ID del usuario
+            idRolEquipo: value, // El ID del rol seleccionado
+        };
+
+        // Verificar si el usuario ya tiene un rol en el arreglo
+        const userIndex = userRoleData.findIndex(
+            (item) => item.idUsuario === userId
+        );
+
+        if (userIndex !== -1) {
+            // Si el usuario ya tiene un rol, actualiza el rol existente
+            const updatedUserRoleData = [...userRoleData];
+            updatedUserRoleData[userIndex] = newUserRole;
+            setUserRoleData(updatedUserRoleData);
+        } else {
+            // Si el usuario no tiene un rol, agrégalo al arreglo
+            setUserRoleData([...userRoleData, newUserRole]);
+        }
+    };
+
+    //ahora se registrara los participantes con su rol
+    const checkData2 = () => {
+        // Esto es porque el procedure solo acepta ID
+
+
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/equipo/insertarParticipantes",
+                {
+                    participantes: idEquipoInsertado,
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+                router.push(
+                    `/dashboard/Proyectos/Proyecto?id=${projectId}&name=${projectName}`
+                );
+            })
+            .catch(function (error)
+            {
+                console.log(error);
+            }
+            );
+    }
+
+
 
     return (
         <div className="crear_equipo">
@@ -366,47 +420,94 @@ export default function crear_equipo(props) {
             )}
             <div style={{ marginBottom: "20px" }}></div>
             <div className="containerButtonsCE">
-                {fieldsEmpty && (
-                    <IconLabel
-                        icon="/icons/alert.svg"
-                        label="Faltan completar campos"
-                        className="iconLabel3"
-                    />
+                {!addParticipantesState ? (
+                    <>
+                        {fieldsEmpty && (
+                            <IconLabel
+                                icon="/icons/alert.svg"
+                                label="Faltan completar campos"
+                                className="iconLabel3"
+                            />
+                        )}
+                        <div className="twoButtonsCE">
+                            <div className="buttonContainerCE">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Registro"
+                                    textBody="¿Seguro que quiere descartar el registro del equipo?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() => router.back()}
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Registrar Equipo"
+                                    textBody="¿Seguro que quiere registrar el nuevo equipo?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        checkData();
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (verifyFieldsEmpty()) {
+                                            setFieldsEmpty(true);
+                                            return false;
+                                        } else {
+                                            setFieldsEmpty(false);
+                                            return true;
+                                        }
+                                    }}
+                                    closeSecondActionState={true}
+                                />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {fieldsEmpty2 && (
+                            <IconLabel
+                                icon="/icons/alert.svg"
+                                label="Faltan completar campos"
+                                className="iconLabel3"
+                            />
+                        )}
+                        <div className="twoButtonsCE">
+                            <div className="buttonContainerCE">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Registro"
+                                    textBody="¿Seguro que quiere descartar el registro de los participantes?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() => router.back()}
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Registrar Participantes"
+                                    textBody="¿Seguro que quiere registrar los participantes?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        checkData2();
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (verifyFieldsEmpty2()) {
+                                            setFieldsEmpty2(true);
+                                            return false;
+                                        } else {
+                                            setFieldsEmpty2(false);
+                                            return true;
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </>
                 )}
-                <div className="twoButtonsCE">
-                    <div className="buttonContainerCE">
-                        <Modal
-                            nameButton="Descartar"
-                            textHeader="Descartar Registro"
-                            textBody="¿Seguro que quiere descartar el registro del equipo?"
-                            colorButton="w-36 bg-slate-100 text-black"
-                            oneButton={false}
-                            secondAction={() => router.back()}
-                            textColor="red"
-                        />
-                        <Modal
-                            nameButton="Aceptar"
-                            textHeader="Registrar Equipo"
-                            textBody="¿Seguro que quiere registrar el nuevo equipo?"
-                            colorButton="w-36 bg-blue-950 text-white"
-                            oneButton={false}
-                            secondAction={() => {
-                                checkData();
-                            }}
-                            textColor="blue"
-                            verifyFunction={() => {
-                                if (verifyFieldsEmpty()) {
-                                    setFieldsEmpty(true);
-                                    return false;
-                                } else {
-                                    setFieldsEmpty(false);
-                                    return true;
-                                }
-                            }}
-                            closeSecondActionState={true}
-                        />
-                    </div>
-                </div>
             </div>
             {modal && (
                 <PopUpRolEquipo
