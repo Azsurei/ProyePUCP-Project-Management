@@ -19,6 +19,8 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import MyCombobox from "@/components/ComboBox";
+import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo"
 
 axios.defaults.withCredentials = true;
 
@@ -72,6 +74,7 @@ export default function crear_equipo(props) {
         setIsTeamNameFilled(!!teamName); // Actualiza el estado basado en si el campo está lleno
     };
 
+    const [modal, setModal] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
 
@@ -79,6 +82,21 @@ export default function crear_equipo(props) {
     const [selectedUniqueMemberList, setSelectedUniqueMemberList] = useState(
         []
     );
+    const [selectedValueRol, setSelectedValueRol] = useState("");
+    const [reloadData, setReloadData] = useState(false);
+
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
+    
+    const handleSelectedValueChangeRol = (value) => {
+        setSelectedValueRol(value);
+    };
+
+    const toggleModal = () => {
+        handleReloadData();
+        setModal(!modal);
+    };
 
     const toggleModal1 = () => {
         setModal1(!modal1);
@@ -161,6 +179,18 @@ export default function crear_equipo(props) {
             selectedUniqueMemberList.length === 0
         );
     }
+
+    useEffect(() => {
+        if (modal) {
+            document.body.style.overflow = "hidden";
+            setReloadData(true);
+        } else {
+            document.body.style.overflow = "auto";
+            setReloadData(false);
+        }
+        setIsLoadingSmall(false);
+    }, [modal]);
+
 
     const checkData = () => {
         const nombreTeam = teamName;
@@ -248,6 +278,27 @@ export default function crear_equipo(props) {
                         );
                     })}
                 </div>
+                <MyCombobox
+                    urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                    property="probabilidades"
+                    nameDisplay="nombreProbabilidad"
+                    hasColor={false}
+                    onSelect={handleSelectedValueChangeRol}
+                    idParam="idProbabilidad"
+                    reloadData={reloadData}
+                    initialName="Seleccione un rol"
+                    inputWidth="full"
+                />
+                <button
+                    className="w-20 h-20"
+                    type="button"
+                    onClick={() => toggleModal()}
+                >
+                    <img
+                        src="/icons/btnEditImagen.svg"
+                        alt="Descripción de la imagen"
+                    />
+                </button>
             </div>
             <div className="participantes">
                 <h3>Participantes:</h3>
@@ -329,6 +380,12 @@ export default function crear_equipo(props) {
                     </div>
                 </div>
             </div>
+            {modal && (
+                    <PopUpRolEquipo
+                        modal={modal}
+                        toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                    />
+                )}
             {modal1 && (
                 <ModalUsersOne
                     listAllUsers={false}

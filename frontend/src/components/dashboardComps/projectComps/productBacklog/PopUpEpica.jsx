@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/PopUpEpica.css";
 //import ListUsers from "./ListUsers";
-import ListEpic from "./ListEpic";
+import ListEpic from "@/components/dashboardComps/projectComps/productBacklog/ListEpic";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 axios.defaults.withCredentials = true;

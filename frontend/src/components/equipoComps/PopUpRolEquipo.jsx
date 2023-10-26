@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/PopUpEpica.css";
-import ListEpic from "./ListEpic";
+import ListEpic from "@/components/dashboardComps/projectComps/productBacklog/ListEpic";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -12,7 +12,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlEliminate}) {
+export default function PopUpRolEquipo({ modal, toggle, handleAddRoles}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
