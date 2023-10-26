@@ -2648,3 +2648,20 @@ BEGIN
         nota = _nota
     WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
 END$
+
+------------
+-- Rol Equipo
+------------
+DROP PROCEDURE IF EXISTS INSERTAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ROL_EQUIPO(
+    IN _idEquipo INT,
+    IN _nombreRol VARCHAR(200)
+)
+BEGIN
+	DECLARE _idRolEquipo INT;
+	INSERT INTO RolesEquipo(nombreRol,idEquipo,estado) 
+    VALUES(_nombreRol,_idEquipo,1);
+    SET _idRolEquipo = @@last_insert_id;
+    SELECT _idRolEquipo AS idRolEquipo;
+END$

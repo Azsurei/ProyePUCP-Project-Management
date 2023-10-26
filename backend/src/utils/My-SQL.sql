@@ -171,12 +171,22 @@ CREATE TABLE UsuarioXEquipo(
     idUsuario INT,
     idEquipo INT,
     activo tinyint,
+    idRol INT,
     UNIQUE(idUsuario,idEquipo),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
 )
 ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS RolesEquipo
+CREATE TABLE RolesEquipo(
+    idRolEquipo INT AUTO_INCREMENT PRIMARY KEY,
+    nombreRol VARCHAR(200),
+    idEquipo INT,
+    estado TINYINT,
+    FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+)
+ENGINE = InnoDB;
 --------------------------------------------------------
 -- Tabla intermedia
 --------------------------------------------------------
