@@ -2649,6 +2649,17 @@ BEGIN
     WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_MIEMBRO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_MIEMBRO_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT up.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM UsuarioXRolXProyecto AS up
+    LEFT JOIN Usuario AS u ON up.idUsuario = u.idUsuario
+	WHERE up.idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
+END$
+
+
 ------------
 -- Rol Equipo
 ------------
@@ -2674,5 +2685,17 @@ CREATE PROCEDURE LISTAR_ROL_EQUIPO(
 BEGIN
 	SELECT *
     FROM RolesEquipo
-    WHERE idEquipo = _idEquipo;
+    WHERE idEquipo = _idEquipo
+    AND estado = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ROL_EQUIPO(
+    IN _idRolEquipo INT
+)
+BEGIN
+	UPDATE RolesEquipo
+    SET estado = 0
+    WHERE idRolEquipo = _idRolEquipo;
 END$

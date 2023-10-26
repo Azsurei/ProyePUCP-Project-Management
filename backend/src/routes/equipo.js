@@ -12,5 +12,6 @@ routerEquipo.get("/listarTareasDeXIdEquipo/:idEquipo",equipoController.listarTar
 //Roles
 routerEquipo.post("/insertarRol",equipoController.insertarRol);
 routerEquipo.get("/listarRol/:idEquipo",equipoController.listarRol);
+routerEquipo.delete("/eliminarRol",equipoController.eliminarRol);
 
 module.exports.routerEquipo = routerEquipo;
