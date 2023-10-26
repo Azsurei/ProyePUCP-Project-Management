@@ -17,6 +17,31 @@ export default function ActaReunion(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
+// *********************************************************************************************
+// Searching Meeting Record ID
+// *********************************************************************************************
+    const [meetingId, setMeetingId] = useState("");
+
+    useEffect(() => {
+        const stringURL = 
+        "http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
+        console.log("La URL es" + stringURL);
+
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                console.log("Listando ActasReunion. Respuesta del servidor:", response.data);
+                const dataActa = response.data.data;
+                console.log("El ID del Acta de Reunion es: ", dataActa.idActaReunion);
+                setMeetingId(dataActa.idActaReunion);
+                setIsLoading(false);
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }, []);
+
     useEffect(() => {
         const fetchData = async () => {
             console.log("Fetching");
