@@ -18,7 +18,8 @@ export default function ModalComponent({
     oneButton,
     secondAction,
     textColor,
-    verifyFunction
+    verifyFunction,
+    closeSecondActionState=false
 }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -59,7 +60,12 @@ export default function ModalComponent({
                                 )}
                                 <Button
                                     className="bg-indigo-950 text-slate-50"
-                                    onPress={secondAction}
+                                    onPress={()=>{
+                                        secondAction();
+                                        if(closeSecondActionState){
+                                            onClose();
+                                        }
+                                    }}
                                 >
                                     Continuar
                                 </Button>

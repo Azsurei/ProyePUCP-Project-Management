@@ -59,6 +59,8 @@ export default function crear_equipo(props) {
     const [roles, setRoles] = useState([]);
     const [rol, setRol] = useState("");
 
+    const [addParticipantesState, setAddParticipantesState] = useState(false);
+
     const handleReloadData = () => {
         setReloadData(true);
     };
@@ -130,34 +132,8 @@ export default function crear_equipo(props) {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
-
-        axios
-            .get(stringURL)
-            .then(function (response) {
-                const userData = response.data.usuario[0];
-                console.log(userData);
-                console.log("el nombre del usuario es ", userData.nombres);
-                console.log("el apellido del usuario es ", userData.apellidos);
-                setDatosUsuario(userData);
-                const leaderFullName =
-                    userData.nombres + " " + userData.apellidos;
-                setTeamLeader(leaderFullName);
-
-                setIsLoading(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, []);
-
     function verifyFieldsEmpty() {
-        return (
-            teamName === "" ||
-            selectedMiembrosList.length === 0 ||
-            selectedUniqueMemberList.length === 0
-        );
+        return teamName === "" || selectedUniqueMemberList.length === 0;
     }
 
     useEffect(() => {
@@ -175,11 +151,11 @@ export default function crear_equipo(props) {
         const nombreTeam = teamName;
         const proyectoId = projectId;
         // Esto es porque el procedure solo acepta ID
-        const selectedMiembrosListWithIDs = selectedMiembrosList.map(
+/*         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
             (usuario) => {
                 return { idUsuario: usuario.idUsuario };
             }
-        );
+        ); */
 
         axios
             .post(
@@ -217,115 +193,121 @@ export default function crear_equipo(props) {
                 </Breadcrumbs>
             </div>
             <div className="title">Crear Equipo</div>
-            <div className="nombreEquipo">
-                <h3>Nombre del equipo:</h3>
-                <Input
-                    className="mt-4"
-                    placeholder="Ingrese el nombre del equipo"
-                    onChange={handleChangeTeamName}
-                    variant="bordered"
-                />
-            </div>
-            <div style={{ marginBottom: "20px" }}></div>
-            <div className="participantes">
-                <h3>Líder del Equipo</h3>
-                <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                        onClick={toggleModal1}
-                    >
-                        <p>Buscar nuevo líder</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
+
+            {!addParticipantesState ? (
+                <>
+                    <div className="nombreEquipo">
+                        <h3>
+                            Nombre del equipo
+                            <span className="text-red-500"> *</span>
+                        </h3>
+                        <Input
+                            className="mt-4"
+                            placeholder="Ingrese el nombre del equipo"
+                            onChange={handleChangeTeamName}
+                            variant="bordered"
                         />
                     </div>
+                    <div style={{ marginBottom: "20px" }}></div>
+                    <div className="participantes">
+                        <h3>
+                            Líder del Equipo
+                            <span className="text-red-500"> *</span>
+                        </h3>
+                        <div className="SelectedUsersContainer">
+                            <div
+                                className="containerToPopUpUsrSearch"
+                                style={{ width: "100%", padding: "0.2rem 0" }}
+                                onClick={toggleModal1}
+                            >
+                                <p>Buscar nuevo líder</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                    style={{ width: "20px" }}
+                                />
+                            </div>
 
-                    {selectedUniqueMemberList.map((component) => {
-                        return (
-                            <CardSelectedUser
-                                key={component.idUsuario}
-                                name={component.nombres}
-                                lastName={component.apellidos}
-                                usuarioObject={component}
-                                email={component.correoElectronico}
-                                removeHandler={removeMiembroUnique}
-                                isEditable={true}
-                            ></CardSelectedUser>
-                        );
-                    })}
-                </div>
-                <ComboBoxArray people={roles} onSelect={setRol} />
-                {console.log("Rol: ", rol)}
-                <button
-                    className="w-20 h-20"
-                    type="button"
-                    onClick={() => toggleModal()}
-                >
-                    <img
-                        src="/icons/btnEditImagen.svg"
-                        alt="Descripción de la imagen"
-                    />
-                </button>
-            </div>
-            <div className="participantes">
-                <h3>Participantes:</h3>
-                <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                        onClick={toggleModal2}
-                    >
-                        <p>Buscar nuevo participante</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
-                        />
+                            {selectedUniqueMemberList.map((component) => {
+                                return (
+                                    <div className="flex gap-2 items-center">
+                                        <CardSelectedUser
+                                            key={component.idUsuario}
+                                            name={component.nombres}
+                                            lastName={component.apellidos}
+                                            usuarioObject={component}
+                                            email={component.correoElectronico}
+                                            removeHandler={removeMiembroUnique}
+                                            isEditable={true}
+                                        ></CardSelectedUser>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
+                </>
+            ) : (
+                <>
+                    <div className="participantes">
+                        <h3>Participantes</h3>
+                        <div className="SelectedUsersContainer">
+                            <div
+                                className="containerToPopUpUsrSearch"
+                                style={{ width: "100%", padding: "0.2rem 0" }}
+                                onClick={toggleModal2}
+                            >
+                                <p>Buscar nuevo participante</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                    style={{ width: "20px" }}
+                                />
+                            </div>
 
-                    <ul
-                        className="listUsersContainer"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                    >
-                        {selectedMiembrosList.map((component) => {
-                            return (
-                                <div className="flex gap-2">
-                                    <CardSelectedUser
-                                        key={component.idUsuario}
-                                        name={component.nombres}
-                                        lastName={component.apellidos}
-                                        usuarioObject={component}
-                                        email={component.correoElectronico}
-                                        removeHandler={removeMiembro}
-                                        isEditable={true}
-                                    ></CardSelectedUser>
-                                    <ComboBoxArray
-                                        people={roles}
-                                        onSelect={setRol}
-                                    />
-                                    <button
-                                        className="w-20 h-20"
-                                        type="button"
-                                        onClick={() => toggleModal()}
-                                    >
-                                        <img
-                                            src="/icons/btnEditImagen.svg"
-                                            alt="Descripción de la imagen"
-                                        />
-                                    </button>
-                                </div>
-                            );
-                        })}
-                    </ul>
-                </div>
-            </div>
+                            <ul
+                                className="listUsersContainer"
+                                style={{ width: "100%", padding: "0.2rem 0" }}
+                            >
+                                {selectedMiembrosList.map((component) => {
+                                    return (
+                                        <div className="flex gap-2 items-center">
+                                            <CardSelectedUser
+                                                key={component.idUsuario}
+                                                name={component.nombres}
+                                                lastName={component.apellidos}
+                                                usuarioObject={component}
+                                                email={
+                                                    component.correoElectronico
+                                                }
+                                                removeHandler={removeMiembro}
+                                                isEditable={true}
+                                            ></CardSelectedUser>
+                                            <ComboBoxArray
+                                                people={roles}
+                                                onSelect={setRol}
+                                            />
+                                            <button
+                                                className="w-20 h-20"
+                                                type="button"
+                                                onClick={() => toggleModal()}
+                                            >
+                                                <img
+                                                    src="/icons/btnEditImagen.svg"
+                                                    alt="Descripción de la imagen"
+                                                />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+                </>
+            )}
             <div style={{ marginBottom: "20px" }}></div>
-            <div>
+            <div className="containerButtonsCE">
                 {fieldsEmpty && (
                     <IconLabel
                         icon="/icons/alert.svg"
@@ -351,8 +333,9 @@ export default function crear_equipo(props) {
                             colorButton="w-36 bg-blue-950 text-white"
                             oneButton={false}
                             secondAction={() => {
-                                checkData();
-                                router.back();
+                                //checkData();
+                                //router.back();
+                                setAddParticipantesState(true);
                             }}
                             textColor="blue"
                             verifyFunction={() => {
@@ -364,6 +347,7 @@ export default function crear_equipo(props) {
                                     return true;
                                 }
                             }}
+                            closeSecondActionState={true}
                         />
                     </div>
                 </div>
