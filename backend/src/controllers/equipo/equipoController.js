@@ -103,7 +103,7 @@ async function listarTareasDeXIdEquipo(req, res, next) {
 
 async function insertarRol(req,res,next){
     const{idEquipo, nombreRol} = req.body;
-    const query = `CALL LISTAR_TAREAS_X_IDEQUIPO(?);`;
+    const query = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
     try {
         const [results] = await connection.query(query, [idEquipo,nombreRol]);
         const idRolEquipo = results[0].idRolEquipo;

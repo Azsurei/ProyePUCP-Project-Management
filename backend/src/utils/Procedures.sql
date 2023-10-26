@@ -2665,3 +2665,14 @@ BEGIN
     SET _idRolEquipo = @@last_insert_id;
     SELECT _idRolEquipo AS idRolEquipo;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ROL_EQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+	SELECT *
+    FROM RolesEquipo
+    WHERE idEquipo = _idEquipo;
+END$
