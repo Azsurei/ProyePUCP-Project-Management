@@ -30,6 +30,12 @@ import {
     Pagination,
   } from "@nextui-org/react";
 
+import {
+    dbDateToDisplayDate,
+    dbDateToInputDate,
+    inputDateToDisplayDate,
+} from "@/common/dateFunctions";
+
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import TuneIcon from '@mui/icons-material/Tune';
 
@@ -104,6 +110,8 @@ export default function Ingresos(props) {
     const [modalContentState, setModalContentState] = useState(0);
 
     const [fecha, setFecha] = useState("");
+
+
     const [activeRefresh, setactiveRefresh] = useState(false);
     const handleChangeFecha = (event) => {
         setFecha(event.target.value);
@@ -111,12 +119,29 @@ export default function Ingresos(props) {
     };
 
 
-    const handleChangeFechaInicio = () => {
+    //Filtro Fecha
+
+    const [fechaInicio, setFechaInicio] = useState("");
+    const [fechaFin, setFechaFin] = useState("");
+
+
+    const handleChangeFechaInicioFilter = (event) => {
+        setFechaInicio(event.target.value);
+    };
+
+    const handleChangeFechaFinFilter = (event) => {
+        setFechaFin(event.target.value);
+    };
+
+
+    // Fin filtro fecha
+
+    /*const handleChangeFechaInicio = () => {
         const datepickerInput = document.getElementById("inputFechaPresupuesto");
         const selectedDate = datepickerInput.value;
         console.log(selectedDate);
         setFecha(selectedDate);
-    }
+    }*/
     
     let idHerramientaCreada;
 
@@ -353,14 +378,14 @@ export default function Ingresos(props) {
                 </div>
 
 
-                <Modal
-            isOpen={isModalFechaOpen}
-            onOpenChange={onModalFechachange}
-            classNames={
-                {
-                    //closeButton: "hidden",
-                }
-            }
+                <Modal  size='xl'
+                        isOpen={isModalFechaOpen}
+                        onOpenChange={onModalFechachange}
+                        classNames={
+                            {
+                                //closeButton: "hidden",
+                            }
+                        }
         >
             <ModalContent>
                 {(onClose) => {
@@ -370,31 +395,48 @@ export default function Ingresos(props) {
                     };
                     return (
                         <>
-                            <ModalHeader className="flex flex-col text-red-500">
-                                Filtro para Ingreso
+                            <ModalHeader >
+                                Filtra tus ingresos
                             </ModalHeader>
 
                             <ModalBody>
-                                <div>
-                                    <DateInput>
 
-                                    </DateInput>
+                            <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
+                                Elige la fecha que deseas consultar.
+                            </p>
+
+                                <div style={{ display: 'flex', alignItems: 'center' ,justifyContent: 'space-between' , gap:'2rem'}}>
+
+                                    <DateInput isEditable={true} value={fechaInicio} onChangeHandler={handleChangeFechaInicioFilter}/>
+
+                                    <span style={{ margin: '0 10px' }}>hasta</span>
+
+                                    <DateInput value={fechaFin} isEditable={true} onChangeHandler={handleChangeFechaFinFilter} />
                                 </div>
+
+                                {fechaInicio}
                             </ModalBody>
+
 
                             <ModalFooter>
                                 <Button
-                                    color="danger"
+                                    className="text-white"
                                     variant="light"
-                                    onPress={onClose}
+                                    onPress={() => {
+                                        onClose(); // Cierra el modal
+                                        setFechaInicio("");
+                                        setFechaFin("");
+                                      }}
+                                    style={{ color: '#EA541D' }}
                                 >
-                                    Cancelar
+                                    Limpiar Búsqueda
                                 </Button>
-                                <Button
-                                    color="primary"
+                                <Button   style={{ backgroundColor: '#EA541D' }}
+                                    className="text-white"
+
                                     onPress={finalizarModal}
                                 >
-                                    Aceptar
+                                    Filtrar
                                 </Button>
                             </ModalFooter>
                         </>
@@ -531,11 +573,7 @@ export default function Ingresos(props) {
 
                                                         </div>
                                                         }                                                      
-                                                />
-
-                                                         
-                                        
-                                        
+                                                />                    
                                         </div>
                                         <p className="textIngreso">Descripción</p>
 
