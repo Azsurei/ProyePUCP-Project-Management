@@ -133,11 +133,26 @@ async function listarRol(req,res,next){
     }
 }
 
+async function eliminarRol(req,res,next){
+    const{idRolEquipo} = req.body;
+    const query = `CALL ELIMINAR_ROL_EQUIPO(?);`;
+    try {
+        await connection.query(query, [idRolEquipo]);
+        console.log(`Se elimino el rol ${idRolEquipo}!`);
+        res.status(200).json({
+            message: "Rol eliminado exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
     listarEquiposYParticipantes,
     listarTareasDeXIdEquipo,
     insertarRol,
-    listarRol
+    listarRol,
+    eliminarRol
 };

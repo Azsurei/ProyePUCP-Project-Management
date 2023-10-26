@@ -2674,5 +2674,17 @@ CREATE PROCEDURE LISTAR_ROL_EQUIPO(
 BEGIN
 	SELECT *
     FROM RolesEquipo
-    WHERE idEquipo = _idEquipo;
+    WHERE idEquipo = _idEquipo
+    AND estado = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ROL_EQUIPO(
+    IN _idRolEquipo INT
+)
+BEGIN
+	UPDATE RolesEquipo
+    SET estado = 0
+    WHERE idRolEquipo = _idRolEquipo;
 END$
