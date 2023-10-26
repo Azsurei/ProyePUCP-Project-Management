@@ -2649,6 +2649,17 @@ BEGIN
     WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_MIEMBRO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_MIEMBRO_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT up.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM UsuarioXRolXProyecto AS up
+    LEFT JOIN Usuario AS u ON up.idUsuario = u.idUsuario
+	WHERE up.idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
+END$
+
+
 ------------
 -- Rol Equipo
 ------------

@@ -3,10 +3,7 @@ const connection = require("../../config/db");
 async function insertarEquipoYParticipantes(req, res, next) {
     //Insertar query aca
     const {idProyecto,nombre,idLider,usuarios} = req.body;
-    console.log("Llegue a recibir solicitud insertar componente edt");
-    const query = `
-        CALL INSERTAR_EQUIPO(?,?,?);
-    `;
+    const query = `CALL INSERTAR_EQUIPO(?,?,?);`;
     try {
         const [results] = await connection.query(query,[idProyecto, nombre, idLider]);
         const idEquipo = results[0][0].idEquipo;

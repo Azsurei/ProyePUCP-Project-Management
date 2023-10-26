@@ -7,7 +7,7 @@ const connection = require("../../config/db");
 
 async function crearAutoEvaluacion(req,res,next){
     const {idProyecto} = req.body;
-    const query = `CALL LISTAR_USUARIOS_X_IDPROYECTO(?);`;
+    const query = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
     try {
         const results = await connection.query(query,[idProyecto]);
         const usuariosXProyecto = results[0][0];
