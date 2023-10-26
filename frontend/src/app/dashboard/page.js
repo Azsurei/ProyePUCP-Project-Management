@@ -6,6 +6,7 @@ import ListProject from "@/components/dashboardComps/projectComps/projectCreateC
 import axios from "axios";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 axios.defaults.withCredentials = true;
 
@@ -34,6 +35,8 @@ export default function Dashboard() {
 
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
+    const { data: session, status} = useSession();
+    console.log(session);
 
     const onSearchChange = (value) => {
         setFilterValue(value);

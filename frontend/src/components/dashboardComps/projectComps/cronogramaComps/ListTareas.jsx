@@ -47,9 +47,9 @@ function CardTarea({
                 <div className="containerGeneralData">
                     <div className="containerNombreTarea">
                         <p>{tarea.sumillaTarea}</p>
-                        {tarea.cantPosteriores !== 0 && (
+                        {tarea.tareasPosteriores.length !== 0 && (
                             <p className="text-bold text-sm capitalize text-default-400">
-                                {tarea.cantPosteriores} tareas posteriores
+                                {tarea.tareasPosteriores.length} tareas posteriores
                             </p>
                         )}
                     </div>

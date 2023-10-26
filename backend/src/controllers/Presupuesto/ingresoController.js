@@ -25,10 +25,12 @@ async function crearLineaIngreso(req,res,next){
 
 async function modificarLineaIngreso(req,res,next){
     const {idLineaIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} = req.body;
+    const query = `CALL MODIFICAR_LINEA_INGRESO(?,?,?,?,?,?,?,?);`;
     try {
-        const query = `CALL MODIFICAR_LINEA_INGRESO(?,?,?,?,?,?,?,?);`;
+        
         const [results] =await connection.query(query,[idLineaIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
-        idModificado = results[0][0].idLineaIngreso;
+        const idModificado = results[0][0].idLineaIngreso;
+        console.log(`Se modificó la linea de ingreso ${idModificado}!`);
         res.status(200).json({message: "Linea ingreso modificada"});
     } catch (error) {
         next(error);

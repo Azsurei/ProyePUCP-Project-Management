@@ -868,7 +868,11 @@ POST http://localhost:8080/api/proyecto/autoEvaluacion/crearAutoEvaluacion HTTP/
 Content-Type:  application/json
 
 {
-  "idProyecto": 58
+  "idProyecto": 58,
+  "criterio1": "Hola",
+  "criterio2": "Hola",
+  "criterio3": "Hola",
+  "criterio4": "Hola"
 }
 
 ###LISTAR AUTOEVALUACION

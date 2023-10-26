@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
@@ -17,7 +16,6 @@ import {
     Button, Spacer,
 } from "@nextui-org/react";
 
-import ListUsersOne from "@/components/ListUsersOne";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
@@ -33,7 +31,7 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/i
 
 axios.defaults.withCredentials = true;
 
-export default function crearActaReunion(props) {
+export default function editarActaReunion(props) {
 // *********************************************************************************************
 // Various Variables
 // *********************************************************************************************
@@ -288,56 +286,34 @@ const handleRemoveComentario = (index) => {
     const [isLoading, setIsLoading] = useState(true);
 
 // *********************************************************************************************
-// Creating a Meeting Record
+// Searching Meeting Record ID
 // *********************************************************************************************
-    const create = () => {
-        console.log("Nombre del equipo = " + teamName);
-        console.log("Líder del equipo = " + teamLeader);
+    const [meetingId, setMeetingId] = useState("");
 
-        const nombreReunion = titleValue;
-        const fechaReunion = dateValue;
-        const horaReunion = timeValue;
-        const motivo = motiveValue;
-        const nombreConvocante = convocante.nombres + convocante.apellidos;
-        
-        // Esto es porque el procedure solo acepta ID
-        const selectedMiembrosListWithIDs = selectedMiembrosList.map(
-            (usuario) => {
-                return { idUsuario: usuario.idUsuario };
-            }
-        );
-        console.log("ProjectoId: ", proyectoId);
-        console.log("NombreTeam: ", nombreTeam);
-        console.log("LiderTeam: ", encargado);
-        console.log(
-            "IDs de Usuarios seleccionados:",
-            selectedMiembrosListWithIDs
-        );
+    useEffect(() => {
+        const stringURL = 
+        "http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
+        console.log("La URL es" + stringURL);
 
         axios
-            .post(
-                "http://localhost:8080/api/proyecto/actaReunion/crearActaReunionrr",
-                {
-                    //idActaReunion: proyectoId,
-                    nombreReunion: nombreReunion,
-                    fechaReunion: fechaReunion,
-                    horaReunion: horaReunion,
-                    nombreConvocante: nombreConvocante,
-                    motivo: motivo,
-                    temas: listTemas,
-                    participantes: selectedMiembrosList,
-                    comentarios: listComentarios,
-                }
-            )
+            .get(stringURL)
             .then(function (response) {
-                console.log(response);
-                console.log("Conexion correcta");
-                router.back();
+                console.log("Listando ActasReunion. Respuesta del servidor:", response.data);
+                const dataActa = response.data.data;
+                console.log("El ID del Acta de Reunion es: ", dataActa.idActaReunion);
+                setMeetingId(dataActa.idActaReunion);
+                setIsLoading(false);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
             });
-    };
+    }, []);
+
+// *********************************************************************************************
+// Creating a Meeting Record Line
+// *********************************************************************************************
+
 
 // *********************************************************************************************
 // Page
@@ -346,19 +322,23 @@ const handleRemoveComentario = (index) => {
         <div className="newMeetingArticle">
             <Spacer y={4}></Spacer>
             <HeaderWithButtons haveReturn={true}
-                               haveAddNew={false}
-                               hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
-                               hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
-                               breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Nueva Reunion'}
-                               btnText={'Volver'}>Crear Acta de Reunion</HeaderWithButtons>
+                            haveAddNew={false}
+                            hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
+                            hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
+                            breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Nueva Reunion'}
+                            btnText={'Volver'}>Acta de Reunion [idLinea]</HeaderWithButtons>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
                         <CardBody>
+                            <div>
+                                <h1>Reunión para ver temas de gastos</h1>
+                            </div>
+                            {/* Mantener para pensar el modo editar
                             <Input 
                                 className="max-w-[1000px]"
                                 isRequired
-                                key="outside"
+                                key="meetingTitle"
                                 size="lg" 
                                 type="title" 
                                 label="Título de Reunión" 
@@ -367,11 +347,13 @@ const handleRemoveComentario = (index) => {
                                 value={titleValue}
                                 onValueChange={setTitleValue} 
                             />
+                            */}
                             <p className="mt-5 mb-1 text-black text-sm font-medium">Reunión convocada por</p>
                             <div className="userSelection flex items-center">
                                 <p className="ml-2 font-medium text-gray-400 ">
                                     {convocante.nombres} {convocante.apellidos}
                                 </p>
+                                {/* Guardar para modo editar
                                 <button 
                                     onClick={toggleModal1}
                                     className="ml-3 bg-[#f0ae19] text-white w-8 h-8
@@ -395,18 +377,20 @@ const handleRemoveComentario = (index) => {
                                     Quiero ser el convocante
                                     </p>
                                 )}
+                            */}
                             </div>
-                                
-                            <div className="dateAndTimeLine">
-                                <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha y Hora de la Reunión</p>
-                                {/*}
-                                <input 
-                                    type="datetime-local" 
-                                    id="datetimePicker" 
-                                    name="datetimePicker" 
-                                    onChange={handleChangeFechaHora}>
-                                </input>
-                                */}
+                            
+                            <div className="dateAndTimeLine flex items-center">
+                                <div className="dateShow">
+                                    <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha</p>
+                                    <p>27/10/2023</p>
+                                </div>
+                                <div className="timeShow">
+                                    <p className="mt-5 mb-1 text-black text-sm font-medium">Hora</p>
+                                    <p>13:32 pm</p>
+                                </div>
+                            
+                                {/* Edit Fecha y hora}
                                 <input
                                     type="date"
                                     id="datePicker"
@@ -423,11 +407,12 @@ const handleRemoveComentario = (index) => {
                                     value={timeValue}
                                     onChange={handleChangeTime}
                                 ></input>
+                                */}
                             </div>
                             <Input 
                                 className="max-w-[1000px] mt-5"
                                 isRequired
-                                key="outside"
+                                key="meetingMotive"
                                 size="lg" 
                                 type="title" 
                                 label="Motivo" 
@@ -643,7 +628,7 @@ const handleRemoveComentario = (index) => {
                                 colorButton="w-36 bg-blue-950 text-white font-semibold"
                                 oneButton={false}
                                 secondAction={() => {
-                                    onSubmit();
+                                    createMeeting();
                                     router.back();
                                 }}
                                 textColor="blue"
@@ -652,7 +637,7 @@ const handleRemoveComentario = (index) => {
                                         setFieldsEmpty(true);
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
+                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -663,16 +648,6 @@ const handleRemoveComentario = (index) => {
             </div>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
-            {/*}
-            <div className="ButtonsContainer mb-5">
-                {verifyFieldsEmpty
-                    && <p className="error-text mt-3">Faltan llenar campos</p>}
-                <Button color="primary" variant="bordered">Cancelar</Button>
-                <Button color="primary" 
-                    isDisabled={verifyFieldsEmpty}
-                    >Crear</Button>
-            </div>
-                */}
         </div>
     )
 }

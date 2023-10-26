@@ -73,6 +73,7 @@
 .tareaContainerSubteam{
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 5px;
     font-weight: 500;
     font-size: 1.1rem;

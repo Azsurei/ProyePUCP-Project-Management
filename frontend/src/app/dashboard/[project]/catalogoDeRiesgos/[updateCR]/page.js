@@ -84,19 +84,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
             setCause(crData.causaRiesgo);
             setImpactDetail(crData.impactoRiesgo);
             setIsSelected(crData.estado === "Activo" ? true : false);
-            //CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-            /*             const selectedMiembrosList1Original = crData.responsables;
-            const selectedMiembrosList1Actualizados =
-                selectedMiembrosList1Original.map((selectedMiembrosList1) => ({
-                    email: selectedMiembrosList1.correoElectronico || "", // Puedes agregar un valor predeterminado en caso de que falte
-                    id: selectedMiembrosList1.idUsuario || "", // Puedes agregar un valor predeterminado en caso de que falte
-                    lastName: selectedMiembrosList1.apellidos || "", // Puedes agregar un valor predeterminado en caso de que falte
-                    name: selectedMiembrosList1.nombres || "", // Puedes agregar un valor predeterminado en caso de que falte
-                }));
-            setSelectedMiembrosList1(selectedMiembrosList1Actualizados);
-            setSelectedMiembrosList1Originales(
-                selectedMiembrosList1Actualizados
-            ); */
             setSelectedMiembrosList1(crData.responsables);
             setSelectedMiembrosList1Originales(crData.responsables);
             const responsesPlansOriginal = crData.planRespuesta;

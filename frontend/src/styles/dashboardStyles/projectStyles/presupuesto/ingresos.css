@@ -17,7 +17,7 @@
     max-width: 60%;
     align-items: center;   
     flex-direction: row;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .textIngreso{
@@ -76,4 +76,21 @@
     margin-bottom: 0.8rem;
 
 }
+
+.alertaMonedaIngreso{
+
+    position: absolute; /* Añade esta línea para establecer una posición absoluta en el elemento de alerta */
+    top: 110%; /* Añade es7ta línea para colocar las alertas justo debajo del combo box */
+    z-index: 1; /* Asegura que las letras estén por debajo del combo box */
+    left: 5px;
+    
+}
+
+.divValidaciones{
+
+    margin-top: 10px;
+    margin-left: 5px;
+    
+}
+
 

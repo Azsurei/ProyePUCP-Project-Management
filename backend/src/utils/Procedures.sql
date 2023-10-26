@@ -2579,18 +2579,22 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_CRITERIO_AUTOEVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CRITERIO_AUTOEVALUACION(
-    IN _idUsuarioEvaluacion INT
+    IN _idUsuarioEvaluacion INT,
+    IN _criterio1 VARCHAR(500),
+    IN _criterio2 VARCHAR(500),
+    IN _criterio3 VARCHAR(500),
+    IN _criterio4 VARCHAR(500)
 )
 BEGIN
 	DECLARE _idCriterioEvaluacion INT;
 	INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Dominio Técnico",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio1,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Compromiso con los trabajos",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio2,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Comunicación con sus compañeros",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio3,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Comprensión del proyecto",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio4,0,1);
     SET _idUsuarioEvaluacion = @@last_insert_id;
     SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
 END$
@@ -2620,4 +2624,131 @@ BEGIN
     SELECT *
 	FROM CriterioEvaluacion
 	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
+<<<<<<< HEAD
+=======
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_OBSERVACION_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_OBSERVACION_X_ID(
+    IN _idUsuarioEvaluacion INT,
+    IN _observaciones VARCHAR(500)
+)
+BEGIN
+    UPDATE UsuarioXEvaluacion 
+    SET observaciones = _observaciones
+    WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_NOTACRITERIO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_NOTACRITERIO_X_ID(
+    IN _idCriterioEvaluacion INT,
+    IN _criterio VARCHAR(500),
+    IN _nota DOUBLE
+)
+BEGIN
+    UPDATE CriterioEvaluacion 
+    SET criterio = _criterio,
+        nota = _nota
+    WHERE idCriterioEvaluacion = _idCriterioEvaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_MIEMBRO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_MIEMBRO_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT up.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
+	FROM UsuarioXRolXProyecto AS up
+    LEFT JOIN Usuario AS u ON up.idUsuario = u.idUsuario
+	WHERE up.idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
+END$
+
+
+------------
+-- Rol Equipo
+------------
+DROP PROCEDURE IF EXISTS INSERTAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ROL_EQUIPO(
+    IN _idEquipo INT,
+    IN _nombreRol VARCHAR(200)
+)
+BEGIN
+	DECLARE _idRolEquipo INT;
+	INSERT INTO RolesEquipo(nombreRol,idEquipo,estado) 
+    VALUES(_nombreRol,_idEquipo,1);
+    SET _idRolEquipo = @@last_insert_id;
+    SELECT _idRolEquipo AS idRolEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ROL_EQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+	SELECT *
+    FROM RolesEquipo
+    WHERE idEquipo = _idEquipo
+    AND estado = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ROL_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ROL_EQUIPO(
+    IN _idRolEquipo INT
+)
+BEGIN
+	UPDATE RolesEquipo
+    SET estado = 0
+    WHERE idRolEquipo = _idRolEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_NUEVO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_NUEVO_EQUIPO(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(200),
+    IN _idLider INT
+)
+BEGIN
+	DECLARE _idEquipo INT;
+    DECLARE _idRolEquipo INT;
+	INSERT INTO Equipo(idProyecto,nombre,fechaCreacion,activo,idLider) 
+    VALUES(_idProyecto,_nombre,NOW(),1,_idLider);
+    SET _idEquipo = @@last_insert_id;
+    INSERT INTO RolesEquipo(nombreRol, idEquipo, estado)
+    VALUES("Lider",_idEquipo,1);
+    SET _idRolEquipo = @@last_insert_id;
+    INSERT INTO UsuarioXEquipo(idUsuario, idEquipo, activo, idRol)
+    VALUES(_idLider,_idEquipo,1, _idRolEquipo);
+    SELECT _idEquipo AS idEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_MIEMBROS_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MIEMBROS_EQUIPO(
+    IN _idEquipo INT,
+    IN _idUsuario INT,
+    IN _idRol INT
+)
+BEGIN
+	DECLARE _idUsuarioXEquipo INT;
+	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo,idRol) 
+    VALUES(_idUsuario,_idEquipo,1,_idRol);
+    SET _idUsuarioXEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_EQUIPO_X_IDEQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+	UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE UsuarioXEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE RolesEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+>>>>>>> 2f9babb16fa898459257ff2a2062e50c8883aeba
 END$

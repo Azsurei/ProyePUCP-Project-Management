@@ -12,7 +12,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresos.css";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import IngresosList from "@/components/dashboardComps/projectComps/presupuestoComps/IngresosList";
+import EgresosList from "@/components/dashboardComps/projectComps/presupuestoComps/EgresosList";
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -43,7 +43,7 @@ export default function Ingresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineasEgresoXIdProyecto/100`;
 
     //const router=userRouter();
     const [listUsers, setListUsers] = useState([]);
@@ -96,7 +96,17 @@ export default function Ingresos(props) {
 
     const [monto, setMonto] = useState("");
 
-    
+    const data = [
+        {
+            idLineaEgreso: 1,
+            descripcion: "Licencia de Software",
+            costoReal: 1000,
+            fechaRegistro: "2021-10-10",
+            cantidad: 1,
+            idMoneda: 1,
+            nombreMoneda: "Dolar",
+        }
+    ];
     
     return (
 
@@ -155,10 +165,7 @@ export default function Ingresos(props) {
                         </div>
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
-                        <IngresosList lista = {data}></IngresosList>
+                        <EgresosList lista = {data}></EgresosList>
                     </div>
 
                 

@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/LisEpic.css";
-import { UserCardsContext } from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
+import { UserCardsContext } from "@/components/equipoComps/PopUpRolEquipo";
 //import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 
-function CardEpic(props) {
+function CardRol(props) {
   const [isSelected, setIsSelected] = useState(false);
   const { selectEpic, deselectEpic } = useContext(UserCardsContext);
 
@@ -30,18 +30,18 @@ function CardEpic(props) {
   );
 }
 
-export default function ListEpic(props) {
+export default function ListRol(props) {
   const router = useRouter();
 
   return (
     <ul className="ListEpicsProject">
       {props.lista.map((component) => {
         return (
-          <CardEpic
-            key={component.idEpica}
-            name={component.nombre}
+          <CardRol
+            key={component.idRolEquipo}
+            name={component.nombreRol}
             epicObject={component}
-          ></CardEpic>
+          ></CardRol>
         );
       })}
     </ul>
