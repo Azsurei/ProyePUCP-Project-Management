@@ -21,6 +21,7 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 
@@ -58,24 +59,35 @@ export default function autoevaluacionEquipo(props) {
         setIsLoadingSmall(false);
     }, []);
     
-    console.log(usersEvaluation);
-
-    const handleSave = async () => {
-        setFormState("loading");
-    
-        try {
-            const response = await axios.put(
+    function saveEvaluation() {
+        return new Promise((resolve, reject) => {
+            axios.put(
                 `http://localhost:8080/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion`,
                 {
                     evaluados: usersEvaluation,
                 }
-            );
-    
-            console.log(response);
+            )
+            .then((response) => {
+                console.log(response);
+                resolve();
+            })
+            .catch((error) => {
+                console.error("Error al guardar las evaluaciones: ", error);
+                reject(error);
+            });
+        });
+    }
+
+    const handleSave = async () => {
+        setFormState("loading");
+        try {
+            await saveEvaluation();
             setInitialEvaluations(usersEvaluation);
-        } catch (error) {
-            console.log(error);
-        } finally {
+            toast.success("La autoevaluación se ha guardado exitosamente.");
+        } catch (e) {
+            toast.error("Ha ocurrido un error al guardar la autoevaluación.");
+        }
+        finally {
             onOpenChange(true);
         }
     };
@@ -230,6 +242,7 @@ export default function autoevaluacionEquipo(props) {
     // Componente
     return (
         <div className="flex flex-col p-8 w-full h-full">
+            <Toaster richColors closeButton={true}/>
             <div className="space-x-4 mb-2">
                 <Breadcrumbs>
                     <BreadcrumbsItem
