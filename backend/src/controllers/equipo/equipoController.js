@@ -145,15 +145,15 @@ async function eliminarRol(req,res,next){
 }
 
 async function insertarEquipo(req,res,next){
-    const{idEquipo, nombreRol} = req.body;
-    const query = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
+    const{idProyecto, nombre, idLider} = req.body;
+    const query = `CALL INSERTAR_NUEVO_EQUIPO(?,?);`;
     try {
-        const [results] = await connection.query(query, [idEquipo,nombreRol]);
-        const idRolEquipo = results[0].idRolEquipo;
-        console.log(`Se insertó el rol ${idRolEquipo}!`);
+        const [results] = await connection.query(query, [idProyecto,nombre,idLider]);
+        const idEquipo = results[0].idEquipo;
+        console.log(`Se insertó el equipo ${idEquipo}!`);
         res.status(200).json({
-            idRolEquipo,
-            message: "Rol insertada exitosamente"
+            idEquipo,
+            message: "Equipo insertada exitosamente"
         });
     } catch (error) {
         next(error);
@@ -167,5 +167,6 @@ module.exports = {
     listarTareasDeXIdEquipo,
     insertarRol,
     listarRol,
-    eliminarRol
+    eliminarRol,
+    insertarEquipo
 };

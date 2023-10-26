@@ -2707,13 +2707,20 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_NUEVO_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_NUEVO_EQUIPO(
-    IN _nombreRol VARCHAR(200),
-    IN _idEquipo INT,
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(200),
+    IN _idLider INT
 )
 BEGIN
-	DECLARE _idRolEquipo INT;
-	INSERT INTO RolesEquipo(nombreRol,idEquipo,estado) 
-    VALUES(_nombreRol,_idEquipo,1);
+	DECLARE _idEquipo INT;
+    DECLARE _idRolEquipo INT;
+	INSERT INTO Equipo(idProyecto,nombre,fechaCreacion,activo,idLider) 
+    VALUES(_idProyecto,_nombre,NOW(),1,_idLider);
+    SET _idEquipo = @@last_insert_id;
+    INSERT INTO RolesEquipo(nombreRol, idEquipo, estado)
+    VALUES("Lider",_idEquipo,1);
     SET _idRolEquipo = @@last_insert_id;
-    SELECT _idRolEquipo AS idRolEquipo;
+    INSERT INTO UsuarioXEquipo(idUsuario, idEquipo, activo, idRol)
+    VALUES(_idLider,_idEquipo,1, _idRolEquipo);
+    SELECT _idEquipo AS idEquipo;
 END$
