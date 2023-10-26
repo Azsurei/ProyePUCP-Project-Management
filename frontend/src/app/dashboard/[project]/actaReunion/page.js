@@ -56,9 +56,6 @@ export default function ActaReunion(props) {
 
                 const lineasActaReunion  = resultado.data.lineasActaReunion;
 
-                console.log(resultado);
-                console.log(resultado.data);
-                console.log(resultado.data.message);
                 console.log(lineasActaReunion);
                 const pendientes = [];
                 const finalizadas = [];
