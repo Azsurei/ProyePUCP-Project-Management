@@ -10,25 +10,33 @@ import {
     ModalHeader,
     Textarea,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { dbDateToInputDate, inputDateToDisplayDate } from "@/common/dateFunctions";
 
 export default function ModalPosterior({
+    idCronograma,
     isOpen,
     onOpenChange,
-    addTaraPosterior,
+    addTareaPosterior,
+    startDate,
 }) {
     const [nombreTarea, setNombreTarea] = useState("");
     const [validName, setValidName] = useState(true);
 
     const [descripcionTarea, setDescripcionTarea] = useState("");
+    const [validDescripcion, setValidDescripcion] = useState(true);
 
-    const [fechaInicio, setFechaInicio] = useState("");
+    const [fechaInicio, setFechaInicio] = useState(startDate);
     const [fechaFin, setFechaFin] = useState("");
     const [validFechaFin, setValidFechaFin] = useState(true);
 
     const [validFechas, setValidFechas] = useState(true);
 
     const msgEmptyField = "Este campo no puede estar vacio";
+
+    useEffect(() => {
+        setFechaInicio(startDate);
+    }, [startDate]);
 
     return (
         <Modal
@@ -44,31 +52,26 @@ export default function ModalPosterior({
             <ModalContent>
                 {(onClose) => {
                     const finalizarModal = () => {
-                        // const objTarea = {
-                        //     //idCronograma: cronogramaId,
-                        //     idTareaEstado: 1, //No iniciado
-                        //     idSubGrupo:
-                        //         selectedSubteam === null
-                        //             ? null
-                        //             : selectedSubteam.idEquipo,
-                        //     idPadre:
-                        //         tareaPadre !== null ? tareaPadre.idTarea : null,
-                        //     idTareaAnterior: null,
-                        //     sumillaTarea: tareaName,
-                        //     descripcion: tareaDescripcion,
-                        //     fechaInicio: fechaInicio,
-                        //     fechaFin: fechaFin,
-                        //     cantSubtareas: 0,
-                        //     cantPosteriores: 0,
-                        //     horasPlaneadas: null,
-                        //     usuarios:
-                        //         selectedUsers.length === 0
-                        //             ? null
-                        //             : selectedUsers,
-                        //     subTareas: null,
-                        //     tareasPosteriores: null,
-                        //};
-                        addTaraPosterior();
+                        const objTarea = {
+                            index: null,
+                            idCronograma: idCronograma,
+                            idTareaEstado: 1, //No iniciado
+                            idSubGrupo: null,
+                            idPadre: null,
+                            idTareaAnterior: null,
+                            sumillaTarea: nombreTarea,
+                            descripcion: descripcionTarea,
+                            fechaInicio: fechaInicio,
+                            fechaFin: fechaFin,
+                            cantSubtareas: 0,
+                            cantPosteriores: 0,
+                            horasPlaneadas: null,
+                            usuarios: null,
+                            subTareas: null,
+                            tareasPosteriores: null,
+                        };
+                        addTareaPosterior(objTarea);
+                        console.log(startDate + "  " + fechaInicio);
                         onClose();
                     };
                     return (
@@ -100,10 +103,36 @@ export default function ModalPosterior({
                                             }}
                                         />
                                     </div>
+                                    <div className="postNombreContainer">
+                                        <p>Descripcion de tarea</p>
+                                        <Textarea
+                                            aria-label="name-lbl"
+                                            isInvalid={!validDescripcion}
+                                            errorMessage={
+                                                !validDescripcion
+                                                    ? msgEmptyField
+                                                    : ""
+                                            }
+                                            variant={"bordered"}
+                                            labelPlacement="outside"
+                                            label=""
+                                            placeholder="Escriba aquí"
+                                            classNames={{ label: "pb-0" }}
+                                            value={descripcionTarea}
+                                            onValueChange={setDescripcionTarea}
+                                            minRows={2}
+                                            size="sm"
+                                            onChange={() => {
+                                                setValidName(true);
+                                            }}
+                                        />
+                                    </div>
                                     <div className="postDatesContainer">
                                         <div className="postDateStart">
                                             <p>Fecha inicio</p>
                                             <DateInput
+                                                value={fechaInicio}
+                                                isEditable={false}
                                                 className={""}
                                                 isInvalid={
                                                     validFechas === true
@@ -122,6 +151,7 @@ export default function ModalPosterior({
                                         <div className="postDateEnd">
                                             <p>Fecha fin</p>
                                             <DateInput
+                                                isEditable={true}
                                                 className={""}
                                                 isInvalid={
                                                     validFechas === true
@@ -134,13 +164,6 @@ export default function ModalPosterior({
                                                 }}
                                             ></DateInput>
                                         </div>
-                                    </div>
-
-                                    <div>
-                                        <p>
-                                            Usuarios asignados: (Mismos que
-                                            tarea previa)
-                                        </p>
                                     </div>
                                 </div>
                             </ModalBody>
