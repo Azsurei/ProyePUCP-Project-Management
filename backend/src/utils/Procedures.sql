@@ -2724,3 +2724,29 @@ BEGIN
     VALUES(_idLider,_idEquipo,1, _idRolEquipo);
     SELECT _idEquipo AS idEquipo;
 END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_MIEMBROS_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MIEMBROS_EQUIPO(
+    IN _idEquipo INT,
+    IN _idUsuario INT,
+    IN _idRol INT
+)
+BEGIN
+	DECLARE _idUsuarioXEquipo INT;
+	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo,idRol) 
+    VALUES(_idUsuario,_idEquipo,1,_idRol);
+    SET _idUsuarioXEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_EQUIPO_X_IDEQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+	UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE UsuarioXEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE RolesEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+END$

@@ -159,6 +159,7 @@ export default function Ingresos(props) {
                 .then(function (response) {
                     console.log(response);
                     console.log("Linea Ingresada");
+                    DataTable();
                     resolve(response);
                 })
                 .catch(function (error) {
@@ -168,7 +169,7 @@ export default function Ingresos(props) {
             }else{
                 console.log("No se encontró la herramienta");
             }
-            DataTable();
+            
 
         })
         .catch(function (error) {
@@ -184,7 +185,9 @@ export default function Ingresos(props) {
             toast.promise(insertarLineaIngreso, {
                 loading: "Registrando Ingreso...",
                 success: (data) => {
+                    DataTable();
                     return "El ingreso se agregó con éxito!";
+                    
                 },
                 error: "Error al agregar ingreso",
                 position: "bottom-right",
@@ -192,7 +195,7 @@ export default function Ingresos(props) {
             
         } catch (error) {
             throw error; // Lanza el error para que se propague
-        }
+        } 
     };
 
 
@@ -446,6 +449,18 @@ export default function Ingresos(props) {
                                 if(Isvalid === true){
                                     try {
                                         await registrarLineaIngreso();
+                                        setMonto("");
+                                        setdescripcionLinea("");
+                                        setselectedMoneda("");
+                                        setselectedTipo("");
+                                        setselectedTipoTransacciono("");
+                                        setFecha("");
+                                        setValidTipoMoneda(true);
+                                        setValidMonto(true);
+                                        setValidDescription(true);
+                                        setValidTipoIngreso(true);
+                                        setValidTipoTransacc(true);
+                                        setValidFecha(true);
 
                                         
                                     } catch (error) {
@@ -610,7 +625,7 @@ export default function Ingresos(props) {
                                                 <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
                                         <div className="fechaContainer">
 
-                                            <div className="divValidaciones">
+                                            
                                                 <p className="text-tiny text-danger">            
                                                         {
                                                             !validFecha
@@ -618,7 +633,7 @@ export default function Ingresos(props) {
                                                             : ""
                                                         }                      
                                                 </p>        
-                                            </div> 
+                                            
 
                                         </div>
 
@@ -634,6 +649,7 @@ export default function Ingresos(props) {
                                                 setselectedMoneda("");
                                                 setselectedTipo("");
                                                 setselectedTipoTransacciono("");
+                                                setFecha("");
                                                 setValidTipoMoneda(true);
                                                 setValidMonto(true);
                                                 setValidDescription(true);
@@ -649,6 +665,7 @@ export default function Ingresos(props) {
                                         <Button
                                             color="primary"
                                             onPress={cerrarModal}
+                                            
                                         >
                                             Guardar
                                         </Button>
