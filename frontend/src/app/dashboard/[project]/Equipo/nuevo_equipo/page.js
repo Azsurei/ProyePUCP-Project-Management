@@ -159,30 +159,7 @@ export default function crear_equipo(props) {
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
-        // Esto es porque el procedure solo acepta ID
-        /*         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
-            (usuario) => {
-                return { idUsuario: usuario.idUsuario };
-            }
-        ); */
 
-        /*         axios
-            .post(
-                "http://localhost:8080/api/proyecto/equipo/insertarEquipoYParticipantes",
-                {
-                    idProyecto: proyectoId,
-                    nombre: nombreTeam,
-                    idLider: selectedUniqueMemberList[0].idUsuario,
-                    usuarios: selectedMiembrosListWithIDs,
-                }
-            )
-            .then(function (response) {
-                console.log(response);
-                console.log("Conexion correcta");
-            })
-            .catch(function (error) {
-                console.log(error);
-            }); */
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
@@ -234,31 +211,28 @@ export default function crear_equipo(props) {
 
     //ahora se registrara los participantes con su rol
     const checkData2 = () => {
-        // Esto es porque el procedure solo acepta ID
-
+        console.log("Post data participantes: ", {
+            idEquipo: idEquipoInsertado,
+            miembros: userRoleData,
+        });
 
         axios
             .post(
-                "http://localhost:8080/api/proyecto/equipo/insertarParticipantes",
+                "http://localhost:8080/api/proyecto/equipo/insertarMiembros",
                 {
-                    participantes: idEquipoInsertado,
+                    idEquipo: idEquipoInsertado,
+                    miembros: userRoleData,
                 }
             )
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
-                router.push(
-                    `/dashboard/Proyectos/Proyecto?id=${projectId}&name=${projectName}`
-                );
+                router.back();
             })
-            .catch(function (error)
-            {
+            .catch(function (error) {
                 console.log(error);
-            }
-            );
-    }
-
-
+            }); 
+    };
 
     return (
         <div className="crear_equipo">
@@ -390,8 +364,11 @@ export default function crear_equipo(props) {
                                                     property="roles"
                                                     nameDisplay="nombreRol"
                                                     hasColor={false}
-                                                    onSelect={
-                                                        handleSelectedValueChangeRol
+                                                    onSelect={(value) =>
+                                                        handleSelectedValueChangeRol(
+                                                            value,
+                                                            component.idUsuario
+                                                        )
                                                     }
                                                     idParam="idRolEquipo"
                                                     reloadData={reloadData}

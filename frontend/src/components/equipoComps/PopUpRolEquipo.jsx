@@ -199,7 +199,7 @@ export default function PopUpRolEquipo({ modal, toggle,idEquipo}) {
                         {addEpic ? (
                             <input
                             type="text" 
-                            autofocus 
+                            autoFocus 
                             className="inputEpica"
                             placeholder="Escribe el nuevo rol"
                             value={newEpicName}
