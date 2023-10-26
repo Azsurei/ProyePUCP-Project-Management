@@ -15,8 +15,10 @@ import { Input } from "@nextui-org/react";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
-
+import ModalUsersOne from "@/components/ModalUsersOne";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 axios.defaults.withCredentials = true;
 
@@ -61,6 +63,7 @@ export default function crear_equipo(props) {
 
     const [teamName, setTeamName] = useState("");
     const [teamLeader, setTeamLeader] = useState("");
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
 
     const [isTeamNameFilled, setIsTeamNameFilled] = useState(false);
     const handleChangeTeamName = (e) => {
@@ -73,6 +76,9 @@ export default function crear_equipo(props) {
     const [modal2, setModal2] = useState(false);
 
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]);
+    const [selectedUniqueMemberList, setSelectedUniqueMemberList] = useState(
+        []
+    );
 
     const toggleModal1 = () => {
         setModal1(!modal1);
@@ -80,6 +86,18 @@ export default function crear_equipo(props) {
 
     const toggleModal2 = () => {
         setModal2(!modal2);
+    };
+
+    const returnUniqueListOfMiembros = (newMiembrosList) => {
+        console.log("En return:", newMiembrosList[0]);
+
+        // Verificar si newMiembrosList es un arreglo con contenido
+        if (Array.isArray(newMiembrosList) && newMiembrosList.length > 0) {
+            // Establecer el arreglo como un arreglo que contiene solo el nuevo objeto
+            setSelectedUniqueMemberList([newMiembrosList[0]]);
+        }
+
+        setModal1(false);
     };
 
     const returnListOfMiembros = (newMiembrosList) => {
@@ -95,6 +113,14 @@ export default function crear_equipo(props) {
         );
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
+    };
+
+    const removeMiembroUnique = (user) => {
+        const newList = selectedUniqueMemberList.filter(
+            (item) => item.idUsuario !== user.idUsuario
+        );
+        setSelectedUniqueMemberList(newList);
+        console.log(newList);
     };
 
     const [datosUsuario, setDatosUsuario] = useState({
@@ -128,26 +154,22 @@ export default function crear_equipo(props) {
             });
     }, []);
 
-    const checkData = () => {
-        console.log("Nombre del equipo = " + teamName);
-        console.log("Líder del equipo = " + teamLeader);
+    function verifyFieldsEmpty() {
+        return (
+            teamName === "" ||
+            selectedMiembrosList.length === 0 ||
+            selectedUniqueMemberList.length === 0
+        );
+    }
 
+    const checkData = () => {
         const nombreTeam = teamName;
-        const encargado = teamLeader;
         const proyectoId = projectId;
-        const nombreProyecto = projectName;
         // Esto es porque el procedure solo acepta ID
         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
             (usuario) => {
                 return { idUsuario: usuario.idUsuario };
             }
-        );
-        console.log("ProjectoId: ", proyectoId);
-        console.log("NombreTeam: ", nombreTeam);
-        console.log("LiderTeam: ", encargado);
-        console.log(
-            "IDs de Usuarios seleccionados:",
-            selectedMiembrosListWithIDs
         );
 
         axios
@@ -156,15 +178,13 @@ export default function crear_equipo(props) {
                 {
                     idProyecto: proyectoId,
                     nombre: nombreTeam,
-                    descripcion: encargado,
+                    idLider: selectedUniqueMemberList[0].idUsuario,
                     usuarios: selectedMiembrosListWithIDs,
                 }
             )
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
-                //const backRoute = "/dashboard/"+{nombreProyecto}+"="+{proyectoId}+"/Equipo";
-                router.back();
             })
             .catch(function (error) {
                 console.log(error);
@@ -198,9 +218,36 @@ export default function crear_equipo(props) {
                 />
             </div>
             <div style={{ marginBottom: "20px" }}></div>
-            <div className="liderEquipo">
+            <div className="participantes">
                 <h3>Líder del Equipo</h3>
-                <p>{teamLeader} (tú) </p>
+                <div className="SelectedUsersContainer">
+                    <div
+                        className="containerToPopUpUsrSearch"
+                        style={{ width: "100%", padding: "0.2rem 0" }}
+                        onClick={toggleModal1}
+                    >
+                        <p>Buscar nuevo líder</p>
+                        <img
+                            src="/icons/icon-searchBar.svg"
+                            alt=""
+                            className="icnSearch"
+                            style={{ width: "20px" }}
+                        />
+                    </div>
+
+                    {selectedUniqueMemberList.map((component) => {
+                        return (
+                            <CardSelectedUser
+                                key={component.idUsuario}
+                                name={component.nombres}
+                                lastName={component.apellidos}
+                                usuarioObject={component}
+                                email={component.correoElectronico}
+                                removeHandler={removeMiembroUnique}
+                            ></CardSelectedUser>
+                        );
+                    })}
+                </div>
             </div>
             <div className="participantes">
                 <h3>Participantes:</h3>
@@ -239,17 +286,65 @@ export default function crear_equipo(props) {
                 </div>
             </div>
             <div style={{ marginBottom: "20px" }}></div>
-            <div className="bottom">
-                <button className="addTeamBtn" onClick={checkData}>
-                    Crear Equipo
-                </button>
+            <div>
+                {fieldsEmpty && (
+                    <IconLabel
+                        icon="/icons/alert.svg"
+                        label="Faltan completar campos"
+                        className="iconLabel3"
+                    />
+                )}
+                <div className="twoButtonsCE">
+                    <div className="buttonContainerCE">
+                        <Modal
+                            nameButton="Descartar"
+                            textHeader="Descartar Registro"
+                            textBody="¿Seguro que quiere descartar el registro del equipo?"
+                            colorButton="w-36 bg-slate-100 text-black"
+                            oneButton={false}
+                            secondAction={() => router.back()}
+                            textColor="red"
+                        />
+                        <Modal
+                            nameButton="Aceptar"
+                            textHeader="Registrar Equipo"
+                            textBody="¿Seguro que quiere registrar el nuevo equipo?"
+                            colorButton="w-36 bg-blue-950 text-white"
+                            oneButton={false}
+                            secondAction={() => {
+                                checkData();
+                                router.back();
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if (verifyFieldsEmpty()) {
+                                    setFieldsEmpty(true);
+                                    return false;
+                                } else {
+                                    setFieldsEmpty(false);
+                                    return true;
+                                }
+                            }}
+                        />
+                    </div>
+                </div>
             </div>
-
+            {modal1 && (
+                <ModalUsersOne
+                    listAllUsers={false}
+                    handlerModalClose={toggleModal1}
+                    handlerModalFinished={returnUniqueListOfMiembros}
+                    excludedUsers={selectedUniqueMemberList}
+                    idProyecto={projectId}
+                ></ModalUsersOne>
+            )}
             {modal2 && (
                 <ModalUser
+                    listAllUsers={false}
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
                     excludedUsers={selectedMiembrosList}
+                    idProyecto={projectId}
                 ></ModalUser>
             )}
 

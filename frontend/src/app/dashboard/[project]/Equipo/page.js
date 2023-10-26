@@ -39,6 +39,8 @@ export default function Equipo(props) {
     const [cantNotStarted, setCantNotStarted] = useState(0);
     const [cantFinished, setCantFinished] = useState(0);
 
+    const [removeLider, setRemoveLider] = useState(false);
+
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(
             (item) => item.idUsuario !== user.idUsuario
@@ -266,7 +268,9 @@ export default function Equipo(props) {
                     <div className="containerMembers">
                         <div className="flex items-center justify-between">
                             <div className="headerGroup">
-                                {`Miembros (${selectedTeam.participantes.length})`}
+                                {`Miembros (${
+                                    selectedTeam.participantes.length + 1
+                                })`}
                             </div>
                             <div className="flex gap-4 items-center mb-4">
                                 {updateState ? (
@@ -335,6 +339,49 @@ export default function Equipo(props) {
                                     <div className="col-span-4 font-bold border-b-2 border-gray-300">
                                         Rol
                                     </div>
+                                </>
+                            )}
+
+                            {/*Para el líder del equipo*/}
+                            {!removeLider && (
+                                <>
+                                    <div className="col-span-6 flex mt-4">
+                                        <p className="membersIcon1">
+                                            {selectedTeam.nombreLider[0] +
+                                                selectedTeam.apellidoLider[0]}
+                                        </p>
+                                        <div>
+                                            <div className="text-lg">
+                                                {selectedTeam.nombreLider}{" "}
+                                                {selectedTeam.apellidoLider}
+                                            </div>
+                                            <div>
+                                                {selectedTeam.correoLider}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {updateState ? (
+                                        <>
+                                            <div className="col-span-3 flex mt-4">
+                                                Líder
+                                            </div>
+                                            <div className="col-span-1 flex mt-4 justify-center">
+                                                <img
+                                                    src="/icons/icon-trash.svg"
+                                                    alt="delete"
+                                                    className="mb-4 cursor-pointer "
+                                                    onClick={() => {
+                                                        /* removeUser(member); */
+                                                        setRemoveLider(true);
+                                                    }}
+                                                />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="col-span-4 flex mt-4">
+                                            Líder
+                                        </div>
+                                    )}
                                 </>
                             )}
 
