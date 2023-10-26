@@ -3,6 +3,7 @@ export default function DateInput({
     isInvalid,
     value,
     onChangeHandler,
+    isEditable
 }) {
     // #inputBoxGeneric{
     //     width: 100%;
@@ -19,11 +20,22 @@ export default function DateInput({
     const inputStyle = {
         width: "100%",
         overflowY: "auto",
-        borderColor: isInvalid ? "red" : "rgb(211, 211, 211)",
+        borderColor: isInvalid ? "red" : "rgb(228, 228, 231)",
         borderWidth: "2px",
         borderRadius: "8px",
         padding: ".2rem .4rem",
         resize: "none",
+    };
+
+    const viewOnly = {
+        width: "100%",
+        overflowY: "auto",
+        borderWidth: "2px",
+        borderRadius: "8px",
+        padding: ".2rem .4rem",
+        resize: "none",
+        backgroundColor: 'rgb(244, 244, 245)',
+        borderColor: 'rgb(244, 244, 245)'
     };
 
     return (
@@ -31,9 +43,10 @@ export default function DateInput({
             className={className}
             type="date"
             id="inputBoxGeneric"
-            style={inputStyle}
+            style={isEditable===true ? inputStyle : viewOnly}
+            readOnly={isEditable===true ? false : true}
             name="datepicker"
-            defaultValue={value}
+            value={value}
             onChange={onChangeHandler}
         ></input>
     );
