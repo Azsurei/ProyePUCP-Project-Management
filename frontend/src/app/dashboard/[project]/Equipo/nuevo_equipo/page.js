@@ -20,10 +20,9 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
-import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo"
+import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 
 axios.defaults.withCredentials = true;
-
 
 export default function crear_equipo(props) {
     const router = useRouter();
@@ -63,7 +62,7 @@ export default function crear_equipo(props) {
     const handleReloadData = () => {
         setReloadData(true);
     };
-    
+
     const handleSelectedValueChangeRol = (value) => {
         setSelectedValueRol(value);
     };
@@ -172,14 +171,13 @@ export default function crear_equipo(props) {
         setIsLoadingSmall(false);
     }, [modal]);
 
-
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
         // Esto es porque el procedure solo acepta ID
         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
             (usuario) => {
-                return { idUsuario: usuario.idUsuario};
+                return { idUsuario: usuario.idUsuario };
             }
         );
 
@@ -260,10 +258,7 @@ export default function crear_equipo(props) {
                         );
                     })}
                 </div>
-                <ComboBoxArray
-                    people={roles}
-                    onSelect={setRol}
-                />
+                <ComboBoxArray people={roles} onSelect={setRol} />
                 {console.log("Rol: ", rol)}
                 <button
                     className="w-20 h-20"
@@ -299,15 +294,31 @@ export default function crear_equipo(props) {
                     >
                         {selectedMiembrosList.map((component) => {
                             return (
-                                <CardSelectedUser
-                                    key={component.idUsuario}
-                                    name={component.nombres}
-                                    lastName={component.apellidos}
-                                    usuarioObject={component}
-                                    email={component.correoElectronico}
-                                    removeHandler={removeMiembro}
-                                    isEditable={true}
-                                ></CardSelectedUser>
+                                <div className="flex gap-2">
+                                    <CardSelectedUser
+                                        key={component.idUsuario}
+                                        name={component.nombres}
+                                        lastName={component.apellidos}
+                                        usuarioObject={component}
+                                        email={component.correoElectronico}
+                                        removeHandler={removeMiembro}
+                                        isEditable={true}
+                                    ></CardSelectedUser>
+                                    <ComboBoxArray
+                                        people={roles}
+                                        onSelect={setRol}
+                                    />
+                                    <button
+                                        className="w-20 h-20"
+                                        type="button"
+                                        onClick={() => toggleModal()}
+                                    >
+                                        <img
+                                            src="/icons/btnEditImagen.svg"
+                                            alt="Descripción de la imagen"
+                                        />
+                                    </button>
+                                </div>
                             );
                         })}
                     </ul>
@@ -358,12 +369,12 @@ export default function crear_equipo(props) {
                 </div>
             </div>
             {modal && (
-                    <PopUpRolEquipo
-                        modal={modal}
-                        toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                        handleAddRoles={handleAddRoles}
-                    />
-                )}
+                <PopUpRolEquipo
+                    modal={modal}
+                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                    handleAddRoles={handleAddRoles}
+                />
+            )}
             {modal1 && (
                 <ModalUsersOne
                     listAllUsers={false}

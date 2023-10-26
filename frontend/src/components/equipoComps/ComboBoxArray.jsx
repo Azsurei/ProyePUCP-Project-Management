@@ -26,9 +26,9 @@ export default function ComboBoxArray({ people, onSelect }) {
                 }}
             >
                 <div className="relative mt-1">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                    <div className="relative w-80 cursor-default overflow-hidden rounded-lg bg-white text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                         <Combobox.Input
-                            className={`w-full border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
+                            className={`w-80 border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
                             onChange={(event) => setQuery(event.target.value)}
                         />
                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
