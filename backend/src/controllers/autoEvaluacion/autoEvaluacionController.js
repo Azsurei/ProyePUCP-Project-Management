@@ -41,10 +41,17 @@ async function listarAutoEvaluacion(req,res,next){
                 const criterios = await connection.query(query1,[usuarioEvaluado.idUsuarioEvaluacion]);
                 usuarioEvaluado.criterios = criterios[0][0];
         }
-        res.status(200).json({
-            evaluados,
-            message: "Autoevaluacion listada"
-        });
+        if(evaluados.length === 0){
+            res.status(200).json({
+                message: "Autoevaluacion no creada"
+            });
+        }
+        else{
+            res.status(200).json({
+                evaluados,
+                message: "Autoevaluacion listada"
+            });
+        }
         console.log('Se listó la autoevalaucion correctamente');
     } catch (error) {
         console.log(error);
