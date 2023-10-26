@@ -146,10 +146,10 @@ async function eliminarRol(req,res,next){
 
 async function insertarEquipo(req,res,next){
     const{idProyecto, nombre, idLider} = req.body;
-    const query = `CALL INSERTAR_NUEVO_EQUIPO(?,?);`;
+    const query = `CALL INSERTAR_NUEVO_EQUIPO(?,?,?);`;
     try {
         const [results] = await connection.query(query, [idProyecto,nombre,idLider]);
-        const idEquipo = results[0].idEquipo;
+        const idEquipo = results[0][0].idEquipo;
         console.log(`Se insertó el equipo ${idEquipo}!`);
         res.status(200).json({
             idEquipo,

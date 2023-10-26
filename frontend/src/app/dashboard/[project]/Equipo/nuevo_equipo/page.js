@@ -61,6 +61,8 @@ export default function crear_equipo(props) {
 
     const [addParticipantesState, setAddParticipantesState] = useState(false);
 
+    const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
+
     const handleReloadData = () => {
         setReloadData(true);
     };
@@ -132,6 +134,10 @@ export default function crear_equipo(props) {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        setIsLoading(false);
+    }, []);
+
     function verifyFieldsEmpty() {
         return teamName === "" || selectedUniqueMemberList.length === 0;
     }
@@ -151,13 +157,13 @@ export default function crear_equipo(props) {
         const nombreTeam = teamName;
         const proyectoId = projectId;
         // Esto es porque el procedure solo acepta ID
-/*         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
+        /*         const selectedMiembrosListWithIDs = selectedMiembrosList.map(
             (usuario) => {
                 return { idUsuario: usuario.idUsuario };
             }
         ); */
 
-        axios
+        /*         axios
             .post(
                 "http://localhost:8080/api/proyecto/equipo/insertarEquipoYParticipantes",
                 {
@@ -169,6 +175,33 @@ export default function crear_equipo(props) {
             )
             .then(function (response) {
                 console.log(response);
+                console.log("Conexion correcta");
+            })
+            .catch(function (error) {
+                console.log(error);
+            }); */
+        console.log("Post data: ", {
+            idProyecto: parseInt(proyectoId),
+            nombre: nombreTeam,
+            idLider: selectedUniqueMemberList[0].idUsuario,
+        });
+        axios
+            .post(
+                "http://localhost:8080/api/proyecto/equipo/insertarEquipo",
+                {
+                    idProyecto: parseInt(proyectoId),
+                    nombre: nombreTeam,
+                    idLider: selectedUniqueMemberList[0].idUsuario,
+                }
+            )
+            .then(function (response) {
+                setIdEquipoInsertado(response.data.idEquipo);
+                setAddParticipantesState(true);
+                console.log(
+                    "El id del equipo creado es:",
+                    response.data.idEquipo
+                );
+                console.log(response.data.message);
                 console.log("Conexion correcta");
             })
             .catch(function (error) {
@@ -229,9 +262,9 @@ export default function crear_equipo(props) {
                                 />
                             </div>
 
-                            {selectedUniqueMemberList.map((component) => {
+                            {selectedUniqueMemberList.map((component, index) => {
                                 return (
-                                    <div className="flex gap-2 items-center">
+                                    <div key={index} className="flex gap-2 items-center">
                                         <CardSelectedUser
                                             key={component.idUsuario}
                                             name={component.nombres}
@@ -270,9 +303,9 @@ export default function crear_equipo(props) {
                                 className="listUsersContainer"
                                 style={{ width: "100%", padding: "0.2rem 0" }}
                             >
-                                {selectedMiembrosList.map((component) => {
+                                {selectedMiembrosList.map((component, index) => {
                                     return (
-                                        <div className="flex gap-2 items-center">
+                                        <div key={index} className="flex gap-2 items-center">
                                             <CardSelectedUser
                                                 key={component.idUsuario}
                                                 name={component.nombres}
@@ -333,9 +366,7 @@ export default function crear_equipo(props) {
                             colorButton="w-36 bg-blue-950 text-white"
                             oneButton={false}
                             secondAction={() => {
-                                //checkData();
-                                //router.back();
-                                setAddParticipantesState(true);
+                                checkData();
                             }}
                             textColor="blue"
                             verifyFunction={() => {
