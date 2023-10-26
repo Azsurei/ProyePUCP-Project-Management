@@ -299,6 +299,8 @@ export default function Ingresos(props) {
 
         return filteredTemplates;
     }, [lineasIngreso, filterValue]);
+
+    
     return (
 
         
@@ -402,8 +404,19 @@ export default function Ingresos(props) {
                             <ModalBody>
 
                             <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
-                                Elige la fecha que deseas consultar.
+                                Elige la fecha que deseas consultar
                             </p>
+
+                            <div style={{ display: 'flex', alignItems: 'center' ,justifyContent: 'space-between' , gap:'2rem'}}>
+                                    <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
+                                        Fecha Inicio
+                                    </p>
+
+                                    <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
+                                        Fecha
+                                    </p>
+                            </div>
+
 
                                 <div style={{ display: 'flex', alignItems: 'center' ,justifyContent: 'space-between' , gap:'2rem'}}>
 
