@@ -26,20 +26,31 @@ async function crearLineaEgreso(req,res,next){
 }
 
 // Definir una función para obtener líneas de egreso
-async function listarLineasXIdProyecto(req,res,next) {
-    const { idProyecto } = req.params;
+async function funcListarLineasXIdProyecto(idProyecto) {
+    let lineasEgreso = [];
     try {
         const query = `CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(?);`;
         const [results] = await connection.query(query, [idProyecto]);
-        const lineas = results[0];
-        res.status(200).json({lineas, message: "Lineas de egreso listado"});
+        lineasEgreso = results[0];
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+    return lineasEgreso;
+}
+
+async function listarLineasXIdProyecto(req,res,next) {
+    const { idProyecto } = req.params;
+    try {
+        const lineasEgreso = funcListarLineasXIdProyecto(idProyecto);
+        res.status(200).json({lineasEgreso, message: "Lineas de egreso listado"});
     } catch (error) {
         console.log(error);
         next(error);
     }
 }
 
-// Definir una función para obtener líneas de egreso
+// Definir una función para modificar líneas de egreso
 async function modificarLineaEgreso(req,res,next) {
     const {idLineaEgreso,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad} = req.params;
     try {
@@ -93,5 +104,6 @@ module.exports = {
     modificarLineaEgreso,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
-    eliminarLineaEgreso
+    eliminarLineaEgreso,
+    funcListarLineasXIdProyecto
 };

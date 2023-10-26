@@ -12,10 +12,10 @@ async function crear(req,res,next){
 }
 
 async function crearLineaEstimacionCosto(req,res,next){
-    const {idMoneda,idEstimacion,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
+    const {idMoneda,idPresupuesto,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
     try {
         const query = `CALL INSERTAR_LINEA_ESTIMACION_COSTO(?,?,?,?,?,?,?,?);`;
-        const [results] = await connection.query(query,[idMoneda,idEstimacion,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
+        const [results] = await connection.query(query,[idMoneda,idPresupuesto,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
         idLineaEstimacionCosto=results[0][0].idLineaEstimacionCosto;
         res.status(200).json({
             idLineaEstimacionCosto,
@@ -77,13 +77,25 @@ async function listarLineasXNombreFechas(req,res,next){
 // }
 
 // Corregido
-async function listarLineasXIdProyecto(req,res,next) {
-    const { idProyecto } = req.params;
+
+async function funcListarLineasXIdProyecto(idProyecto) {
+    let lineasEstimacionCosto = [];
     try {
         const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(?);`;
         const [results] = await connection.query(query, [idProyecto]);
-        const lineas = results[0];
-        res.status(200).json({lineas, message: "Estimacion costo listado"});
+        lineasEstimacionCosto = results[0];
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+    return lineasEstimacionCosto;
+}
+
+async function listarLineasXIdProyecto(req,res,next) {
+    const { idProyecto } = req.params;
+    try {
+        const lineasEstimacionCosto = funcListarLineasXIdProyecto(idProyecto);
+        res.status(200).json({lineasEstimacionCosto, message: "Estimacion costo listado"});
     } catch (error) {
         console.log(error);
         next(error);
@@ -107,5 +119,6 @@ module.exports = {
     modificarLineaEstimacionCosto,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
-    eliminarLineaEstimacionCosto
+    eliminarLineaEstimacionCosto,
+    funcListarLineasXIdProyecto
 };

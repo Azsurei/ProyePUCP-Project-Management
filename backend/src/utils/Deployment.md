@@ -9,17 +9,19 @@
 ## Instalación de Dependencias en la Instancia
 
 2. **Descarga npm y node**.
-
+https://github.com/nodesource/distributions
 3. **Descarga las herramientas adicionales**:
-   - pm2
+   - pm2: npm install pm2 -g
    - git
-   - nginx
+   - certbot: https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal **Es importante configurar el certbot antes del nginx**
+   - nginx: sudo apt install nginx y darle start y enable
+
 
 ## Configuración de Nginx
 
 4. **Crea un archivo de configuración para tu front-end**:
    ```bash
-   sudo nano /etc/nginx/sites-available/frontend-PROYEPUCP
+      sudo nano /etc/nginx/sites-available/frontend-PROYEPUCP
    ```
 5. Añade la siguiente configuración:
    ``` javascript
@@ -42,9 +44,11 @@
    ``` bash
    sudo ln -s /etc/nginx/sites-available/frontend-PROYEPUCP /etc/nginx/sites-enabled/
     ```
+    Borrar todos los default de los sites-* pues estos no permiten el correcto funcionamiento del nginx
+    
 7. Reinicia nginx:
    ``` bash
-   sudo ln -s /etc/nginx/sites-available/frontend-PROYEPUCP /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
     ```
 ## Configuracion de SSH 
 8. Configura SSH en la instancia para poder hacer un git pull al proyecto privado.

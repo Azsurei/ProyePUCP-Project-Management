@@ -2,106 +2,34 @@
 import { Fragment, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
-import axios from "axios";
-import { useEffect, useContext } from "react";
 
-export default function Example({
-    urlApi,
-    property,
-    nameDisplay,
-    hasColor,
-    colorProperty,
-    onSelect,
-    idParam,
-    initialName,
-    reloadData,
-    inputWidth = 64,
-    onSelectValor,
-    valorParam,
-    widthCombo,
-}) {
-    const [selected, setSelected] = useState("");
+export default function ComboBoxArray({ people, onSelect }) {
+    const [selectedPerson, setSelectedPerson] = useState("");
     const [query, setQuery] = useState("");
-    const [data, setData] = useState([]);
-    const [dataWithId, setDataWithId] = useState([]);
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(urlApi);
-                const dataWithId = response.data[property].map(
-                    (item, index) => ({
-                        ...item,
-                        id: index + 1, // Puedes ajustar esta lógica según tus necesidades
-                    })
-                );
-                setDataWithId(dataWithId);
-                setData(response.data[property]);
-                setIsLoadingSmall(false);
-            } catch (error) {
-                console.error("Error al obtener datos:", error);
-            }
-        };
 
-        fetchData();
-        if (reloadData) {
-            fetchData();
-        }
-    }, [reloadData]);
-
-    // const initiaValue = data.find((element) => element[idParam] === initialID);
-    // console.log(initiaValue? initiaValue[nameDisplay] : "No hay datos");
-    // const [inputBase, setInputBase] = useState(initiaValue ? initiaValue[nameDisplay] : "");
-    // console.log(inputBase);
-    // console.log("fin");
-
-    const filteredData =
+    const filteredPeople =
         query === ""
-            ? data
-            : data.filter((object) =>
-                  object[nameDisplay]
-                      .toLowerCase()
-                      .replace(/\s+/g, "")
-                      .includes(query.toLowerCase().replace(/\s+/g, ""))
-              );
-    setTimeout(() => {
-        // Cambia el estado o realiza alguna operación aquí si es necesario
-    }, 10000);
+            ? people
+            : people.filter((person) => {
+                  return person.toLowerCase().includes(query.toLowerCase());
+              });
+
     return (
         <div>
             <Combobox
-                value={selected}
+                value={selectedPerson}
                 onChange={(selectedItem) => {
-                    setSelected(selectedItem);
+                    setSelectedPerson(selectedItem);
                     if (typeof onSelect === "function") {
-                        onSelect(selectedItem[idParam]);
-                    }
-                    if (typeof onSelectValor === "function") {
-                        onSelectValor(selectedItem[valorParam]);
+                        onSelect(selectedItem);
                     }
                 }}
             >
                 <div className="relative mt-1">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                    <div className="relative w-80 cursor-default overflow-hidden rounded-lg bg-white text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                         <Combobox.Input
-                            className={`w-${inputWidth} border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
-                            style={{
-                                ...(widthCombo
-                                    ? { width: `${widthCombo}rem` }
-                                    : {}),
-                                ...(hasColor
-                                    ? {
-                                          backgroundColor:
-                                              selected[colorProperty],
-                                      }
-                                    : {}),
-                            }}
-                            displayValue={(object) => object[nameDisplay]} //lo que se muestra en el input
-                            onChange={(event) => {
-                                setQuery(event.target.value);
-                            }}
-                            {...(selected === "" ? { value: initialName } : {})}
+                            className={`w-80 border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
+                            onChange={(event) => setQuery(event.target.value)}
                         />
                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronUpDownIcon
@@ -121,12 +49,12 @@ export default function Example({
                         afterLeave={() => setQuery("")}
                     >
                         <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-30">
-                            {filteredData?.length === 0 && query !== "" ? (
+                            {filteredPeople?.length === 0 && query !== "" ? (
                                 <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                     Nada encontrado.
                                 </div>
                             ) : (
-                                filteredData?.map((object, index) => (
+                                filteredPeople?.map((person, index) => (
                                     <Combobox.Option
                                         key={index}
                                         className={({ active }) =>
@@ -136,21 +64,21 @@ export default function Example({
                                                     : "text-gray-900"
                                             }`
                                         }
-                                        value={object}
+                                        value={person}
                                     >
-                                        {({ selected, active }) => (
+                                        {({ selectedPerson, active }) => (
                                             <>
                                                 <span
                                                     className={`block truncate ${
-                                                        selected
+                                                        selectedPerson
                                                             ? "font-medium"
                                                             : "font-normal"
                                                     }`}
                                                 >
-                                                    {object[nameDisplay]}{" "}
+                                                    {person}{" "}
                                                     {/* //lo que se muestra en la lista */}
                                                 </span>
-                                                {selected ? (
+                                                {selectedPerson ? (
                                                     <span
                                                         className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                                                             active

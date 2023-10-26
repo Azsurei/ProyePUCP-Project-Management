@@ -3,10 +3,7 @@ const connection = require("../../config/db");
 async function insertarEquipoYParticipantes(req, res, next) {
     //Insertar query aca
     const {idProyecto,nombre,idLider,usuarios} = req.body;
-    console.log("Llegue a recibir solicitud insertar componente edt");
-    const query = `
-        CALL INSERTAR_EQUIPO(?,?,?);
-    `;
+    const query = `CALL INSERTAR_EQUIPO(?,?,?);`;
     try {
         const [results] = await connection.query(query,[idProyecto, nombre, idLider]);
         const idEquipo = results[0][0].idEquipo;
@@ -101,9 +98,107 @@ async function listarTareasDeXIdEquipo(req, res, next) {
     }
 }
 
+async function insertarRol(req,res,next){
+    const{idEquipo, nombreRol} = req.body;
+    const query = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
+    try {
+        const [results] = await connection.query(query, [idEquipo,nombreRol]);
+        const idRolEquipo = results[0].idRolEquipo;
+        console.log(`Se insertó el rol ${idRolEquipo}!`);
+        res.status(200).json({
+            idRolEquipo,
+            message: "Rol insertada exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarRol(req,res,next){
+    const{idEquipo} = req.params;
+    const query = `CALL LISTAR_ROL_EQUIPO(?);`;
+    try {
+        const [results] = await connection.query(query, [idEquipo]);
+        const roles = results[0];
+        console.log(`Se listaron los roles ${roles}!`);
+        res.status(200).json({
+            roles,
+            message: "Roles listados exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarRol(req,res,next){
+    const{idRolEquipo} = req.body;
+    const query = `CALL ELIMINAR_ROL_EQUIPO(?);`;
+    try {
+        await connection.query(query, [idRolEquipo]);
+        console.log(`Se elimino el rol ${idRolEquipo}!`);
+        res.status(200).json({
+            message: "Rol eliminado exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function insertarEquipo(req,res,next){
+    const{idProyecto, nombre, idLider} = req.body;
+    const query = `CALL INSERTAR_NUEVO_EQUIPO(?,?,?);`;
+    try {
+        const [results] = await connection.query(query, [idProyecto,nombre,idLider]);
+        const idEquipo = results[0][0].idEquipo;
+        console.log(`Se insertó el equipo ${idEquipo}!`);
+        res.status(200).json({
+            idEquipo,
+            message: "Equipo insertada exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function insertarMiembros(req,res,next){
+    const{idEquipo,miembros} = req.body;
+    const query = `CALL INSERTAR_MIEMBROS_EQUIPO(?,?,?);`;
+    try {
+        for(const miembro of miembros){
+            const [results] = await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRolEquipo]);
+            const idUsuarioXEquipo = results[0][0].idUsuarioXEquipo;
+            console.log(`Se insertó el miembro ${idUsuarioXEquipo}!`);
+        }
+        res.status(200).json({
+            message: "Miembros insertados exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function eliminarEquipo(req,res,next){
+    const{idEquipo} = req.body;
+    const query = `CALL ELIMINAR_EQUIPO_X_IDEQUIPO(?);`;
+    try {
+        await connection.query(query, [idEquipo]);
+        console.log(`Se elimino el equipo ${idEquipo}!`);
+        res.status(200).json({
+            message: "Equipo eliminado exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
     listarEquiposYParticipantes,
-    listarTareasDeXIdEquipo
+    listarTareasDeXIdEquipo,
+    insertarRol,
+    listarRol,
+    eliminarRol,
+    insertarEquipo,
+    insertarMiembros,
+    eliminarEquipo
 };

@@ -30,6 +30,12 @@ import {
     Pagination,
   } from "@nextui-org/react";
 
+import {
+    dbDateToDisplayDate,
+    dbDateToInputDate,
+    inputDateToDisplayDate,
+} from "@/common/dateFunctions";
+
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import TuneIcon from '@mui/icons-material/Tune';
 
@@ -52,8 +58,48 @@ export default function Ingresos(props) {
     //const router=userRouter();
 
     const onSearchChange = (value) => {
-        setFilterValue(value);
+        if(value) {
+            setFilterValue(value);
+        } else {
+            setFilterValue("");
+        }
+        
     };
+
+    // Modal Fecha
+
+    const {
+        isOpen: isModalFechaOpen,
+        onOpen: onModalFecha,
+        onOpenChange: onModalFechachange,
+    } = useDisclosure();
+
+    
+    const { 
+        isOpen: isModalCrearOpen, 
+        onOpen: onModalCrear, 
+        onOpenChange: onModalCrearChange 
+    
+    
+    } = useDisclosure();
+
+
+    //Filtrar aqui es distinto
+    const filtraFecha = () => {
+        toast.promise(promiseFiltrarFecha, {
+            loading: "Filtrando Fechas...",
+            success: (data) => {
+                return "Fechas filtradas correctamente.";
+            },
+            error: "Error al filtrar",
+            position: "bottom-right",
+        });
+    };
+
+
+
+
+    //Fin Modal Fecha
 
     const [filterValue, setFilterValue] = React.useState("");
 
@@ -61,24 +107,41 @@ export default function Ingresos(props) {
     useEffect(()=>{setIsLoadingSmall(false)},[])
 
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [modalContentState, setModalContentState] = useState(0);
-    //1 es estado de anadir nuevo hito
-    //2 es estado de editar hito
 
     const [fecha, setFecha] = useState("");
+
+
     const [activeRefresh, setactiveRefresh] = useState(false);
     const handleChangeFecha = (event) => {
         setFecha(event.target.value);
+        setValidFecha(true);
     };
 
 
-    const handleChangeFechaInicio = () => {
+    //Filtro Fecha
+
+    const [fechaInicio, setFechaInicio] = useState("");
+    const [fechaFin, setFechaFin] = useState("");
+
+
+    const handleChangeFechaInicioFilter = (event) => {
+        setFechaInicio(event.target.value);
+    };
+
+    const handleChangeFechaFinFilter = (event) => {
+        setFechaFin(event.target.value);
+    };
+
+
+    // Fin filtro fecha
+
+    /*const handleChangeFechaInicio = () => {
         const datepickerInput = document.getElementById("inputFechaPresupuesto");
         const selectedDate = datepickerInput.value;
         console.log(selectedDate);
         setFecha(selectedDate);
-    }
+    }*/
     
     let idHerramientaCreada;
 
@@ -121,6 +184,7 @@ export default function Ingresos(props) {
                 .then(function (response) {
                     console.log(response);
                     console.log("Linea Ingresada");
+                    DataTable();
                     resolve(response);
                 })
                 .catch(function (error) {
@@ -130,7 +194,7 @@ export default function Ingresos(props) {
             }else{
                 console.log("No se encontró la herramienta");
             }
-            DataTable();
+            
 
         })
         .catch(function (error) {
@@ -142,19 +206,13 @@ export default function Ingresos(props) {
     }
 
     const registrarLineaIngreso = async () => {
-        // toast.promise(insertarLineaIngreso, {
-        //     loading: "Registrando Ingreso...",
-        //     success: (data) => {
-        //         return "El ingreso se agregó con éxito!";
-        //     },
-        //     error: "Error al agregar ingreso",
-        //     position: "bottom-right",
-        // });
         try {
             toast.promise(insertarLineaIngreso, {
                 loading: "Registrando Ingreso...",
                 success: (data) => {
+                    DataTable();
                     return "El ingreso se agregó con éxito!";
+                    
                 },
                 error: "Error al agregar ingreso",
                 position: "bottom-right",
@@ -162,31 +220,48 @@ export default function Ingresos(props) {
             
         } catch (error) {
             throw error; // Lanza el error para que se propague
-        }
+        } 
     };
 
 
+    //Validciones
 
-    
+    const [validMonto, setValidMonto] = useState(true);
+    const [validTipoMoneda, setValidTipoMoneda] = useState(true);
+    const [validDescription, setValidDescription] = useState(true);
+    const [validTipoIngreso, setValidTipoIngreso] = useState(true);
+    const [validTipoTransacc, setValidTipoTransacc] = useState(true);
+    const [validFecha, setValidFecha] = useState(true);
+    const msgEmptyField = "Este campo no puede estar vacio";
+
+    // Fin Validaciones
+
+
     const [selectedMoneda, setselectedMoneda] = useState("");
     const [descripcionLinea, setdescripcionLinea] = useState("");
     
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
+        setValidTipoMoneda(true);
     };
 
     const [selectedTipo, setselectedTipo] = useState("");
     
     const handleSelectedValueTipo = (value) => {
         setselectedTipo(value);
+        setValidTipoIngreso(true);
     };
 
     const [selectedTipoTransaccion, setselectedTipoTransacciono] = useState("");
     
     const handleSelectedValueTipoTransaccion = (value) => {
         setselectedTipoTransacciono(value);
+        setValidTipoTransacc(true)
     };
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+    }, []);
 
     const [monto, setMonto] = useState("");
     
@@ -212,13 +287,30 @@ export default function Ingresos(props) {
     
         DataTable();
       }, [projectId]);
-    
+    const hasSearchFilter = Boolean(filterValue);
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...lineasIngreso]
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((item) =>
+            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+
+        return filteredTemplates;
+    }, [lineasIngreso, filterValue]);
     return (
 
         
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
-            <Toaster richColors closeButton={true}/>
+            <Toaster 
+                richColors 
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+                />
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -262,43 +354,164 @@ export default function Ingresos(props) {
                             placeholder="Buscar Ingreso..."
                             startContent={<SearchIcon />}
                             value={filterValue}
+                            onClear={() => onClear("")}
                             onValueChange={onSearchChange}
                             variant="faded"
                         />
 
                     <div className="buttonContainer">
-                        <Button  color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
                             Filtrar
                         </Button>
 
-                        <Button onPress={onOpen} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar
                         </Button>
                        
                         </div>
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {lineasIngreso} refresh ={DataTable}></IngresosList>
+                        <IngresosList lista = {filteredItems} refresh ={DataTable}></IngresosList>
                     </div>
 
                 
                 </div>
 
-                <Modal hideCloseButton={false} size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} >
+
+                <Modal  size='xl'
+                        isOpen={isModalFechaOpen}
+                        onOpenChange={onModalFechachange}
+                        classNames={
+                            {
+                                //closeButton: "hidden",
+                            }
+                        }
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const finalizarModal = () => {
+                        //filtraFecha();
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader >
+                                Filtra tus ingresos
+                            </ModalHeader>
+
+                            <ModalBody>
+
+                            <p style={{ color: '#494949', fontSize: '16px', fontStyle: 'normal', fontWeight: 400 }}>
+                                Elige la fecha que deseas consultar.
+                            </p>
+
+                                <div style={{ display: 'flex', alignItems: 'center' ,justifyContent: 'space-between' , gap:'2rem'}}>
+
+                                    <DateInput isEditable={true} value={fechaInicio} onChangeHandler={handleChangeFechaInicioFilter}/>
+
+                                    <span style={{ margin: '0 10px' }}>hasta</span>
+
+                                    <DateInput value={fechaFin} isEditable={true} onChangeHandler={handleChangeFechaFinFilter} />
+                                </div>
+
+                                {fechaInicio}
+                            </ModalBody>
+
+
+                            <ModalFooter>
+                                <Button
+                                    className="text-white"
+                                    variant="light"
+                                    onPress={() => {
+                                        onClose(); // Cierra el modal
+                                        setFechaInicio("");
+                                        setFechaFin("");
+                                      }}
+                                    style={{ color: '#EA541D' }}
+                                >
+                                    Limpiar Búsqueda
+                                </Button>
+                                <Button   style={{ backgroundColor: '#EA541D' }}
+                                    className="text-white"
+
+                                    onPress={finalizarModal}
+                                >
+                                    Filtrar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+
+                <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
                 <ModalContent >
                         {(onClose) => {
                             const cerrarModal = async () => {
-                                try {
-                                    await registrarLineaIngreso();
 
-                                    
-                                } catch (error) {
-                                    console.error('Error al registrar la línea de ingreso o al obtener los datos:', error);
+                                let Isvalid = true;
+
+                                if (parseFloat(monto) < 0 || isNaN(parseFloat(monto))) {
+                                    setValidMonto(false);
+                                    Isvalid = false;
+                                    console.log("aqui 1");
                                 }
 
-                                onClose();
+                                if(descripcionLinea===""){
+                                    setValidDescription(false);
+                                    Isvalid = false;
+                                }
+
+                                if(selectedTipoTransaccion===""){
+                                    setValidTipoTransacc(false);
+                                    Isvalid = false;
+                                }
+                                if(selectedTipo===""){
+                                    setValidTipoIngreso(false);
+                                    Isvalid = false;
+                                }
+
+
+                                if(selectedMoneda!==1 && selectedMoneda!==2){
+                                    setValidTipoMoneda(false);
+                                    Isvalid= false;
+                                }
+
+                                if(selectedMoneda===1 || selectedMoneda===2){ 
+                                    setValidTipoMoneda(true);
+                                }
+
+                                if(fecha===""){
+                                    setValidFecha(false);
+                                    Isvalid = false;
+                                }
+
+
+                                if(Isvalid === true){
+                                    try {
+                                        await registrarLineaIngreso();
+                                        setMonto("");
+                                        setdescripcionLinea("");
+                                        setselectedMoneda("");
+                                        setselectedTipo("");
+                                        setselectedTipoTransacciono("");
+                                        setFecha("");
+                                        setValidTipoMoneda(true);
+                                        setValidMonto(true);
+                                        setValidDescription(true);
+                                        setValidTipoIngreso(true);
+                                        setValidTipoTransacc(true);
+                                        setValidFecha(true);
+
+                                        
+                                    } catch (error) {
+                                        console.error('Error al registrar la línea de ingreso o al obtener los datos:', error);
+                                    }
+
+                                    onClose();
                                 
-                                
+                                }
                             };
                             return (
                                 <>
@@ -311,41 +524,56 @@ export default function Ingresos(props) {
                                         
                                         <div className="modalAddIngreso">
                                             <div className="comboBoxMoneda">
-                                            <MyCombobox
-                                                urlApi={stringUrlMonedas}
-                                                property="monedas"
-                                                nameDisplay="nombre"
-                                                hasColor={false}
-                                                onSelect={handleSelectedValueMoneda}
-                                                idParam="idMoneda"
-                                                initialName="Tipo Moneda"
-                                                inputWidth="2/3"
-                                                widthCombo="9"
-                                            />
-
+                                                <MyCombobox
+                                                    urlApi={stringUrlMonedas}
+                                                    property="monedas"
+                                                    nameDisplay="nombre"
+                                                    hasColor={false}
+                                                    onSelect={handleSelectedValueMoneda}
+                                                    idParam="idMoneda"
+                                                    initialName="Tipo Moneda"
+                                                    inputWidth="2/3"
+                                                    widthCombo="9"
+                                                />
+                                                <div className="alertaMonedaIngreso" >
+                                                <p className="text-tiny text-danger">            
+                                                        {
+                                                        !validTipoMoneda
+                                                            ? "Seleccione una Moneda"
+                                                            : ""
+                                                        }                      
+                                                    </p>          
+                                                </div>
                                             </div>
-                                        
-                                            <Input
-                                            value={monto}
-                                            onValueChange={setMonto}
-                                            placeholder="0.00"
-                                            labelPlacement="outside"
-                                            startContent={
-                                                <div className="pointer-events-none flex items-center">
-                                                    <span className="text-default-400 text-small">
-                                                            {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
-                                                    </span>
-                                                </div>
-                                            }
-                                            endContent={
-                                                <div className="flex items-center">
+                                            
+                                                <Input
+                                                    value={monto}
+                                                    onValueChange={setMonto}
+                                                    placeholder="0.00"
+                                                    labelPlacement="outside"
+                                                    isInvalid={!validMonto}
+                                                    onChange={()=>{setValidMonto(true)}}
+                                                    type="number"
+                                                    errorMessage={
+                                                        !validMonto
+                                                            ? "Monto inválido"
+                                                            : ""
+                                                    }
 
-                                                </div>
-                                                }
-                                                type="number"
-                                        />
-                                        
-                                        
+
+                                                    startContent={
+                                                        <div className="pointer-events-none flex items-center">
+                                                            <span className="text-default-400 text-small">
+                                                                    {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                            </span>
+                                                        </div>
+                                                    }
+                                                    endContent={
+                                                        <div className="flex items-center">
+
+                                                        </div>
+                                                        }                                                      
+                                                />                    
                                         </div>
                                         <p className="textIngreso">Descripción</p>
 
@@ -354,17 +582,26 @@ export default function Ingresos(props) {
 
                                         <Textarea
                                             label=""
+                                            isInvalid={!validDescription}
+                                            errorMessage={!validDescription ? msgEmptyField : ""}
+                                            maxLength={35}
+                                            variant={"bordered"}
+                                            
                                             labelPlacement="outside"
-                                            placeholder=""
+                                            placeholder="Escriba aquí..."
                                             className="max-w-x"
                                             maxRows="2"
+                                            value={descripcionLinea}
                                             onValueChange={setdescripcionLinea}
+                                            onChange={() => {
+                                                setValidDescription(true);
+                                            }}
+                                            
                                             />
                                          </div>
 
                                          <p className="textIngreso">Tipo Ingreso</p>
-                                        
-
+                                
 
 
                                          <div className="comboBoxTipo">
@@ -380,8 +617,18 @@ export default function Ingresos(props) {
                                                 inputWidth="64"
                                                 widthCombo="15"
                                             />
+                                            <div className="divValidaciones" >
+                                            <p className="text-tiny text-danger">            
+                                                        {
+                                                        !validTipoTransacc
+                                                            ? "Seleccione un tipo de Transacción"
+                                                            : ""
+                                                        }                      
+                                            </p>        
+                                            </div>
 
                                         </div>
+                                         
                                          
                                         <p className="textIngreso">Tipo Transacción</p>
 
@@ -399,11 +646,33 @@ export default function Ingresos(props) {
                                                 widthCombo="15"
                                             />
 
+                                            <div className="divValidaciones" >
+                                                <p className="text-tiny text-danger">            
+                                                            {
+                                                            !validTipoIngreso
+                                                                ? "Seleccione un tipo de Ingreso"
+                                                                : ""
+                                                            }                      
+                                                </p>        
+                                            </div> 
+
+        
+
                                         </div>
                                         <p className="textPresuLast">Fecha Transacción</p>
                                                 <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
                                         <div className="fechaContainer">
- 
+
+                                            
+                                                <p className="text-tiny text-danger">            
+                                                        {
+                                                            !validFecha
+                                                            ? "Ingrese una fecha válida"
+                                                            : ""
+                                                        }                      
+                                                </p>        
+                                            
+
                                         </div>
 
                                     </ModalBody>
@@ -411,13 +680,30 @@ export default function Ingresos(props) {
                                         <Button
                                             color="danger"
                                             variant="light"
-                                            onPress={onClose}
+                                            onPress={() => {
+                                                onClose(); // Cierra el modal
+                                                setMonto("");
+                                                setdescripcionLinea("");
+                                                setselectedMoneda("");
+                                                setselectedTipo("");
+                                                setselectedTipoTransacciono("");
+                                                setFecha("");
+                                                setValidTipoMoneda(true);
+                                                setValidMonto(true);
+                                                setValidDescription(true);
+
+
+                                                setValidTipoIngreso(true);
+                                                setValidTipoTransacc(true);
+                                                setValidFecha(true);
+                                              }}
                                         >
                                             Cancelar
                                         </Button>
                                         <Button
                                             color="primary"
                                             onPress={cerrarModal}
+                                            
                                         >
                                             Guardar
                                         </Button>

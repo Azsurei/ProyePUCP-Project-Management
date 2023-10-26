@@ -6,8 +6,8 @@ const connection = require("../../config/db");
 //
 
 async function crearAutoEvaluacion(req,res,next){
-    const {idProyecto} = req.body;
-    const query = `CALL LISTAR_USUARIOS_X_IDPROYECTO(?);`;
+    const {idProyecto, criterio1, criterio2, criterio3, criterio4} = req.body;
+    const query = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
     try {
         const results = await connection.query(query,[idProyecto]);
         const usuariosXProyecto = results[0][0];
@@ -16,8 +16,8 @@ async function crearAutoEvaluacion(req,res,next){
                 const query1 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
                 const results1 = await connection.query(query1,[idProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
                 const idUsuarioEvaluacion = results1[0][0][0].idUsuarioEvaluacion;
-                const query2 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?);`;
-                const results2 = await connection.query(query2,[idUsuarioEvaluacion]);
+                const query2 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?,?,?,?,?);`;
+                const results2 = await connection.query(query2,[idUsuarioEvaluacion,criterio1,criterio2,criterio3,criterio4]);
             }
         }
         res.status(200).json({
@@ -41,10 +41,17 @@ async function listarAutoEvaluacion(req,res,next){
                 const criterios = await connection.query(query1,[usuarioEvaluado.idUsuarioEvaluacion]);
                 usuarioEvaluado.criterios = criterios[0][0];
         }
-        res.status(200).json({
-            evaluados,
-            message: "Autoevaluacion listada"
-        });
+        if(evaluados.length === 0){
+            res.status(204).json({
+                message: "Autoevaluacion no creada"
+            });
+        }
+        else{
+            res.status(200).json({
+                evaluados,
+                message: "Autoevaluacion listada"
+            });
+        }
         console.log('Se listó la autoevalaucion correctamente');
     } catch (error) {
         console.log(error);

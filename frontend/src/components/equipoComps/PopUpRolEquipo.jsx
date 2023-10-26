@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/PopUpEpica.css";
 //import ListUsers from "./ListUsers";
-import ListEpic from "@/components/dashboardComps/projectComps/productBacklog/ListEpic";
+import ListRol from "@/components/equipoComps/ListRol";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -29,7 +29,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlEliminate}) {
+export default function PopUpRolEquipo({ modal, toggle,idEquipo}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
@@ -49,13 +49,13 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
 
     const fetchData = async () => {
         try {
-          const response = await axios.get(url);
-          const epicas = response.data["epicas"];
+          const response = await axios.get(`http://localhost:8080/api/proyecto/equipo/listarRol/${idEquipo}`);
+          const roles = response.data["roles"];
           const filteredEpicas = filterValue
-              ? epicas.filter((epica) =>
-                  epica.nombre.toLowerCase().includes(filterValue.toLowerCase())
+              ? roles.filter((epica) =>
+                  epica.nombreRol.toLowerCase().includes(filterValue.toLowerCase())
               )
-              : epicas;
+              : roles;
 
           setListEpics(filteredEpicas); 
           if (filteredEpicas.length === 0) {
@@ -70,7 +70,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
     const handleInsertEpic = () => {
         if (newEpicName.trim() === "") {
             setAddErrorEpic("El nombre de la épica no puede estar vacío.");
-        } else if (listEpics.some((epic) => epic.nombre === newEpicName)) {
+        } else if (listEpics.some((epic) => epic.nombreRol === newEpicName)) {
             setAddErrorEpic("El nombre de la épica ya existe en la lista.");
         } else {
             // Realiza la inserción de la nueva épica aquí, por ejemplo, con una solicitud axios.
@@ -78,16 +78,16 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
             setNewEpicName("");
             setAddErrorEpic("");
             const data = {
-                idProductBacklog: backlogID, // Reemplaza con el valor deseado
-                nombre: newEpicName // Reemplaza con el valor deseado
+                idEquipo: idEquipo, // Reemplaza con el valor deseado
+                nombreRol: newEpicName // Reemplaza con el valor deseado
               };
               
              
-                axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarEpica", data)
+                axios.post("http://localhost:8080/api/proyecto/equipo/insertarRol", data)
                 .then((response) => {
                 // Manejar la respuesta de la solicitud POST
                 console.log("Respuesta del servidor:", response.data);
-                console.log("Registro correcto de la epica")
+                console.log("Registro correcto del rol")
                 // Realizar acciones adicionales si es necesario
                 fetchData();
                 })
@@ -99,14 +99,14 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
         }
     };
 
-    const EliminateEpic = (name) => {
-        console.log(name);
+    const EliminateEpic = (idRolEquipo) => {
+        console.log(idRolEquipo);
         setEliminateError("");
         
         const data = {
-            nombreEpica: name // Ajusta el nombre del campo según la estructura esperada por el servidor
+            idRolEquipo: idRolEquipo // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
-        axios.delete("http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica", { data })
+        axios.delete("http://localhost:8080/api/proyecto/equipo/eliminarRol", { data })
             .then((response) => {
                 // Manejar la respuesta de la solicitud DELETE
                 console.log("Respuesta del servidor:", response.data);
@@ -152,13 +152,13 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                 
                 <div className="containerModal">
                     
-                    <p className="buscarEpic">Lista de Epicas</p>
+                    <p className="buscarEpic">Lista de Roles</p>
                     <div className="subcontainer flex justify-end">
                             <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={AddNewEpic}>
-                                Agregar Epica
+                                Agregar Rol
                             </Button>
                             <Button color="danger"  onClick={() => {
-                                                    isSelected ? handleEliminateError("Seguro desea eliminar la epica?") : setNoEpic("Falta seleccionar una epica");
+                                                    isSelected ? handleEliminateError("Seguro desea eliminar el rol?") : setNoEpic("Falta seleccionar un rol");
                                                     }} endContent={<PlusIcon />} className="btnElimanteEpic" >
                                 Eliminar
                             </Button>
@@ -170,7 +170,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         <Input
                             isClearable
                             className="w-full sm:max-w-[100%]"
-                            placeholder="Ingresa una epica..."
+                            placeholder="Ingresa una rol..."
                             startContent={<SearchIcon />}
                             value={filterValue}
                             onValueChange={onSearchChange}
@@ -183,7 +183,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         <UserCardsContext.Provider
                             value={{ selectEpic, deselectEpic }}
                         >
-                            <ListEpic lista={listEpics}></ListEpic>
+                            <ListRol lista={listEpics}></ListRol>
                         </UserCardsContext.Provider>
                         {noResults && (
                             <p className="error-message">
@@ -201,7 +201,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                             type="text" 
                             autoFocus 
                             className="inputEpica"
-                            placeholder="Escribe la nueva epica"
+                            placeholder="Escribe el nuevo rol"
                             value={newEpicName}
                             onChange={(e) => {
                                 setNewEpicName(e.target.value);
@@ -223,7 +223,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                                     </button>
                                     <button
                                         className="buttonOneUser"
-                                        onClick={() => EliminateEpic(selectedEpic.nombre)}
+                                        onClick={() => EliminateEpic(selectedEpic.idRolEquipo)}
                                     >
                                         Confirmar
                                      </button>

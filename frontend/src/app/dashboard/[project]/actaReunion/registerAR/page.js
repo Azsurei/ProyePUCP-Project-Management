@@ -286,45 +286,73 @@ const handleRemoveComentario = (index) => {
     const [isLoading, setIsLoading] = useState(true);
 
 // *********************************************************************************************
-// Creating a Meeting Record
+// Searching Meeting Record ID
 // *********************************************************************************************
-    const create = () => {
-        console.log("Nombre del equipo = " + teamName);
-        console.log("Líder del equipo = " + teamLeader);
+    const [meetingId, setMeetingId] = useState("");
 
+    useEffect(() => {
+        const stringURL = 
+        "http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
+        console.log("La URL es" + stringURL);
+
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                console.log("Listando ActasReunion. Respuesta del servidor:", response.data);
+                const dataActa = response.data.data;
+                console.log("El ID del Acta de Reunion es: ", dataActa.idActaReunion);
+                setMeetingId(dataActa.idActaReunion);
+                setIsLoading(false);
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
+// *********************************************************************************************
+// Creating a Meeting Record Line
+// *********************************************************************************************
+    const createMeeting = () => {
+        const idActaReunion = meetingId;
         const nombreReunion = titleValue;
         const fechaReunion = dateValue;
         const horaReunion = timeValue;
         const motivo = motiveValue;
         const nombreConvocante = convocante.nombres + convocante.apellidos;
-        
-        // Esto es porque el procedure solo acepta ID
-        const selectedMiembrosListWithIDs = selectedMiembrosList.map(
-            (usuario) => {
-                return { idUsuario: usuario.idUsuario };
+        const temas = [];
+        const participantes = selectedMiembrosList.map(
+            (participante) => {
+                return { 
+                    idUsuarioXRolXProyecto: participante.idUsuario,
+                    asistio: false,
+                    };
             }
         );
-        console.log("ProjectoId: ", proyectoId);
-        console.log("NombreTeam: ", nombreTeam);
-        console.log("LiderTeam: ", encargado);
-        console.log(
-            "IDs de Usuarios seleccionados:",
-            selectedMiembrosListWithIDs
-        );
+        const comentarios = [];
+        
+        console.log("Titulo de Reunion: ", nombreReunion);
+        console.log("Convocante de Reunion: ", nombreConvocante);
+        console.log("Fecha de Reunion: ", fechaReunion);
+        console.log("Hora de Reunion: ", horaReunion);
+        console.log("Motivo de Reunion: ", motivo);
+        console.log("Participantes: ", participantes);
 
         axios
             .post(
-                "http://localhost:8080/api/proyecto/actaReunion/crearActaReunionrr",
+                "http://localhost:8080/api/proyecto/actaReunion/crearLineaActaReunion",
                 {
-                    //idActaReunion: proyectoId,
+                    idActaReunion: idActaReunion,
                     nombreReunion: nombreReunion,
                     fechaReunion: fechaReunion,
                     horaReunion: horaReunion,
                     nombreConvocante: nombreConvocante,
+                    
                     motivo: motivo,
-                    temas: listTemas,
-                    participantes: selectedMiembrosList,
-                    comentarios: listComentarios,
+                    temas: temas,
+                    participantes: participantes,
+                    comentarios: comentarios,
+                    
                 }
             )
             .then(function (response) {
@@ -356,7 +384,7 @@ const handleRemoveComentario = (index) => {
                             <Input 
                                 className="max-w-[1000px]"
                                 isRequired
-                                key="outside"
+                                key="meetingTitle"
                                 size="lg" 
                                 type="title" 
                                 label="Título de Reunión" 
@@ -425,7 +453,7 @@ const handleRemoveComentario = (index) => {
                             <Input 
                                 className="max-w-[1000px] mt-5"
                                 isRequired
-                                key="outside"
+                                key="meetingMotive"
                                 size="lg" 
                                 type="title" 
                                 label="Motivo" 
@@ -641,7 +669,7 @@ const handleRemoveComentario = (index) => {
                                 colorButton="w-36 bg-blue-950 text-white font-semibold"
                                 oneButton={false}
                                 secondAction={() => {
-                                    onSubmit();
+                                    createMeeting();
                                     router.back();
                                 }}
                                 textColor="blue"
@@ -650,7 +678,7 @@ const handleRemoveComentario = (index) => {
                                         setFieldsEmpty(true);
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
+                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
