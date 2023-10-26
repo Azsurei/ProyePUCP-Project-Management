@@ -73,6 +73,7 @@ const handler = NextAuth({
                         loginResponse.data.token
                     ) {
                         user.id = loginResponse.data.id;
+                        user.rol = loginResponse.data.rol;
                         user.token = loginResponse.data.token;
                         return { success: true, user };
                     }

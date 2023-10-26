@@ -73,3 +73,47 @@
     cursor: pointer;
     transition: background-color 0.15s ease-in;
 }
+
+.iconLabel2CE{
+    display: flex;
+    align-items: center;
+    gap: 5%;
+    font-weight: 400;
+    font-size: 14px;
+    width: 218px;
+}
+
+.profilePicCE{
+    font-weight: 600;
+    border-radius: 100%;
+    background-color: rgb(212, 212, 212);
+    height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.labelDatoUsuarioCE{
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    font-weight: 700;
+}
+
+.containerBottomCE{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.twoButtonsCE{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.buttonContainerCE{
+    display: flex;
+    gap: 10px;
+    padding: 1rem;
+}

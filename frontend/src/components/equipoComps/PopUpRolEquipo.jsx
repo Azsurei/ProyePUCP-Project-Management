@@ -1,35 +1,18 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/PopUpEpica.css";
-//import ListUsers from "./ListUsers";
 import ListEpic from "@/components/dashboardComps/projectComps/productBacklog/ListEpic";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 axios.defaults.withCredentials = true;
-import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Input,
-    Button,
-    DropdownTrigger,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
-    Chip,
-    User,
-    Pagination,
-} from "@nextui-org/react";
+import {Input,Button,} from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlEliminate}) {
+export default function PopUpRolEquipo({ modal, toggle, handleAddRoles}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
@@ -152,7 +135,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                 
                 <div className="containerModal">
                     
-                    <p className="buscarEpic">Lista de Epicas</p>
+                    <p className="buscarEpic">Listado de Roles por Equipo</p>
                     <div className="subcontainer flex justify-end">
                             <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={AddNewEpic}>
                                 Agregar Epica
