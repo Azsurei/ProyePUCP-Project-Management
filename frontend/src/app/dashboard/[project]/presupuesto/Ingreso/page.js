@@ -60,19 +60,54 @@ export default function Ingresos(props) {
         
     };
 
+    // Modal Fecha
+
+    const {
+        isOpen: isModalFechaOpen,
+        onOpen: onModalFecha,
+        onOpenChange: onModalFechachange,
+    } = useDisclosure();
+
+    
+    const { 
+        isOpen: isModalCrearOpen, 
+        onOpen: onModalCrear, 
+        onOpenChange: onModalCrearChange 
+    
+    
+    } = useDisclosure();
+
+
+    //Filtrar aqui es distinto
+    const filtraFecha = () => {
+        toast.promise(promiseFiltrarFecha, {
+            loading: "Filtrando Fechas...",
+            success: (data) => {
+                return "Fechas filtradas correctamente.";
+            },
+            error: "Error al filtrar",
+            position: "bottom-right",
+        });
+    };
+
+
+
+
+    //Fin Modal Fecha
+
     const [filterValue, setFilterValue] = React.useState("");
 
 
     useEffect(()=>{setIsLoadingSmall(false)},[])
 
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [modalContentState, setModalContentState] = useState(0);
 
     const [fecha, setFecha] = useState("");
     const [activeRefresh, setactiveRefresh] = useState(false);
     const handleChangeFecha = (event) => {
         setFecha(event.target.value);
+        setValidFecha(true);
     };
 
 
@@ -145,14 +180,6 @@ export default function Ingresos(props) {
     }
 
     const registrarLineaIngreso = async () => {
-        // toast.promise(insertarLineaIngreso, {
-        //     loading: "Registrando Ingreso...",
-        //     success: (data) => {
-        //         return "El ingreso se agregó con éxito!";
-        //     },
-        //     error: "Error al agregar ingreso",
-        //     position: "bottom-right",
-        // });
         try {
             toast.promise(insertarLineaIngreso, {
                 loading: "Registrando Ingreso...",
@@ -176,7 +203,7 @@ export default function Ingresos(props) {
     const [validDescription, setValidDescription] = useState(true);
     const [validTipoIngreso, setValidTipoIngreso] = useState(true);
     const [validTipoTransacc, setValidTipoTransacc] = useState(true);
-
+    const [validFecha, setValidFecha] = useState(true);
     const msgEmptyField = "Este campo no puede estar vacio";
 
     // Fin Validaciones
@@ -305,11 +332,11 @@ export default function Ingresos(props) {
                         />
 
                     <div className="buttonContainer">
-                        <Button  color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
                             Filtrar
                         </Button>
 
-                        <Button onPress={onOpen} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar
                         </Button>
                        
@@ -322,7 +349,58 @@ export default function Ingresos(props) {
                 
                 </div>
 
-                <Modal hideCloseButton={false} size='md' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} >
+
+                <Modal
+            isOpen={isModalFechaOpen}
+            onOpenChange={onModalFechachange}
+            classNames={
+                {
+                    //closeButton: "hidden",
+                }
+            }
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const finalizarModal = () => {
+                        //filtraFecha();
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col text-red-500">
+                                Filtro para Ingreso
+                            </ModalHeader>
+
+                            <ModalBody>
+                                <div>
+                                    <DateInput>
+
+                                    </DateInput>
+                                </div>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    onPress={finalizarModal}
+                                >
+                                    Aceptar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+
+                <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
                 <ModalContent >
                         {(onClose) => {
                             const cerrarModal = async () => {
@@ -349,6 +427,7 @@ export default function Ingresos(props) {
                                     Isvalid = false;
                                 }
 
+
                                 if(selectedMoneda!==1 && selectedMoneda!==2){
                                     setValidTipoMoneda(false);
                                     Isvalid= false;
@@ -356,6 +435,11 @@ export default function Ingresos(props) {
 
                                 if(selectedMoneda===1 || selectedMoneda===2){ 
                                     setValidTipoMoneda(true);
+                                }
+
+                                if(fecha===""){
+                                    setValidFecha(false);
+                                    Isvalid = false;
                                 }
 
 
@@ -525,7 +609,17 @@ export default function Ingresos(props) {
                                         <p className="textPresuLast">Fecha Transacción</p>
                                                 <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
                                         <div className="fechaContainer">
- 
+
+                                            <div className="divValidaciones">
+                                                <p className="text-tiny text-danger">            
+                                                        {
+                                                            !validFecha
+                                                            ? "Ingrese una fecha válida"
+                                                            : ""
+                                                        }                      
+                                                </p>        
+                                            </div> 
+
                                         </div>
 
                                     </ModalBody>
@@ -547,6 +641,7 @@ export default function Ingresos(props) {
 
                                                 setValidTipoIngreso(true);
                                                 setValidTipoTransacc(true);
+                                                setValidFecha(true);
                                               }}
                                         >
                                             Cancelar
