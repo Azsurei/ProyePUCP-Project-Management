@@ -109,6 +109,7 @@ export default function Cronograma(props) {
     //2 para visualizar una tarea
     //3 para editar una tarea
     //4 si es que esta agregando una tarea hija
+    const [isEditable, setIsEditable] = useState(false);
 
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [selectedSubteam, setSelectedSubteam] = useState(null);
@@ -184,6 +185,14 @@ export default function Cronograma(props) {
         setTareaEliminar(tarea);
         //prendemos modal de confirmacion
         onModalDeleteOpen();
+    };
+
+    const handleEditar = () => {
+        //ya no consideraremos caso de editar desde Dropdown (Ver a futuro //!!!!!!!!!!)
+        //caso en que se de click desde pantalla de vista
+        //asumimos que data ya esta cargada, debemos habilitar edicion en ella
+
+        setStateSecond(3);
     };
 
     function promiseEliminarTarea() {
@@ -460,7 +469,7 @@ export default function Cronograma(props) {
     }, [selectedUsers]);
 
     useEffect(() => {
-        if (selectedSubteam !== null && stateSecond!==2) {
+        if (selectedSubteam !== null && stateSecond !== 2) {
             console.log("voy a setear todos true");
             let newUsrLst = [];
             for (const user of selectedSubteam.participantes) {
@@ -633,10 +642,13 @@ export default function Cronograma(props) {
                             <p>Nombre de tarea</p>
 
                             <Textarea
+                                variant={
+                                    stateSecond === 2 ? "flat" : "bordered"
+                                }
+                                readOnly={stateSecond === 2 ? true : false}
                                 aria-label="name-lbl"
                                 isInvalid={!validName}
                                 errorMessage={!validName ? msgEmptyField : ""}
-                                variant={"bordered"}
                                 labelPlacement="outside"
                                 label=""
                                 placeholder="Escriba aquí"
@@ -683,12 +695,13 @@ export default function Cronograma(props) {
                         <p>Descripcion</p>
 
                         <Textarea
+                            variant={stateSecond === 2 ? "flat" : "bordered"}
+                            readOnly={stateSecond === 2 ? true : false}
                             aria-label="desc-lbl"
                             isInvalid={!validDescripcion}
                             errorMessage={
                                 !validDescripcion ? msgEmptyField : ""
                             }
-                            variant={"bordered"}
                             labelPlacement="outside"
                             placeholder="Escriba aquí"
                             classNames={{ label: "pb-0" }}
@@ -772,6 +785,7 @@ export default function Cronograma(props) {
                     <div className="containerTab">
                         <div className="flex flex-wrap gap-4">
                             <Tabs
+                                isDisabled={stateSecond === 2 ? true : false}
                                 color={"primary"}
                                 aria-label="Tabs colors"
                                 radius="full"
@@ -831,6 +845,8 @@ export default function Cronograma(props) {
                                             key={component.idUsuario}
                                             usuarioObject={component}
                                             removeHandler={removeUser}
+
+                                            //falta agregar isEditable para renderizar la X
                                         ></CardSelectedUser>
                                     ))
                                 ) : (
@@ -853,27 +869,29 @@ export default function Cronograma(props) {
                                                 </p>
                                             </div>
 
-                                            <div className="flex items-center">
-                                                <div
-                                                    className="membersSelectAll"
-                                                    onClick={() => {
-                                                        let newUsrLst = [];
-                                                        for (const user of selectedSubteam.participantes) {
-                                                            newUsrLst.push(
-                                                                user.idUsuario
+                                            {stateSecond !== 2 && (
+                                                <div className="flex items-center">
+                                                    <div
+                                                        className="membersSelectAll"
+                                                        onClick={() => {
+                                                            let newUsrLst = [];
+                                                            for (const user of selectedSubteam.participantes) {
+                                                                newUsrLst.push(
+                                                                    user.idUsuario
+                                                                );
+                                                            }
+                                                            setSelectedSubteamUsers(
+                                                                newUsrLst
                                                             );
-                                                        }
-                                                        setSelectedSubteamUsers(
-                                                            newUsrLst
-                                                        );
-                                                        setValidSelectedSubteamUsers(
-                                                            true
-                                                        );
-                                                    }}
-                                                >
-                                                    Seleccionar todos
+                                                            setValidSelectedSubteamUsers(
+                                                                true
+                                                            );
+                                                        }}
+                                                    >
+                                                        Seleccionar todos
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
 
                                             <div
                                                 onClick={() => {
@@ -886,19 +904,27 @@ export default function Cronograma(props) {
                                             </div>
                                         </div>
 
-                                        <img
-                                            src="/icons/icon-crossBlack.svg"
-                                            onClick={() => {
-                                                setSelectedSubteam(null);
-                                                setSelectedSubteamUsers([]);
-                                            }}
-                                        ></img>
+                                        {stateSecond !== 2 && (
+                                            <img
+                                                src="/icons/icon-crossBlack.svg"
+                                                onClick={() => {
+                                                    setSelectedSubteam(null);
+                                                    setSelectedSubteamUsers([]);
+                                                }}
+                                            ></img>
+                                        )}
                                     </div>
 
                                     {/* <div className="SubTeamUsersContainerSelected"> */}
                                     <CheckboxGroup
-                                        //isDisabled = {isEditable ? false : true}
-                                        //color= {isEditable ? "primary" : "default"}
+                                        isDisabled={
+                                            stateSecond === 2 ? true : false
+                                        }
+                                        color={
+                                            stateSecond === 2
+                                                ? "default"
+                                                : "primary"
+                                        }
                                         value={selectedSubteamUsers}
                                         onChange={setSelectedSubteamUsers}
                                         orientation="horizontal"

@@ -23,6 +23,19 @@ async function crearLineaIngreso(req,res,next){
     }
 }
 
+async function modificarLineaIngreso(req,res,next){
+    const {idLineaIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion} = req.body;
+    try {
+        const query = `CALL MODIFICAR_LINEA_INGRESO(?,?,?,?,?,?,?,?);`;
+        const [results] =await connection.query(query,[idLineaIngreso,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion]);
+        idModificado = results[0][0].idLineaIngreso;
+        res.status(200).json({message: "Linea ingreso modificada"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 // Definir una función para obtener líneas de ingreso
 async function listarLineasXIdProyecto(req,res,next){
     const { idProyecto } = req.params;
@@ -72,6 +85,7 @@ async function eliminarLineaIngreso(req,res,next){
 module.exports = {
     crear,
     crearLineaIngreso,
+    modificarLineaIngreso,
     listarLineasXNombreFechas,
     eliminarLineaIngreso,
     listarLineasXIdProyecto

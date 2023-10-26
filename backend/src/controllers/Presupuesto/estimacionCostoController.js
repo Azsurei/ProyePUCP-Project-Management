@@ -12,14 +12,26 @@ async function crear(req,res,next){
 }
 
 async function crearLineaEstimacionCosto(req,res,next){
-    const {idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
+    const {idMoneda,idEstimacion,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
     try {
-        const query = `CALL INSERTAR_LINEA_ESTIMACION_COSTO(?,?,?,?,?,?,?);`;
-        const [results] = await connection.query(query,[idMoneda,idEstimacion,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
+        const query = `CALL INSERTAR_LINEA_ESTIMACION_COSTO(?,?,?,?,?,?,?,?);`;
+        const [results] = await connection.query(query,[idMoneda,idEstimacion,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
         idLineaEstimacionCosto=results[0][0].idLineaEstimacionCosto;
         res.status(200).json({
             idLineaEstimacionCosto,
             message: "Linea  estimacion costo creada"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function modificarLineaEstimacionCosto(req,res,next){
+    const {idLineaEstimacionCosto,idMoneda,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio} = req.body;
+    try {
+        const query = `CALL MODIFICAR_LINEA_ESTIMACION_COSTO(?,?,?,?,?,?,?);`;
+        const [results] = await connection.query(query,[idLineaEstimacionCosto,idMoneda,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio]);
+        idModificado = results[0][0].idLineaEstimacionCosto;
+        res.status(200).json({message: "Linea estimacion costo modificada"});
     } catch (error) {
         next(error);
     }
@@ -92,6 +104,7 @@ async function eliminarLineaEstimacionCosto(req,res,next){
 module.exports = {
     crear,
     crearLineaEstimacionCosto,
+    modificarLineaEstimacionCosto,
     listarLineasXNombreFechas,
     listarLineasXIdProyecto,
     eliminarLineaEstimacionCosto

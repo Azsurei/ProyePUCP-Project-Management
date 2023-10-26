@@ -54,6 +54,7 @@ async function listarAutoEvaluacion(req,res,next){
 
 async function actualizarAutoEvaluacion(req,res,next){
     const {evaluados} = req.body;
+    console.log(evaluados);
     const query = `CALL ACTUALIZAR_OBSERVACION_X_ID(?,?);`;
     const query1 = `CALL ACTUALIZAR_NOTACRITERIO_X_ID(?,?,?);`;
     try {

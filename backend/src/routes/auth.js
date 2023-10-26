@@ -24,10 +24,12 @@ routerAuth.post("/login", async (req, res) => {
     try {
         const [results] = await connection.query(query);
         const idUsuario = results[0][0].idUsuario;
+        const idRol = results[0][0].idRol;    
         if (idUsuario != 0) {
             const user = {
                 id: idUsuario,
                 mail: username,
+                rol: idRol,
             };
 
             //procesamos token
