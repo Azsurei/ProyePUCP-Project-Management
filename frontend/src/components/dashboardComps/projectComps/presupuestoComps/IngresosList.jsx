@@ -85,7 +85,7 @@ function CardIngresos({
                     modal={modal2} 
                     descripcionLineaIngreso={selectedLinea.descripcion}
                     montoIngreso={selectedLinea.monto}
-                    idLineaIngreso={selectedLinea.idLineaIngreso}
+                    lineaIngreso={selectedLinea}
                     idIngresoTipo={selectedLinea.idIngresoTipo}
                     nombreIngresoTipo={selectedLinea.descripcionIngresoTipo}
                     idTransaccionTipo={selectedLinea.idTransaccionTipo}

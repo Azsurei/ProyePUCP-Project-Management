@@ -5,7 +5,9 @@ import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDis
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import MyCombobox from "@/components/ComboBox";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
-export default function EditIngreso({modal, descripcionLineaIngreso, montoIngreso, idLineaIngreso, idIngresoTipo, nombreIngresoTipo, idTransaccionTipo, nombreTransaccionTipo, idMonedaIngreso, fechaTransaccionIngreso, refresh}) {
+import axios from "axios";
+axios.defaults.withCredentials = true;
+export default function EditIngreso({modal, descripcionLineaIngreso, montoIngreso, lineaIngreso, idIngresoTipo, nombreIngresoTipo, idTransaccionTipo, nombreTransaccionTipo, idMonedaIngreso, fechaTransaccionIngreso, refresh}) {
     const [selectedTipoMoneda, setSelectedTipoMoneda] = useState("");
     const [selectedTipoIngreso, setSelectedTipoIngreso] = useState("");
     const [selectedTipoTransaccion, setSelectedTipoTransaccion] = useState("");
@@ -14,7 +16,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
     const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
-    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineaXIdProyecto/100`;
+    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     //const router=userRouter();
 
@@ -68,11 +70,15 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
     };
 
     const [monto, setMonto] = useState("");
+    const [selectedNombreTransaccion, setSelectedNombreTransaccion] = useState("");
     useEffect(() => {
+        setMonto(montoIngreso);
+        setselectedTipo(idIngresoTipo);
         setSelectedMonto(montoIngreso);
         setSelectedTipoMoneda(idMonedaIngreso);
         setSelectedTipoIngreso(nombreIngresoTipo);
-        setSelectedTipoTransaccion(nombreTransaccionTipo);
+        setSelectedTipoTransaccion(idTransaccionTipo);
+        setSelectedNombreTransaccion(nombreTransaccionTipo);
         const formattedDate = new Date(fechaTransaccionIngreso).toISOString().split('T')[0];
         setFecha(formattedDate);
         if (modal) {
@@ -81,6 +87,42 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
           }
         console.log("EditIngreso");
     }, []); 
+    const onSubmit = () => {
+        console.log("Que data estoy enviando:", lineaIngreso);
+        const putData = {
+            idLineaIngreso: lineaIngreso.idLineaIngreso,
+            idMoneda: selectedTipoMoneda,
+            idTransaccionTipo: selectedTipoTransaccion,
+            idIngresoTipo: selectedTipo,
+            descripcion: descripcionLinea,
+            monto: monto,
+            cantidad: 1,
+            fechaTransaccion: fecha,
+        };
+        console.log("Actualizado correctamente");
+        console.log(putData);
+        axios.put(
+                "http://localhost:8080/api/proyecto/presupuesto/modificarLineaIngreso",
+                putData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud PUT
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Actualización correcta");
+                const handleRefresh = async () => {
+                    refresh();
+                    console.log("refreshed");
+                  };
+                  handleRefresh();
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            });
+            
+        
+    };
     return (
         <div>
             {startModal && (
@@ -137,7 +179,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                             </div>
                                                             }
                                                             type="number"
-                                                        
+                                                        initialValue={selectedMonto}
                                                     />
                                                     
                                                     
@@ -172,7 +214,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                             hasColor={false}
                                                             onSelect={handleSelectedValueTipoTransaccion}
                                                             idParam="idTransaccionTipo"
-                                                            initialName={selectedTipoIngreso}
+                                                            initialName={selectedNombreTransaccion}
                                                             inputWidth="64"
                                                         />
             
@@ -189,13 +231,13 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                             hasColor={false}
                                                             onSelect={handleSelectedValueTipo}
                                                             idParam="idIngresoTipo"
-                                                            initialName={selectedTipoTransaccion}
+                                                            initialName={selectedTipoIngreso}
                                                             inputWidth="64"
                                                         />
             
                                                     </div>
                                                     <p className="textPresuLast">Fecha Transacción</p>
-                                                            <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha} defaultValue={selectedFecha}/>
+                                                            <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha} defaultValue={fecha}/>
                                                     <div className="fechaContainer">
              
                                                     </div>
@@ -211,7 +253,10 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                                     </Button>
                                                     <Button
                                                         color="primary"
-                                                        onPress={cerrarModal}
+                                                        onPress={() => {
+                                                            onSubmit();
+                                                            onClose();
+                                                        }}
                                                     >
                                                         Guardar
                                                     </Button>
