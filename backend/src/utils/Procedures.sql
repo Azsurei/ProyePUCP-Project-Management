@@ -2703,3 +2703,17 @@ BEGIN
     SET estado = 0
     WHERE idRolEquipo = _idRolEquipo;
 END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_NUEVO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_NUEVO_EQUIPO(
+    IN _nombreRol VARCHAR(200),
+    IN _idEquipo INT,
+)
+BEGIN
+	DECLARE _idRolEquipo INT;
+	INSERT INTO RolesEquipo(nombreRol,idEquipo,estado) 
+    VALUES(_nombreRol,_idEquipo,1);
+    SET _idRolEquipo = @@last_insert_id;
+    SELECT _idRolEquipo AS idRolEquipo;
+END$

@@ -42,7 +42,7 @@ async function listarAutoEvaluacion(req,res,next){
                 usuarioEvaluado.criterios = criterios[0][0];
         }
         if(evaluados.length === 0){
-            res.status(200).json({
+            res.status(204).json({
                 message: "Autoevaluacion no creada"
             });
         }
