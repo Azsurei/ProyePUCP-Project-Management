@@ -160,6 +160,22 @@ async function insertarEquipo(req,res,next){
     }
 }
 
+async function insertarMiembros(req,res,next){
+    const{idEquipo,miembros} = req.body;
+    const query = `CALL INSERTAR_MIEMBROS_EQUIPO(?,?,?);`;
+    try {
+        for(const miembro of miembros){
+            const [results] = await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRolEquipo]);
+            const idUsuarioXEquipo = results[0][0].idUsuarioXEquipo;
+            console.log(`Se insertó el miembro ${idUsuarioXEquipo}!`);
+        }
+        res.status(200).json({
+            message: "Miembros insertados exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
@@ -168,5 +184,6 @@ module.exports = {
     insertarRol,
     listarRol,
     eliminarRol,
-    insertarEquipo
+    insertarEquipo,
+    insertarMiembros
 };
