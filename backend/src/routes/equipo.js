@@ -9,4 +9,8 @@ routerEquipo.get("/listarXIdProyecto/:idProyecto",equipoController.listarXIdProy
 routerEquipo.get("/listarEquiposYParticipantes/:idProyecto",equipoController.listarEquiposYParticipantes);
 routerEquipo.get("/listarTareasDeXIdEquipo/:idEquipo",equipoController.listarTareasDeXIdEquipo);
 
+//Roles
+routerEquipo.post("/insertarRol",equipoController.insertarRol);
+routerEquipo.get("/listarRol/:idEquipo",equipoController.listarRol);
+
 module.exports.routerEquipo = routerEquipo;

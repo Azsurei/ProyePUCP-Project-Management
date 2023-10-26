@@ -101,9 +101,43 @@ async function listarTareasDeXIdEquipo(req, res, next) {
     }
 }
 
+async function insertarRol(req,res,next){
+    const{idEquipo, nombreRol} = req.body;
+    const query = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
+    try {
+        const [results] = await connection.query(query, [idEquipo,nombreRol]);
+        const idRolEquipo = results[0].idRolEquipo;
+        console.log(`Se insertó el rol ${idRolEquipo}!`);
+        res.status(200).json({
+            idRolEquipo,
+            message: "Rol insertada exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarRol(req,res,next){
+    const{idEquipo} = req.params;
+    const query = `CALL LISTAR_ROL_EQUIPO(?);`;
+    try {
+        const [results] = await connection.query(query, [idEquipo]);
+        const roles = results[0];
+        console.log(`Se listaron los roles ${roles}!`);
+        res.status(200).json({
+            roles,
+            message: "Roles listados exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
     listarEquiposYParticipantes,
-    listarTareasDeXIdEquipo
+    listarTareasDeXIdEquipo,
+    insertarRol,
+    listarRol
 };

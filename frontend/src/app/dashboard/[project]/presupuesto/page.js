@@ -179,7 +179,13 @@ export default function Presupuesto(props) {
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
 
-            <Toaster richColors closeButton={true}/>
+            <Toaster 
+            richColors 
+            closeButton={true}
+            toastOptions={{
+                style: { fontSize: "1rem" },
+            }}
+            />
 
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -220,23 +226,24 @@ export default function Presupuesto(props) {
 
                     <div className="subtitlePresupuesto">Flujo de Caja Enero - Junio</div>
                     
-                    <TableBudget> </TableBudget>
+                    {/* <TableBudget> </TableBudget> */}
 
                 </div>
 
                 <Modal size='xl' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} 
                             classNames={{
-                                closeButton: "hidden",
+                                closeButton: "hidden"
                             }}
                 >
                 <ModalContent>
                         {(onClose) => {
-                            const cerrarModal = () => {
+                            const cerrarModal = async() => {
 
                                 let Isvalid = true;
                                 if (parseFloat(monto) < 0 || isNaN(parseFloat(monto))) {
                                     setValidMonto(false);
                                     Isvalid = false;
+                                
                                 }
 
                                 if(parseInt(cantMeses) < 0 || isNaN(parseInt(cantMeses))){
@@ -244,17 +251,25 @@ export default function Presupuesto(props) {
                                     Isvalid = false;
 
                                 }
-                                if(selectedMoneda!=1 || selectedMoneda!=2){
+                                if(selectedMoneda!==1 && selectedMoneda!==2){
                                     setValidTipoMoneda(false);
                                     Isvalid= false;
                                 }
 
-                                if(selectedMoneda==1 || selectedMoneda==2){ 
+                                if(selectedMoneda===1 || selectedMoneda===2){ 
                                     setValidTipoMoneda(true);
+                                
                                 }
-
                                 if(Isvalid === true){
-                                    nuevoPresupuestoInicial();     
+
+                                    try {
+                                        await nuevoPresupuestoInicial();     
+    
+                                        
+                                    } catch (error) {
+                                        console.error('Error al registrar la línea de ingreso o al obtener los datos:', error);
+                                    }
+              
                                     onClose();
                                     setIsLoadingSmall(false);
                                 }
@@ -348,15 +363,14 @@ export default function Presupuesto(props) {
                                             </div>
 
                                             <div className="alertMoneda" >
-                                                <p className="text-tiny text-danger"> 
-                                                            
-                                                            {
-                                                            !validTipoMoneda
-                                                                ? "Seleccione Moneda"
-                                                                : ""
-                                                            }                      
+                                                <p className="text-tiny text-danger">            
+                                                    {
+                                                        !validTipoMoneda
+                                                        ? "Seleccione Moneda"
+                                                        : ""
+                                                    }                      
                     
-                                                        </p>                  
+                                                </p>                  
                                             </div>   
                                     
                                          </div>

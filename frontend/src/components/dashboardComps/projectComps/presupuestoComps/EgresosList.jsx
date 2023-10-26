@@ -9,11 +9,11 @@ import ModalEliminateIngreso from "./ModalEliminateIngreso";
 axios.defaults.withCredentials = true;
 
 function CardEgreso({
-    tipoIngreso,
-    IngresoObject,
+    tipoEgreso,
+    EgresoObject,
     cantidad,
-    montoIngreso,
-    horaIngreso,
+    costoRealEgreso,
+    horaEgreso,
     refresh,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
@@ -27,37 +27,35 @@ function CardEgreso({
     };
 
 
-    const imageIngresoOptions = {
-        "Efectivo": "/icons/icon-Efectivo.svg",
-        "Transferencia": "/icons/icon-transferencia.svg",
+    const imageEgresoOptions = {
         "Licencia de Software": "/icons/icon-licencia.svg",
         "Ingeniero Industrial": "/icons/icon-ingeniero.svg",
         // Agrega más opciones según sea necesario
     };
-    const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoIngreso);
-    const monedaSymbol = IngresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
+    const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoEgreso);
+    const monedaSymbol = EgresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
     return (
         <li
             className="IngresoCard"
         >
             <img
                 className="imgageIngresoDefault"
-                src={imageIngresoOptions[IngresoObject.descripcionTransaccionTipo]}
+                src={imageEgresoOptions[EgresoObject.descripcion]}
             />
             <div className="informacionIngreso">
                 <div style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <p className="titleTipoIngreso">{tipoIngreso}</p>
+                    <p className="titleTipoIngreso">{tipoEgreso}</p>
                     <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>Cant. {cantidad}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoIngreso}</p>
-                    <p className="titleHoraIngreso">{horaIngreso}</p>
+                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgreso"}>{monedaSymbol} {costoRealEgreso}</p>
+                    <p className="titleHoraIngreso">{horaEgreso}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
                     <button className="" type="button">
                         <img src="/icons/editar.svg"/>
                     </button>
-                    <button className="" type="button" onClick={() => toggleModal(IngresoObject)}>
+                    <button className="" type="button" onClick={() => toggleModal(EgresoObject)}>
                         <img src="/icons/eliminar.svg"/>
                     </button>
                 </div>
@@ -67,7 +65,7 @@ function CardEgreso({
                     modal={modal1} 
                     toggle={() => toggleModal(selectedTask)}
                     taskName={selectedTask.descripcion}
-                    idLineaIngreso={selectedTask.idLineaIngreso}
+                    idLineaIngreso={selectedTask.idLineaEgreso}
                     refresh={refresh}
                 />
             )}
@@ -94,7 +92,7 @@ export default function EgresosList(props) {
     // const horaIngreso = fechaTransaccion.toLocaleTimeString();
     useEffect(() => {
         const handleRefresh = async () => {
-            refresh();
+            // refresh();
             console.log("refreshed");
         };
         handleRefresh();
@@ -102,8 +100,8 @@ export default function EgresosList(props) {
     const fechaGroups = {}; // Creamos un objeto para agrupar las fechas
 
     lista.forEach((component) => {
-        const fechaTransaccion = new Date(component.fechaTransaccion);
-        const fechaKey = fechaTransaccion.toISOString().split('T')[0]; // Usamos la fecha como clave
+        const fechaRegistro = new Date(component.fechaRegistro);
+        const fechaKey = fechaRegistro.toISOString().split('T')[0]; // Usamos la fecha como clave
 
         if (!fechaGroups[fechaKey]) {
             fechaGroups[fechaKey] = [];
@@ -114,10 +112,10 @@ export default function EgresosList(props) {
     return (
         <div>
             {Object.keys(fechaGroups).map((fechaKey) => {
-                const fechaTransaccion = new Date(fechaGroups[fechaKey][0].fechaTransaccion);
+                const fechaRegistro = new Date(fechaGroups[fechaKey][0].fechaRegistro);
                 const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                const fechaFormateada = fechaTransaccion.toLocaleDateString('es-ES', options);
-                const horaIngreso = fechaTransaccion.toLocaleTimeString();
+                const fechaFormateada = fechaRegistro.toLocaleDateString('es-ES', options);
+                const horaEgreso = fechaRegistro.toLocaleTimeString();
 
                 return (
                     <div key={fechaKey}>
@@ -127,12 +125,12 @@ export default function EgresosList(props) {
                         <ul className="ListIngresosProject">
                             {fechaGroups[fechaKey].map((component) => (
                                 <CardEgreso
-                                    key={component.idLineaIngreso}
-                                    tipoIngreso={component.descripcion}
-                                    IngresoObject={component}
+                                    key={component.idLineaEgreso}
+                                    tipoEgreso={component.descripcion}
+                                    EgresoObject={component}
                                     cantidad={component.cantidad}
-                                    montoIngreso={component.monto}
-                                    horaIngreso={horaIngreso}
+                                    costoRealEgreso={component.costoReal}
+                                    horaEgreso={horaEgreso}
                                     refresh={refresh}
                                 />
                             ))}

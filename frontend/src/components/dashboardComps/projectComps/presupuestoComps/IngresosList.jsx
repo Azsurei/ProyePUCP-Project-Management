@@ -7,6 +7,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
 import ModalEliminateIngreso from "./ModalEliminateIngreso";
 import EditIngreso from "./EditIngreso";
 
+
 axios.defaults.withCredentials = true;
 
 function CardIngresos({
@@ -55,11 +56,11 @@ function CardIngresos({
             <div className="informacionIngreso">
                 <div style={{ marginTop: "12px", marginLeft: "15px" }}>
                     <p className="titleTipoIngreso">{tipoIngreso}</p>
-                    <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>Cant. {cantidad}</p>
+                    <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>{IngresoObject.descripcionTransaccionTipo}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
                     <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoIngreso}</p>
-                    <p className="titleHoraIngreso">{horaIngreso}</p>
+                    <p className="titleHoraIngreso">{IngresoObject.descripcionIngresoTipo}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
                     <button className="" type="button" onClick={()=>toggleModal2(IngresoObject)}>
@@ -84,7 +85,7 @@ function CardIngresos({
                     modal={modal2} 
                     descripcionLineaIngreso={selectedLinea.descripcion}
                     montoIngreso={selectedLinea.monto}
-                    idLineaIngreso={selectedLinea.idLineaIngreso}
+                    lineaIngreso={selectedLinea}
                     idIngresoTipo={selectedLinea.idIngresoTipo}
                     nombreIngresoTipo={selectedLinea.descripcionIngresoTipo}
                     idTransaccionTipo={selectedLinea.idTransaccionTipo}
@@ -103,7 +104,7 @@ export default function IngresosList(props) {
     const router = useRouter();
 
     const { lista, refresh } = props;
-
+    console.log("listaIngresos", lista);
     if (props.lista.length === 0) {
         return (
             <p className="noResultsMessage">No se encontraron resultados.</p>
