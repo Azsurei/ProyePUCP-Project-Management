@@ -19,7 +19,7 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
+import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 
 axios.defaults.withCredentials = true;
@@ -186,14 +186,11 @@ export default function crear_equipo(props) {
             idLider: selectedUniqueMemberList[0].idUsuario,
         });
         axios
-            .post(
-                "http://localhost:8080/api/proyecto/equipo/insertarEquipo",
-                {
-                    idProyecto: parseInt(proyectoId),
-                    nombre: nombreTeam,
-                    idLider: selectedUniqueMemberList[0].idUsuario,
-                }
-            )
+            .post("http://localhost:8080/api/proyecto/equipo/insertarEquipo", {
+                idProyecto: parseInt(proyectoId),
+                nombre: nombreTeam,
+                idLider: selectedUniqueMemberList[0].idUsuario,
+            })
             .then(function (response) {
                 setIdEquipoInsertado(response.data.idEquipo);
                 setAddParticipantesState(true);
@@ -262,21 +259,30 @@ export default function crear_equipo(props) {
                                 />
                             </div>
 
-                            {selectedUniqueMemberList.map((component, index) => {
-                                return (
-                                    <div key={index} className="flex gap-2 items-center">
-                                        <CardSelectedUser
-                                            key={component.idUsuario}
-                                            name={component.nombres}
-                                            lastName={component.apellidos}
-                                            usuarioObject={component}
-                                            email={component.correoElectronico}
-                                            removeHandler={removeMiembroUnique}
-                                            isEditable={true}
-                                        ></CardSelectedUser>
-                                    </div>
-                                );
-                            })}
+                            {selectedUniqueMemberList.map(
+                                (component, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="flex gap-2 items-center"
+                                        >
+                                            <CardSelectedUser
+                                                key={component.idUsuario}
+                                                name={component.nombres}
+                                                lastName={component.apellidos}
+                                                usuarioObject={component}
+                                                email={
+                                                    component.correoElectronico
+                                                }
+                                                removeHandler={
+                                                    removeMiembroUnique
+                                                }
+                                                isEditable={true}
+                                            ></CardSelectedUser>
+                                        </div>
+                                    );
+                                }
+                            )}
                         </div>
                     </div>
                 </>
@@ -303,37 +309,56 @@ export default function crear_equipo(props) {
                                 className="listUsersContainer"
                                 style={{ width: "100%", padding: "0.2rem 0" }}
                             >
-                                {selectedMiembrosList.map((component, index) => {
-                                    return (
-                                        <div key={index} className="flex gap-2 items-center">
-                                            <CardSelectedUser
-                                                key={component.idUsuario}
-                                                name={component.nombres}
-                                                lastName={component.apellidos}
-                                                usuarioObject={component}
-                                                email={
-                                                    component.correoElectronico
-                                                }
-                                                removeHandler={removeMiembro}
-                                                isEditable={true}
-                                            ></CardSelectedUser>
-                                            <ComboBoxArray
-                                                people={roles}
-                                                onSelect={setRol}
-                                            />
-                                            <button
-                                                className="w-20 h-20"
-                                                type="button"
-                                                onClick={() => toggleModal()}
+                                {selectedMiembrosList.map(
+                                    (component, index) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex gap-2 items-center"
                                             >
-                                                <img
-                                                    src="/icons/btnEditImagen.svg"
-                                                    alt="Descripción de la imagen"
+                                                <CardSelectedUser
+                                                    key={component.idUsuario}
+                                                    name={component.nombres}
+                                                    lastName={
+                                                        component.apellidos
+                                                    }
+                                                    usuarioObject={component}
+                                                    email={
+                                                        component.correoElectronico
+                                                    }
+                                                    removeHandler={
+                                                        removeMiembro
+                                                    }
+                                                    isEditable={true}
+                                                ></CardSelectedUser>
+                                                <MyCombobox
+                                                    urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${idEquipoInsertado}`}
+                                                    property="roles"
+                                                    nameDisplay="nombreRol"
+                                                    hasColor={false}
+                                                    onSelect={
+                                                        handleSelectedValueChangeRol
+                                                    }
+                                                    idParam="idRolEquipo"
+                                                    reloadData={reloadData}
+                                                    initialName="Seleccione un rol"
                                                 />
-                                            </button>
-                                        </div>
-                                    );
-                                })}
+                                                <button
+                                                    className="w-20 h-20"
+                                                    type="button"
+                                                    onClick={() =>
+                                                        toggleModal()
+                                                    }
+                                                >
+                                                    <img
+                                                        src="/icons/btnEditImagen.svg"
+                                                        alt="Descripción de la imagen"
+                                                    />
+                                                </button>
+                                            </div>
+                                        );
+                                    }
+                                )}
                             </ul>
                         </div>
                     </div>
@@ -387,7 +412,7 @@ export default function crear_equipo(props) {
                 <PopUpRolEquipo
                     modal={modal}
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                    handleAddRoles={handleAddRoles}
+                    idEquipo={idEquipoInsertado}
                 />
             )}
             {modal1 && (
