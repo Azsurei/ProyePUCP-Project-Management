@@ -14,4 +14,6 @@ routerEquipo.post("/insertarRol",equipoController.insertarRol);
 routerEquipo.get("/listarRol/:idEquipo",equipoController.listarRol);
 routerEquipo.delete("/eliminarRol",equipoController.eliminarRol);
 
+routerEquipo.post("/insertarEquipo",equipoController.insertarEquipo);
+
 module.exports.routerEquipo = routerEquipo;

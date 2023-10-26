@@ -2580,18 +2580,22 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_CRITERIO_AUTOEVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CRITERIO_AUTOEVALUACION(
-    IN _idUsuarioEvaluacion INT
+    IN _idUsuarioEvaluacion INT,
+    IN _criterio1 VARCHAR(500),
+    IN _criterio2 VARCHAR(500),
+    IN _criterio3 VARCHAR(500),
+    IN _criterio4 VARCHAR(500)
 )
 BEGIN
 	DECLARE _idCriterioEvaluacion INT;
 	INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Dominio Técnico",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio1,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Compromiso con los trabajos",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio2,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Comunicación con sus compañeros",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio3,0,1);
     INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
-    VALUES(_idUsuarioEvaluacion,"Comprensión del proyecto",0,1);
+    VALUES(_idUsuarioEvaluacion,_criterio4,0,1);
     SET _idUsuarioEvaluacion = @@last_insert_id;
     SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
 END$
@@ -2698,4 +2702,25 @@ BEGIN
 	UPDATE RolesEquipo
     SET estado = 0
     WHERE idRolEquipo = _idRolEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_NUEVO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_NUEVO_EQUIPO(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(200),
+    IN _idLider INT
+)
+BEGIN
+	DECLARE _idEquipo INT;
+    DECLARE _idRolEquipo INT;
+	INSERT INTO Equipo(idProyecto,nombre,fechaCreacion,activo,idLider) 
+    VALUES(_idProyecto,_nombre,NOW(),1,_idLider);
+    SET _idEquipo = @@last_insert_id;
+    INSERT INTO RolesEquipo(nombreRol, idEquipo, estado)
+    VALUES("Lider",_idEquipo,1);
+    SET _idRolEquipo = @@last_insert_id;
+    INSERT INTO UsuarioXEquipo(idUsuario, idEquipo, activo, idRol)
+    VALUES(_idLider,_idEquipo,1, _idRolEquipo);
+    SELECT _idEquipo AS idEquipo;
 END$
