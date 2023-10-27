@@ -152,6 +152,22 @@
 
 }
 
+.btnAddEgreso{
+
+    border-radius: 10px;
+    background-color: #0C66E4;
+    border: #0C66E4 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 200px;
+    color: white;
+ 
+    justify-content: center;
+
+
+}
+
 .btnFiltro{
     border-radius: 10px;
     background-color: #1962F0;
@@ -258,6 +274,21 @@
     height: 50vh; /* Establece la altura al 100% de la altura de la ventana */
     overflow-y: auto;
 }
+
+.divHistorial::-webkit-scrollbar {
+    width: 8px;
+}
+
+.divHistorial::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.divHistorial::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+}
+
+
 .containerData {
     display: flex;
     justify-content: space-between;

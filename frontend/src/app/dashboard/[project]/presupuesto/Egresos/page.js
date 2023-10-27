@@ -36,6 +36,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import TuneIcon from '@mui/icons-material/Tune';
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 export const UserCardsContextOne = React.createContext();
 
@@ -109,6 +110,7 @@ export default function Ingresos(props) {
 
     const [descripcionLinea, setdescripcionLinea] = useState("");
     const [montoReal, setMontoReal] = useState("");
+    const [montoEgreso, setMontoEgreso] = useState("");
     const [cantRecurso, setcantRecurso] = useState("");
 
     const [listEstimacionesSelect, setlistEstimacionesSelected] = useState([]);
@@ -180,11 +182,11 @@ export default function Ingresos(props) {
                     idPresupuesto:idHerramientaCreada,
                     idProyecto: projectId,
 
-                    idMoneda: selectedMoneda,
-                    idLineaEstimacionCosto: 1,
+                    idMoneda: dataLineaEstimacion.idMoneda,
+                    idLineaEstimacionCosto: dataLineaEstimacion.idLineaEstimacion,
 
                     descripcion:descripcionLinea,
-                    costoReal: parseFloat(montoReal).toFixed(2),
+                    costoReal: parseFloat(dataLineaEstimacion.tarifaUnitaria * cantRecurso).toFixed(2),
                     cantidad: cantRecurso,
                     fechaRegistro:fecha,
                 })
@@ -270,10 +272,14 @@ export default function Ingresos(props) {
         return filteredTemplates;
     }, [lineasEstimacion, filterValue]);
     
+
+    const [dataLineaEstimacion, setDataLineaEstimacion] = useState("");
+
     const handleCardSelect = (selectedData) => {
         // Realiza la lógica deseada con el dato seleccionado
         console.log("Card seleccionado:", selectedData);
         // Puedes actualizar el estado local aquí si es necesario
+        setDataLineaEstimacion(selectedData);
       }
       
     return (
@@ -355,7 +361,13 @@ export default function Ingresos(props) {
                     </div>
                     
 
-                
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                        <Button onPress={onModalCrear} color="primary" startContent={<AssignmentIcon />} className="btnAddEgreso">
+                                Registrar Egreso
+                        </Button>
+
+                    </div>
+
                 </div>
 
 
@@ -414,58 +426,48 @@ export default function Ingresos(props) {
                                         <p className="textIngreso">Tarifa</p>
                                         
                                         <div className="modalAddIngreso">
-                                            <div className="comboBoxMoneda">
-                                                <MyCombobox
-                                                    urlApi={stringUrlMonedas}
-                                                    property="monedas"
-                                                    nameDisplay="nombre"
-                                                    hasColor={false}
-                                                    onSelect={handleSelectedValueMoneda}
-                                                    idParam="idMoneda"
-                                                    initialName="Tipo Moneda"
-                                                    inputWidth="2/3"
-                                                    widthCombo="9"
-                                                />
-                                                <div className="alertaMonedaIngreso" >
-                                                <p className="text-tiny text-danger">            
-                                                        {
-                                                        !validTipoMoneda
-                                                            ? "Seleccione una Moneda"
-                                                            : ""
-                                                        }                      
-                                                    </p>          
-                                                </div>
-                                            </div>
-                                            
+                                          
                                                 <Input
-                                                    value={monto}
-                                                    onValueChange={setMonto}
-                                                    placeholder="0.00"
-                                                    labelPlacement="outside"
-                                                    isInvalid={!validMonto}
-                                                    onChange={()=>{setValidMonto(true)}}
+                                                    isDisabled
                                                     type="number"
-                                                    errorMessage={
-                                                        !validMonto
-                                                            ? "Monto inválido"
-                                                            : ""
-                                                    }
-
-
+                                                    value={dataLineaEstimacion.tarifaUnitaria}
                                                     startContent={
                                                         <div className="pointer-events-none flex items-center">
                                                             <span className="text-default-400 text-small">
-                                                                    {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                                    {dataLineaEstimacion.idMoneda === 2 ? "S/" : dataLineaEstimacion.idMoneda === 1 ? "$" : " "}
                                                             </span>
                                                         </div>
                                                     }
-                                                    endContent={
-                                                        <div className="flex items-center">
-
-                                                        </div>
-                                                        }                                                      
+    
+                                                    
                                                 />                    
                                         </div>
+
+                                                                                
+                                        <p className="textIngreso">Descripción</p>
+
+                                        <div className="modalAddIngreso">
+                                            
+
+                                            <Textarea
+                                                label=""
+                                                isInvalid={!validDescription}
+                                                errorMessage={!validDescription ? msgEmptyField : ""}
+                                                maxLength={35}
+                                                variant={"bordered"}
+                                                
+                                                labelPlacement="outside"
+                                                placeholder="Escriba aquí..."
+                                                className="max-w-x"
+                                                maxRows="2"
+                                                value={descripcionLinea}
+                                                onValueChange={setdescripcionLinea}
+                                                onChange={() => {
+                                                    setValidDescription(true);
+                                                }}
+                                                
+                                                />
+                                         </div>
                                         
 
                                         <div
@@ -496,7 +498,7 @@ export default function Ingresos(props) {
                                                 flex: 0.58,
                                                 }}
                                             >
-                                                Meses Requerido
+                                                {/* Meses Requerido */}
                                             </p>
                                         </div> 
 
@@ -514,7 +516,8 @@ export default function Ingresos(props) {
                                                  <Input
                                                     value={cantRecurso}
                                                     onValueChange={setcantRecurso}
-                                                    placeholder="0"
+                                                    placeholder={dataLineaEstimacion.cantidadRecurso}
+                                                    defaultValue={dataLineaEstimacion.cantidadRecurso}
                                                     labelPlacement="outside"
                                                     isInvalid={!validCantRecurso}
                                                     onChange={()=>{setValidCantRecurso(true)}}
@@ -532,60 +535,7 @@ export default function Ingresos(props) {
                                                         }                                                      
                                                 /> 
 
-                                                 <Input
-                                                    value={mesesRequerido}
-                                                    onValueChange={setmesesRequerido}
-                                                    placeholder="0"
-                                                    labelPlacement="outside"
-                                                    isInvalid={!validCantMeses}
-                                                    onChange={()=>{setValidCantMeses(true)}}
-                                                    type="number"
-                                                    errorMessage={
-                                                        !validCantMeses
-                                                            ? "Cantidad Inválida"
-                                                            : ""
-                                                    }
-
-                                                    endContent={
-                                                        <div className="flex items-center">
-
-                                                        </div>
-                                                        }                                                      
-                                                />                     
-
-
-
                                         </div>                  
-
-
-
-
-                                        
-                                        <p className="textIngreso">Descripción</p>
-
-                                        <div className="modalAddIngreso">
-                                            
-
-                                            <Textarea
-                                                label=""
-                                                isInvalid={!validDescription}
-                                                errorMessage={!validDescription ? msgEmptyField : ""}
-                                                maxLength={35}
-                                                variant={"bordered"}
-                                                
-                                                labelPlacement="outside"
-                                                placeholder="Escriba aquí..."
-                                                className="max-w-x"
-                                                maxRows="2"
-                                                value={descripcionLinea}
-                                                onValueChange={setdescripcionLinea}
-                                                onChange={() => {
-                                                    setValidDescription(true);
-                                                }}
-                                                
-                                                />
-                                         </div>
-                                            
 
                                         <div
                                             style={{
@@ -603,7 +553,7 @@ export default function Ingresos(props) {
                                                 fontWeight: 300,
                                                 }}
                                             >
-                                                Fecha Inicio
+                                                Fecha Registro
                                             </p>
 
                                             <p
@@ -612,10 +562,10 @@ export default function Ingresos(props) {
                                                 fontSize: "16px",
                                                 fontStyle: "normal",
                                                 fontWeight: 300,
-                                                flex: 0.62,
+                                                flex: 0.66,
                                                 }}
                                             >
-                                                Subtotal
+                                                Costo Real
                                             </p>
                                         </div> 
 
@@ -637,11 +587,11 @@ export default function Ingresos(props) {
                                                 <Input
                                                     isReadOnly
                                                     type="number"
-                                                    value={monto * cantRecurso * mesesRequerido < 0 || cantRecurso === 0 ? 0 : monto * cantRecurso * mesesRequerido}
+                                                    value={dataLineaEstimacion.tarifaUnitaria * cantRecurso  < 0 || cantRecurso === 0 ? 0 : dataLineaEstimacion.tarifaUnitaria * cantRecurso }
                                                     startContent={
                                                         <div className="pointer-events-none flex items-center">
                                                             <span className="text-default-400 text-small">
-                                                                    {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                                    {dataLineaEstimacion.idMoneda  === 2 ? "S/" : dataLineaEstimacion.idMoneda  === 1 ? "$" : " "}
                                                             </span>
                                                         </div>
                                                     }
@@ -651,8 +601,6 @@ export default function Ingresos(props) {
                                     
                                       
                                         <div className="fechaContainer">
-
-                                            
                                                 <p className="text-tiny text-danger">            
                                                         {
                                                             !validFecha
@@ -660,8 +608,6 @@ export default function Ingresos(props) {
                                                             : ""
                                                         }                      
                                                 </p>    
-                                            
-
                                         </div>
 
                                     </ModalBody>
@@ -671,19 +617,15 @@ export default function Ingresos(props) {
                                             variant="light"
                                             onPress={() => {
                                                 onClose(); // Cierra el modal
-                                                setMonto("");
+ 
                                                 setdescripcionLinea("");
-                                                setselectedMoneda("");
                                                 
                                                 setcantRecurso("");
-                                                setmesesRequerido("");
 
                                                 setFecha("");
-                                                setValidTipoMoneda(true);
-                                                setValidMonto(true);
-                                                setValidDescription(true);
 
-                                                setValidCantMeses(true);
+                                                //setValidMonto(true);
+                                                setValidDescription(true);
                                                 setValidCantRecurso(true);
 
                                                 setValidFecha(true);
@@ -696,7 +638,7 @@ export default function Ingresos(props) {
                                             onPress={cerrarModal}
                                             
                                         >
-                                            Guardar
+                                            Agregar
                                         </Button>
                                     </ModalFooter>
                                 </>
