@@ -1,47 +1,26 @@
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/ListEditableInput.css";
-import { Textarea, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import { Textarea, Select, SelectItem } from "@nextui-org/react";
 
 function EditableInput(props) {
     //recibe props 'name', 'number' (?) y 'data'
     //if data === '' entonces poner un placeholder
 
-    const temasPrueba = [
-        {
-            key: "Tema1",
-            descripcion: "Tema 1: Blababababa"
-        },
-        {   
-            key: "Tema2",
-            descripcion: "Tema 2: Ajuajuaju"
-        },
-        {
-            key: "Tema3",
-            descripcion: "Tema 3: Hemisferio norte"
-        },
-    ]
-
     return (
         <li className="EditableInput">
             <div className="inputXdeleteContainer flex items-center gap-5 pb-3">
                 <p>Para el </p>
-                {/* Creo que alguien hizo un ComboBox en algun lado. Puedes cambiarlo por eso*/}
-                <Dropdown>
-                    <DropdownTrigger>
-                        <Button
-                            variant="bordered"
-                        >
-                            Escoger Tema
-                        </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="DynamicActions" temas={temasPrueba}>
-                        {(tema) => (
-                            <DropdownItem
-                                key={tema.key}
-                            >{tema.descripcion}</DropdownItem>
-                        )}
-                    </DropdownMenu>
-                </Dropdown>
+                {/*
+                <Select
+                    label="Tema"
+                    placeholder="Escoge un tema"
+                    className="max-w-xs"
+                    items={props.temas}
+                >
+                    {(tema) => <SelectItem key={tema.value}>{tema.descripcion}</SelectItem}
+                </Select>
+                    */}
             </div>
+            
             <div className="ml-2">
                 <p className="newInputEntrName">
                     {props.typeName} #{props.number}
