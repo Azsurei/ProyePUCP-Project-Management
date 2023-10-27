@@ -53,7 +53,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                                         key={member.idUsuario}
                                     >
                                         {member.nombres[0]}
-                                        {member.apellidos[0]}
+                                        {member.apellidos!==null? member.apellidos[0] : ""}
                                     </p>
                                 ))}
                             {team.participantes.length > 4 && (
