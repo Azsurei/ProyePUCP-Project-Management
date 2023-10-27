@@ -818,8 +818,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         <div className="buttonContainerCR">
                             <Modal
                                 nameButton="Descartar"
-                                textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de la información?"
+                                textHeader="Descartar Actualización"
+                                textBody="¿Seguro que quiere descartar la cactualización de la información?"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
                                 secondAction={() => router.back()}
@@ -827,8 +827,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar Información"
-                                textBody="¿Seguro que quiere registrar la información?"
+                                textHeader="Actualizar Información"
+                                textBody="¿Seguro que quiere actualizar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 secondAction={() => {
