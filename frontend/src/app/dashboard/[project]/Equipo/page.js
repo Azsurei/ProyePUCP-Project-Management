@@ -20,10 +20,12 @@ import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
+import { useRouter } from "next/navigation";
 
 axios.defaults.withCredentials = true;
 
 export default function Equipo(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -66,21 +68,21 @@ export default function Equipo(props) {
         const membersWithRoles = newMiembrosList.map((member) => ({
             ...member,
             idRol: 0, // Establece el valor adecuado para idRol
-            nombreRol: "" // Establece el valor adecuado para nombreRol
+            nombreRol: "", // Establece el valor adecuado para nombreRol
         }));
-    
+
         // Concatena los nuevos miembros a selectedTeam.participantes
-        const updatedMembersList = selectedTeam.participantes.concat(membersWithRoles);
-    
+        const updatedMembersList =
+            selectedTeam.participantes.concat(membersWithRoles);
+
         // Actualiza selectedTeam con la nueva lista de participantes
         setSelectedTeam({
             ...selectedTeam,
             participantes: updatedMembersList,
         });
-    
+
         setModal2(!modal2);
     };
-    
 
     useEffect(() => {
         if (modal) {
@@ -108,11 +110,10 @@ export default function Equipo(props) {
                 return participant;
             }),
         };
-    
+
         // Actualiza el estado con el nuevo selectedTeam
         setSelectedTeam(updatedSelectedTeam);
     };
-    
 
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(
@@ -126,7 +127,8 @@ export default function Equipo(props) {
         setIsLoadingSmall(true);
         let teamsArray;
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarEquiposYParticipantes/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/equipo/listarEquiposYParticipantes/" +
             projectId;
         console.log("La URL es" + stringURL);
         axios
@@ -150,7 +152,8 @@ export default function Equipo(props) {
         setSelectedTeamOriginales(team);
         setIsLoadingSmall(true);
         const verTareasURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
             team.idEquipo;
         axios
             .get(verTareasURL)
@@ -243,25 +246,75 @@ export default function Equipo(props) {
 
         // Realizar solicitudes PUT, POST y DELETE según sea necesario
         // ...
-        const putData={
+        const putData = {
             idEquipo: selectedTeam.idEquipo,
-            miembrosModificados: modifiedParticipants
-        } 
+            miembrosModificados: modifiedParticipants,
+        };
         console.log("Actualizado correctamente");
         console.log(putData);
-        const postData={
+        const postData = {
             idEquipo: selectedTeam.idEquipo,
-            miembros: addedParticipants
-        }
+            miembros: addedParticipants,
+        };
         console.log("Agregado correctamente");
         console.log(postData);
-        const deleteData={
+        const deleteData = {
             idEquipo: selectedTeam.idEquipo,
-            miembrosEliminados: deletedParticipants
-        }
+            miembrosEliminados: deletedParticipants,
+        };
         console.log("Eliminado correctamente");
         console.log(deleteData);
         // Resto del código
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/modificarMiembroEquipo",
+                putData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud PUT
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Registro correcto");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            });
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/insertarMiembrosEquipo",
+                postData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/eliminarMiembroEquipo",
+                {
+                    data: deleteData,
+                }
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
     };
 
     return (
@@ -438,6 +491,7 @@ export default function Equipo(props) {
                                             onPress={() => {
                                                 onSubmitParticipantesRoles();
                                                 setUpdateState(false);
+                                                router.back();
                                             }}
                                         >
                                             Guardar
@@ -574,7 +628,11 @@ export default function Equipo(props) {
 
                                                 <div className="col-span-3 flex mt-4">
                                                     <MyCombobox
-                                                        urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
+                                                        urlApi={
+                                                            process.env
+                                                                .NEXT_PUBLIC_BACKEND_URL +
+                                                            `/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`
+                                                        }
                                                         property="roles"
                                                         nameDisplay="nombreRol"
                                                         hasColor={false}
