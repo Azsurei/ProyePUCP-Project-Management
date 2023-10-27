@@ -243,7 +243,24 @@ export default function Equipo(props) {
 
         // Realizar solicitudes PUT, POST y DELETE según sea necesario
         // ...
-
+        const putData={
+            idEquipo: selectedTeam.idEquipo,
+            miembrosModificados: modifiedParticipants
+        } 
+        console.log("Actualizado correctamente");
+        console.log(putData);
+        const postData={
+            idEquipo: selectedTeam.idEquipo,
+            miembros: addedParticipants
+        }
+        console.log("Agregado correctamente");
+        console.log(postData);
+        const deleteData={
+            idEquipo: selectedTeam.idEquipo,
+            miembrosEliminados: deletedParticipants
+        }
+        console.log("Eliminado correctamente");
+        console.log(deleteData);
         // Resto del código
     };
 
