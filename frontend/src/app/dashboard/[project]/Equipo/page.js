@@ -21,6 +21,7 @@ import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 
@@ -192,8 +193,11 @@ export default function Equipo(props) {
 
     const checkIfLeaderExists = () => {
         // Verifica si al menos un participante tiene el rol de líder
-        const isLeader = selectedTeam.participantes.some((participant) => participant.nombreRol === "Lider");
-    
+        console.log("El selectedTeam para verificar líder es:", selectedTeam);
+        const isLeader = selectedTeam.participantes.some(
+            (participant) => participant.nombreRol === "Lider"
+        );
+
         return isLeader;
     };
 
@@ -504,13 +508,13 @@ export default function Equipo(props) {
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
-                                                if(checkIfLeaderExists){
+                                                if (checkIfLeaderExists()) {
                                                     onSubmitParticipantesRoles();
                                                     setUpdateState(false);
-                                                }else{
-                                                    alert("Un miembro debe tener el rol de líder");
+                                                    toast.success("Se ha modificado exitosamente");
+                                                } else {
+                                                    toast.error("Un miembro debe tener el rol de líder");
                                                 }
-
                                             }}
                                         >
                                             Guardar
@@ -713,6 +717,15 @@ export default function Equipo(props) {
                     )}
                 </div>
             )}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }
