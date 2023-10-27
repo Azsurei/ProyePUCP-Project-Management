@@ -2,17 +2,20 @@
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import DashboardNav from "@/components/dashboardComps/DashboardNav";
 import DashboardSecondNav from "@/components/dashboardComps/DashboardSecondNav";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 import axios from "axios";
 axios.defaults.withCredentials = true;
+
+export const SessionContext = createContext();
 
 export default function RootLayout({ children }) {
     const [userData, setUserData] = useState({ nombres: "", apellidos: "" });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURL)
@@ -39,31 +42,34 @@ export default function RootLayout({ children }) {
         );
     } else {
         return (
-            <div
-                className="dashboardLayout"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                }}
-            >
-                <DashboardNav
-                    userName={userData.nombres}
-                    userLastName={userData.apellidos}
-                />
-                <DashboardSecondNav />
+            <SessionContext.Provider value={userData}>
                 <div
+                    className="dashboardLayout"
                     style={{
-                        marginTop: "123px",
-                        flex: "1",
-                        overflow: "auto",
                         display: "flex",
-                        backgroundColor: '#F5F5F5'
+                        flexDirection: "column",
+                        height: "100%",
                     }}
                 >
-                    {children}
+                    <DashboardNav
+                        userName={userData.nombres}
+                        userLastName={userData.apellidos}
+                        userObj={userData}
+                    />
+                    <DashboardSecondNav />
+                    <div
+                        style={{
+                            marginTop: "123px",
+                            flex: "1",
+                            overflow: "auto",
+                            display: "flex",
+                            backgroundColor: "#F5F5F5",
+                        }}
+                    >
+                        {children}
+                    </div>
                 </div>
-            </div>
+            </SessionContext.Provider>
         );
     }
 }

@@ -19,6 +19,7 @@ import {
 
 import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/../public/icons/EyeSlashFilledIcon";
+import jwtDecode from "jwt-decode";
 
 axios.defaults.withCredentials = true;
 
@@ -39,7 +40,8 @@ function Login() {
 
     // Funciones adicionales
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const validateEmail = (email) => email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    const validateEmail = (email) =>
+        email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
     const validatePassword = (password) => password.length >= 5;
 
     // Control de flujo de variables de formulario
@@ -105,10 +107,12 @@ function Login() {
             }
 
             // TODO: Setear en la futura provider context
-            
+
             router.push("/dashboard");
         } catch (error) {
-            setLoginError("Ocurrió un error al iniciar sesión. Intente de nuevo.");
+            setLoginError(
+                "Ocurrió un error al iniciar sesión. Intente de nuevo."
+            );
             throw error.response.data;
         }
 
@@ -128,6 +132,96 @@ function Login() {
     const handleGoogleSignIn = async () => {
         setLoadingGoogle(true);
     };
+
+    const handleCallbackResponse = (response) => {
+        console.log(response);
+        const userObject = jwtDecode(response.credential);
+        console.log(userObject);
+
+        //aqui ya tenemos correoElectronico y contra (sub). tambien given_name y family_name
+        axios
+            .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`, {
+                username: userObject.email,
+                password: userObject.sub, //consideramos al sub (id) como contraseña en bd
+                imgLink: userObject.picture
+            })
+            .then((response) => {
+                const user = response.data;
+
+                if (user.error) {
+                    throw user;
+                }
+
+                // TODO: Setear en la futura provider context
+                router.push("/dashboard");
+            })
+            .catch(function (error) {
+                console.log("Error al verificar cuenta en bd", error);
+
+                if (error.response.status === 417) {
+                    //handleamos caso en que usuario no existe en bd para registrarlo automaticamente
+                    axios
+                        .post(
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,
+                            {
+                                nombres: userObject.given_name,
+                                apellidos: userObject.family_name,
+                                correoElectronico: userObject.email,
+                                password: userObject.sub,
+                            }
+                        )
+                        .then((response) => {
+                            //usuario registrado, ahora lo logeamos con el login
+                            console.log(response.data.message);
+
+                            axios
+                                .post(
+                                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`,
+                                    {
+                                        username: userObject.email,
+                                        password: userObject.sub,
+                                        imgLink: userObject.picture
+                                    }
+                                )
+                                .then((response) => {
+                                    const user = response.data;
+
+                                    if (user.error) {
+                                        throw user;
+                                    }
+
+                                    // TODO: Setear en la futura provider context
+                                    router.push("/dashboard");
+                                })
+                                .catch(function (error) {
+                                    console.log(
+                                        "Error al verificar cuenta en bd LUEGO de registrar por primera vez",
+                                        error
+                                    );
+                                });
+                        })
+                        .catch(function (error) {
+                            console.log(
+                                "Error al registrar cuenta en bd",
+                                error
+                            );
+                        });
+                }
+            });
+    };
+
+    useEffect(() => {
+        google.accounts.id.initialize({
+            client_id:
+                "152000739309-ljvv04nf75ck9pu4qj1mtf9a15g2kpve.apps.googleusercontent.com",
+            callback: handleCallbackResponse,
+        });
+
+        google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+            theme: "outline",
+            size: "large",
+        });
+    }, []);
 
     // Componente general
     return (
@@ -214,14 +308,16 @@ function Login() {
                 <div className="flex-1 h-0.5 rounded-2xl bg-gray-300"></div>
             </div>
 
-            <Button
+            {/* <Button
                 text="Google"
                 iconBefore={<img src="/icons/icon-google.svg" />}
                 isLoading={loadingGoogle}
                 isDisabled={loadingGoogle}
                 className={"w-48"}
                 onClick={() => handleGoogleSignIn()}
-            />
+            /> */}
+
+            <div id="signInDiv"></div>
 
             <div className="flex flex-wrap justify-between items-center gap-2 w-full content-center">
                 <Link href="/recoverPassword">
