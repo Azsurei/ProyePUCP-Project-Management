@@ -20,6 +20,7 @@ export default function Example({
     onSelectValor,
     valorParam,
     widthCombo,
+    onSelect2,
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
@@ -79,6 +80,9 @@ export default function Example({
                     }
                     if (typeof onSelectValor === "function") {
                         onSelectValor(selectedItem[valorParam]);
+                    }
+                    if (typeof onSelect2 === "function") {
+                        onSelect2(selectedItem[idParam],selectedItem[valorParam]);
                     }
                 }}
             >

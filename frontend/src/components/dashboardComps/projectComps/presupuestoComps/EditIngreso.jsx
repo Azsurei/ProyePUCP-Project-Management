@@ -142,7 +142,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                                             <>
                                                 <ModalHeader className="flex flex-col gap-1" 
                                                     style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                                    Nuevo Ingreso
+                                                    Editar Ingreso
                                                 </ModalHeader>
                                                 <ModalBody>
                                                     <p className="textIngreso">Monto Recibido</p>

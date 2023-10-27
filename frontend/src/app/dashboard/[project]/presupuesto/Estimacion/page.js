@@ -38,7 +38,7 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
 import { set } from "date-fns";
 import { tr } from "date-fns/locale";
-
+import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 
 export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -148,7 +148,7 @@ export default function Ingresos(props) {
                 .then(function (response) {
                     console.log(response);
                     console.log("Linea Ingresada");
-                    //DataTable();
+                    DataTable();
                     resolve(response);
                 })
                 .catch(function (error) {
@@ -228,15 +228,15 @@ export default function Ingresos(props) {
 
     //Aqui va el data table de Iwa
     
-    /*
+    
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
-              const data = response.data.lineasIngreso;
-              setLineasIngreso(data);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdProyecto/${projectId}`);
+              const data = response.data.lineasEstimacionCosto;
+              setLineasEstimacion(data);
               console.log(`Esta es la data:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.lineasIngreso);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasEstimacionCosto);
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
@@ -251,7 +251,7 @@ export default function Ingresos(props) {
       }, [projectId]);
     const hasSearchFilter = Boolean(filterValue);
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...lineasIngreso]
+        let filteredTemplates = [...lineasEstimacion]
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((item) =>
@@ -260,9 +260,9 @@ export default function Ingresos(props) {
         }
 
         return filteredTemplates;
-    }, [lineasIngreso, filterValue]);
+    }, [lineasEstimacion, filterValue]);
 
-    */
+    
 
 
     return (
@@ -343,7 +343,7 @@ export default function Ingresos(props) {
                     </div>
 
                     <div className="divListaIngreso">
-                        Aqui va la Lista de Estimaciones
+                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true}></EstimacionCostoList>
                     </div>
 
 

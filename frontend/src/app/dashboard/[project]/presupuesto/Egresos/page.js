@@ -36,6 +36,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import TuneIcon from '@mui/icons-material/Tune';
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
+import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 
 
 export default function Ingresos(props) {
@@ -217,6 +218,43 @@ export default function Ingresos(props) {
         } 
     };
 
+    const [lineasEstimacion, setLineasEstimacion] = useState([]);
+
+    //Aqui va el data table de Iwa
+    
+    
+    const DataTable = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdProyecto/${projectId}`);
+              const data = response.data.lineasEstimacionCosto;
+              setLineasEstimacion(data);
+              console.log(`Esta es la data:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasEstimacionCosto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };
+
+        
+    useEffect(() => {
+    
+        DataTable();
+      }, [projectId]);
+    const hasSearchFilter = Boolean(filterValue);
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...lineasEstimacion]
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((item) =>
+            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+
+        return filteredTemplates;
+    }, [lineasEstimacion, filterValue]);
     
     return (
 
@@ -282,9 +320,15 @@ export default function Ingresos(props) {
 
                         </div>
                     </div>
-                    <div className="divListaIngreso">
-                        <EgresosList lista = {data}></EgresosList>
+                    <div className="flex">
+                        <div className="divListaIngreso w-1/2">
+                            <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false}></EstimacionCostoList>
+                        </div>
+                        <div className="divListaIngreso w-1/2">
+                            <EgresosList lista = {data}></EgresosList>
+                        </div> 
                     </div>
+                    
 
                 
                 </div>
