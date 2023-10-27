@@ -126,7 +126,7 @@ export default function Equipo(props) {
         setSelectedTeam({ ...selectedTeamTemporal });
     };
 
-    useEffect(() => {
+    const fetchTeamsData = () => {
         setIsLoadingSmall(true);
         let teamsArray;
         const stringURL =
@@ -148,6 +148,10 @@ export default function Equipo(props) {
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
             });
+    };
+
+    useEffect(() => {
+        fetchTeamsData();
     }, []);
 
     const handleSeeTeam = (team) => {
@@ -203,11 +207,16 @@ export default function Equipo(props) {
 
     const checkIfMultipleLeadersExist = () => {
         // Filtra los participantes que tienen el rol de líder
-        const leaderParticipants = selectedTeam.participantes.filter((participant) => participant.nombreRol === "Lider");
-    
+        const leaderParticipants = selectedTeam.participantes.filter(
+            (participant) => participant.nombreRol === "Lider"
+        );
+
         // Verifica si tienes más de un líder
         console.log("El selectedTeam para verificar líderes es:", selectedTeam);
-        console.log("El lenght de leaderParticipants es:", leaderParticipants.length);
+        console.log(
+            "El lenght de leaderParticipants es:",
+            leaderParticipants.length
+        );
         return leaderParticipants.length > 1;
     };
 
@@ -436,6 +445,7 @@ export default function Equipo(props) {
                         haveReturn={true}
                         haveAddNew={false}
                         handlerReturn={() => {
+                            fetchTeamsData();
                             setScreenState(0);
                         }}
                         //newPrimarySon={ListComps.length + 1}
@@ -518,14 +528,25 @@ export default function Equipo(props) {
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
-                                                if (checkIfLeaderExists() && !checkIfMultipleLeadersExist()) {
+                                                if (
+                                                    checkIfLeaderExists() &&
+                                                    !checkIfMultipleLeadersExist()
+                                                ) {
                                                     onSubmitParticipantesRoles();
                                                     setUpdateState(false);
-                                                    toast.success("Se ha modificado exitosamente");
-                                                }else if(checkIfMultipleLeadersExist()){
-                                                    toast.error("Solo puede haber un líder");
+                                                    toast.success(
+                                                        "Se ha modificado exitosamente"
+                                                    );
+                                                } else if (
+                                                    checkIfMultipleLeadersExist()
+                                                ) {
+                                                    toast.error(
+                                                        "Solo puede haber un líder"
+                                                    );
                                                 } else {
-                                                    toast.error("Un miembro debe tener el rol de líder");
+                                                    toast.error(
+                                                        "Un miembro debe tener el rol de líder"
+                                                    );
                                                 }
                                             }}
                                         >
@@ -606,12 +627,19 @@ export default function Equipo(props) {
                                                 >
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos[0]}
+                                                            member.apellidos !==
+                                                        null
+                                                            ? member
+                                                                  .apellidos[0]
+                                                            : ""}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
-                                                            {member.apellidos}
+                                                            {member.apellidos !==
+                                                            null
+                                                                ? member.apellidos
+                                                                : ""}
                                                         </div>
                                                         <div>
                                                             {
@@ -686,12 +714,19 @@ export default function Equipo(props) {
                                                 <div className="col-span-6 flex mt-4">
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos[0]}
+                                                            member.apellidos !==
+                                                        null
+                                                            ? member
+                                                                  .apellidos[0]
+                                                            : ""}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
-                                                            {member.apellidos}
+                                                            {member.apellidos !==
+                                                            null
+                                                                ? member.apellidos
+                                                                : ""}
                                                         </div>
                                                         <div>
                                                             {

@@ -17,7 +17,8 @@ export default function ActaReunion(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const router = useRouter();
+    const [idActa, setidActa] = useState(null);
+
 
 // *********************************************************************************************
 // Searching Meeting Record ID
@@ -25,63 +26,64 @@ export default function ActaReunion(props) {
     const [meetingId, setMeetingId] = useState("");
 
     useEffect(() => {
-        const stringURL = 
-        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
-        console.log("La URL es" + stringURL);
-
+        setIsLoadingSmall(true);
+        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
         axios
             .get(stringURL)
-            .then(function (response) {
-                console.log("Listando ActasReunion. Respuesta del servidor:", response.data);
-                const dataActa = response.data.data;
-                console.log("El ID del Acta de Reunion es: ", dataActa.idActaReunion);
-                setMeetingId(dataActa.idActaReunion);
-                setIsLoadingSmall(false);
+            .then(({ data: { data: { idActaReunion } } }) => {
+                console.log("Listando ActasReunion. Respuesta del servidor:", idActaReunion);
+                setidActa(idActaReunion);
             })
-            .catch(function (error) {
-                console.log(error);
+            .catch((error) => {
+                console.error("Error fetching meeting record ID:", error);
+            })
+            .finally(() => {
+                setIsLoadingSmall(false);
             });
-        }, []);
-
-    const fetchData = async () => {
-        console.log("Fetching");
-        setIsLoadingSmall(true);
-        try {
-            const resultado =
-                await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/29', {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-            const lineasActaReunion  = resultado.data.lineasActaReunion;
-
-            console.log(lineasActaReunion);
-            const pendientes = [];
-            const finalizadas = [];
-            const fechaActual = new Date();
-
-            lineasActaReunion.forEach(reunion => {
-                const fechaReunion = new Date(reunion.fechaReunion);
-                if (fechaReunion >= fechaActual) {
-                    pendientes.push(reunion);
-                } else {
-                    finalizadas.push(reunion);
-                }
-            });
-            setReuniones({ pendientes, finalizadas });
-        } catch (error) {
-            console.error('Error al obtener los datos de la API:', error);
-        }
-        setIsLoadingSmall(false);
-    };
-
-    useEffect(() => {
-        fetchData();
     }, [setIsLoadingSmall, projectId]);
 
+    useEffect(() => {
+        if (idActa) {
+            (async () => {
+                try {
+                    setIsLoadingSmall(true);
+                    const resultado = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/${idActa}`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const lineasActaReunion = resultado.data.lineasActaReunion;
+                    console.log(lineasActaReunion);
+
+                    const pendientes = [];
+                    const finalizadas = [];
+                    const fechaActual = new Date();
+
+                    lineasActaReunion.forEach(reunion => {
+                        const fechaReunion = new Date(reunion.fechaReunion);
+                        if (fechaReunion >= fechaActual) {
+                            pendientes.push(reunion);
+                        } else {
+                            finalizadas.push(reunion);
+                        }
+                    });
+                    setReuniones({ pendientes, finalizadas });
+
+                } catch (error) {
+                    console.error('Error al obtener los datos de la API:', error);
+                } finally {
+                    setIsLoadingSmall(false);
+                }
+            })();
+        }
+    }, [idActa, setIsLoadingSmall]);
+
+    const router = useRouter();
     const handleEdit = (reunion) => {
-        router.push(`/dashboard/${projectName}=${projectId}/actaReunion/edit?data=${reunion.idLineaActaReunion}`);
+
+        const idAR = reunion.idLineaActaReunion;
+
+        router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion/e?edit='+ idAR);
     };
 
     const handleDelete = async (id) => {
@@ -97,7 +99,6 @@ export default function ActaReunion(props) {
 
         if (response.status === 200) {
             console.log('Reunión eliminada con éxito');
-            fetchData();
         }
     };
 

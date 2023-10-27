@@ -5,42 +5,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 import { SmallLoadingScreen } from "./layout";
-import { SessionContext } from "../layout";
 
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default function Project(props) {
-    const { sessionData, setSession } = useContext(SessionContext);
+    
 
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    useEffect(() => {
-        const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verRolUsuarioEnProyecto";
-
-        axios
-            .post(stringURL,{
-                idUsuario: sessionData.idUsuario,
-                idProyecto: projectId
-            })
-            .then(function (response) {
-                const user_rol = response.data.rol.idRol;
-                const new_session = {...sessionData};
-                new_session.rolInProject = user_rol;
-                setSession(new_session);
-
-                console.log("Bienvenido Usuario => " + JSON.stringify(new_session));
-                //setIsLoading(false);
-                setIsLoadingSmall(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, []);
+    
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project

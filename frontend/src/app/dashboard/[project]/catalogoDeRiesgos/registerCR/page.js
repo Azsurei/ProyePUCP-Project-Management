@@ -399,11 +399,11 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
                                         {component.nombres[0] +
-                                            component.apellidos[0]}
+                                         component.apellidos!==null? component.apellidos[0] : ""}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.nombres} ${component.apellidos}`
+                                            `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
                                         )}
                                     </div>
                                 </div>
@@ -433,11 +433,11 @@ export default function CatalogoDeRiesgosRegister(props) {
                                     <div className="iconLabel3CR">
                                         <p className="profilePicCR">
                                             {component.nombres[0] +
-                                                component.apellidos[0]}
+                                                component.apellidos!==null? component.apellidos[0] : ""}
                                         </p>
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
-                                                `${component.nombres} ${component.apellidos}`
+                                                `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
                                             )}
                                         </div>
                                     </div>

@@ -29,17 +29,15 @@ axios.defaults.withCredentials = true;
 
 export default function autoevaluacionEquipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const session = useContext(SessionContext);
+    const { sessionData } = useContext(SessionContext);
 
-    const userId = session.idUsuario.toString();
-    const rol = session.Privilegios_idPrivilegios;
-
-    console.log("Session: ", session);
-    console.log("Rol: ", rol);
-    console.log("User ID: ", userId);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
+    console.log(rol);
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const [initialEvaluations, setInitialEvaluations] = useState([]);
     const [usersEvaluation, setUsersEvaluation] = useState(initialEvaluations);
@@ -66,17 +64,15 @@ export default function autoevaluacionEquipo(props) {
                     userId
             );
 
+            console.log(response.status);
             if (response.status === 200) {
-                
                 const evaluaciones = response.data.evaluados;
                 setInitialEvaluations(evaluaciones);
                 setUsersEvaluation(evaluaciones);
             } else if (response.status === 204) {
-                if (rol !== 3) {
-                    setFormState("created");
-                    return;
-                }
                 setFormState("empty");
+            } else if (response.status === 205) {
+                setFormState("created");
             }
         } catch (error) {
             console.error("Error al obtener las evaluaciones.", error);
@@ -89,7 +85,7 @@ export default function autoevaluacionEquipo(props) {
         getEvaluation();
     }, []);
 
-    console.log(formState); 
+    console.log(usersEvaluation);
 
     // Manejo de guardado de datos
     function saveEvaluation() {
@@ -122,6 +118,7 @@ export default function autoevaluacionEquipo(props) {
         } catch (e) {
             toast.error("Ha ocurrido un error al guardar la autoevaluación.");
         } finally {
+            setIsLoading(false);
             onOpenChange(true);
         }
     };
@@ -163,6 +160,7 @@ export default function autoevaluacionEquipo(props) {
         } catch (e) {
             toast.error("Ha ocurrido un error al crear la autoevaluación.");
         } finally {
+            setIsLoading(false);
             onOpenChange(true);
         }
     };
@@ -556,9 +554,7 @@ export default function autoevaluacionEquipo(props) {
                         text={"Inicio"}
                     ></BreadcrumbsItem>
                     <BreadcrumbsItem text={"Proyectos"}></BreadcrumbsItem>
-                    <BreadcrumbsItem
-                        text={"[Nombre del proyecto]"}
-                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem text={projectName}></BreadcrumbsItem>
                 </Breadcrumbs>
             </div>
             <h2 className="space-x-4 mb-2 montserrat text-[#172B4D] font-bold text-3xl text-gray-700">

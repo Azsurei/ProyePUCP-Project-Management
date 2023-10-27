@@ -645,7 +645,7 @@ export default function ProductBacklogUpdate(props) {
                         <div className="buttonContainer">
                             <Modal
                                 nameButton="Descartar"
-                                textHeader="Descartar Registro"
+                                textHeader="Descartar Actualización"
                                 textBody="¿Seguro que quiere descartar la actualización de la historia de usuario?"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
@@ -654,7 +654,7 @@ export default function ProductBacklogUpdate(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar Historia de Usuario"
+                                textHeader="Actualizar Historia de Usuario"
                                 textBody="¿Seguro que quiere actualizar la historia de usuario?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}

@@ -12,21 +12,21 @@ async function insertarRiesgo(req,res,next){
         const idRiesgo = results[0][0].idRiesgo;
         console.log(`Se generó el riesgo ${idRiesgo}!`);
         for(const responsable of responsables){
-            await connection.execute(`
+            await connection.query(`
                 CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
                 ${responsable.idUsuario});
             `);
         }
         for(const planRespuesta of planesRespuesta){
-            await connection.execute(`
+            await connection.query(`
                 CALL INSERTAR_PLANRESPUESTA(
                 ${idRiesgo},
                 '${planRespuesta.responsePlans}');
             `);
         }
         for(const planContigencia of planesContigencia){
-            await connection.execute(`
+            await connection.query(`
                 CALL INSERTAR_PLANCONTIGENCIA(
                 ${idRiesgo},
                 '${planContigencia.contingencyPlans}');
@@ -143,7 +143,7 @@ async function listarImpacto(req,res,next){
 async function insertarPlanRespuesta(req,res,next){
     const{idRiesgo, responsePlans} = req.body;
     try {
-        const [results] = await connection.execute(`
+        const [results] = await connection.query(`
         CALL INSERTAR_PLANRESPUESTA(
             ${idRiesgo},
             '${responsePlans}');
@@ -177,7 +177,7 @@ async function eliminarPlanRespuesta(req,res,next){
 async function insertarPlanContingencia(req,res,next){
     const{idRiesgo, contingencyPlans} = req.body;
     try {
-        const [results] = await connection.execute(`
+        const [results] = await connection.query(`
         CALL INSERTAR_PLANCONTIGENCIA(
             ${idRiesgo},
             '${contingencyPlans}');
@@ -245,21 +245,21 @@ async function eliminarRRC(req,res,next){
     try {
         // Iteracion Eliminar Responsables
         for (const responsable of responsables) {
-            await connection.execute(`
+            await connection.query(`
             CALL ELIMINAR_RESPONSABLE(${idRiesgo},${responsable.idUsuario});
             `);
             console.log(`Se logró eliminar el responsable: ${responsable.idUsuario}`);
         }
         // Iteracion Eliminar Planes de Respuesta
         for (const planRespuesta of planesRespuesta) {
-            await connection.execute(`
+            await connection.query(`
             CALL ELIMINAR_PLANRESPUESTA(${planRespuesta.idPlanRespuesta});
             `);
             console.log(`Se elimino el plan de respuesta: ${planRespuesta.idPlanRespuesta}`);
         }
         // Iteracion Eliminar Planes de Contingencia
         for (const planContingencia of planesContingencia) {
-            await connection.execute(`
+            await connection.query(`
             CALL ELIMINAR_PLANCONTINGENCIA(${planContingencia.idPlanContingencia});
             `);
             console.log(`Se elimino el plan de contingencia: ${planContingencia.idPlanContingencia}`);
@@ -280,7 +280,7 @@ async function insertarRRC(req,res,next){
     try {
         // Iteracion Insertar Responsables
         for(const responsable of responsables){
-            await connection.execute(`
+            await connection.query(`
                 CALL INSERTAR_RESPONSABLE_RIESGO(
                 ${idRiesgo},
                 ${responsable.idUsuario});
@@ -288,7 +288,7 @@ async function insertarRRC(req,res,next){
         }
         // Iteracion Insertar Planes de Respuesta
         for(const planRespuesta of planesRespuesta){
-            await connection.execute(`
+            await connection.query(`
                 CALL INSERTAR_PLANRESPUESTA(
                 ${idRiesgo},
                 '${planRespuesta.responsePlans}');
@@ -296,7 +296,7 @@ async function insertarRRC(req,res,next){
         }
         // Iteracion Insertar Planes de Contingencia
         for(const planContigencia of planesContingencia){
-            await connection.execute(`
+            await connection.query(`
                 CALL INSERTAR_PLANCONTIGENCIA(
                 ${idRiesgo},
                 '${planContigencia.contingencyPlans}');
@@ -323,7 +323,7 @@ async function modificarRiesgoRRC(req,res,next){
             detalleRiesgo, causaRiesgo, impactoRiesgo, estado]);
         // Iteracion modificar Planes de Respuesta
         for(const planRespuesta of planesRespuesta){
-            await connection.execute(`
+            await connection.query(`
                 CALL MODIFICAR_PLANESRESPUESTA(
                 ${planRespuesta.idPlanRespuesta},
                 '${planRespuesta.responsePlans}');
@@ -331,7 +331,7 @@ async function modificarRiesgoRRC(req,res,next){
         }
         // Iteracion modificar Planes de Contingencia
         for(const planContigencia of planesContingencia){
-            await connection.execute(`
+            await connection.query(`
                 CALL MODIFICAR_PLANESCONTINGENCIA(
                 ${planContigencia.idPlanContingencia},
                 '${planContigencia.contingencyPlans}');

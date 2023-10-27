@@ -27,7 +27,7 @@ async function modificarCampos(req,res,next){
             empresa, cliente, patrocinador, gerente]);
         for (const campo of actaData) {
             console.log(`Datos: ${campo.idDetalle},${campo.nombre},${campo.detalle}`);
-            const [results] = await connection.execute(`
+            const [results] = await connection.query(`
             CALL MODIFICAR_CAMPO_DETALLEAC(
                 ${campo.idDetalle},
                 '${campo.nombre}',
