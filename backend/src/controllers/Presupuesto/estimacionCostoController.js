@@ -94,7 +94,7 @@ async function funcListarLineasXIdProyecto(idProyecto) {
 async function listarLineasXIdProyecto(req,res,next) {
     const { idProyecto } = req.params;
     try {
-        const lineasEstimacionCosto = funcListarLineasXIdProyecto(idProyecto);
+        const lineasEstimacionCosto = await funcListarLineasXIdProyecto(idProyecto);
         res.status(200).json({lineasEstimacionCosto, message: "Estimacion costo listado"});
     } catch (error) {
         console.log(error);
