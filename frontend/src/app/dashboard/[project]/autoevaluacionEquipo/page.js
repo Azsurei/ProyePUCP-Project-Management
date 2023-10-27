@@ -64,16 +64,15 @@ export default function autoevaluacionEquipo(props) {
                     userId
             );
 
+            console.log(response.status);
             if (response.status === 200) {
                 const evaluaciones = response.data.evaluados;
                 setInitialEvaluations(evaluaciones);
                 setUsersEvaluation(evaluaciones);
             } else if (response.status === 204) {
-                if (rol !== 3) {
-                    setFormState("created");
-                    return;
-                }
                 setFormState("empty");
+            } else if (response.status === 205) {
+                setFormState("created");
             }
         } catch (error) {
             console.error("Error al obtener las evaluaciones.", error);
@@ -87,7 +86,7 @@ export default function autoevaluacionEquipo(props) {
     }, []);
 
     console.log(usersEvaluation);
-    
+
     // Manejo de guardado de datos
     function saveEvaluation() {
         return new Promise((resolve, reject) => {
