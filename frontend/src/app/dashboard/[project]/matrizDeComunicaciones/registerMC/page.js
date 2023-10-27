@@ -218,11 +218,11 @@ export default function MatrizComunicacionesRegister(props) {
                                 <div className="iconLabel2MC">
                                     <p className="profilePicMC">
                                         {component.nombres[0] +
-                                            component.apellidos[0]}
+                                            component.apellidos!==null? component.apellidos[0] : ""}
                                     </p>
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
-                                            `${component.nombres} ${component.apellidos}`
+                                            `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
                                         )}
                                     </div>
                                 </div>

@@ -606,12 +606,12 @@ export default function Equipo(props) {
                                                 >
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos[0]}
+                                                            member.apellidos!==null? member.apellidos[0] : ""}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
-                                                            {member.apellidos}
+                                                            {member.apellidos!==null? member.apellidos: ""}
                                                         </div>
                                                         <div>
                                                             {
@@ -686,12 +686,12 @@ export default function Equipo(props) {
                                                 <div className="col-span-6 flex mt-4">
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos[0]}
+                                                            member.apellidos!==null? member.apellidos[0] : ""}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
-                                                            {member.apellidos}
+                                                            {member.apellidos!==null? member.apellidos: ""}
                                                         </div>
                                                         <div>
                                                             {
