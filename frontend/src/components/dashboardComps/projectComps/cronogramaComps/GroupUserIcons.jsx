@@ -18,7 +18,7 @@ export default function GroupUserIcons({ idTarea, listUsers, beImg }) {
                     isBordered={false}
                     color={"primary"}
                     //src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
-                    className="w-14 h-14 text-tiny"
+                    className="w-[50px] h-[50px] text-tiny"
                     fallback={
                         <p id="MoreUsrsIcn">
                             +{count}
