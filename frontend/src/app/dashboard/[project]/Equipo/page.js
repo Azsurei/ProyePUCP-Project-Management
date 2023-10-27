@@ -49,7 +49,6 @@ export default function Equipo(props) {
     const [modal, setModal] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
-    const [actualizarFlag, setActualizarFlag] = useState(false);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -510,9 +509,6 @@ export default function Equipo(props) {
                                             startContent={<SaveIcon />}
                                             onPress={() => {
                                                 onSubmitParticipantesRoles();
-                                                setActualizarFlag(
-                                                    !actualizarFlag
-                                                );
                                                 setUpdateState(false);
                                             }}
                                         >
