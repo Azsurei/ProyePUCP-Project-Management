@@ -87,7 +87,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                         className="w-[100%]"
                     />
                     <p className="min-w-[40px] w-[40px] flex justify-center">
-                        {progressValue + "%"}
+                        {(progressValue!==null || progressValue!==undefined ? progressValue : 0) + "%"}
                     </p>
                 </div>
             </div>
