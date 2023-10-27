@@ -94,7 +94,19 @@
     display: inline-block;
     padding: 3px 5px 3px 5px;
 }
-
+.titleEstimacionPago {
+    color: #FFFFFF;
+    font-family: Roboto;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: auto; /* 106.667% */
+    background-color: #656565;
+    border-radius: 10px;
+    text-align: center;
+    display: inline-block;
+    padding: 3px 5px 3px 5px;
+}
 .titleTipoPagoEgresoHistorial {
     color: #FFFFFF;
     font-family: Roboto;
@@ -152,6 +164,16 @@
 }
 .titleMontoEgresoHistorial {
     color: #E2284D;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 88.889% */
+    margin-bottom: 5px;
+    text-align: right;
+}
+.titleTarifaEstimacion {
+    color: #000000;
     font-family: Montserrat;
     font-size: 18px;
     font-style: normal;

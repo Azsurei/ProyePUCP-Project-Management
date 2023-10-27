@@ -4,18 +4,19 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
-import ModalEliminateIngreso from "./ModalEliminateIngreso";
+import ModalEliminateEstimacion from "./ModalEliminateEstimaciones";
 import EditIngreso from "./EditIngreso";
-
+import EditEstimacion from "./EditEstimacion";
 
 axios.defaults.withCredentials = true;
 
 function CardEstimacionCosto({
-    tipoIngreso,
-    IngresoObject,
+    descripcionEstimacion,
+    EstimacionObject,
     cantidad,
-    montoIngreso,
+    tarifaEstimacion,
     horaIngreso,
+    isEdit,
     refresh,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
@@ -35,63 +36,59 @@ function CardEstimacionCosto({
         console.log("Esta es la linea", selectedLinea);
     };
 
-    const imageIngresoOptions = {
-        "Efectivo": "/icons/icon-Efectivo.svg",
-        "Transferencia": "/icons/icon-transferencia.svg",
-        "Cheque": "/icons/icon-cheque.svg",
-        "Licencia de Software": "/icons/icon-licencia.svg",
-        "Ingeniero Industrial": "/icons/icon-ingeniero.svg",
-        // Agrega más opciones según sea necesario
-    };
-    const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoIngreso);
-    const monedaSymbol = IngresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
+
+    const monedaSymbol = EstimacionObject.nombreMoneda === "USD" ? "$" : "S/";
     return (
         <li
             className="IngresoCard"
         >
             <img
                 className="imgageIngresoDefault"
-                src={imageIngresoOptions[IngresoObject.descripcionTransaccionTipo]}
+                src="/icons/PeopleGroupIcon.svg"
             />
             <div className="informacionIngreso">
                 <div style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <p className="titleTipoIngreso">{tipoIngreso}</p>
-                    <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>{IngresoObject.descripcionTransaccionTipo}</p>
+                    <p className="titleTipoIngreso">{descripcionEstimacion}</p>
+                    <p className="titleEstimacionPago">Cant. {EstimacionObject.cantidadRecurso}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoIngreso}</p>
-                    <p className="titleHoraIngreso">{IngresoObject.descripcionIngresoTipo}</p>
+                    <p className="titleTarifaEstimacion">{monedaSymbol} {tarifaEstimacion}</p>
+                    <p className="titleHoraIngreso">{monedaSymbol} {EstimacionObject.subtotal}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <button className="" type="button" onClick={()=>toggleModal2(IngresoObject)}>
-                        <img src="/icons/editar.svg"/>
+                {isEdit && (
+                    <>
+                    <button className="" type="button" onClick={() => toggleModal2(EstimacionObject)}>
+                        <img src="/icons/editar.svg" />
                     </button>
-                    <button className="" type="button" onClick={() => toggleModal(IngresoObject)}>
-                        <img src="/icons/eliminar.svg"/>
+                    <button className="" type="button" onClick={() => toggleModal(EstimacionObject)}>
+                        <img src="/icons/eliminar.svg" />
                     </button>
+                     </>
+                )}
                 </div>
             </div>
             {modal1 && selectedTask && (
-                <ModalEliminateIngreso
+                <ModalEliminateEstimacion
                     modal={modal1} 
                     toggle={() => toggleModal(selectedTask)}
                     taskName={selectedTask.descripcion}
-                    idLineaIngreso={selectedTask.idLineaIngreso}
+                    idEstimacion={selectedTask.idLineaEstimacion}
                     refresh={refresh}
                 />
             )}
             {modal2 && selectedLinea && (
-                <EditIngreso
-                    modal={modal2} 
-                    descripcionLineaIngreso={selectedLinea.descripcion}
-                    montoIngreso={selectedLinea.monto}
-                    lineaIngreso={selectedLinea}
-                    idIngresoTipo={selectedLinea.idIngresoTipo}
-                    nombreIngresoTipo={selectedLinea.descripcionIngresoTipo}
-                    idTransaccionTipo={selectedLinea.idTransaccionTipo}
-                    nombreTransaccionTipo={selectedLinea.descripcionTransaccionTipo}
-                    idMonedaIngreso={selectedLinea.idMoneda}
-                    fechaTransaccionIngreso={selectedLinea.fechaTransaccion}
+                <EditEstimacion
+                    modal={modal2}
+                    idLineaEstimacion={selectedLinea.idLineaEstimacion} 
+                    descripcionEstimacionCosto={selectedLinea.descripcion}
+                    tarifaEstimacion={selectedLinea.tarifaUnitaria}
+                    estimacionCosto={selectedLinea}
+                    cantidadRecurso={selectedLinea.cantidadRecurso}
+                    mesesEstimacion={(selectedLinea.subtotal/(selectedLinea.tarifaUnitaria*selectedLinea.cantidadRecurso)).toFixed(2)}
+                    idMonedaEstimacion={selectedLinea.idMoneda}
+                    fechaInicio={selectedLinea.fechaInicio}
+                    subtotalEstimacion={selectedLinea.subtotal}
                     refresh={refresh}
                 />
             )}
@@ -103,8 +100,8 @@ function CardEstimacionCosto({
 export default function EstimacionCostoList(props) {
     const router = useRouter();
 
-    const { lista, refresh } = props;
-    console.log("listaIngresos", lista);
+    const { lista, refresh , isEdit} = props;
+    console.log("listaEstimaciones", lista);
     if (props.lista.length === 0) {
         return (
             <p className="noResultsMessage">No se encontraron resultados.</p>
@@ -126,8 +123,8 @@ export default function EstimacionCostoList(props) {
     const fechaGroups = {}; // Creamos un objeto para agrupar las fechas
 
     lista.forEach((component) => {
-        const fechaTransaccion = new Date(component.fechaTransaccion);
-        const fechaKey = fechaTransaccion.toISOString().split('T')[0]; // Usamos la fecha como clave
+        const fechaInicio = new Date(component.fechaInicio);
+        const fechaKey = fechaInicio.toISOString().split('T')[0]; // Usamos la fecha como clave
 
         if (!fechaGroups[fechaKey]) {
             fechaGroups[fechaKey] = [];
@@ -138,10 +135,10 @@ export default function EstimacionCostoList(props) {
     return (
         <div>
             {Object.keys(fechaGroups).map((fechaKey) => {
-                const fechaTransaccion = new Date(fechaGroups[fechaKey][0].fechaTransaccion);
+                const fechaInicio = new Date(fechaGroups[fechaKey][0].fechaInicio);
                 const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                const fechaFormateada = fechaTransaccion.toLocaleDateString('es-ES', options);
-                const horaIngreso = fechaTransaccion.toLocaleTimeString();
+                const fechaFormateada = fechaInicio.toLocaleDateString('es-ES', options);
+                const horaIngreso = fechaInicio.toLocaleTimeString();
 
                 return (
                     <div key={fechaKey}>
@@ -151,12 +148,13 @@ export default function EstimacionCostoList(props) {
                         <ul className="ListIngresosProject">
                             {fechaGroups[fechaKey].map((component) => (
                                 <CardEstimacionCosto
-                                    key={component.idLineaIngreso}
-                                    tipoIngreso={component.descripcion}
-                                    IngresoObject={component}
-                                    cantidad={component.cantidad}
-                                    montoIngreso={component.monto}
+                                    key={component.idLineaEstimacion}
+                                    descripcionEstimacion={component.descripcion}
+                                    EstimacionObject={component}
+                                    cantidad={component.cantidadRecurso}
+                                    tarifaEstimacion={component.tarifaUnitaria}
                                     horaIngreso={horaIngreso}
+                                    isEdit={isEdit}
                                     refresh={refresh}
                                 />
                             ))}
