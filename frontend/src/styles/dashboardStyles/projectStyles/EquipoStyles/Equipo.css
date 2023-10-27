@@ -252,21 +252,20 @@
     list-style: none;
     display: grid;
     gap: 0px;
-    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
-    margin-top: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
 }
 
 .membersIcon {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 50px;
+    height: 50px;
     flex-shrink: 0;
     border-radius: 100%;
-    margin-left: 1rem;
     font-size: 15px;
     background-color: lightgray;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: 'Montserrat';
 }
 
 .memberInfo {
@@ -306,6 +305,16 @@
 }
 
 
+.cardEquipoBigHeader{
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-size: 1.35rem;
+}
+
+.cardEquipoLeaderLbl{
+    font-family: 'Montserrat';
+    font-size: 1.1rem;
+}
 
 
 

@@ -350,8 +350,8 @@ export default function MatrizComunicacionesUpdate(props) {
                         <div className="buttonContainerMC">
                             <Modal
                                 nameButton="Descartar"
-                                textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de la información?"
+                                textHeader="Descartar Actualización"
+                                textBody="¿Seguro que quiere descartar la actualización de la información?"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
                                 secondAction={() => router.back()}
@@ -359,8 +359,8 @@ export default function MatrizComunicacionesUpdate(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar información"
-                                textBody="¿Seguro que quiere registrar la información?"
+                                textHeader="Actualizar información"
+                                textBody="¿Seguro que quiere actualizar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 secondAction={() => {

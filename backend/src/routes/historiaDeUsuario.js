@@ -125,7 +125,7 @@ routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,
         console.log(`Se inserto la HU ${idHU}!`);
         // Iteracion Escenario
         for (const scenario of scenarioData) {
-            const [scenarioRows] = await connection.execute(`
+            const [scenarioRows] = await connection.query(`
             CALL INSERTAR_HISTORIA_CRITERIO(
                 ${idHU},
                 '${scenario.dadoQue}',
@@ -138,7 +138,7 @@ routerHistoriaDeUsuario.post("/insertarHistoriaDeUsuario",verifyToken,async(req,
             console.log(`Se insertó el criterio de aceptacion: ${idHistoriaCriterioDeAceptacion}`);
         }
         for (const requerimiento of requirementData) {
-            const [requerimientoRows] = await connection.execute(`
+            const [requerimientoRows] = await connection.query(`
             CALL INSERTAR_HISTORIA_REQUISITO(
                 ${idHU},
                 '${requerimiento.requirement}'
@@ -167,10 +167,10 @@ routerHistoriaDeUsuario.get("/:idHistoriaDeUsuario/listarHistoriaDeUsuario",veri
     try {
         const [results] = await connection.query(query,[idHistoriaDeUsuario]);
         console.log(results[0]);
-        const [criterioAceptacionData] = await connection.execute(`
+        const [criterioAceptacionData] = await connection.query(`
             CALL LISTAR_CRITERIO_X_IDHU(${idHistoriaDeUsuario});
         `);
-        const [requirimientosData] = await connection.execute(`
+        const [requirimientosData] = await connection.query(`
             CALL LISTAR_REQUERIMIENTO_X_IDHU(${idHistoriaDeUsuario});
         `);
         const historiaUsuario = {
@@ -204,7 +204,7 @@ routerHistoriaDeUsuario.put("/modificarHistoriaDeUsuario",verifyToken,async(req,
         console.log(`Se modifico la HU ${idHU}!`);
         // Iteracion Escenario
         for (const scenario of scenarioData) {
-            const [scenarioRows] = await connection.execute(`
+            const [scenarioRows] = await connection.query(`
             CALL MODIFICAR_HISTORIA_CRITERIO(
                 ${idHU},
                 ${scenario.idHistoriaCriterioDeAceptacion},
@@ -218,7 +218,7 @@ routerHistoriaDeUsuario.put("/modificarHistoriaDeUsuario",verifyToken,async(req,
             console.log(`Se modificó el criterio de aceptacion: ${idHistoriaCriterioDeAceptacion}`);
         }
         for (const requerimiento of requirementData) {
-            const [requerimientoRows] = await connection.execute(`
+            const [requerimientoRows] = await connection.query(`
             CALL MODIFICAR_HISTORIA_REQUISITO(
                 ${idHU},
                 ${requerimiento.idHistoriaRequisito},
@@ -392,14 +392,14 @@ routerHistoriaDeUsuario.delete("/eliminarCriterioRequisito",verifyToken,async(re
     try {
         // Iteracion Eliminar Criterio de Aceptacion
         for (const scenario of scenarioData) {
-            await connection.execute(`
+            await connection.query(`
             CALL ELIMINAR_HU_CRITERIO_ACEPTACION(${scenario.idHistoriaCriterioDeAceptacion});
             `);
             console.log(`Se logró eliminar el criterio de aceptacion: ${scenario.idHistoriaCriterioDeAceptacion}`);
         }
         // Iteracion Eliminar Criterio de Aceptacion
         for (const requerimiento of requirementData) {
-            await connection.execute(`
+            await connection.query(`
             CALL ELIMINAR_HU_REQUISITO(${requerimiento.idHistoriaRequisito});
             `);
             console.log(`Se elimino el requisito: ${requerimiento.idHistoriaRequisito}`);
@@ -421,7 +421,7 @@ routerHistoriaDeUsuario.post("/insertarCriterioRequisito",verifyToken,async(req,
     try {
         // Iteracion Insertar Criterio de Aceptacion
         for (const scenario of scenarioData) {
-            const [scenarioRows] = await connection.execute(`
+            const [scenarioRows] = await connection.query(`
             CALL INSERTAR_HISTORIA_CRITERIO(
                 ${idHistoriaUsuario},
                 '${scenario.dadoQue}',
@@ -434,7 +434,7 @@ routerHistoriaDeUsuario.post("/insertarCriterioRequisito",verifyToken,async(req,
         }
         // Iteracion Eliminar Criterio de Aceptacion
         for (const requerimiento of requirementData) {
-            const [requerimientoRows] = await connection.execute(`
+            const [requerimientoRows] = await connection.query(`
             CALL INSERTAR_HISTORIA_REQUISITO(
                 ${idHistoriaUsuario},
                 '${requerimiento.requirement}'

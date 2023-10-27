@@ -128,7 +128,7 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         ]);
 
                         const idActaConstitucion = results[0][0].idActaConstitucion;
-                        const [detalleAC] = await connection.execute(`
+                        const [detalleAC] = await connection.query(`
                             CALL INSERTAR_DETALLEAC_CREADO(${idActaConstitucion});
                             `);
                     }

@@ -166,7 +166,7 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>
         // Iteracion
         for (const criterio of criterioAceptacion) {
             if(criterio.data!==""){
-                const [criterioAceptacionRows] = await connection.execute(`
+                const [criterioAceptacionRows] = await connection.query(`
                 CALL INSERTAR_CRITERIOS_ACEPTACION(
                     ${idComponenteEDT},
                     '${criterio.data}'
@@ -178,7 +178,7 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT",verifyToken,async(req,res)=>
         }
         for (const entregable of entregables) {
             if(entregable.data!==""){
-                const [entregableRows] = await connection.execute(`
+                const [entregableRows] = await connection.query(`
                 CALL INSERTAR_ENTREGABLE(
                     '${entregable.data}',
                     ${idComponenteEDT}
@@ -215,7 +215,7 @@ routerEDT.post("/modificarComponenteEDT",verifyToken,async(req,res)=>{
         // Pendiente (Falta preguntar)
         // Iteracion
         // for (const criterio of criterioAceptacion) {
-        //     const [criterioAceptacionRows] = await connection.execute(`
+        //     const [criterioAceptacionRows] = await connection.query(`
         //     CALL INSERTAR_CRITERIOS_ACEPTACION(
         //         ${idComponenteEDT},
         //         '${criterio.data}'
@@ -225,7 +225,7 @@ routerEDT.post("/modificarComponenteEDT",verifyToken,async(req,res)=>{
         //     console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
         // }
         // for (const entregable of entregables) {
-        //     const [entregableRows] = await connection.execute(`
+        //     const [entregableRows] = await connection.query(`
         //     CALL INSERTAR_ENTREGABLE(
         //         '${entregable.data}',
         //         ${idComponenteEDT}
@@ -276,10 +276,10 @@ routerEDT.post("/verInfoComponenteEDT",verifyToken,async(req,res)=>{
         console.log(results[0]);
 
         query = "CALL LISTAR_CRITERIO_X_IDCOMPONENTE(?);";
-        const [criterioAceptacion] = await connection.execute(query,[idComponente]);
+        const [criterioAceptacion] = await connection.query(query,[idComponente]);
 
         query = "CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(?);";
-        const [entregables] = await connection.execute(query,[idComponente]);
+        const [entregables] = await connection.query(query,[idComponente]);
 
         const componenteEDT = {
             component: results[0][0],
