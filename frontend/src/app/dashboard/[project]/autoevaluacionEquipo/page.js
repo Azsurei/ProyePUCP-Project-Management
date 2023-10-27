@@ -2,6 +2,7 @@
 
 import { useContext, useEffect, useState } from "react";
 import { SmallLoadingScreen } from "../layout";
+import { SessionContext } from "../../layout";
 import axios from "axios";
 
 import {
@@ -27,41 +28,54 @@ import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function autoevaluacionEquipo(props) {
-    const userId = session?.user?.id.toString();
-    const rol = 3 || session?.user?.rol;
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const session = useContext(SessionContext);
+
+    const userId = session.idUsuario.toString();
+    const rol = session.Privilegios_idPrivilegios;
+
+    console.log("Session: ", session);
     console.log("Rol: ", rol);
     console.log("User ID: ", userId);
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
 
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-
     const [initialEvaluations, setInitialEvaluations] = useState([]);
     const [usersEvaluation, setUsersEvaluation] = useState(initialEvaluations);
     const [formState, setFormState] = useState("initial"); // "empty", "created", "initial", "modified"
+    const [criteriosSave, setCriteriosSave] = useState({
+        criterio1: "",
+        criterio2: "",
+        criterio3: "",
+        criterio4: "",
+    });
+
     const [isLoading, setIsLoading] = useState(false);
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     // Manejo de carga de datos
     const getEvaluation = async () => {
         try {
             const response = await axios.get(
-                process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/autoEvaluacion/listarAutoEvaluacion/` +
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/autoEvaluacion/listarAutoEvaluacion/` +
                     projectId +
                     `/` +
                     userId
             );
 
             if (response.status === 200) {
-                if (rol !== 3) {
-                    setFormState("created");
-                    return;
-                }
+                
                 const evaluaciones = response.data.evaluados;
                 setInitialEvaluations(evaluaciones);
                 setUsersEvaluation(evaluaciones);
             } else if (response.status === 204) {
+                if (rol !== 3) {
+                    setFormState("created");
+                    return;
+                }
                 setFormState("empty");
             }
         } catch (error) {
@@ -75,12 +89,15 @@ export default function autoevaluacionEquipo(props) {
         getEvaluation();
     }, []);
 
+    console.log(formState); 
+
     // Manejo de guardado de datos
     function saveEvaluation() {
         return new Promise((resolve, reject) => {
             axios
                 .put(
-                    process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion`,
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        `/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion`,
                     {
                         evaluados: usersEvaluation,
                     }
@@ -114,13 +131,14 @@ export default function autoevaluacionEquipo(props) {
         return new Promise((resolve, reject) => {
             axios
                 .post(
-                    process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/autoEvaluacion/crearAutoEvaluacion`,
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        `/api/proyecto/autoEvaluacion/crearAutoEvaluacion`,
                     {
                         idProyecto: projectId,
-                        criterio1: "Dominio técnico",
-                        criterio2: "Compromiso con los trabajos",
-                        criterio3: "Comunicación con los compañeros",
-                        criterio4: "Comprensión de proyecto",
+                        criterio1: criteriosSave.criterio1,
+                        criterio2: criteriosSave.criterio2,
+                        criterio3: criteriosSave.criterio3,
+                        criterio4: criteriosSave.criterio4,
                     }
                 )
                 .then((response) => {
@@ -147,6 +165,18 @@ export default function autoevaluacionEquipo(props) {
         } finally {
             onOpenChange(true);
         }
+    };
+
+    const handleCriteriosChange = (name, value) => {
+        setCriteriosSave((prevCriterios) => ({
+            ...prevCriterios,
+            [name]: value,
+        }));
+
+        const allCriteriosFilled = Object.values(criteriosSave).every(
+            (criterio) => criterio.trim() !== ""
+        );
+        setIsSaveDisabled(!allCriteriosFilled);
     };
 
     // Manejo de cambios en los datos
@@ -336,28 +366,72 @@ export default function autoevaluacionEquipo(props) {
                                                 <ModalBody>
                                                     <Input
                                                         autoFocus
+                                                        name="criterio1"
                                                         label="Criterio 1"
                                                         placeholder="Ej. Dominio técnico"
                                                         type="text"
+                                                        value={
+                                                            criteriosSave.criterio1
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleCriteriosChange(
+                                                                "criterio1",
+                                                                e.target.value
+                                                            )
+                                                        }
                                                         variant="bordered"
+                                                        isRequired={true}
                                                     />
                                                     <Input
+                                                        name="criterio2"
                                                         label="Criterio 2"
                                                         placeholder="Ej. Compromiso con los trabjos"
                                                         type="text"
+                                                        value={
+                                                            criteriosSave.criterio2
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleCriteriosChange(
+                                                                "criterio2",
+                                                                e.target.value
+                                                            )
+                                                        }
                                                         variant="bordered"
+                                                        isRequired={true}
                                                     />
                                                     <Input
+                                                        name="criterio3"
                                                         label="Criterio 3"
                                                         placeholder="Ej. Comunicación con los compañeros"
                                                         type="text"
+                                                        value={
+                                                            criteriosSave.criterio3
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleCriteriosChange(
+                                                                "criterio3",
+                                                                e.target.value
+                                                            )
+                                                        }
                                                         variant="bordered"
+                                                        isRequired={true}
                                                     />
                                                     <Input
+                                                        name="criterio4"
                                                         label="Criterio 4"
                                                         placeholder="Ej. Comprensión de proyecto"
                                                         type="text"
+                                                        value={
+                                                            criteriosSave.criterio4
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleCriteriosChange(
+                                                                "criterio4",
+                                                                e.target.value
+                                                            )
+                                                        }
                                                         variant="bordered"
+                                                        isRequired={true}
                                                     />
                                                 </ModalBody>
                                                 <ModalFooter>
@@ -374,6 +448,9 @@ export default function autoevaluacionEquipo(props) {
                                                         onPress={handleCreate}
                                                         isLoading={
                                                             isLoading === true
+                                                        }
+                                                        isDisabled={
+                                                            isSaveDisabled
                                                         }
                                                     >
                                                         Crear
