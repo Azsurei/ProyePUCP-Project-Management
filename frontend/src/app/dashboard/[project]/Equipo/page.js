@@ -136,15 +136,58 @@ export default function Equipo(props) {
         console.log("La URL es" + stringURL);
         axios
             .get(stringURL)
-
             .then((response) => {
                 console.log("Respuesta del servidor:", response.data);
                 teamsArray = response.data.equipos;
                 console.log("Los arreglos son " + JSON.stringify(teamsArray));
-                setListComps(teamsArray);
-                setIsLoadingSmall(false);
-            })
 
+                for (const equipo of teamsArray) {
+                    equipo.tareasNoIniciado = 0;
+                    equipo.tareasFinished = 0;
+                }
+
+                for (const equipo of teamsArray) {
+                    const verTareasURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
+                        equipo.idEquipo;
+                    axios
+                        .get(verTareasURL)
+                        .then((response) => {
+                            console.log(response.data.message);
+                            console.log(response.data.tareasEquipo);
+                            const tareasNoIniciado =
+                                response.data.tareasEquipo.filter(
+                                    (tarea) => tarea.idTareaEstado === 1
+                                ).length;
+                            const tareasFinished =
+                                response.data.tareasEquipo.filter(
+                                    (tarea) => tarea.idTareaEstado === 4
+                                ).length;
+                            equipo.tareasNoIniciado = tareasNoIniciado;
+                            equipo.tareasFinished = tareasFinished;
+                            console.log(
+                                "este equipo tuvo " +
+                                    tareasNoIniciado +
+                                    " y " +
+                                    tareasFinished
+                            );
+
+                            setListComps(teamsArray);
+                            setIsLoadingSmall(false);
+                        })
+                        .catch(function (error) {
+                            console.log(
+                                "Error al cargar la lista de tareas del equipo: ",
+                                error
+                            );
+                        });
+                }
+
+                console.log("ya pase");
+                
+                
+            })
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
             });
@@ -412,7 +455,7 @@ export default function Equipo(props) {
                         </div>
                     ) : (
                         <div className="noTeamsMessage">
-                            <h2>¡Vaya!</h2>
+                            <h2>Empieza Ya!</h2>
                             <p className="littleMessage">
                                 ¡Aún no tienes equipos en este proyecto! <br />
                                 Recuerda que delegar tareas es muy importante.

@@ -5,6 +5,14 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Progress } from "@nextui-org/react";
 
 const CardEquipo = ({ team, handleSeeTeam }) => {
+    const totalTareas =
+        (team.tareasNoIniciado !== null ? team.tareasNoIniciado : 0) +
+        (team.tareasFinished !== null ? team.tareasFinished : 0);
+    const progressValue =
+        ((team.tareasFinished !== null ? team.tareasFinished : 0) /
+            totalTareas) *
+        100;
+
     function capitalizeWords(str) {
         // Dividimos la cadena en palabras usando el espacio como separador
         const words = str.split(" ");
@@ -20,7 +28,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
     }
     return (
         <div>
-            <div    //estaba en 70
+            <div //estaba en 70
                 className="w-full max-w-[30rem] shadow-md 
           border border-gray-300 rounded-lg card-hover my-2 overflow-hidden p-[1rem]"
                 onClick={() => {
@@ -28,7 +36,9 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                 }}
             >
                 <div>
-                    <p className="cardEquipoBigHeader">{team.nombre}</p>
+                    <p className="cardEquipoBigHeader">
+                        {team.nombre}
+                    </p>
                     <p className="cardEquipoLeaderLbl mb-2">
                         Líder:{" "}
                         {capitalizeWords(
@@ -40,25 +50,24 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                 {team.participantes.length > 0 ? (
                     <div className="divPictures mb-2">
                         {team.participantes.map((member, index) => (
-                            <>
-                                <Avatar
-                                    //isBordered
-                                    //as="button"
-                                    className="transition-transform w-[50px] min-w-[50px] h-[50x] min-h-[50px]"
-                                    src={member.imgLink}
-                                    fallback={
-                                        <p
-                                            className="membersIcon"
-                                            key={member.idUsuario}
-                                        >
-                                            {member.nombres[0]}
-                                            {member.apellidos !== null
-                                                ? member.apellidos[0]
-                                                : ""}
-                                        </p>
-                                    }
-                                />
-                            </>
+                            <Avatar
+                                //isBordered
+                                //as="button"
+                                key={member.idUsuario}
+                                className="transition-transform w-[50px] min-w-[50px] h-[50x] min-h-[50px]"
+                                src={member.imgLink}
+                                fallback={
+                                    <p
+                                        className="membersIcon"
+                                        key={member.idUsuario}
+                                    >
+                                        {member.nombres[0]}
+                                        {member.apellidos !== null
+                                            ? member.apellidos[0]
+                                            : ""}
+                                    </p>
+                                }
+                            />
                         ))}
                     </div>
                 ) : (
@@ -66,12 +75,16 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                         Este equipo no cuenta con miembros
                     </p>
                 )}
-                <div className="progressBarContainer">
+                <div className="progressBarContainer flex flex-row items-center">
                     <Progress
                         color="primary"
                         aria-label="Loading..."
-                        value={70}
+                        value={progressValue}
+                        className="w-[100%]"
                     />
+                    <p className="min-w-[40px] w-[40px] flex justify-center">
+                        {progressValue + "%"}
+                    </p>
                 </div>
             </div>
         </div>

@@ -514,7 +514,7 @@ export default function crear_equipo(props) {
                 ></ModalUser>
             )}
 
-            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+            {/* <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen> */}
         </div>
     );
 }
