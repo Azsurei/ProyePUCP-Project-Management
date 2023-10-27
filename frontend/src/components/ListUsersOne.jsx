@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListUsers.css";
 import { UserCardsContextOne } from "./ModalUsersOne";
+import { Avatar } from "@nextui-org/react";
 
 axios.defaults.withCredentials = true;
 
