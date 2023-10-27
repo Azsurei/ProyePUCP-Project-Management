@@ -507,7 +507,7 @@ export default function Equipo(props) {
                                             startContent={<SaveIcon />}
                                             onPress={() => {
                                                 onSubmitParticipantesRoles();
-                                                actualizarFlag(!actualizarFlag);
+                                                setActualizarFlag(!actualizarFlag);
                                                 setUpdateState(false);
                                             }}
                                         >
