@@ -2265,9 +2265,10 @@ DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTES_X_IDEQUIPO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PARTICIPANTES_X_IDEQUIPO(IN _idEquipo INT)
 BEGIN
-    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
-	FROM Usuario AS u
-    LEFT JOIN UsuarioXEquipo AS ue ON u.idUsuario = ue.idUsuario
+    SELECT ue.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo, ue.idRol, re.nombreRol
+    FROM UsuarioXEquipo AS ue
+    LEFT JOIN Usuario AS u ON ue.idUsuario = u.idUsuario
+    LEFT JOIN RolesEquipo AS re ON ue.idRol = re.idRolEquipo
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
 
@@ -2750,5 +2751,42 @@ BEGIN
 	UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
     UPDATE UsuarioXEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
     UPDATE RolesEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
->>>>>>> 2f9babb16fa898459257ff2a2062e50c8883aeba
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PROYECTO_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PROYECTO_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE UsuarioXEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE RolesEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
+    IN _idEquipo INT,
+    IN _idUsuario INT,
+    IN _idRol INT
+)
+BEGIN
+	UPDATE UsuarioXEquipo 
+    SET idRol = _idRol 
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_MIEMBRO_EQUIPO(
+    IN _idEquipo INT,
+    IN _idUsuario INT
+)
+BEGIN
+	UPDATE UsuarioXEquipo 
+    SET activo = 0 
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
 END$

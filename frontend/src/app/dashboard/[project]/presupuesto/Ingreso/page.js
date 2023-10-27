@@ -155,7 +155,7 @@ export default function Ingresos(props) {
                     idTransaccionTipo:selectedTipoTransaccion,
                     idIngresoTipo:selectedTipo,
                     descripcion:descripcionLinea,
-                    monto:parseFloat(monto),
+                    monto:parseFloat(monto).toFixed(2),
                     cantidad:1,
                     fechaTransaccion:fecha,
                 })
