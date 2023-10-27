@@ -2763,3 +2763,30 @@ BEGIN
     UPDATE UsuarioXEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
     UPDATE RolesEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
+    IN _idEquipo INT,
+    IN _idUsuario INT,
+    IN _idRol INT
+)
+BEGIN
+	UPDATE UsuarioXEquipo 
+    SET idRol = _idRol 
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_MIEMBRO_EQUIPO(
+    IN _idEquipo INT,
+    IN _idUsuario INT
+)
+BEGIN
+	UPDATE UsuarioXEquipo 
+    SET activo = 0 
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+END$
