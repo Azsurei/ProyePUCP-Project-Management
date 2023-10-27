@@ -486,7 +486,7 @@ export default function ProductBacklogUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasPrioridad"}
                             property="historiasPrioridad"
                             nameDisplay="nombre"
                             hasColor={true}
@@ -523,7 +523,7 @@ export default function ProductBacklogUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasEstado"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasEstado"}
                             property="historiasEstado"
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}

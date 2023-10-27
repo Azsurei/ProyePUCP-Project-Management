@@ -302,7 +302,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarProbabilidades"}
                             property="probabilidades"
                             nameDisplay="nombreProbabilidad"
                             hasColor={false}
@@ -320,7 +320,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarImpacto"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarImpacto"}
                             property="impacto"
                             nameDisplay="nombreImpacto"
                             hasColor={false}
