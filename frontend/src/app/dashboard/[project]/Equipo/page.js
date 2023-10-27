@@ -49,6 +49,7 @@ export default function Equipo(props) {
     const [modal, setModal] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
+    const [actualizarFlag, setActualizarFlag] = useState(false);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -116,12 +117,17 @@ export default function Equipo(props) {
     };
 
     const removeUser = (user) => {
-        const newList = selectedTeam.participantes.filter(
+        const selectedTeamTemporal = { ...selectedTeam }; // Crear una nueva copia del objeto
+        const newList = selectedTeamTemporal.participantes.filter(
             (item) => item.idUsuario !== user.idUsuario
         );
-        selectedTeam.participantes = newList;
-        setSelectedTeam({ ...selectedTeam });
+        selectedTeamTemporal.participantes = newList;
+    
+        console.log("El selecteTeam actual es:", selectedTeam);
+        console.log("El selecteTeam original es:", selectedTeamOriginales);
+        setSelectedTeam({ ...selectedTeamTemporal });
     };
+    
 
     useEffect(() => {
         setIsLoadingSmall(true);
@@ -148,8 +154,14 @@ export default function Equipo(props) {
     }, []);
 
     const handleSeeTeam = (team) => {
+        console.log("Pase por aqui");
         setSelectedTeam(team);
         setSelectedTeamOriginales(team);
+        console.log("El first selecteTeam actual es:", selectedTeam);
+        console.log(
+            "El first selecteTeam original es:",
+            selectedTeamOriginales
+        );
         setIsLoadingSmall(true);
         const verTareasURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -274,7 +286,7 @@ export default function Equipo(props) {
             .then((response) => {
                 // Manejar la respuesta de la solicitud PUT
                 console.log("Respuesta del servidor:", response.data);
-                console.log("Registro correcto");
+                console.log("Actualización correcta");
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
@@ -403,6 +415,11 @@ export default function Equipo(props) {
             )}
             {screenState === 1 && (
                 <div>
+                    {console.log("El second selecteTeam actual es:", selectedTeam)}
+                    {console.log(
+                        "El second selecteTeam original es:",
+                        selectedTeamOriginales
+                    )}
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
@@ -490,8 +507,8 @@ export default function Equipo(props) {
                                             startContent={<SaveIcon />}
                                             onPress={() => {
                                                 onSubmitParticipantesRoles();
+                                                actualizarFlag(!actualizarFlag);
                                                 setUpdateState(false);
-                                                router.back();
                                             }}
                                         >
                                             Guardar
@@ -554,49 +571,6 @@ export default function Equipo(props) {
                                 </>
                             )}
 
-                            {/*Para el líder del equipo*/}
-                            {/*creo que ya no sirvirá */}
-                            {/*                             {!removeLider && (
-                                <>
-                                    <div className="col-span-6 flex mt-4">
-                                        <p className="membersIcon1">
-                                            {selectedTeam.nombreLider[0] +
-                                                selectedTeam.apellidoLider[0]}
-                                        </p>
-                                        <div>
-                                            <div className="text-lg">
-                                                {selectedTeam.nombreLider}{" "}
-                                                {selectedTeam.apellidoLider}
-                                            </div>
-                                            <div>
-                                                {selectedTeam.correoLider}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {updateState ? (
-                                        <>
-                                            <div className="col-span-3 flex mt-4">
-                                                Líder
-                                            </div>
-                                            <div className="col-span-1 flex mt-4 justify-center">
-                                                <img
-                                                    src="/icons/icon-trash.svg"
-                                                    alt="delete"
-                                                    className="mb-4 cursor-pointer "
-                                                    onClick={() => {
-                                                        setRemoveLider(true);
-                                                    }}
-                                                />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="col-span-4 flex mt-4">
-                                            Líder
-                                        </div>
-                                    )}
-                                </>
-                            )} */}
-
                             {updateState ? (
                                 <>
                                     {selectedTeam.participantes.map(
@@ -649,13 +623,25 @@ export default function Equipo(props) {
                                                         }
                                                     />
                                                 </div>
+                                                {console.log("El selecteTeam actual justo en eliminar es:", selectedTeam)}
+                                                {console.log("El selecteTeam original justo en eliminar es:", selectedTeamOriginales)}
                                                 <div className="col-span-1 flex mt-4 justify-center">
                                                     <img
                                                         src="/icons/icon-trash.svg"
                                                         alt="delete"
                                                         className="mb-4 cursor-pointer "
                                                         onClick={() => {
+                                                            console.log("El antes selecteTeam actual es:", selectedTeam);
+                                                            console.log(
+                                                                "El antes selecteTeam original es:",
+                                                                selectedTeamOriginales
+                                                            );
                                                             removeUser(member);
+                                                            console.log("El después selecteTeam actual es:", selectedTeam);
+                                                            console.log(
+                                                                "El después selecteTeam original es:",
+                                                                selectedTeamOriginales
+                                                            );
                                                         }}
                                                     />
                                                 </div>
