@@ -56,7 +56,7 @@ async function funcListarLineasXIdProyecto(idProyecto){
 async function listarLineasXIdProyecto(req,res,next){
     const { idProyecto } = req.params;
     try{
-        lineasIngreso = funcListarLineasXIdProyecto(idProyecto);
+        lineasIngreso = await funcListarLineasXIdProyecto(idProyecto);
         res.status(200).json({
             lineasIngreso,
             message: "Linea de ingreso listadas correctamente"
