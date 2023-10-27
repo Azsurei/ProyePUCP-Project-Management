@@ -2265,9 +2265,10 @@ DROP PROCEDURE IF EXISTS LISTAR_PARTICIPANTES_X_IDEQUIPO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PARTICIPANTES_X_IDEQUIPO(IN _idEquipo INT)
 BEGIN
-    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo
+    SELECT ue.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo, ue.idRol, re.nombreRol
     FROM UsuarioXEquipo AS ue
-    LEFT JOIN Usuario AS u ON u.idUsuario = ue.idUsuario
+    LEFT JOIN Usuario AS u ON ue.idUsuario = u.idUsuario
+    LEFT JOIN RolesEquipo AS re ON ue.idRol = re.idRolEquipo
 	WHERE ue.idEquipo = _idEquipo AND ue.activo=1;
 END$
 
