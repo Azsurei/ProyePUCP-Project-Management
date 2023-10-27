@@ -5,29 +5,48 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListUsers.css";
 import { UserCardsContextOne } from "./ModalUsersOne";
+import { Avatar } from "@nextui-org/react";
 
 axios.defaults.withCredentials = true;
 
-function CardUser({
-    usuarioObject,
-    isSelected,
-    onSelection,
-}) {
+function CardUser({ usuarioObject, isSelected, onSelection }) {
     //const [isSelected, setIsSelected] = useState(false);
-
 
     return (
         <li
             className={isSelected ? "UserCard active" : "UserCard"}
             onClick={onSelection}
         >
-            <img
+            {/* <img
                 className="imgageUserDefault"
                 src="/images/userDefaultList.png"
+            /> */}
+
+            <Avatar
+                //isBordered
+                //as="button"
+                className="transition-transform w-[48px] min-w-[48px] h-[48px] min-h-[48px]"
+                src={usuarioObject.imgLink}
+                fallback={
+                    <p className="usrLeftIconNull">
+                        {usuarioObject.nombres[0] +
+                            (usuarioObject.apellidos !== null
+                                ? usuarioObject.apellidos[0]
+                                : "")}
+                    </p>
+                }
             />
-            <div style={{ marginTop: "12px", marginLeft: "15px" }}>
-                <p className="titleUserName">{usuarioObject.nombres + " " + usuarioObject.apellidos}</p>
-                <p className="titleUserEmail">{usuarioObject.correoElectronico}</p>
+            <div className="cardUserDataSection">
+                <p className="titleUserName">
+                    {usuarioObject.nombres +
+                        " " +
+                        (usuarioObject.apellidos !== null
+                            ? usuarioObject.apellidos
+                            : "")}
+                </p>
+                <p className="titleUserEmail">
+                    {usuarioObject.correoElectronico}
+                </p>
             </div>
         </li>
     );
