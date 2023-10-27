@@ -5,10 +5,10 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
-import { Avatar, AvatarGroup, Card , CardBody, CardHeader, Divider} from '@nextui-org/react';
+import { Button, Avatar, AvatarGroup, Card , CardBody, CardHeader, Divider} from '@nextui-org/react';
 import {Tabs, Tab} from '@nextui-org/react';
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
-
+import { useRouter } from "next/navigation";
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [reuniones, setReuniones] = useState({ pendientes: [], finalizadas: [] });
@@ -16,6 +16,7 @@ export default function ActaReunion(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const router = useRouter();
 
 // *********************************************************************************************
 // Searching Meeting Record ID
@@ -34,7 +35,6 @@ export default function ActaReunion(props) {
                 const dataActa = response.data.data;
                 console.log("El ID del Acta de Reunion es: ", dataActa.idActaReunion);
                 setMeetingId(dataActa.idActaReunion);
-                setIsLoading(false);
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -79,20 +79,34 @@ export default function ActaReunion(props) {
         fetchData();
     }, [setIsLoadingSmall, projectId]);
 
+    const handleEdit = (reunion) => {
+        router.push(`/dashboard/${projectName}=${projectId}/actaReunion/${reunion.idLineaActaReunion}`);
+    };
+
+    const handleDelete = (id) => {
+        // Aquí puedes mostrar un modal para confirmar la acción
+        const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar esta reunión?");
+        if (confirmDelete) {
+            // Realiza la acción de eliminar
+            // Puedes hacer una llamada a la API para eliminar la reunión
+        }
+    };
+
     const renderCard = (reunion) => {
         const participantes = Array.isArray(reunion.participantesXReunion)
             ? reunion.participantesXReunion
             : reunion.participantesXReunion ? [reunion.participantesXReunion] : [];
         return (
-
-            <Card key={reunion.idLineaActaReunion} className="max-w-full mx-auto my-4" isPressable={true}>
+            <div className="flex flex-wrap items-start my-4 space-x-4 justify-center">
+            <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
                 <CardHeader className="p-4">
-                    <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.idLineaActaReunion}. {reunion.nombreReunion}</h3>
+                    <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
                 </CardHeader>
                 <Divider className="my-1"/>
-                <CardBody className="flex-row justify-between items-center h-28">
+                <CardBody className="flex-row justify-between items-center h-36">
                     <div className="mr-4">
-                        <p className="text-blue-900 montserrat">Reunión convocada por: {reunion.nombreConvocante}</p>
+                        <p className="text-blue-900 montserrat">Reunión convocada por:</p>
+                        <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
                         <p className="text-gray-700 montserrat">Fecha: {new Date(reunion.fechaReunion).toLocaleDateString()}</p>
                         <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
                     </div>
@@ -116,6 +130,12 @@ export default function ActaReunion(props) {
                     )}
                 </CardBody>
             </Card>
+            <div className="flex flex-col space-y-10 mt-10">
+            <Button onClick={() => handleEdit(reunion)}>Editar</Button>
+            <Button color="error" >Eliminar</Button>
+            </div>
+            </div>
+            // Crear botones de editar y eliminar
         );
     };
 
