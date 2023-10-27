@@ -42,9 +42,9 @@ async function listarAutoEvaluacion(req,res,next){
                 usuarioEvaluado.criterios = criterios[0][0];
         }
         if(evaluados.length === 0){
-            const query2 = `CALL OBTENER_idRol_X_idUsuario(?,?);`;
-            const results3 = await connection.query(query2,[idProyecto,idUsuario]);
-            if(results3[0][0].length === 0){
+            const query3 = `CALL VERIFICAR_EXISTE_EVALUACION(?);`;
+            const results4 = await connection.query(query3,[idProyecto]);
+            if(results4[0][0].length === 0){
                 res.status(204).json({
                     message: "Autoevaluacion no creada"
                 });
