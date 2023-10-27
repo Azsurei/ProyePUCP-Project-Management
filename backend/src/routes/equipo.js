@@ -19,5 +19,6 @@ routerEquipo.post("/insertarMiembros",equipoController.insertarMiembros);
 routerEquipo.delete("/eliminarEquipo",equipoController.eliminarEquipo);
 
 routerEquipo.put("/modificarMiembroEquipo",equipoController.modificarMiembroEquipo);
+routerEquipo.delete("/eliminarMiembroEquipo",equipoController.eliminarMiembroEquipo);
 
 module.exports.routerEquipo = routerEquipo;

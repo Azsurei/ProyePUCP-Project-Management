@@ -206,6 +206,22 @@ async function modificarMiembroEquipo(req,res,next){
         next(error);
     }
 }
+
+async function eliminarMiembroEquipo(req,res,next){
+    const{idEquipo, miembrosEliminados} = req.body;
+    const query = `CALL ELIMINAR_MIEMBRO_EQUIPO(?,?);`;
+    try {
+        for(const miembro of miembrosEliminados){
+            await connection.query(query, [idEquipo,miembro.idUsuario]);
+            console.log(`Se elimino el miembro ${miembro.idUsuario}!`);
+        }
+        res.status(200).json({
+            message: "Miembro eliminado exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
@@ -217,5 +233,6 @@ module.exports = {
     insertarEquipo,
     insertarMiembros,
     eliminarEquipo,
-    modificarMiembroEquipo
+    modificarMiembroEquipo,
+    eliminarMiembroEquipo
 };
