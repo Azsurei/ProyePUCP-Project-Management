@@ -619,7 +619,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
                                         {component.nombres[0] +
-                                            component.apellidos[0]}
+                                            component.apellidos!==null? component.apellidos[0] : ""}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(

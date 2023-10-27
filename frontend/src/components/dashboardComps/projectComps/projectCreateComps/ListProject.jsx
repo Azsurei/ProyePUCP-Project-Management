@@ -49,7 +49,7 @@ function ProjectCard(props) {
                     {props.miembros.map((member) => (
                     <p className="membersIcon" key={member.idUsuario}>
                         {member.nombres[0]}
-                        {member.apellidos[0]}
+                        {member.apellidos !== null ? member.apellidos[0] : ""}
                     </p>
                     ))}
                 </div>
