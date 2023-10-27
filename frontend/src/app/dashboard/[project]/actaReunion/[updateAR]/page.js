@@ -354,8 +354,8 @@ const handleRemoveComentario = (index) => {
                             haveAddNew={false}
                             hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
                             hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
-                            breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Nueva Reunion'}
-                            btnText={'Volver'}>Acta de Reunion [idLinea]</HeaderWithButtons>
+                            breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Editar Reunion'}
+                            btnText={'Volver'}>Editar Acta de Reunion</HeaderWithButtons>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
