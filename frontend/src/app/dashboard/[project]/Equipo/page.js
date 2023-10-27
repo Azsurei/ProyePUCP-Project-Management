@@ -201,6 +201,16 @@ export default function Equipo(props) {
         return isLeader;
     };
 
+    const checkIfMultipleLeadersExist = () => {
+        // Filtra los participantes que tienen el rol de líder
+        const leaderParticipants = selectedTeam.participantes.filter((participant) => participant.nombreRol === "Lider");
+    
+        // Verifica si tienes más de un líder
+        console.log("El selectedTeam para verificar líderes es:", selectedTeam);
+        console.log("El lenght de leaderParticipants es:", leaderParticipants.length);
+        return leaderParticipants.length > 1;
+    };
+
     const findModifiedDeletedAdded = (
         originalArray,
         newArray,
@@ -508,10 +518,12 @@ export default function Equipo(props) {
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
-                                                if (checkIfLeaderExists()) {
+                                                if (checkIfLeaderExists() && !checkIfMultipleLeadersExist()) {
                                                     onSubmitParticipantesRoles();
                                                     setUpdateState(false);
                                                     toast.success("Se ha modificado exitosamente");
+                                                }else if(checkIfMultipleLeadersExist()){
+                                                    toast.error("Solo puede haber un líder");
                                                 } else {
                                                     toast.error("Un miembro debe tener el rol de líder");
                                                 }
