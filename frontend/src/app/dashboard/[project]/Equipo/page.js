@@ -156,19 +156,19 @@ export default function Equipo(props) {
                         .then((response) => {
                             console.log(response.data.message);
                             console.log(response.data.tareasEquipo);
-                            const tareasNoIniciado =
+                            const tareasTotales =
                                 response.data.tareasEquipo.filter(
-                                    (tarea) => tarea.idTareaEstado === 1
+                                    (tarea) => tarea.idTareaEstado !== 4
                                 ).length;
                             const tareasFinished =
                                 response.data.tareasEquipo.filter(
                                     (tarea) => tarea.idTareaEstado === 4
                                 ).length;
-                            equipo.tareasNoIniciado = tareasNoIniciado;
+                            equipo.tareasTotales = tareasTotales;
                             equipo.tareasFinished = tareasFinished;
                             console.log(
                                 "este equipo tuvo " +
-                                    tareasNoIniciado +
+                                tareasTotales +
                                     " y " +
                                     tareasFinished
                             );

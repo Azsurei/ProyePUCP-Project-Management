@@ -6,12 +6,18 @@ import { Avatar, Progress } from "@nextui-org/react";
 
 const CardEquipo = ({ team, handleSeeTeam }) => {
     const totalTareas =
-        (team.tareasNoIniciado !== null ? team.tareasNoIniciado : 0) +
+        (team.tareasTotales !== null ? team.tareasTotales : 0) +
         (team.tareasFinished !== null ? team.tareasFinished : 0);
-    const progressValue =
-        ((team.tareasFinished !== null ? team.tareasFinished : 0) /
-            totalTareas) *
-        100;
+
+    let progressValue;
+    if (totalTareas === 0) {
+        progressValue = 0;
+    } else {
+        progressValue =
+            ((team.tareasFinished !== null ? team.tareasFinished : 0) /
+                totalTareas) *
+            100;
+    }
 
     function capitalizeWords(str) {
         // Dividimos la cadena en palabras usando el espacio como separador
@@ -36,9 +42,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                 }}
             >
                 <div>
-                    <p className="cardEquipoBigHeader">
-                        {team.nombre}
-                    </p>
+                    <p className="cardEquipoBigHeader">{team.nombre}</p>
                     <p className="cardEquipoLeaderLbl mb-2">
                         Líder:{" "}
                         {capitalizeWords(
