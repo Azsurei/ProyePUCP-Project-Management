@@ -17,7 +17,7 @@ export default function ActaReunion(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const router = useRouter();
+
 
 // *********************************************************************************************
 // Searching Meeting Record ID
@@ -80,8 +80,12 @@ export default function ActaReunion(props) {
         fetchData();
     }, [setIsLoadingSmall, projectId]);
 
+    const router = useRouter();
     const handleEdit = (reunion) => {
-        router.push(`/dashboard/${projectName}=${projectId}/actaReunion/edit?data=${reunion.idLineaActaReunion}`);
+
+        const idAR = reunion.idLineaActaReunion;
+
+        router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion/e?edit='+ idAR);
     };
 
     const handleDelete = async (id) => {
