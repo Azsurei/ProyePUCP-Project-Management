@@ -28,6 +28,7 @@ import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps
 
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import { is } from "date-fns/locale";
 
 axios.defaults.withCredentials = true;
 
@@ -52,8 +53,11 @@ const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 setIsLoadingSmall(false);
 
-// Edit Mode: False for New Meeting, True for Edit Meeting
+// Edit Mode: False for See Meeting, True for Edit Meeting
 const [isEditMode, setIsEditMode] = useState(false);
+const toggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+  };
 
 //Vital Data for Creating Meeting
 const [titleValue, setTitleValue] = useState("");
@@ -61,6 +65,9 @@ const [motiveValue, setMotiveValue] = useState("");
 const [dateValue, setDateValue] = useState(""); 
 const [timeValue, setTimeValue] = useState("");
 
+// *********************************************************************************************
+// Working with ARLine
+// *********************************************************************************************
     const [actaReunion, setActaReunion] = useState(null);
 
     const fetchData = async (id) => {
@@ -76,7 +83,7 @@ const [timeValue, setTimeValue] = useState("");
 
             // Update the actaReunion state with the fetched data
             setActaReunion(response.data);
-            console.log(response.data)
+            console.log(response.data);
         } catch (error) {
             console.error('Error al obtener los datos de la API:', error);
         }
@@ -94,6 +101,12 @@ const handleChangeDate = (event) => {
 const handleChangeTime = (event) => {
     setTimeValue(event.target.value);
 };
+
+useEffect(() => {
+    if (actaReunion) {
+      setTitleValue(actaReunion.lineaActaReunion.nombreReunion);
+    }
+  }, [actaReunion]);
 
 // *********************************************************************************************
 // Validations
@@ -117,6 +130,12 @@ function getMinDate() {
 
     return `${year}-${month}-${day}`;
 }
+
+/*
+const fechaISO = actaReunion.lineaActaReunion.fechaReunion;
+const fecha = new Date(fechaISO);
+const fechaLocal = fecha.toISOString().split('T')[0];
+*/
 
 function getMinTime() {
     const today = new Date();
@@ -144,6 +163,34 @@ function getMinTime() {
 const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
 const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
 const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
+
+const [numeroTemas, setNumeroTemas] = useState([]);
+
+useEffect(() => {
+    if (actaReunion 
+        && actaReunion.lineaActaReunion 
+        && actaReunion.lineaActaReunion.temasReunion) 
+    {
+        const temas = actaReunion.lineaActaReunion.temasReunion.map((_, index) => ({
+            descripcion: `Tema ${index + 1}`
+        }));
+        setNumeroTemas(temas);
+        setListTemas(actaReunion.lineaActaReunion.temasReunion);
+    }
+  }, [actaReunion]);
+
+
+useEffect(() => {
+    if (actaReunion 
+        && actaReunion.lineaActaReunion 
+        && actaReunion.lineaActaReunion.comentarios) {
+        setListComentarios(actaReunion.lineaActaReunion.comentarios);
+        setDateValue(actaReunion.lineaActaReunion.fechaReunion.split("T")[0]);
+        setTimeValue(actaReunion.lineaActaReunion.horaReunion.substring(0, 5));
+        setMotiveValue(actaReunion.lineaActaReunion.motivo);
+    }
+}, [actaReunion]);
+
 
 const handleAddTema = ()=>{
     const newList_T =  [
@@ -316,7 +363,7 @@ const handleRemoveComentario = (index) => {
 
     const [isLoading, setIsLoading] = useState(true);
 
-
+/*
 // *********************************************************************************************
 // Searching Meeting Record ID
 // *********************************************************************************************
@@ -341,38 +388,42 @@ const handleRemoveComentario = (index) => {
                 console.log(error);
             });
     }, []);
-
+*/
 // *********************************************************************************************
-// Getting Meeting Participants from Meeting Record Line
+// Handle Participants
 // *********************************************************************************************
-    const [participantes, setParticipantes] = useState("");
+    const [participantes, setParticipantes] = useState([]);
 
     useEffect(() => {
-        const stringURL = 
-        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarParticipanteXReunionXIdActaReunion/"
-            + meetingId;
-        console.log("La URL es" + stringURL);
+        if (actaReunion 
+            && actaReunion.lineaActaReunion 
+            && actaReunion.lineaActaReunion.participantesXReunion) {
+          const participantesTransformados = 
+            actaReunion.lineaActaReunion.participantesXReunion.map(participante => {
+            return {
+              idUsuario: participante.idUsuario,
+              nombreCompleto: `${participante.nombres} ${participante.apellidos}`,
+              asistio: false,
+            };
+          });
+          setParticipantes(participantesTransformados);
+        }
+      }, [actaReunion]);
 
-        axios
-            .get(stringURL)
-            .then(function (response) {
-                console.log("Listando Participantes. Respuesta del servidor:", response.data);
-                const dataActa = response.data.data;
-                
-                setMeetingId(dataActa.idActaReunion);
-                setIsLoading(false);
-                setIsLoadingSmall(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, []);
-
-
-// *********************************************************************************************
-// Creating a Meeting Record Line
-// *********************************************************************************************
-
+      const handleAsistenciaChange = (idUsuario) => {
+        const nuevosParticipantes = participantes.map(participante => {
+          if (participante.idUsuario === idUsuario) {
+            return { ...participante, asistio: !participante.asistio };
+          }
+          return participante;
+        });
+        setParticipantes(nuevosParticipantes);
+      };
+    
+      const handleBorrarParticipante = (idUsuario) => {
+        const nuevosParticipantes = participantes.filter(participante => participante.idUsuario !== idUsuario);
+        setParticipantes(nuevosParticipantes);
+      };
 
 // *********************************************************************************************
 // Page
@@ -386,32 +437,44 @@ const handleRemoveComentario = (index) => {
                             hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
                             breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Editar Reunion'}
                             btnText={'Volver'}>Editar Acta de Reunion</HeaderWithButtons>
+            <div style={{ padding: '10px' }}>
+                <button onClick={toggleEditMode}>
+                    {isEditMode ? 'Guardar Cambios' : 'Editar'}
+                </button>
+            </div>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
                         <CardBody>
+                            {/*
                             <div className="lineMeetingTitle">
                                 <h1>Reunión para ver temas de gastos</h1>
                             </div>
-                            {/* Mantener para pensar el modo editar
-                            <Input 
-                                className="max-w-[1000px]"
-                                isRequired
-                                key="meetingTitle"
-                                size="lg" 
-                                type="title" 
-                                label="Título de Reunión" 
-                                labelPlacement="outside"
-                                placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
-                                value={titleValue}
-                                onValueChange={setTitleValue} 
-                            />
                             */}
+                            {actaReunion && (
+                                <Input 
+                                    className="max-w-[1000px]"
+                                    isRequired
+                                    key="meetingTitle"
+                                    size="lg" 
+                                    type="title" 
+                                    label="Título de Reunión" 
+                                    labelPlacement="outside"
+                                    placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
+                                    value={isEditMode ? titleValue : actaReunion.lineaActaReunion.nombreReunion}
+                                    isReadOnly={!isEditMode}
+                                    onValueChange={setTitleValue} 
+                                />
+                            )}
+
+                            
                             <p className=" convenourTitle mt-5 mb-1 font-medium">Reunión convocada por</p>
                             <div className="userSelection flex items-center">
-                                <p className="ml-2 font-medium text-gray-400 ">
-                                    {convocante.nombres} {convocante.apellidos}
-                                </p>
+                                {actaReunion && (
+                                    <p className="ml-2 font-medium text-gray-400 ">
+                                        {actaReunion.lineaActaReunion.nombreConvocante}
+                                    </p>
+                                )}                           
                                 {/* Guardar para modo editar
                                 <button 
                                     onClick={toggleModal1}
@@ -442,50 +505,54 @@ const handleRemoveComentario = (index) => {
                             <div className="dateAndTimeLine flex items-center gap-10">
                                 <div className="dateShow">
                                     <p className=" dateShowTitle mt-5 font-medium">Fecha</p>
-                                    <p className="dateShowing">27/10/2023</p>
+                                    {/*<p className="dateShowing">27/10/2023</p>*/}
+                                    {actaReunion && actaReunion.lineaActaReunion && (
+                                        <input
+                                            type="date"
+                                            id="datePicker"
+                                            name="datePicker"
+                                            min={getMinDate()}
+                                            value={isEditMode ? dateValue : actaReunion.lineaActaReunion.fechaReunion.split("T")[0]}
+                                            onChange={handleChangeDate}
+                                            readOnly={!isEditMode}
+                                        ></input>
+                                    )}
+                                    
                                 </div>
                                 <div className="timeShow">
                                     <p className="timeShowTitle mt-5 ml-5 font-medium">Hora</p>
-                                    <p className="timeShowing">13:32 pm</p>
-                                </div>
-                            
-                                {/* Edit Fecha y hora}
-                                <input
-                                    type="date"
-                                    id="datePicker"
-                                    name="datePicker"
-                                    min={getMinDate()}
-                                    value={dateValue}
-                                    onChange={handleChangeDate}
-                                ></input>
-                                <input
-                                    type="time"
-                                    id="timePicker"
-                                    name="timePicker"
-                                    min={getMinTime()}
-                                    value={timeValue}
-                                    onChange={handleChangeTime}
-                                ></input>
-                                */}
+                                    {/*<p className="timeShowing">13:32 pm</p>*/}
+                                    {actaReunion && actaReunion.lineaActaReunion && (
+                                        <input
+                                            type="time"
+                                            id="timePicker"
+                                            name="timePicker"
+                                            min={getMinTime()}
+                                            value={isEditMode ? timeValue : actaReunion.lineaActaReunion.horaReunion.substring(0, 5)}
+                                            readOnly={!isEditMode}
+                                            onChange={handleChangeTime}
+                                        ></input>
+                                    )}
+                                </div>      
                             </div>
                             <div className="meetingMotive"> 
                                 <h2 className="font-medium">Motivo</h2>
-                                <p>Este es el motivo</p>
+                                {actaReunion && (
+                                    <Input 
+                                        className="max-w-[1000px] mt-5"
+                                        isRequired
+                                        key="meetingMotive"
+                                        size="lg" 
+                                        type="title" 
+                                        labelPlacement="outside"
+                                        placeholder="Ingrese el motivo de la reunion"
+                                        value={isEditMode ? motiveValue : actaReunion.lineaActaReunion.motivo}
+                                        isReadOnly={!isEditMode}
+                                        onValueChange={setMotiveValue} 
+                                    />
+                                )}
+                                
                             </div>
-                            {/* Para el editar}
-                            <Input 
-                                className="max-w-[1000px] mt-5"
-                                isRequired
-                                key="meetingMotive"
-                                size="lg" 
-                                type="title" 
-                                label="Motivo" 
-                                labelPlacement="outside"
-                                placeholder="Ingrese el motivo de la reunion"
-                                value={motiveValue}
-                                onValueChange={setMotiveValue} 
-                            />
-                            */}
                         </CardBody>
                         <CardFooter>
                         </CardFooter>
@@ -500,21 +567,33 @@ const handleRemoveComentario = (index) => {
                             <h3>Personas Convocadas</h3>
                         </CardHeader>
                         <CardBody className="py-0 mt-0 ml-2">
-                            <Table aria-label="membersTable">
-                                <TableHeader>
-                                    <TableColumn>MIEMBROS</TableColumn>
-                                    <TableColumn>ASISTENCIA</TableColumn>
-                                </TableHeader>
-                                <TableBody miembros={participantes}>
-                                    {/*
-                                    {miembro => (
-                                        <TableRow key={miembro.idUsuario}>
-                                            
-                                        </TableRow>
-                                    )}
-                                    */}
-                                </TableBody>
-                            </Table>
+                        <div className="flex justify-between mb-2">
+                            <span className="text-mg font-semibold">Lista de Miembros</span>
+                            <span className="text-mg font-semibold mr-6">Asistencia</span>
+                        </div>
+                            {participantes.map(participante => (
+                                <div 
+                                    key={participante.idUsuario}
+                                    className="flex justify-between items-center p-2 rounded-lg"
+                                >
+                                    <span className="text-gray-700">{participante.nombreCompleto}</span>
+                                    <div className="flex items-center">
+                                        <Checkbox
+                                            isSelected={participante.asistio}
+                                            onValueChange={() => handleAsistenciaChange(participante.idUsuario)}
+                                            className="mr-4"
+                                        >
+                                        </Checkbox>
+                                        <button 
+                                            onClick={() => handleBorrarParticipante(participante.idUsuario)}
+                                            className="text-red-500 hover:text-red-700"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                            ))}
                             {/*
                             <p>Lista de Miembros</p>
                             {/**** Selector de Miembros ***** 
@@ -557,8 +636,7 @@ const handleRemoveComentario = (index) => {
                                     excludedUsers={selectedMiembrosList}
                                 ></ModalUsers>
                             )}   
-                            {/* Fin del selector de miembros */}
-                            
+                            {/* Fin del selector de miembros */} 
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
@@ -591,6 +669,7 @@ const handleRemoveComentario = (index) => {
                                     handleChanges={handleChangeTema}
                                     handleRemove={handleRemoveTema}
                                     ListInputs={listTemas} 
+                                    typeFault="temas"
                                     typeName="Tema">
                                 </ListEditableInput>
                             </div>
@@ -625,7 +704,7 @@ const handleRemoveComentario = (index) => {
                                     handleChanges={handleChangeAcuerdo}
                                     handleRemove={handleRemoveAcuerdo}
                                     ListInputs={listAcuerdos}
-                                    temas={listTemas} 
+                                    temas={numeroTemas}     
                                     typeName="Acuerdo">
                                 </AcuerdosListEditableInput>
                             </div>
@@ -660,6 +739,7 @@ const handleRemoveComentario = (index) => {
                                     handleChanges={handleChangeComentario}
                                     handleRemove={handleRemoveComentario}
                                     ListInputs={listComentarios} 
+                                    typeFault="comentarios"
                                     typeName="Comentario">
                                 </ListEditableInput>
                             </div>

@@ -90,6 +90,7 @@ export default function EditEgreso({modal, descripcionLineaEgreso, costoRealEgre
         setSelectedEstimacionCosto(lineaEgreso.idLineaEstimacionCosto);
         setSelectedCantidad(cantidadEgreso);
         setcantRecurso(cantidadEgreso);
+        setdescripcionLinea(descripcionLineaEgreso);
         const formattedDate = new Date(fechaRegistroEgreso).toISOString().split('T')[0];
         setFecha(formattedDate);
         if (modal) {

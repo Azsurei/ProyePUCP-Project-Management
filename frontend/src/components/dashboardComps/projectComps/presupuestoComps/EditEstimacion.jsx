@@ -91,6 +91,8 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
         setSelectMeses(mesesEstimacion);
         setSelectSubtotal(subtotalEstimacion);
         setSelectedDescripcion(descripcionEstimacionCosto);
+        setdescripcionLinea(descripcionEstimacionCosto);
+        setdescripcionEstimacion(descripcionEstimacionCosto);
         const formattedDate = new Date(fechaInicio).toISOString().split('T')[0];
         setFecha(formattedDate);
         if (modal) {

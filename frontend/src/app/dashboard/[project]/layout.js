@@ -72,7 +72,7 @@ export default function RootLayout({ children, params }) {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 gap: ".2rem",
-                                zIndex: 9
+                                zIndex: 10
                             }}
                         >
                             <p
