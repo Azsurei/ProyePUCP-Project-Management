@@ -383,7 +383,7 @@ export default function autoevaluacionEquipo(props) {
                                                     <Input
                                                         name="criterio2"
                                                         label="Criterio 2"
-                                                        placeholder="Ej. Compromiso con los trabjos"
+                                                        placeholder="Ej. Compromiso con los trabajos"
                                                         type="text"
                                                         value={
                                                             criteriosSave.criterio2
