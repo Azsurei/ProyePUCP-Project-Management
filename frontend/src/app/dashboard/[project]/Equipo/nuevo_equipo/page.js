@@ -509,6 +509,8 @@ export default function crear_equipo(props) {
                     handlerModalFinished={returnListOfMiembros}
                     excludedUsers={selectedMiembrosList}
                     idProyecto={projectId}
+                    excludedUniqueUser={selectedUniqueMemberList}
+                    isExcludedUniqueUser={true}
                 ></ModalUser>
             )}
 

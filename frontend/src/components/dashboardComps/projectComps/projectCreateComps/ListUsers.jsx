@@ -4,13 +4,16 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListUsers.css";
 import { UserCardsContextNormal } from "./ModalUsers";
+import { Avatar } from "@nextui-org/react";
 
 axios.defaults.withCredentials = true;
 
-function CardUser({usuarioObject}) {
+function CardUser({ usuarioObject }) {
     const [isSelected, setIsSelected] = useState(false);
 
-    const { addUserList, removeUserInList } = useContext(UserCardsContextNormal);
+    const { addUserList, removeUserInList } = useContext(
+        UserCardsContextNormal
+    );
 
     const handleSelectedOn = () => {
         addUserList(usuarioObject);
@@ -27,15 +30,44 @@ function CardUser({usuarioObject}) {
             className={isSelected ? "UserCard active" : "UserCard"}
             onClick={isSelected ? handleSelectedOff : handleSelectedOn}
         >
-            <img
+            {/* <img
                 className="imgageUserDefault"
                 src="/images/userDefaultList.png"
+                //src={usuarioObject.imgLink}
+            /> */}
+            {/* <p className="usrLeftIconNull">
+                {usuarioObject.nombres[0] +
+                    (usuarioObject.apellidos !== null
+                        ? usuarioObject.apellidos[0]
+                        : "")}
+            </p> */}
+
+            <Avatar
+                //isBordered
+                //as="button"
+                className="transition-transform w-[48px] min-w-[48px] h-[48px] min-h-[48px]"
+                src={usuarioObject.imgLink}
+                fallback={
+                    <p className="usrLeftIconNull">
+                        {usuarioObject.nombres[0] +
+                            (usuarioObject.apellidos !== null
+                                ? usuarioObject.apellidos[0]
+                                : "")}
+                    </p>
+                }
             />
-            <div style={{ marginTop: "12px", marginLeft: "15px" }}>
+
+            <div className="cardUserDataSection">
                 <p className="titleUserName">
-                    {usuarioObject.nombres + " " + usuarioObject.apellidos}
+                    {usuarioObject.nombres +
+                        " " +
+                        (usuarioObject.apellidos !== null
+                            ? usuarioObject.apellidos
+                            : "")}
                 </p>
-                <p className="titleUserEmail">{usuarioObject.correoElectronico}</p>
+                <p className="titleUserEmail">
+                    {usuarioObject.correoElectronico}
+                </p>
             </div>
         </li>
     );
