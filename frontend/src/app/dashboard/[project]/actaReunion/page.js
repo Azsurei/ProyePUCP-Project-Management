@@ -76,6 +76,7 @@ export default function ActaReunion(props) {
     };
 
     useEffect(() => {
+
         fetchData();
     }, [setIsLoadingSmall, projectId]);
 
