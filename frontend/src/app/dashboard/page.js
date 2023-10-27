@@ -146,7 +146,7 @@ export default function Dashboard() {
 
         useEffect(() => {
             const stringURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/listarUsuariosConPrivilegios";
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/listarUsuariosConPrivilegios";
             axios
                 .get(stringURL)
                 .then((response) => {
