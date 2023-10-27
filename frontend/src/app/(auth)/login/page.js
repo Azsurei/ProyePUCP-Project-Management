@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
 
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -26,7 +25,6 @@ axios.defaults.withCredentials = true;
 function Login() {
     // Variables de importaciones
     const router = useRouter();
-    const { data: session } = useSession();
 
     // Variables de formulario
     const [email, setEmail] = useState("");
@@ -78,35 +76,57 @@ function Login() {
         }
     }, [email, password]);
 
-    // Manejo de envíos de formulario de inicio de sesion
-    useEffect(() => {
-        if (session) {
-            Cookies.set("tokenProyePUCP", session.user.token, {
-                expires: null,
-            });
-            router.push("/dashboard");
-        }
-    }, [session]);
+    // // Manejo de envíos de formulario de inicio de sesion
+    // useEffect(() => {
+    //     if (session) {
+    //         Cookies.set("tokenProyePUCP", session.user.token, {
+    //             expires: null,
+    //         });
+    //         router.push("/dashboard");
+    //     }
+    // }, [session]);
 
     const handleSubmit = async () => {
         setStatusForm("submitting");
 
-        const responseNextAuth = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
+        try {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+                {
+                    username: email,
+                    password: password,
+                }
+            );
 
-        if (responseNextAuth.error) {
-            setStatusForm("valid");
-            setLoginError("Ocurrion un error al iniciar sesión. Intente de nuevo.");
-            return;
+            const user = response.data;
+
+            if (user.error) {
+                throw user;
+            }
+
+            // TODO: Setear en la futura provider context
+            
+            router.push("/dashboard");
+        } catch (error) {
+            setLoginError("Ocurrió un error al iniciar sesión. Intente de nuevo.");
+            throw error.response.data;
         }
+
+        // const responseNextAuth = await signIn("credentials", {
+        //     email,
+        //     password,
+        //     redirect: false,
+        // });
+
+        // if (responseNextAuth.error) {
+        //     setStatusForm("valid");
+        //     setLoginError("Ocurrion un error al iniciar sesión. Intente de nuevo.");
+        //     return;
+        // }
     };
 
     const handleGoogleSignIn = async () => {
         setLoadingGoogle(true);
-        await signIn("google");
     };
 
     // Componente general

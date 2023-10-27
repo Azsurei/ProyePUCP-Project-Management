@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { SmallLoadingScreen } from "../layout";
 import axios from "axios";
 
@@ -28,9 +27,10 @@ import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function autoevaluacionEquipo(props) {
-    const { data: session } = useSession();
     const userId = session?.user?.id.toString();
-    const rol = session?.user?.rol;
+    const rol = 3 || session?.user?.rol;
+    console.log("Rol: ", rol);
+    console.log("User ID: ", userId);
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -54,7 +54,7 @@ export default function autoevaluacionEquipo(props) {
             );
 
             if (response.status === 200) {
-                if (rol !== 1) {
+                if (rol !== 3) {
                     setFormState("created");
                     return;
                 }
@@ -297,7 +297,6 @@ export default function autoevaluacionEquipo(props) {
 
     // Renderizado de acuerdo a rol
     const renderRole = () => {
-        // agregar variantes para renderizado dependiendo del rol del usuario (igual a 1 o diferente)
         return (
             <>
                 {formState === "empty" && (
@@ -309,13 +308,13 @@ export default function autoevaluacionEquipo(props) {
                         <p className="font-[Montserrat] text-xl">
                             No existe una autoevaluación activa
                         </p>
-                        {rol === 1 && (
+                        {rol === 3 && (
                             <p className="font-[Montserrat] text-xl">
                                 Un supervisor o jefe de proyecto debe activar la
                                 autoevaluación
                             </p>
                         )}
-                        {rol !== 1 && (
+                        {rol !== 3 && (
                             <>
                                 <Button
                                     className="font-[Roboto] bg-[#172B4D] text-[#FFFFFF]"
@@ -399,7 +398,7 @@ export default function autoevaluacionEquipo(props) {
                         </p>
                     </div>
                 )}
-                {rol === 1 && formState !== "empty" && (
+                {rol === 3 && formState !== "empty" && (
                     <>
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center items-right sm:gap-10 gap-4 mb-4">
                             <p className="text-justify">
