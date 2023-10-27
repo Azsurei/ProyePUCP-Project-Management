@@ -133,10 +133,10 @@
   text-decoration: none;
   margin-left: 8px;
   padding-top: 2px;
+}
 
-  &:hover {
-    text-decoration: underline;
-  }
+.changeConvocanteText:hover {
+  text-decoration: underline;
 }
 
 /*
