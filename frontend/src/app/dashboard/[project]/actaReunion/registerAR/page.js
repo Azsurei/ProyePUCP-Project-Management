@@ -672,7 +672,7 @@ const handleRemoveComentario = (index) => {
                                 oneButton={false}
                                 secondAction={() => {
                                     createMeeting();
-                                    router.back();
+                                    router.push(`/dashboard/${projectName}=${projectId}/actaReunion`);
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
