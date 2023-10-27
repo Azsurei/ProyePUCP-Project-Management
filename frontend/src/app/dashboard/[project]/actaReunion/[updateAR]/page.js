@@ -6,7 +6,7 @@ import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
 
-import { useRouter } from "next/navigation";
+import { useRouter , useSearchParams} from "next/navigation";
 import {
     Input,
     Card, CardHeader, CardBody, CardFooter,
@@ -14,7 +14,6 @@ import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue,
     Checkbox,
 } from "@nextui-org/react";
-
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
@@ -41,7 +40,8 @@ export default function editarActaReunion(props) {
 // *********************************************************************************************
 // Router. Helps you to move between pages
 const router = useRouter();
-    const dataId = router.data;
+const searchParams = useSearchParams();
+const idLineaActa = searchParams.get('edit');
 //const receivedData = router.edit.data;
 // Project Info
 const decodedUrl = decodeURIComponent(props.params.project);
@@ -63,11 +63,11 @@ const [timeValue, setTimeValue] = useState("");
 
     const [actaReunion, setActaReunion] = useState(null);
 
-    const fetchData = async () => {
+    const fetchData = async (id) => {
         setIsLoadingSmall(true);
         try {
             // Assuming that projectId is the idLineaActaReunion
-            const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/24`;
+            const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/' + id;
             const response = await axios.get(url, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -84,13 +84,10 @@ const [timeValue, setTimeValue] = useState("");
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(idLineaActa);
     }, [setIsLoadingSmall, projectId]);
 
-
-
-
-    const handleChangeDate = (event) => {
+const handleChangeDate = (event) => {
     setDateValue(event.target.value);
 };
 
