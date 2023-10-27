@@ -11,7 +11,7 @@ async function insertarEquipoYParticipantes(req, res, next) {
         // Iteracion
         for (const usuario of usuarios) {
             if (usuario.data !== "") {
-                const [usuarioXEquipoRows] = await connection.execute(`
+                const [usuarioXEquipoRows] = await connection.query(`
                 CALL INSERTAR_USUARIO_X_EQUIPO(
                     ${usuario.idUsuario},
                     '${idEquipo}'
