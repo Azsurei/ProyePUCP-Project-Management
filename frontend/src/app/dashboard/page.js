@@ -308,7 +308,7 @@ export default function Dashboard() {
                 )} 
             </div>
 
-            <ListProject></ListProject>
+            <ListProject filterValue={filterValue} onSearchChange={onSearchChange}></ListProject>
         </div>
     );
 }

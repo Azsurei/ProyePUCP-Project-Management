@@ -71,7 +71,7 @@ export default function ListProject(props) {
     //const {sessionData, setSession} = useContext(SessionContext);
 
     const router = useRouter();
-
+    const { filterValue, onSearchChange} = props;
     function handleClick(proy_id, proy_name) {
         router.push("/dashboard/" + proy_name + "=" + proy_id);
     }
@@ -109,10 +109,13 @@ export default function ListProject(props) {
                 console.log(error);
             });
     }, []);
-
+    const filteredProjects = ListComps.filter((component) => {
+        const projectName = component.name.toLowerCase();
+        return projectName.includes(filterValue.toLowerCase());
+      });
     return (
         <ul className="ListProject">
-            {ListComps.map((component) => {
+            {filteredProjects.map((component) => {
                 return (
                     <ProjectCard
                         key={component.id}
