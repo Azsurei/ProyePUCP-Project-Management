@@ -33,7 +33,7 @@ export default function GroupUserIcons({ idTarea, listUsers, beImg }) {
                         <Avatar
                             isBordered
                             color="default"
-                            //src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                            src={user.imgLink}
                             className="w-14 h-14 text-tiny"
                             fallback={
                                 <p id="UsrNoIcon">

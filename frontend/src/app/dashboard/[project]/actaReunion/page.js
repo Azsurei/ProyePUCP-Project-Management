@@ -1,7 +1,7 @@
 "use client";
 
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, createContext } from "react";
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
@@ -9,6 +9,7 @@ import { Button, Avatar, AvatarGroup, Card , CardBody, CardHeader, Divider} from
 import {Tabs, Tab} from '@nextui-org/react';
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import { useRouter } from "next/navigation";
+
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [reuniones, setReuniones] = useState({ pendientes: [], finalizadas: [] });
@@ -76,12 +77,11 @@ export default function ActaReunion(props) {
     };
 
     useEffect(() => {
-
         fetchData();
     }, [setIsLoadingSmall, projectId]);
 
     const handleEdit = (reunion) => {
-        router.push(`/dashboard/${projectName}=${projectId}/actaReunion/${reunion.idLineaActaReunion}`);
+        router.push(`/dashboard/${projectName}=${projectId}/actaReunion/edit?data=${reunion.idLineaActaReunion}`);
     };
 
     const handleDelete = async (id) => {
@@ -106,6 +106,7 @@ export default function ActaReunion(props) {
             ? reunion.participantesXReunion
             : reunion.participantesXReunion ? [reunion.participantesXReunion] : [];
         return (
+
             <div className="flex flex-wrap items-start my-4 space-x-4 justify-center">
             <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
                 <CardHeader className="p-4">

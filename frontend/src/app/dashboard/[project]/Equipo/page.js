@@ -21,6 +21,7 @@ import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 
@@ -49,7 +50,6 @@ export default function Equipo(props) {
     const [modal, setModal] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
-    const [actualizarFlag, setActualizarFlag] = useState(false);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -123,12 +123,8 @@ export default function Equipo(props) {
             (item) => item.idUsuario !== user.idUsuario
         );
         selectedTeamTemporal.participantes = newList;
-    
-        console.log("El selecteTeam actual es:", selectedTeam);
-        console.log("El selecteTeam original es:", selectedTeamOriginales);
         setSelectedTeam({ ...selectedTeamTemporal });
     };
-    
 
     useEffect(() => {
         setIsLoadingSmall(true);
@@ -193,6 +189,26 @@ export default function Equipo(props) {
             });
 
         setScreenState(1);
+    };
+
+    const checkIfLeaderExists = () => {
+        // Verifica si al menos un participante tiene el rol de líder
+        console.log("El selectedTeam para verificar líder es:", selectedTeam);
+        const isLeader = selectedTeam.participantes.some(
+            (participant) => participant.nombreRol === "Lider"
+        );
+
+        return isLeader;
+    };
+
+    const checkIfMultipleLeadersExist = () => {
+        // Filtra los participantes que tienen el rol de líder
+        const leaderParticipants = selectedTeam.participantes.filter((participant) => participant.nombreRol === "Lider");
+    
+        // Verifica si tienes más de un líder
+        console.log("El selectedTeam para verificar líderes es:", selectedTeam);
+        console.log("El lenght de leaderParticipants es:", leaderParticipants.length);
+        return leaderParticipants.length > 1;
     };
 
     const findModifiedDeletedAdded = (
@@ -416,11 +432,6 @@ export default function Equipo(props) {
             )}
             {screenState === 1 && (
                 <div>
-                    {console.log("El second selecteTeam actual es:", selectedTeam)}
-                    {console.log(
-                        "El second selecteTeam original es:",
-                        selectedTeamOriginales
-                    )}
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
@@ -507,9 +518,15 @@ export default function Equipo(props) {
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
-                                                onSubmitParticipantesRoles();
-                                                setActualizarFlag(!actualizarFlag);
-                                                setUpdateState(false);
+                                                if (checkIfLeaderExists() && !checkIfMultipleLeadersExist()) {
+                                                    onSubmitParticipantesRoles();
+                                                    setUpdateState(false);
+                                                    toast.success("Se ha modificado exitosamente");
+                                                }else if(checkIfMultipleLeadersExist()){
+                                                    toast.error("Solo puede haber un líder");
+                                                } else {
+                                                    toast.error("Un miembro debe tener el rol de líder");
+                                                }
                                             }}
                                         >
                                             Guardar
@@ -517,9 +534,12 @@ export default function Equipo(props) {
                                         <Button
                                             color="danger"
                                             startContent={<CrossWhite />}
-                                            onPress={() =>
-                                                setUpdateState(false)
-                                            }
+                                            onPress={() => {
+                                                setUpdateState(false);
+                                                setSelectedTeam(
+                                                    selectedTeamOriginales
+                                                );
+                                            }}
                                         >
                                             Cancelar
                                         </Button>
@@ -611,9 +631,13 @@ export default function Equipo(props) {
                                                         property="roles"
                                                         nameDisplay="nombreRol"
                                                         hasColor={false}
-                                                        onSelect2={(value,name) =>
+                                                        onSelect2={(
+                                                            value,
+                                                            name
+                                                        ) =>
                                                             handleSelectedValueChangeRol(
-                                                                value, name,
+                                                                value,
+                                                                name,
                                                                 member.idUsuario
                                                             )
                                                         }
@@ -625,25 +649,13 @@ export default function Equipo(props) {
                                                         }
                                                     />
                                                 </div>
-                                                {console.log("El selecteTeam actual justo en eliminar es:", selectedTeam)}
-                                                {console.log("El selecteTeam original justo en eliminar es:", selectedTeamOriginales)}
                                                 <div className="col-span-1 flex mt-4 justify-center">
                                                     <img
                                                         src="/icons/icon-trash.svg"
                                                         alt="delete"
                                                         className="mb-4 cursor-pointer "
                                                         onClick={() => {
-                                                            console.log("El antes selecteTeam actual es:", selectedTeam);
-                                                            console.log(
-                                                                "El antes selecteTeam original es:",
-                                                                selectedTeamOriginales
-                                                            );
                                                             removeUser(member);
-                                                            console.log("El después selecteTeam actual es:", selectedTeam);
-                                                            console.log(
-                                                                "El después selecteTeam original es:",
-                                                                selectedTeamOriginales
-                                                            );
                                                         }}
                                                     />
                                                 </div>
@@ -717,6 +729,15 @@ export default function Equipo(props) {
                     )}
                 </div>
             )}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

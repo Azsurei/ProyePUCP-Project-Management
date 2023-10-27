@@ -33,12 +33,16 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/i
 axios.defaults.withCredentials = true;
 
 export default function editarActaReunion(props) {
+
+
+
 // *********************************************************************************************
 // Various Variables
 // *********************************************************************************************
 // Router. Helps you to move between pages
 const router = useRouter();
-
+    const dataId = router.data;
+//const receivedData = router.edit.data;
 // Project Info
 const decodedUrl = decodeURIComponent(props.params.project);
 const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -55,9 +59,38 @@ const [isEditMode, setIsEditMode] = useState(false);
 const [titleValue, setTitleValue] = useState("");
 const [motiveValue, setMotiveValue] = useState("");
 const [dateValue, setDateValue] = useState(""); 
-const [timeValue, setTimeValue] = useState(""); 
+const [timeValue, setTimeValue] = useState("");
 
-const handleChangeDate = (event) => {
+    const [actaReunion, setActaReunion] = useState(null);
+
+    const fetchData = async () => {
+        setIsLoadingSmall(true);
+        try {
+            // Assuming that projectId is the idLineaActaReunion
+            const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/24`;
+            const response = await axios.get(url, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Update the actaReunion state with the fetched data
+            setActaReunion(response.data);
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error al obtener los datos de la API:', error);
+        }
+        setIsLoadingSmall(false);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [setIsLoadingSmall, projectId]);
+
+
+
+
+    const handleChangeDate = (event) => {
     setDateValue(event.target.value);
 };
 
