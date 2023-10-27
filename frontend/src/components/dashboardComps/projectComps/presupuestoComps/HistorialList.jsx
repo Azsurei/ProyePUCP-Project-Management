@@ -1,5 +1,5 @@
 "use client";
-import {  useState } from "react";
+import {  useState, useEffect } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -159,8 +159,14 @@ function renderGroups(groups, fechaKeyProperty) {
 
 export default function HistorialList(props) {
     const router = useRouter();
-    const { listaIngresos, listaEgreso } = props;
-  
+    const { listaIngresos, listaEgreso , refresh} = props;
+    useEffect(() => {
+        const handleRefresh = async () => {
+            refresh();
+            console.log("refreshed");
+        };
+        handleRefresh();
+    }, []);
     // Combina las listas de ingresos y egresos
     const combinedList = [...listaIngresos, ...listaEgreso];
   
@@ -180,6 +186,7 @@ export default function HistorialList(props) {
       groupedByDate[fechaKey].push(item);
     });
   
+    
     return (
       <div>
         {Object.keys(groupedByDate).map((fechaKey) => (

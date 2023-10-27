@@ -1,11 +1,12 @@
 "use client";
 
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListProject.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 const memberDataProject = [
@@ -48,7 +49,7 @@ function ProjectCard(props) {
                     {props.miembros.map((member) => (
                     <p className="membersIcon" key={member.idUsuario}>
                         {member.nombres[0]}
-                        {member.apellidos[0]}
+                        {member.apellidos !== null ? member.apellidos[0] : ""}
                     </p>
                     ))}
                 </div>
@@ -67,6 +68,8 @@ function ProjectCard(props) {
 //Aqui es la lista de Proyectos
 
 export default function ListProject(props) {
+    //const {sessionData, setSession} = useContext(SessionContext);
+
     const router = useRouter();
 
     function handleClick(proy_id, proy_name) {
@@ -93,6 +96,8 @@ export default function ListProject(props) {
                         dateStart: proyect.fechaInicio,
                         dateEnd: proyect.fechaFin,
                         members: proyect.miembros,
+                        roleId: proyect.idRol,
+                        roleName: proyect.nombrerol
                     };
                 });
 
@@ -116,6 +121,9 @@ export default function ListProject(props) {
                         fechaFin={component.dateEnd}
                         miembros={component.members}
                         onClick={() => {
+                            // const updSessionData = {...sessionData};
+                            // updSessionData.rolInProject = component.roleId;
+                            // setSession(updSessionData);
                             handleClick(component.id, component.name);
                         }}
                     ></ProjectCard>

@@ -6,15 +6,18 @@ import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 import { SmallLoadingScreen } from "./layout";
 
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 export default function Project(props) {
+    
+
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    useEffect(() => {
-        setIsLoadingSmall(false);
-    }, []);
+    
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project
@@ -35,7 +38,7 @@ export default function Project(props) {
                         fontSize: "1.5rem",
                         color: "#172B4D",
                         fontWeight: "400",
-                        margin: '0 0'
+                        margin: "0 0",
                     }}
                 >
                     Bienvenido a tu proyecto!
@@ -46,8 +49,8 @@ export default function Project(props) {
                         fontSize: "3rem",
                         color: "#172B4D",
                         fontWeight: "600",
-                        margin: '0 0',
-                        lineHeight: '40px'
+                        margin: "0 0",
+                        lineHeight: "40px",
                     }}
                 >
                     {projectName}

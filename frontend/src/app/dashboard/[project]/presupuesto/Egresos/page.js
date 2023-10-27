@@ -72,6 +72,11 @@ export default function Ingresos(props) {
     
     
     } = useDisclosure();
+    const {
+        isOpen: isModalFechaOpen,
+        onOpen: onModalFecha,
+        onOpenChange: onModalFechachange,
+    } = useDisclosure();
 
     //Fin Modales
 
@@ -235,7 +240,7 @@ export default function Ingresos(props) {
     };
 
     const [lineasEstimacion, setLineasEstimacion] = useState([]);
-
+    const [lineasEgreso, setLineasEgreso] = useState([]);
     //Aqui va el data table de Iwa
     
     
@@ -254,11 +259,27 @@ export default function Ingresos(props) {
             fetchData();
     };
 
+    const DataEgresos= async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEgresoXIdProyecto/${projectId}`);
+              const data = response.data.lineasEgreso;
+              setLineasEgreso(data);
+              console.log(`Esta es la data:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasEgreso);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };
+
         
     useEffect(() => {
-    
+        DataEgresos();
         DataTable();
       }, [projectId]);
+
     const hasSearchFilter = Boolean(filterValue);
     const filteredItems = React.useMemo(() => {
         let filteredTemplates = [...lineasEstimacion]
@@ -274,12 +295,16 @@ export default function Ingresos(props) {
     
 
     const [dataLineaEstimacion, setDataLineaEstimacion] = useState("");
-
-    const handleCardSelect = (selectedData) => {
+    const handleCardSelect = (selectedData, isSelect) => {
         // Realiza la lógica deseada con el dato seleccionado
         console.log("Card seleccionado:", selectedData);
         // Puedes actualizar el estado local aquí si es necesario
-        setDataLineaEstimacion(selectedData);
+        if (isSelect) {
+            setDataLineaEstimacion(selectedData);
+        } else {
+            setDataLineaEstimacion("");
+        }
+        
       }
       
     return (
@@ -329,10 +354,23 @@ export default function Ingresos(props) {
                                 <button className="btnCommon btnEstimacion  sm:w-1 sm:h-1"  type="button">Estimacion</button>
                         </Link>
 
-
+                        {/* <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                            Filtrar
+                        </Button> */}
                     </div>
+                    
                     <div className="divFiltroPresupuesto">
+                        
                         <Input
+                            isClearable
+                            className="w-2/4 sm:max-w-[50%]"
+                            placeholder="Buscar Partida..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            variant="faded"
+                        />
+                                                <Input
                             isClearable
                             className="w-2/4 sm:max-w-[50%]"
                             placeholder="Buscar Egreso..."
@@ -341,7 +379,6 @@ export default function Ingresos(props) {
                             onValueChange={onSearchChange}
                             variant="faded"
                         />
-
                          <div className="buttonContainer">
 
                         </div>
@@ -355,8 +392,10 @@ export default function Ingresos(props) {
                             </UserCardsContextOne.Provider>
                             
                         </div>
+                        
                         <div className="divListaIngreso w-1/2">
-                            <EgresosList lista = {data}></EgresosList>
+
+                            <EgresosList lista = {lineasEgreso}></EgresosList>
                         </div> 
                     </div>
                     
@@ -405,6 +444,7 @@ export default function Ingresos(props) {
                                         setValidCantRecurso(true);
                                         setValidDescription(true);
                                         setValidFecha(true);
+                                        DataEgresos();
                                         
                                     } catch (error) {
                                         console.error('Error al registrar la línea de estimación o al obtener los datos:', error);
@@ -460,12 +500,12 @@ export default function Ingresos(props) {
                                                 placeholder="Escriba aquí..."
                                                 className="max-w-x"
                                                 maxRows="2"
-                                                value={descripcionLinea}
+                                                value={dataLineaEstimacion.descripcion}
                                                 onValueChange={setdescripcionLinea}
                                                 onChange={() => {
                                                     setValidDescription(true);
                                                 }}
-                                                
+                                                defaultValue = {dataLineaEstimacion.descripcion}
                                                 />
                                          </div>
                                         
@@ -582,11 +622,12 @@ export default function Ingresos(props) {
                                                 <input type="date" id="inputFechaPresupuesto" name="datepicker" 
                                                 style={{ width: '18rem' }}
 
-                                                onChange={handleChangeFecha}/>
+                                                onChange={handleChangeFecha} defaultValue={dataLineaEstimacion.fechaInicio}/>
 
                                                 <Input
                                                     isReadOnly
                                                     type="number"
+                                                    placeholder={dataLineaEstimacion.subtotal}
                                                     value={dataLineaEstimacion.tarifaUnitaria * cantRecurso  < 0 || cantRecurso === 0 ? 0 : dataLineaEstimacion.tarifaUnitaria * cantRecurso }
                                                     startContent={
                                                         <div className="pointer-events-none flex items-center">
@@ -595,7 +636,7 @@ export default function Ingresos(props) {
                                                             </span>
                                                         </div>
                                                     }
-                                                    
+                                                    defaultValue={dataLineaEstimacion.subtotal}
                                                 />
                                         </div>       
                                     

@@ -48,6 +48,27 @@ routerUsuario.get("/verInfoUsuario", verifyToken, async (req, res) => {
     }
 });
 
+routerUsuario.post("/verRolUsuarioEnProyecto", verifyToken, async (req,res) => {
+    const {idUsuario, idProyecto} = req.body;
+
+    console.log("Llegue a recibir solicitud ver rol de tu usuario en proyecto=================================================");
+    const query = `
+        CALL LISTAR_ROL_X_IDUSUARIO_IDPROYECTO(?,?);
+    `;
+    try {
+        const [results] = await connection.query(query, [idUsuario, idProyecto]);
+        res.status(200).json({
+            rol: results[0][0],
+            message: "Rol de usuario obtenido exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al obtener rol del usuario:", error);
+        res.status(500).send(
+            "Error al obtener rol del usuario: " + error.message
+        );
+    }
+});
+
 routerUsuario.post(
     "/insertarUsuariosAProyecto",
     verifyToken,

@@ -3,7 +3,8 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: .3rem .3rem;
+    align-items: center;
+    padding: .4rem .4rem;
 
     border-radius: 5px;
     border-style: solid;
@@ -15,6 +16,7 @@
     width: 100%;
 
     padding-right: 8px;
+
 }
 
 .CardSelectedUser .containerLeft{
@@ -32,10 +34,13 @@
     height: 50px;
     width: 50px;
 
+    font-size: 1.1rem;
+
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 
 .CardSelectedUser .containerLeft .containerInfo{
     display: flex;
@@ -60,4 +65,9 @@
     font-family: 'Roboto';
     font-weight: 300;
     margin: 0 0;
+}
+
+.CardSelectedUser .icnRightDelete{
+    width: 25px;
+    height: 25px;
 }

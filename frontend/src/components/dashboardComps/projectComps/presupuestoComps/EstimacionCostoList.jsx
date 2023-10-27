@@ -25,7 +25,9 @@ function CardEstimacionCosto({
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
-    
+    const [isSelected, setIsSelected] = useState(false);
+
+
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
@@ -38,16 +40,31 @@ function CardEstimacionCosto({
         console.log("Esta es la linea", selectedLinea);
     };
 
+    // const handleCardSelect = () => {
+    //     if (onSelect) {
+    //         if (isSelected) {
+    //             setIsSelected(false);
+    //             onSelect(null);
+    //             console.log("deseleccionado");
+    //         } else {
+    //             setIsSelected(!isSelected);
+    //         onSelect(EstimacionObject);
+    //         }
+            
+    //     }
+    // };
     const handleCardSelect = () => {
         if (onSelect) {
-            onSelect(EstimacionObject);
+            setIsSelected(!isSelected); // Cambiar el estado isSelected
+            onSelect(EstimacionObject, !isSelected); // Pasar el elemento y el estado de selección
         }
     };
+    
 
     const monedaSymbol = EstimacionObject.nombreMoneda === "USD" ? "$" : "S/";
     return (
         <li
-            className="IngresoCard"
+            className={isSelected ? "IngresoCard active" : "IngresoCard"}
             onClick={handleCardSelect}
         >
             <img
@@ -140,9 +157,9 @@ export default function EstimacionCostoList(props) {
 
         fechaGroups[fechaKey].push(component);
     });
-    const handleCardSelect = (selectedData) => {
+    const handleCardSelect = (selectedData, isSelected) => {
         // Llama a la función proporcionada desde la página principal para pasar el dato de regreso
-        props.onCardSelect(selectedData);
+        props.onCardSelect(selectedData, isSelected);
       }
 
     return (
@@ -169,7 +186,7 @@ export default function EstimacionCostoList(props) {
                                     horaIngreso={horaIngreso}
                                     isEdit={isEdit}
                                     refresh={refresh}
-                                    onSelect={() => handleCardSelect(component)}
+                                    onSelect={(selectedData, isSelected) => handleCardSelect(selectedData, isSelected)}
                                 />
                             ))}
                         </ul>

@@ -10,8 +10,14 @@ axios.defaults.withCredentials = true;
 export const SessionContext = createContext();
 
 export default function RootLayout({ children }) {
-    const [userData, setUserData] = useState({ nombres: "", apellidos: "" });
+    const [sessionData, setSessionData] = useState({ nombres: "", apellidos: "" });
     const [isLoading, setIsLoading] = useState(true);
+
+    const setSession = (session) => {
+        setSessionData(session);
+        console.log(session);
+    }
+
 
     useEffect(() => {
         const stringURL =
@@ -21,9 +27,11 @@ export default function RootLayout({ children }) {
             .get(stringURL)
             .then(function (response) {
                 const user_data = response.data.usuario[0];
-                console.log("el nombre del usuario es ", user_data.nombres);
-                console.log("el apellido del usuario es ", user_data.apellidos);
-                setUserData(user_data);
+                user_data.rolInProject = null;
+
+                console.log("INFO DEL USUARIO LOGEADO : " + JSON.stringify(user_data));
+
+                setSessionData(user_data);
 
                 setIsLoading(false);
             })
@@ -42,7 +50,7 @@ export default function RootLayout({ children }) {
         );
     } else {
         return (
-            <SessionContext.Provider value={userData}>
+            <SessionContext.Provider value={{sessionData, setSession}}>
                 <div
                     className="dashboardLayout"
                     style={{
@@ -52,9 +60,9 @@ export default function RootLayout({ children }) {
                     }}
                 >
                     <DashboardNav
-                        userName={userData.nombres}
-                        userLastName={userData.apellidos}
-                        userObj={userData}
+                        userName={sessionData.nombres}
+                        userLastName={sessionData.apellidos}
+                        userObj={sessionData}
                     />
                     <DashboardSecondNav />
                     <div
