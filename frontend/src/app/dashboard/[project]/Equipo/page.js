@@ -37,6 +37,7 @@ export default function Equipo(props) {
     //1 es vista de un equipo particular
 
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [selectedTeamOriginales, setSelectedTeamOriginales] = useState(null);
     const [selectedTeamTareas, setSelectedTeamTareas] = useState([]);
     const [updateState, setUpdateState] = useState(false);
 
@@ -144,6 +145,7 @@ export default function Equipo(props) {
 
     const handleSeeTeam = (team) => {
         setSelectedTeam(team);
+        setSelectedTeamOriginales(team);
         setIsLoadingSmall(true);
         const verTareasURL =
             "http://localhost:8080/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
@@ -173,6 +175,48 @@ export default function Equipo(props) {
             });
 
         setScreenState(1);
+    };
+
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        // Encuentra elementos modificados y eliminados
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                    modifiedArray.push(newItem);
+                } */
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
     };
 
     return (
