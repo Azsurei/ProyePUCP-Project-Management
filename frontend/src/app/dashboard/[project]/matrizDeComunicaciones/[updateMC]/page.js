@@ -215,7 +215,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarCanales"}
                             property="canales"
                             nameDisplay="nombreCanal"
                             hasColor={false}
@@ -231,7 +231,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFrecuencia"}
                             property="frecuencias"
                             nameDisplay="nombreFrecuencia"
                             hasColor={false}
@@ -247,7 +247,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFormato"
+                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFormato"}
                             property="formatos"
                             nameDisplay="nombreFormato"
                             hasColor={false}
