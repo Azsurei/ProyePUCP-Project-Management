@@ -42,39 +42,40 @@ export default function ActaReunion(props) {
             });
         }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            console.log("Fetching");
-            setIsLoadingSmall(true);
-            try {
-                const resultado =
-                    await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/29', {
+    const fetchData = async () => {
+        console.log("Fetching");
+        setIsLoadingSmall(true);
+        try {
+            const resultado =
+                await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/29', {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
 
-                const lineasActaReunion  = resultado.data.lineasActaReunion;
+            const lineasActaReunion  = resultado.data.lineasActaReunion;
 
-                console.log(lineasActaReunion);
-                const pendientes = [];
-                const finalizadas = [];
-                const fechaActual = new Date();
+            console.log(lineasActaReunion);
+            const pendientes = [];
+            const finalizadas = [];
+            const fechaActual = new Date();
 
-                lineasActaReunion.forEach(reunion => {
-                    const fechaReunion = new Date(reunion.fechaReunion);
-                    if (fechaReunion >= fechaActual) {
-                        pendientes.push(reunion);
-                    } else {
-                        finalizadas.push(reunion);
-                    }
-                });
-                setReuniones({ pendientes, finalizadas });
-            } catch (error) {
-                console.error('Error al obtener los datos de la API:', error);
-            }
-            setIsLoadingSmall(false);
-        };
+            lineasActaReunion.forEach(reunion => {
+                const fechaReunion = new Date(reunion.fechaReunion);
+                if (fechaReunion >= fechaActual) {
+                    pendientes.push(reunion);
+                } else {
+                    finalizadas.push(reunion);
+                }
+            });
+            setReuniones({ pendientes, finalizadas });
+        } catch (error) {
+            console.error('Error al obtener los datos de la API:', error);
+        }
+        setIsLoadingSmall(false);
+    };
+
+    useEffect(() => {
 
         fetchData();
     }, [setIsLoadingSmall, projectId]);
@@ -83,12 +84,20 @@ export default function ActaReunion(props) {
         router.push(`/dashboard/${projectName}=${projectId}/actaReunion/${reunion.idLineaActaReunion}`);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         // Aquí puedes mostrar un modal para confirmar la acción
-        const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar esta reunión?");
-        if (confirmDelete) {
-            // Realiza la acción de eliminar
-            // Puedes hacer una llamada a la API para eliminar la reunión
+        const response = await axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                idLineaActaReunion: id
+            }
+        });
+
+        if (response.status === 200) {
+            console.log('Reunión eliminada con éxito');
+            fetchData();
         }
     };
 

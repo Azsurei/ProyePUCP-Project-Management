@@ -20,10 +20,12 @@ import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
+import { useRouter } from "next/navigation";
 
 axios.defaults.withCredentials = true;
 
 export default function Equipo(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -47,6 +49,7 @@ export default function Equipo(props) {
     const [modal, setModal] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
+    const [actualizarFlag, setActualizarFlag] = useState(false);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -66,21 +69,21 @@ export default function Equipo(props) {
         const membersWithRoles = newMiembrosList.map((member) => ({
             ...member,
             idRol: 0, // Establece el valor adecuado para idRol
-            nombreRol: "" // Establece el valor adecuado para nombreRol
+            nombreRol: "", // Establece el valor adecuado para nombreRol
         }));
-    
+
         // Concatena los nuevos miembros a selectedTeam.participantes
-        const updatedMembersList = selectedTeam.participantes.concat(membersWithRoles);
-    
+        const updatedMembersList =
+            selectedTeam.participantes.concat(membersWithRoles);
+
         // Actualiza selectedTeam con la nueva lista de participantes
         setSelectedTeam({
             ...selectedTeam,
             participantes: updatedMembersList,
         });
-    
+
         setModal2(!modal2);
     };
-    
 
     useEffect(() => {
         if (modal) {
@@ -108,25 +111,30 @@ export default function Equipo(props) {
                 return participant;
             }),
         };
-    
+
         // Actualiza el estado con el nuevo selectedTeam
         setSelectedTeam(updatedSelectedTeam);
     };
-    
 
     const removeUser = (user) => {
-        const newList = selectedTeam.participantes.filter(
+        const selectedTeamTemporal = { ...selectedTeam }; // Crear una nueva copia del objeto
+        const newList = selectedTeamTemporal.participantes.filter(
             (item) => item.idUsuario !== user.idUsuario
         );
-        selectedTeam.participantes = newList;
-        setSelectedTeam({ ...selectedTeam });
+        selectedTeamTemporal.participantes = newList;
+    
+        console.log("El selecteTeam actual es:", selectedTeam);
+        console.log("El selecteTeam original es:", selectedTeamOriginales);
+        setSelectedTeam({ ...selectedTeamTemporal });
     };
+    
 
     useEffect(() => {
         setIsLoadingSmall(true);
         let teamsArray;
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarEquiposYParticipantes/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/equipo/listarEquiposYParticipantes/" +
             projectId;
         console.log("La URL es" + stringURL);
         axios
@@ -146,11 +154,18 @@ export default function Equipo(props) {
     }, []);
 
     const handleSeeTeam = (team) => {
+        console.log("Pase por aqui");
         setSelectedTeam(team);
         setSelectedTeamOriginales(team);
+        console.log("El first selecteTeam actual es:", selectedTeam);
+        console.log(
+            "El first selecteTeam original es:",
+            selectedTeamOriginales
+        );
         setIsLoadingSmall(true);
         const verTareasURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
             team.idEquipo;
         axios
             .get(verTareasURL)
@@ -243,8 +258,75 @@ export default function Equipo(props) {
 
         // Realizar solicitudes PUT, POST y DELETE según sea necesario
         // ...
-
+        const putData = {
+            idEquipo: selectedTeam.idEquipo,
+            miembrosModificados: modifiedParticipants,
+        };
+        console.log("Actualizado correctamente");
+        console.log(putData);
+        const postData = {
+            idEquipo: selectedTeam.idEquipo,
+            miembros: addedParticipants,
+        };
+        console.log("Agregado correctamente");
+        console.log(postData);
+        const deleteData = {
+            idEquipo: selectedTeam.idEquipo,
+            miembrosEliminados: deletedParticipants,
+        };
+        console.log("Eliminado correctamente");
+        console.log(deleteData);
         // Resto del código
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/modificarMiembroEquipo",
+                putData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud PUT
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Actualización correcta");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            });
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/insertarMiembrosEquipo",
+                postData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/eliminarMiembroEquipo",
+                {
+                    data: deleteData,
+                }
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
     };
 
     return (
@@ -333,6 +415,11 @@ export default function Equipo(props) {
             )}
             {screenState === 1 && (
                 <div>
+                    {console.log("El second selecteTeam actual es:", selectedTeam)}
+                    {console.log(
+                        "El second selecteTeam original es:",
+                        selectedTeamOriginales
+                    )}
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
@@ -420,6 +507,7 @@ export default function Equipo(props) {
                                             startContent={<SaveIcon />}
                                             onPress={() => {
                                                 onSubmitParticipantesRoles();
+                                                setActualizarFlag(!actualizarFlag);
                                                 setUpdateState(false);
                                             }}
                                         >
@@ -483,49 +571,6 @@ export default function Equipo(props) {
                                 </>
                             )}
 
-                            {/*Para el líder del equipo*/}
-                            {/*creo que ya no sirvirá */}
-                            {/*                             {!removeLider && (
-                                <>
-                                    <div className="col-span-6 flex mt-4">
-                                        <p className="membersIcon1">
-                                            {selectedTeam.nombreLider[0] +
-                                                selectedTeam.apellidoLider[0]}
-                                        </p>
-                                        <div>
-                                            <div className="text-lg">
-                                                {selectedTeam.nombreLider}{" "}
-                                                {selectedTeam.apellidoLider}
-                                            </div>
-                                            <div>
-                                                {selectedTeam.correoLider}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {updateState ? (
-                                        <>
-                                            <div className="col-span-3 flex mt-4">
-                                                Líder
-                                            </div>
-                                            <div className="col-span-1 flex mt-4 justify-center">
-                                                <img
-                                                    src="/icons/icon-trash.svg"
-                                                    alt="delete"
-                                                    className="mb-4 cursor-pointer "
-                                                    onClick={() => {
-                                                        setRemoveLider(true);
-                                                    }}
-                                                />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="col-span-4 flex mt-4">
-                                            Líder
-                                        </div>
-                                    )}
-                                </>
-                            )} */}
-
                             {updateState ? (
                                 <>
                                     {selectedTeam.participantes.map(
@@ -557,7 +602,11 @@ export default function Equipo(props) {
 
                                                 <div className="col-span-3 flex mt-4">
                                                     <MyCombobox
-                                                        urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
+                                                        urlApi={
+                                                            process.env
+                                                                .NEXT_PUBLIC_BACKEND_URL +
+                                                            `/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`
+                                                        }
                                                         property="roles"
                                                         nameDisplay="nombreRol"
                                                         hasColor={false}
@@ -574,13 +623,25 @@ export default function Equipo(props) {
                                                         }
                                                     />
                                                 </div>
+                                                {console.log("El selecteTeam actual justo en eliminar es:", selectedTeam)}
+                                                {console.log("El selecteTeam original justo en eliminar es:", selectedTeamOriginales)}
                                                 <div className="col-span-1 flex mt-4 justify-center">
                                                     <img
                                                         src="/icons/icon-trash.svg"
                                                         alt="delete"
                                                         className="mb-4 cursor-pointer "
                                                         onClick={() => {
+                                                            console.log("El antes selecteTeam actual es:", selectedTeam);
+                                                            console.log(
+                                                                "El antes selecteTeam original es:",
+                                                                selectedTeamOriginales
+                                                            );
                                                             removeUser(member);
+                                                            console.log("El después selecteTeam actual es:", selectedTeam);
+                                                            console.log(
+                                                                "El después selecteTeam original es:",
+                                                                selectedTeamOriginales
+                                                            );
                                                         }}
                                                     />
                                                 </div>

@@ -196,7 +196,7 @@ async function modificarMiembroEquipo(req,res,next){
     const query = `CALL MODIFICAR_MIEMBRO_EQUIPO(?,?,?);`;
     try {
         for(const miembro of miembrosModificados){
-            await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRolEquipo]);
+            await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRol]);
             console.log(`Se modifico el miembro ${miembro.idUsuario}!`);
         }
         res.status(200).json({
@@ -222,6 +222,23 @@ async function eliminarMiembroEquipo(req,res,next){
         next(error);
     }
 }
+
+async function insertarMiembrosEquipo(req,res,next){
+    const{idEquipo,miembros} = req.body;
+    const query = `CALL INSERTAR_MIEMBROS_EQUIPO(?,?,?);`;
+    try {
+        for(const miembro of miembros){
+            const [results] = await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRol]);
+            const idUsuarioXEquipo = results[0][0].idUsuarioXEquipo;
+            console.log(`Se insertó el miembro ${idUsuarioXEquipo}!`);
+        }
+        res.status(200).json({
+            message: "Miembros insertados exitosamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
@@ -234,5 +251,6 @@ module.exports = {
     insertarMiembros,
     eliminarEquipo,
     modificarMiembroEquipo,
-    eliminarMiembroEquipo
+    eliminarMiembroEquipo,
+    insertarMiembrosEquipo
 };
