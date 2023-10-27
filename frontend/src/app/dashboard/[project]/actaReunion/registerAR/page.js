@@ -528,7 +528,7 @@ const handleRemoveComentario = (index) => {
                         <CardFooter></CardFooter>
                     </Card>
                 </div>
-
+                {/*
                 <div className="meetingTopics p-5"> 
                     <Card className="mx-auto"> 
                         <CardHeader>
@@ -643,16 +643,8 @@ const handleRemoveComentario = (index) => {
                             className="iconLabel3"
                         />
                     )}
-                    {/*}
-                    {getMinTime() === "00:00" && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Elige una hora apropiada"
-                            className="iconLabel3"
-                        />
-                    )}
-                    */}
                 </div>
+                    */}
                 <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal
