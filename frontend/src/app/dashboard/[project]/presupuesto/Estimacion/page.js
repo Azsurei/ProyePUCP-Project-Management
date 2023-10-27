@@ -36,6 +36,8 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
+import { set } from "date-fns";
+import { tr } from "date-fns/locale";
 
 
 export default function Ingresos(props) {
@@ -106,8 +108,65 @@ export default function Ingresos(props) {
     
     //Funciones
 
-    function insertarLineaEstimacion() {
+    let idHerramientaCreada;
 
+    function insertarLineaEstimacion() {
+        return new Promise((resolve, reject) => {
+        let flag=0;
+        const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/insertarLineaEstimacionCosto`;
+        
+        console.log(projectId);
+        const stringURLListaHerramientas="http://localhost:8080/api/herramientas/"+projectId+"/listarHerramientasDeProyecto";
+        
+
+        axios.get(stringURLListaHerramientas)
+        .then(function (response) {
+            const herramientas = response.data.herramientas;
+    
+            // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 13
+            for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag=1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+
+            if(flag===1){
+                axios.post(stringUrlTipoTransaccion, {
+                    idMoneda: selectedMoneda,
+                    idPresupuesto:idHerramientaCreada,
+                    idProyecto: projectId,
+                    descripcion:descripcionLinea,
+                    tarifaUnitaria: monto,
+                    cantidadRecurso: cantRecurso,
+                    subtotal:parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
+                    fechaInicio:fecha,
+                })
+        
+                .then(function (response) {
+                    console.log(response);
+                    console.log("Linea Ingresada");
+                    //DataTable();
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                });
+            }else{
+                console.log("No se encontró la herramienta");
+            }
+            
+
+        })
+        .catch(function (error) {
+            console.error('Error al hacer Listado Herramienta', error);
+            reject(error);
+        });
+
+        });
     }
 
 
@@ -134,6 +193,8 @@ export default function Ingresos(props) {
     //Validciones
 
     const [validMonto, setValidMonto] = useState(true);
+    const [validCantMeses, setValidCantMeses] = useState(true);
+    const [validCantRecurso, setValidCantRecurso] = useState(true);
     const [validTipoMoneda, setValidTipoMoneda] = useState(true);
     const [validDescription, setValidDescription] = useState(true);
     const [validFecha, setValidFecha] = useState(true);
@@ -159,6 +220,10 @@ export default function Ingresos(props) {
 
 
     const [monto, setMonto] = useState("");
+    const [cantRecurso, setcantRecurso] = useState("");
+    const [mesesRequerido, setmesesRequerido] = useState("");
+
+
     const [lineasEstimacion, setLineasEstimacion] = useState([]);
 
     //Aqui va el data table de Iwa
@@ -394,8 +459,6 @@ export default function Ingresos(props) {
                 </Modal>
 
 
-
-
                 <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
                 <ModalContent >
                         {(onClose) => {
@@ -406,8 +469,19 @@ export default function Ingresos(props) {
                                 if (parseFloat(monto) < 0 || isNaN(parseFloat(monto))) {
                                     setValidMonto(false);
                                     Isvalid = false;
-                                    console.log("aqui 1");
                                 }
+
+                                if (parseInt(cantRecurso) < 0 || isNaN(parseInt(cantRecurso))) {
+                                    setValidCantRecurso(false);
+                                    Isvalid = false;
+                                }
+
+                                if (parseInt(mesesRequerido) < 0 || isNaN(parseInt(mesesRequerido))) {
+                                    setValidCantMeses(false);
+                                    Isvalid = false;
+                                }
+
+
 
                                 if(descripcionLinea===""){
                                     setValidDescription(false);
@@ -431,14 +505,22 @@ export default function Ingresos(props) {
 
                                 if(Isvalid === true){
                                     try {
-                                        await registrarLineaIngreso();
+                                        await registrarLineaEstimacion();
                                         setMonto("");
                                         setdescripcionLinea("");
                                         setselectedMoneda("");
                                         
                                         setFecha("");
+
+                                        setValidCantMeses("");
+                                        setValidCantRecurso("");
+                                        
                                         setValidTipoMoneda(true);
                                         setValidMonto(true);
+
+                                        setValidCantRecurso(true);
+                                        setValidCantMeses(true);
+
                                         setValidDescription(true);
                                         setValidFecha(true);
 
@@ -455,10 +537,12 @@ export default function Ingresos(props) {
                                 <>
                                     <ModalHeader className="flex flex-col gap-1" 
                                         style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                        Nuevo Ingreso
+                                        Nueva Estimación
                                     </ModalHeader>
+
                                     <ModalBody>
-                                        <p className="textIngreso">Monto Recibido</p>
+                      
+                                        <p className="textIngreso">Tarifa</p>
                                         
                                         <div className="modalAddIngreso">
                                             <div className="comboBoxMoneda">
@@ -513,43 +597,190 @@ export default function Ingresos(props) {
                                                         }                                                      
                                                 />                    
                                         </div>
+                                        
+
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-between",
+                                            
+                                            }}
+                                            >
+                                            <p
+                                                style={{
+                                                color: "#44546F",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 300,
+                                                }}
+                                            >
+                                                Cantidad Recurso
+                                            </p>
+
+                                            <p
+                                                style={{
+                                                color: "#44546F",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 300,
+                                                flex: 0.58,
+                                                }}
+                                            >
+                                                Meses Requerido
+                                            </p>
+                                        </div> 
+
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "flex-start", // Alineación en la parte superior
+
+                                                justifyContent: "space-between",
+                                                marginTop: "0.5rem",
+                                                gap: "4.7rem",
+                                                marginBottom: "0.6rem",
+                                            }}
+                                            >
+                                                 <Input
+                                                    value={cantRecurso}
+                                                    onValueChange={setcantRecurso}
+                                                    placeholder="0"
+                                                    labelPlacement="outside"
+                                                    isInvalid={!validCantRecurso}
+                                                    onChange={()=>{setValidCantRecurso(true)}}
+                                                    type="number"
+                                                    errorMessage={
+                                                        !validCantRecurso
+                                                            ? "Cantidad inválida"
+                                                            : ""
+                                                    }
+
+                                                    endContent={
+                                                        <div className="flex items-center">
+
+                                                        </div>
+                                                        }                                                      
+                                                /> 
+
+                                                 <Input
+                                                    value={mesesRequerido}
+                                                    onValueChange={setmesesRequerido}
+                                                    placeholder="0"
+                                                    labelPlacement="outside"
+                                                    isInvalid={!validCantMeses}
+                                                    onChange={()=>{setValidCantMeses(true)}}
+                                                    type="number"
+                                                    errorMessage={
+                                                        !validCantMeses
+                                                            ? "Cantidad Inválida"
+                                                            : ""
+                                                    }
+
+                                                    endContent={
+                                                        <div className="flex items-center">
+
+                                                        </div>
+                                                        }                                                      
+                                                />                     
+
+
+
+                                        </div>                  
+
+
+
+
+                                        
                                         <p className="textIngreso">Descripción</p>
 
                                         <div className="modalAddIngreso">
                                             
 
-                                        <Textarea
-                                            label=""
-                                            isInvalid={!validDescription}
-                                            errorMessage={!validDescription ? msgEmptyField : ""}
-                                            maxLength={35}
-                                            variant={"bordered"}
-                                            
-                                            labelPlacement="outside"
-                                            placeholder="Escriba aquí..."
-                                            className="max-w-x"
-                                            maxRows="2"
-                                            value={descripcionLinea}
-                                            onValueChange={setdescripcionLinea}
-                                            onChange={() => {
-                                                setValidDescription(true);
-                                            }}
-                                            
-                                            />
+                                            <Textarea
+                                                label=""
+                                                isInvalid={!validDescription}
+                                                errorMessage={!validDescription ? msgEmptyField : ""}
+                                                maxLength={35}
+                                                variant={"bordered"}
+                                                
+                                                labelPlacement="outside"
+                                                placeholder="Escriba aquí..."
+                                                className="max-w-x"
+                                                maxRows="2"
+                                                value={descripcionLinea}
+                                                onValueChange={setdescripcionLinea}
+                                                onChange={() => {
+                                                    setValidDescription(true);
+                                                }}
+                                                
+                                                />
                                          </div>
+                                            
 
-                                         <p className="textIngreso">Tipo Ingreso</p>
-                                
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-between",
+                                                marginTop: "0.5rem",
+                                            }}
+                                            >
+                                            <p
+                                                style={{
+                                                color: "#44546F",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 300,
+                                                }}
+                                            >
+                                                Fecha Inicio
+                                            </p>
+
+                                            <p
+                                                style={{
+                                                color: "#44546F",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 300,
+                                                flex: 0.62,
+                                                }}
+                                            >
+                                                Subtotal
+                                            </p>
+                                        </div> 
 
 
+                                         <div 
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-between",
+                                                gap: "2.5rem"
+                                            }}>
 
-                                         
-                                         
-                                        <p className="textIngreso">Tipo Transacción</p>
+                                                
+                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" 
+                                                style={{ width: '18rem' }}
 
+                                                onChange={handleChangeFecha}/>
+
+                                                <Input
+                                                    isReadOnly
+                                                    type="number"
+                                                    value={monto * cantRecurso * mesesRequerido < 0 || cantRecurso === 0 ? 0 : monto * cantRecurso * mesesRequerido}
+                                                    startContent={
+                                                        <div className="pointer-events-none flex items-center">
+                                                            <span className="text-default-400 text-small">
+                                                                    {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                            </span>
+                                                        </div>
+                                                    }
+                                                    
+                                                />
+                                        </div>       
                                     
-                                        <p className="textPresuLast">Fecha Transacción</p>
-                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" onChange={handleChangeFecha}/>
+                                      
                                         <div className="fechaContainer">
 
                                             
@@ -559,7 +790,7 @@ export default function Ingresos(props) {
                                                             ? "Ingrese una fecha válida"
                                                             : ""
                                                         }                      
-                                                </p>        
+                                                </p>    
                                             
 
                                         </div>
@@ -574,11 +805,17 @@ export default function Ingresos(props) {
                                                 setMonto("");
                                                 setdescripcionLinea("");
                                                 setselectedMoneda("");
+                                                
+                                                setcantRecurso("");
+                                                setmesesRequerido("");
 
                                                 setFecha("");
                                                 setValidTipoMoneda(true);
                                                 setValidMonto(true);
                                                 setValidDescription(true);
+
+                                                setValidCantMeses(true);
+                                                setValidCantRecurso(true);
 
                                                 setValidFecha(true);
                                               }}
