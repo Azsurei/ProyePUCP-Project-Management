@@ -18,6 +18,8 @@ import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 import CardTarea from "@/components/equipoComps/CardTarea";
 import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 
 axios.defaults.withCredentials = true;
 
@@ -35,6 +37,7 @@ export default function Equipo(props) {
     //1 es vista de un equipo particular
 
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [selectedTeamOriginales, setSelectedTeamOriginales] = useState(null);
     const [selectedTeamTareas, setSelectedTeamTareas] = useState([]);
     const [updateState, setUpdateState] = useState(false);
 
@@ -44,6 +47,7 @@ export default function Equipo(props) {
     const [removeLider, setRemoveLider] = useState(false);
 
     const [modal, setModal] = useState(false);
+    const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [userRoleData, setUserRoleData] = useState([]); //Define un estado para almacenar los datos del usuario y el rol asociado
 
@@ -54,6 +58,24 @@ export default function Equipo(props) {
     const toggleModal = () => {
         handleReloadData();
         setModal(!modal);
+    };
+
+    const toggleModal2 = () => {
+        setModal2(!modal2);
+    };
+
+    const returnListOfMiembros = (newMiembrosList) => {
+        // Concatenamos los nuevos miembros a selectedTeam.participantes
+        const updatedMembersList =
+            selectedTeam.participantes.concat(newMiembrosList);
+
+        // Actualizamos selectedTeam con la nueva lista de participantes
+        setSelectedTeam({
+            ...selectedTeam,
+            participantes: updatedMembersList,
+        });
+
+        setModal2(!modal2);
     };
 
     useEffect(() => {
@@ -123,6 +145,7 @@ export default function Equipo(props) {
 
     const handleSeeTeam = (team) => {
         setSelectedTeam(team);
+        setSelectedTeamOriginales(team);
         setIsLoadingSmall(true);
         const verTareasURL =
             "http://localhost:8080/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
@@ -152,6 +175,74 @@ export default function Equipo(props) {
             });
 
         setScreenState(1);
+    };
+
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        // Encuentra elementos modificados y eliminados
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                    modifiedArray.push(newItem);
+                } */
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
+    };
+
+    const onSubmitParticipantesRoles = () => {
+        const selectedTeamOriginal = selectedTeamOriginales;
+        const selectedTeamModified = selectedTeam;
+
+        // Comparar cambios en los participantes
+        const {
+            modifiedArray: modifiedParticipants,
+            deletedArray: deletedParticipants,
+            addedArray: addedParticipants,
+        } = findModifiedDeletedAdded(
+            selectedTeamOriginal.participantes,
+            selectedTeamModified.participantes,
+            "idUsuario"
+        );
+
+        // Resto del código para manejar las diferencias
+        console.log("Modified Participants:", modifiedParticipants);
+        console.log("Deleted Participants:", deletedParticipants);
+        console.log("Added Participants:", addedParticipants);
+
+        // Realizar solicitudes PUT, POST y DELETE según sea necesario
+        // ...
+
+        // Resto del código
     };
 
     return (
@@ -325,9 +416,10 @@ export default function Equipo(props) {
                                         <Button
                                             color="primary"
                                             startContent={<SaveIcon />}
-                                            onPress={() =>
-                                                setUpdateState(false)
-                                            }
+                                            onPress={() => {
+                                                onSubmitParticipantesRoles();
+                                                setUpdateState(false);
+                                            }}
                                         >
                                             Guardar
                                         </Button>
@@ -432,65 +524,114 @@ export default function Equipo(props) {
                                 </>
                             )} */}
 
-                            {selectedTeam.participantes.map((member) => (
-                                //falta un key aqui
+                            {updateState ? (
                                 <>
-                                    <div
-                                        className="col-span-6 flex mt-4"
-                                        key={member.idUsuario}
+                                    {selectedTeam.participantes.map(
+                                        (member) => (
+                                            //falta un key aqui
+                                            <React.Fragment
+                                                key={member.idUsuario}
+                                            >
+                                                <div
+                                                    className="col-span-6 flex mt-4"
+                                                    key={member.idUsuario}
+                                                >
+                                                    <p className="membersIcon1">
+                                                        {member.nombres[0] +
+                                                            member.apellidos[0]}
+                                                    </p>
+                                                    <div>
+                                                        <div className="text-lg">
+                                                            {member.nombres}{" "}
+                                                            {member.apellidos}
+                                                        </div>
+                                                        <div>
+                                                            {
+                                                                member.correoElectronico
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-span-3 flex mt-4">
+                                                    <MyCombobox
+                                                        urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
+                                                        property="roles"
+                                                        nameDisplay="nombreRol"
+                                                        hasColor={false}
+                                                        onSelect={(value) =>
+                                                            handleSelectedValueChangeRol(
+                                                                value,
+                                                                member.idUsuario
+                                                            )
+                                                        }
+                                                        idParam="idRolEquipo"
+                                                        reloadData={reloadData}
+                                                        initialName={
+                                                            member.nombreRol
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className="col-span-1 flex mt-4 justify-center">
+                                                    <img
+                                                        src="/icons/icon-trash.svg"
+                                                        alt="delete"
+                                                        className="mb-4 cursor-pointer "
+                                                        onClick={() => {
+                                                            removeUser(member);
+                                                        }}
+                                                    />
+                                                </div>
+                                            </React.Fragment>
+                                        )
+                                    )}
+                                    <div className="col-span-8"></div>
+                                    <Button
+                                        className="bg-blue-400 text-white rounded-lg col-span-2 flex gap-2 items-center mt-8"
+                                        onClick={toggleModal2}
                                     >
-                                        <p className="membersIcon1">
-                                            {member.nombres[0] +
-                                                member.apellidos[0]}
-                                        </p>
-                                        <div>
-                                            <div className="text-lg">
-                                                {member.nombres}{" "}
-                                                {member.apellidos}
-                                            </div>
-                                            <div>
-                                                {member.correoElectronico}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {updateState ? (
-                                        <>
-                                            <div className="col-span-3 flex mt-4">
-                                                <MyCombobox
-                                                    urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
-                                                    property="roles"
-                                                    nameDisplay="nombreRol"
-                                                    hasColor={false}
-                                                    onSelect={(value) =>
-                                                        handleSelectedValueChangeRol(
-                                                            value,
-                                                            member.idUsuario
-                                                        )
-                                                    }
-                                                    idParam="idRolEquipo"
-                                                    reloadData={reloadData}
-                                                    initialName="Seleccione un rol"
-                                                />
-                                            </div>
-                                            <div className="col-span-1 flex mt-4 justify-center">
-                                                <img
-                                                    src="/icons/icon-trash.svg"
-                                                    alt="delete"
-                                                    className="mb-4 cursor-pointer "
-                                                    onClick={() => {
-                                                        removeUser(member);
-                                                    }}
-                                                />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="col-span-4 flex mt-4">
-                                            {/*aca traeré la data del selectedTeam mejorado*/}
-                                            Miembro
-                                        </div>
+                                        <img
+                                            src="/icons/icon-searchBar.svg"
+                                            alt="icono de buscar"
+                                            className="icnSearch"
+                                            style={{ width: "20px" }}
+                                        />
+                                        <p>Buscar nuevo participante</p>
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    {selectedTeam.participantes.map(
+                                        (member) => (
+                                            <React.Fragment
+                                                key={member.idUsuario}
+                                            >
+                                                <div className="col-span-6 flex mt-4">
+                                                    <p className="membersIcon1">
+                                                        {member.nombres[0] +
+                                                            member.apellidos[0]}
+                                                    </p>
+                                                    <div>
+                                                        <div className="text-lg">
+                                                            {member.nombres}{" "}
+                                                            {member.apellidos}
+                                                        </div>
+                                                        <div>
+                                                            {
+                                                                member.correoElectronico
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="col-span-4 flex mt-4">
+                                                    {/* aca traeré la data del selectedTeam mejorado */}
+                                                    {member.nombreRol}
+                                                </div>
+                                            </React.Fragment>
+                                        )
                                     )}
                                 </>
-                            ))}
+                            )}
                         </div>
                     </div>
                     {modal && (
@@ -499,6 +640,15 @@ export default function Equipo(props) {
                             toggle={() => toggleModal()} // Pasa la función como una función de flecha
                             idEquipo={selectedTeam.idEquipo}
                         />
+                    )}
+                    {modal2 && (
+                        <ModalUser
+                            listAllUsers={false}
+                            handlerModalClose={toggleModal2}
+                            handlerModalFinished={returnListOfMiembros}
+                            excludedUsers={selectedTeam.participantes}
+                            idProyecto={projectId}
+                        ></ModalUser>
                     )}
                 </div>
             )}
