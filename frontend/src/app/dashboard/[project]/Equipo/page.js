@@ -122,9 +122,6 @@ export default function Equipo(props) {
             (item) => item.idUsuario !== user.idUsuario
         );
         selectedTeamTemporal.participantes = newList;
-
-        console.log("El selecteTeam actual es:", selectedTeam);
-        console.log("El selecteTeam original es:", selectedTeamOriginales);
         setSelectedTeam({ ...selectedTeamTemporal });
     };
 
@@ -191,6 +188,13 @@ export default function Equipo(props) {
             });
 
         setScreenState(1);
+    };
+
+    const checkIfLeaderExists = () => {
+        // Verifica si al menos un participante tiene el rol de líder
+        const isLeader = selectedTeam.participantes.some((participant) => participant.nombreRol === "Lider");
+    
+        return isLeader;
     };
 
     const findModifiedDeletedAdded = (
@@ -414,14 +418,6 @@ export default function Equipo(props) {
             )}
             {screenState === 1 && (
                 <div>
-                    {console.log(
-                        "El second selecteTeam actual es:",
-                        selectedTeam
-                    )}
-                    {console.log(
-                        "El second selecteTeam original es:",
-                        selectedTeamOriginales
-                    )}
                     <HeaderWithButtonsSamePage
                         haveReturn={true}
                         haveAddNew={false}
@@ -508,8 +504,13 @@ export default function Equipo(props) {
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
-                                                onSubmitParticipantesRoles();
-                                                setUpdateState(false);
+                                                if(checkIfLeaderExists){
+                                                    onSubmitParticipantesRoles();
+                                                    setUpdateState(false);
+                                                }else{
+                                                    alert("Un miembro debe tener el rol de líder");
+                                                }
+
                                             }}
                                         >
                                             Guardar
@@ -632,37 +633,13 @@ export default function Equipo(props) {
                                                         }
                                                     />
                                                 </div>
-                                                {console.log(
-                                                    "El selecteTeam actual justo en eliminar es:",
-                                                    selectedTeam
-                                                )}
-                                                {console.log(
-                                                    "El selecteTeam original justo en eliminar es:",
-                                                    selectedTeamOriginales
-                                                )}
                                                 <div className="col-span-1 flex mt-4 justify-center">
                                                     <img
                                                         src="/icons/icon-trash.svg"
                                                         alt="delete"
                                                         className="mb-4 cursor-pointer "
                                                         onClick={() => {
-                                                            console.log(
-                                                                "El antes selecteTeam actual es:",
-                                                                selectedTeam
-                                                            );
-                                                            console.log(
-                                                                "El antes selecteTeam original es:",
-                                                                selectedTeamOriginales
-                                                            );
                                                             removeUser(member);
-                                                            console.log(
-                                                                "El después selecteTeam actual es:",
-                                                                selectedTeam
-                                                            );
-                                                            console.log(
-                                                                "El después selecteTeam original es:",
-                                                                selectedTeamOriginales
-                                                            );
                                                         }}
                                                     />
                                                 </div>
