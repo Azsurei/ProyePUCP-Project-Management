@@ -7,6 +7,7 @@ import axios from "axios";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 
@@ -29,6 +30,7 @@ import {
 } from "@nextui-org/react";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import CardSelectedUser from "@/components/CardSelectedUser";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 
 export default function Dashboard() {
     const [filterValue, setFilterValue] = useState("");
@@ -44,12 +46,102 @@ export default function Dashboard() {
 
         const [listPrivUsers, setListPrivUsers] = useState([]);
         const [userSearchValue, setUserSearchValue] = useState("");
+        const [modalSearchUser, setModalSearchUser] = useState(false);
+
+        const toggleModal = () => {
+            setModalSearchUser(!modalSearchUser);
+        };
+
+        function promiseCambiar_A_Alumno(usuario) {
+            return new Promise((resolve, reject) => {
+                const stringURL =
+                    "http://localhost:8080/api/admin/cambiarPrivilegioUsuario";
+                axios
+                    .put(stringURL, {
+                        idUsuario: usuario.idUsuario,
+                        idPrivilegio: 1,
+                    })
+                    .then((response) => {
+                        console.log(response);
+                        resolve(response);
+                    })
+
+                    .catch(function (error) {
+                        console.log("Error al eliminar usuario", error);
+                        reject(error);
+                    });
+            });
+        }
 
         const removeHandler = (usuario) => {
             const newArray = listPrivUsers.filter(
                 (item) => item.idUsuario !== usuario.idUsuario
             );
             setListPrivUsers(newArray);
+
+            //lanzamos notificaicon de eliminacion
+            toast.promise(promiseCambiar_A_Alumno(usuario), {
+                loading: "Quitando privilegio a usuario...",
+                success: (data) => {
+                    return "El usuario ya no cuenta con privilegios";
+                },
+                error: "Error al quitar privilegio a usuario",
+                position: "bottom-right",
+            });
+        };
+
+        function promiseAñadirProfesores(listSelected) {
+            return new Promise((resolve, reject) => {
+                for (const usuario of listSelected) {
+                    const stringURL =
+                        "http://localhost:8080/api/admin/cambiarPrivilegioUsuario";
+                    axios
+                        .put(stringURL, {
+                            idUsuario: usuario.idUsuario,
+                            idPrivilegio: 2,
+                        })
+                        .then((response) => {
+                            console.log(response);
+                        })
+
+                        .catch(function (error) {
+                            console.log("Error al eliminar usuario", error);
+                            reject(error);
+                        });
+                }
+                resolve("listo");
+            });
+        }
+
+        const returnListSelected = (listSelected) => {
+            setModalSearchUser(false);
+            console.log("se recibio: " + listSelected);
+
+            const strLoading =
+                listSelected.length > 1
+                    ? "Añadiendo profesores..."
+                    : "Añadiendo profesor...";
+            const strSuccess =
+                listSelected.length > 1
+                    ? "Los profesores fueron añadidos con exito!"
+                    : "El profesor fue añadido con exito!";
+            const strError =
+                listSelected.length > 1
+                    ? "Error al añadir los profesores"
+                    : "Error al añadir al profesor";
+
+            toast.promise(promiseAñadirProfesores(listSelected), {
+                loading: strLoading,
+                success: (data) => {
+                    return strSuccess;
+                },
+                error: strError,
+                position: "bottom-right",
+            });
+
+            const newList = [...listPrivUsers, ...listSelected];
+            console.log(newList);
+            setListPrivUsers(newList);
         };
 
         useEffect(() => {
@@ -97,7 +189,10 @@ export default function Dashboard() {
                     </div>
 
                     <div>
-                        <div className="flex flex-row justify-between items-center">
+                        <div
+                            className="flex flex-row justify-between items-center mb-2"
+                            style={{ fontFamily: "Montserrat" }}
+                        >
                             <p
                                 style={{
                                     fontFamily: "Montserrat",
@@ -109,7 +204,14 @@ export default function Dashboard() {
                                 Lista de usuarios con permisos de Creacion de
                                 Proyecto:{" "}
                             </p>
-                            <div>boton</div>
+                            <Button
+                                className="h-[35px] bg-172B4D text-white font-semibold"
+                                onPress={() => {
+                                    setModalSearchUser(true);
+                                }}
+                            >
+                                Añadir usuario
+                            </Button>
                         </div>
 
                         <Input
@@ -135,6 +237,24 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
+
+                {modalSearchUser && (
+                    <ModalUser
+                        listAllUsers={true}
+                        handlerModalClose={toggleModal}
+                        handlerModalFinished={returnListSelected}
+                        excludedUsers={listPrivUsers}
+                        //idProyecto={projectId}
+                    ></ModalUser>
+                )}
+
+                <Toaster
+                    closeButton={true}
+                    richColors
+                    toastOptions={{
+                        style: { fontSize: "1.05rem" },
+                    }}
+                />
             </div>
         );
     }
@@ -166,20 +286,24 @@ export default function Dashboard() {
                     />
                 </div>
 
-                <div className="contentDer">
-                    <p className="textProject">¿Tienes ya la idea ganadora?</p>
+                {session.user.rol === 2 && (
+                    <div className="contentDer">
+                        <p className="textProject">
+                            ¿Tienes ya la idea ganadora?
+                        </p>
 
-                    <div className="butonAddProject">
-                        <Link
-                            href="/dashboard/newProject"
-                            id="newProBtnContainer"
-                        >
-                            <button className="addProjectbtn">
-                                Crear Proyecto
-                            </button>
-                        </Link>
+                        <div className="butonAddProject">
+                            <Link
+                                href="/dashboard/newProject"
+                                id="newProBtnContainer"
+                            >
+                                <button className="addProjectbtn">
+                                    Crear Proyecto
+                                </button>
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <ListProject></ListProject>
