@@ -222,7 +222,7 @@ export default function Equipo(props) {
     const onSubmitParticipantesRoles = () => {
         const selectedTeamOriginal = selectedTeamOriginales;
         const selectedTeamModified = selectedTeam;
-    
+
         // Comparar cambios en los participantes
         const {
             modifiedArray: modifiedParticipants,
@@ -233,15 +233,15 @@ export default function Equipo(props) {
             selectedTeamModified.participantes,
             "idUsuario"
         );
-    
+
         // Resto del código para manejar las diferencias
         console.log("Modified Participants:", modifiedParticipants);
         console.log("Deleted Participants:", deletedParticipants);
         console.log("Added Participants:", addedParticipants);
-    
+
         // Realizar solicitudes PUT, POST y DELETE según sea necesario
         // ...
-    
+
         // Resto del código
     };
 
@@ -416,9 +416,10 @@ export default function Equipo(props) {
                                         <Button
                                             color="primary"
                                             startContent={<SaveIcon />}
-                                            onPress={() =>
-                                                setUpdateState(false)
-                                            }
+                                            onPress={() => {
+                                                onSubmitParticipantesRoles();
+                                                setUpdateState(false);
+                                            }}
                                         >
                                             Guardar
                                         </Button>
