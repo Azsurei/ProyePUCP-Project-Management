@@ -2735,12 +2735,27 @@ CREATE PROCEDURE INSERTAR_MIEMBROS_EQUIPO(
     IN _idRol INT
 )
 BEGIN
-	DECLARE _idUsuarioXEquipo INT;
-	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo,idRol) 
-    VALUES(_idUsuario,_idEquipo,1,_idRol);
-    SET _idUsuarioXEquipo = @@last_insert_id;
+    DECLARE _idUsuarioXEquipo INT;
+    -- Verificar si ya existe un registro para este idEquipo e idUsuario
+    SELECT idUsuarioXEquipo INTO _idUsuarioXEquipo
+    FROM UsuarioXEquipo
+    WHERE idEquipo = _idEquipo AND idUsuario = _idUsuario;
+
+    IF _idUsuarioXEquipo IS NOT NULL THEN
+        -- Si existe, actualiza el registro existente
+        UPDATE UsuarioXEquipo
+        SET activo = 1, idRol = _idRol
+        WHERE idUsuarioXEquipo = _idUsuarioXEquipo;
+    ELSE
+        -- Si no existe, inserta un nuevo registro
+        INSERT INTO UsuarioXEquipo(idUsuario, idEquipo, activo, idRol)
+        VALUES(_idUsuario, _idEquipo, 1, _idRol);
+        SET _idUsuarioXEquipo = @@last_insert_id;
+    END IF;
+
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
+
 
 DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
 DELIMITER $
