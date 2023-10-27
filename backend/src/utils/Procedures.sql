@@ -2818,5 +2818,19 @@ BEGIN
     LEFT JOIN UsuarioXRolXProyecto as up ON u.idUsuario = up.idUsuario
     WHERE u.idUsuario = _idUsuario 
     AND up.idProyecto = _idProyecto
-    AND u.activo = 1;
+    AND u.activo = 1
+    AND u.idRol;
+END$
+
+DROP PROCEDURE IF EXISTS VERIFICAR_EXISTE_EVALUACION;
+DELIMITER $
+CREATE PROCEDURE VERIFICAR_EXISTE_EVALUACION(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT ue.idAutoEvaluacion
+    FROM UsuarioXEvaluacion AS ue
+    LEFT JOIN Autoevaluacion as ae ON ue.idAutoevaluacion = ae.idAutoevaluacion
+    WHERE ae.idProyecto = _idProyecto 
+    AND ae.activo = 1;
 END$
