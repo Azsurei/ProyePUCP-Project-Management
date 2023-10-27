@@ -9,19 +9,20 @@ import { SmallLoadingScreen } from "../../layout";
 import { useRouter } from "next/navigation";
 import {
     Input,
-    Card,
-    CardHeader,
-    CardBody,
-    CardFooter,
+    Card, CardHeader, CardBody, CardFooter,
     Button, Spacer,
+    Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue,
+    Checkbox,
 } from "@nextui-org/react";
 
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
-import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunion.css";
+import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/LineaActaReunion.css";
+
 import CardSelectedUser from "@/components/CardSelectedUser";
 
+import AcuerdosListEditableInput from "@/components/dashboardComps/projectComps/actaReunionComps/ARListEditableInput";
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -285,6 +286,7 @@ const handleRemoveComentario = (index) => {
 
     const [isLoading, setIsLoading] = useState(true);
 
+
 // *********************************************************************************************
 // Searching Meeting Record ID
 // *********************************************************************************************
@@ -311,6 +313,33 @@ const handleRemoveComentario = (index) => {
     }, []);
 
 // *********************************************************************************************
+// Getting Meeting Participants from Meeting Record Line
+// *********************************************************************************************
+    const [participantes, setParticipantes] = useState("");
+
+    useEffect(() => {
+        const stringURL = 
+        "http://localhost:8080/api/proyecto/actaReunion/listarParticipanteXReunionXIdActaReunion/"
+            + meetingId;
+        console.log("La URL es" + stringURL);
+
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                console.log("Listando Participantes. Respuesta del servidor:", response.data);
+                const dataActa = response.data.data;
+                
+                setMeetingId(dataActa.idActaReunion);
+                setIsLoading(false);
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
+
+// *********************************************************************************************
 // Creating a Meeting Record Line
 // *********************************************************************************************
 
@@ -331,7 +360,7 @@ const handleRemoveComentario = (index) => {
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
                         <CardBody>
-                            <div>
+                            <div className="lineMeetingTitle">
                                 <h1>Reunión para ver temas de gastos</h1>
                             </div>
                             {/* Mantener para pensar el modo editar
@@ -348,7 +377,7 @@ const handleRemoveComentario = (index) => {
                                 onValueChange={setTitleValue} 
                             />
                             */}
-                            <p className="mt-5 mb-1 text-black text-sm font-medium">Reunión convocada por</p>
+                            <p className=" convenourTitle mt-5 mb-1 font-medium">Reunión convocada por</p>
                             <div className="userSelection flex items-center">
                                 <p className="ml-2 font-medium text-gray-400 ">
                                     {convocante.nombres} {convocante.apellidos}
@@ -380,14 +409,14 @@ const handleRemoveComentario = (index) => {
                             */}
                             </div>
                             
-                            <div className="dateAndTimeLine flex items-center">
+                            <div className="dateAndTimeLine flex items-center gap-10">
                                 <div className="dateShow">
-                                    <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha</p>
-                                    <p>27/10/2023</p>
+                                    <p className=" dateShowTitle mt-5 font-medium">Fecha</p>
+                                    <p className="dateShowing">27/10/2023</p>
                                 </div>
                                 <div className="timeShow">
-                                    <p className="mt-5 mb-1 text-black text-sm font-medium">Hora</p>
-                                    <p>13:32 pm</p>
+                                    <p className="timeShowTitle mt-5 ml-5 font-medium">Hora</p>
+                                    <p className="timeShowing">13:32 pm</p>
                                 </div>
                             
                                 {/* Edit Fecha y hora}
@@ -409,6 +438,11 @@ const handleRemoveComentario = (index) => {
                                 ></input>
                                 */}
                             </div>
+                            <div className="meetingMotive"> 
+                                <h2 className="font-medium">Motivo</h2>
+                                <p>Este es el motivo</p>
+                            </div>
+                            {/* Para el editar}
                             <Input 
                                 className="max-w-[1000px] mt-5"
                                 isRequired
@@ -421,12 +455,9 @@ const handleRemoveComentario = (index) => {
                                 value={motiveValue}
                                 onValueChange={setMotiveValue} 
                             />
+                            */}
                         </CardBody>
                         <CardFooter>
-                            <div className="mandatoryAdvise p-2">
-                                <img src="/icons/alert.svg"/>
-                                <p>Recuerda que todos estos campos son obligatorios para crear un Acta de Reunión</p>
-                            </div>
                         </CardFooter>
                     </Card>
                     
@@ -439,8 +470,24 @@ const handleRemoveComentario = (index) => {
                             <h3>Personas Convocadas</h3>
                         </CardHeader>
                         <CardBody className="py-0 mt-0 ml-2">
+                            <Table aria-label="membersTable">
+                                <TableHeader>
+                                    <TableColumn>MIEMBROS</TableColumn>
+                                    <TableColumn>ASISTENCIA</TableColumn>
+                                </TableHeader>
+                                <TableBody miembros={participantes}>
+                                    {/*
+                                    {miembro => (
+                                        <TableRow key={miembro.idUsuario}>
+                                            
+                                        </TableRow>
+                                    )}
+                                    */}
+                                </TableBody>
+                            </Table>
+                            {/*
                             <p>Lista de Miembros</p>
-                            {/**** Selector de Miembros ***** */}
+                            {/**** Selector de Miembros ***** 
                             <div className="SelectedUsersContainer">
                                 <div
                                     className="containerToPopUpUsrSearch"
@@ -481,6 +528,7 @@ const handleRemoveComentario = (index) => {
                                 ></ModalUsers>
                             )}   
                             {/* Fin del selector de miembros */}
+                            
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
@@ -542,13 +590,14 @@ const handleRemoveComentario = (index) => {
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
-                                <ListEditableInput 
+                                <AcuerdosListEditableInput
                                     beEditable={true} 
                                     handleChanges={handleChangeAcuerdo}
                                     handleRemove={handleRemoveAcuerdo}
-                                    ListInputs={listAcuerdos} 
+                                    ListInputs={listAcuerdos}
+                                    temas={listTemas} 
                                     typeName="Acuerdo">
-                                </ListEditableInput>
+                                </AcuerdosListEditableInput>
                             </div>
                         </CardBody>
                         <CardFooter></CardFooter>

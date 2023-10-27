@@ -17,6 +17,7 @@ function CardTarea({
     tarea,
     leftMargin,
     handleVerDetalle,
+    handleEdit,
     handleAddNewSon,
     handleDelete,
 }) {
@@ -38,20 +39,27 @@ function CardTarea({
     return (
         <div className="containerCardYHijo">
             <div className="tareaCard">
-                {tarea.tareasHijas.length !== 0 && (
-                    <div className="containerChevron" onClick={toggleOpen}>
-                        <img src="/icons/chevron-down.svg" />
-                    </div>
-                )}
-
                 <div className="containerGeneralData">
                     <div className="containerNombreTarea">
-                        <p>{tarea.sumillaTarea}</p>
-                        {tarea.tareasPosteriores.length !== 0 && (
-                            <p className="text-bold text-sm capitalize text-default-400">
-                                {tarea.tareasPosteriores.length} tareas posteriores
-                            </p>
+                        {tarea.tareasHijas.length !== 0 && (
+                            <div
+                                className="containerChevron"
+                                onClick={toggleOpen}
+                            >
+                                <img src="/icons/chevron-down.svg" />
+                            </div>
                         )}
+                        <div className="flex flex-col">
+                            <p>{tarea.sumillaTarea}</p>
+                            {tarea.tareasPosteriores.length !== 0 && (
+                                <p className="text-bold text-sm capitalize text-default-400">
+                                    {tarea.tareasPosteriores.length +
+                                        (tarea.tareasPosteriores.length > 1
+                                            ? " tareas posteriores"
+                                            : " tarea posterior")}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     <div className="containerSelectedUsers">
@@ -88,17 +96,22 @@ function CardTarea({
                     </div>
                 </div>
 
-                <div className="relative flex justify-end items-center gap-2">
+                <div className="contaienrMas Opciones relative flex justify-end items-center gap-2">
                     <Dropdown aria-label="droMenTareasMain">
                         <DropdownTrigger aria-label="droMenTareasTrigger">
-                            <Button
-                                size="md"
-                                radius="sm"
-                                variant="flat"
-                                color="default"
-                            >
-                                Ver opciones
-                            </Button>
+                            
+                                <Button
+                                
+                                    size="md"
+                                    radius="sm"
+                                    variant="flat"
+                                    color="default"
+                                    className="ButtonMore"
+                                >
+                                    <p className="lblVerOpciones">Ver opciones</p>
+                                    <VerticalDotsIcon className="icnVerOpciones text-black-300" />
+                                </Button>
+                            
                         </DropdownTrigger>
                         <DropdownMenu aria-label="droMenTareas">
                             <DropdownItem
@@ -117,7 +130,12 @@ function CardTarea({
                             >
                                 Ver detalle
                             </DropdownItem>
-                            <DropdownItem aria-label="edit">
+                            <DropdownItem
+                                aria-label="edit"
+                                onClick={() => {
+                                    handleEdit(tarea);
+                                }}
+                            >
                                 Editar
                             </DropdownItem>
                             <DropdownItem
@@ -125,7 +143,7 @@ function CardTarea({
                                 className="text-danger"
                                 color="danger"
                                 onClick={() => {
-                                    handleDelete(tarea)
+                                    handleDelete(tarea);
                                 }}
                             >
                                 Eliminar
@@ -154,6 +172,7 @@ export default function ListTareas({
     listTareas,
     leftMargin,
     handleVerDetalle,
+    handleEdit,
     handleAddNewSon,
     handleDelete,
 }) {
@@ -166,6 +185,7 @@ export default function ListTareas({
                         tarea={tarea}
                         leftMargin={leftMargin}
                         handleVerDetalle={handleVerDetalle}
+                        handleEdit={handleEdit}
                         handleAddNewSon={handleAddNewSon}
                         handleDelete={handleDelete}
                     ></CardTarea>

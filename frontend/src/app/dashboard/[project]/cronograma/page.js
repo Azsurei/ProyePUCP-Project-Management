@@ -53,6 +53,35 @@ export default function Cronograma(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const router = useRouter();
 
+    const dropBoxItems = [
+        {
+            id: 1,
+            itemKey: "1",
+            texto: "No iniciado",
+            color: "default",
+        },
+        {
+            id: 2,
+            itemKey: "2",
+            texto: "En progreso",
+            color: "primary",
+        },
+        {
+            id: 3,
+            itemKey: "3",
+            texto: "Atrasado",
+            color: "danger",
+        },
+        {
+            id: 4,
+            itemKey: "4",
+            texto: "Finalizado",
+            color: "success",
+        },
+    ];
+
+    const colorDropbox = ["default", "primary", "danger", "success"];
+
     //const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const {
         isOpen: isModalSubEOpen,
@@ -90,15 +119,10 @@ export default function Cronograma(props) {
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
 
-    const [tareaEstado, setTareaEstado] = useState({
-        id: 0,
-        texto: "",
-        color: "",
-    });
-    const [dropBoxColor, setDropBoxColor] = useState(null);
-
     const [tareaDescripcion, setTareaDescripcion] = useState("");
     const [validDescripcion, setValidDescripcion] = useState(true);
+
+    const [tareaEstado, setTareaEstado] = useState(["1"]);
 
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
@@ -130,7 +154,8 @@ export default function Cronograma(props) {
         setTareaPadre(null);
         setTareaName("");
         setTareaDescripcion("");
-        //setear combo box
+        setTareaEstado(["1"]);
+
         setFechaInicio("");
         setFechaFin("");
 
@@ -139,6 +164,12 @@ export default function Cronograma(props) {
         setSelectedSubteam(null);
         setSelectedUsers([]);
         setTabSelected("users");
+
+        setValidName(true);
+        setValidDescripcion(true);
+        setValidFechas(true);
+        setValidAsigned(true);
+        setValidSelectedSubteamUsers(true);
 
         setStateSecond(1);
         setToggleNew(true);
@@ -149,6 +180,14 @@ export default function Cronograma(props) {
         setTareaPadre(tarea.idPadre);
         setTareaName(tarea.sumillaTarea);
         setTareaDescripcion(tarea.descripcion);
+
+        setTareaEstado([String(tarea.idTareaEstado)]);
+        console.log(
+            "seteando al idTareaEstado = " +
+                tarea.idTareaEstado +
+                " / " +
+                String(tarea.idTareaEstado)
+        );
 
         console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
         console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
@@ -184,6 +223,7 @@ export default function Cronograma(props) {
         setValidDescripcion(true);
         setValidFechas(true);
         setValidAsigned(true);
+        setValidSelectedSubteamUsers(true);
 
         setStateSecond(2);
         setToggleNew(true);
@@ -193,7 +233,8 @@ export default function Cronograma(props) {
         setTareaPadre(tareaPadre);
         setTareaName("");
         setTareaDescripcion("");
-        //setear combo box
+        setTareaEstado(["1"]);
+
         setFechaInicio("");
         setFechaFin("");
         setListPosteriores([]);
@@ -202,7 +243,66 @@ export default function Cronograma(props) {
         setSelectedUsers([]);
         setTabSelected("users");
 
+        setValidName(true);
+        setValidDescripcion(true);
+        setValidFechas(true);
+        setValidAsigned(true);
+        setValidSelectedSubteamUsers(true);
+
         setStateSecond(4);
+        setToggleNew(true);
+    };
+
+    const handleEdit = (tarea) => {
+        setTareaPadre(tarea.idPadre);
+        setTareaName(tarea.sumillaTarea);
+        setTareaDescripcion(tarea.descripcion);
+
+        setTareaEstado([String(tarea.idTareaEstado)]);
+        console.log(
+            "seteando al idTareaEstado = " +
+                tarea.idTareaEstado +
+                " / " +
+                String(tarea.idTareaEstado)
+        );
+
+        console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
+        console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
+
+        setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
+        setFechaFin(dbDateToInputDate(tarea.fechaFin));
+
+        setListPosteriores(tarea.tareasPosteriores);
+        for (const task of tarea.tareasPosteriores) {
+            task.fechaFin = dbDateToInputDate(task.fechaFin);
+        }
+
+        if (tarea.idEquipo === null) {
+            setSelectedUsers(tarea.usuarios);
+            setSelectedSubteam(null);
+            setSelectedSubteamUsers([]);
+            setTabSelected("users");
+        } else {
+            setSelectedSubteam(tarea.equipo);
+            setSelectedUsers([]);
+
+            let newUsrLst = [];
+            for (const user of tarea.usuarios) {
+                newUsrLst.push(user.idUsuario);
+            }
+            setSelectedSubteamUsers(newUsrLst);
+            setValidSelectedSubteamUsers(true);
+
+            setTabSelected("subteams");
+        }
+
+        setValidName(true);
+        setValidDescripcion(true);
+        setValidFechas(true);
+        setValidAsigned(true);
+        setValidSelectedSubteamUsers(true);
+
+        setStateSecond(3);
         setToggleNew(true);
     };
 
@@ -211,14 +311,6 @@ export default function Cronograma(props) {
         setTareaEliminar(tarea);
         //prendemos modal de confirmacion
         onModalDeleteOpen();
-    };
-
-    const handleEditar = () => {
-        //ya no consideraremos caso de editar desde Dropdown (Ver a futuro //!!!!!!!!!!)
-        //caso en que se de click desde pantalla de vista
-        //asumimos que data ya esta cargada, debemos habilitar edicion en ella
-
-        setStateSecond(3);
     };
 
     function promiseEliminarTarea() {
@@ -329,6 +421,7 @@ export default function Cronograma(props) {
 
     function promiseRegistrarTarea() {
         return new Promise((resolve, reject) => {
+            console.log(tareaEstado);
             let selectedSubteamUsersWithId;
             if (selectedSubteam !== null) {
                 //remapeamos array para darle un nombre al atributo
@@ -345,7 +438,7 @@ export default function Cronograma(props) {
             axios
                 .post(newURL, {
                     idCronograma: cronogramaId,
-                    idTareaEstado: 1, //No iniciado
+                    idTareaEstado: parseInt(tareaEstado[0], 10), //No iniciado
                     idSubGrupo:
                         selectedSubteam === null
                             ? null
@@ -460,31 +553,6 @@ export default function Cronograma(props) {
         console.log(updatedList);
         setListPosteriores(updatedList);
     };
-
-    const dropBoxItems = [
-        {
-            id: 1,
-            texto: "No iniciado",
-            color: "default",
-        },
-        {
-            id: 2,
-            texto: "En progreso",
-            color: "primary",
-        },
-        {
-            id: 3,
-            texto: "Atrasado",
-            color: "warning",
-        },
-        {
-            id: 4,
-            texto: "Finalizado",
-            color: "success",
-        },
-    ];
-
-    const colorDropbox = ["default", "primary", "warning", "success"];
 
     useEffect(() => {
         const stringURL =
@@ -665,13 +733,16 @@ export default function Cronograma(props) {
                     </HeaderWithButtonsSamePage>
 
                     {/* <AgendaTable listTareas={listTareas}></AgendaTable> */}
-                    <ListTareas
-                        listTareas={listTareas}
-                        leftMargin={"0px"}
-                        handleVerDetalle={handleVerDetalle}
-                        handleAddNewSon={handleAddNewSon}
-                        handleDelete={handleDelete}
-                    ></ListTareas>
+                    <div className="pb-[60px]">
+                        <ListTareas
+                            listTareas={listTareas}
+                            leftMargin={"0px"}
+                            handleVerDetalle={handleVerDetalle}
+                            handleAddNewSon={handleAddNewSon}
+                            handleEdit={handleEdit}
+                            handleDelete={handleDelete}
+                        ></ListTareas>
+                    </div>
                 </div>
             </div>
 
@@ -681,14 +752,11 @@ export default function Cronograma(props) {
                 <div className="containerGeneralRight">
                     <div className="flex flex-row items-end">
                         <HeaderWithButtonsSamePage
-                            haveReturn={true}
+                            haveReturn={stateSecond === 2 ? true : false}
                             haveAddNew={false}
                             handlerReturn={() => {
                                 setToggleNew(false);
                             }}
-                            haveEditBtn={true}
-                            handlerEdit={handleEditar}
-                            editBtnText={"Editar"}
                             breadcrump={
                                 "Inicio / Proyectos / " +
                                 projectName +
@@ -708,7 +776,7 @@ export default function Cronograma(props) {
                                 size="md"
                                 radius="sm"
                                 onClick={() => {
-                                    handleEditar();
+                                    setStateSecond(3);
                                 }}
                                 className="bg-F0AE19 h-[35px] mb-1 w-[115px]"
                                 startContent={<UpdateIcon />}
@@ -754,22 +822,30 @@ export default function Cronograma(props) {
                             <p>Estado</p>
                             <Select
                                 //variant="bordered"
+                                isDisabled={stateSecond === 2 ? true : false}
                                 aria-label="cbo-lbl"
                                 label=""
                                 placeholder="Selecciona"
                                 labelPlacement="outside"
                                 classNames={{ trigger: "h-10" }}
                                 size="sm"
-                                color={colorDropbox[tareaEstado - 1]}
+                                color={
+                                    colorDropbox[parseInt(tareaEstado, 10) - 1]
+                                }
                                 onChange={(e) => {
-                                    setTareaEstado(e.target.value);
+                                    // const state = {
+                                    //     id: dropBoxItems.find(item => item.itemKey === e.target.value).id,
+                                    //     itemKey: e.target.value
+                                    // }
+                                    setTareaEstado([e.target.value]);
                                     console.log(tareaEstado);
                                 }}
+                                selectedKeys={tareaEstado}
                             >
                                 {dropBoxItems.map((items) => (
                                     <SelectItem
-                                        key={items.id}
-                                        value={items.texto}
+                                        key={items.itemKey}
+                                        value={items.itemKey}
                                         color={items.color}
                                     >
                                         {items.texto}
@@ -1136,8 +1212,16 @@ export default function Cronograma(props) {
                         <div className="twoButtonsEnd">
                             <BtnToModal
                                 nameButton="Descartar"
-                                textHeader="Descartar Tarea"
-                                textBody="¿Seguro que quiere descartar el registro de esta tarea?"
+                                textHeader={
+                                    stateSecond === 3
+                                        ? "Descartar Actualización"
+                                        : "Descartar Registro"
+                                }
+                                textBody={
+                                    stateSecond === 3
+                                        ? "¿Seguro que quiere descartar la actualizacion de esta tarea?"
+                                        : "¿Seguro que quiere descartar el registro de esta tarea?"
+                                }
                                 headerColor="red"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
@@ -1151,16 +1235,23 @@ export default function Cronograma(props) {
                             <BtnToModal
                                 nameButton="Aceptar"
                                 textHeader="Registrar Tarea"
-                                textBody="¿Seguro que quiere desea registrar esta tarea?"
+                                textBody={
+                                    stateSecond === 3
+                                        ? "¿Seguro que quiere actualizar esta tarea?"
+                                        : "¿Seguro que desea registrar esta tarea?"
+                                }
                                 //headerColor
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 leftBtnText="Cancelar"
                                 rightBtnText="Confirmar"
                                 doBeforeClosing={() => {
-                                    if (stateSecond === 1 || stateSecond === 4) {
+                                    if (
+                                        stateSecond === 1 ||
+                                        stateSecond === 4
+                                    ) {
                                         registrarTarea();
-                                    } else if( stateSecond === 3) { 
+                                    } else if (stateSecond === 3) {
                                         editarTarea();
                                     }
                                 }}

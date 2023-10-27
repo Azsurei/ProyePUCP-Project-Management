@@ -314,7 +314,8 @@ const handleRemoveComentario = (index) => {
 // Creating a Meeting Record Line
 // *********************************************************************************************
     const createMeeting = () => {
-        const idActaReunion = meetingId;
+       // const idActaReunion = meetingId;
+        const idActaReunion = 29;
         const nombreReunion = titleValue;
         const fechaReunion = dateValue;
         const horaReunion = timeValue;
@@ -508,6 +509,7 @@ const handleRemoveComentario = (index) => {
                                                 usuarioObject={component}
                                                 email={component.email}
                                                 removeHandler={removeMiembro}
+                                                isEditable={true}
                                             ></CardSelectedUser>
                                         );
                                     })}
