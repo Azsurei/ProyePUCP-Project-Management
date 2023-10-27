@@ -44,12 +44,9 @@ export default function Equipo(props) {
     const [cantNotStarted, setCantNotStarted] = useState(0);
     const [cantFinished, setCantFinished] = useState(0);
 
-    const [removeLider, setRemoveLider] = useState(false);
-
     const [modal, setModal] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
-    const [userRoleData, setUserRoleData] = useState([]); //Define un estado para almacenar los datos del usuario y el rol asociado
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -65,18 +62,25 @@ export default function Equipo(props) {
     };
 
     const returnListOfMiembros = (newMiembrosList) => {
-        // Concatenamos los nuevos miembros a selectedTeam.participantes
-        const updatedMembersList =
-            selectedTeam.participantes.concat(newMiembrosList);
-
-        // Actualizamos selectedTeam con la nueva lista de participantes
+        // Agrega idRol y nombreRol a cada miembro en newMiembrosList
+        const membersWithRoles = newMiembrosList.map((member) => ({
+            ...member,
+            idRol: 0, // Establece el valor adecuado para idRol
+            nombreRol: "" // Establece el valor adecuado para nombreRol
+        }));
+    
+        // Concatena los nuevos miembros a selectedTeam.participantes
+        const updatedMembersList = selectedTeam.participantes.concat(membersWithRoles);
+    
+        // Actualiza selectedTeam con la nueva lista de participantes
         setSelectedTeam({
             ...selectedTeam,
             participantes: updatedMembersList,
         });
-
+    
         setModal2(!modal2);
     };
+    
 
     useEffect(() => {
         if (modal) {
@@ -90,27 +94,25 @@ export default function Equipo(props) {
     }, [modal]);
 
     const handleSelectedValueChangeRol = (value, userId) => {
-        // Crear un objeto para el nuevo rol del usuario
-        const newUserRole = {
-            idUsuario: userId, // El ID del usuario
-            idRolEquipo: value, // El ID del rol seleccionado
+        // Crea una copia profunda de selectedTeam para evitar mutar el estado directamente
+        const updatedSelectedTeam = {
+            ...selectedTeam,
+            participantes: selectedTeam.participantes.map((participant) => {
+                if (participant.idUsuario === userId) {
+                    // Si el usuario coincide, actualiza el idRol
+                    return {
+                        ...participant,
+                        idRol: value, // Actualiza el idRol con el nuevo valor
+                    };
+                }
+                return participant;
+            }),
         };
-
-        // Verificar si el usuario ya tiene un rol en el arreglo
-        const userIndex = userRoleData.findIndex(
-            (item) => item.idUsuario === userId
-        );
-
-        if (userIndex !== -1) {
-            // Si el usuario ya tiene un rol, actualiza el rol existente
-            const updatedUserRoleData = [...userRoleData];
-            updatedUserRoleData[userIndex] = newUserRole;
-            setUserRoleData(updatedUserRoleData);
-        } else {
-            // Si el usuario no tiene un rol, agrégalo al arreglo
-            setUserRoleData([...userRoleData, newUserRole]);
-        }
+    
+        // Actualiza el estado con el nuevo selectedTeam
+        setSelectedTeam(updatedSelectedTeam);
     };
+    
 
     const removeUser = (user) => {
         const newList = selectedTeam.participantes.filter(

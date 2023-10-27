@@ -29,6 +29,12 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    CircularProgress,
+    Card,
+    CardBody,
+    CardHeader,
+    CardFooter,
+    Chip,
   } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -36,6 +42,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
+import { set } from "date-fns";
 
 
 export default function Ingresos(props) {
@@ -44,6 +51,7 @@ export default function Ingresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100`;
     
 
     //const router=userRouter();
@@ -52,6 +60,9 @@ export default function Ingresos(props) {
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [IngresosTotales, setIngresosTotales] = useState(null);
+    const [EgresosTotales, setEgresosTotales] = useState(null);
+    const [performance, setPerformance] = useState(null);
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
@@ -120,13 +131,6 @@ export default function Ingresos(props) {
           };
             fetchData();
     };
-
-        
-    useEffect(() => {
-    
-        DataTable();
-      }, [projectId]);
-      
     const dataEgreso = [
         {
             idLineaEgreso: 1,
@@ -138,6 +142,26 @@ export default function Ingresos(props) {
             nombreMoneda: "Dolar",
         }
     ];
+    const totalCalculate = () => {
+        const totalI = lineasIngreso.reduce((total, item) => total + item.monto, 0);
+        const totalE = dataEgreso.reduce((total, item) => total + item.costoReal, 0);
+        const porcentaje = (1-((totalI-totalE)/totalI))*100;
+        setIngresosTotales(totalI);
+        console.log("Ingresos Totales",totalI);
+        setEgresosTotales( totalE);
+        console.log("Egresos totales",totalE);
+        setPerformance(porcentaje);
+        console.log("Performance",porcentaje);
+    }    
+    useEffect(() => {
+        
+        
+        DataTable();
+      }, [projectId]);
+      
+    useEffect(() => {
+        totalCalculate();
+    }, [lineasIngreso]);
 
     return (
 
@@ -201,10 +225,51 @@ export default function Ingresos(props) {
                        
                         </div>
                     </div>
-                    <div className="divListaIngreso">
+                    <div className="containerData">
+                        <div className="divHistorial w-1/2">
                         <HistorialList listaIngresos={lineasIngreso} listaEgreso = {dataEgreso}></HistorialList>
 
+                        </div>
+                        <div className="justify-center items-center w-1/2">
+                            <Card className="w-[500px] h-[500px] border-none bg-gradient-to-br from-white-500 to-white-500 mx-auto my-auto">
+                                <CardHeader>
+                                    <p className="titleBalance">Balance</p>
+                                </CardHeader>
+                                <CardBody className="justify-center items-center my-0 p-0 flex-none">
+                                    <CircularProgress
+                                        classNames={{
+                                        svg: "w-80 h-80 drop-shadow-md",
+                                        indicator: "text-red-500",
+                                        track: "stroke-current text-green-500",
+                                        value: "text-8xl font-semibold text-black",
+                                    }}
+                                    value={performance}
+                                    strokeWidth={4}
+                                    showValueLabel={true}
+                                    />
+                                </CardBody>
+                                <CardFooter className="justify-center items-center p-0 text-center">
+                                <div className="text-left textBalance">
+                                    <div className="dataBalance ">
+                                        <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
+                                            <div className="titleBalanceData" style={{ textAlign: "left" }}>Ingresos: </div>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>S/ {IngresosTotales}</div>
+                                        </div>
+                                        <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
+                                            <div className="titleBalanceData" style={{ textAlign: "left" }}>Egresos: </div>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>S/{EgresosTotales}</div>
+                                        </div>
+                                        <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
+                                            <div className="titleBalanceData" style={{ textAlign: "left" }}>Disponible: </div>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{IngresosTotales - EgresosTotales > 0 ? `S/ ${IngresosTotales - EgresosTotales}` : 'Sin fondos disponibles'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </CardFooter>
+                            </Card>
+                        </div>
                     </div>
+
 
                 
                 </div>

@@ -214,6 +214,7 @@ export default function Ingresos(props) {
     const [validTipoIngreso, setValidTipoIngreso] = useState(true);
     const [validTipoTransacc, setValidTipoTransacc] = useState(true);
     const [validFecha, setValidFecha] = useState(true);
+    const [filtrarFecha, setFiltrarFecha] = useState(false);
     const msgEmptyField = "Este campo no puede estar vacio";
 
     // Fin Validaciones
@@ -271,17 +272,41 @@ export default function Ingresos(props) {
         DataTable();
       }, [projectId]);
     const hasSearchFilter = Boolean(filterValue);
-    const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...lineasIngreso]
+    // const filteredItems = React.useMemo(() => {
+    //     let filteredTemplates = [...lineasIngreso]
 
+    //     if (hasSearchFilter) {
+    //         filteredTemplates = filteredTemplates.filter((item) =>
+    //         item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+    //         );
+    //     }
+
+    //     return filteredTemplates;
+    // }, [lineasIngreso, filterValue]);
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...lineasIngreso];
+    
+        // Filtro de búsqueda
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((item) =>
-            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+                item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
-
+    
+        // Filtro por fechas
+        if (fechaInicio && fechaFin && filtrarFecha) {
+            const fechaInicioTimestamp = Date.parse(fechaInicio);
+            const fechaFinTimestamp = Date.parse(fechaFin);
+            filteredTemplates = filteredTemplates.filter((item) => {
+                const itemFechaTimestamp = Date.parse(item.fechaTransaccion); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
+                return itemFechaTimestamp >= fechaInicioTimestamp && itemFechaTimestamp <= fechaFinTimestamp;
+            });
+        }
+    
         return filteredTemplates;
-    }, [lineasIngreso, filterValue]);
+    }, [lineasIngreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
+    
+
 
     
     return (
@@ -367,6 +392,7 @@ export default function Ingresos(props) {
                         {(onClose) => {
                         const finalizarModal = () => {
                             //filtraFecha();
+                            setFiltrarFecha(true);
                             onClose();
                         };
                         return (
