@@ -219,6 +219,32 @@ export default function Equipo(props) {
         return { modifiedArray, deletedArray, addedArray };
     };
 
+    const onSubmitParticipantesRoles = () => {
+        const selectedTeamOriginal = selectedTeamOriginales;
+        const selectedTeamModified = selectedTeam;
+    
+        // Comparar cambios en los participantes
+        const {
+            modifiedArray: modifiedParticipants,
+            deletedArray: deletedParticipants,
+            addedArray: addedParticipants,
+        } = findModifiedDeletedAdded(
+            selectedTeamOriginal.participantes,
+            selectedTeamModified.participantes,
+            "idUsuario"
+        );
+    
+        // Resto del código para manejar las diferencias
+        console.log("Modified Participants:", modifiedParticipants);
+        console.log("Deleted Participants:", deletedParticipants);
+        console.log("Added Participants:", addedParticipants);
+    
+        // Realizar solicitudes PUT, POST y DELETE según sea necesario
+        // ...
+    
+        // Resto del código
+    };
+
     return (
         <div className="containerTeamsPage">
             {screenState === 0 && (
