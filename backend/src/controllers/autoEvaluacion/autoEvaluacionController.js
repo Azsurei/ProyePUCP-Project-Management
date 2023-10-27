@@ -43,16 +43,15 @@ async function listarAutoEvaluacion(req,res,next){
         }
         if(evaluados.length === 0){
             const query2 = `CALL OBTENER_idRol_X_idUsuario(?,?);`;
-            const results = await connection.query(query2,[idProyecto,idUsuario]);
-            const idRol = results[0][0].idRol;
-            if(idRol != 3){
-                res.status(205).json({
-                    message: "Solo miembro tiene autoevalaucion"
+            const results3 = await connection.query(query2,[idProyecto,idUsuario]);
+            if(results3[0][0].length === 0){
+                res.status(204).json({
+                    message: "Autoevaluacion no creada"
                 });
             }
             else{
-                res.status(204).json({
-                    message: "Autoevaluacion no creada"
+                res.status(205).json({
+                    message: "Solo miembro tiene autoevalaucion"
                 });
             }
         }
