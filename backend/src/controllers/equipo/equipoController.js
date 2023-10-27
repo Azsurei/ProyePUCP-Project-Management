@@ -196,7 +196,7 @@ async function modificarMiembroEquipo(req,res,next){
     const query = `CALL MODIFICAR_MIEMBRO_EQUIPO(?,?,?);`;
     try {
         for(const miembro of miembrosModificados){
-            await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRolEquipo]);
+            await connection.query(query, [idEquipo,miembro.idUsuario,miembro.idRol]);
             console.log(`Se modifico el miembro ${miembro.idUsuario}!`);
         }
         res.status(200).json({
