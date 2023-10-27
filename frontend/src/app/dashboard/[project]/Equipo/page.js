@@ -96,7 +96,7 @@ export default function Equipo(props) {
         setIsLoadingSmall(false);
     }, [modal]);
 
-    const handleSelectedValueChangeRol = (value, userId) => {
+    const handleSelectedValueChangeRol = (value, name, userId) => {
         // Crea una copia profunda de selectedTeam para evitar mutar el estado directamente
         const updatedSelectedTeam = {
             ...selectedTeam,
@@ -106,6 +106,7 @@ export default function Equipo(props) {
                     return {
                         ...participant,
                         idRol: value, // Actualiza el idRol con el nuevo valor
+                        nombreRol: name, // Actualiza el nombreRol con el nuevo valor
                     };
                 }
                 return participant;
@@ -610,13 +611,14 @@ export default function Equipo(props) {
                                                         property="roles"
                                                         nameDisplay="nombreRol"
                                                         hasColor={false}
-                                                        onSelect={(value) =>
+                                                        onSelect2={(value,name) =>
                                                             handleSelectedValueChangeRol(
-                                                                value,
+                                                                value, name,
                                                                 member.idUsuario
                                                             )
                                                         }
                                                         idParam="idRolEquipo"
+                                                        valorParam="nombreRol"
                                                         reloadData={reloadData}
                                                         initialName={
                                                             member.nombreRol
