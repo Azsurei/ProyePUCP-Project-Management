@@ -35,13 +35,15 @@ import { SessionContext } from "./layout";
 export default function Dashboard() {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
-    const session = useContext(SessionContext);
+
+    const {sessionData} = useContext(SessionContext);
+    
 
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
 
-    if (session.Privilegios_idPrivilegios === 3) {
+    if (sessionData.Privilegios_idPrivilegios === 3) {
         //debe ser 2
 
         const [listPrivUsers, setListPrivUsers] = useState([]);
@@ -260,7 +262,7 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
-        console.log(session);
+        console.log(sessionData);
     }, []);
 
     return (
@@ -286,7 +288,7 @@ export default function Dashboard() {
                     />
                 </div>
 
-                 {session.Privilegios_idPrivilegios === 2 && ( 
+                 {sessionData.Privilegios_idPrivilegios === 2 && ( 
                     <div className="contentDer">
                         <p className="textProject">
                             ¿Tienes ya la idea ganadora?
