@@ -425,6 +425,7 @@ export default function crear_equipo(props) {
                                     oneButton={false}
                                     secondAction={() => {
                                         checkData();
+                                        setAddParticipantesState(true);
                                     }}
                                     textColor="blue"
                                     verifyFunction={() => {

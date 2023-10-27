@@ -101,17 +101,9 @@
     font-weight: 700;
 }
 
-.containerBottomCE{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .twoButtonsCE{
     display: flex;
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    justify-content: flex-end;
 }
 
 .buttonContainerCE{
@@ -121,6 +113,10 @@
 }
 
 .containerButtonsCE{
-    flex: 1;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 100vh; /* Opcional: Asegura que el contenedor ocupe toda la altura de la pantalla */
 }
