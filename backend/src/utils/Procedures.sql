@@ -2805,3 +2805,18 @@ BEGIN
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
 END$
+
+DROP PROCEDURE IF EXISTS OBTENER_idRol_X_idUsuario;
+DELIMITER $
+CREATE PROCEDURE OBTENER_idRol_X_idUsuario(
+    IN _idProyecto INT,
+    IN _idUsuario INT
+)
+BEGIN
+	SELECT up.idRol
+    FROM Usuario AS u
+    LEFT JOIN UsuarioXRolXProyecto as up ON u.idUsuario = up.idUsuario
+    WHERE u.idUsuario = _idUsuario 
+    AND up.idProyecto = _idProyecto
+    AND u.activo = 1;
+END$
