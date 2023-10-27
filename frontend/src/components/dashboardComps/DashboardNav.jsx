@@ -4,13 +4,15 @@ import React from "react";
 import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 import Cookies from "js-cookie";
 
 function DashboardNav({ userName, userLastName }) {
-    const handleSignOut = async () => {
-        Cookies.remove("tokenProyePUCP");
-        await signOut();
+    const router = useRouter();
+
+    const handleSignOut = () => {
+        // Eliminar cookie del backend
+        Cookies.remove('tokenProyePUCP');
+        router.push("/login");
     };
 
     return (
