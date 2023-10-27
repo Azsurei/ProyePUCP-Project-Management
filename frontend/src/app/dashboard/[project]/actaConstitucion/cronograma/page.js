@@ -145,7 +145,7 @@ export default function CronogramaActa(props) {
     const initializeHito = () => {
         setIsLoadingSmall(true);
         const listHitoURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/listarHito/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/listarHito/" +
             projectId;
         axios
             .get(listHitoURL)
@@ -413,7 +413,7 @@ export default function CronogramaActa(props) {
 
     const addNewHito = (hitoName, hitoDate) => {
         const addURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/insertarHito";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/insertarHito";
         axios
             .post(addURL, {
                 idProyecto: projectId,
@@ -446,7 +446,7 @@ export default function CronogramaActa(props) {
 
     const updateHito = (idSelected, hName, hDate) => {
         const addURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/modificarHito";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/modificarHito";
         axios
             .put(addURL, {
                 idHito: idSelected,
@@ -480,7 +480,7 @@ export default function CronogramaActa(props) {
 
     const deleteHito = (idSelected) => {
         const deleteURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/eliminarHito";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/eliminarHito";
         axios
             .put(deleteURL, {
                 idHito: idSelected,

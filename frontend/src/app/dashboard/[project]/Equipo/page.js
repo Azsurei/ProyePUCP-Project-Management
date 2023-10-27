@@ -126,7 +126,7 @@ export default function Equipo(props) {
         setIsLoadingSmall(true);
         let teamsArray;
         const stringURL =
-            "http://localhost:8080/api/proyecto/equipo/listarEquiposYParticipantes/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarEquiposYParticipantes/" +
             projectId;
         console.log("La URL es" + stringURL);
         axios
@@ -150,7 +150,7 @@ export default function Equipo(props) {
         setSelectedTeamOriginales(team);
         setIsLoadingSmall(true);
         const verTareasURL =
-            "http://localhost:8080/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
             team.idEquipo;
         axios
             .get(verTareasURL)
@@ -557,7 +557,7 @@ export default function Equipo(props) {
 
                                                 <div className="col-span-3 flex mt-4">
                                                     <MyCombobox
-                                                        urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
+                                                        urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`}
                                                         property="roles"
                                                         nameDisplay="nombreRol"
                                                         hasColor={false}

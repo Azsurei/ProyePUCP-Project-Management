@@ -142,7 +142,7 @@ export default function ListElementsEDT(props) {
         console.log("Procediendo con insertar el componente");
         axios
             .post(
-                "http://localhost:8080/api/proyecto/EDT/eliminarComponenteEDT",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/eliminarComponenteEDT",
                 {
                     idComponente: idAEliminar,
                     codigo: codAEliminar,

@@ -190,7 +190,7 @@ export default function newProject() {
 
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
-        const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURL)
@@ -236,7 +236,7 @@ export default function newProject() {
 
         const nombre = nameProject;
         axios
-            .post("http://localhost:8080/api/proyecto/insertarProyecto", {
+            .post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/insertarProyecto", {
                 proyecto: { nombre, fechaInicio, fechaFin },
                 herramientas: listHerramientas,
                 participantesSupervisores: selectedSupervisoresList,

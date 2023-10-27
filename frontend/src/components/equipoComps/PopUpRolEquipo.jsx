@@ -49,7 +49,7 @@ export default function PopUpRolEquipo({ modal, toggle,idEquipo}) {
 
     const fetchData = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/api/proyecto/equipo/listarRol/${idEquipo}`);
+          const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/equipo/listarRol/${idEquipo}`);
           const roles = response.data["roles"];
           const filteredEpicas = filterValue
               ? roles.filter((epica) =>
@@ -83,7 +83,7 @@ export default function PopUpRolEquipo({ modal, toggle,idEquipo}) {
               };
               
              
-                axios.post("http://localhost:8080/api/proyecto/equipo/insertarRol", data)
+                axios.post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/insertarRol", data)
                 .then((response) => {
                 // Manejar la respuesta de la solicitud POST
                 console.log("Respuesta del servidor:", response.data);
@@ -106,7 +106,7 @@ export default function PopUpRolEquipo({ modal, toggle,idEquipo}) {
         const data = {
             idRolEquipo: idRolEquipo // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
-        axios.delete("http://localhost:8080/api/proyecto/equipo/eliminarRol", { data })
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/eliminarRol", { data })
             .then((response) => {
                 // Manejar la respuesta de la solicitud DELETE
                 console.log("Respuesta del servidor:", response.data);

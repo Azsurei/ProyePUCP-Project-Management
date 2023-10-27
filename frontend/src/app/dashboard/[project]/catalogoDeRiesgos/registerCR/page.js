@@ -231,7 +231,7 @@ export default function CatalogoDeRiesgosRegister(props) {
         console.log("El postData es :", postData);
         axios
             .post(
-                "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRiesgo",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
             )
             .then((response) => {
@@ -302,7 +302,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarProbabilidades"
                             property="probabilidades"
                             nameDisplay="nombreProbabilidad"
                             hasColor={false}
@@ -320,7 +320,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarImpacto"
                             property="impacto"
                             nameDisplay="nombreImpacto"
                             hasColor={false}

@@ -30,8 +30,8 @@ export default function ProductBacklogUpdate(props) {
     const idHU = props.params.updatePB;
     const decodedUrl = decodeURIComponent(props.params.project); //borrar
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1); //borrar
-    const stringURLEpics = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`; //borrar
-    const stringURLBacklog = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
+    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarEpicas`; //borrar
+    const stringURLBacklog = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -137,7 +137,7 @@ export default function ProductBacklogUpdate(props) {
     }, [modal]);
 
     useEffect(() => {
-        const stringURLHU = `http://localhost:8080/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
+        const stringURLHU = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         axios
             .get(stringURLHU)
             .then(function (response) {
@@ -337,7 +337,7 @@ export default function ProductBacklogUpdate(props) {
         console.log(deleteData);
         axios
             .put(
-                "http://localhost:8080/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
                 putData
             )
             .then((response) => {
@@ -350,7 +350,7 @@ export default function ProductBacklogUpdate(props) {
                 // Manejar errores si la solicitud PUT falla
                 console.error("Error al realizar la solicitud PUT:", error);
             }); 
-        axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarCriterioRequisito", postData)
+        axios.post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/insertarCriterioRequisito", postData)
             .then((response) => {
               // Manejar la respuesta de la solicitud POST
               console.log("Respuesta del servidor (POST):", response.data);
@@ -361,7 +361,7 @@ export default function ProductBacklogUpdate(props) {
               // Manejar errores si la solicitud POST falla
               console.error("Error al realizar la solicitud POST:", error);
             });
-        axios.delete("http://localhost:8080/api/proyecto/backlog/hu/eliminarCriterioRequisito", {
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/eliminarCriterioRequisito", {
                 data: deleteData
               })
                 .then((response) => {
@@ -486,7 +486,7 @@ export default function ProductBacklogUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasPrioridad"
                             property="historiasPrioridad"
                             nameDisplay="nombre"
                             hasColor={true}
@@ -523,7 +523,7 @@ export default function ProductBacklogUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasEstado"
                             property="historiasEstado"
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}
@@ -702,7 +702,7 @@ export default function ProductBacklogUpdate(props) {
                         toggle={() => toggleModal()} // Pasa la función como una función de flecha
                         url={stringURLEpics}
                         backlogID={backlog[0].idProductBacklog}
-                        urlEliminate={`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
+                        urlEliminate={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/eliminarEpica`}
                     />
                 )}
             </div>

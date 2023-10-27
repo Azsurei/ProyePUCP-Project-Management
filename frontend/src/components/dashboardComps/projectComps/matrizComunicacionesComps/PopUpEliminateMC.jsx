@@ -12,7 +12,7 @@ function PopUpEliminateMC({ modal, toggle, taskName, idComunicacion, refresh}) {
             idComunicacion: idComunicacion // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
 
-        axios.delete("http://localhost:8080/api/proyecto/matrizDeComunicaciones/eliminarComunicacion", { data })
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/eliminarComunicacion", { data })
             .then((response) => {
                 // Manejar la respuesta de la solicitud POST
                 console.log("Respuesta del servidor:", response.data);

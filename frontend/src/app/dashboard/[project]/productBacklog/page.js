@@ -54,7 +54,7 @@ export default function ProductBacklog(props) {
           try {
             // Realiza la solicitud HTTP al endpoint del router
             const stringURL =
-            "http://localhost:8080/api/proyecto/backlog/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/" +
             projectId +
             "/listarHistorias";
             const response = await axios.get(stringURL);

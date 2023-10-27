@@ -13,10 +13,10 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
     const [selectedTipoTransaccion, setSelectedTipoTransaccion] = useState("");
     const [selectedFecha, setSelectedFecha] = useState("");
     const [selectedMonto, setSelectedMonto] = useState("");
-    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
-    const stringUrlTipoIngreso = `http://localhost:8080/api/proyecto/presupuesto/listarTipoIngresosTodos`;
-    const stringUrlTipoTransaccion = `http://localhost:8080/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
-    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
+    const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+    const stringUrlTipoIngreso = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoIngresosTodos`;
+    const stringUrlTipoTransaccion = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
+    const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     //const router=userRouter();
 
@@ -102,7 +102,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
         console.log("Actualizado correctamente");
         console.log(putData);
         axios.put(
-                "http://localhost:8080/api/proyecto/presupuesto/modificarLineaIngreso",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/modificarLineaIngreso",
                 putData
             )
             .then((response) => {

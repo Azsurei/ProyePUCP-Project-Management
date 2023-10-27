@@ -166,7 +166,7 @@ export default function crear_equipo(props) {
             idLider: selectedUniqueMemberList[0].idUsuario,
         });
         axios
-            .post("http://localhost:8080/api/proyecto/equipo/insertarEquipo", {
+            .post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/insertarEquipo", {
                 idProyecto: parseInt(proyectoId),
                 nombre: nombreTeam,
                 idLider: selectedUniqueMemberList[0].idUsuario,
@@ -218,7 +218,7 @@ export default function crear_equipo(props) {
 
         axios
             .post(
-                "http://localhost:8080/api/proyecto/equipo/insertarMiembros",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/insertarMiembros",
                 {
                     idEquipo: idEquipoInsertado,
                     miembros: userRoleData,
@@ -360,7 +360,7 @@ export default function crear_equipo(props) {
                                                     isEditable={true}
                                                 ></CardSelectedUser>
                                                 <MyCombobox
-                                                    urlApi={`http://localhost:8080/api/proyecto/equipo/listarRol/${idEquipoInsertado}`}
+                                                    urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/equipo/listarRol/${idEquipoInsertado}`}
                                                     property="roles"
                                                     nameDisplay="nombreRol"
                                                     hasColor={false}

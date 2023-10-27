@@ -112,7 +112,7 @@ export default function MatrizComunicacionesRegister(props) {
         console.log("El postData es :", postData);
         axios
             .post(
-                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
                 postData
             )
             .then((response) => {
@@ -164,7 +164,7 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarCanales"
                             property="canales"
                             nameDisplay="nombreCanal"
                             hasColor={false}
@@ -180,7 +180,7 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
                             property="frecuencias"
                             nameDisplay="nombreFrecuencia"
                             hasColor={false}
@@ -196,7 +196,7 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFormato"
                             property="formatos"
                             nameDisplay="nombreFormato"
                             hasColor={false}

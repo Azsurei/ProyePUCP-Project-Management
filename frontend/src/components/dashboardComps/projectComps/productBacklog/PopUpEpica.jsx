@@ -83,7 +83,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
               };
               
              
-                axios.post("http://localhost:8080/api/proyecto/backlog/hu/insertarEpica", data)
+                axios.post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/insertarEpica", data)
                 .then((response) => {
                 // Manejar la respuesta de la solicitud POST
                 console.log("Respuesta del servidor:", response.data);
@@ -106,7 +106,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
         const data = {
             nombreEpica: name // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
-        axios.delete("http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica", { data })
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/eliminarEpica", { data })
             .then((response) => {
                 // Manejar la respuesta de la solicitud DELETE
                 console.log("Respuesta del servidor:", response.data);

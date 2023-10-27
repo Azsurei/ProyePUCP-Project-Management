@@ -23,7 +23,7 @@ export default function ModalEliminateIngreso({ modal, toggle, taskName , idLine
       idLineaIngreso: idLineaIngreso // Ajusta el nombre del campo según la estructura esperada por el servidor
     };
 
-    axios.delete("http://localhost:8080/api/proyecto/presupuesto/eliminarLineaIngreso", { data })
+    axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/eliminarLineaIngreso", { data })
         .then((response) => {
             // Manejar la respuesta de la solicitud POST
             console.log("Respuesta del servidor:", response.data);

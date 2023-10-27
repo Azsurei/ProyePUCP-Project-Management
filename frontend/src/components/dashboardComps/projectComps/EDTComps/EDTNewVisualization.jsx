@@ -142,7 +142,7 @@ export default function EDTNewVisualization({
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
         url:
-            "http://localhost:8080/api/proyecto/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/" +
             projectId +
             "/insertarComponenteEDT",
         headers: {
@@ -155,7 +155,7 @@ export default function EDTNewVisualization({
         console.log("Procediendo con insertar el componente");
         axios
             .post(
-                "http://localhost:8080/api/proyecto/EDT/" +
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/" +
                     projectId +
                     "/insertarComponenteEDT",
                 {

@@ -139,7 +139,7 @@ export default function EDTCompVisualization({
         );
         axios
             .post(
-                "http://localhost:8080/api/proyecto/EDT/modificarComponenteEDT",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/modificarComponenteEDT",
                 {
                     idComponenteEDT: idComponentToSee,
                     descripcion: inDescripcion,
@@ -168,7 +168,7 @@ export default function EDTCompVisualization({
         console.log("Procediendo sacar informacion del componente");
         axios
             .post(
-                "http://localhost:8080/api/proyecto/EDT/verInfoComponenteEDT",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/verInfoComponenteEDT",
                 {
                     idComponente: idComponentToSee,
                 }

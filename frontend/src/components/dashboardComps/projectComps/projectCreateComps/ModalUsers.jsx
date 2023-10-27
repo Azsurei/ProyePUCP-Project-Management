@@ -61,7 +61,7 @@ export default function ModalUser({
 
     const refreshList = () => {
         if (listAllUsers === false) {
-            const stringURL = `http://localhost:8080/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
+            const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
 
             axios
                 .get(stringURL)
@@ -102,7 +102,7 @@ export default function ModalUser({
                 });
         } else {
             const stringURL =
-                "http://localhost:8080/api/usuario/listarUsuarios";
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/listarUsuarios";
             axios
                 .post(stringURL, {
                     nombreCorreo: filterValue,

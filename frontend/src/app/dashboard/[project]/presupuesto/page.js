@@ -43,7 +43,7 @@ export default function Presupuesto(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
+    const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
     const router = useRouter();
 
     const volverMainDashboard = () => {
@@ -67,7 +67,7 @@ export default function Presupuesto(props) {
     useEffect(() => {
         console.log(projectId);
     
-        const stringURLListaHerramientas = `http://localhost:8080/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
+        const stringURLListaHerramientas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
         
     
         axios.get(stringURLListaHerramientas)
@@ -88,7 +88,7 @@ export default function Presupuesto(props) {
                 if (flag === 1) {
     
                     // Aquí encadenamos el segundo axios
-                    const stringURLListarPresupuesto = "http://localhost:8080/api/proyecto/presupuesto/listarPresupuesto/"+idHerramientaCreada;
+                    const stringURLListarPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/listarPresupuesto/"+idHerramientaCreada;
                     axios.get(stringURLListarPresupuesto)
                         .then(response => {
                             const presupuesto = response.data.presupuesto;
@@ -122,8 +122,8 @@ export default function Presupuesto(props) {
     function modificarPresupuesto() {
         return new Promise((resolve, reject) => {
             setIsLoadingSmall(true);
-            const stringUrlmodificaPresupuesto = `http://localhost:8080/api/proyecto/presupuesto/modificarPresupuesto`;
-            const stringURLListaHerramientas = `http://localhost:8080/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
+            const stringUrlmodificaPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/modificarPresupuesto`;
+            const stringURLListaHerramientas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`;
     
             axios.get(stringURLListaHerramientas)
                 .then(function (response) {

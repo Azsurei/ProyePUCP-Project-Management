@@ -78,7 +78,7 @@ export default function ListProject(props) {
 
     useEffect(() => {
         let proyectsArray;
-        const stringURL = "http://localhost:8080/api/proyecto/listarProyectos";
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/listarProyectos";
 
         axios
             .get(stringURL)

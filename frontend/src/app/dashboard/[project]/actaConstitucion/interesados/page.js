@@ -137,7 +137,7 @@ export default function Interesados(props) {
     useEffect(() => {
         setIsLoadingSmall(true);
         const listIntrURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/listarInteresados/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/listarInteresados/" +
             projectId;
         axios
             .get(listIntrURL)
@@ -169,7 +169,7 @@ export default function Interesados(props) {
     // Function to list interesados
     const listarInteresados = async () => {
         try {
-            const response = await axios.get("/api/listarInteresados"); // Replace with the correct API endpoint
+            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/listarInteresados"); // Replace with the correct API endpoint
             // Assuming the response contains an array of interesados data
             setInteresados(response.data);
         } catch (error) {
@@ -179,7 +179,7 @@ export default function Interesados(props) {
 
     const addNewInteresado = (newName, newPosition, newOrganization) => {
         const addURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/insertarInteresado";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/insertarInteresado";
         axios
             .post(addURL, {
                 idProyecto: projectId,
@@ -215,7 +215,7 @@ export default function Interesados(props) {
         newOrganization
     ) => {
         const updURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/modificarInteresado";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/modificarInteresado";
         axios
             .put(updURL, {
                 idInteresado: idSelected,
@@ -246,7 +246,7 @@ export default function Interesados(props) {
 
     const deleteInteresado = (idSelected) => {
         const deleteURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/eliminarInteresado";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/eliminarInteresado";
         axios
             .put(deleteURL, {
                 idInteresado: idSelected,

@@ -7,7 +7,7 @@ function PopUpEliminate({ modal, toggle, taskName, idHistoriaDeUsuario , refresh
 
     const Eliminate = (idHistoriaDeUsuario) => {
         console.log(idHistoriaDeUsuario);
-        axios.post("http://localhost:8080/api/proyecto/backlog/hu/eliminarHistoria", { idHistoriaDeUsuario: idHistoriaDeUsuario })
+        axios.post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/eliminarHistoria", { idHistoriaDeUsuario: idHistoriaDeUsuario })
             .then((response) => {
                 // Manejar la respuesta de la solicitud POST
                 console.log("Respuesta del servidor:", response.data);

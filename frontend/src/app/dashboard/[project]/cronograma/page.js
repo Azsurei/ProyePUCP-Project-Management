@@ -316,7 +316,7 @@ export default function Cronograma(props) {
     function promiseEliminarTarea() {
         return new Promise((resolve, reject) => {
             const deleteURL =
-                "http://localhost:8080/api/proyecto/cronograma/eliminarTarea";
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/eliminarTarea";
 
             if (tareaEliminar === null) {
                 reject("No se encontro la tarea");
@@ -331,7 +331,7 @@ export default function Cronograma(props) {
 
                     //actualizamos lista de tareas
                     const tareasURL =
-                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
                     axios
                         .get(tareasURL)
@@ -389,7 +389,7 @@ export default function Cronograma(props) {
         console.log(firstFechaFin);
 
         const updateURL =
-            "http://localhost:8080/api/proyecto/cronograma/actualizarCronograma";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/actualizarCronograma";
         axios
             .put(updateURL, {
                 idProyecto: projectId,
@@ -400,7 +400,7 @@ export default function Cronograma(props) {
                 console.log(response.data.message);
 
                 const tareasURL =
-                    "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                    process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
                     projectId;
                 axios
                     .get(tareasURL)
@@ -434,7 +434,7 @@ export default function Cronograma(props) {
 
             setToggleNew(false);
             const newURL =
-                "http://localhost:8080/api/proyecto/cronograma/insertarTarea";
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/insertarTarea";
             axios
                 .post(newURL, {
                     idCronograma: cronogramaId,
@@ -464,7 +464,7 @@ export default function Cronograma(props) {
                     //actualizamos lista de tareas
 
                     const tareasURL =
-                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
                     axios
                         .get(tareasURL)
@@ -507,7 +507,7 @@ export default function Cronograma(props) {
             }, 2000);
 
             const tareasURL =
-                "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
                 projectId;
             axios
                 .get(tareasURL)
@@ -556,7 +556,7 @@ export default function Cronograma(props) {
 
     useEffect(() => {
         const stringURL =
-            "http://localhost:8080/api/proyecto/cronograma/listarCronograma";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarCronograma";
 
         axios
             .post(stringURL, { idProyecto: projectId })
@@ -572,7 +572,7 @@ export default function Cronograma(props) {
                     //onOpen();
                 } else {
                     const tareasURL =
-                        "http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
                     axios
                         .get(tareasURL)

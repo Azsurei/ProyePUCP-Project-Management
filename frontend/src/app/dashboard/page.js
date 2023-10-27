@@ -55,7 +55,7 @@ export default function Dashboard() {
         function promiseCambiar_A_Alumno(usuario) {
             return new Promise((resolve, reject) => {
                 const stringURL =
-                    "http://localhost:8080/api/admin/cambiarPrivilegioUsuario";
+                    process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/cambiarPrivilegioUsuario";
                 axios
                     .put(stringURL, {
                         idUsuario: usuario.idUsuario,
@@ -94,7 +94,7 @@ export default function Dashboard() {
             return new Promise((resolve, reject) => {
                 for (const usuario of listSelected) {
                     const stringURL =
-                        "http://localhost:8080/api/admin/cambiarPrivilegioUsuario";
+                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/cambiarPrivilegioUsuario";
                     axios
                         .put(stringURL, {
                             idUsuario: usuario.idUsuario,
@@ -146,7 +146,7 @@ export default function Dashboard() {
 
         useEffect(() => {
             const stringURL =
-                "http://localhost:8080/api/admin/listarUsuariosConPrivilegios";
+                process.env.NEXT_PUBLIC_BACKEND_URL+process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/listarUsuariosConPrivilegios";
             axios
                 .get(stringURL)
                 .then((response) => {

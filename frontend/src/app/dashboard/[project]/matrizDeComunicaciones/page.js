@@ -32,7 +32,7 @@ export default function MatrizDeComunicaciones(props){
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const stringURL = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/59`
+    const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/59`
     console.log(projectId);
     console.log(projectName);
     const [modal1, setModal1] = useState(false);
@@ -48,7 +48,7 @@ export default function MatrizDeComunicaciones(props){
           try {
             // Realiza la solicitud HTTP al endpoint del router
             const stringURL =
-            "http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/" +
             projectId;
             const response = await axios.get(stringURL);
     

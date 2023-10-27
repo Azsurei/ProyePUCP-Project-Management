@@ -25,7 +25,7 @@ export default function ActaReunion(props) {
 
     useEffect(() => {
         const stringURL = 
-        "http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
+        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
         console.log("La URL es" + stringURL);
 
         axios
@@ -48,7 +48,7 @@ export default function ActaReunion(props) {
             setIsLoadingSmall(true);
             try {
                 const resultado =
-                    await axios.get('http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/29', {
+                    await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/29', {
                     headers: {
                         'Content-Type': 'application/json'
                     }

@@ -137,7 +137,7 @@ export default function Info(props) {
     useEffect(() => {
         setIsLoadingSmall(true);
         const listURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/listarActaConstitucion/" +
             projectId;
         axios
             .get(listURL)
@@ -162,7 +162,7 @@ export default function Info(props) {
         //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
         setIsLoadingSmall(true);
         const updateURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/modificarCampos";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/modificarCampos";
         axios
             .put(updateURL, {
                 idProyecto: projectId,
@@ -209,7 +209,7 @@ export default function Info(props) {
             await new Promise((resolve) => setTimeout(resolve, 2000));
         } catch (error) {}
         const addNewURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/crearCampos";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/crearCampos";
         axios
             .post(addNewURL, {
                 idProyecto: projectId,
@@ -263,7 +263,7 @@ export default function Info(props) {
     const deleteDetail = () => {
         console.log(JSON.stringify(fieldToDelete));
         const deleteURL =
-            "http://localhost:8080/api/proyecto/ActaConstitucion/eliminarCampo";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/eliminarCampo";
         axios
             .put(deleteURL, {
                 idDetalle: fieldToDelete.idDetalle,

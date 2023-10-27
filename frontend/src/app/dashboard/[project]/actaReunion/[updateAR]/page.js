@@ -210,7 +210,7 @@ const handleRemoveComentario = (index) => {
     });
 
     useEffect(() => {
-        const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURL)
@@ -294,7 +294,7 @@ const handleRemoveComentario = (index) => {
 
     useEffect(() => {
         const stringURL = 
-        "http://localhost:8080/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
+        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
         console.log("La URL es" + stringURL);
 
         axios
@@ -319,7 +319,7 @@ const handleRemoveComentario = (index) => {
 
     useEffect(() => {
         const stringURL = 
-        "http://localhost:8080/api/proyecto/actaReunion/listarParticipanteXReunionXIdActaReunion/"
+        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarParticipanteXReunionXIdActaReunion/"
             + meetingId;
         console.log("La URL es" + stringURL);
 

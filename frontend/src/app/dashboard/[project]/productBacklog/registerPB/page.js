@@ -43,8 +43,8 @@ export default function ProductBacklogRegister(props) {
     const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-    const stringURLEpics = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarEpicas`;
-    const stringURLBacklog = `http://localhost:8080/api/proyecto/backlog/${projectId}/listarBacklog`;
+    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarEpicas`;
+    const stringURLBacklog = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarBacklog`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -96,7 +96,7 @@ export default function ProductBacklogRegister(props) {
 
     useEffect(() => {
         const stringURLUsuario =
-            "http://localhost:8080/api/usuario/verInfoUsuario";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURLUsuario)
@@ -219,7 +219,7 @@ export default function ProductBacklogRegister(props) {
         console.log(postData);
         axios
             .post(
-                "http://localhost:8080/api/proyecto/backlog/hu/insertarHistoriaDeUsuario",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/insertarHistoriaDeUsuario",
                 postData
             )
             .then((response) => {
@@ -340,7 +340,7 @@ export default function ProductBacklogRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasPrioridad"
                             property="historiasPrioridad"
                             nameDisplay="nombre"
                             hasColor={true}
@@ -379,7 +379,7 @@ export default function ProductBacklogRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/backlog/hu/listarHistoriasEstado"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasEstado"
                             property="historiasEstado"
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}
@@ -552,7 +552,7 @@ export default function ProductBacklogRegister(props) {
                         toggle={() => toggleModal()} // Pasa la función como una función de flecha
                         url={stringURLEpics}
                         backlogID={backlog[0].idProductBacklog}
-                        urlEliminate={`http://localhost:8080/api/proyecto/backlog/hu/eliminarEpica`}
+                        urlEliminate={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/eliminarEpica`}
                     />
                 )}
             </div>

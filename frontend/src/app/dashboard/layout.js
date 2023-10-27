@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const stringURL = "http://localhost:8080/api/usuario/verInfoUsuario";
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURL)

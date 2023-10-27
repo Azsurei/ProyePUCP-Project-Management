@@ -47,7 +47,7 @@ export default function ListTools(addToolToList, removeToolInList, props) {
     useEffect(() => {
         let toolsArray;
         const stringURL =
-            "http://localhost:8080/api/herramientas/listarHerramientas";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/herramientas/listarHerramientas";
         axios
             .get(stringURL)
             .then(function (response) {

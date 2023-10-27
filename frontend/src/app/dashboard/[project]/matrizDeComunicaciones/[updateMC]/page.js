@@ -77,7 +77,7 @@ export default function MatrizComunicacionesUpdate(props) {
     }, [matrizComunicaciones]);
 
     useEffect(() => {
-        const stringURLMC = `http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        const stringURLMC = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
         axios
             .get(stringURLMC)
             .then(function (response) {
@@ -159,7 +159,7 @@ export default function MatrizComunicacionesUpdate(props) {
         console.log(putData);
         axios
             .put(
-                "http://localhost:8080/api/proyecto/matrizDeComunicaciones/modificarMatrizComunicacion",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/modificarMatrizComunicacion",
                 putData
             )
             .then((response) => {
@@ -215,7 +215,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarCanales"
                             property="canales"
                             nameDisplay="nombreCanal"
                             hasColor={false}
@@ -231,7 +231,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
                             property="frecuencias"
                             nameDisplay="nombreFrecuencia"
                             hasColor={false}
@@ -247,7 +247,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/matrizDeComunicaciones/listarFormato"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFormato"
                             property="formatos"
                             nameDisplay="nombreFormato"
                             hasColor={false}

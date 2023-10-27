@@ -51,7 +51,7 @@ export default function Ingresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const stringUrlPrueba = `http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100`;
+    const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100`;
     
 
     //const router=userRouter();
@@ -87,7 +87,7 @@ export default function Ingresos(props) {
     
 
 
-    const stringUrlMonedas = `http://localhost:8080/api/proyecto/presupuesto/listarMonedasTodas`;
+    const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
     
     const [selectedMoneda, setselectedMoneda] = useState("");
 
@@ -120,7 +120,7 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(`http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
               const data = response.data.lineasIngreso;
               setLineasIngreso(data);
               console.log(`Esta es la data:`, data);

@@ -33,7 +33,7 @@ export default function EDT(props) {
     function refreshComponentsEDT() {
         console.log("rerendering ListComps");
         const stringURL =
-            "http://localhost:8080/api/proyecto/EDT/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/" +
             projectId +
             "/listarComponentesEDTXIdProyecto";
 

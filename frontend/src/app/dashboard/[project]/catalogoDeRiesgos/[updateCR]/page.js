@@ -113,7 +113,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
     }, [catalogoRiesgos]);
 
     useEffect(() => {
-        const stringURLCR = `http://localhost:8080/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
+        const stringURLCR = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
         axios
             .get(stringURLCR)
             .then(function (response) {
@@ -419,7 +419,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
         console.log(deleteData);
         axios
             .put(
-                "http://localhost:8080/api/proyecto/catalogoRiesgos/modificarRiesgoRRC",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/modificarRiesgoRRC",
                 putData
             )
             .then((response) => {
@@ -434,7 +434,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             });
         axios
             .post(
-                "http://localhost:8080/api/proyecto/catalogoRiesgos/insertarRRC",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRRC",
                 postData
             )
             .then((response) => {
@@ -449,7 +449,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             });
         axios
             .delete(
-                "http://localhost:8080/api/proyecto/catalogoRiesgos/eliminarRRC",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/eliminarRRC",
                 {
                     data: deleteData,
                 }
@@ -522,7 +522,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarProbabilidades"
                             property="probabilidades"
                             nameDisplay="nombreProbabilidad"
                             hasColor={false}
@@ -540,7 +540,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi="http://localhost:8080/api/proyecto/catalogoRiesgos/listarImpacto"
+                            urlApi=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarImpacto"
                             property="impacto"
                             nameDisplay="nombreImpacto"
                             hasColor={false}

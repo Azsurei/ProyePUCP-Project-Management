@@ -168,7 +168,7 @@ function ProjectSidebar(props) {
     useEffect(() => {
         let toolsArray;
         const stringURL =
-            "http://localhost:8080/api/herramientas/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/herramientas/" +
             props.projectId +
             "/listarHerramientasDeProyecto";
         axios
@@ -223,7 +223,7 @@ function ProjectSidebar(props) {
             });
 
         const stringURL_2 =
-            "http://localhost:8080/api/proyecto/listarUsuariosXidRolXidProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/listarUsuariosXidRolXidProyecto";
 
         axios
             .post(stringURL_2, {
@@ -365,7 +365,7 @@ function ProjectSidebar(props) {
 
     const addUserToProject = (newMiembrosList) => {
         const addNewURL =
-            "http://localhost:8080/api/usuario/insertarUsuariosAProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/insertarUsuariosAProyecto";
 
         const formatedMiembrosList = newMiembrosList.map((user) => ({
             ...user, // Copy the existing properties

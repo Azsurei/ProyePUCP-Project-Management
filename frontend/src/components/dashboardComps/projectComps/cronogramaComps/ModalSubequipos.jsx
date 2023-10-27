@@ -85,7 +85,7 @@ export default function ModalSubequipos({ isOpen, onOpenChange, projectId, getSe
 
     const refreshList = () => {
         const searchURL =
-            "http://localhost:8080/api/proyecto/equipo/listarEquiposYParticipantes/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/equipo/listarEquiposYParticipantes/" +
             projectId;
         axios
             .get(searchURL, {

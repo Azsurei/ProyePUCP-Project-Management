@@ -47,7 +47,7 @@ export default function autoevaluacionEquipo(props) {
     const getEvaluation = async () => {
         try {
             const response = await axios.get(
-                `http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/` +
+                process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/autoEvaluacion/listarAutoEvaluacion/` +
                     projectId +
                     `/` +
                     userId
@@ -80,7 +80,7 @@ export default function autoevaluacionEquipo(props) {
         return new Promise((resolve, reject) => {
             axios
                 .put(
-                    `http://localhost:8080/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion`,
+                    process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/autoEvaluacion/actualizarAutoEvaluacion`,
                     {
                         evaluados: usersEvaluation,
                     }
@@ -114,7 +114,7 @@ export default function autoevaluacionEquipo(props) {
         return new Promise((resolve, reject) => {
             axios
                 .post(
-                    `http://localhost:8080/api/proyecto/autoEvaluacion/crearAutoEvaluacion`,
+                    process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/autoEvaluacion/crearAutoEvaluacion`,
                     {
                         idProyecto: projectId,
                         criterio1: "Dominio técnico",
