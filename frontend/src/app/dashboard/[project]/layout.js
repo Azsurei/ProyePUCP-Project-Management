@@ -1,11 +1,12 @@
 "use client";
 import ProjectSidebar from "@/components/dashboardComps/projectComps/ProjectSidebar";
 import "@/styles/dashboardStyles/projectStyles/ProjectSidebar.css";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 
 import axios from "axios";
+import { SessionContext } from "../layout";
 axios.defaults.withCredentials = true;
 
 export const SmallLoadingScreen = createContext();
