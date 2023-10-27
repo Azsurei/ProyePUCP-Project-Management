@@ -19,6 +19,7 @@ import CardTarea from "@/components/equipoComps/CardTarea";
 import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 
 axios.defaults.withCredentials = true;
 
@@ -495,7 +496,9 @@ export default function Equipo(props) {
                                                         }
                                                         idParam="idRolEquipo"
                                                         reloadData={reloadData}
-                                                        initialName="Seleccione un rol"
+                                                        initialName={
+                                                            member.nombreRol
+                                                        }
                                                     />
                                                 </div>
                                                 <div className="col-span-1 flex mt-4 justify-center">
@@ -511,18 +514,19 @@ export default function Equipo(props) {
                                             </React.Fragment>
                                         )
                                     )}
-                                    <div
-                                        className="containerToPopUpUsrSearch"
+                                    <div className="col-span-8"></div>
+                                    <Button
+                                        className="bg-blue-400 text-white rounded-lg col-span-2 flex gap-2 items-center mt-8"
                                         onClick={toggleModal2}
                                     >
-                                        <p>Buscar nuevo participante</p>
                                         <img
                                             src="/icons/icon-searchBar.svg"
                                             alt="icono de buscar"
                                             className="icnSearch"
                                             style={{ width: "20px" }}
                                         />
-                                    </div>
+                                        <p>Buscar nuevo participante</p>
+                                    </Button>
                                 </>
                             ) : (
                                 <>
@@ -550,7 +554,7 @@ export default function Equipo(props) {
                                                 </div>
                                                 <div className="col-span-4 flex mt-4">
                                                     {/* aca traeré la data del selectedTeam mejorado */}
-                                                    Miembro
+                                                    {member.nombreRol}
                                                 </div>
                                             </React.Fragment>
                                         )
