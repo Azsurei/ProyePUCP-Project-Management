@@ -18,12 +18,14 @@ function CardEstimacionCosto({
     horaIngreso,
     isEdit,
     refresh,
+    onSelect,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
+    
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
@@ -36,11 +38,17 @@ function CardEstimacionCosto({
         console.log("Esta es la linea", selectedLinea);
     };
 
+    const handleCardSelect = () => {
+        if (onSelect) {
+            onSelect(EstimacionObject);
+        }
+    };
 
     const monedaSymbol = EstimacionObject.nombreMoneda === "USD" ? "$" : "S/";
     return (
         <li
             className="IngresoCard"
+            onClick={handleCardSelect}
         >
             <img
                 className="imgageIngresoDefault"
@@ -132,6 +140,11 @@ export default function EstimacionCostoList(props) {
 
         fechaGroups[fechaKey].push(component);
     });
+    const handleCardSelect = (selectedData) => {
+        // Llama a la función proporcionada desde la página principal para pasar el dato de regreso
+        props.onCardSelect(selectedData);
+      }
+
     return (
         <div>
             {Object.keys(fechaGroups).map((fechaKey) => {
@@ -156,6 +169,7 @@ export default function EstimacionCostoList(props) {
                                     horaIngreso={horaIngreso}
                                     isEdit={isEdit}
                                     refresh={refresh}
+                                    onSelect={() => handleCardSelect(component)}
                                 />
                             ))}
                         </ul>

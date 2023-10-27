@@ -85,6 +85,29 @@ export default function Ingresos(props) {
     //2 es estado de editar hito
 
     
+    const [fecha, setFecha] = useState("");
+
+
+    const [activeRefresh, setactiveRefresh] = useState(false);
+    const handleChangeFecha = (event) => {
+        setFecha(event.target.value);
+        setValidFecha(true);
+    };
+
+
+    //Filtro Fecha
+
+    const [fechaInicio, setFechaInicio] = useState("");
+    const [fechaFin, setFechaFin] = useState("");
+    const [filtrarFecha, setFiltrarFecha] = useState(false);
+
+    const handleChangeFechaInicioFilter = (event) => {
+        setFechaInicio(event.target.value);
+    };
+
+    const handleChangeFechaFinFilter = (event) => {
+        setFechaFin(event.target.value);
+    };
 
 
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
@@ -163,6 +186,29 @@ export default function Ingresos(props) {
         totalCalculate();
     }, [lineasIngreso]);
 
+    const hasSearchFilter = Boolean(filterValue);
+    // const filteredItems = React.useMemo(() => {
+    //     let filteredTemplates = [...lineasIngreso];
+    
+    //     // Filtro de búsqueda
+    //     if (hasSearchFilter) {
+    //         filteredTemplates = filteredTemplates.filter((item) =>
+    //             item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+    //         );
+    //     }
+    
+    //     // Filtro por fechas
+    //     if (fechaInicio && fechaFin && filtrarFecha) {
+    //         const fechaInicioTimestamp = Date.parse(fechaInicio);
+    //         const fechaFinTimestamp = Date.parse(fechaFin);
+    //         filteredTemplates = filteredTemplates.filter((item) => {
+    //             const itemFechaTimestamp = Date.parse(item.fechaTransaccion); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
+    //             return itemFechaTimestamp >= fechaInicioTimestamp && itemFechaTimestamp <= fechaFinTimestamp;
+    //         });
+    //     }
+    
+    //     return filteredTemplates;
+    // }, [lineasIngreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
     return (
 
         

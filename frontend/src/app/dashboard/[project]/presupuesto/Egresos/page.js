@@ -37,7 +37,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
-
+export const UserCardsContextOne = React.createContext();
 
 export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -111,7 +111,21 @@ export default function Ingresos(props) {
     const [montoReal, setMontoReal] = useState("");
     const [cantRecurso, setcantRecurso] = useState("");
 
+    const [listEstimacionesSelect, setlistEstimacionesSelected] = useState([]);
 
+    const addEstimacionesList = (lineasEstimacion) => {
+        setlistEstimacionesSelected([
+            lineasEstimacion
+        ]);
+    };
+
+    const removeEstimacionesInList = (lineasEstimacion) => {
+        const newEstimacionList = listEstimacionesSelect.filter(
+            (item) => item.idLineaEstimacion !== lineasEstimacion.idLineaEstimacion
+        );
+        setlistEstimacionesSelected(newEstimacionList);
+        console.log(newEstimacionList);
+    };
 
     const onClear = React.useCallback(() => {
         setFilterValue("");
@@ -256,6 +270,12 @@ export default function Ingresos(props) {
         return filteredTemplates;
     }, [lineasEstimacion, filterValue]);
     
+    const handleCardSelect = (selectedData) => {
+        // Realiza la lógica deseada con el dato seleccionado
+        console.log("Card seleccionado:", selectedData);
+        // Puedes actualizar el estado local aquí si es necesario
+      }
+      
     return (
 
         
@@ -322,7 +342,12 @@ export default function Ingresos(props) {
                     </div>
                     <div className="flex">
                         <div className="divListaIngreso w-1/2">
-                            <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false}></EstimacionCostoList>
+                            <UserCardsContextOne.Provider
+                                value={{ addEstimacionesList, removeEstimacionesInList }}
+                                >
+                                <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false} onCardSelect={handleCardSelect}></EstimacionCostoList>
+                            </UserCardsContextOne.Provider>
+                            
                         </div>
                         <div className="divListaIngreso w-1/2">
                             <EgresosList lista = {data}></EgresosList>

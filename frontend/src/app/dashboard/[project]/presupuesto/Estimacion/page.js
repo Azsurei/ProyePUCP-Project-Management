@@ -95,7 +95,7 @@ export default function Ingresos(props) {
 
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
-        
+    const [filtrarFecha, setFiltrarFecha] = useState(false);
         
     const handleChangeFechaInicioFilter = (event) => {
         setFechaInicio(event.target.value);
@@ -251,16 +251,27 @@ export default function Ingresos(props) {
       }, [projectId]);
     const hasSearchFilter = Boolean(filterValue);
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...lineasEstimacion]
-
+        let filteredTemplates = [...lineasEstimacion];
+    
+        // Filtro de búsqueda
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((item) =>
-            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+                item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
-
+    
+        // Filtro por fechas
+        if (fechaInicio && fechaFin && filtrarFecha) {
+            const fechaInicioTimestamp = Date.parse(fechaInicio);
+            const fechaFinTimestamp = Date.parse(fechaFin);
+            filteredTemplates = filteredTemplates.filter((item) => {
+                const itemFechaTimestamp = Date.parse(item.fechaInicio); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
+                return itemFechaTimestamp >= fechaInicioTimestamp && itemFechaTimestamp <= fechaFinTimestamp;
+            });
+        }
+    
         return filteredTemplates;
-    }, [lineasEstimacion, filterValue]);
+    }, [lineasEstimacion, filterValue, fechaInicio, fechaFin, filtrarFecha]);
 
     
 
@@ -354,6 +365,7 @@ export default function Ingresos(props) {
                         {(onClose) => {
                         const finalizarModal = () => {
                             //filtraFecha();
+                            setFiltrarFecha(true);
                             onClose();
                         };
                         return (
