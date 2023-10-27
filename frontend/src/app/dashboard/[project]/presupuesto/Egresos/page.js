@@ -38,6 +38,7 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
+import { set } from "date-fns";
 export const UserCardsContextOne = React.createContext();
 
 export default function Ingresos(props) {
@@ -53,12 +54,23 @@ export default function Ingresos(props) {
     const onSearchChange = (value) => {
         if(value) {
             setFilterValue(value);
+            
         } else {
             setFilterValue("");
+            
+        }
+    };
+
+    const onSearchChange2 = (value) => {
+        if(value) {
+            setFilterEgreso(value);
+        } else {
+            setFilterEgreso("");
         }
     };
 
     const [filterValue, setFilterValue] = React.useState("");
+    const [filterEgreso, setFilterEgreso] = React.useState("");
 
 
     useEffect(()=>{setIsLoadingSmall(false)},[])
@@ -92,6 +104,7 @@ export default function Ingresos(props) {
 
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
+    const [filtrarFecha, setFiltrarFecha] = useState(false);
         
     const handleChangeFechaInicioFilter = (event) => {
         setFechaInicio(event.target.value);
@@ -136,6 +149,7 @@ export default function Ingresos(props) {
 
     const onClear = React.useCallback(() => {
         setFilterValue("");
+        setFilterEgreso("");
     }, []);
 
     const data = [
@@ -226,7 +240,7 @@ export default function Ingresos(props) {
             toast.promise(insertatLineaEgreso, {
                 loading: "Registrando Egreso...",
                 success: (data) => {
-                    //DataTable();
+                    DataEgresos();
                     return "El egreso se agregó con éxito!";
                     
                 },
@@ -281,17 +295,29 @@ export default function Ingresos(props) {
       }, [projectId]);
 
     const hasSearchFilter = Boolean(filterValue);
+    const hasSearchFilterEgreso = Boolean(filterEgreso);
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...lineasEstimacion]
-
+        let filteredTemplates = [...lineasEstimacion];
+    
+        // Filtro de búsqueda
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((item) =>
-            item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
+                item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
-
+    
+        // Filtro por fechas
+        if (fechaInicio && fechaFin && filtrarFecha) {
+            const fechaInicioTimestamp = Date.parse(fechaInicio);
+            const fechaFinTimestamp = Date.parse(fechaFin);
+            filteredTemplates = filteredTemplates.filter((item) => {
+                const itemFechaTimestamp = Date.parse(item.fechaInicio); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
+                return itemFechaTimestamp >= fechaInicioTimestamp && itemFechaTimestamp <= fechaFinTimestamp;
+            });
+        }
+    
         return filteredTemplates;
-    }, [lineasEstimacion, filterValue]);
+    }, [lineasEstimacion, filterValue, fechaInicio, fechaFin, filtrarFecha]);
     
 
     const [dataLineaEstimacion, setDataLineaEstimacion] = useState("");
@@ -306,7 +332,28 @@ export default function Ingresos(props) {
         }
         
       }
-      
+    const filteredEgresos= React.useMemo(() => {
+        let filteredEgresos = [...lineasEgreso];
+    
+        // Filtro de búsqueda
+        if (hasSearchFilterEgreso) {
+            filteredEgresos = filteredEgresos.filter((item) =>
+                item.descripcion.toLowerCase().includes(filterEgreso.toLowerCase())
+            );
+        }
+    
+        // Filtro por fechas
+        if (fechaInicio && fechaFin && filtrarFecha) {
+            const fechaInicioTimestamp = Date.parse(fechaInicio);
+            const fechaFinTimestamp = Date.parse(fechaFin);
+            filteredEgresos = filteredEgresos.filter((item) => {
+                const itemFechaTimestamp = Date.parse(item.fechaRegistro); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
+                return itemFechaTimestamp >= fechaInicioTimestamp && itemFechaTimestamp <= fechaFinTimestamp;
+            });
+        }
+    
+        return filteredEgresos;
+    }, [lineasEgreso, filterEgreso, fechaInicio, fechaFin, filtrarFecha]);
     return (
 
         
@@ -354,9 +401,9 @@ export default function Ingresos(props) {
                                 <button className="btnCommon btnEstimacion  sm:w-1 sm:h-1"  type="button">Estimacion</button>
                         </Link>
 
-                        {/* <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
                             Filtrar
-                        </Button> */}
+                        </Button>
                     </div>
                     
                     <div className="divFiltroPresupuesto">
@@ -370,13 +417,13 @@ export default function Ingresos(props) {
                             onValueChange={onSearchChange}
                             variant="faded"
                         />
-                                                <Input
+                            <Input
                             isClearable
                             className="w-2/4 sm:max-w-[50%]"
                             placeholder="Buscar Egreso..."
                             startContent={<SearchIcon />}
-                            value={filterValue}
-                            onValueChange={onSearchChange}
+                            value={filterEgreso}
+                            onValueChange={onSearchChange2}
                             variant="faded"
                         />
                          <div className="buttonContainer">
@@ -395,7 +442,7 @@ export default function Ingresos(props) {
                         
                         <div className="divListaIngreso w-1/2">
 
-                            <EgresosList lista = {lineasEgreso}></EgresosList>
+                            <EgresosList lista = {filteredEgresos} refresh ={DataEgresos}></EgresosList>
                         </div> 
                     </div>
                     
@@ -408,7 +455,116 @@ export default function Ingresos(props) {
                     </div>
 
                 </div>
+            
+                <Modal size="xl" isOpen={isModalFechaOpen} onOpenChange={onModalFechachange}>
+                    <ModalContent>
+                        {(onClose) => {
+                        const finalizarModal = () => {
+                            //filtraFecha();
+                            setFiltrarFecha(true);
+                            onClose();
+                        };
+                        return (
+                            <>
+                            <ModalHeader>Filtra tus ingresos</ModalHeader>
 
+                            <ModalBody>
+                                <p
+                                style={{
+                                    color: "#494949",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 400,
+                                }}
+                                >
+                                Elige la fecha que deseas consultar
+                                </p>
+
+                                <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    marginTop: "1rem",
+                                }}
+                                >
+                                <p
+                                    style={{
+                                    color: "#002D74",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 500,
+                                    }}
+                                >
+                                    Desde
+                                </p>
+
+                                <p
+                                    style={{
+                                    color: "#002D74",
+                                    fontSize: "16px",
+                                    fontStyle: "normal",
+                                    fontWeight: 500,
+                                    flex: 0.43,
+                                    }}
+                                >
+                                    Hasta
+                                </p>
+                                </div>
+
+                                <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    gap: "2rem",
+                                    marginBottom: "1.2rem",
+                                }}
+                                >
+                                <DateInput
+                                    isEditable={true}
+                                    value={fechaInicio}
+                                    onChangeHandler={handleChangeFechaInicioFilter}
+                                />
+
+                                <span style={{ margin: "0 10px" }}>
+                                    <ArrowRightAltIcon />
+                                </span>
+
+                                <DateInput
+                                    value={fechaFin}
+                                    isEditable={true}
+                                    onChangeHandler={handleChangeFechaFinFilter}
+                                />
+                                </div>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button
+                                className="text-white"
+                                variant="light"
+                                onPress={() => {
+                                    onClose(); // Cierra el modal
+                                    setFechaInicio("");
+                                    setFechaFin("");
+                                }}
+                                style={{ color: "#EA541D" }}
+                                >
+                                Limpiar Búsqueda
+                                </Button>
+                                <Button
+                                style={{ backgroundColor: "#EA541D" }}
+                                className="text-white"
+                                onPress={finalizarModal}
+                                >
+                                Filtrar
+                                </Button>
+                            </ModalFooter>
+                            </>
+                        );
+                        }}
+                    </ModalContent>
+                </Modal>
 
 
             <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
@@ -444,12 +600,12 @@ export default function Ingresos(props) {
                                         setValidCantRecurso(true);
                                         setValidDescription(true);
                                         setValidFecha(true);
-                                        DataEgresos();
+                                        
                                         
                                     } catch (error) {
                                         console.error('Error al registrar la línea de estimación o al obtener los datos:', error);
                                     }
-
+                                    
                                     onClose();
                                 
                                 }
@@ -458,7 +614,7 @@ export default function Ingresos(props) {
                                 <>
                                     <ModalHeader className="flex flex-col gap-1" 
                                         style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                        Nueva Estimación
+                                        Nueva Egreso
                                     </ModalHeader>
 
                                     <ModalBody>
@@ -500,7 +656,7 @@ export default function Ingresos(props) {
                                                 placeholder="Escriba aquí..."
                                                 className="max-w-x"
                                                 maxRows="2"
-                                                value={dataLineaEstimacion.descripcion}
+                                                
                                                 onValueChange={setdescripcionLinea}
                                                 onChange={() => {
                                                     setValidDescription(true);
