@@ -317,7 +317,7 @@ export default function Ingresos(props) {
                         <Input
                             isClearable
                             className="w-2/4 sm:max-w-[50%]"
-                            placeholder="Buscar Ingreso..."
+                            placeholder="Buscar Estimación..."
                             startContent={<SearchIcon />}
                             value={filterValue}
                             onClear={() => onClear("")}
@@ -512,9 +512,9 @@ export default function Ingresos(props) {
                                         
                                         setFecha("");
 
-                                        setValidCantMeses("");
-                                        setValidCantRecurso("");
-                                        
+                                        setcantRecurso("");
+                                        setmesesRequerido("");
+
                                         setValidTipoMoneda(true);
                                         setValidMonto(true);
 

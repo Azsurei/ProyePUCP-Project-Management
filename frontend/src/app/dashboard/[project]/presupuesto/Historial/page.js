@@ -188,7 +188,7 @@ export default function Ingresos(props) {
                         <Input
                             isClearable
                             className="w-2/4 sm:max-w-[50%]"
-                            placeholder="Buscar Ingreso..."
+                            placeholder="Buscar Movimiento..."
                             startContent={<SearchIcon />}
                             value={filterValue}
                             onValueChange={onSearchChange}

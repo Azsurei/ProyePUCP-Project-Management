@@ -22,11 +22,13 @@ const routerAuth = require('./routes/auth').routerAuth;
 const routerProyecto = require('./routes/proyecto').routerProyecto;
 const routerUsuario = require('./routes/usuario').routerUsuario;
 const routerHerramientas = require('./routes/herramientas').routerHerramientas;
+const routerAdmin = require('./routes/admin').routerAdmin;
 
 app.use('/api/herramientas',routerHerramientas);
 app.use('/api/auth',routerAuth);
 app.use('/api/proyecto',routerProyecto);
 app.use('/api/usuario',routerUsuario);
+app.use('/api/admin',routerAdmin);
 
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.PORT || port;
