@@ -876,7 +876,7 @@ Content-Type:  application/json
 }
 
 ###LISTAR AUTOEVALUACION
-GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/58/93 HTTP/1.1
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/135/93 HTTP/1.1
 Content-Type:  application/json
 
 ###
