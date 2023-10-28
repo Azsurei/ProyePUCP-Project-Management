@@ -1,3 +1,4 @@
+// actaReunion/page.js
 "use client";
 
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
@@ -27,7 +28,7 @@ export default function ActaReunion(props) {
 
     useEffect(() => {
         setIsLoadingSmall(true);
-        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+'/api/proyecto/actaReunion/listarActaReunionXIdProyecto/'+projectId;
         axios
             .get(stringURL)
             .then(({ data: { data: { idActaReunion } } }) => {
@@ -99,7 +100,14 @@ export default function ActaReunion(props) {
 
         if (response.status === 200) {
             console.log('Reunión eliminada con éxito');
+
+            setReuniones(prevReuniones => {
+                const newPendientes = prevReuniones.pendientes.filter(reunion => reunion.idLineaActaReunion !== id);
+                const newFinalizadas = prevReuniones.finalizadas.filter(reunion => reunion.idLineaActaReunion !== id);
+                return { pendientes: newPendientes, finalizadas: newFinalizadas };
+            });
         }
+
     };
 
     const renderCard = (reunion) => {
@@ -108,43 +116,43 @@ export default function ActaReunion(props) {
             : reunion.participantesXReunion ? [reunion.participantesXReunion] : [];
         return (
 
-            <div className="flex flex-wrap items-start my-4 space-x-4 justify-center">
-            <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
-                <CardHeader className="p-4">
-                    <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
-                </CardHeader>
-                <Divider className="my-1"/>
-                <CardBody className="flex-row justify-between items-center h-36">
-                    <div className="mr-4">
-                        <p className="text-blue-900 montserrat">Reunión convocada por:</p>
-                        <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
-                        <p className="text-gray-700 montserrat">Fecha: {new Date(reunion.fechaReunion).toLocaleDateString()}</p>
-                        <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
-                    </div>
-                    {participantes.length > 0 && (
-                        <>
-                            <Divider orientation="vertical" />
-                            <div className="flex text-gray-700 montserrat ml-4 mr-2">Personas convocadas:</div>
-                            <AvatarGroup isBordered max={3} className="space-x-2">
-                                {participantes.slice(0, 3).map((participante, index) => (
-                                    <Avatar key={index} src="" fallback={
-                                        <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
-                                            {participante.nombres[0] + participante.apellidos[0]}
-                                        </p>
-                                    } />
-                                ))}
-                            </AvatarGroup>
-                            {participantes.length > 3 &&
-                                <p className="ml-2">+{participantes.length - 3} más</p>
-                            }
-                        </>
-                    )}
-                </CardBody>
-            </Card>
-            <div className="flex flex-col space-y-10 mt-10">
-            <Button onClick={() => handleEdit(reunion)}>Editar</Button>
-            <Button color="error" >Eliminar</Button>
-            </div>
+            <div key={reunion.idLineaActaReunion} className="flex flex-wrap items-start my-4 space-x-4 justify-center">
+                <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
+                    <CardHeader className="p-4">
+                        <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
+                    </CardHeader>
+                    <Divider className="my-1"/>
+                    <CardBody className="flex-row justify-between items-center h-36">
+                        <div className="mr-4">
+                            <p className="text-blue-900 montserrat">Reunión convocada por:</p>
+                            <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
+                            <p className="text-gray-700 montserrat">Fecha: {new Date(reunion.fechaReunion).toLocaleDateString()}</p>
+                            <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
+                        </div>
+                        {participantes.length > 0 && (
+                            <>
+                                <Divider orientation="vertical" />
+                                <div className="flex text-gray-700 montserrat ml-4 mr-2">Personas convocadas:</div>
+                                <AvatarGroup isBordered max={3} className="space-x-2">
+                                    {participantes.map((participante, index) => (
+                                        <Avatar key={participante.idUsuarioXRolXProyecto}  src="" fallback={
+                                            <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
+                                                {participante.nombres[0] + participante.apellidos[0]}
+                                            </p>
+                                        } />
+                                    ))}
+                                </AvatarGroup>
+                                {participantes.length > 3 &&
+                                    <p className="ml-2">+{participantes.length - 3} más</p>
+                                }
+                            </>
+                        )}
+                    </CardBody>
+                </Card>
+                <div className="flex flex-col space-y-10 mt-10">
+                    <Button onClick={() => handleEdit(reunion)}>Editar</Button>
+                    <Button onClick={() => handleDelete(reunion.idLineaActaReunion)} color="error" >Eliminar</Button>
+                </div>
             </div>
             // Crear botones de editar y eliminar
         );

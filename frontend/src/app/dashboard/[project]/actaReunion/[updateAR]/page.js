@@ -1,3 +1,4 @@
+// [updateAR]/PAGE.JS
 "use client"
 
 import React, { useState, useEffect, useContext } from "react";
@@ -40,30 +41,30 @@ export default function editarActaReunion(props) {
 // Various Variables
 // *********************************************************************************************
 // Router. Helps you to move between pages
-const router = useRouter();
-const searchParams = useSearchParams();
-const idLineaActa = searchParams.get('edit');
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const idLineaActa = searchParams.get('edit');
 //const receivedData = router.edit.data;
 // Project Info
-const decodedUrl = decodeURIComponent(props.params.project);
-const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
 // Loading Window
-const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-setIsLoadingSmall(false);
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    setIsLoadingSmall(false);
 
 // Edit Mode: False for See Meeting, True for Edit Meeting
-const [isEditMode, setIsEditMode] = useState(false);
-const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
+    const [isEditMode, setIsEditMode] = useState(false);
+    const toggleEditMode = () => {
+        setIsEditMode(!isEditMode);
+    };
 
 //Vital Data for Creating Meeting
-const [titleValue, setTitleValue] = useState("");
-const [motiveValue, setMotiveValue] = useState("");
-const [dateValue, setDateValue] = useState(""); 
-const [timeValue, setTimeValue] = useState("");
+    const [titleValue, setTitleValue] = useState("");
+    const [motiveValue, setMotiveValue] = useState("");
+    const [dateValue, setDateValue] = useState("");
+    const [timeValue, setTimeValue] = useState("");
 
 // *********************************************************************************************
 // Working with ARLine
@@ -94,187 +95,187 @@ const [timeValue, setTimeValue] = useState("");
         fetchData(idLineaActa);
     }, [setIsLoadingSmall, projectId]);
 
-const handleChangeDate = (event) => {
-    setDateValue(event.target.value);
-};
+    const handleChangeDate = (event) => {
+        setDateValue(event.target.value);
+    };
 
-const handleChangeTime = (event) => {
-    setTimeValue(event.target.value);
-};
+    const handleChangeTime = (event) => {
+        setTimeValue(event.target.value);
+    };
 
-useEffect(() => {
-    if (actaReunion) {
-      setTitleValue(actaReunion.lineaActaReunion.nombreReunion);
-    }
-  }, [actaReunion]);
+    useEffect(() => {
+        if (actaReunion) {
+            setTitleValue(actaReunion.lineaActaReunion.nombreReunion);
+        }
+    }, [actaReunion]);
 
 // *********************************************************************************************
 // Validations
 // *********************************************************************************************
-const [fieldsEmpty, setFieldsEmpty] = useState(false);
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
 
-function verifyFieldsEmpty() {
-    return (
-        titleValue === "" ||
-        dateValue === "" ||
-        timeValue === "" ||
-        motiveValue === "" 
-    );
-}
-
-function getMinDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Los meses se indexan a partir de 0
-    const day = today.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-/*
-const fechaISO = actaReunion.lineaActaReunion.fechaReunion;
-const fecha = new Date(fechaISO);
-const fechaLocal = fecha.toISOString().split('T')[0];
-*/
-
-function getMinTime() {
-    const today = new Date();
-    const selectedDate = new Date(dateValue);
-    const currentTime = today.getHours() * 60 + today.getMinutes();
-
-    if (
-        selectedDate.getDate() === today.getDate() &&
-        selectedDate.getMonth() === today.getMonth() &&
-        selectedDate.getFullYear() === today.getFullYear()
-    ) {
-        const selectedTime = parseInt(timeValue.split(":")[0]) * 60 + parseInt(timeValue.split(":")[1]);
-        if (selectedTime < currentTime) {
-            // Muestra un mensaje de advertencia si la hora elegida es anterior a la hora actual
-            return "00:00";
-        }
+    function verifyFieldsEmpty() {
+        return (
+            titleValue === "" ||
+            dateValue === "" ||
+            timeValue === "" ||
+            motiveValue === ""
+        );
     }
-    // Si la fecha seleccionada es hoy y la hora es actual o posterior, o cualquier otra fecha, no hay restricciones
-    return "00:00";
-}
+
+    function getMinDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Los meses se indexan a partir de 0
+        const day = today.getDate().toString().padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    /*
+    const fechaISO = actaReunion.lineaActaReunion.fechaReunion;
+    const fecha = new Date(fechaISO);
+    const fechaLocal = fecha.toISOString().split('T')[0];
+    */
+
+    function getMinTime() {
+        const today = new Date();
+        const selectedDate = new Date(dateValue);
+        const currentTime = today.getHours() * 60 + today.getMinutes();
+
+        if (
+            selectedDate.getDate() === today.getDate() &&
+            selectedDate.getMonth() === today.getMonth() &&
+            selectedDate.getFullYear() === today.getFullYear()
+        ) {
+            const selectedTime = parseInt(timeValue.split(":")[0]) * 60 + parseInt(timeValue.split(":")[1]);
+            if (selectedTime < currentTime) {
+                // Muestra un mensaje de advertencia si la hora elegida es anterior a la hora actual
+                return "00:00";
+            }
+        }
+        // Si la fecha seleccionada es hoy y la hora es actual o posterior, o cualquier otra fecha, no hay restricciones
+        return "00:00";
+    }
 
 // *********************************************************************************************
 // Handlers of Topics, Agreements and Comments
 // *********************************************************************************************
-const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
-const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
-const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
+    const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
+    const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
+    const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
 
-const [numeroTemas, setNumeroTemas] = useState([]);
+    const [numeroTemas, setNumeroTemas] = useState([]);
 
-useEffect(() => {
-    if (actaReunion 
-        && actaReunion.lineaActaReunion 
-        && actaReunion.lineaActaReunion.temasReunion) 
-    {
-        const temas = actaReunion.lineaActaReunion.temasReunion.map((_, index) => ({
-            descripcion: `Tema ${index + 1}`
-        }));
-        setNumeroTemas(temas);
-        setListTemas(actaReunion.lineaActaReunion.temasReunion);
-    }
-  }, [actaReunion]);
-
-
-useEffect(() => {
-    if (actaReunion 
-        && actaReunion.lineaActaReunion 
-        && actaReunion.lineaActaReunion.comentarios) {
-        setListComentarios(actaReunion.lineaActaReunion.comentarios);
-        setDateValue(actaReunion.lineaActaReunion.fechaReunion.split("T")[0]);
-        setTimeValue(actaReunion.lineaActaReunion.horaReunion.substring(0, 5));
-        setMotiveValue(actaReunion.lineaActaReunion.motivo);
-    }
-}, [actaReunion]);
-
-
-const handleAddTema = ()=>{
-    const newList_T =  [
-        ...listTemas, 
+    useEffect(() => {
+        if (actaReunion
+            && actaReunion.lineaActaReunion
+            && actaReunion.lineaActaReunion.temasReunion)
         {
-        index: listTemas.length + 1,
-        data: ''
+            const temas = actaReunion.lineaActaReunion.temasReunion.map((_, index) => ({
+                descripcion: `Tema ${index + 1}`
+            }));
+            setNumeroTemas(temas);
+            setListTemas(actaReunion.lineaActaReunion.temasReunion);
         }
-    ];
-    setListTemas(newList_T);
-}
+    }, [actaReunion]);
 
-const handleAddAcuerdo = ()=>{
-    const newList_A =  [
-        ...listAcuerdos, 
-        {
-        index: listAcuerdos.length + 1,
-        data: ''
+
+    useEffect(() => {
+        if (actaReunion
+            && actaReunion.lineaActaReunion
+            && actaReunion.lineaActaReunion.comentarios) {
+            setListComentarios(actaReunion.lineaActaReunion.comentarios);
+            setDateValue(actaReunion.lineaActaReunion.fechaReunion.split("T")[0]);
+            setTimeValue(actaReunion.lineaActaReunion.horaReunion.substring(0, 5));
+            setMotiveValue(actaReunion.lineaActaReunion.motivo);
         }
-    ];
-    setListAcuerdos(newList_A);
-}
+    }, [actaReunion]);
 
-const handleAddComentario = ()=>{
-    const newList_C =  [
-        ...listComentarios, 
-        {
-        index: listComentarios.length + 1,
-        data: ''
+
+    const handleAddTema = ()=>{
+        const newList_T =  [
+            ...listTemas,
+            {
+                index: listTemas.length + 1,
+                data: ''
+            }
+        ];
+        setListTemas(newList_T);
+    }
+
+    const handleAddAcuerdo = ()=>{
+        const newList_A =  [
+            ...listAcuerdos,
+            {
+                index: listAcuerdos.length + 1,
+                data: ''
+            }
+        ];
+        setListAcuerdos(newList_A);
+    }
+
+    const handleAddComentario = ()=>{
+        const newList_C =  [
+            ...listComentarios,
+            {
+                index: listComentarios.length + 1,
+                data: ''
+            }
+        ];
+        setListComentarios(newList_C);
+    }
+
+    const handleChangeTema = (e, index) => {
+        const updatedEntregables = [...listTemas];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListTemas(updatedEntregables);
+    };
+
+    const handleChangeAcuerdo = (e, index) => {
+        const updatedEntregables = [...listAcuerdos];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListAcuerdos(updatedEntregables);
+    };
+
+    const handleChangeComentario = (e, index) => {
+        const updatedEntregables = [...listComentarios];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListComentarios(updatedEntregables);
+    };
+
+    const handleRemoveTema = (index) => {
+        const updatedEntregables = [...listTemas];
+        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedEntregables.length; i++) {
+            updatedEntregables[i].index = updatedEntregables[i].index - 1;
         }
-    ];
-    setListComentarios(newList_C);
-}
-
-const handleChangeTema = (e, index) => {
-    const updatedEntregables = [...listTemas];
-    updatedEntregables[index - 1].data = e.target.value;
-    console.log(updatedEntregables);
-    setListTemas(updatedEntregables);
-};
-
-const handleChangeAcuerdo = (e, index) => {
-    const updatedEntregables = [...listAcuerdos];
-    updatedEntregables[index - 1].data = e.target.value;
-    console.log(updatedEntregables);
-    setListAcuerdos(updatedEntregables);
-};
-
-const handleChangeComentario = (e, index) => {
-    const updatedEntregables = [...listComentarios];
-    updatedEntregables[index - 1].data = e.target.value;
-    console.log(updatedEntregables);
-    setListComentarios(updatedEntregables);
-};
-
-const handleRemoveTema = (index) => {
-    const updatedEntregables = [...listTemas];
-    updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-    for (let i = index - 1; i < updatedEntregables.length; i++) {
-        updatedEntregables[i].index = updatedEntregables[i].index - 1;
+        console.log(updatedEntregables);
+        setListTemas(updatedEntregables);
     }
-    console.log(updatedEntregables);
-    setListTemas(updatedEntregables);
-}
 
-const handleRemoveAcuerdo = (index) => {
-    const updatedEntregables = [...listAcuerdos];
-    updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-    for (let i = index - 1; i < updatedEntregables.length; i++) {
-        updatedEntregables[i].index = updatedEntregables[i].index - 1;
+    const handleRemoveAcuerdo = (index) => {
+        const updatedEntregables = [...listAcuerdos];
+        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedEntregables.length; i++) {
+            updatedEntregables[i].index = updatedEntregables[i].index - 1;
+        }
+        console.log(updatedEntregables);
+        setListAcuerdos(updatedEntregables);
     }
-    console.log(updatedEntregables);
-    setListAcuerdos(updatedEntregables);
-}
 
-const handleRemoveComentario = (index) => {
-    const updatedEntregables = [...listComentarios];
-    updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-    for (let i = index - 1; i < updatedEntregables.length; i++) {
-        updatedEntregables[i].index = updatedEntregables[i].index - 1;
+    const handleRemoveComentario = (index) => {
+        const updatedEntregables = [...listComentarios];
+        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedEntregables.length; i++) {
+            updatedEntregables[i].index = updatedEntregables[i].index - 1;
+        }
+        console.log(updatedEntregables);
+        setListComentarios(updatedEntregables);
     }
-    console.log(updatedEntregables);
-    setListComentarios(updatedEntregables);
-}
 
 // *********************************************************************************************
 // About User Information
@@ -313,7 +314,7 @@ const handleRemoveComentario = (index) => {
     // For convocante to have datosUsuario
     useEffect(() => {
         setConvocante(datosUsuario);
-      }, [datosUsuario]);
+    }, [datosUsuario]);
 
     // Modal1: Choose convenor. Modal2: Choose participants
     const [modal1, setModal1] = useState(false);
@@ -332,11 +333,11 @@ const handleRemoveComentario = (index) => {
     // Modal1 returns a list of only one object
     const returnListConvocante = (newMiembrosList) => {
         const nuevoConvocante = newMiembrosList[0];
-  
+
         const newMembrsList = [...selectedConvocanteList, ...newMiembrosList];
         setSelectedConvocanteList(newMembrsList);
         setModal1(!modal1);
-        
+
         if (newMiembrosList.length > 0) {
             setConvocante(nuevoConvocante);
         }
@@ -363,15 +364,15 @@ const handleRemoveComentario = (index) => {
 
     const [isLoading, setIsLoading] = useState(true);
 
-/*
+
 // *********************************************************************************************
 // Searching Meeting Record ID
 // *********************************************************************************************
     const [meetingId, setMeetingId] = useState("");
 
     useEffect(() => {
-        const stringURL = 
-        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
         console.log("La URL es" + stringURL);
 
         axios
@@ -388,42 +389,41 @@ const handleRemoveComentario = (index) => {
                 console.log(error);
             });
     }, []);
-*/
 // *********************************************************************************************
 // Handle Participants
 // *********************************************************************************************
     const [participantes, setParticipantes] = useState([]);
 
     useEffect(() => {
-        if (actaReunion 
-            && actaReunion.lineaActaReunion 
+        if (actaReunion
+            && actaReunion.lineaActaReunion
             && actaReunion.lineaActaReunion.participantesXReunion) {
-          const participantesTransformados = 
-            actaReunion.lineaActaReunion.participantesXReunion.map(participante => {
-            return {
-              idUsuario: participante.idUsuario,
-              nombreCompleto: `${participante.nombres} ${participante.apellidos}`,
-              asistio: false,
-            };
-          });
-          setParticipantes(participantesTransformados);
+            const participantesTransformados =
+                actaReunion.lineaActaReunion.participantesXReunion.map(participante => {
+                    return {
+                        idUsuario: participante.idUsuario,
+                        nombreCompleto: `${participante.nombres} ${participante.apellidos}`,
+                        asistio: false,
+                    };
+                });
+            setParticipantes(participantesTransformados);
         }
-      }, [actaReunion]);
+    }, [actaReunion]);
 
-      const handleAsistenciaChange = (idUsuario) => {
+    const handleAsistenciaChange = (idUsuario) => {
         const nuevosParticipantes = participantes.map(participante => {
-          if (participante.idUsuario === idUsuario) {
-            return { ...participante, asistio: !participante.asistio };
-          }
-          return participante;
+            if (participante.idUsuario === idUsuario) {
+                return { ...participante, asistio: !participante.asistio };
+            }
+            return participante;
         });
         setParticipantes(nuevosParticipantes);
-      };
-    
-      const handleBorrarParticipante = (idUsuario) => {
+    };
+
+    const handleBorrarParticipante = (idUsuario) => {
         const nuevosParticipantes = participantes.filter(participante => participante.idUsuario !== idUsuario);
         setParticipantes(nuevosParticipantes);
-      };
+    };
 
 // *********************************************************************************************
 // Page
@@ -432,11 +432,11 @@ const handleRemoveComentario = (index) => {
         <div className="newMeetingArticle">
             <Spacer y={4}></Spacer>
             <HeaderWithButtons haveReturn={true}
-                            haveAddNew={false}
-                            hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
-                            hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
-                            breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Editar Reunion'}
-                            btnText={'Volver'}>Editar Acta de Reunion</HeaderWithButtons>
+                               haveAddNew={false}
+                               hrefToReturn={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
+                               hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
+                               breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Editar Reunion'}
+                               btnText={'Volver'}>Editar Acta de Reunion</HeaderWithButtons>
             <div style={{ padding: '10px' }}>
                 <button onClick={toggleEditMode}>
                     {isEditMode ? 'Guardar Cambios' : 'Editar'}
@@ -452,37 +452,37 @@ const handleRemoveComentario = (index) => {
                             </div>
                             */}
                             {actaReunion && (
-                                <Input 
+                                <Input
                                     className="max-w-[1000px]"
                                     isRequired
                                     key="meetingTitle"
-                                    size="lg" 
-                                    type="title" 
-                                    label="Título de Reunión" 
+                                    size="lg"
+                                    type="title"
+                                    label="Título de Reunión"
                                     labelPlacement="outside"
                                     placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
                                     value={isEditMode ? titleValue : actaReunion.lineaActaReunion.nombreReunion}
                                     isReadOnly={!isEditMode}
-                                    onValueChange={setTitleValue} 
+                                    onValueChange={setTitleValue}
                                 />
                             )}
 
-                            
+
                             <p className=" convenourTitle mt-5 mb-1 font-medium">Reunión convocada por</p>
                             <div className="userSelection flex items-center">
                                 {actaReunion && (
                                     <p className="ml-2 font-medium text-gray-400 ">
                                         {actaReunion.lineaActaReunion.nombreConvocante}
                                     </p>
-                                )}                           
+                                )}
                                 {/* Guardar para modo editar
-                                <button 
+                                <button
                                     onClick={toggleModal1}
                                     className="ml-3 bg-[#f0ae19] text-white w-8 h-8
                                         rounded-full">
                                     <img src="/icons/icon-searchBar.svg"/>
                                 </button>
-                                
+
                                 {modal1 && (
                                 <ModalUsersOne
                                     listAllUsers={false}
@@ -501,7 +501,7 @@ const handleRemoveComentario = (index) => {
                                 )}
                             */}
                             </div>
-                            
+
                             <div className="dateAndTimeLine flex items-center gap-10">
                                 <div className="dateShow">
                                     <p className=" dateShowTitle mt-5 font-medium">Fecha</p>
@@ -517,7 +517,7 @@ const handleRemoveComentario = (index) => {
                                             readOnly={!isEditMode}
                                         ></input>
                                     )}
-                                    
+
                                 </div>
                                 <div className="timeShow">
                                     <p className="timeShowTitle mt-5 ml-5 font-medium">Hora</p>
@@ -533,46 +533,46 @@ const handleRemoveComentario = (index) => {
                                             onChange={handleChangeTime}
                                         ></input>
                                     )}
-                                </div>      
+                                </div>
                             </div>
-                            <div className="meetingMotive"> 
+                            <div className="meetingMotive">
                                 <h2 className="font-medium">Motivo</h2>
                                 {actaReunion && (
-                                    <Input 
+                                    <Input
                                         className="max-w-[1000px] mt-5"
                                         isRequired
                                         key="meetingMotive"
-                                        size="lg" 
-                                        type="title" 
+                                        size="lg"
+                                        type="title"
                                         labelPlacement="outside"
                                         placeholder="Ingrese el motivo de la reunion"
                                         value={isEditMode ? motiveValue : actaReunion.lineaActaReunion.motivo}
                                         isReadOnly={!isEditMode}
-                                        onValueChange={setMotiveValue} 
+                                        onValueChange={setMotiveValue}
                                     />
                                 )}
-                                
+
                             </div>
                         </CardBody>
                         <CardFooter>
                         </CardFooter>
                     </Card>
-                    
+
                 </div>
                 <br /><br />
                 <div className="invitedPeople p-5 ">
                     <Card className="mx-auto">
-                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg 
+                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg
                             font-bold text-blue-950 font-sans">
                             <h3>Personas Convocadas</h3>
                         </CardHeader>
                         <CardBody className="py-0 mt-0 ml-2">
-                        <div className="flex justify-between mb-2">
-                            <span className="text-mg font-semibold">Lista de Miembros</span>
-                            <span className="text-mg font-semibold mr-6">Asistencia</span>
-                        </div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-mg font-semibold">Lista de Miembros</span>
+                                <span className="text-mg font-semibold mr-6">Asistencia</span>
+                            </div>
                             {participantes.map(participante => (
-                                <div 
+                                <div
                                     key={participante.idUsuario}
                                     className="flex justify-between items-center p-2 rounded-lg"
                                 >
@@ -584,19 +584,19 @@ const handleRemoveComentario = (index) => {
                                             className="mr-4"
                                         >
                                         </Checkbox>
-                                        <button 
+                                        <button
                                             onClick={() => handleBorrarParticipante(participante.idUsuario)}
                                             className="text-red-500 hover:text-red-700"
                                         >
                                             X
                                         </button>
                                     </div>
-                                    
+
                                 </div>
                             ))}
                             {/*
                             <p>Lista de Miembros</p>
-                            {/**** Selector de Miembros ***** 
+                            {/**** Selector de Miembros *****
                             <div className="SelectedUsersContainer">
                                 <div
                                     className="containerToPopUpUsrSearch"
@@ -635,15 +635,15 @@ const handleRemoveComentario = (index) => {
                                     handlerModalFinished={returnListOfMiembros}
                                     excludedUsers={selectedMiembrosList}
                                 ></ModalUsers>
-                            )}   
-                            {/* Fin del selector de miembros */} 
+                            )}
+                            {/* Fin del selector de miembros */}
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
                 </div>
 
-                <div className="meetingTopics p-5"> 
-                    <Card className="mx-auto"> 
+                <div className="meetingTopics p-5">
+                    <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
@@ -653,22 +653,22 @@ const handleRemoveComentario = (index) => {
                                     ¿De qué temas se hablará en la reunión? ¡Asegúrate de ser claro!
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleAddTema}
                                 className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
-                            
+
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
                                 <ListEditableInput
-                                    beEditable={true} 
+                                    beEditable={true}
                                     handleChanges={handleChangeTema}
                                     handleRemove={handleRemoveTema}
-                                    ListInputs={listTemas} 
+                                    ListInputs={listTemas}
                                     typeFault="temas"
                                     typeName="Tema">
                                 </ListEditableInput>
@@ -678,8 +678,8 @@ const handleRemoveComentario = (index) => {
                     </Card>
                 </div>
 
-                <div className="agreements p-5"> 
-                    <Card className="mx-auto"> 
+                <div className="agreements p-5">
+                    <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
@@ -689,10 +689,10 @@ const handleRemoveComentario = (index) => {
                                     ¿A que acuerdos se llegaron en la reunión? ¡Recuerda ser responsable y razonable!
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleAddAcuerdo}
                                 className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
@@ -700,11 +700,11 @@ const handleRemoveComentario = (index) => {
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
                                 <AcuerdosListEditableInput
-                                    beEditable={true} 
+                                    beEditable={true}
                                     handleChanges={handleChangeAcuerdo}
                                     handleRemove={handleRemoveAcuerdo}
                                     ListInputs={listAcuerdos}
-                                    temas={numeroTemas}     
+                                    temas={numeroTemas}
                                     typeName="Acuerdo">
                                 </AcuerdosListEditableInput>
                             </div>
@@ -712,9 +712,9 @@ const handleRemoveComentario = (index) => {
                         <CardFooter></CardFooter>
                     </Card>
                 </div>
-                
-                <div className="pendingComments p-5"> 
-                    <Card className="mx-auto"> 
+
+                <div className="pendingComments p-5">
+                    <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
@@ -724,21 +724,21 @@ const handleRemoveComentario = (index) => {
                                     ¿Aún tienes algo que acotar?
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleAddComentario}
                                 className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
-                                <ListEditableInput 
-                                    beEditable={true} 
+                                <ListEditableInput
+                                    beEditable={true}
                                     handleChanges={handleChangeComentario}
                                     handleRemove={handleRemoveComentario}
-                                    ListInputs={listComentarios} 
+                                    ListInputs={listComentarios}
                                     typeFault="comentarios"
                                     typeName="Comentario">
                                 </ListEditableInput>
@@ -770,39 +770,39 @@ const handleRemoveComentario = (index) => {
                     */}
                 </div>
                 <div className="twoButtons1">
-                        <div className="buttonContainer">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
-                                colorButton="w-36 bg-slate-100 text-black font-semibold"
-                                oneButton={false}
-                                secondAction={() => router.back()}
-                                textColor="red"
-                            />
-                            <Modal
-                                nameButton="Aceptar"
-                                textHeader="Registrar Acta de Reunión"
-                                textBody="¿Seguro que quiere registrar el Acta de Reunión?"
-                                colorButton="w-36 bg-blue-950 text-white font-semibold"
-                                oneButton={false}
-                                secondAction={() => {
-                                    createMeeting();
-                                    router.back();
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (verifyFieldsEmpty()) {
-                                        setFieldsEmpty(true);
-                                        return false;
-                                    } else {
-                                        setFieldsEmpty(false);
-                                        return true;
-                                    }
-                                }}
-                            />
-                        </div>
+                    <div className="buttonContainer">
+                        <Modal
+                            nameButton="Descartar"
+                            textHeader="Descartar Registro"
+                            textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
+                            colorButton="w-36 bg-slate-100 text-black font-semibold"
+                            oneButton={false}
+                            secondAction={() => router.back()}
+                            textColor="red"
+                        />
+                        <Modal
+                            nameButton="Aceptar"
+                            textHeader="Registrar Acta de Reunión"
+                            textBody="¿Seguro que quiere registrar el Acta de Reunión?"
+                            colorButton="w-36 bg-blue-950 text-white font-semibold"
+                            oneButton={false}
+                            secondAction={() => {
+                                //createMeeting();
+                                router.back();
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if (verifyFieldsEmpty()) {
+                                    setFieldsEmpty(true);
+                                    return false;
+                                } else {
+                                    setFieldsEmpty(false);
+                                    return true;
+                                }
+                            }}
+                        />
                     </div>
+                </div>
 
             </div>
 
