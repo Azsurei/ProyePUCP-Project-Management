@@ -117,6 +117,7 @@ export default function Ingresos(props) {
     //No es prioridad filtro fecha por ahora
     
     //Validciones
+    const [cardSelected, setCardSelected] = useState(false);
 
     const [validMontoReal, setValidMontoReal] = useState(true);
     const [validCantRecurso, setValidCantRecurso] = useState(true);
@@ -327,8 +328,12 @@ export default function Ingresos(props) {
         // Puedes actualizar el estado local aquí si es necesario
         if (isSelect) {
             setDataLineaEstimacion(selectedData);
+            setCardSelected(true); // Se ha seleccionado un card
+
         } else {
             setDataLineaEstimacion("");
+            setCardSelected(false); // Se ha deseleccionado el card
+
         }
         
       }
@@ -401,9 +406,20 @@ export default function Ingresos(props) {
                                 <button className="btnCommon btnEstimacion  sm:w-1 sm:h-1"  type="button">Estimacion</button>
                         </Link>
 
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginLeft: 'auto' }}>
+                                <Button onPress={onModalCrear} color="primary" startContent={<AssignmentIcon />} 
+                                        isDisabled={!cardSelected} className="btnAddEgreso">
+                                        Registrar Egreso
+                                </Button>
+
+                                <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                                    Filtrar
+                                </Button>
+                        </div>
+
+
+
+
                     </div>
                     
                     <div className="divFiltroPresupuesto">
@@ -446,13 +462,6 @@ export default function Ingresos(props) {
                         </div> 
                     </div>
                     
-
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                        <Button onPress={onModalCrear} color="primary" startContent={<AssignmentIcon />} className="btnAddEgreso">
-                                Registrar Egreso
-                        </Button>
-
-                    </div>
 
                 </div>
             
