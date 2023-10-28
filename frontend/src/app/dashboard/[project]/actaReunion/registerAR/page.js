@@ -278,8 +278,10 @@ export default function crearActaReunion(props) {
 
     const removeMiembro = (miembro) => {
         const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
+            (item) => item.idUsuario !== miembro.idUsuario
         );
+        console.log('Muestra los seleccionados');
+        console.log(selectedMiembrosList);
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
     };
@@ -491,7 +493,7 @@ export default function crearActaReunion(props) {
                                     {selectedMiembrosList.map((component) => {
                                         return (
                                             <CardSelectedUser
-                                                key={component.id}
+                                                key={component.idUsuario}
                                                 name={component.name}
                                                 lastName={component.lastName}
                                                 usuarioObject={component}
