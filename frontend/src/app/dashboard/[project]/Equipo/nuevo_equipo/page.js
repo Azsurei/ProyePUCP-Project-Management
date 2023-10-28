@@ -19,6 +19,7 @@ import ModalUsersOne from "@/components/ModalUsersOne";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
 import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import { Button } from "@nextui-org/react";
@@ -59,8 +60,8 @@ export default function crear_equipo(props) {
     const [selectedValueRol, setSelectedValueRol] = useState("");
     const [reloadData, setReloadData] = useState(false);
 
+    const [rol, setRol] = useState(""); //Define un estado para almacenar el rol seleccionado [idRolEquipo
     const [roles, setRoles] = useState([]);
-    const [rol, setRol] = useState("");
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
 
@@ -351,24 +352,9 @@ export default function crear_equipo(props) {
                                         removeHandler={removeMiembro}
                                         isEditable={true}
                                     ></CardSelectedUser>
-                                    <MyCombobox
-                                        urlApi={
-                                            process.env
-                                                .NEXT_PUBLIC_BACKEND_URL +
-                                            `/api/proyecto/equipo/listarRol/${idEquipoInsertado}`
-                                        }
-                                        property="roles"
-                                        nameDisplay="nombreRol"
-                                        hasColor={false}
-                                        onSelect={(value) =>
-                                            handleSelectedValueChangeRol(
-                                                value,
-                                                component.idUsuario
-                                            )
-                                        }
-                                        idParam="idRolEquipo"
-                                        reloadData={reloadData}
-                                        initialName="Seleccione un rol"
+                                    <ComboBoxArray
+                                        people={roles}
+                                        onSelect={setRol}
                                     />
                                 </div>
                             );
@@ -425,7 +411,7 @@ export default function crear_equipo(props) {
                 <PopUpRolEquipo
                     modal={modal}
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                    idEquipo={idEquipoInsertado}
+                    handleAddRoles={handleAddRoles}
                 />
             )}
             {modal1 && (
