@@ -219,7 +219,7 @@ function Login() {
 
         google.accounts.id.renderButton(document.getElementById("signInDiv"), {
             theme: "outline",
-            size: "large",
+            size: "large"
         });
     }, []);
 
@@ -302,6 +302,7 @@ function Login() {
                 className={"w-48"}
             />
 
+
             <div className="flex flex-row w-full items-center">
                 <div className="flex-1 h-0.5 rounded-2xl bg-gray-300"></div>
                 <div className="px-4">O inicia sesión con</div>
@@ -318,6 +319,12 @@ function Login() {
             /> */}
 
             <div id="signInDiv"></div>
+
+
+            <p className="m-0 p-[.2rem] px-[.5rem] bg-slate-300 rounded-lg" onClick={()=>{
+                setEmail("adminLosDibujitos@hotmail.com");
+                setPassword("ContraSegura_3526890");
+            }}>CUENTA ADMIN</p>
 
             <div className="flex flex-wrap justify-between items-center gap-2 w-full content-center">
                 <Link href="/recoverPassword">

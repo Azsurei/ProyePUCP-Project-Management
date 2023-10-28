@@ -91,9 +91,7 @@ function MemberIcon(props) {
                         <div className="text-small font-bold">
                             {props.name + " " + props.lastName}
                         </div>
-                        <div className="text-small">
-                            {props.email}
-                        </div>
+                        <div className="text-small">{props.email}</div>
                     </div>
                 </PopoverContent>
             </Popover>
@@ -486,6 +484,18 @@ function ProjectSidebar(props) {
                     +
                 </div>
             </ul>
+
+            <Link href={stringBase + "/settings"}>
+                <div
+                    className="text-medium font-medium 
+            bg-slate-300 
+            flex justify-center 
+            rounded-md py-[.3rem] 
+            cursor-pointer"
+                >
+                    Configuracion de proyecto
+                </div>
+            </Link>
 
             {/* <DropDownMenu info={listTools1}></DropDownMenu>
             <DropDownMenu info={listTools2}></DropDownMenu> */}

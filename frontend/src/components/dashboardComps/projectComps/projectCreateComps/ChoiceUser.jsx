@@ -33,7 +33,7 @@ export default function ChoiceUser({
                     {selectedSupervisoresList.map((component) => {
                         return (
                             <CardSelectedUser
-                                key={component.id}
+                                key={component.idUsuario}
                                 name={component.name}
                                 lastName={component.lastName}
                                 usuarioObject={component}
@@ -63,7 +63,7 @@ export default function ChoiceUser({
                     {selectedMiembrosList.map((component) => {
                         return (
                             <CardSelectedUser
-                                key={component.id}
+                                key={component.idUsuario}
                                 name={component.name}
                                 lastName={component.lastName}
                                 usuarioObject={component}
