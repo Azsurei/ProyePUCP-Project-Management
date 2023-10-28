@@ -399,7 +399,7 @@ export default function crearActaReunion(props) {
                                         listAllUsers={false}
                                         handlerModalClose={toggleModal1}
                                         handlerModalFinished={returnListConvocante}
-                                        excludedUsers={selectedConvocanteList}
+                                        excludedUsers={[]}
                                         idProyecto={projectId}
                                     ></ModalUsersOne>
                                 )}
