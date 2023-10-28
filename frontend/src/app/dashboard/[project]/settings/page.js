@@ -59,8 +59,8 @@ function DatesScreen () {
 
 export default function Settings() {
     const [settingsState, setSettingsState] = useState("users");
-    const btnStyle = "group hover:underline font-medium px-4 py-2 rounded-md";
-    const btnStyleActive = "font-medium px-4 py-2 rounded-md bg-[#F4F4F5]";
+    const btnStyle = "group hover:underline font-medium px-4 py-2 rounded-md cursor-pointer";
+    const btnStyleActive = "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] cursor-pointer";
 
     return (
         <div className="flex flex-col w-[100%] h-[100%] p-[2.5rem] space-y-7 font-[Montserrat]">
