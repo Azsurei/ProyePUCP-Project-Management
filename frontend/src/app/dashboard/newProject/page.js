@@ -25,6 +25,8 @@ import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useContext } from "react";
+import { SessionContext } from "../layout";
 
 axios.defaults.withCredentials = true;
 
@@ -95,7 +97,7 @@ export const ToolCardsContext = createContext();
 
 export default function newProject() {
     const router = useRouter();
-
+    const {sessionData} = useContext(SessionContext);
 
     const steps = ['Información General', 'Herramientas', 'Participantes'];
 
@@ -479,14 +481,14 @@ export default function newProject() {
                 <ModalUser
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfSupervisores}
-                    excludedUsers={selectedSupervisoresList}
+                    excludedUsers={[...selectedMiembrosList,...selectedSupervisoresList,sessionData]}
                 ></ModalUser>
             )}
             {modal2 && (
                 <ModalUser
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
-                    excludedUsers={selectedMiembrosList}
+                    excludedUsers={[...selectedMiembrosList,...selectedSupervisoresList,sessionData]}
                 ></ModalUser>
             )}
 

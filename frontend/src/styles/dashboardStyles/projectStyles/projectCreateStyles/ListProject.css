@@ -1,64 +1,62 @@
-.ListProject .ProjectCard{
+.ListProject .ProjectCard {
+    background: #fff;
+
+    width: 100%; /* Ajusta el ancho según tus necesidades */
+    height: auto;
+
+    overflow: right;
+}
+
+.ProjectCard {
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
+    padding: 1.2rem 1.2rem;
 
     border-radius: 10px;
-    background: #FFF;
-    
-    
-    width: 100%; /* Ajusta el ancho según tus necesidades */
-    height: 250px;
-    
-    border-radius: 16px;
-    overflow: right;
-	
+    border-style: solid;
+    border-color: #dfdfdf;
+    border-width: 1px;
+    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+
+    transform: scale(1);
+    transition: background-color 0.15s ease-in, transform  0.1s ease-in;
 }
 
-.ProjectCard{
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
-    padding: 2rem 2rem;
-}
-
-.ProjectCard:hover{
-
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
-    background-color: #5088e9c5; /* Cambia el color de fondo */
-    color: white;
-    transform: scale(1.05);
+.ProjectCard:hover {
+    /* box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5); */
+    /* background-color: #507fd1c5; */
+    background-color: rgb(238, 238, 238);
     cursor: pointer;
+    transform: scale(1.02);
+
+    transition: transform 0.15s ease-in;
+    transition: background-color 0.15s ease-in, transform 0.1s ease-in;
 }
 
-.ProjectCard:hover{
+
+
+/* .ProjectCard:hover .cardDates {
     color: white;
-    transition: background-color 0.15s ease-in;
+} */
 
-}
 
-.ProjectCard:hover .cardDates{
-    color: white;
-}
-
-.ProjectCard:hover .membersIcon{
-    background-color: gray;
-    transition: background-color 0.15s ease;
-}
-
-.ListProject .ProjectCard .cardTitleProject{
+.ListProject .ProjectCard .cardTitleProject {
     font-size: 16px;
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
     font-weight: 600;
     font-style: normal;
 }
 
-.divPictures{
+.divPictures {
     list-style: none;
     display: grid;
     gap: 0px;
-    grid-template-columns: repeat(auto-fill, minmax(45px,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
     row-gap: 5px;
-    margin-top: 10px;
-
+    margin-top: 7px;
+    font-family: 'Montserrat';
 }
 
-.ListProject{
+.ListProject {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -68,11 +66,11 @@
     display: grid;
     row-gap: 1.5rem;
     column-gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     height: auto;
-    
 }
-.cardDates{
+
+.cardDates {
     color: #767676;
     font-family: Montserrat;
     font-size: 12px;
@@ -81,37 +79,37 @@
     line-height: 2rem; /* 177.778% */
 }
 
-.membersIcon{
-    width: 2.5rem;
+.membersIcon {
+    /* width: 2.5rem;
     height: 2.5rem;
     flex-shrink: 0;
-    border-radius: 100%;
+    border-radius: 100%; */
 
     background-color: lightgray;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-color: lightgray;
+    font-size: .9rem;
 }
 
-.teamTag{
-    margin-top: 1rem;
-    margin-bottom: 1.3rem;
+.teamTag {
     border-radius: 5px;
-    background-color:#8DFFA6;
-    width: 12rem;
+    width: auto;
     height: 2rem;
     display: inline-block;
     padding: 5px 5px;
     border-radius: 4px;
     text-align: center;
+    opacity: 0.5;
 }
 
 .teamTag p {
     font-size: 14px;
     margin: 0;
-    color: black;
+    color: white;
     font-style: normal;
-    font-weight: 600;
+    font-weight: 500;
     text-align: center;
     font-family: Montserrat;
-  }
+}

@@ -64,10 +64,14 @@ const memberData = [
 function MemberIcon(props) {
     return (
         <li className="memberContainer">
-            <p className="memberIcon">
-                {props.name[0]}
-                {props.lastName[0]}
-            </p>
+            {props.imgLink !== null ? (
+                <img className="memberIcon" src={props.imgLink} />
+            ) : (
+                <p className="memberIcon">
+                    {props.name[0]}
+                    {props.lastName[0]}
+                </p>
+            )}
         </li>
     );
 }
@@ -168,7 +172,8 @@ function ProjectSidebar(props) {
     useEffect(() => {
         let toolsArray;
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/herramientas/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/herramientas/" +
             props.projectId +
             "/listarHerramientasDeProyecto";
         axios
@@ -223,7 +228,8 @@ function ProjectSidebar(props) {
             });
 
         const stringURL_2 =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/listarUsuariosXidRolXidProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/listarUsuariosXidRolXidProyecto";
 
         axios
             .post(stringURL_2, {
@@ -365,7 +371,8 @@ function ProjectSidebar(props) {
 
     const addUserToProject = (newMiembrosList) => {
         const addNewURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/insertarUsuariosAProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/usuario/insertarUsuariosAProyecto";
 
         const formatedMiembrosList = newMiembrosList.map((user) => ({
             ...user, // Copy the existing properties
@@ -416,6 +423,7 @@ function ProjectSidebar(props) {
                             key={member.idUsuario}
                             name={member.nombres}
                             lastName={member.apellidos}
+                            imgLink={member.imgLink}
                         ></MemberIcon>
                     );
                 })}
@@ -468,9 +476,8 @@ function ProjectSidebar(props) {
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
 
-
             {/* ESTO ESTA PENDIENTEEEE ================================================= */}
-            {isModalUserOpen && 
+            {isModalUserOpen && (
                 <ModalUsersOne
                     listAllUsers={true}
                     handlerModalClose={() => {
@@ -481,7 +488,7 @@ function ProjectSidebar(props) {
                         setIsModalUserOpen(false);
                         //addUserToProject(newMiembrosList);
                     }}
-                    excludedUsers={memberData.map(item => ({
+                    excludedUsers={memberData.map((item) => ({
                         id: item.idUsuario,
                         name: item.nombres,
                         lastName: item.apellidos,
@@ -489,7 +496,7 @@ function ProjectSidebar(props) {
                     }))}
                     idProyecto={props.projectId}
                 ></ModalUsersOne>
-            }
+            )}
         </nav>
     );
 }
