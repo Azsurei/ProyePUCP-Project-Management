@@ -19,6 +19,10 @@ export default function RootLayout({ children, params }) {
     const [isLoadingSmall, setIsLoadingSmall] = useState(true);
 
     const { sessionData, setSession } = useContext(SessionContext);
+
+
+    const [projectRolData, setProjectRolData] = useState({rolInProject:1, rolNameInProject: ""});
+
     useEffect(() => {
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verRolUsuarioEnProyecto";
@@ -29,12 +33,14 @@ export default function RootLayout({ children, params }) {
                 idProyecto: projectId
             })
             .then(function (response) {
-                const user_rol = response.data.rol.idRol;
                 const new_session = {...sessionData};
-                new_session.rolInProject = user_rol;
+                new_session.rolInProject = response.data.rol.idRol;
+                new_session.rolNameInProject = response.data.rol.nombre;
                 setSession(new_session);
 
                 console.log("Bienvenido Usuario => " + JSON.stringify(new_session));
+
+                setProjectRolData({rolInProject: response.data.rol.idRol, rolNameInProject: response.data.rol.nombre});
                 //setIsLoading(false);
                 setIsLoadingSmall(false);
             })
@@ -50,6 +56,8 @@ export default function RootLayout({ children, params }) {
                 <ProjectSidebar
                     projectName={projectName}
                     projectId={projectId}
+                    projectIdRole={projectRolData.rolInProject}
+                    projectNameRole={projectRolData.rolNameInProject}
                     currentUrl={params.project}
                 ></ProjectSidebar>
                 <div
