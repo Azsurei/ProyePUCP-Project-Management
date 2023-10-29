@@ -1,8 +1,28 @@
+.ListProject {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-top: 1.8rem;
+    padding-bottom: 2.5rem;
+
+    display: grid;
+    row-gap: 1.5rem;
+    column-gap: 1.5rem;
+
+
+    grid-template-columns: repeat(auto-fit, minmax(min(300px,100%), 1fr));
+    height: auto;
+}
+
 .ListProject .ProjectCard {
     background: #fff;
 
-    width: 100%; /* Ajusta el ancho según tus necesidades */
-    height: auto;
+
+    max-width: 400px;
+    min-width: 300px;
+
+    /* margin-right: auto;
+    margin-left: auto; */
 
     overflow: right;
 }
@@ -56,19 +76,7 @@
     font-family: 'Montserrat';
 }
 
-.ListProject {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-top: 1.8rem;
-    padding-bottom: 2.5rem;
 
-    display: grid;
-    row-gap: 1.5rem;
-    column-gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    height: auto;
-}
 
 .cardDates {
     color: #767676;

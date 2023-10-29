@@ -252,9 +252,8 @@ export default function ProductBacklog(props) {
                                 <DropdownItem onClick={() => {
                                     setRoutering(data)
                                 }}>
-                                {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
+                                
                                         Editar 
-                                {/* </Link> */}
                                 </DropdownItem>
 
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
@@ -411,7 +410,7 @@ export default function ProductBacklog(props) {
                 <div className="titleBacklog">BACKLOG</div>
                 <div className="navigationBacklog">
                     <div className="navigationBacklogIzquierda">
-                        <Link href="#tableroKanban">
+                        <Link href="#tableroKanban" style={{border: '1px red solid', height:'auto'}}>
                             <button className="btnBacklog sm:w-1 sm:h-1" type="button">Tablero Kanban</button>
                         </Link>
                         <Link href="#sprintBacklog">
@@ -422,7 +421,7 @@ export default function ProductBacklog(props) {
                         </Link>
                     </div>
                     <div className="navigationBacklogDerecha">
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/registerPB"}>
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/backlog/productBacklog/registerPB"}>
                             <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Añadir elemento</button>
                         </Link>
                     </div>
