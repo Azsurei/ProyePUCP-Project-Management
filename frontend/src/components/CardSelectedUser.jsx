@@ -13,7 +13,7 @@ export default function CardSelectedUser({
         <div className="CardSelectedUser">
             <div className="containerLeft">
                 {/* <p className="profilePic">{nombres[0] + apellidos[0]}</p> */}
-                 <Avatar
+                <Avatar
                     //isBordered
                     //as="button"
                     className="transition-transform w-[50px] min-w-[50px] h-[50x] min-h-[50px]"
@@ -26,7 +26,7 @@ export default function CardSelectedUser({
                                     : "")}
                         </p>
                     }
-                /> 
+                />
 
                 <div className="containerInfo">
                     <p className="usrNames">{nombres + " " + apellidos}</p>
@@ -35,9 +35,9 @@ export default function CardSelectedUser({
             </div>
             {isEditable && (
                 <img
-                    src="/icons/icon-crossBlack.svg"
+                    src="/icons/icon-trash.svg"
                     alt="delete"
-                    className="icnRightDelete"
+                    className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
                     onClick={() => {
                         removeHandler(usuarioObject);
                     }}

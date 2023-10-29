@@ -11,11 +11,11 @@ export default function ComboBoxArray({ people, onSelect }) {
         query === ""
             ? people
             : people.filter((person) => {
-                  return person.toLowerCase().includes(query.toLowerCase());
+                  return person.nombreRol.toLowerCase().includes(query.toLowerCase());
               });
 
     return (
-        <div>
+        <div className="absolute right-16 top-1/2 transform -translate-y-1/2">
             <Combobox
                 value={selectedPerson}
                 onChange={(selectedItem) => {
@@ -30,6 +30,7 @@ export default function ComboBoxArray({ people, onSelect }) {
                         <Combobox.Input
                             className={`w-80 border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
                             onChange={(event) => setQuery(event.target.value)}
+                            displayValue={(person) => person.nombreRol}
                         />
                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronUpDownIcon
@@ -75,7 +76,7 @@ export default function ComboBoxArray({ people, onSelect }) {
                                                             : "font-normal"
                                                     }`}
                                                 >
-                                                    {person}{" "}
+                                                    {person.nombreRol}{" "}
                                                     {/* //lo que se muestra en la lista */}
                                                 </span>
                                                 {selectedPerson ? (
