@@ -93,7 +93,6 @@ export default function Equipo(props) {
             document.body.style.overflow = "auto";
             setReloadData(false);
         }
-        setIsLoadingSmall(false);
     }, [modal]);
 
     const handleSelectedValueChangeRol = (value, name, userId) => {
@@ -174,7 +173,7 @@ export default function Equipo(props) {
                             );
 
                             setListComps(teamsArray);
-                            setIsLoadingSmall(false);
+                            
                         })
                         .catch(function (error) {
                             console.log(
@@ -183,7 +182,7 @@ export default function Equipo(props) {
                             );
                         });
                 }
-
+                setIsLoadingSmall(false);
                 console.log("ya pase");
                 
                 

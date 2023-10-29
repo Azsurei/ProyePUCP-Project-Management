@@ -6,45 +6,20 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import { Input, Button } from "@nextui-org/react";
-
-import { SearchIcon } from "@/../public/icons/SearchIcon";
+import "@/styles/dashboardStyles/projectStyles/productBacklog/LisEpic.css";
+import { Toaster, toast } from "sonner";
 
 export const UserCardsContext = React.createContext();
 
 export default function PopUpRolEquipo({ modal, toggle, handleAddRoles }) {
-    const [filterValue, setFilterValue] = useState("");
     const [listRoles, setListRoles] = useState([]);
-    const [noResults, setNoResults] = useState(false);
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
     const [eliminateError, setEliminateError] = useState("");
     const [noRol, setNoRol] = useState("");
     const [isSelected, setIsSelected] = useState(false);
     const [addRol, setAddRol] = useState(false);
-
-    const onSearchChange = (value) => {
-        setFilterValue(value);
-    };
-
-    const AddNewRol = () => {
-        setAddRol(true);
-    };
-
-    const fetchData = () => {
-        const roles = listRoles; //roles es un arreglo de strings(nombres de roles)
-        const filteredRoles = filterValue
-            ? roles.filter((rol) =>
-                  rol.toLowerCase().includes(filterValue.toLowerCase())
-              )
-            : roles;
-
-        setListRoles(filteredRoles);
-        if (filteredRoles.length === 0) {
-            setNoResults(true);
-        } else {
-            setNoResults(false);
-        }
-    };
+    const [quantity, setQuantity] = useState(1);
 
     const handleInsertRol = () => {
         const hasDuplicates = (arr) => new Set(arr).size !== arr.length;
@@ -62,66 +37,13 @@ export default function PopUpRolEquipo({ modal, toggle, handleAddRoles }) {
         }
     };
 
-    //quita el rol del arreglo de roles
-/*     const EliminateRol = (rol) => {
-        setEliminateError("");
-        setListRoles(listRoles.filter((rol) => rol !== selectedRol));
-        setIsSelected(false);
-    }; */
-
-    const EliminateRoles = (rolesToRemove) => {
-        setEliminateError("");
-        
-        // Convertir el conjunto en un arreglo
-        const rolesToRemoveArray = Array.from(rolesToRemove);
-        
-        setListRoles((prevRoles) => prevRoles.filter((rol) => !rolesToRemoveArray.includes(rol)));
-        setIsSelected(false);
-      };
-
-    /*     const [selectedRol, setSelectedRol] = useState(null);
-
-    const selectRol = (rol) => {
-        setSelectedRol(rol);
-        setIsSelected(true);
-        setNoRol("");
-        console.log(rol);
+    const EliminateRoles = (rol) => {
+        setListRoles((prevRoles) => {
+            return prevRoles.filter((role) => role.idRol !== rol.idRol);
+        });
     };
-
-    const deselectRol = (rol) => {
-        setSelectedRol(null);
-        setIsSelected(false);
-    }; */
 
     const [selectedRoles, setSelectedRoles] = useState(new Set());
-
-    const selectRol = (rol) => {
-        setSelectedRoles((prevSelectedRoles) => {
-            const newSelectedRoles = new Set(prevSelectedRoles);
-            newSelectedRoles.add(rol);
-            setIsSelected(true);
-            setNoRol("");
-            return newSelectedRoles;
-        });
-    };
-
-    const deselectRol = (rol) => {
-        setSelectedRoles((prevSelectedRoles) => {
-            const newSelectedRoles = new Set(prevSelectedRoles);
-            newSelectedRoles.delete(rol);
-            setIsSelected(false);
-            return newSelectedRoles;
-        });
-    };
-
-    const handleEliminateError = (nameError) => {
-        setEliminateError(nameError);
-        setAddErrorRol("");
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [filterValue]);
 
     //agregamos el rol a la lista de roles
     const handleConfirmButtonClick = () => {
@@ -141,137 +63,126 @@ export default function PopUpRolEquipo({ modal, toggle, handleAddRoles }) {
         modal && (
             <div className="popUp" style={{ animation: "droptop .3s linear" }}>
                 <div onClick={toggle} className="overlay"></div>
-                <div className="modalEpic">
+                <div className="containerRolEquipoPrincipal">
                     {/*HEADER*/}
-                    <div className="containerModal">
-                        <p className="buscarEpic">
+                    <div className="w-full">
+                        <div className="buscarEpic">
                             Listado de Roles por Equipo
-                        </p>
-                        <div className="subcontainer flex justify-end">
+                        </div>
+                        <div className="flex w-full gap-2 mt-2">
                             {/*No modifiques este boton, ya esta bien*/}
+                            <Input
+                                variant="bordered"
+                                placeholder="Ingrese un rol"
+                                className="w-4/5"
+                                value={newRolName}
+                                onValueChange={setNewRolName}
+                            />
                             <Button
                                 color="primary"
                                 endContent={<PlusIcon />}
                                 className="btnAddEpic"
-                                onClick={AddNewRol}
+                                onClick={() => {
+                                    if (newRolName.trim() === "") {
+                                        toast.error(
+                                            "El nombre del rol no puede estar vacío."
+                                        );
+                                    } else if (
+                                        listRoles.some(
+                                            (rol) =>
+                                                rol.nombreRol === newRolName
+                                        )
+                                    ) {
+                                        toast.error(
+                                            "El nombre del rol ya existe en la lista."
+                                        );
+                                    } else {
+                                        const newRol = {
+                                            idRol: quantity,
+                                            nombreRol: newRolName,
+                                        };
+                                        setQuantity(quantity + 1);
+
+                                        setListRoles([newRol, ...listRoles]);
+                                        console.log(
+                                            "La lista de roles es:",
+                                            listRoles
+                                        );
+                                        setNewRolName(""); // Limpia el input de nombre del rol
+                                    }
+                                }}
                             >
                                 Agregar Rol
                             </Button>
-                            <Button
-                                color="danger"
-                                onClick={() => {
-                                    isSelected
-                                        ? handleEliminateError(
-                                              "Seguro desea eliminar el rol?"
-                                          )
-                                        : setNoRol(
-                                              "Falta seleccionar el rol a eliminar"
-                                          );
-                                }}
-                                endContent={<PlusIcon />}
-                                className="btnElimanteEpic"
-                            >
-                                Eliminar
-                            </Button>
                         </div>
                     </div>
-                    {/*No modifiques esto, ya esta bien*/}
-                    {/*BUSCADOR*/}
-                    <div className="divBuscador">
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[100%]"
-                            placeholder="Ingresa un rol..."
-                            startContent={<SearchIcon />}
-                            value={filterValue}
-                            onValueChange={onSearchChange}
-                            variant="faded"
-                        />
-                    </div>
-
                     {/*LISTADO*/}
-                    <div className="containerModal">
-                        <div className="divEpics">
-                            <UserCardsContext.Provider
-                                value={{ selectRol, deselectRol }}
-                            >
-                                <ListRol lista={listRoles}></ListRol>
-                            </UserCardsContext.Provider>
-                            {noResults && (
-                                <p className="error-message">
-                                    No se encontraron resultados.
-                                </p>
-                            )}
+                    <div className="w-full flex-1 overflow-y-auto">
+                        <div className="containerModal">
+                            <div className="divEpics">
+                                <ul className="ListEpicsProject">
+                                    {listRoles.map((role, index) => {
+                                        return (
+                                            <li
+                                                key={index}
+                                                className="UserCardRol"
+                                            >
+                                                <div
+                                                    style={{
+                                                        marginTop: "12px",
+                                                        marginLeft: "15px",
+                                                    }}
+                                                >
+                                                    <p className="titleUserName">
+                                                        {role.nombreRol}
+                                                    </p>
+                                                </div>
+                                                <img
+                                                    src="/icons/icon-trash.svg"
+                                                    alt="delete"
+                                                    className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
+                                                    onClick={() => {
+                                                        EliminateRoles(
+                                                            role
+                                                        );
+                                                    }}
+                                                />
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
                         </div>
                     </div>
-
-                    {/*AGREGAR*/}
-                    <div className="subcontainer">
-                        {addRol ? (
-                            <div className="flex">
-                                <input
-                                    type="text"
-                                    autofocus
-                                    className="inputEpica"
-                                    placeholder="Escribe el nuevo rol"
-                                    value={newRolName}
-                                    onChange={(e) => {
-                                        setNewRolName(e.target.value);
-                                        setAddErrorRol("");
-                                    }}
-                                ></input>
-                                <img
-                                    src="/icons/icon-confirm.svg"
-                                    alt="Confirmar"
-                                    onClick={handleConfirmButtonClick}
-                                ></img>
-                            </div>
-                        ) : null}
-                        {addErrorRol && (
-                            <p className="error-message">{addErrorRol}</p>
-                        )}
-                        {noRol && <p className="error-message">{noRol}</p>}
-                        {eliminateError ? (
-                            <div>
-                                <p className="error-message">
-                                    {eliminateError}
-                                </p>
-                                <div className="endButtons">
-                                    <button
-                                        className="buttonTwoUser"
-                                        onClick={() => setEliminateError("")}
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button
-                                        className="buttonOneUser"
-                                        onClick={() =>
-                                            EliminateRoles(selectedRoles)
-                                        }
-                                    >
-                                        Confirmar
-                                    </button>
-                                </div>
-                            </div>
-                        ) : null}
-                    </div>
-
                     {/*FOOTER*/}
                     {/*ya esta esto, no o modifiques */}
-                    <div className="buttonSection">
-                        <button className="close-modal" onClick={toggle}>
-                            Cancelar
-                        </button>
-                        <div className="right-buttons">
-                            <button
-                                className="btn-modal"
+                    <div className="w-full flex justify-end">
+                        <div className="flex gap-2">
+                            <Button
+                                color="danger"
+                                variant="light"
+                                onClick={toggle}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                className="bg-indigo-950 text-slate-50"
                                 onClick={handleInsertRol}
                             >
                                 Aceptar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
+                <Toaster
+                    position="bottom-left"
+                    richColors
+                    theme={"light"}
+                    closeButton={true}
+                    toastOptions={{
+                        style: { fontSize: "1rem" },
+                    }}
+                />
             </div>
         )
     );
