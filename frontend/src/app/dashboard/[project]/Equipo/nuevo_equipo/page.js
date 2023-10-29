@@ -61,7 +61,7 @@ export default function crear_equipo(props) {
     const [reloadData, setReloadData] = useState(false);
 
     const [rol, setRol] = useState({}); //Define un estado para almacenar el rol seleccionado [idRolEquipo
-    const [roles, setRoles] = useState([]);
+    const [roles, setRoles] = useState([{idRol: 1, nombreRol: "Miembro"}]); //Define un estado para almacenar los roles disponibles
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
 
@@ -85,9 +85,11 @@ export default function crear_equipo(props) {
     };
 
     //roles es un arreglo de roles, en este caso paso como parametro el conjunto de roles
-    const handleAddRoles = (roles) => {
-        setRoles(roles);
-        console.log("Roles: ", roles);
+    const handleAddRoles = (newRoles) => {
+        // Concatena los nuevos roles con los roles existentes
+        const updatedRoles = [...roles, ...newRoles];
+        setRoles(updatedRoles);
+        console.log("Roles: ", updatedRoles);
     };
 
     const returnUniqueListOfMiembros = (newMiembrosList) => {

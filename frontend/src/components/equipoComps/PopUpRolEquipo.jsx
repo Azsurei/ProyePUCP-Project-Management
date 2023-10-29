@@ -19,22 +19,12 @@ export default function PopUpRolEquipo({ modal, toggle, handleAddRoles }) {
     const [noRol, setNoRol] = useState("");
     const [isSelected, setIsSelected] = useState(false);
     const [addRol, setAddRol] = useState(false);
-    const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState(2);
 
     const handleInsertRol = () => {
-        const hasDuplicates = (arr) => new Set(arr).size !== arr.length;
-        if (listRoles.length === 0) {
-            setAddErrorRol("No se puede crear un equipo sin roles.");
-        } else if (hasDuplicates(listRoles)) {
-            setAddErrorRol("El nombre del rol ya existe en la lista.");
-        } else {
-            // Realiza la inserción de la nueva épica aquí, por ejemplo, con una solicitud axios.
-            // Luego, limpia el campo de entrada y el mensaje de error.
-            setNewRolName("");
-            setAddErrorRol("");
-            handleAddRoles(listRoles);
-            toggle();
-        }
+        setNewRolName("");
+        handleAddRoles(listRoles);
+        toggle();
     };
 
     const EliminateRoles = (rol) => {
@@ -142,9 +132,7 @@ export default function PopUpRolEquipo({ modal, toggle, handleAddRoles }) {
                                                     alt="delete"
                                                     className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
                                                     onClick={() => {
-                                                        EliminateRoles(
-                                                            role
-                                                        );
+                                                        EliminateRoles(role);
                                                     }}
                                                 />
                                             </li>
