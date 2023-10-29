@@ -227,20 +227,21 @@ BEGIN
 END
 
 
-DROP PROCEDURE LISTAR_USUARIOS_X_NOMBRE_CORREO
+DROP PROCEDURE LISTAR_USUARIOS_X_NOMBRE_CORREO;
+
 DELIMITER $
 CREATE PROCEDURE LISTAR_USUARIOS_X_NOMBRE_CORREO(
     IN _nombreCorreo VARCHAR(255)
 )
 BEGIN
-    SELECT idUsuario, nombres, apellidos, correoElectronico
-    FROM Usuario 
-    WHERE ( _nombreCorreo IS NULL OR (CONCAT(nombres, ' ', apellidos) LIKE CONCAT('%', _nombreCorreo, '%')) OR
-    correoElectronico LIKE CONCAT('%', _nombreCorreo, '%')) 
-    AND activo = 1;
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico
+    FROM Usuario u
+    WHERE ( _nombreCorreo IS NULL OR (CONCAT(u.nombres, ' ', u.apellidos) LIKE CONCAT('%', _nombreCorreo, '%')) OR
+    u.correoElectronico LIKE CONCAT('%', _nombreCorreo, '%')) 
+    AND u.activo = 1;
 END$
 
-CALL LISTAR_USUARIOS_X_NOMBRE_CORREO('Ren');
+CALL LISTAR_USUARIOS_X_NOMBRE_CORREO('Aug');
 SELECT * FROM UsuarioXRolXProyecto;
 
 DROP PROCEDURE INSERTAR_USUARIO_X_ROL_X_PROYECTO;
@@ -262,6 +263,16 @@ CALL LISTAR_USUARIOS_X_ID_ROL_X_ID_PROYECTO(1,6);
 CREATE PROCEDURE LISTAR_HERRAMIENTAS()
 BEGIN
 	SELECT * FROM Herramienta WHERE activo =1;
+END$
+
+DROP PROCEDURE LISTAR_USUARIOS_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.activo, u.imgLink, up.idUsuarioRolProyecto
+	FROM Usuario AS u
+    JOIN UsuarioXRolXProyecto AS up ON u.idUsuario = up.idUsuario
+	WHERE up.idProyecto = _idProyecto AND up.activo=1;
 END$
 
 DELIMITER $
@@ -798,8 +809,8 @@ BEGIN
     WHERE pr.idLineaActaReunion = _idLineaActaReunion AND pr.activo=1;
 END$
 
-CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(1)
-
+CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(52)
+SELECT * FROM LineaActaReunion;
 DROP PROCEDURE IF EXISTS MODIFICAR_PARTICIPANTE_X_REUNION;
 DELIMITER $
 CREATE PROCEDURE MODIFICAR_PARTICIPANTE_X_REUNION(

@@ -13,6 +13,8 @@ const routerCatalagoRiesgos = require('./catalogoRiesgos').routerCatalagoRiesgos
 const routerActaReunion = require('./actaReunion').routerActaReunion;
 const routerProyecto = express.Router();
 
+const proyectoController = require("../controllers/proyectoController");
+
 routerProyecto.use("/backlog", routerBacklog);
 routerProyecto.use("/EDT", routerEDT);
 routerProyecto.use("/equipo", routerEquipo);
@@ -23,6 +25,8 @@ routerProyecto.use("/matrizDeComunicaciones", routerMatrizComunicaciones);
 routerProyecto.use("/autoEvaluacion", routerAutoEvaluacion);
 routerProyecto.use("/catalogoRiesgos", routerCatalagoRiesgos);
 routerProyecto.use("/actaReunion", routerActaReunion);
+//routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
+
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
     const idUsuario = req.user.id; //del token
