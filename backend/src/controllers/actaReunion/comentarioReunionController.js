@@ -22,10 +22,6 @@ async function listarXIdLineaActaReunion(req,res,next){
     }
 }
 
-
-
-
-
 async function funcCrear(idLineaActaReunion,descripcion){
     try {
         const query = `CALL INSERTAR_COMENTARIO_REUNION(?,?);`;
@@ -50,10 +46,19 @@ async function funcListarXIdLineaActaReunion(idLineaActaReunion){
     return comentarios;
 }
 
+async function funcModificar(idComentarioReunion,descripcion){
+    try {
+        const query = `CALL MODIFICAR_COMENTARIO_REUNION(?,?);`;
+        const [results]=await connection.query(query,[idComentarioReunion,descripcion]);
+    } catch (error) {
+        next(error);
+    }
+}
 
 module.exports = {
     crear,
     listarXIdLineaActaReunion,
     funcCrear,
-    funcListarXIdLineaActaReunion
+    funcListarXIdLineaActaReunion,
+    funcModificar
 }

@@ -16,7 +16,7 @@ https://github.com/nodesource/distributions
    - certbot: https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal **Es importante configurar el certbot antes del nginx**
    - nginx: sudo apt install nginx y darle start y enable
 
-
+   
 ## Configuración de Nginx
 
 4. **Crea un archivo de configuración para tu front-end**:

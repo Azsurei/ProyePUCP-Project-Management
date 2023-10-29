@@ -56,8 +56,8 @@ async function listarXIdLineaActaReunion(req,res,next){
         const query = `CALL LISTAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(?);`;
         const [results] = await connection.query(query,[idLineaActaReunion]);
         const lineaActaReunion = results[0][0];
-
-        if (!idLineaActaReunion) {
+        console.log(lineaActaReunion);
+        if (!lineaActaReunion) {
             return res.status(400).json({ message: "El ID de la línea del acta de reunión debe ser valido y debe estar activo" });
         }
         
@@ -73,6 +73,17 @@ async function listarXIdLineaActaReunion(req,res,next){
         res.status(200).json({
             lineaActaReunion,
             message: "Lineas acta reunion listadas"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function modificar(req,res,next){
+    const {idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentario} = req.body;
+    try {
+        const result = await funcModificar(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentario);
+        res.status(200).json({
+            message: "Linea acta reunion modificada"});
     } catch (error) {
         next(error);
     }
@@ -104,10 +115,33 @@ async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,no
     return idLineaActaReunion;
 }
 
+async function funcModificar(idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios){
+    try {
+        const query = `CALL MODIFICAR_LINEA_ACTA_REUNION(?,?,?,?,?,?);`;
+        [results] = await connection.query(query,[idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo]);
+        for(const tema of temas){
+            temaReunionController.funcModificar(idLineaActaReunion,tema.descripcion,tema.acuerdos);
+        }
+
+        for(const participante of participantes){
+            participanteXReunionController.funcModificar(idLineaActaReunion,participante.idUsuarioXRolXProyecto,participante.asistio);
+        }
+
+        for(const comentario of comentarios){
+            comentarioReunionController.funcModificar(idLineaActaReunion,comentario.descripcion);
+        }
+    } catch (error) {
+        console.log(error);
+        return 0;
+    }
+    return 1;
+}
+
 module.exports = {
     crear,
     listarXIdActaReunion,
     funcCrear,
     listarXIdLineaActaReunion,
-    eliminarXIdLineaActaReunion
+    eliminarXIdLineaActaReunion,
+    modificar
 }

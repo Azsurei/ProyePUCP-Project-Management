@@ -53,6 +53,18 @@ async function funcListarXIdTemaReunion(idTemaReunion){
     return acuerdos;
 }
 
+async function funcModificar(idAcuerdo,descripcion,fechaObjetivo,responsables){
+    try {
+        const query = `CALL MODIFICAR_ACUERDO(?,?,?);`;
+        const [results]=await connection.query(query,[idAcuerdo,descripcion,fechaObjetivo]);
+        for(responsable of responsables){
+            responsableAcuerdoController.funcModificar(idAcuerdo,responsable.idUsuarioXRolXProyecto);
+        }
+    } catch (error) {
+        next(error);
+    }
+
+}
 
 
 module.exports = {
