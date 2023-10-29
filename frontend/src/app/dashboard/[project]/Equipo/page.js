@@ -126,7 +126,7 @@ export default function Equipo(props) {
         setSelectedTeam({ ...selectedTeamTemporal });
     };
 
-    useEffect(() => {
+    const fetchTeamsData = () => {
         setIsLoadingSmall(true);
         let teamsArray;
         const stringURL =
@@ -136,18 +136,65 @@ export default function Equipo(props) {
         console.log("La URL es" + stringURL);
         axios
             .get(stringURL)
-
             .then((response) => {
                 console.log("Respuesta del servidor:", response.data);
                 teamsArray = response.data.equipos;
                 console.log("Los arreglos son " + JSON.stringify(teamsArray));
-                setListComps(teamsArray);
-                setIsLoadingSmall(false);
-            })
 
+                for (const equipo of teamsArray) {
+                    equipo.tareasNoIniciado = 0;
+                    equipo.tareasFinished = 0;
+                }
+
+                for (const equipo of teamsArray) {
+                    const verTareasURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
+                        equipo.idEquipo;
+                    axios
+                        .get(verTareasURL)
+                        .then((response) => {
+                            console.log(response.data.message);
+                            console.log(response.data.tareasEquipo);
+                            const tareasTotales =
+                                response.data.tareasEquipo.filter(
+                                    (tarea) => tarea.idTareaEstado !== 4
+                                ).length;
+                            const tareasFinished =
+                                response.data.tareasEquipo.filter(
+                                    (tarea) => tarea.idTareaEstado === 4
+                                ).length;
+                            equipo.tareasTotales = tareasTotales;
+                            equipo.tareasFinished = tareasFinished;
+                            console.log(
+                                "este equipo tuvo " +
+                                tareasTotales +
+                                    " y " +
+                                    tareasFinished
+                            );
+
+                            setListComps(teamsArray);
+                            setIsLoadingSmall(false);
+                        })
+                        .catch(function (error) {
+                            console.log(
+                                "Error al cargar la lista de tareas del equipo: ",
+                                error
+                            );
+                        });
+                }
+
+                console.log("ya pase");
+                
+                
+            })
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
             });
+    };
+
+    useEffect(() => {
+        fetchTeamsData();
     }, []);
 
     const handleSeeTeam = (team) => {
@@ -203,11 +250,16 @@ export default function Equipo(props) {
 
     const checkIfMultipleLeadersExist = () => {
         // Filtra los participantes que tienen el rol de líder
-        const leaderParticipants = selectedTeam.participantes.filter((participant) => participant.nombreRol === "Lider");
-    
+        const leaderParticipants = selectedTeam.participantes.filter(
+            (participant) => participant.nombreRol === "Lider"
+        );
+
         // Verifica si tienes más de un líder
         console.log("El selectedTeam para verificar líderes es:", selectedTeam);
-        console.log("El lenght de leaderParticipants es:", leaderParticipants.length);
+        console.log(
+            "El lenght de leaderParticipants es:",
+            leaderParticipants.length
+        );
         return leaderParticipants.length > 1;
     };
 
@@ -403,7 +455,7 @@ export default function Equipo(props) {
                         </div>
                     ) : (
                         <div className="noTeamsMessage">
-                            <h2>¡Vaya!</h2>
+                            <h2>Empieza Ya!</h2>
                             <p className="littleMessage">
                                 ¡Aún no tienes equipos en este proyecto! <br />
                                 Recuerda que delegar tareas es muy importante.
@@ -436,6 +488,7 @@ export default function Equipo(props) {
                         haveReturn={true}
                         haveAddNew={false}
                         handlerReturn={() => {
+                            fetchTeamsData();
                             setScreenState(0);
                         }}
                         //newPrimarySon={ListComps.length + 1}
@@ -518,14 +571,25 @@ export default function Equipo(props) {
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
-                                                if (checkIfLeaderExists() && !checkIfMultipleLeadersExist()) {
+                                                if (
+                                                    checkIfLeaderExists() &&
+                                                    !checkIfMultipleLeadersExist()
+                                                ) {
                                                     onSubmitParticipantesRoles();
                                                     setUpdateState(false);
-                                                    toast.success("Se ha modificado exitosamente");
-                                                }else if(checkIfMultipleLeadersExist()){
-                                                    toast.error("Solo puede haber un líder");
+                                                    toast.success(
+                                                        "Se ha modificado exitosamente"
+                                                    );
+                                                } else if (
+                                                    checkIfMultipleLeadersExist()
+                                                ) {
+                                                    toast.error(
+                                                        "Solo puede haber un líder"
+                                                    );
                                                 } else {
-                                                    toast.error("Un miembro debe tener el rol de líder");
+                                                    toast.error(
+                                                        "Un miembro debe tener el rol de líder"
+                                                    );
                                                 }
                                             }}
                                         >
@@ -606,12 +670,19 @@ export default function Equipo(props) {
                                                 >
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos!==null? member.apellidos[0] : ""}
+                                                            member.apellidos !==
+                                                        null
+                                                            ? member
+                                                                  .apellidos[0]
+                                                            : ""}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
-                                                            {member.apellidos!==null? member.apellidos: ""}
+                                                            {member.apellidos !==
+                                                            null
+                                                                ? member.apellidos
+                                                                : ""}
                                                         </div>
                                                         <div>
                                                             {
@@ -686,12 +757,19 @@ export default function Equipo(props) {
                                                 <div className="col-span-6 flex mt-4">
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos!==null? member.apellidos[0] : ""}
+                                                            member.apellidos !==
+                                                        null
+                                                            ? member
+                                                                  .apellidos[0]
+                                                            : ""}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
-                                                            {member.apellidos!==null? member.apellidos: ""}
+                                                            {member.apellidos !==
+                                                            null
+                                                                ? member.apellidos
+                                                                : ""}
                                                         </div>
                                                         <div>
                                                             {

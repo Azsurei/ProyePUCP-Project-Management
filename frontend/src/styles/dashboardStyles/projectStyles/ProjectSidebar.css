@@ -49,6 +49,7 @@
     font-weight: 600;
     color: #172B4D;
     max-width: 220px;
+    line-break: anywhere;
 }
 
 .ProjectSidebar .dates{
@@ -59,16 +60,21 @@
 .ProjectSidebar .teamContainer{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
+    gap: .5rem;
+    margin-top: 5px;
 }
 
 .ProjectSidebar .teamContainer .teamHeader{
     font-size: 1.2rem;
     color: #767676;
+    flex-wrap: nowrap;
+    min-width:60px;
 }
 
 .ProjectSidebar .teamContainer .teamName{
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #000000;
 
     background-color: #8DFFA6;
@@ -101,6 +107,14 @@
 /*=============== STYLES OF MemberIcon ===============*/
 .memberContainer{
     display: flex;
+    transform: scale(1);
+    transition: transform 0.1s ease-in;
+    cursor: pointer;
+}
+
+.memberContainer:hover{
+    transform: scale(1.09);
+    transition: transform 0.1s ease-in;
 }
 
 

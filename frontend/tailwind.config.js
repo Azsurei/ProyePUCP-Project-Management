@@ -20,6 +20,9 @@ module.exports = {
             backgroundColor: {
                 '172B4D': '#172B4D',
                 'F0AE19': '#F0AE19',
+            },
+            textColor: {
+                '172B4D': '#172B4D',
             }
         },
     },

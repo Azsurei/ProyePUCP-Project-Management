@@ -82,7 +82,7 @@ export default function Cronograma(props) {
 
     const colorDropbox = ["default", "primary", "danger", "success"];
 
-    //const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const {
         isOpen: isModalSubEOpen,
         onOpen: onModalSubEOpen,
@@ -316,7 +316,8 @@ export default function Cronograma(props) {
     function promiseEliminarTarea() {
         return new Promise((resolve, reject) => {
             const deleteURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/eliminarTarea";
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/cronograma/eliminarTarea";
 
             if (tareaEliminar === null) {
                 reject("No se encontro la tarea");
@@ -331,7 +332,8 @@ export default function Cronograma(props) {
 
                     //actualizamos lista de tareas
                     const tareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
                     axios
                         .get(tareasURL)
@@ -389,7 +391,8 @@ export default function Cronograma(props) {
         console.log(firstFechaFin);
 
         const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/actualizarCronograma";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/cronograma/actualizarCronograma";
         axios
             .put(updateURL, {
                 idProyecto: projectId,
@@ -400,13 +403,14 @@ export default function Cronograma(props) {
                 console.log(response.data.message);
 
                 const tareasURL =
-                    process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/cronograma/listarTareasXidProyecto/" +
                     projectId;
                 axios
                     .get(tareasURL)
                     .then(function (response) {
-                        setListTareas(response.data.tareas);
-                        console.log(response.data.tareas);
+                        setListTareas(response.data.tareasOrdenadas);
+                        console.log(response.data.tareasOrdenadas);
 
                         setIsLoadingSmall(false);
                     })
@@ -434,7 +438,8 @@ export default function Cronograma(props) {
 
             setToggleNew(false);
             const newURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/insertarTarea";
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/cronograma/insertarTarea";
             axios
                 .post(newURL, {
                     idCronograma: cronogramaId,
@@ -464,7 +469,8 @@ export default function Cronograma(props) {
                     //actualizamos lista de tareas
 
                     const tareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
                     axios
                         .get(tareasURL)
@@ -507,7 +513,8 @@ export default function Cronograma(props) {
             }, 2000);
 
             const tareasURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/cronograma/listarTareasXidProyecto/" +
                 projectId;
             axios
                 .get(tareasURL)
@@ -555,8 +562,10 @@ export default function Cronograma(props) {
     };
 
     useEffect(() => {
+        setIsLoadingSmall(true);
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarCronograma";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/cronograma/listarCronograma";
 
         axios
             .post(stringURL, { idProyecto: projectId })
@@ -569,10 +578,11 @@ export default function Cronograma(props) {
                     cronogramaData.fechaFin === null
                 ) {
                     //setModalFirstTime(true);
-                    //onOpen();
+                    onOpen();
                 } else {
                     const tareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
                         projectId;
                     axios
                         .get(tareasURL)
@@ -617,7 +627,7 @@ export default function Cronograma(props) {
 
     return (
         <div className="cronogramaDiv">
-            {/* {
+            {
                 <Modal
                     onOpenChange={onOpenChange}
                     isDismissable={false}
@@ -648,6 +658,7 @@ export default function Cronograma(props) {
                                                 <div className="fechaCrearLeft">
                                                     <p>Fecha inicio</p>
                                                     <DateInput
+                                                        isEditable={true}
                                                         className={""}
                                                         onChangeHandler={(
                                                             e
@@ -661,6 +672,7 @@ export default function Cronograma(props) {
                                                 <div className="fechaCrearRight">
                                                     <p>Fecha fin</p>
                                                     <DateInput
+                                                        isEditable={true}
                                                         className={""}
                                                         onChangeHandler={(
                                                             e
@@ -694,7 +706,7 @@ export default function Cronograma(props) {
                         }}
                     </ModalContent>
                 </Modal>
-            } */}
+            }
             <ModalSubequipos
                 isOpen={isModalSubEOpen}
                 onOpenChange={onModalSubEOpenChange}
@@ -1209,7 +1221,7 @@ export default function Cronograma(props) {
                     </div>
 
                     {stateSecond !== 2 && (
-                        <div className="twoButtonsEnd">
+                        <div className="twoButtonsEnd pb-8">
                             <BtnToModal
                                 nameButton="Descartar"
                                 textHeader={

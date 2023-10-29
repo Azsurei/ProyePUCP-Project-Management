@@ -2817,12 +2817,27 @@ CREATE PROCEDURE INSERTAR_MIEMBROS_EQUIPO(
     IN _idRol INT
 )
 BEGIN
-	DECLARE _idUsuarioXEquipo INT;
-	INSERT INTO UsuarioXEquipo(idUsuario,idEquipo,activo,idRol) 
-    VALUES(_idUsuario,_idEquipo,1,_idRol);
-    SET _idUsuarioXEquipo = @@last_insert_id;
+    DECLARE _idUsuarioXEquipo INT;
+    -- Verificar si ya existe un registro para este idEquipo e idUsuario
+    SELECT idUsuarioXEquipo INTO _idUsuarioXEquipo
+    FROM UsuarioXEquipo
+    WHERE idEquipo = _idEquipo AND idUsuario = _idUsuario;
+
+    IF _idUsuarioXEquipo IS NOT NULL THEN
+        -- Si existe, actualiza el registro existente
+        UPDATE UsuarioXEquipo
+        SET activo = 1, idRol = _idRol
+        WHERE idUsuarioXEquipo = _idUsuarioXEquipo;
+    ELSE
+        -- Si no existe, inserta un nuevo registro
+        INSERT INTO UsuarioXEquipo(idUsuario, idEquipo, activo, idRol)
+        VALUES(_idUsuario, _idEquipo, 1, _idRol);
+        SET _idUsuarioXEquipo = @@last_insert_id;
+    END IF;
+
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
+
 
 DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
 DELIMITER $
@@ -2871,4 +2886,33 @@ BEGIN
     SET activo = 0 
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS OBTENER_idRol_X_idUsuario;
+DELIMITER $
+CREATE PROCEDURE OBTENER_idRol_X_idUsuario(
+    IN _idProyecto INT,
+    IN _idUsuario INT
+)
+BEGIN
+	SELECT up.idRol
+    FROM Usuario AS u
+    LEFT JOIN UsuarioXRolXProyecto as up ON u.idUsuario = up.idUsuario
+    WHERE u.idUsuario = _idUsuario 
+    AND up.idProyecto = _idProyecto
+    AND u.activo = 1
+    AND u.idRol;
+END$
+
+DROP PROCEDURE IF EXISTS VERIFICAR_EXISTE_EVALUACION;
+DELIMITER $
+CREATE PROCEDURE VERIFICAR_EXISTE_EVALUACION(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT ue.idAutoEvaluacion
+    FROM UsuarioXEvaluacion AS ue
+    LEFT JOIN Autoevaluacion as ae ON ue.idAutoevaluacion = ae.idAutoevaluacion
+    WHERE ae.idProyecto = _idProyecto 
+    AND ae.activo = 1;
 END$

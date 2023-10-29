@@ -79,6 +79,7 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
         setSelectedTipoIngreso(nombreIngresoTipo);
         setSelectedTipoTransaccion(idTransaccionTipo);
         setSelectedNombreTransaccion(nombreTransaccionTipo);
+        setdescripcionLinea(descripcionLineaIngreso);
         const formattedDate = new Date(fechaTransaccionIngreso).toISOString().split('T')[0];
         setFecha(formattedDate);
         if (modal) {

@@ -12,11 +12,21 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Link from "next/link";
 import { useState } from "react";
 import * as React from "react";
-import TracerNewProject from "@/components/TracerNewProject";
+import TracerNewProject  from "@/components/TracerNewProject";
+
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createContext } from "react";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
+
+import Box from '@mui/material/Box';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepButton from '@mui/material/StepButton';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { useContext } from "react";
+import { SessionContext } from "../layout";
 
 axios.defaults.withCredentials = true;
 
@@ -87,6 +97,58 @@ export const ToolCardsContext = createContext();
 
 export default function newProject() {
     const router = useRouter();
+    const {sessionData} = useContext(SessionContext);
+
+    const steps = ['Información General', 'Herramientas', 'Participantes'];
+
+
+    const [activeStep, setActiveStep] = useState(0);
+    const [completed, setCompleted] = useState({});
+
+    const totalSteps = () => {
+        return steps.length;
+    };
+
+    const completedSteps = () => {
+        return Object.keys(completed).length;
+    };
+
+    const isLastStep = () => {
+        return activeStep === totalSteps() - 1;
+    };
+
+    const allStepsCompleted = () => {
+        return completedSteps() === totalSteps();
+    };
+
+    const handleNext = () => {
+        const newActiveStep =
+        isLastStep() && !allStepsCompleted()
+            ? steps.findIndex((step, i) => !(i in completed))
+            : activeStep + 1;
+        setActiveStep(newActiveStep);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleStep = (step) => () => {
+        setActiveStep(step);
+    };
+
+    const handleComplete = () => {
+        const newCompleted = completed;
+        newCompleted[activeStep] = true;
+        setCompleted(newCompleted);
+        handleNext();
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+        setCompleted({});
+    };
+
 
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
@@ -157,11 +219,16 @@ export default function newProject() {
     const cambiarEstadoAdelante = () => {
         if (estadoProgress != 3) {
             setEstadoProgress(estadoProgress + 1);
+            handleNext();
+            handleComplete();
         }
     };
     const camibarEstadoAtras = () => {
         if (estadoProgress != 1) {
             setEstadoProgress(estadoProgress - 1);
+            handleBack();
+            handleReset();
+            
         }
     };
 
@@ -289,16 +356,21 @@ export default function newProject() {
                 <p className="textProject2">Crea un Proyecto</p>
             </div>
 
-            <div className="trackerBar">
-                {estadoProgress === 1 && (
-                    <TracerNewProject items={items}></TracerNewProject>
-                )}
-                {estadoProgress === 2 && (
-                    <TracerNewProject items={items2}></TracerNewProject>
-                )}
-                {estadoProgress === 3 && (
-                    <TracerNewProject items={items3}></TracerNewProject>
-                )}
+            <div >
+
+                <Box sx={{ width: '80%', mx: 'auto' ,marginTop: '20px'}}>
+
+                <Stepper nonLinear activeStep={activeStep}>
+                    {steps.map((label, index) => (
+                    <Step key={label} completed={completed[index]}>
+                        <StepButton color="inherit" disabled={true}>
+                        {label}
+                        </StepButton>
+                    </Step>
+                    ))}
+                </Stepper>
+
+                </Box>
             </div>
 
             <div className="containerInfoBox">
@@ -409,14 +481,14 @@ export default function newProject() {
                 <ModalUser
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfSupervisores}
-                    excludedUsers={selectedSupervisoresList}
+                    excludedUsers={[...selectedMiembrosList,...selectedSupervisoresList,sessionData]}
                 ></ModalUser>
             )}
             {modal2 && (
                 <ModalUser
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
-                    excludedUsers={selectedMiembrosList}
+                    excludedUsers={[...selectedMiembrosList,...selectedSupervisoresList,sessionData]}
                 ></ModalUser>
             )}
 

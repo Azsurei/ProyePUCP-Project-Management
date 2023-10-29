@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
@@ -619,7 +619,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
                                         {component.nombres[0] +
-                                            component.apellidos!==null? component.apellidos[0] : ""}
+                                            (component.apellidos!==null? component.apellidos[0] : "")}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
@@ -653,7 +653,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                     <div className="iconLabel3CR">
                                         <p className="profilePicCR">
                                             {component.nombres[0] +
-                                                component.apellidos!==null? component.apellidos[0] : ""}
+                                                (component.apellidos!==null? component.apellidos[0] : "")}
                                         </p>
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
@@ -818,8 +818,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         <div className="buttonContainerCR">
                             <Modal
                                 nameButton="Descartar"
-                                textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de la información?"
+                                textHeader="Descartar Actualización"
+                                textBody="¿Seguro que quiere descartar la cactualización de la información?"
                                 colorButton="w-36 bg-slate-100 text-black"
                                 oneButton={false}
                                 secondAction={() => router.back()}
@@ -827,8 +827,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             />
                             <Modal
                                 nameButton="Aceptar"
-                                textHeader="Registrar Información"
-                                textBody="¿Seguro que quiere registrar la información?"
+                                textHeader="Actualizar Información"
+                                textBody="¿Seguro que quiere actualizar la información?"
                                 colorButton="w-36 bg-blue-950 text-white"
                                 oneButton={false}
                                 secondAction={() => {

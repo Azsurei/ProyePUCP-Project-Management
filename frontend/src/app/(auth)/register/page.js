@@ -7,8 +7,11 @@ import "@/styles/resetPassword.css";
 import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 function register() {
+    const router = useRouter();
+
     const [nombre, setNombre] = useState("");
     const [apellido, setApellido] = useState("");
     const [correoElectronico, setCorreoElectronico] = useState("");
@@ -21,7 +24,7 @@ function register() {
 
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
-        url: process.env.NEXT_PUBLIC_BACKEND_URL+"/api/auth/register",
+        url: process.env.NEXT_PUBLIC_BACKEND_URL + "/api/auth/register",
         headers: {
             "Content-Type": "application/json",
         },
@@ -57,7 +60,7 @@ function register() {
         console.log(password);
 
         axios
-            .post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/auth/register", {
+            .post(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/auth/register", {
                 nombres: nombre,
                 apellidos: apellido,
                 correoElectronico: correoElectronico,
@@ -66,11 +69,30 @@ function register() {
             .then(function (response) {
                 console.log(response);
                 console.log("Registro correcto");
+
+                axios
+                    .post(
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+                        {
+                            username: correoElectronico,
+                            password: password,
+                        }
+                    )
+                    .then(function (response) {
+                        console.log("se logro");
+                        const user = response.data;
+                        router.push("/dashboard");
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             })
             .catch(function (error) {
                 console.log(error);
             });
     }
+
+
 
     return (
         <>

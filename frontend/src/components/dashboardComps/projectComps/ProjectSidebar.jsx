@@ -8,17 +8,23 @@ import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import {
     Accordion,
     AccordionItem,
+    Avatar,
     Button,
+    Chip,
     Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
     ModalHeader,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     useDisclosure,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 const memberData = [
@@ -63,11 +69,32 @@ const memberData = [
 
 function MemberIcon(props) {
     return (
-        <li className="memberContainer">
-            <p className="memberIcon">
-                {props.name[0]}
-                {props.lastName[0]}
-            </p>
+        <li className="memberContainer relative">
+            <Popover placement="top" showArrow={true}>
+                <PopoverTrigger>
+                    <Avatar
+                        //isBordered
+                        //as="button"
+                        className="transition-transform w-[40px] min-w-[40px] h-[40px] min-h-[40px]"
+                        radius="md"
+                        src={props.imgLink}
+                        fallback={
+                            <p className="memberIcon">
+                                {props.name[0]}
+                                {props.lastName[0]}
+                            </p>
+                        }
+                    />
+                </PopoverTrigger>
+                <PopoverContent>
+                    <div className="px-1 py-2">
+                        <div className="text-small font-bold">
+                            {props.name + " " + props.lastName}
+                        </div>
+                        <div className="text-small">{props.email}</div>
+                    </div>
+                </PopoverContent>
+            </Popover>
         </li>
     );
 }
@@ -168,7 +195,8 @@ function ProjectSidebar(props) {
     useEffect(() => {
         let toolsArray;
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/herramientas/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/herramientas/" +
             props.projectId +
             "/listarHerramientasDeProyecto";
         axios
@@ -223,7 +251,8 @@ function ProjectSidebar(props) {
             });
 
         const stringURL_2 =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/listarUsuariosXidRolXidProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/listarUsuariosXidRolXidProyecto";
 
         axios
             .post(stringURL_2, {
@@ -236,6 +265,7 @@ function ProjectSidebar(props) {
 
                 setMembersData(members_data);
                 console.log(members_data);
+
                 setIsLoading(false);
             })
             .catch(function (error) {
@@ -365,7 +395,8 @@ function ProjectSidebar(props) {
 
     const addUserToProject = (newMiembrosList) => {
         const addNewURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/insertarUsuariosAProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/usuario/insertarUsuariosAProyecto";
 
         const formatedMiembrosList = newMiembrosList.map((user) => ({
             ...user, // Copy the existing properties
@@ -387,6 +418,21 @@ function ProjectSidebar(props) {
             });
     };
 
+    const roleColor = [
+        {
+            idRol: 1,
+            color: "danger",
+        },
+        {
+            idRol: 2,
+            color: "warning",
+        },
+        {
+            idRol: 3,
+            color: "primary",
+        },
+    ];
+
     return (
         <nav
             className={`ProjectSidebar ${
@@ -404,8 +450,16 @@ function ProjectSidebar(props) {
                 <p className="SidebarHeader">{props.projectName}</p>
                 <p className="dates">13/09/2023 - 20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
-                    <p className="teamHeader">Equipo:</p>
-                    <p className="teamName">Los dibujitos</p>
+                    <p className="teamHeader">Tu rol:</p>
+
+                    <Chip
+                        className="capitalize"
+                        color={roleColor[props.projectIdRole - 1].color}
+                        size="lg"
+                        variant="flat"
+                    >
+                        {props.projectNameRole}
+                    </Chip>
                 </div>
             </div>
 
@@ -416,6 +470,8 @@ function ProjectSidebar(props) {
                             key={member.idUsuario}
                             name={member.nombres}
                             lastName={member.apellidos}
+                            email={member.correoElectronico}
+                            imgLink={member.imgLink}
                         ></MemberIcon>
                     );
                 })}
@@ -428,6 +484,18 @@ function ProjectSidebar(props) {
                     +
                 </div>
             </ul>
+
+            <Link href={stringBase + "/settings"}>
+                <div
+                    className="text-medium font-medium 
+            bg-slate-300 
+            flex justify-center 
+            rounded-md py-[.3rem] 
+            cursor-pointer"
+                >
+                    Configuracion de proyecto
+                </div>
+            </Link>
 
             {/* <DropDownMenu info={listTools1}></DropDownMenu>
             <DropDownMenu info={listTools2}></DropDownMenu> */}
@@ -468,9 +536,8 @@ function ProjectSidebar(props) {
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
 
-
             {/* ESTO ESTA PENDIENTEEEE ================================================= */}
-            {isModalUserOpen && 
+            {isModalUserOpen && (
                 <ModalUsersOne
                     listAllUsers={true}
                     handlerModalClose={() => {
@@ -481,7 +548,7 @@ function ProjectSidebar(props) {
                         setIsModalUserOpen(false);
                         //addUserToProject(newMiembrosList);
                     }}
-                    excludedUsers={memberData.map(item => ({
+                    excludedUsers={memberData.map((item) => ({
                         id: item.idUsuario,
                         name: item.nombres,
                         lastName: item.apellidos,
@@ -489,7 +556,7 @@ function ProjectSidebar(props) {
                     }))}
                     idProyecto={props.projectId}
                 ></ModalUsersOne>
-            }
+            )}
         </nav>
     );
 }

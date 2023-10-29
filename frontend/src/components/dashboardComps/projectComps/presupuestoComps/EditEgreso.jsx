@@ -7,18 +7,36 @@ import MyCombobox from "@/components/ComboBox";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
-export default function EditEstimacion({modal, idLineaEstimacion, descripcionEstimacionCosto, tarifaEstimacion, estimacionCosto, cantidadRecurso, mesesEstimacion, idMonedaEstimacion, fechaInicio, subtotalEstimacion, refresh}) {
+export default function EditEgreso({modal, descripcionLineaEgreso, costoRealEgreso, lineaEgreso, idMonedaEgreso, fechaRegistroEgreso, refresh, idLineaEstimacionCosto, cantidadEgreso}) {
     const [selectedTipoMoneda, setSelectedTipoMoneda] = useState("");
+    const [selectedEstimacionCosto, setSelectedEstimacionCosto] = useState("");
     const [selectedFecha, setSelectedFecha] = useState("");
     const [selectedMonto, setSelectedMonto] = useState("");
+    const [selectedCantidad, setSelectedCantidad] = useState("");
+    const [selectedIdEgreso, setSelectedIdEgreso] = useState("");
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+    const stringUrlTipoIngreso = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoIngresosTodos`;
+    const stringUrlTipoTransaccion = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
+    const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
+    const [validMontoReal, setValidMontoReal] = useState(true);
+    const [validCantRecurso, setValidCantRecurso] = useState(true);
+    const [validDescription, setValidDescription] = useState(true);
+    const [validFecha, setValidFecha] = useState(true);
+    const msgEmptyField = "Este campo no puede estar vacio";
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const [selectCantidadRecurso, setSelectCantidadRecurso] = useState("");
-    const[selectMeses, setSelectMeses] = useState("");
-    const [selectSubtotal, setSelectSubtotal] = useState("");
-    const [selectedDescripcion, setSelectedDescripcion] = useState("");
-
     //const router=userRouter();
+    const { 
+        isOpen: isModalCrearOpen, 
+        onOpen: onModalCrear, 
+        onOpenChange: onModalCrearChange 
+    
+    
+    } = useDisclosure();
+    const {
+        isOpen: isModalFechaOpen,
+        onOpen: onModalFecha,
+        onOpenChange: onModalFechachange,
+    } = useDisclosure();
 
     const onSearchChange = (value) => {
         setFilterValue(value);
@@ -50,72 +68,52 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
         setFecha(selectedDate);
     }
     const [selectedMoneda, setselectedMoneda] = useState("");
-    const [descripcionEstimacion, setdescripcionEstimacion] = useState("");
+    const [descripcionLinea, setdescripcionLinea] = useState("");
     
     
     const handleSelectedValueMoneda = (value) => {
         setselectedMoneda(value);
-        setValidTipoMoneda(true);
     };
-    const { 
-        isOpen: isModalCrearOpen, 
-        onOpen: onModalCrear, 
-        onOpenChange: onModalCrearChange 
-    
-    
-    } = useDisclosure();
 
-    const [selectedTipo, setselectedTipo] = useState("");
-    const [descripcionLinea, setdescripcionLinea] = useState("");
-
+   
+    const [montoReal, setMontoReal] = useState("");
+    const [montoEgreso, setMontoEgreso] = useState("");
     const [cantRecurso, setcantRecurso] = useState("");
-    const [mesesRequerido, setmesesRequerido] = useState("");
 
     const [monto, setMonto] = useState("");
     const [selectedNombreTransaccion, setSelectedNombreTransaccion] = useState("");
-    const [validMonto, setValidMonto] = useState(true);
-    const [validCantMeses, setValidCantMeses] = useState(true);
-    const [validCantRecurso, setValidCantRecurso] = useState(true);
-    const [validTipoMoneda, setValidTipoMoneda] = useState(true);
-    const [validDescription, setValidDescription] = useState(true);
-    const [validFecha, setValidFecha] = useState(true);
-    const msgEmptyField = "Este campo no puede estar vacio";
-    
-
     useEffect(() => {
-        setMonto(tarifaEstimacion);
-        setSelectedMonto(tarifaEstimacion);
-        setSelectedTipoMoneda(idMonedaEstimacion);
-        setSelectCantidadRecurso(cantidadRecurso);
-        setcantRecurso(cantidadRecurso);
-        setSelectMeses(mesesEstimacion);
-        setSelectSubtotal(subtotalEstimacion);
-        setSelectedDescripcion(descripcionEstimacionCosto);
-        setdescripcionLinea(descripcionEstimacionCosto);
-        setdescripcionEstimacion(descripcionEstimacionCosto);
-        const formattedDate = new Date(fechaInicio).toISOString().split('T')[0];
+        setSelectedIdEgreso(lineaEgreso.idLineaEgreso);
+        setMonto(costoRealEgreso);
+        setSelectedMonto(costoRealEgreso);
+        setSelectedTipoMoneda(lineaEgreso.idMoneda);
+        setSelectedEstimacionCosto(lineaEgreso.idLineaEstimacionCosto);
+        setSelectedCantidad(cantidadEgreso);
+        setcantRecurso(cantidadEgreso);
+        setdescripcionLinea(descripcionLineaEgreso);
+        const formattedDate = new Date(fechaRegistroEgreso).toISOString().split('T')[0];
         setFecha(formattedDate);
         if (modal) {
             setStartModal(true);
             onModalCrear();
           }
-        console.log("EditIngreso", subtotalEstimacion);
+        console.log("EditEgreso");
     }, []); 
     const onSubmit = () => {
-        console.log("Que data estoy enviando:", estimacionCosto);
+        console.log("Que data estoy enviando:", lineaEgreso);
         const putData = {
-            idLineaEstimacionCosto: idLineaEstimacion,
+            idLineaEgreso: selectedIdEgreso,
             idMoneda: selectedTipoMoneda,
+            idLineaEstimacionCosto: selectedEstimacionCosto,
             descripcion: descripcionLinea,
-            tarifaUnitaria: monto,
-            cantidadRecurso: cantRecurso,
-            subtotal: parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
-            fechaInicio: fecha,
+            costoReal: parseFloat((selectedMonto/selectedCantidad) * cantRecurso).toFixed(2),
+            fechaRegistro: fecha,
+            cantidad: cantRecurso,
         };
         console.log("Actualizado correctamente");
-        console.log(putData);
+        console.log("El put data", putData);
         axios.put(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/modificarLineaEstimacionCosto",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/modificarLineaEgreso",
                 putData
             )
             .then((response) => {
@@ -146,35 +144,14 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
             
                                             let Isvalid = true;
             
-                                            if (parseFloat(monto) < 0 || isNaN(parseFloat(monto))) {
-                                                setValidMonto(false);
-                                                Isvalid = false;
-                                            }
-            
                                             if (parseInt(cantRecurso) < 0 || isNaN(parseInt(cantRecurso))) {
                                                 setValidCantRecurso(false);
                                                 Isvalid = false;
                                             }
             
-                                            if (parseInt(mesesRequerido) < 0 || isNaN(parseInt(mesesRequerido))) {
-                                                setValidCantMeses(false);
-                                                Isvalid = false;
-                                            }
-            
-            
-            
                                             if(descripcionLinea===""){
                                                 setValidDescription(false);
                                                 Isvalid = false;
-                                            }
-            
-                                            if(selectedMoneda!==1 && selectedMoneda!==2){
-                                                setValidTipoMoneda(false);
-                                                Isvalid= false;
-                                            }
-            
-                                            if(selectedMoneda===1 || selectedMoneda===2){ 
-                                                setValidTipoMoneda(true);
                                             }
             
                                             if(fecha===""){
@@ -182,33 +159,23 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                 Isvalid = false;
                                             }
             
-            
                                             if(Isvalid === true){
                                                 try {
-                                                    await registrarLineaEstimacion();
-                                                    setMonto("");
+                                                    onSubmit();
+                                                
                                                     setdescripcionLinea("");
-                                                    setselectedMoneda("");
-                                                    
                                                     setFecha("");
-            
                                                     setcantRecurso("");
-                                                    setmesesRequerido("");
-            
-                                                    setValidTipoMoneda(true);
-                                                    setValidMonto(true);
             
                                                     setValidCantRecurso(true);
-                                                    setValidCantMeses(true);
-            
                                                     setValidDescription(true);
                                                     setValidFecha(true);
-            
+                                                    
                                                     
                                                 } catch (error) {
                                                     console.error('Error al registrar la línea de estimación o al obtener los datos:', error);
                                                 }
-            
+                                                
                                                 onClose();
                                             
                                             }
@@ -217,7 +184,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                             <>
                                                 <ModalHeader className="flex flex-col gap-1" 
                                                     style={{ color: "#000", fontFamily: "Montserrat", fontSize: "16px", fontStyle: "normal", fontWeight: 600 }}>
-                                                    Editar Estimación
+                                                    Nueva Egreso
                                                 </ModalHeader>
             
                                                 <ModalBody>
@@ -225,44 +192,11 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                     <p className="textIngreso">Tarifa</p>
                                                     
                                                     <div className="modalAddIngreso">
-                                                        <div className="comboBoxMoneda">
-                                                            <MyCombobox
-                                                                urlApi={stringUrlMonedas}
-                                                                property="monedas"
-                                                                nameDisplay="nombre"
-                                                                hasColor={false}
-                                                                onSelect={handleSelectedValueMoneda}
-                                                                idParam="idMoneda"
-                                                                initialName={selectedTipoMoneda===1 ? "Dolar" : "Soles"}
-                                                                inputWidth="2/3"
-                                                                widthCombo="9"
-                                                            />
-                                                            <div className="alertaMonedaIngreso" >
-                                                            <p className="text-tiny text-danger">            
-                                                                    {
-                                                                    !validTipoMoneda
-                                                                        ? "Seleccione una Moneda"
-                                                                        : ""
-                                                                    }                      
-                                                                </p>          
-                                                            </div>
-                                                        </div>
-                                                        
+                                                      
                                                             <Input
-                                                                value={monto}
-                                                                onValueChange={setMonto}
-                                                                placeholder={selectedMonto}
-                                                                labelPlacement="outside"
-                                                                isInvalid={!validMonto}
-                                                                onChange={()=>{setValidMonto(true)}}
+                                                                isDisabled
                                                                 type="number"
-                                                                errorMessage={
-                                                                    !validMonto
-                                                                        ? "Monto inválido"
-                                                                        : ""
-                                                                }
-            
-            
+                                                                value={(selectedMonto/selectedCantidad).toFixed(2)}
                                                                 startContent={
                                                                     <div className="pointer-events-none flex items-center">
                                                                         <span className="text-default-400 text-small">
@@ -270,14 +204,36 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                                         </span>
                                                                     </div>
                                                                 }
-                                                                endContent={
-                                                                    <div className="flex items-center">
-            
-                                                                    </div>
-                                                                    }
-                                                                initialValue={selectedMonto}                                                      
+                
+                                                                
                                                             />                    
                                                     </div>
+            
+                                                                                            
+                                                    <p className="textIngreso">Descripción</p>
+            
+                                                    <div className="modalAddIngreso">
+                                                        
+            
+                                                        <Textarea
+                                                            label=""
+                                                            isInvalid={!validDescription}
+                                                            errorMessage={!validDescription ? msgEmptyField : ""}
+                                                            maxLength={35}
+                                                            variant={"bordered"}
+                                                            
+                                                            labelPlacement="outside"
+                                                            placeholder="Escriba aquí..."
+                                                            className="max-w-x"
+                                                            maxRows="2"
+                                                            
+                                                            onValueChange={setdescripcionLinea}
+                                                            onChange={() => {
+                                                                setValidDescription(true);
+                                                            }}
+                                                            defaultValue = {descripcionLineaEgreso}
+                                                            />
+                                                     </div>
                                                     
             
                                                     <div
@@ -308,7 +264,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                             flex: 0.58,
                                                             }}
                                                         >
-                                                            Meses Requerido
+                                                            {/* Meses Requerido */}
                                                         </p>
                                                     </div> 
             
@@ -326,7 +282,8 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                              <Input
                                                                 value={cantRecurso}
                                                                 onValueChange={setcantRecurso}
-                                                                placeholder={selectCantidadRecurso}
+                                                                placeholder={selectedCantidad}
+                                                                defaultValue={selectedCantidad}
                                                                 labelPlacement="outside"
                                                                 isInvalid={!validCantRecurso}
                                                                 onChange={()=>{setValidCantRecurso(true)}}
@@ -341,65 +298,10 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                                     <div className="flex items-center">
             
                                                                     </div>
-                                                                    }
-                                                                initialValue={selectCantidadRecurso}                                                      
+                                                                    }                                                      
                                                             /> 
             
-                                                             <Input
-                                                                value={mesesRequerido}
-                                                                onValueChange={setmesesRequerido}
-                                                                placeholder={selectMeses}
-                                                                labelPlacement="outside"
-                                                                isInvalid={!validCantMeses}
-                                                                onChange={()=>{setValidCantMeses(true)}}
-                                                                type="number"
-                                                                errorMessage={
-                                                                    !validCantMeses
-                                                                        ? "Cantidad Inválida"
-                                                                        : ""
-                                                                }
-            
-                                                                endContent={
-                                                                    <div className="flex items-center">
-            
-                                                                    </div>
-                                                                    }
-                                                                initialValue={selectMeses}                                                      
-                                                            />                     
-            
-            
-            
                                                     </div>                  
-            
-            
-            
-            
-                                                    
-                                                    <p className="textIngreso">Descripción</p>
-            
-                                                    <div className="modalAddIngreso">
-                                                        
-            
-                                                        <Textarea
-                                                            label=""
-                                                            isInvalid={!validDescription}
-                                                            errorMessage={!validDescription ? msgEmptyField : ""}
-                                                            maxLength={35}
-                                                            variant={"bordered"}
-                                                            
-                                                            labelPlacement="outside"
-                                                            placeholder="Escriba aquí..."
-                                                            className="max-w-x"
-                                                            maxRows="2"
-                                                            // value={descripcionLinea}
-                                                            onValueChange={setdescripcionLinea}
-                                                            onChange={() => {
-                                                                setValidDescription(true);
-                                                            }}
-                                                            defaultValue={descripcionEstimacionCosto}
-                                                            />
-                                                     </div>
-                                                        
             
                                                     <div
                                                         style={{
@@ -417,7 +319,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                             fontWeight: 300,
                                                             }}
                                                         >
-                                                            Fecha Inicio
+                                                            Fecha Registro
                                                         </p>
             
                                                         <p
@@ -426,10 +328,10 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                             fontSize: "16px",
                                                             fontStyle: "normal",
                                                             fontWeight: 300,
-                                                            flex: 0.62,
+                                                            flex: 0.66,
                                                             }}
                                                         >
-                                                            Subtotal
+                                                            Costo Real
                                                         </p>
                                                     </div> 
             
@@ -451,23 +353,21 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                             <Input
                                                                 isReadOnly
                                                                 type="number"
-                                                                placeholder={selectSubtotal}
-                                                                value={monto * cantRecurso * mesesRequerido < 0 || cantRecurso === 0 ? 0 : monto * cantRecurso * mesesRequerido}
+                                                                placeholder={selectedMonto}
+                                                                value={(selectedMonto/selectedCantidad) * cantRecurso  < 0 || cantRecurso === 0 ? 0 : (selectedMonto/selectedCantidad) * cantRecurso }
                                                                 startContent={
                                                                     <div className="pointer-events-none flex items-center">
                                                                         <span className="text-default-400 text-small">
-                                                                                {selectedMoneda === 2 ? "S/" : selectedMoneda === 1 ? "$" : " "}
+                                                                                {selectedMoneda  === 2 ? "S/" : selectedMoneda  === 1 ? "$" : " "}
                                                                         </span>
                                                                     </div>
                                                                 }
-                                                                defaultValue={selectSubtotal}
+                                                                defaultValue="0.00"
                                                             />
                                                     </div>       
                                                 
                                                   
                                                     <div className="fechaContainer">
-            
-                                                        
                                                             <p className="text-tiny text-danger">            
                                                                     {
                                                                         !validFecha
@@ -475,8 +375,6 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                                         : ""
                                                                     }                      
                                                             </p>    
-                                                        
-            
                                                     </div>
             
                                                 </ModalBody>
@@ -486,19 +384,15 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                         variant="light"
                                                         onPress={() => {
                                                             onClose(); // Cierra el modal
-                                                            setMonto("");
+             
                                                             setdescripcionLinea("");
-                                                            setselectedMoneda("");
                                                             
                                                             setcantRecurso("");
-                                                            setmesesRequerido("");
             
                                                             setFecha("");
-                                                            setValidTipoMoneda(true);
-                                                            setValidMonto(true);
-                                                            setValidDescription(true);
             
-                                                            setValidCantMeses(true);
+                                                            //setValidMonto(true);
+                                                            setValidDescription(true);
                                                             setValidCantRecurso(true);
             
                                                             setValidFecha(true);
@@ -508,20 +402,17 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                     </Button>
                                                     <Button
                                                         color="primary"
-                                                        onPress={() => {
-                                                            onSubmit();
-                                                            onClose();
-                                                        }}
+                                                        onPress={cerrarModal}
                                                         
                                                     >
-                                                        Guardar
+                                                        Agregar
                                                     </Button>
                                                 </ModalFooter>
                                             </>
                                         );
                                     }}
                                 </ModalContent>
-                            </Modal>
+                            </Modal>   
 
 
             )}

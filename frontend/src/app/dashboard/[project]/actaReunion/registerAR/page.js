@@ -1,3 +1,4 @@
+// actaReunion/registerAR/page.js
 "use client"
 
 import React, { useState, useEffect, useContext } from "react";
@@ -6,7 +7,7 @@ import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
 
-import { useRouter } from "next/navigation";
+import { useRouter , useSearchParams} from "next/navigation";
 import {
     Input,
     Card,
@@ -36,167 +37,167 @@ export default function crearActaReunion(props) {
 // Various Variables
 // *********************************************************************************************
 // Router. Helps you to move between pages
-const router = useRouter();
+    const router = useRouter();
 
 // Project Info
-const decodedUrl = decodeURIComponent(props.params.project);
-const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
 // Loading Window
-const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-setIsLoadingSmall(false);
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+
 
 // Edit Mode: False for New Meeting, True for Edit Meeting
-const [isEditMode, setIsEditMode] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
 
 //Vital Data for Creating Meeting
-const [titleValue, setTitleValue] = useState("");
-const [motiveValue, setMotiveValue] = useState("");
-const [dateValue, setDateValue] = useState(""); 
-const [timeValue, setTimeValue] = useState(""); 
+    const [titleValue, setTitleValue] = useState("");
+    const [motiveValue, setMotiveValue] = useState("");
+    const [dateValue, setDateValue] = useState("");
+    const [timeValue, setTimeValue] = useState("");
 
-const handleChangeDate = (event) => {
-    setDateValue(event.target.value);
-};
+    const handleChangeDate = (event) => {
+        setDateValue(event.target.value);
+    };
 
-const handleChangeTime = (event) => {
-    setTimeValue(event.target.value);
-};
+    const handleChangeTime = (event) => {
+        setTimeValue(event.target.value);
+    };
 
 // *********************************************************************************************
 // Validations
 // *********************************************************************************************
-const [fieldsEmpty, setFieldsEmpty] = useState(false);
+    const [fieldsEmpty, setFieldsEmpty] = useState(false);
 
-function verifyFieldsEmpty() {
-    return (
-        titleValue === "" ||
-        dateValue === "" ||
-        timeValue === "" ||
-        motiveValue === "" 
-    );
-}
-
-function getMinDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Los meses se indexan a partir de 0
-    const day = today.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-function getMinTime() {
-    const today = new Date();
-    const selectedDate = new Date(dateValue);
-    const currentTime = today.getHours() * 60 + today.getMinutes();
-
-    if (
-        selectedDate.getDate() === today.getDate() &&
-        selectedDate.getMonth() === today.getMonth() &&
-        selectedDate.getFullYear() === today.getFullYear()
-    ) {
-        const selectedTime = parseInt(timeValue.split(":")[0]) * 60 + parseInt(timeValue.split(":")[1]);
-        if (selectedTime < currentTime) {
-            // Muestra un mensaje de advertencia si la hora elegida es anterior a la hora actual
-            return "00:00";
-        }
+    function verifyFieldsEmpty() {
+        return (
+            titleValue === "" ||
+            dateValue === "" ||
+            timeValue === "" ||
+            motiveValue === ""
+        );
     }
-    // Si la fecha seleccionada es hoy y la hora es actual o posterior, o cualquier otra fecha, no hay restricciones
-    return "00:00";
-}
+
+    function getMinDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Los meses se indexan a partir de 0
+        const day = today.getDate().toString().padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function getMinTime() {
+        const today = new Date();
+        const selectedDate = new Date(dateValue);
+        const currentTime = today.getHours() * 60 + today.getMinutes();
+
+        if (
+            selectedDate.getDate() === today.getDate() &&
+            selectedDate.getMonth() === today.getMonth() &&
+            selectedDate.getFullYear() === today.getFullYear()
+        ) {
+            const selectedTime = parseInt(timeValue.split(":")[0]) * 60 + parseInt(timeValue.split(":")[1]);
+            if (selectedTime < currentTime) {
+                // Muestra un mensaje de advertencia si la hora elegida es anterior a la hora actual
+                return "00:00";
+            }
+        }
+        // Si la fecha seleccionada es hoy y la hora es actual o posterior, o cualquier otra fecha, no hay restricciones
+        return "00:00";
+    }
 
 // *********************************************************************************************
 // Handlers of Topics, Agreements and Comments
 // *********************************************************************************************
-const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
-const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
-const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
+    const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
+    const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
+    const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
 
-const handleAddTema = ()=>{
-    const newList_T =  [
-        ...listTemas, 
-        {
-        index: listTemas.length + 1,
-        data: ''
-        }
-    ];
-    setListTemas(newList_T);
-}
-
-const handleAddAcuerdo = ()=>{
-    const newList_A =  [
-        ...listAcuerdos, 
-        {
-        index: listAcuerdos.length + 1,
-        data: ''
-        }
-    ];
-    setListAcuerdos(newList_A);
-}
-
-const handleAddComentario = ()=>{
-    const newList_C =  [
-        ...listComentarios, 
-        {
-        index: listComentarios.length + 1,
-        data: ''
-        }
-    ];
-    setListComentarios(newList_C);
-}
-
-const handleChangeTema = (e, index) => {
-    const updatedEntregables = [...listTemas];
-    updatedEntregables[index - 1].data = e.target.value;
-    console.log(updatedEntregables);
-    setListTemas(updatedEntregables);
-};
-
-const handleChangeAcuerdo = (e, index) => {
-    const updatedEntregables = [...listAcuerdos];
-    updatedEntregables[index - 1].data = e.target.value;
-    console.log(updatedEntregables);
-    setListAcuerdos(updatedEntregables);
-};
-
-const handleChangeComentario = (e, index) => {
-    const updatedEntregables = [...listComentarios];
-    updatedEntregables[index - 1].data = e.target.value;
-    console.log(updatedEntregables);
-    setListComentarios(updatedEntregables);
-};
-
-const handleRemoveTema = (index) => {
-    const updatedEntregables = [...listTemas];
-    updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-    for (let i = index - 1; i < updatedEntregables.length; i++) {
-        updatedEntregables[i].index = updatedEntregables[i].index - 1;
+    const handleAddTema = ()=>{
+        const newList_T =  [
+            ...listTemas,
+            {
+                index: listTemas.length + 1,
+                data: ''
+            }
+        ];
+        setListTemas(newList_T);
     }
-    console.log(updatedEntregables);
-    setListTemas(updatedEntregables);
-}
 
-const handleRemoveAcuerdo = (index) => {
-    const updatedEntregables = [...listAcuerdos];
-    updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-    for (let i = index - 1; i < updatedEntregables.length; i++) {
-        updatedEntregables[i].index = updatedEntregables[i].index - 1;
+    const handleAddAcuerdo = ()=>{
+        const newList_A =  [
+            ...listAcuerdos,
+            {
+                index: listAcuerdos.length + 1,
+                data: ''
+            }
+        ];
+        setListAcuerdos(newList_A);
     }
-    console.log(updatedEntregables);
-    setListAcuerdos(updatedEntregables);
-}
 
-const handleRemoveComentario = (index) => {
-    const updatedEntregables = [...listComentarios];
-    updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-    for (let i = index - 1; i < updatedEntregables.length; i++) {
-        updatedEntregables[i].index = updatedEntregables[i].index - 1;
+    const handleAddComentario = ()=>{
+        const newList_C =  [
+            ...listComentarios,
+            {
+                index: listComentarios.length + 1,
+                data: ''
+            }
+        ];
+        setListComentarios(newList_C);
     }
-    console.log(updatedEntregables);
-    setListComentarios(updatedEntregables);
-}
+
+    const handleChangeTema = (e, index) => {
+        const updatedEntregables = [...listTemas];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListTemas(updatedEntregables);
+    };
+
+    const handleChangeAcuerdo = (e, index) => {
+        const updatedEntregables = [...listAcuerdos];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListAcuerdos(updatedEntregables);
+    };
+
+    const handleChangeComentario = (e, index) => {
+        const updatedEntregables = [...listComentarios];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListComentarios(updatedEntregables);
+    };
+
+    const handleRemoveTema = (index) => {
+        const updatedEntregables = [...listTemas];
+        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedEntregables.length; i++) {
+            updatedEntregables[i].index = updatedEntregables[i].index - 1;
+        }
+        console.log(updatedEntregables);
+        setListTemas(updatedEntregables);
+    }
+
+    const handleRemoveAcuerdo = (index) => {
+        const updatedEntregables = [...listAcuerdos];
+        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedEntregables.length; i++) {
+            updatedEntregables[i].index = updatedEntregables[i].index - 1;
+        }
+        console.log(updatedEntregables);
+        setListAcuerdos(updatedEntregables);
+    }
+
+    const handleRemoveComentario = (index) => {
+        const updatedEntregables = [...listComentarios];
+        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
+        for (let i = index - 1; i < updatedEntregables.length; i++) {
+            updatedEntregables[i].index = updatedEntregables[i].index - 1;
+        }
+        console.log(updatedEntregables);
+        setListComentarios(updatedEntregables);
+    }
 
 // *********************************************************************************************
 // About User Information
@@ -235,7 +236,7 @@ const handleRemoveComentario = (index) => {
     // For convocante to have datosUsuario
     useEffect(() => {
         setConvocante(datosUsuario);
-      }, [datosUsuario]);
+    }, [datosUsuario]);
 
     // Modal1: Choose convenor. Modal2: Choose participants
     const [modal1, setModal1] = useState(false);
@@ -254,11 +255,11 @@ const handleRemoveComentario = (index) => {
     // Modal1 returns a list of only one object
     const returnListConvocante = (newMiembrosList) => {
         const nuevoConvocante = newMiembrosList[0];
-  
+
         const newMembrsList = [...selectedConvocanteList, ...newMiembrosList];
         setSelectedConvocanteList(newMembrsList);
         setModal1(!modal1);
-        
+
         if (newMiembrosList.length > 0) {
             setConvocante(nuevoConvocante);
         }
@@ -277,61 +278,50 @@ const handleRemoveComentario = (index) => {
 
     const removeMiembro = (miembro) => {
         const newMembrsList = selectedMiembrosList.filter(
-            (item) => item.id !== miembro.id
+            (item) => item.idUsuario !== miembro.idUsuario
         );
+        console.log('Muestra los seleccionados');
+        console.log(selectedMiembrosList);
         setSelectedMiembrosList(newMembrsList);
         console.log(newMembrsList);
     };
 
     const [isLoading, setIsLoading] = useState(true);
 
-// *********************************************************************************************
-// Searching Meeting Record ID
-// *********************************************************************************************
-    const [meetingId, setMeetingId] = useState("");
+    const [idActa, setidActa] = useState(null);
 
     useEffect(() => {
-        const stringURL = 
-        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/listarActaReunionXIdProyecto/" + projectId;
-        console.log("La URL es" + stringURL);
-
+        setIsLoadingSmall(true);
+        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
         axios
             .get(stringURL)
-            .then(function (response) {
-                console.log("Listando ActasReunion. Respuesta del servidor:", response.data);
-                const dataActa = response.data.data;
-                console.log("El ID del Acta de Reunion es: ", dataActa.idActaReunion);
-                setMeetingId(dataActa.idActaReunion);
-                setIsLoading(false);
-                setIsLoadingSmall(false);
+            .then(({ data: { data: { idActaReunion } } }) => {
+                console.log("Listando ActasReunion. Respuesta del servidor:", idActaReunion);
+                setidActa(idActaReunion);
             })
-            .catch(function (error) {
-                console.log(error);
+            .catch((error) => {
+                console.error("Error fetching meeting record ID:", error);
+            })
+            .finally(() => {
+                setIsLoadingSmall(false);
             });
-    }, []);
+    }, [setIsLoadingSmall, projectId]);
 
 // *********************************************************************************************
 // Creating a Meeting Record Line
 // *********************************************************************************************
     const createMeeting = () => {
-       // const idActaReunion = meetingId;
-        const idActaReunion = 29;
+        const idActaReunion = idActa;
         const nombreReunion = titleValue;
         const fechaReunion = dateValue;
         const horaReunion = timeValue;
         const motivo = motiveValue;
         const nombreConvocante = convocante.nombres + convocante.apellidos;
         const temas = [];
-        const participantes = selectedMiembrosList.map(
-            (participante) => {
-                return { 
-                    idUsuarioXRolXProyecto: participante.idUsuario,
-                    asistio: false,
-                    };
-            }
-        );
+        const participantes= [];
         const comentarios = [];
-        
+
+        console.log('id de acta reunion:', idActaReunion);
         console.log("Titulo de Reunion: ", nombreReunion);
         console.log("Convocante de Reunion: ", nombreConvocante);
         console.log("Fecha de Reunion: ", fechaReunion);
@@ -348,12 +338,12 @@ const handleRemoveComentario = (index) => {
                     fechaReunion: fechaReunion,
                     horaReunion: horaReunion,
                     nombreConvocante: nombreConvocante,
-                    
+
                     motivo: motivo,
                     temas: temas,
                     participantes: participantes,
                     comentarios: comentarios,
-                    
+
                 }
             )
             .then(function (response) {
@@ -382,55 +372,55 @@ const handleRemoveComentario = (index) => {
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
                         <CardBody>
-                            <Input 
+                            <Input
                                 className="max-w-[1000px]"
                                 isRequired
                                 key="meetingTitle"
-                                size="lg" 
-                                type="title" 
-                                label="Título de Reunión" 
+                                size="lg"
+                                type="title"
+                                label="Título de Reunión"
                                 labelPlacement="outside"
                                 placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
                                 value={titleValue}
-                                onValueChange={setTitleValue} 
+                                onValueChange={setTitleValue}
                             />
                             <p className="mt-5 mb-1 text-black text-sm font-medium">Reunión convocada por</p>
                             <div className="userSelection flex items-center">
                                 <p className="ml-2 font-medium text-gray-400 ">
                                     {convocante.nombres} {convocante.apellidos}
                                 </p>
-                                <button 
+                                <button
                                     onClick={toggleModal1}
                                     className="ml-3 bg-[#f0ae19] text-white w-8 h-8
                                         rounded-full">
                                     <img src="/icons/icon-searchBar.svg"/>
                                 </button>
-                                
+
                                 {modal1 && (
-                                <ModalUsersOne
-                                    listAllUsers={false}
-                                    handlerModalClose={toggleModal1}
-                                    handlerModalFinished={returnListConvocante}
-                                    excludedUsers={selectedConvocanteList}
-                                    idProyecto={projectId}
-                                ></ModalUsersOne>
+                                    <ModalUsersOne
+                                        listAllUsers={false}
+                                        handlerModalClose={toggleModal1}
+                                        handlerModalFinished={returnListConvocante}
+                                        excludedUsers={[]}
+                                        idProyecto={projectId}
+                                    ></ModalUsersOne>
                                 )}
                             </div>
                             <div>
                                 {convocante !== datosUsuario && (
                                     <p className="changeConvocanteText" onClick={resetConvocante}>
-                                    Quiero ser el convocante
+                                        Quiero ser el convocante
                                     </p>
                                 )}
                             </div>
-                                
+
                             <div className="dateAndTimeLine">
                                 <p className="mt-5 mb-1 text-black text-sm font-medium">Fecha y Hora de la Reunión</p>
                                 {/*}
-                                <input 
-                                    type="datetime-local" 
-                                    id="datetimePicker" 
-                                    name="datetimePicker" 
+                                <input
+                                    type="datetime-local"
+                                    id="datetimePicker"
+                                    name="datetimePicker"
                                     onChange={handleChangeFechaHora}>
                                 </input>
                                 */}
@@ -451,17 +441,17 @@ const handleRemoveComentario = (index) => {
                                     onChange={handleChangeTime}
                                 ></input>
                             </div>
-                            <Input 
+                            <Input
                                 className="max-w-[1000px] mt-5"
                                 isRequired
                                 key="meetingMotive"
-                                size="lg" 
-                                type="title" 
-                                label="Motivo" 
+                                size="lg"
+                                type="title"
+                                label="Motivo"
                                 labelPlacement="outside"
                                 placeholder="Ingrese el motivo de la reunion"
                                 value={motiveValue}
-                                onValueChange={setMotiveValue} 
+                                onValueChange={setMotiveValue}
                             />
                         </CardBody>
                         <CardFooter>
@@ -471,12 +461,12 @@ const handleRemoveComentario = (index) => {
                             </div>
                         </CardFooter>
                     </Card>
-                    
+
                 </div>
                 <br /><br />
                 <div className="invitedPeople p-5 ">
                     <Card className="mx-auto">
-                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg 
+                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg
                             font-bold text-blue-950 font-sans">
                             <h3>Personas Convocadas</h3>
                         </CardHeader>
@@ -499,11 +489,11 @@ const handleRemoveComentario = (index) => {
                                 </div>
 
                                 <ul className="listUsersContainer"
-                                style={{ width: '80%', padding: '0.2rem 0' }}>
+                                    style={{ width: '80%', padding: '0.2rem 0' }}>
                                     {selectedMiembrosList.map((component) => {
                                         return (
                                             <CardSelectedUser
-                                                key={component.id}
+                                                key={component.idUsuario}
                                                 name={component.name}
                                                 lastName={component.lastName}
                                                 usuarioObject={component}
@@ -522,15 +512,14 @@ const handleRemoveComentario = (index) => {
                                     handlerModalFinished={returnListOfMiembros}
                                     excludedUsers={selectedMiembrosList}
                                 ></ModalUsers>
-                            )}   
+                            )}
                             {/* Fin del selector de miembros */}
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
                 </div>
-
-                <div className="meetingTopics p-5"> 
-                    <Card className="mx-auto"> 
+                <div className="meetingTopics p-5">
+                    <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
@@ -540,22 +529,22 @@ const handleRemoveComentario = (index) => {
                                     ¿De qué temas se hablará en la reunión? ¡Asegúrate de ser claro!
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleAddTema}
                                 className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
-                            
+
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
                                 <ListEditableInput
-                                    beEditable={true} 
+                                    beEditable={true}
                                     handleChanges={handleChangeTema}
                                     handleRemove={handleRemoveTema}
-                                    ListInputs={listTemas} 
+                                    ListInputs={listTemas}
                                     typeName="Tema">
                                 </ListEditableInput>
                             </div>
@@ -564,8 +553,8 @@ const handleRemoveComentario = (index) => {
                     </Card>
                 </div>
 
-                <div className="agreements p-5"> 
-                    <Card className="mx-auto"> 
+                <div className="agreements p-5">
+                    <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
@@ -575,21 +564,21 @@ const handleRemoveComentario = (index) => {
                                     ¿A que acuerdos se llegaron en la reunión? ¡Recuerda ser responsable y razonable!
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleAddAcuerdo}
                                 className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
-                                <ListEditableInput 
-                                    beEditable={true} 
+                                <ListEditableInput
+                                    beEditable={true}
                                     handleChanges={handleChangeAcuerdo}
                                     handleRemove={handleRemoveAcuerdo}
-                                    ListInputs={listAcuerdos} 
+                                    ListInputs={listAcuerdos}
                                     typeName="Acuerdo">
                                 </ListEditableInput>
                             </div>
@@ -597,9 +586,9 @@ const handleRemoveComentario = (index) => {
                         <CardFooter></CardFooter>
                     </Card>
                 </div>
-                
-                <div className="pendingComments p-5"> 
-                    <Card className="mx-auto"> 
+
+                <div className="pendingComments p-5">
+                    <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
@@ -609,21 +598,21 @@ const handleRemoveComentario = (index) => {
                                     ¿Aún tienes algo que acotar?
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={handleAddComentario}
                                 className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer 
+                                rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
-                                <ListEditableInput 
-                                    beEditable={true} 
+                                <ListEditableInput
+                                    beEditable={true}
                                     handleChanges={handleChangeComentario}
                                     handleRemove={handleRemoveComentario}
-                                    ListInputs={listComentarios} 
+                                    ListInputs={listComentarios}
                                     typeName="Comentario">
                                 </ListEditableInput>
                             </div>
@@ -643,64 +632,47 @@ const handleRemoveComentario = (index) => {
                             className="iconLabel3"
                         />
                     )}
-                    {/*}
-                    {getMinTime() === "00:00" && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Elige una hora apropiada"
-                            className="iconLabel3"
-                        />
-                    )}
-                    */}
                 </div>
+
                 <div className="twoButtons1">
-                        <div className="buttonContainer">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
-                                colorButton="w-36 bg-slate-100 text-black font-semibold"
-                                oneButton={false}
-                                secondAction={() => router.back()}
-                                textColor="red"
-                            />
-                            <Modal
-                                nameButton="Aceptar"
-                                textHeader="Registrar Acta de Reunión"
-                                textBody="¿Seguro que quiere registrar el Acta de Reunión?"
-                                colorButton="w-36 bg-blue-950 text-white font-semibold"
-                                oneButton={false}
-                                secondAction={() => {
-                                    createMeeting();
-                                    router.push(`/dashboard/${projectName}=${projectId}/actaReunion`);
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (verifyFieldsEmpty()) {
-                                        setFieldsEmpty(true);
-                                        return false;
-                                    } else {
-                                        setFieldsEmpty(false);
-                                        return true;
-                                    }
-                                }}
-                            />
-                        </div>
+                    <div className="buttonContainer">
+                        <Modal
+                            nameButton="Descartar"
+                            textHeader="Descartar Registro"
+                            textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
+                            colorButton="w-36 bg-slate-100 text-black font-semibold"
+                            oneButton={false}
+                            secondAction={() => router.back()}
+                            textColor="red"
+                        />
+                        <Modal
+                            nameButton="Aceptar"
+                            textHeader="Registrar Acta de Reunión"
+                            textBody="¿Seguro que quiere registrar el Acta de Reunión?"
+                            colorButton="w-36 bg-blue-950 text-white font-semibold"
+                            oneButton={false}
+                            secondAction={() => {
+                                createMeeting();
+                                router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion');
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if (verifyFieldsEmpty()) {
+                                    setFieldsEmpty(true);
+                                    return false;
+                                } else {
+                                    setFieldsEmpty(false);
+                                    return true;
+                                }
+                            }}
+                        />
                     </div>
+                </div>
 
             </div>
 
-            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
-            {/*}
-            <div className="ButtonsContainer mb-5">
-                {verifyFieldsEmpty
-                    && <p className="error-text mt-3">Faltan llenar campos</p>}
-                <Button color="primary" variant="bordered">Cancelar</Button>
-                <Button color="primary" 
-                    isDisabled={verifyFieldsEmpty}
-                    >Crear</Button>
-            </div>
-                */}
+
+
         </div>
     )
 }

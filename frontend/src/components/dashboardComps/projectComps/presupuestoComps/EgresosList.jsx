@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
-import ModalEliminateIngreso from "./ModalEliminateIngreso";
-
+import ModalEliminateEgreso from "./ModalEliminateEgreso";
+import EditEgreso from "./EditEgreso";
 axios.defaults.withCredentials = true;
 
 function CardEgreso({
@@ -20,12 +20,17 @@ function CardEgreso({
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [selectedLinea, setSelectedLinea] = useState(null);
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
         console.log("Esta es la tarea", selectedTask);
     };
-
+    const toggleModal2 = (task) => {
+        setSelectedLinea(task);
+        setModal2(!modal2);
+        console.log("Esta es la linea", selectedLinea);
+    };
 
     const imageEgresoOptions = {
         "Licencia de Software": "/icons/icon-licencia.svg",
@@ -52,7 +57,7 @@ function CardEgreso({
                     <p className="titleHoraIngreso">{horaEgreso}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <button className="" type="button">
+                    <button className="" type="button" onClick={() => toggleModal2(EgresoObject)}>
                         <img src="/icons/editar.svg"/>
                     </button>
                     <button className="" type="button" onClick={() => toggleModal(EgresoObject)}>
@@ -61,15 +66,29 @@ function CardEgreso({
                 </div>
             </div>
             {modal1 && selectedTask && (
-                <ModalEliminateIngreso
+                <ModalEliminateEgreso
                     modal={modal1} 
                     toggle={() => toggleModal(selectedTask)}
                     taskName={selectedTask.descripcion}
-                    idLineaIngreso={selectedTask.idLineaEgreso}
+                    idLineaEgreso={selectedTask.idLineaEgreso}
                     refresh={refresh}
                 />
             )}
-
+             {modal2 && selectedLinea && (
+                <EditEgreso
+                    modal={modal2} 
+                    descripcionLineaEgreso={selectedLinea.descripcion}
+                    costoRealEgreso={selectedLinea.costoReal}
+                    lineaEgreso={selectedLinea}
+                    idMonedaIngreso={selectedLinea.idMoneda}
+                    fechaRegistroEgreso={selectedLinea.fechaRegistro}
+                    refresh={refresh}
+                    idLineaEstimacion={selectedLinea.idLineaEstimacionCosto}
+                    cantidadEgreso={selectedLinea.cantidad}
+                    
+                    
+                />
+            )}
         </li>
     );
 }

@@ -52,9 +52,10 @@ async function listarLineasXIdProyecto(req,res,next) {
 
 // Definir una función para modificar líneas de egreso
 async function modificarLineaEgreso(req,res,next) {
-    const {idLineaEgreso,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad} = req.params;
+    const {idLineaEgreso,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad} = req.body;
+    const query = `CALL MODIFICAR_LINEA_EGRESO(?,?,?,?,?,?,?);`;
     try {
-        const query = `CALL MODIFICAR_LINEA_EGRESO(?,?,?,?,?,?,?);`;
+        
         const [results] = await connection.query(query, [idLineaEgreso,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad]);
         const idLineaEgresoModificado = results[0][0].idLineaEgreso;
         res.status(200).json({idLineaEgresoModificado, message: "Lineas de egreso modificadas"});

@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
             .then(function (response) {
                 const user_data = response.data.usuario[0];
                 user_data.rolInProject = null;
+                user_data.rolNameInProject = null;
 
                 console.log("INFO DEL USUARIO LOGEADO : " + JSON.stringify(user_data));
 

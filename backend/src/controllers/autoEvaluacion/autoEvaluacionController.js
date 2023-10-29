@@ -42,9 +42,18 @@ async function listarAutoEvaluacion(req,res,next){
                 usuarioEvaluado.criterios = criterios[0][0];
         }
         if(evaluados.length === 0){
-            res.status(204).json({
-                message: "Autoevaluacion no creada"
-            });
+            const query3 = `CALL VERIFICAR_EXISTE_EVALUACION(?);`;
+            const results4 = await connection.query(query3,[idProyecto]);
+            if(results4[0][0].length === 0){
+                res.status(204).json({
+                    message: "Autoevaluacion no creada"
+                });
+            }
+            else{
+                res.status(205).json({
+                    message: "Solo miembro tiene autoevalaucion"
+                });
+            }
         }
         else{
             res.status(200).json({
