@@ -135,7 +135,7 @@ export default function ActaReunion(props) {
                                 <div className="flex text-gray-700 montserrat ml-4 mr-2">Personas convocadas:</div>
                                 <AvatarGroup isBordered max={3} className="space-x-2">
                                     {participantes.map((participante, index) => (
-                                        <Avatar key={participante.idUsuarioXRolXProyecto}  src="" fallback={
+                                        <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
                                             <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
                                                 {participante.nombres[0] + participante.apellidos[0]}
                                             </p>
