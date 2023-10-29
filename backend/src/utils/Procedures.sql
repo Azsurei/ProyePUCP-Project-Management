@@ -535,6 +535,28 @@ BEGIN
     -- Desactivar la Línea de Acta
     UPDATE LineaActaReunion SET activo = 0 WHERE idLineaActaReunion = _idLineaActaReunion;
 END $
+
+
+DROP PROCEDURE IF EXISTS MODIFICAR_LINEA_ACTA_REUNION;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_LINEA_ACTA_REUNION(
+    IN _idLineaActaReunion INT,
+    IN _nombreReunion VARCHAR(255),
+    IN _fechaReunion DATE,
+    IN _horaReunion TIME,
+    IN _nombreConvocante VARCHAR(255),
+    IN _motivo 	VARCHAR(255)
+)
+BEGIN 
+	UPDATE LineaActaReunion 
+    SET 
+    nombreReunion = _nombreReunion, 
+    fechaReunion = _fechaReunion,
+    horaReunion = _horaReunion,
+    nombreConvocante = _nombreConvocante,
+    motivo = _motivo
+    WHERE idLineaActaReunion = _idLineaActaReunion AND activo = 1;
+END$
 --------------------------
 --  TEMA REUNION
 --------------------------
@@ -570,6 +592,18 @@ END$
 CALL INSERTAR_TEMA_REUNION(1, 'Discusión sobre el plan de proyecto');
 CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(1)
 
+DROP PROCEDURE IF EXISTS MODIFICAR_TEMA_REUNION;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_TEMA_REUNION(
+    IN _idTemaReunion INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	UPDATE TemaReunion 
+    SET descripcion = _descripcion
+    WHERE idTemaReunion = _idTemaReunion AND activo =1;
+    SELECT _idTemaReunion AS idTemaReunion;
+END$
 ----------------------
 -- Acuerdo
 ----------------------
@@ -612,6 +646,19 @@ END$
 
 CALL LISTAR_ACUERDO_X_ID_TEMA_REUNION(1);
 
+DROP PROCEDURE IF EXISTS MODIFICAR_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ACUERDO(
+    IN _idAcuerdo INT,
+    IN _descripcion VARCHAR(500),
+    IN _fechaObjetivo  DATE
+)
+BEGIN
+	UPDATE Acuerdo 
+    SET descripcion = _descripcion, fechaObjetivo = _fechaObjetivo
+    WHERE idAcuerdo = _idAcuerdo AND activo =1;
+    SELECT _idAcuerdo AS idAcuerdo;
+END$
 --------------------------
 -- Responsables de acuerdo
 --------------------------
@@ -643,7 +690,7 @@ CREATE PROCEDURE LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(
     IN _idAcuerdo INT
 )
 BEGIN
-    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico
+    SELECT ra.idResponsableAcuerdo,urp.idUsuarioRolProyecto,u.idUsuario, u.nombres, u.apellidos, u.correoElectronico
     FROM ResponsableAcuerdo ra INNER JOIN UsuarioXRolXProyecto urp ON ra.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto 
     INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario
     WHERE ra.idAcuerdo = _idAcuerdo 
@@ -652,10 +699,22 @@ END$
 
 CALL LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(1)
 
+
 ##############################################################
 ## FALTA EL LISTAR USUARIOS X ROL X PROYECTO PREGUNTAR LOGICA
 ##############################################################
-
+DROP PROCEDURE IF EXISTS MODIFICAR_RESPONSABLE_ACUERDO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_RESPONSABLE_ACUERDO(
+    IN _idResponsableAcuerdo INT,
+    IN _idUsuarioXRolXProyecto INT
+)
+BEGIN
+	UPDATE ResponsableAcuerdo 
+    SET idUsuarioXRolXProyecto = _idUsuarioXRolXProyecto
+    WHERE idResponsableAcuerdo = _idResponsableAcuerdo AND activo =1;
+    SELECT _idResponsableAcuerdo AS idResponsableAcuerdo;
+END$
 -------------------------
 -- Comentario Reunion
 -------------------------
@@ -691,6 +750,18 @@ END$
 
 CALL LISTAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION(1);
 
+DROP PROCEDURE IF EXISTS MODIFICAR_COMENTARIO_REUNION;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_COMENTARIO_REUNION(
+    IN _idComentarioReunion INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	UPDATE ComentarioReunion 
+    SET descripcion = _descripcion
+    WHERE idComentarioReunion = _idComentarioReunion AND activo =1;
+    SELECT _idComentarioReunion AS idComentarioReunion;
+END$
 --------------------------------------
 -- PARTICIPANTE X REUNION
 --------------------------------------
@@ -721,7 +792,7 @@ CREATE PROCEDURE LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(
     IN _idLineaActaReunion INT
 )
 BEGIN
-    SELECT u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.usuario
+    SELECT pr.idParticipanteXReunion,urp.idUsuarioRolProyecto, u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.usuario
     FROM ParticipanteXReunion pr INNER JOIN UsuarioXRolXProyecto urp ON pr.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto
     INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario 
     WHERE pr.idLineaActaReunion = _idLineaActaReunion AND pr.activo=1;
@@ -729,7 +800,18 @@ END$
 
 CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(1)
 
-
+DROP PROCEDURE IF EXISTS MODIFICAR_PARTICIPANTE_X_REUNION;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PARTICIPANTE_X_REUNION(
+    IN _idParticipanteXReunion INT,
+    IN _asistio TINYINT
+)
+BEGIN
+	UPDATE ParticipanteXReunion 
+    SET asistio = _asistio
+    WHERE idParticipanteXReunion = _idParticipanteXReunion AND activo =1;
+    SELECT _idParticipanteXReunion AS idParticipanteXReunion;
+END$
 
 
 ######################

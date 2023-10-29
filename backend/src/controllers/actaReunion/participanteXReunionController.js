@@ -46,9 +46,19 @@ async function funcListarXIdLineaActaReunion(idLineaActaReunion){
     return participantesXReunion;
 }
 
+async function funcModificar(idParticipanteXReunion,asistio){
+    try {
+        const query = `CALL MODIFICAR_PARTICIPANTE_X_REUNION(?,?);`;
+        const [results]=await connection.query(query,[idParticipanteXReunion,asistio]);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     crear,
     listarXIdLineaActaReunion,
     funcCrear,
-    funcListarXIdLineaActaReunion
+    funcListarXIdLineaActaReunion,
+    funcModificar
 }

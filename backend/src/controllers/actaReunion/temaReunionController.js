@@ -53,9 +53,23 @@ async function funcListarXIdLineaActaReunion(idLineaActaReunion){
     return temasReunion;
 }
 
+async function funcModificar(idTemaReunion,descripcion,acuerdos){
+    try {
+        const query = `CALL MODIFICAR_TEMA_REUNION(?,?);`;
+        const [results]=await connection.query(query,[idTemaReunion,descripcion]);
+        for(acuerdo of acuerdos){
+            acuerdoController.funcModificar(acuerdo.idAcuerdo,acuerdo.descripcion,acuerdo.fechaObjetivo,acuerdo.responsables);
+        }
+    } catch (error) {
+        next(error);
+    }
+    return idTemaReunion;
+}
+
 module.exports = {
     crear,
     listarXIdLineaActaReunion,
     funcCrear,
-    funcListarXIdLineaActaReunion
+    funcListarXIdLineaActaReunion,
+    funcModificar
 }

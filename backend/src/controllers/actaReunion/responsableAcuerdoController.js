@@ -48,9 +48,19 @@ async function funcListarXIdAcuerdo(idAcuerdo){
     return responsablesAcuerdo;
 }
 
+async function funcModificar(idResponsableAcuerdo,idUsuarioXRolXProyecto){
+    try{
+        const query = `CALL MODIFICAR_RESPONSABLE_ACUERDO(?,?);`;
+        const [results] = await connection.query(query,[idResponsableAcuerdo,idUsuarioXRolXProyecto]);
+    }catch(error){
+        next(error);
+    }
+}
+
 module.exports = {
     crear,
     listarXIdAcuerdo,
     funcCrear,
-    funcListarXIdAcuerdo
+    funcListarXIdAcuerdo,
+    funcModificar
 }
