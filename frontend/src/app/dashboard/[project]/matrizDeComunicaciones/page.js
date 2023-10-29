@@ -263,9 +263,8 @@ export default function MatrizDeComunicaciones(props){
                             <DropdownItem onClick={() => 
                                     setRoutering(data)
                                 }>
-                                {/* <Link href={"/dashboard/"+projectName+"="+projectId+"/productBacklog/"+object?.idHistoriaDeUsuario}> */}
+                                
                                         Editar 
-                                {/* </Link> */}
                                 </DropdownItem>
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>

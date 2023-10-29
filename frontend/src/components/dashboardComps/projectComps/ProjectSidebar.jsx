@@ -319,7 +319,7 @@ function ProjectSidebar(props) {
             position: 1,
             optIcon: "/icons/sideBarDropDown_icons/sbdd5.svg",
             optName: "Gestion de backlog",
-            goTo: `${stringBase}/productBacklog`,
+            goTo: `${stringBase}/backlog/kanban`,
         },
         {
             id: 3,

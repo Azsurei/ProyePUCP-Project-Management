@@ -17,7 +17,10 @@ export default function Project(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    
+    useEffect(()=>{
+        setIsLoadingSmall(false);
+    },[]);
+
 
     return (
         //aqui va el contenido dentro de la pagina de ruta /project

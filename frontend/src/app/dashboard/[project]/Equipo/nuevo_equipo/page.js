@@ -60,7 +60,7 @@ export default function crear_equipo(props) {
     const [selectedValueRol, setSelectedValueRol] = useState("");
     const [reloadData, setReloadData] = useState(false);
 
-    const [rol, setRol] = useState(""); //Define un estado para almacenar el rol seleccionado [idRolEquipo
+    const [rol, setRol] = useState({}); //Define un estado para almacenar el rol seleccionado [idRolEquipo
     const [roles, setRoles] = useState([]);
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
