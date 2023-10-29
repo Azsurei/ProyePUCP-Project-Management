@@ -86,10 +86,7 @@ export default function crear_equipo(props) {
 
     //roles es un arreglo de roles, en este caso paso como parametro el conjunto de roles
     const handleAddRoles = (newRoles) => {
-        // Concatena los nuevos roles con los roles existentes
-        const updatedRoles = [...roles, ...newRoles];
-        setRoles(updatedRoles);
-        console.log("Roles: ", updatedRoles);
+        setRoles(newRoles);
     };
 
     const returnUniqueListOfMiembros = (newMiembrosList) => {
@@ -343,7 +340,7 @@ export default function crear_equipo(props) {
                             return (
                                 <div
                                     key={index}
-                                    className="flex gap-2 items-center"
+                                    className="flex gap-2 items-center relative"
                                 >
                                     <CardSelectedUser
                                         key={component.idUsuario}
@@ -414,6 +411,7 @@ export default function crear_equipo(props) {
                     modal={modal}
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
                     handleAddRoles={handleAddRoles}
+                    initialListRoles={roles}
                 />
             )}
             {modal1 && (
@@ -423,6 +421,8 @@ export default function crear_equipo(props) {
                     handlerModalFinished={returnUniqueListOfMiembros}
                     excludedUsers={selectedUniqueMemberList}
                     idProyecto={projectId}
+                    excludedUniqueUser={selectedMiembrosList}
+                    isExcludedUniqueUser={true}
                 ></ModalUsersOne>
             )}
             {modal2 && (

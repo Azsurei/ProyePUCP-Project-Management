@@ -11,8 +11,8 @@ import { Toaster, toast } from "sonner";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpRolEquipo({ modal, toggle, handleAddRoles }) {
-    const [listRoles, setListRoles] = useState([]);
+export default function PopUpRolEquipo({ modal, toggle, handleAddRoles,initialListRoles }) {
+    const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
     const [eliminateError, setEliminateError] = useState("");
