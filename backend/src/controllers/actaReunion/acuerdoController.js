@@ -71,5 +71,6 @@ module.exports = {
     crear,
     listarXIdTemaReunion,
     funcCrear,
-    funcListarXIdTemaReunion
+    funcListarXIdTemaReunion,
+    funcModificar
 }

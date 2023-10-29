@@ -61,7 +61,7 @@ async function funcModificar(idTemaReunion,descripcion,acuerdos){
             acuerdoController.funcModificar(acuerdo.idAcuerdo,acuerdo.descripcion,acuerdo.fechaObjetivo,acuerdo.responsables);
         }
     } catch (error) {
-        next(error);
+        throw error;
     }
     return idTemaReunion;
 }
