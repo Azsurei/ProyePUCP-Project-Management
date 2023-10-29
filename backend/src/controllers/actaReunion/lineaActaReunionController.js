@@ -79,9 +79,9 @@ async function listarXIdLineaActaReunion(req,res,next){
 }
 
 async function modificar(req,res,next){
-    const {idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentario} = req.body;
+    const {idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios} = req.body;
     try {
-        const result = await funcModificar(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentario);
+        const result = await funcModificar(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios);
         res.status(200).json({
             message: "Linea acta reunion modificada"});
     } catch (error) {
