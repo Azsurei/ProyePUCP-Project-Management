@@ -25,6 +25,7 @@ import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
 import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/RouteringCR";
+import ModalEliminateRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ModalEliminateRC";
 export default function MatrizDeComunicaciones(props){
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -75,6 +76,7 @@ export default function MatrizDeComunicaciones(props){
 
     const toggleModal = (task) => {
         setSelectedTask(task);
+        console.log("El id del objeto es: ", selectedTask);
         setModal1(!modal1);
     };
     const setRoutering = (objectID) => {
@@ -235,7 +237,7 @@ export default function MatrizDeComunicaciones(props){
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
                                     <VerticalDotsIcon className="text-default-300" />
@@ -251,7 +253,17 @@ export default function MatrizDeComunicaciones(props){
 
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
+                        <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
+                            <button className="" type="button" onClick={() => {
+                                    setRoutering(data)
+                                 }}>
+                                <img src="/icons/editar.svg"/>
+                            </button>
+                            <button className="" type="button" onClick={() => toggleModal(data)}>
+                                <img src="/icons/eliminar.svg"/>
+                            </button>
+                        </div>
                     </div>
                 );
             default:
@@ -377,6 +389,15 @@ export default function MatrizDeComunicaciones(props){
                 
                 </div>
             </div>
+            {modal1 && selectedTask && (
+                <ModalEliminateRC
+                    modal = {modal1} 
+                    toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
+                    taskName={selectedTask.nombreRiesgo}
+                    idRiesgo = {selectedTask.idRiesgo}
+                    refresh={DataTable}
+                />
+            )}
             {navegate && objectRC.idRiesgo && (
                 <RouteringRC
                     proy_name = {projectName}

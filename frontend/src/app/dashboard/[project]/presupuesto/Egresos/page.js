@@ -670,7 +670,7 @@ export default function Ingresos(props) {
                                                 onChange={() => {
                                                     setValidDescription(true);
                                                 }}
-                                                defaultValue = {dataLineaEstimacion.descripcion}
+                                                
                                                 />
                                          </div>
                                         

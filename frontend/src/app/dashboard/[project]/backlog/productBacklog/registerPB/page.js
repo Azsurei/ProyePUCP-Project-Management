@@ -13,7 +13,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import { useRouter } from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { SmallLoadingScreen } from "../../../layout";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {

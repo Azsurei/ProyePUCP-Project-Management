@@ -253,7 +253,7 @@ export default function MatrizDeComunicaciones(props){
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
                                     <VerticalDotsIcon className="text-default-300" />
@@ -268,7 +268,17 @@ export default function MatrizDeComunicaciones(props){
                                 </DropdownItem>
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
+                        <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
+                    <button className="" type="button" onClick={() => {
+                                    setRoutering(data)
+                                 }}>
+                        <img src="/icons/editar.svg"/>
+                    </button>
+                    <button className="" type="button" onClick={() => toggleModal(data)}>
+                        <img src="/icons/eliminar.svg"/>
+                    </button>
+                </div>
                     </div>
                 );
             default:
