@@ -317,10 +317,37 @@ export default function crearActaReunion(props) {
         const horaReunion = timeValue;
         const motivo = motiveValue;
         const nombreConvocante = convocante.nombres + convocante.apellidos;
-        const temas = [];
-        const participantes= [];
-        const comentarios = [];
+        const temas = listTemas.map(value => ({
+            descripcion: value.data, // assuming this is a property of the items in listTemas
+            acuerdos: [],
+        }));
 
+        const participantes = selectedMiembrosList.map(participante => ({ // assuming you have a list of participants
+            idUsuarioXRolXProyecto: participante.idUsuario,
+            asistio: false,
+        }));
+
+        const comentarios = listComentarios.map(comentario => ({ // assuming you have a list of comments
+            descripcion: comentario.descripcion,
+        }));
+
+        const meeting = {
+            idActaReunion,
+            nombreReunion,
+            fechaReunion,
+            horaReunion,
+            nombreConvocante,
+            motivo,
+            temas,
+            participantes,
+            comentarios
+        };
+
+        // Convert the meeting object to JSON format
+        const meetingJSON = JSON.stringify(meeting, null, 2);
+
+        // Now you can save meetingJSON to a file or send it in a request
+        console.log(meetingJSON);
         console.log('id de acta reunion:', idActaReunion);
         console.log("Titulo de Reunion: ", nombreReunion);
         console.log("Convocante de Reunion: ", nombreConvocante);
