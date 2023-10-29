@@ -32,7 +32,6 @@ function Login() {
     const [password, setPassword] = useState("");
     const [statusForm, setStatusForm] = useState("init");
     const [loadingCred, setLoadingCred] = useState(false);
-    const [loadingGoogle, setLoadingGoogle] = useState(false);
     const [loginError, setLoginError] = useState(null);
 
     // Variables adicionales
@@ -78,19 +77,8 @@ function Login() {
         }
     }, [email, password]);
 
-    // // Manejo de envíos de formulario de inicio de sesion
-    // useEffect(() => {
-    //     if (session) {
-    //         Cookies.set("tokenProyePUCP", session.user.token, {
-    //             expires: null,
-    //         });
-    //         router.push("/dashboard");
-    //     }
-    // }, [session]);
-
     const handleSubmit = async () => {
         setStatusForm("submitting");
-
         try {
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
@@ -99,38 +87,11 @@ function Login() {
                     password: password,
                 }
             );
-
-            const user = response.data;
-
-            if (user.error) {
-                throw user;
-            }
-
-            // TODO: Setear en la futura provider context
-
             router.push("/dashboard");
         } catch (error) {
-            setLoginError(
-                "Ocurrió un error al iniciar sesión. Intente de nuevo."
-            );
-            throw error.response.data;
+            setLoginError(error.response.data);
+            setStatusForm("valid");
         }
-
-        // const responseNextAuth = await signIn("credentials", {
-        //     email,
-        //     password,
-        //     redirect: false,
-        // });
-
-        // if (responseNextAuth.error) {
-        //     setStatusForm("valid");
-        //     setLoginError("Ocurrion un error al iniciar sesión. Intente de nuevo.");
-        //     return;
-        // }
-    };
-
-    const handleGoogleSignIn = async () => {
-        setLoadingGoogle(true);
     };
 
     const handleCallbackResponse = (response) => {
@@ -143,16 +104,9 @@ function Login() {
             .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`, {
                 username: userObject.email,
                 password: userObject.sub, //consideramos al sub (id) como contraseña en bd
-                imgLink: userObject.picture
+                imgLink: userObject.picture,
             })
             .then((response) => {
-                const user = response.data;
-
-                if (user.error) {
-                    throw user;
-                }
-
-                // TODO: Setear en la futura provider context
                 router.push("/dashboard");
             })
             .catch(function (error) {
@@ -180,17 +134,10 @@ function Login() {
                                     {
                                         username: userObject.email,
                                         password: userObject.sub,
-                                        imgLink: userObject.picture
+                                        imgLink: userObject.picture,
                                     }
                                 )
                                 .then((response) => {
-                                    const user = response.data;
-
-                                    if (user.error) {
-                                        throw user;
-                                    }
-
-                                    // TODO: Setear en la futura provider context
                                     router.push("/dashboard");
                                 })
                                 .catch(function (error) {
@@ -219,7 +166,7 @@ function Login() {
 
         google.accounts.id.renderButton(document.getElementById("signInDiv"), {
             theme: "outline",
-            size: "large"
+            size: "large",
         });
     }, []);
 
@@ -302,39 +249,36 @@ function Login() {
                 className={"w-48"}
             />
 
-
             <div className="flex flex-row w-full items-center">
                 <div className="flex-1 h-0.5 rounded-2xl bg-gray-300"></div>
-                <div className="px-4">O inicia sesión con</div>
+                <div className="font-['Roboto'] font-normal text-md px-4">O inicia sesión con</div>
                 <div className="flex-1 h-0.5 rounded-2xl bg-gray-300"></div>
             </div>
 
-            {/* <Button
-                text="Google"
-                iconBefore={<img src="/icons/icon-google.svg" />}
-                isLoading={loadingGoogle}
-                isDisabled={loadingGoogle}
-                className={"w-48"}
-                onClick={() => handleGoogleSignIn()}
-            /> */}
-
             <div id="signInDiv"></div>
 
-
-            <p className="m-0 p-[.2rem] px-[.5rem] bg-slate-300 rounded-lg" onClick={()=>{
-                setEmail("adminLosDibujitos@hotmail.com");
-                setPassword("ContraSegura_3526890");
-            }}>CUENTA ADMIN</p>
+            <Button
+                type="text"
+                text="Administrador"
+                href={"#"}
+                onClick={() => {
+                    setEmail("adminLosDibujitos@hotmail.com");
+                    setPassword("ContraSegura_3526890");
+                }}
+                isDisabled={statusForm === "submitting"}
+                className={"w-48"}
+            />
 
             <div className="flex flex-wrap justify-between items-center gap-2 w-full content-center">
-                <Link href="/recoverPassword">
+                <span className="font-['Roboto'] font-normal text-md">¿No tienes una cuenta?</span>
+                {/* <Link href="/recoverPassword">
                     <span className="font-['Roboto'] text-md font-bold leading-12 text-[#A9D562] hover:text-[#88B847] active:text-[#507A31] no-underline">
                         ¿Olvidó la contraseña?
                     </span>
-                </Link>
+                </Link> */}
                 <Link href="/register">
-                    <span className="font-['Roboto'] text-md font-bold leading-12 text-[#A9D562] hover:text-[#88B847] active:text-[#507A31] no-underline">
-                        Registrate
+                    <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
+                        Regístrate
                     </span>
                 </Link>
             </div>
