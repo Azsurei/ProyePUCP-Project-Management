@@ -1,0 +1,11 @@
+.generalKanbanCompCont::-webkit-scrollbar {
+    width: 4px;
+}
+
+.generalKanbanCompCont::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+.generalKanbanCompCont::-webkit-scrollbar-thumb {
+    @apply bg-rose-900 rounded-xl;
+}

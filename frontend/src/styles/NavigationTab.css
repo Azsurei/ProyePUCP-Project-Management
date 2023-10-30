@@ -1,0 +1,8 @@
+.navigationTabButton{
+    cursor: pointer;
+    transition: background-color 0.15s ease-in;
+}
+
+.navigationTabButton:hover{
+    background-color: rgb(233, 233, 233);
+}
