@@ -37,6 +37,8 @@ export default function crear_equipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     setIsLoadingSmall(false);
 
+    const [activeDropdown, setActiveDropdown] = useState(null);
+
     const [teamName, setTeamName] = useState("");
     const [teamLeader, setTeamLeader] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
@@ -356,6 +358,8 @@ export default function crear_equipo(props) {
                                                 component.idUsuario
                                             )
                                         }
+                                        isDropdownActive={activeDropdown === index}
+                                        setActiveDropdown={()=>{setActiveDropdown(index)}}
                                     />
                                 </div>
                             );

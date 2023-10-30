@@ -11,6 +11,8 @@ function ColumnContainer({
     updateColumn,
     createTask,
     tasks,
+    deleteTask,
+    updateTask,
 }) {
     const [editMode, setEditMode] = useState(false);
 
@@ -145,7 +147,12 @@ function ColumnContainer({
             {/****************Main content **************/}
             <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
                 {tasks.map((task) => (
-                    <TaskCard key={task.id} task={task}/>
+                    <TaskCard
+                        key={task.id}
+                        task={task}
+                        deleteTask={deleteTask}
+                        updateTask={updateTask}
+                    />
                 ))}
             </div>
 
