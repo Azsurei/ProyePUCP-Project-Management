@@ -451,7 +451,7 @@ export default function Ingresos(props) {
                             <UserCardsContextOne.Provider
                                 value={{ addEstimacionesList, removeEstimacionesInList }}
                                 >
-                                <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false} onCardSelect={handleCardSelect}></EstimacionCostoList>
+                                <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false} isSelected = {true} onCardSelect={handleCardSelect}></EstimacionCostoList>
                             </UserCardsContextOne.Provider>
                             
                         </div>

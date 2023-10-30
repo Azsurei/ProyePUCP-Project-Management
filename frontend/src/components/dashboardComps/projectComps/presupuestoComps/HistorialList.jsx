@@ -28,23 +28,23 @@ function CardEgreso({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoEgreso);
-    const monedaSymbol = EgresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
+    const monedaSymbol = EgresoObject.nombreMoneda === "USD" ? "$" : "S/";
     return (
         <li
             className="IngresoCard"
         >
             <img
                 className="imgageIngresoDefault"
-                src={imageEgresoOptions[EgresoObject.descripcion]}
+                src="/icons/icon-licencia.svg"
             />
             <div className="informacionIngreso">
                 <div style={{ marginTop: "12px", marginLeft: "15px" }}>
                     <p className="titleTipoIngreso">{tipoEgreso}</p>
-                    <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>Cant. {cantidad}</p>
+                    <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPagoEgresoHistorial"}>Cant. {cantidad}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgreso"}>{monedaSymbol} {costoRealEgreso}</p>
-                    <p className="titleHoraIngreso">{horaEgreso}</p>
+                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgresoHistorial"}>{monedaSymbol} {costoRealEgreso}</p>
+                    
                 </div>
                 
             </div>
@@ -76,7 +76,7 @@ function CardIngresos({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoIngreso);
-    const monedaSymbol = IngresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
+    const monedaSymbol = IngresoObject.nombreMoneda === "USD" ? "$" : "S/";
     return (
         <li
             className="IngresoCard"

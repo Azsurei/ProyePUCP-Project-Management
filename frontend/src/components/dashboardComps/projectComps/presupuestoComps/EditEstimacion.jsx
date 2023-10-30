@@ -1,4 +1,4 @@
-import { set } from "date-fns";
+import { set, sub } from "date-fns";
 import React from "react";
 import { useEffect , useState, useContext} from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link} from "@nextui-org/react";
@@ -88,8 +88,10 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
         setSelectedTipoMoneda(idMonedaEstimacion);
         setSelectCantidadRecurso(cantidadRecurso);
         setcantRecurso(cantidadRecurso);
-        setSelectMeses(mesesEstimacion);
+        
         setSelectSubtotal(subtotalEstimacion);
+        setSelectMeses(mesesEstimacion);
+        setmesesRequerido(mesesEstimacion);
         setSelectedDescripcion(descripcionEstimacionCosto);
         setdescripcionLinea(descripcionEstimacionCosto);
         setdescripcionEstimacion(descripcionEstimacionCosto);
@@ -348,7 +350,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                              <Input
                                                                 value={mesesRequerido}
                                                                 onValueChange={setmesesRequerido}
-                                                                placeholder={selectMeses}
+                                                                placeholder={mesesRequerido}
                                                                 labelPlacement="outside"
                                                                 isInvalid={!validCantMeses}
                                                                 onChange={()=>{setValidCantMeses(true)}}

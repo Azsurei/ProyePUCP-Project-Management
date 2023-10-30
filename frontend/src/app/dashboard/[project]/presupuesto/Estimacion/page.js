@@ -342,9 +342,12 @@ export default function Ingresos(props) {
                             Filtrar
                         </Button>
 
-                        <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
-                            Ver Tabla
-                        </Button>
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion/EstimacionTabla"}>
+                            <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
+                                Ver Tabla
+                            </Button>
+                        </Link>
+
 
                         <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar
@@ -354,7 +357,7 @@ export default function Ingresos(props) {
                     </div>
 
                     <div className="divListaIngreso">
-                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true}></EstimacionCostoList>
+                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false}></EstimacionCostoList>
                     </div>
 
 
