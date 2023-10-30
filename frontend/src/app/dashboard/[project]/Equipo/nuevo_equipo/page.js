@@ -160,9 +160,9 @@ export default function crear_equipo(props) {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
             roles: roles,
-            idLider: selectedUniqueMemberList[0].idUsuario,
+            userRoleData: userRoleData,
         });
-        axios
+        /* axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/insertarEquipo",
@@ -183,7 +183,7 @@ export default function crear_equipo(props) {
             })
             .catch(function (error) {
                 console.log(error);
-            });
+            }); */
     };
 
     const handleSelectedValueChangeRol = (value, userId) => {
@@ -350,7 +350,12 @@ export default function crear_equipo(props) {
                                     ></CardSelectedUser>
                                     <ComboBoxArray
                                         people={roles}
-                                        onSelect={setRol}
+                                        onSelect={(value) =>
+                                            handleSelectedValueChangeRol(
+                                                value,
+                                                component.idUsuario
+                                            )
+                                        }
                                     />
                                 </div>
                             );
@@ -385,8 +390,7 @@ export default function crear_equipo(props) {
                             colorButton="w-36 bg-blue-950 text-white"
                             oneButton={false}
                             secondAction={() => {
-                                //checkData();
-                                setAddParticipantesState(true);
+                                checkData();
                             }}
                             textColor="blue"
                             verifyFunction={() => {
