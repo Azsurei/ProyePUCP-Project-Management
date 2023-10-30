@@ -172,15 +172,16 @@ export default function crear_equipo(props) {
             roles: todosRoles,
             userRoleData: todosUserRoleData,
         });
-        /* axios
+        
+        axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/insertarEquipo",
+                    "/api/proyecto/equipo/insertarEquipoYParticipantes",
                 {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
             roles: todosRoles,
-            userRoleData: todosUserRoleData,
+            usuariosXRol: todosUserRoleData,
                 }
             )
             .then(function (response) {
@@ -189,7 +190,7 @@ export default function crear_equipo(props) {
             })
             .catch(function (error) {
                 console.log(error);
-            }); */
+            });
     };
 
     const handleSelectedValueChangeRol = (value, userId) => {

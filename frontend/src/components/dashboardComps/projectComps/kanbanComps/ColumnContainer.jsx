@@ -1,7 +1,7 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import TrashIcon from "./TrashIcon";
 import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PlusIcon from "./PlusIcon";
 import TaskCard from "./TaskCard";
 
@@ -15,6 +15,10 @@ function ColumnContainer({
     updateTask,
 }) {
     const [editMode, setEditMode] = useState(false);
+
+    const tasksIds = useMemo(() => {
+        return tasks.map(task => task.id);
+    }, [tasks]);
 
     const {
         setNodeRef,
@@ -48,8 +52,8 @@ function ColumnContainer({
         border-2
         border-rose-500
         w-[350px]
-        h-[500px]
-        max-h-[500px]
+        h-[100%]
+        min-h-[100%]
         rounded-md
         flex
         flex-col
@@ -63,14 +67,14 @@ function ColumnContainer({
             ref={setNodeRef}
             style={style}
             className="
-    bg-slate-100
-    w-[350px]
-    h-[500px]
-    max-h-[500px]
-    rounded-md
-    flex
-    flex-col
-    "
+            bg-slate-100
+            w-[350px]
+            h-[100%]
+            min-h-[100%]
+            rounded-md
+            flex
+            flex-col
+            "
         >
             {/****************Column title **************/}
             <div
@@ -107,7 +111,7 @@ function ColumnContainer({
                     rounded-full
                     "
                     >
-                        0
+                        {tasks.length}
                     </div>
                     {!editMode && column.title}
                     {editMode && (
@@ -146,14 +150,16 @@ function ColumnContainer({
 
             {/****************Main content **************/}
             <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
-                {tasks.map((task) => (
-                    <TaskCard
-                        key={task.id}
-                        task={task}
-                        deleteTask={deleteTask}
-                        updateTask={updateTask}
-                    />
-                ))}
+                <SortableContext items={tasksIds}>
+                    {tasks.map((task) => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                            deleteTask={deleteTask}
+                            updateTask={updateTask}
+                        />
+                    ))}
+                </SortableContext>
             </div>
 
             {/****************Main footer **************/}
@@ -164,7 +170,7 @@ function ColumnContainer({
                     createTask(column.id);
                 }}
             >
-                <PlusIcon /> Add task
+                <PlusIcon /> Añadir tarea
             </button>
         </div>
     );
