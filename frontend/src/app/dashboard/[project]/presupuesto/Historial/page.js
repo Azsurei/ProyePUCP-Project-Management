@@ -178,8 +178,8 @@ export default function Ingresos(props) {
     ];
     const totalCalculate = () => {
         const totalI = lineasIngreso.reduce((total, item) => total + item.monto, 0);
-        const totalE = dataEgreso.reduce((total, item) => total + item.costoReal, 0);
-        const porcentaje = (1-((totalI-totalE)/totalI))*100;
+        const totalE = lineasEgreso.reduce((total, item) => total + item.costoReal, 0);
+        const porcentaje = totalI ? (((totalI - totalE) / totalI)) * 100 : 0;
         setIngresosTotales(totalI);
         console.log("Ingresos Totales",totalI);
         setEgresosTotales( totalE);
@@ -354,8 +354,8 @@ export default function Ingresos(props) {
                                     <CircularProgress
                                         classNames={{
                                         svg: "w-80 h-80 drop-shadow-md",
-                                        indicator: "text-red-500",
-                                        track: "stroke-current text-green-500",
+                                        indicator: "text-green-500",
+                                        track: "stroke-current text-red-500",
                                         value: "text-8xl font-semibold text-black",
                                     }}
                                     value={performance}

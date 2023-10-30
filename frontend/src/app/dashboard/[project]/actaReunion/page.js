@@ -10,6 +10,7 @@ import { Button, Avatar, AvatarGroup, Card , CardBody, CardHeader, Divider} from
 import {Tabs, Tab} from '@nextui-org/react';
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -121,7 +122,7 @@ export default function ActaReunion(props) {
                     <CardHeader className="p-4">
                         <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
                     </CardHeader>
-                    <Divider className="my-1"/>
+                    <Divider />
                     <CardBody className="flex-row justify-between items-center h-36">
                         <div className="mr-4">
                             <p className="text-blue-900 montserrat">Reunión convocada por:</p>
@@ -132,26 +133,34 @@ export default function ActaReunion(props) {
                         {participantes.length > 0 && (
                             <>
                                 <Divider orientation="vertical" />
-                                <div className="flex text-gray-700 montserrat ml-4 mr-2">Personas convocadas:</div>
-                                <AvatarGroup isBordered max={3} className="space-x-2">
+                                <div className="flex text-gray-700 montserrat">Convocados :   </div>
+                                <AvatarGroup isBordered max={3} >
                                     {participantes.map((participante, index) => (
-                                        <Avatar key={participante.idUsuarioXRolXProyecto}  src="" fallback={
+                                        <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
                                             <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
                                                 {participante.nombres[0] + participante.apellidos[0]}
                                             </p>
                                         } />
                                     ))}
                                 </AvatarGroup>
-                                {participantes.length > 3 &&
-                                    <p className="ml-2">+{participantes.length - 3} más</p>
-                                }
                             </>
                         )}
                     </CardBody>
                 </Card>
                 <div className="flex flex-col space-y-10 mt-10">
-                    <Button onClick={() => handleEdit(reunion)}>Editar</Button>
-                    <Button onClick={() => handleDelete(reunion.idLineaActaReunion)} color="error" >Eliminar</Button>
+                    <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
+                    <Modal
+                        nameButton="Eliminar"
+                        textHeader="Eliminar reunion"
+                        textBody="¿Seguro que quiere eliminar esta reunion?"
+                        colorButton="w-36 bg-red-600 text-white font-semibold"
+                        oneButton={false}
+                        secondAction={() => {
+                            handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
+                            router.back();
+                        }}
+                        textColor="red"
+                    />
                 </div>
             </div>
             // Crear botones de editar y eliminar

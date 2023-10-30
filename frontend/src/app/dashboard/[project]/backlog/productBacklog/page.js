@@ -30,7 +30,7 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from 'next/navigation';
-import { SmallLoadingScreen } from "../layout";
+import { SmallLoadingScreen } from "../../layout";
 
 export default function ProductBacklog(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -241,25 +241,35 @@ export default function ProductBacklog(props) {
                 return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem onClick={() => {
-                                    setRoutering(data)
-                                }}>
+                    // <div className="relative flex justify-end items-center gap-2">
+                    //     <Dropdown>
+                    //         <DropdownTrigger>
+                    //             <Button isIconOnly size="sm" variant="light">
+                    //                 <VerticalDotsIcon className="text-default-300" />
+                    //             </Button>
+                    //         </DropdownTrigger>
+                    //         <DropdownMenu>
+                    //             <DropdownItem onClick={() => {
+                    //                 setRoutering(data)
+                    //             }}>
                                 
-                                        Editar 
-                                </DropdownItem>
+                    //                     Editar 
+                    //             </DropdownItem>
 
-                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
+                    //             <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
+                    //         </DropdownMenu>
+                    //     </Dropdown>
+                    // </div>
+                <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
+                    <button className="" type="button" onClick={() => {
+                                    setRoutering(data)
+                                 }}>
+                        <img src="/icons/editar.svg"/>
+                    </button>
+                    <button className="" type="button" onClick={() => toggleModal(data)}>
+                        <img src="/icons/eliminar.svg"/>
+                    </button>
+                </div>
                 );
             case "NombrePrioridad":
                 return (

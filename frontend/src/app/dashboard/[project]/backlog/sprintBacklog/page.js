@@ -4,7 +4,6 @@ import { SmallLoadingScreen } from "../../layout";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import { useRouter } from "next/navigation";
 import NavigationTab from "@/components/NavigationTab";
-import KanbanBoard from "@/components/dashboardComps/projectComps/kanbanComps/KanbanBoard";
 
 export default function Kanban(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -17,5 +16,9 @@ export default function Kanban(props) {
         setIsLoadingSmall(false);
     }, []);
 
-    return <KanbanBoard></KanbanBoard>;
+    return (
+        <div>
+            this is sprint backlog
+        </div>
+    );
 }

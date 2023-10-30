@@ -33,6 +33,8 @@ export default function ModalUsersOne({
     handlerModalFinished,
     excludedUsers,
     idProyecto,
+    excludedUniqueUser,
+    isExcludedUniqueUser=false,
 }) {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
@@ -91,9 +93,14 @@ export default function ModalUsersOne({
                     );
 
                     //quitamos los usuarios que ya fueron seleccionados
-                    const excludedUserIds = excludedUsers.map(
+                    let excludedUserIds = excludedUsers.map(
                         (user) => user.idUsuario
                     );
+                    if (isExcludedUniqueUser) {
+                        excludedUserIds = excludedUserIds.concat(
+                            excludedUniqueUser.map((user) => user.idUsuario)
+                        );
+                    }
                     const filteredUsers = response.data.usuarios.filter(
                         (user) => !excludedUserIds.includes(user.idUsuario)
                     );

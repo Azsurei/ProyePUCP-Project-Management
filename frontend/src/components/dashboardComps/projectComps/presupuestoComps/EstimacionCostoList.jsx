@@ -18,6 +18,7 @@ function CardEstimacionCosto({
     horaIngreso,
     isEdit,
     refresh,
+    canSelect,
     onSelect,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
@@ -54,7 +55,7 @@ function CardEstimacionCosto({
     //     }
     // };
     const handleCardSelect = () => {
-        if (onSelect) {
+        if (onSelect && canSelect) {
             setIsSelected(!isSelected); // Cambiar el estado isSelected
             onSelect(EstimacionObject, !isSelected); // Pasar el elemento y el estado de selección
         }
@@ -78,7 +79,7 @@ function CardEstimacionCosto({
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
                     <p className="titleTarifaEstimacion">{monedaSymbol} {tarifaEstimacion}</p>
-                    <p className="titleHoraIngreso">{monedaSymbol} {EstimacionObject.subtotal}</p>
+                    <p className="titleHoraIngreso">Subtotal: {monedaSymbol} {EstimacionObject.subtotal}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
                 {isEdit && (
@@ -125,7 +126,7 @@ function CardEstimacionCosto({
 export default function EstimacionCostoList(props) {
     const router = useRouter();
 
-    const { lista, refresh , isEdit} = props;
+    const { lista, refresh , isEdit , isSelected} = props;
     console.log("listaEstimaciones", lista);
     if (props.lista.length === 0) {
         return (
@@ -186,6 +187,7 @@ export default function EstimacionCostoList(props) {
                                     horaIngreso={horaIngreso}
                                     isEdit={isEdit}
                                     refresh={refresh}
+                                    canSelect={isSelected}
                                     onSelect={(selectedData, isSelected) => handleCardSelect(selectedData, isSelected)}
                                 />
                             ))}

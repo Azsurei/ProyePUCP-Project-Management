@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/ContainerScenario2";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { SmallLoadingScreen } from "../../../layout";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {

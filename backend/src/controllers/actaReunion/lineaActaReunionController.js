@@ -23,12 +23,11 @@ async function listarXIdActaReunion(req,res,next){
         const query = `CALL LISTAR_LINEA_ACTA_REUNION_X_ID_ACTA_REUNION(?);`;
         const results = await connection.query(query,[idActaReunion]);
         const lineasActaReunion = results[0][0];
-
+        console.log(lineasActaReunion);
         for(const linea of lineasActaReunion){
-            console.log(linea.idLineaActaReunion);
             const query2 = `CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(?);`;
             const [resulstParticipanteXReunion] = await connection.query(query2,[linea.idLineaActaReunion]);
-            linea.participantesXReunion = resulstParticipanteXReunion[0][0];
+            linea.participantesXReunion = resulstParticipanteXReunion[0];
         }
         res.status(200).json({
             lineasActaReunion,

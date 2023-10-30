@@ -226,7 +226,7 @@ export default function Presupuesto(props) {
 
                     <div className="subtitlePresupuesto">Flujo de Caja Enero - Junio</div>
                     
-                    {/* <TableBudget> </TableBudget> */}
+                    <TableBudget> </TableBudget>
 
                 </div>
 

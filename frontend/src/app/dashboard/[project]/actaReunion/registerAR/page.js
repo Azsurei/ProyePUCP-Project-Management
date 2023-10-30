@@ -202,12 +202,14 @@ export default function crearActaReunion(props) {
 // *********************************************************************************************
 // About User Information
 // *********************************************************************************************
-    const [datosUsuario, setDatosUsuario] = useState({
-        idUsuario: "",
-        nombres: "",
-        apellidos: "",
-        correoElectronico: "",
-    });
+    const [datosUsuario, setDatosUsuario] = useState(
+        { idUsuario: 0,
+            nombres: " ",
+            apellidos: " ",
+            correoElectronico: " ",
+            activo: 0,
+            imgLink: null,
+            idUsuarioRolProyecto: 0 });
 
     useEffect(() => {
         const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
@@ -297,6 +299,7 @@ export default function crearActaReunion(props) {
             .get(stringURL)
             .then(({ data: { data: { idActaReunion } } }) => {
                 console.log("Listando ActasReunion. Respuesta del servidor:", idActaReunion);
+                console.log(projectId);
                 setidActa(idActaReunion);
             })
             .catch((error) => {
@@ -316,19 +319,17 @@ export default function crearActaReunion(props) {
         const fechaReunion = dateValue;
         const horaReunion = timeValue;
         const motivo = motiveValue;
-        const nombreConvocante = convocante.nombres + convocante.apellidos;
+        const nombreConvocante = convocante.nombres + " " + convocante.apellidos;
         const temas = listTemas.map(value => ({
-            descripcion: value.data, // assuming this is a property of the items in listTemas
+            descripcion: value.data,
             acuerdos: [],
         }));
-
         const participantes = selectedMiembrosList.map(participante => ({ // assuming you have a list of participants
-            idUsuarioXRolXProyecto: participante.idUsuario,
+            idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
             asistio: false,
         }));
-
-        const comentarios = listComentarios.map(comentario => ({ // assuming you have a list of comments
-            descripcion: comentario.descripcion,
+        const comentarios = listComentarios.map(value => ({ // assuming you have a list of comments
+            descripcion: value.data,
         }));
 
         const meeting = {
@@ -348,6 +349,7 @@ export default function crearActaReunion(props) {
 
         // Now you can save meetingJSON to a file or send it in a request
         console.log(meetingJSON);
+        console.log("Seleccionados: ",selectedMiembrosList);
         console.log('id de acta reunion:', idActaReunion);
         console.log("Titulo de Reunion: ", nombreReunion);
         console.log("Convocante de Reunion: ", nombreConvocante);
@@ -534,10 +536,13 @@ export default function crearActaReunion(props) {
                             </div>
                             {modal2 && (
                                 <ModalUsers
-                                    idProyecto={projectId}
+                                    listAllUsers={false}
                                     handlerModalClose={toggleModal2}
                                     handlerModalFinished={returnListOfMiembros}
                                     excludedUsers={selectedMiembrosList}
+                                    idProyecto={projectId}
+                                    excludedUniqueUser={selectedConvocanteList}
+                                    isExcludedUniqueUser={true}
                                 ></ModalUsers>
                             )}
                             {/* Fin del selector de miembros */}
@@ -679,8 +684,10 @@ export default function crearActaReunion(props) {
                             colorButton="w-36 bg-blue-950 text-white font-semibold"
                             oneButton={false}
                             secondAction={() => {
+                                resetConvocante();
                                 createMeeting();
-                                router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion');
+                                router.back();
+                                router.back();
                             }}
                             textColor="blue"
                             verifyFunction={() => {
@@ -695,11 +702,7 @@ export default function crearActaReunion(props) {
                         />
                     </div>
                 </div>
-
             </div>
-
-
-
         </div>
     )
 }

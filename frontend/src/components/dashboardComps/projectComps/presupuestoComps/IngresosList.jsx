@@ -44,7 +44,7 @@ function CardIngresos({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoIngreso);
-    const monedaSymbol = IngresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
+    const monedaSymbol = IngresoObject.nombreMoneda === "USD" ? "$" : "S/";
     return (
         <li
             className="IngresoCard"
