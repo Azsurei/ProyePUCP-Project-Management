@@ -358,7 +358,7 @@ export default function newProject() {
 
             <div >
 
-                <Box sx={{ width: '80%', mx: 'auto' ,marginTop: '20px'}}>
+                <Box sx={{ width: '70%', mx: 'auto' ,marginTop: '20px'}}>
 
                 <Stepper nonLinear activeStep={activeStep}>
                     {steps.map((label, index) => (
