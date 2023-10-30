@@ -659,7 +659,6 @@ export default function Equipo(props) {
                                 <>
                                     {selectedTeam.participantes.map(
                                         (member) => (
-                                            //falta un key aqui
                                             <React.Fragment
                                                 key={member.idUsuario}
                                             >

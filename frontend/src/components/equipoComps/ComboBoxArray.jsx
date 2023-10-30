@@ -1,10 +1,18 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-export default function ComboBoxArray({ people, onSelect, isDropdownActive, setActiveDropdown }) {
-    const [selectedPerson, setSelectedPerson] = useState("");
+export default function ComboBoxArray({
+    people,
+    onSelect,
+    isDropdownActive,
+    setActiveDropdown,
+    autoSelectedValue,
+    onSelectAuto,
+    idUsuario,
+}) {
+    const [selectedPerson, setSelectedPerson] = useState(autoSelectedValue);
     const [query, setQuery] = useState("");
 
     const filteredPeople =
@@ -16,8 +24,18 @@ export default function ComboBoxArray({ people, onSelect, isDropdownActive, setA
                       .includes(query.toLowerCase());
               });
 
+    useEffect(() => {
+        console.log("Dentro de comboBoxArray el idRol y idUsuario es: "+autoSelectedValue.idRol+"y"+idUsuario);
+        // Este efecto se ejecutará cuando el componente se monte y cuando `autoSelectedValue` cambie.
+        onSelectAuto(autoSelectedValue.idRol,idUsuario);
+    },[]);
+
     return (
-        <div className="absolute right-16 top-1/2 transform -translate-y-1/2" onClick={setActiveDropdown} style={{zIndex: isDropdownActive ? "30" : "10"}}>
+        <div
+            className="absolute right-16 top-1/2 transform -translate-y-1/2"
+            onClick={setActiveDropdown}
+            style={{ zIndex: isDropdownActive ? "30" : "10" }}
+        >
             {/* <div className="absolute right-16 top-1/2 transform -translate-y-1/2"> */}
             <Combobox
                 value={selectedPerson}

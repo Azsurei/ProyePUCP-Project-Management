@@ -126,13 +126,6 @@ export default function crear_equipo(props) {
         console.log(newList);
     };
 
-    const [datosUsuario, setDatosUsuario] = useState({
-        idUsuario: "",
-        nombres: "",
-        apellidos: "",
-        correoElectronico: "",
-    });
-
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -172,16 +165,16 @@ export default function crear_equipo(props) {
             roles: todosRoles,
             userRoleData: todosUserRoleData,
         });
-        
-        axios
+
+        /* axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/insertarEquipoYParticipantes",
                 {
-            idProyecto: parseInt(proyectoId),
-            nombre: nombreTeam,
-            roles: todosRoles,
-            usuariosXRol: todosUserRoleData,
+                    idProyecto: parseInt(proyectoId),
+                    nombre: nombreTeam,
+                    roles: todosRoles,
+                    usuariosXRol: todosUserRoleData,
                 }
             )
             .then(function (response) {
@@ -190,7 +183,7 @@ export default function crear_equipo(props) {
             })
             .catch(function (error) {
                 console.log(error);
-            });
+            }); */
     };
 
     const handleSelectedValueChangeRol = (value, userId) => {
@@ -215,6 +208,27 @@ export default function crear_equipo(props) {
             setUserRoleData([...userRoleData, newUserRole]);
         }
     };
+
+    const handleAutoSelectedValueChangeRol = (value, userId) => {
+        // Crear un objeto para el nuevo rol del usuario
+        const newUserRole = {
+            idUsuario: userId, // El ID del usuario
+            idRolEquipo: value, // El ID del rol seleccionado
+        };
+    
+        // Verificar si el usuario ya tiene un rol en el arreglo
+        const userIndex = userRoleData.findIndex(
+            (item) => item.idUsuario === userId
+        );
+        console.log("user index:",userIndex);
+    
+        if (userIndex === -1) {
+            // Si el usuario no tiene un rol, agrégalo al arreglo
+            console.log("handleAutoSelectedValueChangeRol:",[...userRoleData, newUserRole]);
+            setUserRoleData([...userRoleData, newUserRole]);
+        }
+    };
+    
 
     return (
         <div className="crear_equipo">
@@ -289,6 +303,7 @@ export default function crear_equipo(props) {
                     color="primary"
                     startContent={<AddIcon />}
                     onClick={() => toggleModal()}
+                    className="w-full"
                 >
                     Agregar roles
                 </Button>
@@ -343,7 +358,22 @@ export default function crear_equipo(props) {
                                         setActiveDropdown={() => {
                                             setActiveDropdown(index);
                                         }}
+                                        autoSelectedValue={{
+                                            idRol: 2,
+                                            nombreRol: "Miembro",
+                                        }}
+                                        onSelectAuto={(value, id) =>
+                                            handleAutoSelectedValueChangeRol(
+                                                value,
+                                                id
+                                            )
+                                        }
+                                        idUsuario={component.idUsuario}
                                     />
+                                    {console.log(
+                                        `Los userDateRoles ${index} son :`,
+                                        userRoleData
+                                    )}
                                 </div>
                             );
                         })}
@@ -378,6 +408,7 @@ export default function crear_equipo(props) {
                             oneButton={false}
                             secondAction={() => {
                                 checkData();
+                                //router.back();
                             }}
                             textColor="blue"
                             verifyFunction={() => {
