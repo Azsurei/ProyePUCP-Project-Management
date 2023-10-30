@@ -11,11 +11,14 @@ export default function ComboBoxArray({ people, onSelect }) {
         query === ""
             ? people
             : people.filter((person) => {
-                  return person.nombreRol.toLowerCase().includes(query.toLowerCase());
+                  return person.nombreRol
+                      .toLowerCase()
+                      .includes(query.toLowerCase());
               });
 
     return (
-        <div className="absolute right-16 top-1/2 transform -translate-y-1/2">
+        <div>
+            {/* <div className="absolute right-16 top-1/2 transform -translate-y-1/2"> */}
             <Combobox
                 value={selectedPerson}
                 onChange={(selectedItem) => {
