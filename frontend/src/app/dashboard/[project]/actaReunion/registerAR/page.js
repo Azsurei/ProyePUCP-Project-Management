@@ -202,12 +202,14 @@ export default function crearActaReunion(props) {
 // *********************************************************************************************
 // About User Information
 // *********************************************************************************************
-    const [datosUsuario, setDatosUsuario] = useState({
-        idUsuario: "",
-        nombres: "",
-        apellidos: "",
-        correoElectronico: "",
-    });
+    const [datosUsuario, setDatosUsuario] = useState(
+        { idUsuario: 0,
+            nombres: " ",
+            apellidos: " ",
+            correoElectronico: " ",
+            activo: 0,
+            imgLink: null,
+            idUsuarioRolProyecto: 0 });
 
     useEffect(() => {
         const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
@@ -323,10 +325,9 @@ export default function crearActaReunion(props) {
             acuerdos: [],
         }));
         const participantes = selectedMiembrosList.map(participante => ({ // assuming you have a list of participants
-            idUsuarioXRolXProyecto: participante.idUsuario,
+            idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
             asistio: false,
         }));
-
         const comentarios = listComentarios.map(value => ({ // assuming you have a list of comments
             descripcion: value.data,
         }));
@@ -348,6 +349,7 @@ export default function crearActaReunion(props) {
 
         // Now you can save meetingJSON to a file or send it in a request
         console.log(meetingJSON);
+        console.log("Seleccionados: ",selectedMiembrosList);
         console.log('id de acta reunion:', idActaReunion);
         console.log("Titulo de Reunion: ", nombreReunion);
         console.log("Convocante de Reunion: ", nombreConvocante);
@@ -684,7 +686,8 @@ export default function crearActaReunion(props) {
                             secondAction={() => {
                                 resetConvocante();
                                 createMeeting();
-                                router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion');
+                                router.back();
+                                router.back();
                             }}
                             textColor="blue"
                             verifyFunction={() => {
