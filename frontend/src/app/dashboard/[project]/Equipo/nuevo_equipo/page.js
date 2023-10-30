@@ -37,6 +37,8 @@ export default function crear_equipo(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     setIsLoadingSmall(false);
 
+    const [activeDropdown, setActiveDropdown] = useState(null);
+
     const [teamName, setTeamName] = useState("");
     const [teamLeader, setTeamLeader] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
@@ -61,7 +63,7 @@ export default function crear_equipo(props) {
     const [reloadData, setReloadData] = useState(false);
 
     const [rol, setRol] = useState({}); //Define un estado para almacenar el rol seleccionado [idRolEquipo
-    const [roles, setRoles] = useState([{idRol: 1, nombreRol: "Miembro"}]); //Define un estado para almacenar los roles disponibles
+    const [roles, setRoles] = useState([{ idRol: 2, nombreRol: "Miembro" }]); //Define un estado para almacenar los roles disponibles
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
 
@@ -138,11 +140,7 @@ export default function crear_equipo(props) {
     }, []);
 
     function verifyFieldsEmpty() {
-        return teamName === "" || selectedUniqueMemberList.length === 0;
-    }
-
-    function verifyFieldsEmpty2() {
-        return userRoleData.length === 0;
+        return teamName === "";
     }
 
     useEffect(() => {
@@ -159,34 +157,39 @@ export default function crear_equipo(props) {
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
+        const todosRoles = [{ idRol: 1, nombreRol: "Líder" }, ...roles];
+        const todosUserRoleData = [
+            {
+                idUsuario: selectedUniqueMemberList[0].idUsuario,
+                idRolEquipo: 1,
+            },
+            ...userRoleData,
+        ];
 
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
-            idLider: selectedUniqueMemberList[0].idUsuario,
+            roles: todosRoles,
+            userRoleData: todosUserRoleData,
         });
-        axios
+        /* axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/insertarEquipo",
                 {
-                    idProyecto: parseInt(proyectoId),
-                    nombre: nombreTeam,
-                    idLider: selectedUniqueMemberList[0].idUsuario,
+            idProyecto: parseInt(proyectoId),
+            nombre: nombreTeam,
+            roles: todosRoles,
+            userRoleData: todosUserRoleData,
                 }
             )
             .then(function (response) {
-                setIdEquipoInsertado(response.data.idEquipo);
-                console.log(
-                    "El id del equipo creado es:",
-                    response.data.idEquipo
-                );
                 console.log(response.data.message);
                 console.log("Conexion correcta");
             })
             .catch(function (error) {
                 console.log(error);
-            });
+            }); */
     };
 
     const handleSelectedValueChangeRol = (value, userId) => {
@@ -210,32 +213,6 @@ export default function crear_equipo(props) {
             // Si el usuario no tiene un rol, agrégalo al arreglo
             setUserRoleData([...userRoleData, newUserRole]);
         }
-    };
-
-    //ahora se registrara los participantes con su rol
-    const checkData2 = () => {
-        console.log("Post data participantes: ", {
-            idEquipo: idEquipoInsertado,
-            miembros: userRoleData,
-        });
-
-        axios
-            .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/insertarMiembros",
-                {
-                    idEquipo: idEquipoInsertado,
-                    miembros: userRoleData,
-                }
-            )
-            .then(function (response) {
-                console.log(response);
-                console.log("Conexion correcta");
-                router.back();
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
     };
 
     return (
@@ -353,7 +330,18 @@ export default function crear_equipo(props) {
                                     ></CardSelectedUser>
                                     <ComboBoxArray
                                         people={roles}
-                                        onSelect={setRol}
+                                        onSelect={(value) =>
+                                            handleSelectedValueChangeRol(
+                                                value,
+                                                component.idUsuario
+                                            )
+                                        }
+                                        isDropdownActive={
+                                            activeDropdown === index
+                                        }
+                                        setActiveDropdown={() => {
+                                            setActiveDropdown(index);
+                                        }}
                                     />
                                 </div>
                             );
@@ -388,8 +376,7 @@ export default function crear_equipo(props) {
                             colorButton="w-36 bg-blue-950 text-white"
                             oneButton={false}
                             secondAction={() => {
-                                //checkData();
-                                setAddParticipantesState(true);
+                                checkData();
                             }}
                             textColor="blue"
                             verifyFunction={() => {

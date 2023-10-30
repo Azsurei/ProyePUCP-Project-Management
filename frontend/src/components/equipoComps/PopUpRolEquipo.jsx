@@ -19,7 +19,7 @@ export default function PopUpRolEquipo({ modal, toggle, handleAddRoles,initialLi
     const [noRol, setNoRol] = useState("");
     const [isSelected, setIsSelected] = useState(false);
     const [addRol, setAddRol] = useState(false);
-    const [quantity, setQuantity] = useState(2);
+    const [quantity, setQuantity] = useState(3);
 
     const handleInsertRol = () => {
         setNewRolName("");

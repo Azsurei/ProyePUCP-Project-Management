@@ -12,6 +12,8 @@
     "dependencies": {
         "@atlaskit/datetime-picker": "^12.10.2",
         "@atlaskit/progress-tracker": "^8.5.3",
+        "@dnd-kit/core": "^6.0.8",
+        "@dnd-kit/sortable": "^7.0.2",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
         "@headlessui/react": "^1.7.17",
