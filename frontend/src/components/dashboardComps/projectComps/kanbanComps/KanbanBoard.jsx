@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PlusIcon from "./PlusIcon";
 import ColumnContainer from "./ColumnContainer";
 import {
@@ -14,8 +14,16 @@ import { createPortal } from "react-dom";
 import "@/styles/dashboardStyles/projectStyles/kanbanStyles/KanbanBoard.css";
 import TaskCard from "./TaskCard";
 
-export default function KanbanBoard() {
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
+export default function KanbanBoard({projectId}) {
+
+    const [stateWhatsHappening, setStateWhatsHappening] = useState("");
+
     const [columns, setColumns] = useState([]);
+    //inicializamos columnas con aquellas cuyas tareas sean null
+
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
     //has id and title
     const [tasks, setTasks] = useState([]);
@@ -32,6 +40,33 @@ export default function KanbanBoard() {
         })
     );
 
+    useEffect(() => {
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/listarColumnasYTareas/" +
+            projectId;
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
+                const columnTareas = {
+                    id: generateId(), //a cambiar en futuro
+                    title: `Tareas`,
+                };
+                setColumns([...columns, columnTareas]);
+                setStateWhatsHappening("se asignaron");
+                console.log("hello");
+
+                console.log(response.data.data);
+                //console.log(response.data.message);
+                //console.log("Conexion correcta");
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
     return (
         <div
             className="generalKanbanCompCont
@@ -44,14 +79,23 @@ export default function KanbanBoard() {
     overflow-y-hidden
     py-[20px]"
         >
+            <p className="w-[100px]">{stateWhatsHappening}</p>
             <DndContext
                 sensors={sensors}
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
                 onDragOver={onDragOver}
             >
-                <div className={columns.length !== 0 ? "flex gap-4 h-[100%] min-h-[100%]": "flex gap-1 h-[100%] min-h-[100%]"}>
-                    <div className="flex gap-4 h-full min-h-full">
+                <div
+                    className={
+                        columns.length !== 0
+                            ? "flex gap-4 h-[100%] min-h-[100%]"
+                            : "flex gap-1 h-[100%] min-h-[100%]"
+                    }
+                >
+                    <div className="flex gap-8 h-full min-h-full">
+                        {/*La primera columna, debe ser una llamada TAREAS, que contenga toda la lista de tareas con idColumnaKanban y posicionKanban = null*/}
+                        
                         <SortableContext items={columnsId}>
                             {columns.map((column) => (
                                 <ColumnContainer
@@ -187,30 +231,35 @@ export default function KanbanBoard() {
     }
 
     function onDragEnd(event) {
+        setStateWhatsHappening("entraste a onDragEnd");
         setActiveColumn(null);
         setActiveTask(null);
 
         const { active, over } = event;
         if (!over) return; //not draggin over smting valid
 
+        const isActiveAColumn = active.data.current?.type === "Column";
         const activeColumnId = active.id;
         const overColumnId = over.id;
         if (activeColumnId === overColumnId) return;
 
-        setColumns((columns) => {
-            console.log("====== " + activeColumnId + " " + overColumnId);
-            const activeColumnIndex = columns.findIndex(
-                (col) => col.id === activeColumnId
-            );
-            const overColumnIndex = columns.findIndex(
-                (col) => col.id === overColumnId
-            );
-
-            return arrayMove(columns, activeColumnIndex, overColumnIndex);
-        });
+        if(isActiveAColumn){
+            setColumns((columns) => {
+                const activeColumnIndex = columns.findIndex(
+                    (col) => col.id === activeColumnId
+                );
+                const overColumnIndex = columns.findIndex(
+                    (col) => col.id === overColumnId
+                );
+    
+                return arrayMove(columns, activeColumnIndex, overColumnIndex);
+            });
+        }
     }
 
     function onDragOver(event) {
+        setStateWhatsHappening("entraste a onDragOver");
+
         const { active, over } = event;
         if (!over) return; //not draggin over smting valid
 
@@ -220,6 +269,9 @@ export default function KanbanBoard() {
 
         const isActiveATask = active.data.current?.type === "Task";
         const isOverATask = over.data.current?.type === "Task";
+
+
+        setStateWhatsHappening("entraste a onDragOver con isActiveATask = "+isActiveATask+" y isOverATask = "+isOverATask);
 
         if (!isActiveATask) return;
 
@@ -237,6 +289,8 @@ export default function KanbanBoard() {
         }
 
         const isOverAColumn = over.data.current?.type === "Column";
+
+        setStateWhatsHappening("entraste a onDragOver con isActiveATask = "+isActiveATask+" y isOverAColumn = "+isOverAColumn);
 
         //im dropping a task over a column
         if (isActiveATask && isOverAColumn) {
