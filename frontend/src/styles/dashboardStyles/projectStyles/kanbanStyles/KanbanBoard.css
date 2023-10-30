@@ -9,3 +9,15 @@
 .generalKanbanCompCont::-webkit-scrollbar-thumb {
     @apply bg-rose-900 rounded-xl;
 }
+
+.TaskContainerCard::-webkit-scrollbar {
+    width: 4px;
+}
+
+.TaskContainerCard::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+.TaskContainerCard::-webkit-scrollbar-thumb{
+    @apply bg-sky-500 rounded-xl;
+}
