@@ -159,6 +159,7 @@ export default function crear_equipo(props) {
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
+            roles: roles,
             idLider: selectedUniqueMemberList[0].idUsuario,
         });
         axios
