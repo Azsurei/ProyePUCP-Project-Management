@@ -112,7 +112,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
 
                         <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
                             Exportar
-                        </Button>
+                        </Button> 
                     </div>
 
                     <div className="subtitlePresupuesto">Estimacion de Costos </div>
@@ -121,7 +121,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
       <Table sx={{ minWidth: 700 }} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="center" colSpan={2}>
+            <TableCell align="right" colSpan={2}>
               Cantidad Recurso
             </TableCell>
             <TableCell align="right">Tarifa</TableCell>
@@ -148,16 +148,11 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
           ))}
           <TableRow>
             <TableCell rowSpan={3} />
-            <TableCell colSpan={2}>Subtotal</TableCell>
+            <TableCell colSpan={1} align="right">Subtotal</TableCell>
             <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Tax</TableCell>
-            <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>Total</TableCell>
+            <TableCell colSpan={1} align="right">Total</TableCell>
             <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
           </TableRow>
         </TableBody>

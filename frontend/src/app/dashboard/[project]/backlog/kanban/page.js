@@ -17,5 +17,5 @@ export default function Kanban(props) {
         setIsLoadingSmall(false);
     }, []);
 
-    return <KanbanBoard></KanbanBoard>;
+    return <KanbanBoard projectId={projectId}></KanbanBoard>;
 }
