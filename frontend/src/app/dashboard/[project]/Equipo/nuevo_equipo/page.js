@@ -138,11 +138,7 @@ export default function crear_equipo(props) {
     }, []);
 
     function verifyFieldsEmpty() {
-        return teamName === "" || selectedUniqueMemberList.length === 0;
-    }
-
-    function verifyFieldsEmpty2() {
-        return userRoleData.length === 0;
+        return teamName === "";
     }
 
     useEffect(() => {
