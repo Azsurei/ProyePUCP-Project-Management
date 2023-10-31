@@ -2970,3 +2970,51 @@ BEGIN
     WHERE ae.idProyecto = _idProyecto 
     AND ae.activo = 1;
 END$
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO_AUTORIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO_AUTORIDAD(
+    IN _nombreAutoridad VARCHAR(200)
+)
+BEGIN
+	DECLARE _idInteresadoAutoridad INT;
+	INSERT INTO InteresadoAutoridad(nombreAutoridad,activo) 
+    VALUES(_nombreAutoridad,1);
+    SET _idInteresadoAutoridad = @@last_insert_id;
+    SELECT _idInteresadoAutoridad AS idInteresadoAutoridad;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO_ADHESION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO_ADHESION(
+    IN _nombreAdhesion VARCHAR(200)
+)
+BEGIN
+	DECLARE _idInteresadoAdhesionActual INT;
+	INSERT INTO InteresadoAdhesion(nombreAdhesion,activo) 
+    VALUES(_nombreAdhesion,1);
+    SET _idInteresadoAdhesionActual = @@last_insert_id;
+    SELECT _idInteresadoAdhesionActual AS idInteresadoAdhesionActual;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_INTERESADO_AUTORIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADO_AUTORIDAD()
+BEGIN
+	SELECT *
+    FROM InteresadoAutoridad
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_INTERESADO_ADHESION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADO_ADHESION()
+BEGIN
+	SELECT *
+    FROM InteresadoAdhesion
+    WHERE activo = 1;
+END$

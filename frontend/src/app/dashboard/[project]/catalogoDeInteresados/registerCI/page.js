@@ -11,6 +11,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import ContainerRequirementsCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerRequirementsCI";
 import ContainerStrategiesCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerStrategiesCI";
 import MailIcon from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/MailIcon";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 export default function CatalogoDeInteresadosRegister(props) {
@@ -37,6 +38,8 @@ export default function CatalogoDeInteresadosRegister(props) {
     const isTextTooLong3 = organization.length > 100;
     const isTextTooLong4 = charge.length > 100;
     const isTextTooLong5 = contactInformation.length > 400;
+    const isTextTooLong6 = email.length > 100;
+    const isTextTooLong7 = phone.length > 100;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
@@ -116,21 +119,47 @@ export default function CatalogoDeInteresadosRegister(props) {
         });
     }
 
+    function verifyFieldsEmpty() {
+        return (
+            name === "" ||
+            requirements.some(
+                (requirements) => requirements.requirements === ""
+            ) ||
+            strategies.some((strategies) => strategies.strategies === "")
+        );
+    }
+
+    function verifyFieldsExcessive() {
+        return (
+            name.length > 100 ||
+            role.length > 100 ||
+            organization.length > 100 ||
+            charge.length > 100 ||
+            email.length > 100 ||
+            phone.length > 100 ||
+            contactInformation.length > 400 ||
+            requirements.some(
+                (requirements) => requirements.requirements.length > 400
+            ) ||
+            strategies.some((strategies) => strategies.strategies.length > 400)
+        );
+    }
+
     const onSubmit = () => {
         const postData = {
             idProyecto: parseInt(projectId),
-            idProbabilidad: probability,
-            idImpacto: impact,
-            nombreRiesgo: name,
-            fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].idUsuario,
-            detalleRiesgo: detail,
-            causaRiesgo: cause,
-            impactoRiesgo: impactDetail,
-            estado: isSelected ? "Activo" : "Inactivo",
-            responsables: selectedMiembrosList1,
-            planesRespuesta: responsePlans,
-            planesContigencia: contingencyPlans,
+            idAutoridad: autority,
+            idAdhesionActual: currentAdhesion,
+            idAdhesionDeseada: futureAdhesion,
+            nombre: name,
+            rol: role,
+            organizacion: organization,
+            cargo: charge,
+            correoElectronico: email,
+            numeroTelefono: phone,
+            informacionContacto: contactInformation,
+            requeriments: requirements,
+            strategies: strategies,
         };
         console.log("El postData es :", postData);
         /*         axios
@@ -242,15 +271,15 @@ export default function CatalogoDeInteresadosRegister(props) {
                         placeholder="Escriba aquí"
                         startContent={
                             <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                          }
+                        }
                         isRequired
                         className="custom-labelCI"
                         value={email}
                         onValueChange={setEmail}
                         maxLength="105"
-                        isInvalid={isTextTooLong4}
+                        isInvalid={isTextTooLong6}
                         errorMessage={
-                            isTextTooLong4
+                            isTextTooLong6
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
@@ -267,9 +296,9 @@ export default function CatalogoDeInteresadosRegister(props) {
                         value={phone}
                         onValueChange={setPhone}
                         maxLength="105"
-                        isInvalid={isTextTooLong4}
+                        isInvalid={isTextTooLong7}
                         errorMessage={
-                            isTextTooLong4
+                            isTextTooLong7
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
@@ -394,7 +423,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                     {quantity2 === 0 ? (
                         <div className="flex justify-center items-center">
-                            <div>¡Puede agregar algunas estratgias!</div>
+                            <div>¡Puede agregar algunas estrategias!</div>
                         </div>
                     ) : (
                         strategies.map((strategies, index) => (
@@ -439,7 +468,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    router.back();
+                                    //router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
@@ -447,26 +476,21 @@ export default function CatalogoDeInteresadosRegister(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(true);
+                                        toast.error("Faltan completar campos y se excedió el límite de caractéres")
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(false);
+                                        toast.error("Faltan completar campos")
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        setFieldsExcessive(true);
-                                        setFieldsEmpty(false);
+                                        toast.error("Se excedió el límite de caractéres")
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
-                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -475,6 +499,15 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                 </div>
             </div>
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

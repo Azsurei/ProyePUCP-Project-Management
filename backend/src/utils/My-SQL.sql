@@ -1149,3 +1149,89 @@ CREATE TABLE RiesgoImpacto(
 )
 ENGINE = InnoDB;
 
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------
+
+DROP TABLE IF EXISTS Interesado;
+CREATE TABLE Interesado(
+    idInteresado INT AUTO_INCREMENT PRIMARY KEY,
+    nombreCompleto VARCHAR(200),
+    rolEnProyecto VARCHAR(200),
+    organizacion VARCHAR(200),
+    cargo VARCHAR(200),
+    correo VARCHAR(200),
+    telefeno VARCHAR(12),
+    datosContacto VARCHAR(200),
+    idNivelAutoridad INT,
+    idNivelAdhesionActual INT,
+    idNivelAdhesionDeseado INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS Interesado;
+CREATE TABLE Interesado(
+    idInteresado INT AUTO_INCREMENT PRIMARY KEY,
+    idCatalogoInteresado INT,
+    nombreCompleto VARCHAR(200),
+    rolEnProyecto VARCHAR(200),
+    organizacion VARCHAR(200),
+    cargo VARCHAR(200),
+    correo VARCHAR(200),
+    telefeno VARCHAR(12),
+    datosContacto VARCHAR(200),
+    idNivelAutoridad INT,
+    idNivelAdhesionActual INT,
+    idNivelAdhesionDeseado INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idCatalogoInteresado) REFERENCES CatalogoInteresado (idCatalogoInteresado),
+    FOREIGN KEY (idNivelAutoridad) REFERENCES InteresadoAutoridad (idInteresadoAutoridad),
+    FOREIGN KEY (idNivelAdhesionActual) REFERENCES InteresadoAdhesion (idInteresadoAdhesionActual),
+    FOREIGN KEY (idNivelAdhesionDeseado) REFERENCES InteresadoAdhesion (idInteresadoAdhesionActual)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoAutoridad;
+CREATE TABLE InteresadoAutoridad(
+    idInteresadoAutoridad INT AUTO_INCREMENT PRIMARY KEY,
+    nombreAutoridad VARCHAR(200),
+    activo tinyint NOT NULL
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoAdhesion;
+CREATE TABLE InteresadoAdhesion(
+    idInteresadoAdhesionActual INT AUTO_INCREMENT PRIMARY KEY,
+    nombreAdhesion VARCHAR(200),
+    activo tinyint NOT NULL
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoRequerimiento;
+CREATE TABLE InteresadoRequerimiento(
+    idRequerimiento INT AUTO_INCREMENT PRIMARY KEY,
+    idInteresado INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoEstrategia;
+CREATE TABLE InteresadoEstrategia(
+    idEstrategia INT AUTO_INCREMENT PRIMARY KEY,
+    idInteresado INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------
