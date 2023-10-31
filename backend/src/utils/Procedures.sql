@@ -931,26 +931,28 @@ CREATE PROCEDURE INSERTAR_TAREA(
     IN _fechaFin DATE,
     IN _cantSubtareas INT,
     IN _cantPosteriores INT,
-    IN _horasPlaneadas TIME
+    IN _horasPlaneadas TIME,
+    IN _esPosterior TINYINT
 )
 BEGIN
 	DECLARE _idTarea INT;
-	INSERT INTO Tarea(idCronograma,idTareaEstado,idEquipo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,fechaUltimaModificacionEstado,activo) 
-    VALUES(_idCronograma,_idTareaEstado,_idEquipo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,curdate(),1);		
+	INSERT INTO Tarea(idCronograma,idTareaEstado,idEquipo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,fechaUltimaModificacionEstado,esPosterior,activo) 
+    VALUES(_idCronograma,_idTareaEstado,_idEquipo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,curdate(),_esPosterior,1);		
     SET _idTarea = @@last_insert_id;
     SELECT _idTarea AS idTarea;
 END $
 
 DROP PROCEDURE IF EXISTS LISTAR_TAREAS_X_ID_PROYECTO;
-CREATE DEFINER=`admin`@`%` PROCEDURE `LISTAR_TAREAS_X_ID_PROYECTO`(
+DELIMITER $
+CREATE PROCEDURE LISTAR_TAREAS_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
     WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto) AND t.idTareaEstado = te.idTareaEstado
     AND t.activo=1;
-END
+END$
 
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
@@ -1882,7 +1884,6 @@ DROP PROCEDURE IF EXISTS INSERTAR_LINEA_INGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
 	IN _idPresupuesto INT,
-    IN _idProyecto INT,
     IN _idMoneda INT,
 	IN _idTransaccionTipo INT,
     IN _idIngresoTipo INT,
@@ -1893,8 +1894,8 @@ CREATE PROCEDURE INSERTAR_LINEA_INGRESO(
 )
 BEGIN
 	DECLARE _idLineaIngreso INT;
-	INSERT INTO LineaIngreso(idPresupuesto,idProyecto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
-    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
+	INSERT INTO LineaIngreso(idPresupuesto,idMoneda,idTransaccionTipo,idIngresoTipo,descripcion,monto,cantidad,fechaTransaccion,activo) 
+    VALUES(_idPresupuesto,_idMoneda,_idTransaccionTipo,_idIngresoTipo,_descripcion,_monto,_cantidad,_fechaTransaccion,1);
     SET _idLineaIngreso = @@last_insert_id;
     SELECT _idLineaIngreso AS idLineaIngreso;
 END$
@@ -1936,23 +1937,23 @@ END $
 
 
 
-DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PROYECTO;
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO;
 DELIMITER $
-CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PROYECTO(IN _idProyecto INT)
+CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
     SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion, t.idTransaccionTipo, t.descripcion AS descripcionTransaccionTipo,
     i.idIngresoTipo, i.descripcion AS descripcionIngresoTipo, m.idMoneda, m.nombre AS nombreMoneda
 	FROM LineaIngreso AS l LEFT JOIN TransaccionTipo AS t ON l.idTransaccionTipo = t.idTransaccionTipo
 							LEFT JOIN IngresoTipo AS i ON l.idIngresoTipo = i.idIngresoTipo
 							LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
-	WHERE l.idProyecto = _idProyecto AND l.activo=1;
+	WHERE l.idPresupuesto = _idPresupuesto AND l.activo=1;
 END$
 
 
-DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PROYECTO_NOMBRE_FECHAS;
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO_NOMBRE_FECHAS;
 DELIMITER $
-CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(
-	IN _idProyecto INT,
+CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO_NOMBRE_FECHAS(
+	IN _idPresupuesto INT,
     IN _descripcion VARCHAR(255),
     IN _fechaIni DATE,
     IN _fechaFin DATE)
@@ -1964,7 +1965,7 @@ BEGIN
 							LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
 	WHERE l.descripcion LIKE CONCAT('%', IFNULL(_descripcion, l.descripcion), '%') 
     AND (l.fechaTransaccion BETWEEN IFNULL(_fechaIni, '1000-01-01') AND IFNULL(_fechaFin, '9999-12-31'))
-    AND l.idProyecto = _idProyecto AND l.activo=1;
+    AND l.idPresupuesto = _idPresupuesto AND l.activo=1;
 END$
 
 
@@ -2001,7 +2002,6 @@ DROP PROCEDURE IF EXISTS INSERTAR_LINEA_EGRESO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 	IN _idPresupuesto INT,
-    IN _idProyecto INT,
     IN _idMoneda INT,
     IN _idLineaEstimacionCosto INT,
 	IN _descripcion  VARCHAR(255),
@@ -2011,8 +2011,8 @@ CREATE PROCEDURE INSERTAR_LINEA_EGRESO(
 )
 BEGIN
 	DECLARE _idLineaEgreso INT;
-	INSERT INTO LineaEgreso(idPresupuesto,idProyecto,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad,activo) 
-    VALUES(_idPresupuesto,_idProyecto,_idMoneda,_idLineaEstimacionCosto,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
+	INSERT INTO LineaEgreso(idPresupuesto,idMoneda,idLineaEstimacionCosto,descripcion,costoReal,fechaRegistro,cantidad,activo) 
+    VALUES(_idPresupuesto,_idMoneda,_idLineaEstimacionCosto,_descripcion,_costoReal,_fechaRegistro,_cantidad,1);
     SET _idLineaEgreso = @@last_insert_id;
     SELECT _idLineaEgreso AS idLineaEgreso;
 END$
@@ -2043,28 +2043,26 @@ BEGIN
         idLineaEgreso = _idLineaEgreso AND activo=1;
     
     SELECT _idLineaEgreso AS idLineaEgreso;
-END
-$
+END$
 
 
 
 SELECT * FROM Presupuesto;
 
-DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO;
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO;
 DELIMITER $
-CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PROYECTO(IN _idProyecto INT)
+CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
     SELECT l.idLineaEgreso,l.descripcion, l.costoReal,l.fechaRegistro, l.cantidad, m.idMoneda, m.nombre AS nombreMoneda
 	FROM LineaEgreso AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
-	WHERE l.idProyecto = _idProyecto AND l.activo=1;
+	WHERE l.idPresupuesto = _idPresupuesto AND l.activo=1;
 END$
 
-CALL LISTAR_LINEA_EGRESO_X_ID_PROYECTO(50);
 
-DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PROYECTO_NOMBRE_FECHAS;
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO_NOMBRE_FECHAS;
 DELIMITER $
-CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PROYECTO_NOMBRE_FECHAS(
-	IN _idProyecto INT,
+CREATE PROCEDURE LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO_NOMBRE_FECHAS(
+	IN _idPresupuesto INT,
     IN _descripcion VARCHAR(255),
     IN _fechaIni DATE,
     IN _fechaFin DATE
@@ -2074,7 +2072,7 @@ BEGIN
 	FROM LineaEgreso AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
 	WHERE l.descripcion LIKE CONCAT('%', IFNULL(_descripcion, l.descripcion), '%') 
     AND (l.fechaRegistro BETWEEN IFNULL(_fechaIni, '1000-01-01') AND IFNULL(_fechaFin, '9999-12-31'))
-    AND l.idProyecto = _idProyecto AND l.activo=1;
+    AND l.idPresupuesto = _idPresupuesto AND l.activo=1;
 END$
 
 
@@ -2125,17 +2123,17 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_ESTIMACION_COSTO(
     IN _idMoneda INT,
     IN _idPresupuesto INT,
-    IN _idProyecto INT,
     IN _descripcion VARCHAR(255),
     IN _tarifaUnitaria DECIMAL(10,2),
     IN _cantidadRecurso INT,
     IN _subtotal DECIMAL(10,2),
-    IN _fechaInicio DATE
+    IN _fechaInicio DATE,
+    IN _tiempoRequerido INT
 )
 BEGIN
 	DECLARE _idLineaEstimacionCosto INT;
-	INSERT INTO LineaEstimacionCosto(idMoneda,idPresupuesto,idProyecto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,activo) 
-    VALUES(_idMoneda,_idPresupuesto,_idProyecto,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,1);
+	INSERT INTO LineaEstimacionCosto(idMoneda,idPresupuesto,descripcion,tarifaUnitaria,cantidadRecurso,subtotal,fechaInicio,tiempoRequerido,activo) 
+    VALUES(_idMoneda,_idPresupuesto,_descripcion,_tarifaUnitaria,_cantidadRecurso,_subtotal,_fechaInicio,_tiempoRequerido,1);
     SET _idLineaEstimacionCosto = @@last_insert_id;
     SELECT _idLineaEstimacionCosto AS idLineaEstimacionCosto;
 END$
@@ -2149,7 +2147,8 @@ CREATE PROCEDURE MODIFICAR_LINEA_ESTIMACION_COSTO(
     IN _tarifaUnitaria DECIMAL(10,2),
     IN _cantidadRecurso INT,
     IN _subtotal DECIMAL(10,2),
-    IN _fechaInicio DATE
+    IN _fechaInicio DATE,
+    IN _tiempoRequerido INT
 )
 BEGIN
     UPDATE LineaEstimacionCosto
@@ -2159,7 +2158,8 @@ BEGIN
         tarifaUnitaria = _tarifaUnitaria,
         cantidadRecurso = _cantidadRecurso,
         subtotal = _subtotal,
-        fechaInicio = _fechaInicio
+        fechaInicio = _fechaInicio,
+        tiempoRequerido =_tiempoRequerido
     WHERE
         idLineaEstimacion = _idLineaEstimacionCosto;
 
@@ -2170,19 +2170,19 @@ END$
 
 CALL INSERTAR_LINEA_ESTIMACION_COSTO(1,1,1,"Primera linea de estimacion costo",20,2,40,CURDATE());
 
-DROP PROCEDURE IF EXISTS LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO;
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PRESUPUESTO;
 DELIMITER $
-CREATE PROCEDURE LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO(IN _idProyecto INT)
+CREATE PROCEDURE LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
     SELECT l.idLineaEstimacion, l.descripcion, l.tarifaUnitaria,l.cantidadRecurso,l.subtotal,l.fechaInicio, m.idMoneda, m.nombre AS nombreMoneda
 	FROM LineaEstimacionCosto AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
-	WHERE l.idProyecto = _idProyecto AND l.activo=1;
+	WHERE l.idPresupuesto = _idPresupuesto AND l.activo=1;
 END$
 
-DROP PROCEDURE IF EXISTS LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS;
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PRESUPUESTO_NOMBRE_FECHAS;
 DELIMITER $
-CREATE PROCEDURE LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS(
-	IN _idProyecto INT,
+CREATE PROCEDURE LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PRESUPUESTO_NOMBRE_FECHAS(
+	IN _idPresupuesto INT,
     IN _descripcion VARCHAR(255),
     IN _fechaIni DATE,
     IN _fechaFin DATE)
@@ -2191,11 +2191,11 @@ BEGIN
 	FROM LineaEstimacionCosto AS l LEFT JOIN Moneda AS m ON l.idMoneda = m.idMoneda
 	WHERE l.descripcion LIKE CONCAT('%', IFNULL(_descripcion, l.descripcion), '%') 
     AND (l.fechaInicio BETWEEN IFNULL(_fechaIni, '1000-01-01') AND IFNULL(_fechaFin, '9999-12-31'))
-    AND l.idProyecto = _idProyecto AND l.activo=1;
+    AND l.idPresupuesto = _idPresupuesto AND l.activo=1;
 END$
 
 SELECT * FROM LineaEstimacionCosto;
-CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PROYECTO_NOMBRE_FECHAS(50,'Pri',NULL,NULL)
+CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PRESUPUESTO_NOMBRE_FECHAS(40,NULL,NULL,NULL)
 
 
 DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_ESTIMACION_COSTO;
@@ -2969,4 +2969,52 @@ BEGIN
     LEFT JOIN Autoevaluacion as ae ON ue.idAutoevaluacion = ae.idAutoevaluacion
     WHERE ae.idProyecto = _idProyecto 
     AND ae.activo = 1;
+END$
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO_AUTORIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO_AUTORIDAD(
+    IN _nombreAutoridad VARCHAR(200)
+)
+BEGIN
+	DECLARE _idInteresadoAutoridad INT;
+	INSERT INTO InteresadoAutoridad(nombreAutoridad,activo) 
+    VALUES(_nombreAutoridad,1);
+    SET _idInteresadoAutoridad = @@last_insert_id;
+    SELECT _idInteresadoAutoridad AS idInteresadoAutoridad;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO_ADHESION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO_ADHESION(
+    IN _nombreAdhesion VARCHAR(200)
+)
+BEGIN
+	DECLARE _idInteresadoAdhesionActual INT;
+	INSERT INTO InteresadoAdhesion(nombreAdhesion,activo) 
+    VALUES(_nombreAdhesion,1);
+    SET _idInteresadoAdhesionActual = @@last_insert_id;
+    SELECT _idInteresadoAdhesionActual AS idInteresadoAdhesionActual;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_INTERESADO_AUTORIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADO_AUTORIDAD()
+BEGIN
+	SELECT *
+    FROM InteresadoAutoridad
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_INTERESADO_ADHESION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADO_ADHESION()
+BEGIN
+	SELECT *
+    FROM InteresadoAdhesion
+    WHERE activo = 1;
 END$

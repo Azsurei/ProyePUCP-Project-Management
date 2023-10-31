@@ -70,18 +70,6 @@ CREATE TABLE IF NOT EXISTS LineaIngreso (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-ALTER TABLE LineaIngreso ADD COLUMN idMoneda INT;
-
-
-
-ALTER TABLE LineaIngreso 
-ADD FOREIGN KEY (idMoneda) 
-REFERENCES Moneda(idMoneda);
-
-ALTER TABLE LineaIngreso 
-ADD FOREIGN KEY (idIngreso) 
-REFERENCES Ingreso(idIngreso);
-
 -- -----------------------------------------------------
 -- Table Privilegios
 -- -----------------------------------------------------
@@ -279,6 +267,7 @@ CREATE TABLE Tarea(
     cantPosteriores INT,
     horasPlaneadas TIME,
     fechaUltimaModificacionEstado DATE, ## Campo para verificar cuando se cambio el estado de la tarea
+    esPosterior TINYINT,
     activo TINYINT,
 	FOREIGN KEY (idCronograma) REFERENCES Cronograma(idCronograma),
     FOREIGN KEY (idTareaEstado) REFERENCES TareaEstado(idTareaEstado)
@@ -642,18 +631,21 @@ CREATE TABLE LineaEgreso(
 	idLineaEgreso INT AUTO_INCREMENT PRIMARY KEY,
     idPresupuesto INT,
     idMoneda INT,
+    idLineaEstimacionCosto INT,
     descripcion VARCHAR(255),
     costoReal  DECIMAL(10,2),
     fechaRegistro DATE,
     cantidad INT,
+    tiempoRequerido INT,
     activo TINYINT,
     FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto),
+    FOREIGN KEY (idLineaEstimacionCosto) REFERENCES LineaEstimacionCosto(idLineaEstimacionCosto),
     FOREIGN KEY (idMoneda) REFERENCES Moneda(idMoneda)
 )
 ENGINE = InnoDB;
 
-ALTER TABLE LineaEgreso ADD FOREIGN KEY (idLineaEstimacionCosto) REFERENCES LineaEstimacionCosto(idLineaEstimacion);
-ALTER TABLE LineaIngreso DROP COLUMN idIngreso;
+
+
 
 CREATE TABLE EstimacionCosto(
 	idEstimacion INT AUTO_INCREMENT PRIMARY KEY,
@@ -684,16 +676,6 @@ CREATE TABLE LineaEstimacionCosto(
     FOREIGN KEY (idEstimacion) REFERENCES EstimacionCosto(idEstimacion)
 )
 ENGINE = InnoDB;
-
-SELECT CONSTRAINT_NAME
-FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE TABLE_NAME = 'LineaEstimacionCosto'
-AND COLUMN_NAME = 'idEstimacion';
-
-ALTER TABLE LineaEstimacionCosto
-ADD COLUMN idPresupuesto INT;
-
-ALTER TABLE LineaEstimacionCosto ADD FOREIGN KEY (idPresupuesto) REFERENCES Presupuesto(idPresupuesto);
 
 -----------------------
 -- Product Backlog
@@ -1123,3 +1105,89 @@ CREATE TABLE RiesgoImpacto(
 )
 ENGINE = InnoDB;
 
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------
+
+DROP TABLE IF EXISTS Interesado;
+CREATE TABLE Interesado(
+    idInteresado INT AUTO_INCREMENT PRIMARY KEY,
+    nombreCompleto VARCHAR(200),
+    rolEnProyecto VARCHAR(200),
+    organizacion VARCHAR(200),
+    cargo VARCHAR(200),
+    correo VARCHAR(200),
+    telefeno VARCHAR(12),
+    datosContacto VARCHAR(200),
+    idNivelAutoridad INT,
+    idNivelAdhesionActual INT,
+    idNivelAdhesionDeseado INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idRiesgo) REFERENCES Riesgo (idRiesgo)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS Interesado;
+CREATE TABLE Interesado(
+    idInteresado INT AUTO_INCREMENT PRIMARY KEY,
+    idCatalogoInteresado INT,
+    nombreCompleto VARCHAR(200),
+    rolEnProyecto VARCHAR(200),
+    organizacion VARCHAR(200),
+    cargo VARCHAR(200),
+    correo VARCHAR(200),
+    telefeno VARCHAR(12),
+    datosContacto VARCHAR(200),
+    idNivelAutoridad INT,
+    idNivelAdhesionActual INT,
+    idNivelAdhesionDeseado INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY (idCatalogoInteresado) REFERENCES CatalogoInteresado (idCatalogoInteresado),
+    FOREIGN KEY (idNivelAutoridad) REFERENCES InteresadoAutoridad (idInteresadoAutoridad),
+    FOREIGN KEY (idNivelAdhesionActual) REFERENCES InteresadoAdhesion (idInteresadoAdhesionActual),
+    FOREIGN KEY (idNivelAdhesionDeseado) REFERENCES InteresadoAdhesion (idInteresadoAdhesionActual)
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoAutoridad;
+CREATE TABLE InteresadoAutoridad(
+    idInteresadoAutoridad INT AUTO_INCREMENT PRIMARY KEY,
+    nombreAutoridad VARCHAR(200),
+    activo tinyint NOT NULL
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoAdhesion;
+CREATE TABLE InteresadoAdhesion(
+    idInteresadoAdhesionActual INT AUTO_INCREMENT PRIMARY KEY,
+    nombreAdhesion VARCHAR(200),
+    activo tinyint NOT NULL
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoRequerimiento;
+CREATE TABLE InteresadoRequerimiento(
+    idRequerimiento INT AUTO_INCREMENT PRIMARY KEY,
+    idInteresado INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoEstrategia;
+CREATE TABLE InteresadoEstrategia(
+    idEstrategia INT AUTO_INCREMENT PRIMARY KEY,
+    idInteresado INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Catalogo de Riesgos
+-----------------------

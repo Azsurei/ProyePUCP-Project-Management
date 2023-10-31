@@ -20,7 +20,7 @@
 .interesedRegisterCI{
     width: 100%;
     display: grid;
-    grid-template-rows: repeat(9,auto);
+    grid-template-rows: repeat(7,auto);
     gap: 2rem;
 }
 
@@ -48,6 +48,13 @@
     gap: 5%;
     margin-right: 15px;
     align-items: center;
+}
+
+.containerInputCI{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(450px,1fr));
+    row-gap: 2rem;
+    column-gap: 2rem;
 }
 
 .titleButtonCI{
@@ -79,5 +86,27 @@
     cursor: pointer;
     outline: none;
     border: none;
-    margin: 1rem 0;
+    margin-top: 0.5rem;
+}
+
+.buttonTitleCI2{
+    border-radius: 10px;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
+    height: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    width: 100px;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+}
+
+.containerBottomRI{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

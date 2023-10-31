@@ -93,11 +93,42 @@ async function cambiarPosicionColumna(req,res,next){
 }
 
 
+async function renombrarColumna(req,res,next){
+    const {idColumnaKanban, nombre} = req.body;
+    try{
+        const query = `CALL MODFICAR_NOMBRE_COLUMNA_KANBAN(?,?);`;
+        const [results] = await connection.query(query, [idColumnaKanban, nombre]);
+        res.status(200).json({
+            message: "Se actualizo el nombre de la columna correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function eliminarColumna(req,res,next){
+    const {idColumnaKanban} = req.body;
+    try{
+        const query = `CALL ELIMINAR_COLUMNA_KANBAN(?);`;
+        const [results] = await connection.query(query, [idColumnaKanban]);
+        res.status(200).json({
+            message: "Se elimino la columna correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
 module.exports = {
     listarColumnas,
     listarTareasTodasSinPosteriores,
     listarColumnasYTareas,
     cambiarPosicionTarea,
     crearColumna,
-    cambiarPosicionColumna
+    cambiarPosicionColumna,
+    renombrarColumna,
+    eliminarColumna
 };
