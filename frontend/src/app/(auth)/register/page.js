@@ -1,196 +1,297 @@
 "use client";
 
-import Button from "@/components/Button";
-import Placeholder from "@/components/Placeholder";
-import "@/styles/resetPassword.css";
-
-import { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-function register() {
+import axios from "axios";
+import jwtDecode from "jwt-decode";
+
+import Button from "@/components/Button";
+import {
+    Input,
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+} from "@nextui-org/react";
+
+import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
+import { EyeSlashFilledIcon } from "@/../public/icons/EyeSlashFilledIcon";
+
+function Register() {
+    // Variables de importaciones
     const router = useRouter();
 
+    // Variables de formulario
     const [nombre, setNombre] = useState("");
     const [apellido, setApellido] = useState("");
-    const [correoElectronico, setCorreoElectronico] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [passwordRepe, setpasswordRepe] = useState("");
-    const [passwordError, setPasswordError] = useState(false);
-    const [passwordErrorRepe, setPasswordErrorRepe] = useState(false);
-    const [tocoSegundoPassword, setTocoSegundoPassword] = useState(false);
-    let passwordIguales = false;
+    const [passwordRep, setPasswordRep] = useState("");
+    const [statusForm, setStatusForm] = useState("init"); // init, valid, submitting, success
+    const [loadingRegister, setLoadingRegister] = useState(false);
+    const [registerError, setRegisterError] = useState(null);
 
-    const axiosOptions = {
-        method: "post", // El método de solicitud puede variar según tus necesidades
-        url: process.env.NEXT_PUBLIC_BACKEND_URL + "/api/auth/register",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
+    // Variables adicionales
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Funciones auxiliares
+    const toggleVisibility = () => setIsVisible(!isVisible);
+    const validateEmail = (email) =>
+        email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    const validatePassword = (password) => password.length >= 5;
+
+    // Control de flujo de variables de formulario
+    const nombreInvalid = React.useMemo(() => {
+        if (nombre === "") return false;
+        return nombre.length >= 3 ? false : true;
+    }, [nombre]);
+
+    const apellidoInvalid = React.useMemo(() => {
+        if (apellido === "") return false;
+        return apellido.length >= 3 ? false : true;
+    }, [apellido]);
+
+    const emailInvalid = React.useMemo(() => {
+        if (email === "") return false;
+        return validateEmail(email) ? false : true;
+    }, [email]);
+
+    const passwordInvalid = React.useMemo(() => {
+        if (password === "") return false;
+        return validatePassword(password) ? false : true;
+    }, [password]);
+
+    const passwordRepInvalid = React.useMemo(() => {
+        if (passwordRep === "") return false;
+        return password === passwordRep ? false : true;
+    }, [password, passwordRep]);
+
+    // Control de flujo del estado general del formulario
+    useEffect(() => {
+        if (statusForm === "init" || statusForm === "valid") {
+            setLoadingRegister(false);
+        } else if (statusForm === "submitting") {
+            setLoadingRegister(true);
+            setRegisterError(null);
+        }
+    }, [statusForm]);
+
+    useEffect(() => {
+        if (
+            nombreInvalid ||
+            apellidoInvalid ||
+            emailInvalid ||
+            passwordInvalid ||
+            passwordRepInvalid ||
+            nombre === "" ||
+            apellido === "" ||
+            email === "" ||
+            password === "" ||
+            passwordRep === ""
+        ) {
+            setStatusForm("init");
+        } else {
+            setStatusForm("valid");
+        }
+    }, [nombre, apellido, email, password, passwordRep]);
+
+    // Funciones de formulario
+    const handleRegister = async () => {
+        setStatusForm("submitting");
+        try {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,
+                {
+                    nombres: nombre,
+                    apellidos: apellido,
+                    correoElectronico: email,
+                    password: password,
+                }
+            );
+            setStatusForm("success");
+        } catch (error) {
+            setRegisterError(error.response.data);
+            setStatusForm("valid");
+        }
     };
 
-    function handleChange(name, value) {
-        if (name === "nombre") setNombre(value);
-        else if (name === "apellido") setApellido(value);
-        else if (name === "correoElectronico") setCorreoElectronico(value);
-        if (name === "contraseña") {
-            setPassword(value);
-            if (value.length < 3) {
-                setPasswordError(true);
-            } else {
-                setPasswordError(false);
-            }
-        } else {
-            setTocoSegundoPassword(true);
-            setpasswordRepe(value);
-            if (value.length < 3) {
-                setPasswordErrorRepe(true);
-            } else {
-                setPasswordErrorRepe(false);
-            }
-        }
-    }
+    console.log(statusForm);
 
-    function handleRegister() {
-        console.log(nombre);
-        console.log(apellido);
-        console.log(correoElectronico);
-        console.log(password);
-
-        axios
-            .post(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/auth/register", {
-                nombres: nombre,
-                apellidos: apellido,
-                correoElectronico: correoElectronico,
-                password: password,
-            })
-            .then(function (response) {
-                console.log(response);
-                console.log("Registro correcto");
-
-                axios
-                    .post(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
-                        {
-                            username: correoElectronico,
-                            password: password,
-                        }
-                    )
-                    .then(function (response) {
-                        console.log("se logro");
-                        const user = response.data;
-                        router.push("/dashboard");
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
-
-
+    // Componente
     return (
         <>
-            <div className="cabecera">
-                <div className="contenedor-nueva-contraseña">
-                    <span>Regístrate</span>
-                </div>
-                <div className="contenedor-ingresar-contraseña">
-                    ¡Crea tu cuenta!
-                </div>
-            </div>
-            <div className="cuerpo">
-                <div className="placeholders">
-                    <Placeholder
-                        attribute={{
-                            id: "nombre",
-                            name: "nombre",
-                            type: "text",
-                            placeholder: "Nombre",
-                        }}
-                        handleChange={handleChange}
-                    />
-                    <Placeholder
-                        attribute={{
-                            id: "apellido",
-                            name: "apellido",
-                            type: "text",
-                            placeholder: "Apellido",
-                        }}
-                        handleChange={handleChange}
-                    />
-                    <Placeholder
-                        attribute={{
-                            id: "correoElectronico",
-                            name: "correoElectronico",
-                            type: "text",
-                            placeholder: "Correo Electrónico",
-                        }}
-                        handleChange={handleChange}
-                    />
-                    <Placeholder
-                        attribute={{
-                            id: "contraseña",
-                            name: "contraseña",
-                            type: "password",
-                            placeholder: "Nueva contraseña",
-                        }}
-                        handleChange={handleChange}
-                        param={passwordError}
-                    />
-                    {passwordError && (
-                        <label className="label-error">
-                            Contraseña inválida o incompleta
-                        </label>
-                    )}
-                    <Placeholder
-                        attribute={{
-                            id: "contraseñaConfimar",
-                            name: "contraseñaConfimar",
-                            type: "password",
-                            placeholder: "Confirmar contraseña",
-                        }}
-                        handleChange={handleChange}
-                        param={passwordErrorRepe}
-                    />
-                    {passwordErrorRepe && (
-                        <label className="label-error">
-                            Contraseña inválida o incompleta
-                        </label>
-                    )}
-                    {password !== passwordRepe &&
-                        !passwordErrorRepe &&
-                        tocoSegundoPassword && (
-                            <label className="label-error">
-                                Las contraseñas no son iguales
-                            </label>
+            {statusForm === "success" && (
+                <>
+                    <div className="flex flex-col gap-4 items-center justify-center">
+                        <p className="font-['Montserrat'] font-medium text-4xl">
+                            Cuenta registrada
+                        </p>
+                        <p className="font-['Roboto'] font-normal text-xl">
+                            Se ha creado la cuenta exitosamente
+                        </p>
+                    </div>
+                    <div className="w-full h-0.5 rounded-2xl bg-gray-300"></div>
+                    <Link href="/login">
+                        <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
+                            Regresar a inicio de sesión
+                        </span>
+                    </Link>
+                </>
+            )}
+            {statusForm !== "success" && (
+                <>
+                    <div className="flex flex-col gap-2 items-center justify-center">
+                        <p className="font-['Montserrat'] font-medium text-4xl">
+                            Regístrate
+                        </p>
+                        <p className="font-['Roboto'] font-normal text-xl">
+                            ¡Crea tu cuenta!
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col items-center w-full gap-4">
+                        {registerError && (
+                            <Card className="bg-[#FFA00A] text-white">
+                                <CardBody>
+                                    <p>{registerError}</p>
+                                </CardBody>
+                            </Card>
                         )}
-                </div>
-                <div className="boton">
+                        <Input
+                            value={nombre}
+                            type="text"
+                            label="Nombres"
+                            size="md"
+                            variant="bordered"
+                            radius="sm"
+                            fullWidth={true}
+                            isInvalid={nombreInvalid}
+                            color={nombreInvalid ? "danger" : "default"}
+                            errorMessage={
+                                nombreInvalid ? "Nombre inválido" : ""
+                            }
+                            onValueChange={setNombre}
+                            isClearable
+                            className="font-['Roboto']"
+                        />
+                        <Input
+                            value={apellido}
+                            type="text"
+                            label="Apellidos"
+                            size="md"
+                            variant="bordered"
+                            radius="sm"
+                            fullWidth={true}
+                            isInvalid={apellidoInvalid}
+                            color={apellidoInvalid ? "danger" : "default"}
+                            errorMessage={
+                                apellidoInvalid ? "Apellido inválido" : ""
+                            }
+                            onValueChange={setApellido}
+                            isClearable
+                            className="font-['Roboto']"
+                        />
+                        <Input
+                            value={email}
+                            type="email"
+                            label="Correo electrónico"
+                            size="md"
+                            variant="bordered"
+                            radius="sm"
+                            fullWidth={true}
+                            isInvalid={emailInvalid}
+                            color={emailInvalid ? "danger" : "default"}
+                            errorMessage={
+                                emailInvalid
+                                    ? "Correo electrónico inválido"
+                                    : ""
+                            }
+                            onValueChange={setEmail}
+                            isClearable
+                            className="font-['Roboto']"
+                        />
+                        <Input
+                            value={password}
+                            type={isVisible ? "text" : "password"}
+                            label="Contraseña"
+                            size="md"
+                            variant="bordered"
+                            radius="sm"
+                            fullWidth={true}
+                            isInvalid={passwordInvalid}
+                            color={passwordInvalid ? "danger" : "default"}
+                            errorMessage={
+                                passwordInvalid
+                                    ? "La contraseña debe tener 5 caracteres o más"
+                                    : ""
+                            }
+                            onValueChange={setPassword}
+                            endContent={
+                                <button
+                                    className="focus:outline-none"
+                                    type="button"
+                                    onClick={toggleVisibility}
+                                >
+                                    {isVisible ? (
+                                        <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                    ) : (
+                                        <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                    )}
+                                </button>
+                            }
+                            className="font-['Roboto']"
+                        />
+                        <Input
+                            value={passwordRep}
+                            type={"password"}
+                            label="Confirmar contraseña"
+                            size="md"
+                            variant="bordered"
+                            radius="sm"
+                            fullWidth={true}
+                            isInvalid={passwordRepInvalid}
+                            color={passwordRepInvalid ? "danger" : "default"}
+                            errorMessage={
+                                passwordRepInvalid
+                                    ? "Las contraseñas no coinciden"
+                                    : ""
+                            }
+                            onValueChange={setPasswordRep}
+                            className="font-['Roboto']"
+                        />
+                    </div>
+
                     <Button
+                        type="submit"
                         text="Registrarse"
                         href={"#"}
                         onClick={handleRegister}
+                        isLoading={loadingRegister}
+                        isDisabled={
+                            loadingRegister ||
+                            statusForm === "init" ||
+                            statusForm === "submitting"
+                        }
+                        className={"w-48"}
                     />
-                </div>
-                <div className="otros-login">
-                    <div className="roboto">¿Tienes un cuenta?</div>
-                    <div>
+
+                    <div className="flex flex-wrap justify-between items-center gap-2 w-full content-center">
+                        <span className="font-['Roboto']">
+                            ¿Tienes una cuenta?
+                        </span>
                         <Link href="/login">
-                            <span className="iniciar-sesion roboto">
+                            <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
                                 Iniciar sesión
                             </span>
                         </Link>
                     </div>
-                </div>
-            </div>
+                </>
+            )}
         </>
     );
 }
 
-export default register;
+export default Register;

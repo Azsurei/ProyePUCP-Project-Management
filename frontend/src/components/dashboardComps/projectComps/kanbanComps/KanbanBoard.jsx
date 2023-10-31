@@ -15,11 +15,18 @@ import "@/styles/dashboardStyles/projectStyles/kanbanStyles/KanbanBoard.css";
 import TaskCard from "./TaskCard";
 
 import axios from "axios";
+import ModalTaskView from "./ModalTaskView";
+import { useDisclosure } from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 
-export default function KanbanBoard({projectId}) {
-
+export default function KanbanBoard({ projectId }) {
     const [stateWhatsHappening, setStateWhatsHappening] = useState("");
+
+    const {
+        isOpen: isOpenViewTask,
+        onOpenChange: onOpenChangeViewTask,
+        onOpen: onOpenViewTask,
+    } = useDisclosure();
 
     const [columns, setColumns] = useState([]);
     //inicializamos columnas con aquellas cuyas tareas sean null
@@ -50,17 +57,19 @@ export default function KanbanBoard({projectId}) {
             .then(function (response) {
                 //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
                 const columnTareas = {
-                    id: generateId(), //a cambiar en futuro
-                    title: `Tareas`,
+                    idColumnaKanban: 0,
+                    nombre: `Tareas`,
                 };
+
+                //siempre va a recibir columnas y tareas por orden de posicion
                 setColumns([...columns, columnTareas]);
                 setStateWhatsHappening("se asignaron");
                 console.log("hello");
 
                 console.log(response.data.data);
+                setTasks(response.data.data.tareas);
                 //console.log(response.data.message);
                 //console.log("Conexion correcta");
-                
             })
             .catch(function (error) {
                 console.log(error);
@@ -79,7 +88,15 @@ export default function KanbanBoard({projectId}) {
     overflow-y-hidden
     py-[20px]"
         >
-            <p className="w-[100px]">{stateWhatsHappening}</p>
+            <p
+                className="w-[100px]"
+                onClick={() => {
+                    console.log("COLUMNAS: " + JSON.stringify(columns));
+                    console.log("TAREAS: " + JSON.stringify(tasks));
+                }}
+            >
+                {"Click me"}
+            </p>
             <DndContext
                 sensors={sensors}
                 onDragStart={onDragStart}
@@ -95,19 +112,22 @@ export default function KanbanBoard({projectId}) {
                 >
                     <div className="flex gap-8 h-full min-h-full">
                         {/*La primera columna, debe ser una llamada TAREAS, que contenga toda la lista de tareas con idColumnaKanban y posicionKanban = null*/}
-                        
+
                         <SortableContext items={columnsId}>
                             {columns.map((column) => (
                                 <ColumnContainer
-                                    key={column.id}
+                                    key={column.idColumnaKanban}
                                     column={column}
                                     deleteColumn={deleteColumn}
                                     updateColumn={updateColumn}
                                     createTask={createTask}
                                     deleteTask={deleteTask}
                                     updateTask={updateTask}
+                                    openViewTask={onOpenViewTask}
                                     tasks={tasks.filter(
-                                        (task) => task.columnId === column.id
+                                        (task) =>
+                                            task.idColumnaKanban ===
+                                            column.idColumnaKanban
                                     )}
                                 />
                             ))}
@@ -146,7 +166,9 @@ export default function KanbanBoard({projectId}) {
                                 deleteTask={deleteTask}
                                 updateTask={updateTask}
                                 tasks={tasks.filter(
-                                    (task) => task.columnId === activeColumn.id
+                                    (task) =>
+                                        task.idColumnaKanban ===
+                                        activeColumn.idColumnaKanban
                                 )}
                             ></ColumnContainer>
                         )}
@@ -161,13 +183,18 @@ export default function KanbanBoard({projectId}) {
                     document.body
                 )}
             </DndContext>
+
+            <ModalTaskView
+                isOpen={isOpenViewTask}
+                onOpenChange={onOpenChangeViewTask}
+            />
         </div>
     );
 
     function createTask(columnId) {
         const newTask = {
-            id: generateId(),
-            columnId: columnId,
+            idTarea: generateId(),
+            idColumnaKanban: columnId,
             content: `Tarea ${tasks.length + 1}`,
         };
 
@@ -177,13 +204,13 @@ export default function KanbanBoard({projectId}) {
     }
 
     function deleteTask(taskId) {
-        const newTasks = tasks.filter((task) => task.id !== taskId);
+        const newTasks = tasks.filter((task) => task.idTarea !== taskId);
         setTasks(newTasks);
     }
 
     function updateTask(id, content) {
         const newTasks = tasks.map((task) => {
-            if (task.id !== id) return task;
+            if (task.idTarea !== id) return task;
             return { ...task, content: content };
         });
 
@@ -192,8 +219,8 @@ export default function KanbanBoard({projectId}) {
 
     function createNewColumn() {
         const columnToAdd = {
-            id: generateId(), //a cambiar en futuro
-            title: `Columna ${columns.length + 1}`,
+            idColumnaKanban: generateId(), //a cambiar en futuro
+            nombre: `Columna ${columns.length + 1}`,
         };
 
         console.log(columnToAdd);
@@ -202,16 +229,18 @@ export default function KanbanBoard({projectId}) {
     }
 
     function deleteColumn(id) {
-        const filteredColumn = columns.filter((col) => col.id != id);
+        const filteredColumn = columns.filter(
+            (col) => col.idColumnaKanban != id
+        );
         setColumns(filteredColumn);
 
-        const newTasks = tasks.filter((t) => t.columnId !== id);
+        const newTasks = tasks.filter((t) => t.idColumnaKanban !== id);
         setTasks(newTasks);
     }
 
     function updateColumn(id, title) {
         const newColumns = columns.map((col) => {
-            if (col.id !== id) return col;
+            if (col.idColumnaKanban !== id) return col;
             return { ...col, title: title };
         });
 
@@ -243,15 +272,18 @@ export default function KanbanBoard({projectId}) {
         const overColumnId = over.id;
         if (activeColumnId === overColumnId) return;
 
-        if(isActiveAColumn){
+        if (isActiveAColumn) {
             setColumns((columns) => {
                 const activeColumnIndex = columns.findIndex(
-                    (col) => col.id === activeColumnId
+                    (col) => col.idColumnaKanban === activeColumnId
                 );
                 const overColumnIndex = columns.findIndex(
-                    (col) => col.id === overColumnId
+                    (col) => col.idColumnaKanban === overColumnId
                 );
-    
+
+                //cambiamos la pos (switcheamos nomas)
+                console.log("CAMBIANDO COLSSS==");
+
                 return arrayMove(columns, activeColumnIndex, overColumnIndex);
             });
         }
@@ -270,38 +302,81 @@ export default function KanbanBoard({projectId}) {
         const isActiveATask = active.data.current?.type === "Task";
         const isOverATask = over.data.current?.type === "Task";
 
-
-        setStateWhatsHappening("entraste a onDragOver con isActiveATask = "+isActiveATask+" y isOverATask = "+isOverATask);
-
         if (!isActiveATask) return;
 
         //Im dropping a task over another task
         if (isActiveATask && isOverATask) {
             setTasks((tasks) => {
                 //hacemos el switch de posiciones REPENSAR PARA BD (Se deberia basar en un nuevo atributo llamado POSITION o algo asi)
-                const activeIndex = tasks.findIndex((t) => t.id === activeId);
-                const overIndex = tasks.findIndex((t) => t.id === overId);
+                const activeIndex = tasks.findIndex(
+                    (t) => t.idTarea === activeId
+                );
+                const overIndex = tasks.findIndex((t) => t.idTarea === overId);
 
-                tasks[activeIndex].columnId = tasks[overIndex].columnId;
+                tasks[activeIndex].idColumnaKanban =
+                    tasks[overIndex].idColumnaKanban;
 
-                return arrayMove(tasks, activeIndex, overIndex);
+                const newArray = arrayMove(tasks, activeIndex, overIndex);
+                newArray.forEach((task, index) => {
+                    if (task.posicionKanban !== index) {
+                        console.log("haciendo cambiaso"); //aqui mandar cambio a sql
+                        registerPositionChange(
+                            task.idTarea,
+                            task.posicionKanban
+                        );
+                    }
+                    task.posicionKanban = index;
+                });
+
+                return newArray;
             });
         }
 
         const isOverAColumn = over.data.current?.type === "Column";
 
-        setStateWhatsHappening("entraste a onDragOver con isActiveATask = "+isActiveATask+" y isOverAColumn = "+isOverAColumn);
-
         //im dropping a task over a column
         if (isActiveATask && isOverAColumn) {
             setTasks((tasks) => {
-                const activeIndex = tasks.findIndex((t) => t.id === activeId);
+                const activeIndex = tasks.findIndex(
+                    (t) => t.idTarea === activeId
+                );
 
-                tasks[activeIndex].columnId = overId;
-
+                tasks[activeIndex].idColumnaKanban = overId;
+                console.log(
+                    "ENTRASTEFEOooooooooooooooooooooooooooooo =============="
+                );
                 return arrayMove(tasks, activeIndex, activeIndex); //triggers rerender
             });
         }
+    }
+
+    function registerPositionChange(idTarea, posicionKanban) {
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/kanban/cambiarPosicionTarea";
+        axios
+            .post(stringURL, {
+                idTarea: idTarea,
+                posicionKanban: posicionKanban
+            })
+            .then(function (response) {
+                //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
+                const columnTareas = {
+                    idColumnaKanban: 0,
+                    nombre: `Tareas`,
+                };
+
+                //siempre va a recibir columnas y tareas por orden de posicion
+                setColumns([...columns, columnTareas]);
+                setStateWhatsHappening("se asignaron");
+                console.log("hello");
+
+                console.log(response.data.data);
+                setTasks(response.data.data.tareas);
+                //console.log(response.data.message);
+                //console.log("Conexion correcta");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 }
 

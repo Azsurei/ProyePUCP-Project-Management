@@ -13,11 +13,12 @@ function ColumnContainer({
     tasks,
     deleteTask,
     updateTask,
+    openViewTask,
 }) {
     const [editMode, setEditMode] = useState(false);
 
     const tasksIds = useMemo(() => {
-        return tasks.map(task => task.id);
+        return tasks.map(task => task.idTarea);
     }, [tasks]);
 
     const {
@@ -28,7 +29,7 @@ function ColumnContainer({
         transition,
         isDragging,
     } = useSortable({
-        id: column.id,
+        id: column.idColumnaKanban,
         data: {
             type: "Column",
             column,
@@ -113,13 +114,13 @@ function ColumnContainer({
                     >
                         {tasks.length}
                     </div>
-                    {!editMode && column.title}
+                    {!editMode && column.nombre}
                     {editMode && (
                         <input
                             className="bg-white focus:border-rose-500 border rounded outline-none px-2"
                             value={column.title}
                             onChange={(e) =>
-                                updateColumn(column.id, e.target.value)
+                                updateColumn(column.idColumnaKanban, e.target.value)
                             }
                             autoFocus
                             onBlur={() => {
@@ -134,7 +135,7 @@ function ColumnContainer({
                 </div>
                 <button
                     onClick={() => {
-                        deleteColumn(column.id);
+                        deleteColumn(column.idColumnaKanban);
                     }}
                     className="
                 stroke-gray-500
@@ -153,10 +154,11 @@ function ColumnContainer({
                 <SortableContext items={tasksIds}>
                     {tasks.map((task) => (
                         <TaskCard
-                            key={task.id}
+                            key={task.idTarea}
                             task={task}
                             deleteTask={deleteTask}
                             updateTask={updateTask}
+                            openViewTask={openViewTask}
                         />
                     ))}
                 </SortableContext>
@@ -167,7 +169,7 @@ function ColumnContainer({
                 className="flex gap-2 items-center border-slate-100 border-2 rounded-md p-4
             border-x-slate-100 hover:bg-white hover:text-rose-500 active:bg-slate-50"
                 onClick={() => {
-                    createTask(column.id);
+                    createTask(column.idColumnaKanban);
                 }}
             >
                 <PlusIcon /> Añadir tarea

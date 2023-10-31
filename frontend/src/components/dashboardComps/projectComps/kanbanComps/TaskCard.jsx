@@ -4,7 +4,7 @@ import "@/styles/dashboardStyles/projectStyles/kanbanStyles/KanbanBoard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-function TaskCard({ task, deleteTask, updateTask }) {
+function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
     const [mouseIsOver, setMouseIsOver] = useState(false);
     const [editMode, setEditMode] = useState(false);
 
@@ -16,7 +16,7 @@ function TaskCard({ task, deleteTask, updateTask }) {
         transition,
         isDragging,
     } = useSortable({
-        id: task.id,
+        id: task.idTarea,
         data: {
             type: "Task",
             task,
@@ -36,50 +36,18 @@ function TaskCard({ task, deleteTask, updateTask }) {
 
     if (isDragging) {
         return (
-            <div ref={setNodeRef} style={style} className="
+            <div
+                ref={setNodeRef}
+                style={style}
+                className="
             opacity-30
             bg-white p-2.5 h-[100px]
         min-h-[100px] items-center flex text-left rounded-xl
         border-2 border-rose-500
         cursor-grab relative TaskContainerCard
-            ">
-                Draggin tasks
-            </div>
-        );
-    }
-
-    if (editMode) {
-        return (
-            <div
-                ref={setNodeRef}
-                style={style}
-                {...attributes}
-                {...listeners}
-                className="bg-white p-2.5 h-[100px]
-                min-h-[100px] items-center flex text-left rounded-xl
-                hover:ring-2 hover:ring-inset hover:ring-rose-500
-                cursor-grab relative TaskContainerCard"
+            "
             >
-                <textarea
-                    className="
-                TaskContainerCard
-                h-[90%]
-                w-full
-                resize-none
-                border-none
-                rounded
-                bg-transparent
-                text-black focus:outline-none
-                "
-                    value={task.content}
-                    autoFocus
-                    placeholder="Task content here"
-                    onBlur={toggleEditMode} //aqui y en onKeyDown deberiamos actualizar el contenido en la DB
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) toggleEditMode();
-                    }}
-                    onChange={(e) => updateTask(task.id, e.target.value)}
-                ></textarea>
+                La tarea se moverá aqui
             </div>
         );
     }
@@ -90,7 +58,7 @@ function TaskCard({ task, deleteTask, updateTask }) {
             style={style}
             {...attributes}
             {...listeners}
-            onClick={toggleEditMode}
+            onClick={openViewTask}
             className="TaskContainerCard bg-white p-2.5 h-[100px]
             min-h-[100px] items-center flex text-left rounded-xl
             hover:ring-2 hover:ring-inset hover:ring-rose-500
@@ -108,12 +76,12 @@ function TaskCard({ task, deleteTask, updateTask }) {
                 whitespace-pre-wrap TaskContainerCard
             "
             >
-                {task.content}
+                {task.sumillaTarea}
             </p>
             {mouseIsOver && (
                 <button
                     onClick={() => {
-                        deleteTask(task.id);
+                        deleteTask(task.idTarea);
                     }}
                     className="stroke-black absolute right-4 top-1/2 
                                 -translate-y-1/2 bg-slate-100 p-1 rounded opacity-60 hover:opacity-100"

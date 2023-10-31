@@ -46,8 +46,27 @@ async function listarColumnasYTareas(req,res,next){
     }
 }
 
+
+async function cambiarPosicion(req,res,next){
+    const {idTarea, posicionKanban} = req.body;
+    try{
+        const query = `CALL CAMBIAR_POSICION_TAREA(?);`;
+        const [results] = await connection.query(query, [idTarea, posicionKanban]);
+        const tareas = results[0];
+
+        res.status(200).json({
+            tareas,
+            message: "Se modificaron las posiciones correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 module.exports = {
     listarColumnas,
     listarTareasTodasSinPosteriores,
-    listarColumnasYTareas
+    listarColumnasYTareas,
+    cambiarPosicion
 };
