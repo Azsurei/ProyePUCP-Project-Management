@@ -11,7 +11,12 @@ import { Toaster, toast } from "sonner";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpRolEquipo({ modal, toggle, handleAddRoles,initialListRoles }) {
+export default function PopUpRolEquipo({
+    modal,
+    toggle,
+    handleAddRoles,
+    initialListRoles,
+}) {
     const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
@@ -127,14 +132,19 @@ export default function PopUpRolEquipo({ modal, toggle, handleAddRoles,initialLi
                                                         {role.nombreRol}
                                                     </p>
                                                 </div>
-                                                <img
-                                                    src="/icons/icon-trash.svg"
-                                                    alt="delete"
-                                                    className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
-                                                    onClick={() => {
-                                                        EliminateRoles(role);
-                                                    }}
-                                                />
+                                                {role.nombreRol !==
+                                                    "Miembro" && (
+                                                    <img
+                                                        src="/icons/icon-trash.svg"
+                                                        alt="delete"
+                                                        className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
+                                                        onClick={() => {
+                                                            EliminateRoles(
+                                                                role
+                                                            );
+                                                        }}
+                                                    />
+                                                )}
                                             </li>
                                         );
                                     })}
