@@ -1,6 +1,6 @@
 .projectNametxt{
 
-    color: #172B4D;
+    color: #262626;
     font-family: Montserrat;
     font-size: 15px;
     font-style: normal;
@@ -9,7 +9,7 @@
 }
 .titleTool{
 
-    color: #172B4D;
+    color: #262626;
     text-align: center;
     font-family: Roboto;
     margin-top: 1rem;
@@ -42,8 +42,8 @@
 
 .ToolCard{
 
-    border-radius: 10px;
-    background: #FFF;
+    border-radius: 4px;
+    background:#f2f8f9;
     
     
     width: 100%;
@@ -51,40 +51,60 @@
     flex-shrink: 0;
     margin: 2px 2px;
 
-    
-    border-radius: 16px;
-    overflow: right;
-    border-radius: 10px;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
 
+    overflow: right;
+
+    border: 1px solid #f2f8f9;
     border-style: solid;
     border-color: transparent;
     border-width: 5px;
 
     display:flex;
     flex-direction: column;
+
+    &:hover {
+        transition: all 0.2s ease-out;
+        box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+        top: -4px;
+        border: 1px solid #cccccc;
+        background-color: white;
+
+
+        
+      }
+
+    &:hover:before {
+        transform: scale(2.15);
+    }
 	
 }
 
-.ToolCard:hover{
 
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
-    background: #aef3f8d9;
-    transform: scale(1.05);
+
+.ToolCard:hover{
     cursor: pointer;
 }
 
 .ToolCard.active{
-    border-color: #9BFFB7;
+
+    border-color: #4898E9; /* Borde gris cuando está seleccionada */
+
+}
+
+.ToolCard.active p.titleTool {
+    color: #4898E9; /* Cambia el color del texto en hover */
 }
 
 .ToolCard.active:hover{
     background: white;
 }
 
+
+
+
 .descriptionTool{
 
-    color: #000;
+    color: #666666;
     text-align: center;
     font-family: Roboto;
     font-size: 13px;
@@ -97,13 +117,29 @@
 
 .buttonOneTool {
     border-radius: 5px;
-    background-color: #172B4D;
+    background-color: #4CAF50;
     /* border: #F0AE19 1px solid; */
     border-style: none;
     font-size: 0.9rem;
     font-weight: 600;
     height: 30px;
-    width: 5rem;
+    width: 6.5rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+}
+
+.buttonOneTool2{
+
+    border-radius: 5px;
+    background-color: #4898E9;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 30px;
+    width: 6.5rem;
     color: white;
     transition: background-color 0.15s ease-in;
     font-size: 12px;
@@ -111,9 +147,9 @@
 }
 
 .buttonOneTool:hover {
-    background-color: #132b56;
+    background-color: #4CAF50;
     transition: background-color 0.15s ease-in;
-    transform: scale(1.04);
+    
     cursor: pointer;
 }
 

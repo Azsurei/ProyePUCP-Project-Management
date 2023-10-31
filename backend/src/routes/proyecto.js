@@ -11,9 +11,12 @@ const routerMatrizComunicaciones = require('./matrizDeComunicaciones').routerMat
 const routerAutoEvaluacion = require('./autoEvaluacion').routerAutoEvaluacion;
 const routerCatalagoRiesgos = require('./catalogoRiesgos').routerCatalagoRiesgos;
 const routerActaReunion = require('./actaReunion').routerActaReunion;
+const routerKanban = require("./kanban").routerKanban;
+
 const routerProyecto = express.Router();
 
 const proyectoController = require("../controllers/proyectoController");
+
 
 routerProyecto.use("/backlog", routerBacklog);
 routerProyecto.use("/EDT", routerEDT);
@@ -25,6 +28,7 @@ routerProyecto.use("/matrizDeComunicaciones", routerMatrizComunicaciones);
 routerProyecto.use("/autoEvaluacion", routerAutoEvaluacion);
 routerProyecto.use("/catalogoRiesgos", routerCatalagoRiesgos);
 routerProyecto.use("/actaReunion", routerActaReunion);
+routerProyecto.use("/kanban",routerKanban);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 

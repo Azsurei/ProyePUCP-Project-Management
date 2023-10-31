@@ -188,6 +188,10 @@ async function listarXIdProyecto(req, res, next) {
     }
 }
 
+
+
+
+
 async function eliminarTarea(req, res, next) {
     const { tarea } = req.body;
     try {

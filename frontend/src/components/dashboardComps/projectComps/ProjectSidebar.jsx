@@ -303,7 +303,7 @@ function ProjectSidebar(props) {
             position: 4,
             optIcon: "/icons/sideBarDropDown_icons/sbdd4.svg",
             optName: "Reporte de avances",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/reportes`,
         },
     ];
 

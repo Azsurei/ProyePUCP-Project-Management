@@ -22,7 +22,7 @@ function CardEpic(props) {
   }
 
   return (
-    <li className={isSelected ? "UserCard active" : "UserCard"} onClick={isSelected ? handleSelectedOff : handleSelectedOn}>
+    <li className={isSelected ? "EpicCard active" : "EpicCard"} onClick={isSelected ? handleSelectedOff : handleSelectedOn}>
       <div style={{ marginTop: '12px', marginLeft: '15px' }}>
         <p className="titleUserName">{props.name}</p>
       </div>
