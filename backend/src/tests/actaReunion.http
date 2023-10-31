@@ -2,7 +2,6 @@
 PUT http://localhost:8080/api/proyecto/actaReunion/modificarLineaActaReunion HTTP/1.1
 Content-Type: application/json
 
-
 {
   "idLineaActaReunion": 41,
   "nombreReunion": "Reunión de Planificación",

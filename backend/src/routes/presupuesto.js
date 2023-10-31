@@ -2,13 +2,13 @@ const express = require("express");
 const routerPresupuesto = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
 
-const monedaController = require("../controllers/Presupuesto/monedaController");
-const tipoIngresoController = require("../controllers/Presupuesto/tipoIngresoController");
-const tipoTransaccionController = require("../controllers/Presupuesto/tipoTransaccionController");
-const presupuestoController = require("../controllers/Presupuesto/presupuestoController");
-const ingresoController = require("../controllers/Presupuesto/ingresoController");
-const egresoController = require("../controllers/Presupuesto/egresoController");
-const estimacionCostoController = require("../controllers/Presupuesto/estimacionCostoController");
+const monedaController = require("../controllers/presupuesto/monedaController");
+const tipoIngresoController = require("../controllers/presupuesto/tipoIngresoController");
+const tipoTransaccionController = require("../controllers/presupuesto/tipoTransaccionController");
+const presupuestoController = require("../controllers/presupuesto/presupuestoController");
+const ingresoController = require("../controllers/presupuesto/ingresoController");
+const egresoController = require("../controllers/presupuesto/egresoController");
+const estimacionCostoController = require("../controllers/presupuesto/estimacionCostoController");
 
 //Presupuesto
 routerPresupuesto.post("/insertarPresupuesto",presupuestoController.crear);

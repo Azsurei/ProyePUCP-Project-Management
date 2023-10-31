@@ -62,7 +62,7 @@ async function listarLineasTodas(req, res, next) {
         next(error);
     }
 }
-
+    
 async function listarLineasIngresoYEgresoXIdProyecto(req, res, next) {
     const {idProyecto} = req.params;
     try {
