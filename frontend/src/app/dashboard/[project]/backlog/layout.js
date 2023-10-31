@@ -11,7 +11,7 @@ export default function RootLayout({ children, params }) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     return (
-        <div className="p-[2.5rem] flex flex-col space-y-2 min-w-[100%] min-h-[100%] h-full">
+        <div className="p-[2.5rem] flex flex-col space-y-2 min-w-[100%] min-h-[100%]">
             <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={false}
