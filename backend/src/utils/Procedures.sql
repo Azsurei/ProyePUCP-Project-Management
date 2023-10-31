@@ -954,6 +954,24 @@ END
 
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
+DROP PROCEDURE IF EXISTS MODIFICAR_TAREA;
+
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_TAREA(
+    IN _idTarea INT,
+	IN _sumillaTarea VARCHAR(255),
+    IN _descripcion VARCHAR(500),
+    IN _idTareaEstado INT,
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _idEquipo INT
+)
+BEGIN
+	UPDATE Tarea SET sumillaTarea = _sumillaTarea, descripcion = _descripcion, idTareaEstado = _idTareaEstado,
+    fechaInicio = _fechaInicio, fechaFin = _fechaFin, idEquipo = _idEquipo
+    WHERE idTarea = _idTarea AND activo = 1;
+END$
+
 --------------------------
 -- Tarea Estado
 --------------------------
@@ -1009,7 +1027,32 @@ SELECT *FROM Cronograma;
 UPDATE UsuarioXTarea SET activo = 0 WHERE idUsuarioXTarea = 1;
 SELECT * FROM UsuarioXTarea;
 
+-- ELimina todos los usuarios de una tarea
+DROP PROCEDURE IF EXISTS ELIMINAR_USUARIOS_X_ID_TAREA;
+DELIMITER $
+CREATE PROCEDURE  ELIMINAR_USUARIOS_X_ID_TAREA(
+    IN _idTarea INT
+)
+BEGIN
+	DELETE FROM UsuarioXTarea WHERE idTarea = _idTarea AND activo =1;
+END$
 
+-- Elimina un usuario especifico de una tarea
+DROP PROCEDURE IF EXISTS ELIMINAR_USUARIO_X_ID_TAREA;
+DELIMITER $
+CREATE PROCEDURE  ELIMINAR_USUARIO_X_ID_TAREA(
+    IN _idTarea INT,
+    IN _idUsuario INT
+)
+BEGIN
+	UPDATE UsuarioXTarea SET activo = 0 
+    WHERE idTarea = _idTarea AND idUsuario = _idUsuario AND activo =1;
+END$
+
+
+########################################33
+## Equipo
+########################################
 
 DROP PROCEDURE LISTAR_EQUIPO_X_ID_EQUIPO;
 DELIMITER $
