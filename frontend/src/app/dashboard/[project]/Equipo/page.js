@@ -624,12 +624,6 @@ export default function Equipo(props) {
                                         >
                                             Editar
                                         </Button>
-                                        <Button
-                                            color="danger"
-                                            startContent={<CrossWhite />}
-                                        >
-                                            Eliminar
-                                        </Button>
                                     </>
                                 )}
                             </div>
