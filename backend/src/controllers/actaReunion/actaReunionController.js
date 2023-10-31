@@ -42,6 +42,8 @@ async function funcCrear(idProyecto){
     return idActaReunion;
 }
 
+
+
 // const query = `CALL LISTAR_ACTA_REUNION_X_ID_PROYECTO(?);`;
 // const [resultsActaReunion] = await connection.query(query, [idProyecto]);
 

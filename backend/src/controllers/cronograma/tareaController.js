@@ -21,7 +21,7 @@ async function crear(req, res, next) {
     } = req.body;
 
     try {
-        const idTarea = await insertarTarea(idCronograma, idTareaEstado, idSubGrupo, idPadre, idTareaAnterior, sumillaTarea, descripcion, fechaInicio, fechaFin, cantSubtareas, cantPosteriores, horasPlaneadas );
+        const idTarea = await insertarTarea(idCronograma, idTareaEstado, idSubGrupo, idPadre, idTareaAnterior, sumillaTarea, descripcion, fechaInicio, fechaFin, cantSubtareas, cantPosteriores, horasPlaneadas,0 );
         await usuarioXTareaController.funcCrearUsuariosXTarea(usuarios, idTarea);
         //await insertarTareas(subTareas);  --Ya no insertamos subTareas en esta seccion, se insertan como normales
         await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
@@ -65,7 +65,7 @@ async function funcModificar(idTarea,sumillaTarea,descripcion,idTareaEstado,fech
 async function funcAgregarTareasPosteriores(tareasPosterioresAgregadas,idTarea){
     if(tareasPosterioresAgregadas){
         for(const tarea of tareasPosterioresAgregadas){
-            [results] = insertarTarea(tarea.idCronograma,tarea.idTareaEstado,tarea.idSubGrupo,idTarea,tarea.idTareaAnterior,tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.cantSubtareas,tarea.cantPosteriores,tarea.horasPlaneadas);
+            [results] = insertarTarea(tarea.idCronograma,tarea.idTareaEstado,tarea.idSubGrupo,idTarea,tarea.idTareaAnterior,tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.cantSubtareas,tarea.cantPosteriores,tarea.horasPlaneadas,1);
         }
     }
 }
@@ -86,8 +86,8 @@ async function funcModificarTareasPosteriores(tareasPosteriores){
     }
 }
 
-async function insertarTarea(idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas) {
-    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?);`;
+async function insertarTarea(idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas,esPosterior) {
+    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?);`;
     const [results] = await connection.query(query, [
         idCronograma,
         idTareaEstado,
@@ -101,6 +101,7 @@ async function insertarTarea(idCronograma,idTareaEstado,idSubGrupo,idPadre,idTar
         cantSubtareas,
         cantPosteriores,
         horasPlaneadas,
+        esPosterior
     ]);
     return results[0][0].idTarea;
 }
