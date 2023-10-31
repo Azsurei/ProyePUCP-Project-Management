@@ -1144,8 +1144,9 @@ CREATE TABLE Interesado(
     idNivelAdhesionDeseado INT,
     activo tinyint NOT NULL,
     FOREIGN KEY (idCatalogoInteresado) REFERENCES CatalogoInteresado (idCatalogoInteresado),
-    FOREIGN KEY (idCatalogoInteresado) REFERENCES CatalogoInteresado (idCatalogoInteresado),
-    FOREIGN KEY (idCatalogoInteresado) REFERENCES CatalogoInteresado (idCatalogoInteresado)
+    FOREIGN KEY (idNivelAutoridad) REFERENCES InteresadoAutoridad (idInteresadoAutoridad),
+    FOREIGN KEY (idNivelAdhesionActual) REFERENCES InteresadoAdhesion (idInteresadoAdhesionActual),
+    FOREIGN KEY (idNivelAdhesionDeseado) REFERENCES InteresadoAdhesion (idInteresadoAdhesionActual)
 )
 ENGINE = InnoDB;
 
@@ -1160,7 +1161,6 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS InteresadoAdhesion;
 CREATE TABLE InteresadoAdhesion(
     idInteresadoAdhesionActual INT AUTO_INCREMENT PRIMARY KEY,
-    idInteresado INT,
     nombreAdhesion VARCHAR(200),
     activo tinyint NOT NULL
 )
@@ -1169,8 +1169,22 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS InteresadoRequerimiento;
 CREATE TABLE InteresadoRequerimiento(
     idRequerimiento INT AUTO_INCREMENT PRIMARY KEY,
+    idInteresado INT,
     descripcion VARCHAR(500),
-    activo tinyint NOT NULL
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS InteresadoEstrategia;
+CREATE TABLE InteresadoEstrategia(
+    idEstrategia INT AUTO_INCREMENT PRIMARY KEY,
+    idInteresado INT,
+    descripcion VARCHAR(500),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
 )
 ENGINE = InnoDB;
 
