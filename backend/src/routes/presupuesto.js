@@ -12,8 +12,8 @@ const estimacionCostoController = require("../controllers/presupuesto/estimacion
 
 //Presupuesto
 routerPresupuesto.post("/insertarPresupuesto",presupuestoController.crear);
-routerPresupuesto.get("/listarLineasTodasXIdProyecto/:idProyecto",presupuestoController.listarLineasTodas);
 routerPresupuesto.get("/listarPresupuesto/:idPresupuesto",presupuestoController.listarXIdPresupuesto);
+routerPresupuesto.get("/listarLineasTodasXIdPresupuesto/:idPresupuesto",presupuestoController.listarLineasTodas);
 routerPresupuesto.put("/modificarPresupuesto",presupuestoController.modificar);
 
 //Listado monedas y tipos de transaccion e ingresos
@@ -24,10 +24,10 @@ routerPresupuesto.get("/listarTipoTransaccionTodos",verifyToken, tipoTransaccion
 // Ingresos
 routerPresupuesto.post("/insertarIngreso",ingresoController.crear);
 routerPresupuesto.post("/insertarLineaIngreso",ingresoController.crearLineaIngreso);
-routerPresupuesto.get("/listarLineasIngresoXIdProyecto/:idProyecto",ingresoController.listarLineasXIdProyecto);
+routerPresupuesto.get("/listarLineasIngresoXIdPresupuesto/:idPresupuesto",ingresoController.listarLineasXIdPresupuesto);
 routerPresupuesto.put("/modificarLineaIngreso",ingresoController.modificarLineaIngreso);
 //routerPresupuesto.get("/listarLineaXIdProyecto/:idProyecto",ingresoController.listarLineaXIdProyecto); //Corregido (Augusto)
-routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
+routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idPresupuesto/:descripcion/:fechaIni/:fechaFin",ingresoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
 
 // Egreso e ingreso
@@ -36,8 +36,8 @@ routerPresupuesto.get("/listarLineasIngresoYEgresoXIdProyecto/:idProyecto",presu
 // Egresos
 routerPresupuesto.post("/insertarEgreso",egresoController.crear);
 routerPresupuesto.post("/insertarLineaEgreso",egresoController.crearLineaEgreso);
-routerPresupuesto.get("/listarLineasEgresoXIdProyecto/:idProyecto",egresoController.listarLineasXIdProyecto); //Corregido (Augusto)
-routerPresupuesto.get("/listarLineaEgresoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",egresoController.listarLineasXNombreFechas);
+routerPresupuesto.get("/listarLineasEgresoXIdPresupuesto/:idPresupuesto",egresoController.listarLineasXIdPresupuesto); //Corregido (Augusto)
+routerPresupuesto.get("/listarLineasEgresoXNombreFechas/:idPresupuesto/:descripcion/:fechaIni/:fechaFin",egresoController.listarLineasXNombreFechas);
 routerPresupuesto.put("/modificarLineaEgreso",egresoController.modificarLineaEgreso);
 routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEgreso);    
 
@@ -45,10 +45,10 @@ routerPresupuesto.delete("/eliminarLineaEgreso",egresoController.eliminarLineaEg
 //Estimacion de costos
 routerPresupuesto.post("/insertarEstimacionCosto",estimacionCostoController.crear);
 routerPresupuesto.post("/insertarLineaEstimacionCosto",estimacionCostoController.crearLineaEstimacionCosto);
-routerPresupuesto.get("/listarLineasEstimacionCostoXIdProyecto/:idProyecto",estimacionCostoController.listarLineasXIdProyecto);
+routerPresupuesto.get("/listarLineasEstimacionCostoXIdPresupuesto/:idPresupuesto",estimacionCostoController.listarLineasXIdPresupuesto);
 routerPresupuesto.put("/modificarLineaEstimacionCosto",estimacionCostoController.modificarLineaEstimacionCosto);
 //routerPresupuesto.get("/listarEstimacionXIdProyecto/:idProyecto",estimacionCostoController.listarEstimacionXIdProyecto); //Corregido (Augusto)
-routerPresupuesto.get("/listarLineaEstimacionCostoXNombreFechas/:idProyecto/:descripcion/:fechaIni/:fechaFin",estimacionCostoController.listarLineasXNombreFechas);
+routerPresupuesto.get("/listarLineaEstimacionCostoXNombreFechas/:idPresupuesto/:descripcion/:fechaIni/:fechaFin",estimacionCostoController.listarLineasXNombreFechas);
 routerPresupuesto.delete("/eliminarLineaCosto",estimacionCostoController.eliminarLineaEstimacionCosto);
 
 module.exports.routerPresupuesto = routerPresupuesto;
