@@ -148,18 +148,18 @@ export default function CatalogoDeInteresadosRegister(props) {
     const onSubmit = () => {
         const postData = {
             idProyecto: parseInt(projectId),
-            idProbabilidad: probability,
-            idImpacto: impact,
-            nombreRiesgo: name,
-            fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].idUsuario,
-            detalleRiesgo: detail,
-            causaRiesgo: cause,
-            impactoRiesgo: impactDetail,
-            estado: isSelected ? "Activo" : "Inactivo",
-            responsables: selectedMiembrosList1,
-            planesRespuesta: responsePlans,
-            planesContigencia: contingencyPlans,
+            idAutoridad: autority,
+            idAdhesionActual: currentAdhesion,
+            idAdhesionDeseada: futureAdhesion,
+            nombre: name,
+            rol: role,
+            organizacion: organization,
+            cargo: charge,
+            correoElectronico: email,
+            numeroTelefono: phone,
+            informacionContacto: contactInformation,
+            requeriments: requirements,
+            strategies: strategies,
         };
         console.log("El postData es :", postData);
         /*         axios
@@ -423,7 +423,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                     {quantity2 === 0 ? (
                         <div className="flex justify-center items-center">
-                            <div>¡Puede agregar algunas estratgias!</div>
+                            <div>¡Puede agregar algunas estrategias!</div>
                         </div>
                     ) : (
                         strategies.map((strategies, index) => (
@@ -468,7 +468,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    router.back();
+                                    //router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
