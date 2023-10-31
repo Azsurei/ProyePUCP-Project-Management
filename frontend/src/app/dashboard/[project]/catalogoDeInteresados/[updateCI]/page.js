@@ -406,13 +406,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                         <MyCombobox
                             urlApi={
                                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                                "/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                                "/api/proyecto/catalogoInteresados/listarAutoridad"
                             }
-                            property="probabilidades"
-                            nameDisplay="nombreProbabilidad"
+                            property="autoridades"
+                            nameDisplay="nombreAutoridad"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeAutority}
-                            idParam="idProbabilidad"
+                            idParam="idInteresadoAutoridad"
                             initialName="Seleccione un nivel"
                         />
                     </div>
@@ -425,13 +425,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                         <MyCombobox
                             urlApi={
                                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                                "/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                                "/api/proyecto/catalogoInteresados/listarAdhesion"
                             }
-                            property="probabilidades"
-                            nameDisplay="nombreProbabilidad"
+                            property="adhesiones"
+                            nameDisplay="nombreAdhesion"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCurrentAdhesion}
-                            idParam="idProbabilidad"
+                            idParam="idInteresadoAdhesionActual"
                             initialName="Seleccione un nivel"
                         />
                     </div>
@@ -444,13 +444,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                         <MyCombobox
                             urlApi={
                                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                                "/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                                "/api/proyecto/catalogoInteresados/listarAdhesion"
                             }
-                            property="probabilidades"
-                            nameDisplay="nombreProbabilidad"
+                            property="adhesiones"
+                            nameDisplay="nombreAdhesion"
                             hasColor={false}
                             onSelect={handleSelectedValueChangeFutureAdhesion}
-                            idParam="idProbabilidad"
+                            idParam="idInteresadoAdhesionActual"
                             initialName="Seleccione un nivel"
                         />
                     </div>
