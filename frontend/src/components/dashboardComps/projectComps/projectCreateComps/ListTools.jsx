@@ -4,6 +4,26 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListTools.css";
 import { ToolCardsContext } from "@/app/dashboard/newProject/page";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
+
+import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
+import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
+import {
+    Modal, 
+    ModalContent, 
+    ModalHeader, 
+    ModalBody, 
+    ModalFooter,
+    useDisclosure,
+    Input,
+    Button,
+    DropdownTrigger,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem,
+    Pagination,
+  } from "@nextui-org/react";
+
 axios.defaults.withCredentials = true;
 
 function CardSelectTools(props) {
@@ -20,6 +40,7 @@ function CardSelectTools(props) {
 		removeToolInList(props.herramientaObject);
 		setIsSelected(false)
 	}
+    const showPlantillaButton = ["Autoevaluacion", "Acta de constitucion"].includes(props.name);
 
     return (
         <li className={isSelected ? "ToolCard active" : "ToolCard"} onClick={props.onClick}>
@@ -30,9 +51,12 @@ function CardSelectTools(props) {
             </div>
 
             <div className="buttonContatinerTool">
-                <button className="buttonOneTool">Ver Detalles</button>
-                {isSelected != true && <button className="buttonOneTool" onClick={handleSelectedOn}>Agregar</button>}
-				{isSelected && <button className="buttonOneTool" onClick={handleSelectedOff}>Eliminar</button>}
+                
+                {showPlantillaButton && <Button  startContent={<ContentPasteGoIcon/>} className="buttonOneTool2">Plantilla</Button>}
+
+                {isSelected != true &&<Button  onPress={handleSelectedOn} startContent={<PlusIcon/>} className="buttonOneTool">Agregar</Button>}
+                           
+				{isSelected && <Button  onPress={handleSelectedOff} startContent={<ClearTwoToneIcon/>} className="buttonOneTool2">Eliminar</Button>}
             </div>
         </li>
     );

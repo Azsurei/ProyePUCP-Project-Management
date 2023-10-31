@@ -624,12 +624,6 @@ export default function Equipo(props) {
                                         >
                                             Editar
                                         </Button>
-                                        <Button
-                                            color="danger"
-                                            startContent={<CrossWhite />}
-                                        >
-                                            Eliminar
-                                        </Button>
                                     </>
                                 )}
                             </div>
@@ -659,7 +653,6 @@ export default function Equipo(props) {
                                 <>
                                     {selectedTeam.participantes.map(
                                         (member) => (
-                                            //falta un key aqui
                                             <React.Fragment
                                                 key={member.idUsuario}
                                             >

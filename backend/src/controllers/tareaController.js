@@ -141,6 +141,10 @@ async function listarXIdProyecto(req, res, next) {
     }
 }
 
+
+
+
+
 async function eliminarTarea(req, res, next) {
     const { tarea } = req.body;
     const query = `CALL ELIMINAR_TAREA(?);`;
@@ -244,5 +248,5 @@ function structureData(data) {
 module.exports = {
     crear,
     listarXIdProyecto,
-    eliminarTarea,
+    eliminarTarea
 };

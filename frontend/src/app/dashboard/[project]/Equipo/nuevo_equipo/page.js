@@ -20,7 +20,6 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
-import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import { Button } from "@nextui-org/react";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
@@ -40,9 +39,7 @@ export default function crear_equipo(props) {
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     const [teamName, setTeamName] = useState("");
-    const [teamLeader, setTeamLeader] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsEmpty2, setFieldsEmpty2] = useState(false);
 
     const [isTeamNameFilled, setIsTeamNameFilled] = useState(false);
     const handleChangeTeamName = (e) => {
@@ -126,13 +123,6 @@ export default function crear_equipo(props) {
         console.log(newList);
     };
 
-    const [datosUsuario, setDatosUsuario] = useState({
-        idUsuario: "",
-        nombres: "",
-        apellidos: "",
-        correoElectronico: "",
-    });
-
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -158,13 +148,18 @@ export default function crear_equipo(props) {
         const nombreTeam = teamName;
         const proyectoId = projectId;
         const todosRoles = [{ idRol: 1, nombreRol: "Líder" }, ...roles];
-        const todosUserRoleData = [
-            {
-                idUsuario: selectedUniqueMemberList[0].idUsuario,
-                idRolEquipo: 1,
-            },
-            ...userRoleData,
-        ];
+        let todosUserRoleData;
+        if (selectedUniqueMemberList.length !== 0) {
+            todosUserRoleData = [
+                {
+                    idUsuario: selectedUniqueMemberList[0].idUsuario,
+                    idRolEquipo: 1,
+                },
+                ...userRoleData,
+            ];
+        }else{
+            todosUserRoleData = userRoleData;
+        }
 
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
@@ -172,16 +167,16 @@ export default function crear_equipo(props) {
             roles: todosRoles,
             userRoleData: todosUserRoleData,
         });
-        
+
         axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/insertarEquipoYParticipantes",
                 {
-            idProyecto: parseInt(proyectoId),
-            nombre: nombreTeam,
-            roles: todosRoles,
-            usuariosXRol: todosUserRoleData,
+                    idProyecto: parseInt(proyectoId),
+                    nombre: nombreTeam,
+                    roles: todosRoles,
+                    usuariosXRol: todosUserRoleData,
                 }
             )
             .then(function (response) {
@@ -213,6 +208,25 @@ export default function crear_equipo(props) {
         } else {
             // Si el usuario no tiene un rol, agrégalo al arreglo
             setUserRoleData([...userRoleData, newUserRole]);
+        }
+    };
+
+    const handleAutoSelectedValueChangeRol = (value, userId) => {
+        // Crear un objeto para el nuevo rol del usuario
+        const newUserRole = {
+            idUsuario: userId, // El ID del usuario
+            idRolEquipo: value, // El ID del rol seleccionado
+        };
+
+        // Verificar si el usuario ya tiene un rol en el arreglo
+        const userIndex = userRoleData.findIndex(
+            (item) => item.idUsuario === userId
+        );
+
+        if (userIndex === -1) {
+            // Si el usuario no tiene un rol, agrégalo al arreglo
+            const updatedUserRoleData = [...userRoleData, newUserRole];
+            setUserRoleData(updatedUserRoleData);
         }
     };
 
@@ -289,6 +303,7 @@ export default function crear_equipo(props) {
                     color="primary"
                     startContent={<AddIcon />}
                     onClick={() => toggleModal()}
+                    className="w-full"
                 >
                     Agregar roles
                 </Button>
@@ -343,7 +358,16 @@ export default function crear_equipo(props) {
                                         setActiveDropdown={() => {
                                             setActiveDropdown(index);
                                         }}
-                                    />
+                                        autoSelectedValue={{
+                                            idRol: 2,
+                                            nombreRol: "Miembro",
+                                        }}
+                                    >
+                                        {handleAutoSelectedValueChangeRol(
+                                            2,
+                                            component.idUsuario
+                                        )}
+                                    </ComboBoxArray>
                                 </div>
                             );
                         })}
@@ -378,6 +402,7 @@ export default function crear_equipo(props) {
                             oneButton={false}
                             secondAction={() => {
                                 checkData();
+                                router.back();
                             }}
                             textColor="blue"
                             verifyFunction={() => {

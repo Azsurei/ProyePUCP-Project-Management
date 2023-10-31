@@ -33,20 +33,20 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
         return capitalizedWords.join(" ");
     }
     return (
-        <div>
+        <>
             <div //estaba en 70
-                className="w-full max-w-[30rem] shadow-md 
-          border border-gray-300 rounded-lg card-hover my-2 overflow-hidden p-[1rem]"
+                className="w-full shadow-md 
+                border border-gray-300 rounded-lg card-hover my-2 overflow-hidden p-[1rem]"
                 onClick={() => {
                     handleSeeTeam(team);
                 }}
             >
                 <div>
                     <p className="cardEquipoBigHeader">{team.nombre}</p>
-                    <p className="cardEquipoLeaderLbl mb-2">
+                    <p className="cardEquipoLeaderLbl mb-2 h-[52.81px]">
                         Líder:{" "}
-                        {capitalizeWords(
-                            `${team.nombreLider} ${team.apellidoLider}`
+                        {team.participantes.length===0? "No asignado":capitalizeWords(
+                            `${team.participantes[0].nombres} ${team.participantes[0].apellidos}`
                         )}
                     </p>
                 </div>
@@ -75,7 +75,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="h-[50px]">
+                    <p className="h-[50px] mb-2">
                         Este equipo no cuenta con miembros
                     </p>
                 )}
@@ -87,11 +87,13 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                         className="w-[100%]"
                     />
                     <p className="min-w-[40px] w-[40px] flex justify-center">
-                        {(progressValue!==null || progressValue!==undefined ? progressValue : 0) + "%"}
+                        {(progressValue !== null || progressValue !== undefined
+                            ? progressValue
+                            : 0) + "%"}
                     </p>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
