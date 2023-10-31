@@ -299,7 +299,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                 <div className="comboCI">
                     <div className="containerComboCI">
                         <IconLabel
-                            icon="/icons/probabilityCR.svg"
+                            icon="/icons/authorityIcon.svg"
                             label="Nivel de autoridad"
                             className="iconLabel4"
                         />
@@ -318,7 +318,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                     <div className="containerComboCI">
                         <IconLabel
-                            icon="/icons/probabilityCR.svg"
+                            icon="/icons/adhesionIcon.svg"
                             label="Nivel de adhesión actual"
                             className="iconLabel4"
                         />
@@ -337,7 +337,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                     <div className="containerComboCI">
                         <IconLabel
-                            icon="/icons/probabilityCR.svg"
+                            icon="/icons/adhesionIcon.svg"
                             label="Nivel de adhesión deseado"
                             className="iconLabel4"
                         />
