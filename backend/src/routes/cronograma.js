@@ -1,14 +1,14 @@
 const express = require("express");
 const routerCronograma = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
-const cronogramaController = require("../controllers/cronogramaController");
-const tareaController = require("../controllers/tareaController");
+const cronogramaController = require("../controllers/cronograma/cronogramaController");
+const tareaController = require("../controllers/cronograma/tareaController");
 
 
 routerCronograma.post("/insertarCronograma",verifyToken, cronogramaController.crear);
 routerCronograma.post("/insertarTarea", tareaController.crear);
 
-routerCronograma.put("/actualizarCronograma", verifyToken,cronogramaController.actualizar);
+routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);
 
 
 
