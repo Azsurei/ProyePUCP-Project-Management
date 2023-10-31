@@ -425,7 +425,6 @@ export default function Cronograma(props) {
 
     function promiseRegistrarTarea() {
         return new Promise((resolve, reject) => {
-            console.log(tareaEstado);
             let selectedSubteamUsersWithId;
             if (selectedSubteam !== null) {
                 //remapeamos array para darle un nombre al atributo
@@ -437,6 +436,31 @@ export default function Cronograma(props) {
             }
 
             setToggleNew(false);
+            const objTareaNueva = {
+                idCronograma: cronogramaId,
+                idTareaEstado: parseInt(tareaEstado[0], 10), //No iniciado
+                idSubGrupo:
+                    selectedSubteam === null ? null : selectedSubteam.idEquipo,
+                idPadre: tareaPadre !== null ? tareaPadre.idTarea : null,
+                idTareaAnterior: null,
+                sumillaTarea: tareaName,
+                descripcion: tareaDescripcion,
+                fechaInicio: fechaInicio,
+                fechaFin: fechaFin,
+                cantSubtareas: 0,
+                cantPosteriores: 0,
+                horasPlaneadas: null,
+                usuarios:
+                    selectedUsers.length === 0
+                        ? selectedSubteamUsersWithId
+                        : selectedUsers, //veriifcar posible error
+                subTareas: null,
+                tareasPosteriores: listPosteriores,
+            };
+            console.log(objTareaNueva,null,2);
+            resolve("exito");
+
+            /*
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/cronograma/insertarTarea";
@@ -490,6 +514,7 @@ export default function Cronograma(props) {
                     console.log(error);
                     reject(error);
                 });
+            */
         });
     }
 
