@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { Textarea } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
-import {useRouter, useSearchParams} from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
@@ -51,8 +51,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
-    const isTextTooLong3 = detail.length > 400;
-    const isTextTooLong4 = detail.length > 400;
+    const isTextTooLong3 = cause.length > 400;
+    const isTextTooLong4 = impactDetail.length > 400;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
@@ -113,7 +113,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
     }, [catalogoRiesgos]);
 
     useEffect(() => {
-        const stringURLCR = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
+        const stringURLCR =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            `/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
         axios
             .get(stringURLCR)
             .then(function (response) {
@@ -419,7 +421,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
         console.log(deleteData);
         axios
             .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/modificarRiesgoRRC",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoRiesgos/modificarRiesgoRRC",
                 putData
             )
             .then((response) => {
@@ -434,7 +437,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
             });
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRRC",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoRiesgos/insertarRRC",
                 postData
             )
             .then((response) => {
@@ -449,7 +453,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
             });
         axios
             .delete(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/eliminarRRC",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoRiesgos/eliminarRRC",
                 {
                     data: deleteData,
                 }
@@ -522,7 +527,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarProbabilidades"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            }
                             property="probabilidades"
                             nameDisplay="nombreProbabilidad"
                             hasColor={false}
@@ -540,7 +548,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarImpacto"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/catalogoRiesgos/listarImpacto"
+                            }
                             property="impacto"
                             nameDisplay="nombreImpacto"
                             hasColor={false}
@@ -619,11 +630,17 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
                                         {component.nombres[0] +
-                                            (component.apellidos!==null? component.apellidos[0] : "")}
+                                            (component.apellidos !== null
+                                                ? component.apellidos[0]
+                                                : "")}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
+                                            `${component.nombres} ${
+                                                component.apellidos !== null
+                                                    ? component.apellidos
+                                                    : ""
+                                            }`
                                         )}
                                     </div>
                                 </div>
@@ -636,7 +653,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     </div>
                 </div>
                 <div className="titleButtonCR">
-                    <h4 style={{ fontWeight: 600 }}>Responsables del riesgo<span className="text-red-500"> *</span></h4>
+                    <h4 style={{ fontWeight: 600 }}>
+                        Responsables del riesgo
+                        <span className="text-red-500"> *</span>
+                    </h4>
                 </div>
                 <div className="containerResponsables">
                     <ButtonIconLabel
@@ -653,11 +673,17 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                     <div className="iconLabel3CR">
                                         <p className="profilePicCR">
                                             {component.nombres[0] +
-                                                (component.apellidos!==null? component.apellidos[0] : "")}
+                                                (component.apellidos !== null
+                                                    ? component.apellidos[0]
+                                                    : "")}
                                         </p>
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
-                                                `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
+                                                `${component.nombres} ${
+                                                    component.apellidos !== null
+                                                        ? component.apellidos
+                                                        : ""
+                                                }`
                                             )}
                                         </div>
                                     </div>
