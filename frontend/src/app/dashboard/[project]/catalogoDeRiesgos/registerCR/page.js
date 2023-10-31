@@ -42,8 +42,8 @@ export default function CatalogoDeRiesgosRegister(props) {
 
     const isTextTooLong1 = name.length > 400;
     const isTextTooLong2 = detail.length > 400;
-    const isTextTooLong3 = detail.length > 400;
-    const isTextTooLong4 = detail.length > 400;
+    const isTextTooLong3 = cause.length > 400;
+    const isTextTooLong4 = impactDetail.length > 400;
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);

@@ -13,12 +13,13 @@ function ColumnContainer({
     tasks,
     deleteTask,
     updateTask,
+    updateColumnNameDB,
     openViewTask,
 }) {
     const [editMode, setEditMode] = useState(false);
 
     const tasksIds = useMemo(() => {
-        return tasks.map(task => task.idTarea);
+        return tasks.map((task) => task.idTarea);
     }, [tasks]);
 
     const {
@@ -82,7 +83,9 @@ function ColumnContainer({
                 {...attributes}
                 {...listeners}
                 onClick={() => {
-                    setEditMode(true);
+                    if(column.idColumnaKanban !== 0 ){
+                        setEditMode(true);
+                    }
                 }}
                 className="
             bg-white
@@ -120,33 +123,46 @@ function ColumnContainer({
                             className="bg-white focus:border-rose-500 border rounded outline-none px-2"
                             value={column.nombre}
                             onChange={(e) =>
-                                updateColumn(column.idColumnaKanban, e.target.value)
+                                updateColumn(
+                                    column.idColumnaKanban,
+                                    e.target.value
+                                )
                             }
                             autoFocus
                             onBlur={() => {
                                 setEditMode(false);
+                                updateColumnNameDB(
+                                    column.idColumnaKanban,
+                                    column.nombre
+                                );
                             }}
                             onKeyDown={(e) => {
                                 if (e.key !== "Enter") return;
                                 setEditMode(false);
+                                updateColumnNameDB(
+                                    column.idColumnaKanban,
+                                    column.nombre
+                                );
                             }}
                         />
                     )}
                 </div>
-                <button
-                    onClick={() => {
-                        deleteColumn(column.idColumnaKanban);
-                    }}
-                    className="
-                stroke-gray-500
-                hover:stroke-black
-                hover: bg-slate-100
-                rounded
-                px-1
-                py-1"
-                >
-                    <TrashIcon />
-                </button>
+                {column.idColumnaKanban !== 0 && (
+                    <button
+                        onClick={() => {
+                            deleteColumn(column.idColumnaKanban, column.nombre);
+                        }}
+                        className="
+                        stroke-gray-500
+                        hover:stroke-black
+                        hover: bg-slate-100
+                        rounded
+                        px-1
+                        py-1"
+                    >
+                        <TrashIcon />
+                    </button>
+                )}
             </div>
 
             {/****************Main content **************/}
