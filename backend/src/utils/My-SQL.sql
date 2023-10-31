@@ -578,6 +578,50 @@ CREATE TABLE Retrospectiva(
 )
 ENGINE = InnoDB;
 
+
+CREATE TABLE LineaRetrospectiva(
+	idLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
+	idRetrospectiva INT,
+    idEquipo INT,
+    cantBien INT,
+    cantMal INT,
+    cantQueHacer INT,
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idRetrospectiva) REFERENCES Retrospectiva(idRetrospectiva),
+    FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE CriterioRetrospectiva(
+	idCriterioRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(255),
+    fechaCreacion DATE,
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS ItemLineaRetrospectiva;
+CREATE TABLE ItemLineaRetrospectiva(
+	idItemLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
+    idLineaRetrospectiva INT,
+    idCriterioRetrospectiva INT,
+    descripcion VARCHAR(255),
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idLineaRetrospectiva) REFERENCES LineaRetrospectiva(idLineaRetrospectiva),
+    FOREIGN KEY (idCriterioRetrospectiva) REFERENCES CriterioRetrospectiva(idCriterioRetrospectiva)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ItemLineaRetrospectiva(
+	idItemLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(255),
+    fechaCreacion DATE,
+    activo TINYINT
+)
+ENGINE = InnoDB;
+
 -----------------------
 -- Presupuesto
 -----------------------
