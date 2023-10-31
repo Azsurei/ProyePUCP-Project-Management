@@ -44,6 +44,7 @@ export default function KanbanBoard({ projectId }) {
 
     const [activeColumn, setActiveColumn] = useState(null);
     const [activeTask, setActiveTask] = useState(null);
+    const [oldColumn, setOldColumn] = useState(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -102,6 +103,22 @@ export default function KanbanBoard({ projectId }) {
                 onClick={() => {
                     console.log("COLUMNAS: " + JSON.stringify(columns));
                     console.log("TAREAS: " + JSON.stringify(tasks));
+                    for (const column of columns) {
+                        console.log(
+                            "TAREAS DE COL " +
+                                column.idColumnaKanban +
+                                " => " +
+                                JSON.stringify(
+                                    tasks.filter(
+                                        (task) =>
+                                            task.idColumnaKanban ===
+                                            column.idColumnaKanban
+                                    ),
+                                    null,
+                                    2
+                                )
+                        );
+                    }
                 }}
             >
                 {"Click me"}
@@ -132,6 +149,7 @@ export default function KanbanBoard({ projectId }) {
                                     createTask={createTask}
                                     deleteTask={deleteTask}
                                     updateTask={updateTask}
+                                    updateColumnNameDB={updateColumnNameDB}
                                     openViewTask={onOpenViewTask}
                                     tasks={tasks.filter(
                                         (task) =>
@@ -174,6 +192,7 @@ export default function KanbanBoard({ projectId }) {
                                 createTask={createTask}
                                 deleteTask={deleteTask}
                                 updateTask={updateTask}
+                                updateColumnNameDB={updateColumnNameDB}
                                 tasks={tasks.filter(
                                     (task) =>
                                         task.idColumnaKanban ===
@@ -197,7 +216,7 @@ export default function KanbanBoard({ projectId }) {
                 isOpen={isOpenViewTask}
                 onOpenChange={onOpenChangeViewTask}
             />
-            <Toaster richColors></Toaster>
+            <Toaster richColors position="top-center"></Toaster>
         </div>
     );
 
@@ -258,14 +277,41 @@ export default function KanbanBoard({ projectId }) {
             });
     }
 
-    function deleteColumn(id) {
+    function deleteColumn(id, name) {
         const filteredColumn = columns.filter(
             (col) => col.idColumnaKanban != id
         );
         setColumns(filteredColumn);
 
-        const newTasks = tasks.filter((t) => t.idColumnaKanban !== id);
-        setTasks(newTasks);
+        deleteColumnDB(id, name);
+
+        //sacamos el max posicionKanban de columna 0.
+        const tareasCol0 = tasks.filter((task) => task.idColumnaKanban === 0);
+        let lastPosicionKanban = tareasCol0[tareasCol0.length - 1].posicionKanban;  //+1 para empezar en el siguiente
+        console.log("Empezaremos en " + lastPosicionKanban);
+
+        const updatedTasks = tasks.map((task) => {
+            if (task.idColumnaKanban === id) {
+                lastPosicionKanban++;
+                registerTaskPositionChange(
+                    task.idTarea,
+                    lastPosicionKanban,
+                    0,
+                    task.sumillaTarea
+                );
+                return { ...task, posicionKanban: lastPosicionKanban, idColumnaKanban: 0 };
+            }
+            return task;
+        });
+
+        updatedTasks.sort((a, b) => {
+            if (a.idColumnaKanban === b.idColumnaKanban) {
+              return a.posicionKanban - b.posicionKanban;
+            }
+            return a.idColumnaKanban - b.idColumnaKanban;
+          });
+
+        setTasks(updatedTasks);
     }
 
     function updateColumn(id, title) {
@@ -285,24 +331,37 @@ export default function KanbanBoard({ projectId }) {
 
         if (event.active.data.current?.type === "Task") {
             setActiveTask(event.active.data.current.task);
+            setOldColumn(event.active.data.current.task.idColumnaKanban);
             return;
         }
     }
 
     function onDragEnd(event) {
-        setStateWhatsHappening("entraste a onDragEnd");
+        console.log("Entraste a onDragEnd");
         setActiveColumn(null);
         setActiveTask(null);
+        setOldColumn(null);
 
         const { active, over } = event;
-        if (!over) return; //not draggin over smting valid
+        if (!over) {
+            //not draggin over smting valid
+            console.log(
+                "No estas cambiando nada, se refiltra arreglo para evitar errores"
+            );
+            return;
+        }
 
         const isActiveAColumn = active.data.current?.type === "Column";
         const activeColumnId = active.id;
         const overColumnId = over.id;
-        if (activeColumnId === overColumnId) return;
+
+        if (activeColumnId === overColumnId && isActiveAColumn) {
+            console.log("Se movio la columna, pero sigue en el mismo lugar");
+            return;
+        }
 
         if (isActiveAColumn) {
+            console.log("Se reposiciono una columna");
             setColumns((columns) => {
                 const activeColumnIndex = columns.findIndex(
                     (col) => col.idColumnaKanban === activeColumnId
@@ -322,7 +381,7 @@ export default function KanbanBoard({ projectId }) {
                 newArray.forEach((columns, index) => {
                     if (columns.posicion !== index) {
                         console.log(
-                            "haciendo cambiaso de columnas en posicion " +
+                            "Haciendo cambiaso de columnas en posicion " +
                                 columns.posicion +
                                 " con index " +
                                 index
@@ -337,14 +396,67 @@ export default function KanbanBoard({ projectId }) {
                 });
 
                 return newArray;
-
-                //return arrayMove(columns, activeColumnIndex, overColumnIndex);
             });
         }
 
+        const isActiveATask = active.data.current?.type === "Task";
+        if (isActiveATask) {
+            console.log(
+                "Se termino de mover una tarea, reordenando si es que la posicion original de esta fue diferente a la final"
+            );
+
+            //realmente solo deberiamos reordenar la colummna original y la final (del active)
+            const tareaNueva = tasks.find((task) => task.idTarea === active.id);
+
+            console.log(
+                "Columna antigua es " +
+                    oldColumn +
+                    " y nueva columna es " +
+                    tareaNueva.idColumnaKanban
+            );
+
+            const newTasksArray = [...tasks];
+
+            for (const task of newTasksArray) {
+                const column = columns.find(
+                    (col) => col.idColumnaKanban === task.idColumnaKanban
+                );
+
+                const columnTasks = tasks.filter(
+                    (t) => t.idColumnaKanban === column.idColumnaKanban
+                );
+
+                const newPosition = columnTasks.findIndex(
+                    (t) => t.idTarea === task.idTarea
+                );
+
+                if (
+                    task.idColumnaKanban === oldColumn ||
+                    task.idColumnaKanban === tareaNueva.idColumnaKanban
+                ) {
+                    console.log(
+                        "debemos roeordenar " +
+                            task.sumillaTarea +
+                            " a posicion = " +
+                            newPosition +
+                            " de idColumnaKanban = " +
+                            task.idColumnaKanban
+                    );
+                    registerTaskPositionChange(
+                        task.idTarea,
+                        newPosition,
+                        task.idColumnaKanban,
+                        task.sumillaTarea
+                    );
+                }
+
+                task.posicionKanban = newPosition;
+            }
+
+            setTasks(newTasksArray);
+        }
 
         //verificar el caso cuando se termina el movimiento de tarea
-
     }
 
     function onDragOver(event) {
@@ -375,20 +487,6 @@ export default function KanbanBoard({ projectId }) {
                     tasks[overIndex].idColumnaKanban;
 
                 const newArray = arrayMove(tasks, activeIndex, overIndex);
-                newArray.forEach((task, index) => {
-                    if (task.posicionKanban !== index) {
-                        // registerTaskPositionChange(
-                        //     task.idTarea,
-                        //     index,
-                        //     tasks[overIndex].idColumnaKanban,
-                        //     task.sumillaTarea
-                        // );
-                        console.log(
-                            "moviendo task en posicion " + task.posicionKanban
-                        );
-                    }
-                    task.posicionKanban = index;
-                });
 
                 return newArray;
             });
@@ -403,38 +501,7 @@ export default function KanbanBoard({ projectId }) {
                     (t) => t.idTarea === activeId
                 );
 
-                console.log(
-                    "tenemos que mover reposicionar todas las tareas de la columna " +
-                        tasks[activeIndex].idColumnaKanban
-                );
-
-                const oldIdColumnaKanban = tasks[activeIndex].idColumnaKanban;
                 tasks[activeIndex].idColumnaKanban = overId;
-                
-                let count = 0;
-                tasks.forEach((task, index) => {
-                    if (task.idColumnaKanban === oldIdColumnaKanban) {
-                        console.log(
-                            "moviendo task en posicion " + task.posicionKanban + " a " +count+ " de " + task.idColumnaKanban
-                        );
-                        task.posicionKanban = count;
-
-                        //falta guardar reposicion en base de datos
-
-
-                        count++;
-                    }
-                    
-                });
-
-                
-
-                // registerTaskPositionChange(
-                //     task.idTarea,
-                //     index,
-                //     tasks[overIndex].idColumnaKanban,
-                //     task.sumillaTarea
-                // );
 
                 return arrayMove(tasks, activeIndex, activeIndex); //triggers rerender
             });
@@ -482,6 +549,45 @@ export default function KanbanBoard({ projectId }) {
             .catch(function (error) {
                 console.log(error);
                 toast.error("Error al mover columna en Kanban");
+            });
+    }
+
+    function updateColumnNameDB(idColumnaKanban, name) {
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/renombarColumna";
+        axios
+            .post(stringURL, {
+                idColumnaKanban: idColumnaKanban,
+                nombre: name,
+            })
+            .then(function (response) {
+                const str = "Columna " + name + " renombrada con exito";
+                toast.success(str);
+            })
+            .catch(function (error) {
+                console.log(error);
+                toast.error("Error al actualizar nombre de  columna");
+                //falta implementar optimistic update failure
+            });
+    }
+
+    function deleteColumnDB(idColumnaKanban, name){
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/eliminarColumna";
+        axios
+            .post(stringURL, {
+                idColumnaKanban: idColumnaKanban
+            })
+            .then(function (response) {
+                const str = "Columna " + name + " eliminada";
+                toast.success(str);
+            })
+            .catch(function (error) {
+                console.log(error);
+                toast.error("Error al eliminar columna columna");
+                //falta implementar optimistic update failure
             });
     }
 }
