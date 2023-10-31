@@ -59,7 +59,6 @@ async function listarXIdLineaActaReunion(req,res,next){
         if (!lineaActaReunion) {
             return res.status(400).json({ message: "El ID de la línea del acta de reunión debe ser valido y debe estar activo" });
         }
-        
         lineaActaReunion.comentarios = await comentarioReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
         lineaActaReunion.participantesXReunion = await participanteXReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
         lineaActaReunion.temasReunion = await temaReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);

@@ -1,4 +1,4 @@
-const connection = require("../config/db");
+const connection = require("../../config/db");
 
 async function crear(req,res,next){
     const {idProyecto} = req.body;
