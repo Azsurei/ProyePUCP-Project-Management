@@ -17,6 +17,7 @@ import TaskCard from "./TaskCard";
 import axios from "axios";
 import ModalTaskView from "./ModalTaskView";
 import { useDisclosure } from "@nextui-org/react";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function KanbanBoard({ projectId }) {
@@ -31,7 +32,12 @@ export default function KanbanBoard({ projectId }) {
     const [columns, setColumns] = useState([]);
     //inicializamos columnas con aquellas cuyas tareas sean null
 
-    const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+    const columnsId = useMemo(() => {
+        const colId = columns.map((col) => col.idColumnaKanban);
+        console.log(colId);
+        return colId;
+    }, [columns]);
+
     //has id and title
     const [tasks, setTasks] = useState([]);
     //has id, columnId, content
@@ -58,13 +64,15 @@ export default function KanbanBoard({ projectId }) {
                 //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
                 const columnTareas = {
                     idColumnaKanban: 0,
+                    idProyecto: parseInt(projectId),
                     nombre: `Tareas`,
+                    posicion: 0,
+                    activo: 1,
                 };
 
                 //siempre va a recibir columnas y tareas por orden de posicion
-                setColumns([...columns, columnTareas]);
-                setStateWhatsHappening("se asignaron");
-                console.log("hello");
+                //setColumns([columnTareas, ...response.data.data.columnas]);
+                setColumns([columnTareas, ...response.data.data.columnas]);
 
                 console.log(response.data.data);
                 setTasks(response.data.data.tareas);
@@ -73,6 +81,7 @@ export default function KanbanBoard({ projectId }) {
             })
             .catch(function (error) {
                 console.log(error);
+                toast.error("Error en carga. Recarge la pagina");
             });
     }, []);
 
@@ -188,6 +197,7 @@ export default function KanbanBoard({ projectId }) {
                 isOpen={isOpenViewTask}
                 onOpenChange={onOpenChangeViewTask}
             />
+            <Toaster richColors></Toaster>
         </div>
     );
 
@@ -218,14 +228,34 @@ export default function KanbanBoard({ projectId }) {
     }
 
     function createNewColumn() {
-        const columnToAdd = {
-            idColumnaKanban: generateId(), //a cambiar en futuro
-            nombre: `Columna ${columns.length + 1}`,
-        };
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/crearColumna";
+        axios
+            .post(stringURL, {
+                idProyecto: projectId,
+                nombre: `Columna ${columns.length + 1}`,
+            })
+            .then(function (response) {
+                const columnToAdd = {
+                    idColumnaKanban: response.data.columnaId, //a cambiar en futuro
+                    idProyecto: parseInt(projectId),
+                    nombre: `Columna ${columns.length + 1}`,
+                    posicion: columns.length - 1,
+                    activo: 1,
+                };
+                setColumns([...columns, columnToAdd]);
 
-        console.log(columnToAdd);
-
-        setColumns([...columns, columnToAdd]);
+                const str =
+                    "Columna " +
+                    `Columna ${columns.length + 1}` +
+                    " registrada";
+                toast.success(str);
+            })
+            .catch(function (error) {
+                console.log(error);
+                toast.error("Error al crear columna");
+            });
     }
 
     function deleteColumn(id) {
@@ -241,7 +271,7 @@ export default function KanbanBoard({ projectId }) {
     function updateColumn(id, title) {
         const newColumns = columns.map((col) => {
             if (col.idColumnaKanban !== id) return col;
-            return { ...col, title: title };
+            return { ...col, nombre: title };
         });
 
         setColumns(newColumns);
@@ -281,12 +311,40 @@ export default function KanbanBoard({ projectId }) {
                     (col) => col.idColumnaKanban === overColumnId
                 );
 
-                //cambiamos la pos (switcheamos nomas)
-                console.log("CAMBIANDO COLSSS==");
+                if (overColumnIndex === 0) return columns;
 
-                return arrayMove(columns, activeColumnIndex, overColumnIndex);
+                console.log("entrando...");
+                const newArray = arrayMove(
+                    columns,
+                    activeColumnIndex,
+                    overColumnIndex
+                );
+                newArray.forEach((columns, index) => {
+                    if (columns.posicion !== index) {
+                        console.log(
+                            "haciendo cambiaso de columnas en posicion " +
+                                columns.posicion +
+                                " con index " +
+                                index
+                        );
+                        registerColumnPositionChange(
+                            columns.idColumnaKanban,
+                            index,
+                            columns.nombre
+                        );
+                    }
+                    columns.posicion = index;
+                });
+
+                return newArray;
+
+                //return arrayMove(columns, activeColumnIndex, overColumnIndex);
             });
         }
+
+
+        //verificar el caso cuando se termina el movimiento de tarea
+
     }
 
     function onDragOver(event) {
@@ -319,10 +377,14 @@ export default function KanbanBoard({ projectId }) {
                 const newArray = arrayMove(tasks, activeIndex, overIndex);
                 newArray.forEach((task, index) => {
                     if (task.posicionKanban !== index) {
-                        console.log("haciendo cambiaso"); //aqui mandar cambio a sql
-                        registerPositionChange(
-                            task.idTarea,
-                            task.posicionKanban
+                        // registerTaskPositionChange(
+                        //     task.idTarea,
+                        //     index,
+                        //     tasks[overIndex].idColumnaKanban,
+                        //     task.sumillaTarea
+                        // );
+                        console.log(
+                            "moviendo task en posicion " + task.posicionKanban
                         );
                     }
                     task.posicionKanban = index;
@@ -341,41 +403,85 @@ export default function KanbanBoard({ projectId }) {
                     (t) => t.idTarea === activeId
                 );
 
-                tasks[activeIndex].idColumnaKanban = overId;
                 console.log(
-                    "ENTRASTEFEOooooooooooooooooooooooooooooo =============="
+                    "tenemos que mover reposicionar todas las tareas de la columna " +
+                        tasks[activeIndex].idColumnaKanban
                 );
+
+                const oldIdColumnaKanban = tasks[activeIndex].idColumnaKanban;
+                tasks[activeIndex].idColumnaKanban = overId;
+                
+                let count = 0;
+                tasks.forEach((task, index) => {
+                    if (task.idColumnaKanban === oldIdColumnaKanban) {
+                        console.log(
+                            "moviendo task en posicion " + task.posicionKanban + " a " +count+ " de " + task.idColumnaKanban
+                        );
+                        task.posicionKanban = count;
+
+                        //falta guardar reposicion en base de datos
+
+
+                        count++;
+                    }
+                    
+                });
+
+                
+
+                // registerTaskPositionChange(
+                //     task.idTarea,
+                //     index,
+                //     tasks[overIndex].idColumnaKanban,
+                //     task.sumillaTarea
+                // );
+
                 return arrayMove(tasks, activeIndex, activeIndex); //triggers rerender
             });
         }
     }
 
-    function registerPositionChange(idTarea, posicionKanban) {
-        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/kanban/cambiarPosicionTarea";
+    function registerTaskPositionChange(
+        idTarea,
+        posicionKanban,
+        idColumnaKanban,
+        sumillaTarea
+    ) {
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/cambiarPosicionTarea";
         axios
             .post(stringURL, {
                 idTarea: idTarea,
-                posicionKanban: posicionKanban
+                posicionKanban: posicionKanban,
+                idColumnaKanban: idColumnaKanban,
             })
             .then(function (response) {
-                //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
-                const columnTareas = {
-                    idColumnaKanban: 0,
-                    nombre: `Tareas`,
-                };
-
-                //siempre va a recibir columnas y tareas por orden de posicion
-                setColumns([...columns, columnTareas]);
-                setStateWhatsHappening("se asignaron");
-                console.log("hello");
-
-                console.log(response.data.data);
-                setTasks(response.data.data.tareas);
-                //console.log(response.data.message);
-                //console.log("Conexion correcta");
+                const str = "Tarea " + sumillaTarea + " movida con exito";
+                toast.success(str);
             })
             .catch(function (error) {
                 console.log(error);
+                toast.error("Error al modificar Kanban");
+            });
+    }
+
+    function registerColumnPositionChange(idColumn, posicion, nombre) {
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/cambiarPosicionColumna";
+        axios
+            .post(stringURL, {
+                idColumnaKanban: idColumn,
+                posicion: posicion,
+            })
+            .then(function (response) {
+                const str = "Columna " + nombre + " movida con exito";
+                toast.success(str);
+            })
+            .catch(function (error) {
+                console.log(error);
+                toast.error("Error al mover columna en Kanban");
             });
     }
 }

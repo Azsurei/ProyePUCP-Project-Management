@@ -6,6 +6,8 @@ const kanbanController = require("../controllers/kanbanController");
 routerKanban.get("/listarColumnas/:idProyecto",verifyToken, kanbanController.listarColumnas);
 routerKanban.get("/listarTareasTodasSinPosteriores/:idProyecto",verifyToken, kanbanController.listarTareasTodasSinPosteriores);
 routerKanban.get("/listarColumnasYTareas/:idProyecto",verifyToken, kanbanController.listarColumnasYTareas);
-routerKanban.post("/cambiarPosicionTarea",verifyToken, kanbanController.cambiarPosicion);
+routerKanban.post("/cambiarPosicionTarea",verifyToken, kanbanController.cambiarPosicionTarea);
+routerKanban.post("/crearColumna",verifyToken, kanbanController.crearColumna);
+routerKanban.post("/cambiarPosicionColumna",verifyToken, kanbanController.cambiarPosicionColumna);
 
 module.exports.routerKanban = routerKanban;

@@ -118,7 +118,7 @@ function ColumnContainer({
                     {editMode && (
                         <input
                             className="bg-white focus:border-rose-500 border rounded outline-none px-2"
-                            value={column.title}
+                            value={column.nombre}
                             onChange={(e) =>
                                 updateColumn(column.idColumnaKanban, e.target.value)
                             }
