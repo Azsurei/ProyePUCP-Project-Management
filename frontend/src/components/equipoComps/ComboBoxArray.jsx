@@ -9,8 +9,6 @@ export default function ComboBoxArray({
     isDropdownActive,
     setActiveDropdown,
     autoSelectedValue,
-    onSelectAuto,
-    idUsuario,
 }) {
     const [selectedPerson, setSelectedPerson] = useState(autoSelectedValue);
     const [query, setQuery] = useState("");
@@ -23,12 +21,6 @@ export default function ComboBoxArray({
                       .toLowerCase()
                       .includes(query.toLowerCase());
               });
-
-    useEffect(() => {
-        console.log("Dentro de comboBoxArray el idRol y idUsuario es: "+autoSelectedValue.idRol+"y"+idUsuario);
-        // Este efecto se ejecutará cuando el componente se monte y cuando `autoSelectedValue` cambie.
-        onSelectAuto(autoSelectedValue.idRol,idUsuario);
-    },[]);
 
     return (
         <div

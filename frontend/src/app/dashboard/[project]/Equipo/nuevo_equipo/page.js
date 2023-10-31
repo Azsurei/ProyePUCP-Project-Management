@@ -20,7 +20,6 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
-import MyCombobox from "@/components/ComboBox";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import { Button } from "@nextui-org/react";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
@@ -40,9 +39,7 @@ export default function crear_equipo(props) {
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     const [teamName, setTeamName] = useState("");
-    const [teamLeader, setTeamLeader] = useState("");
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsEmpty2, setFieldsEmpty2] = useState(false);
 
     const [isTeamNameFilled, setIsTeamNameFilled] = useState(false);
     const handleChangeTeamName = (e) => {
@@ -151,13 +148,18 @@ export default function crear_equipo(props) {
         const nombreTeam = teamName;
         const proyectoId = projectId;
         const todosRoles = [{ idRol: 1, nombreRol: "Líder" }, ...roles];
-        const todosUserRoleData = [
-            {
-                idUsuario: selectedUniqueMemberList[0].idUsuario,
-                idRolEquipo: 1,
-            },
-            ...userRoleData,
-        ];
+        let todosUserRoleData;
+        if (selectedUniqueMemberList.length !== 0) {
+            todosUserRoleData = [
+                {
+                    idUsuario: selectedUniqueMemberList[0].idUsuario,
+                    idRolEquipo: 1,
+                },
+                ...userRoleData,
+            ];
+        }else{
+            todosUserRoleData = userRoleData;
+        }
 
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
@@ -166,7 +168,7 @@ export default function crear_equipo(props) {
             userRoleData: todosUserRoleData,
         });
 
-        /* axios
+        axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/insertarEquipoYParticipantes",
@@ -183,7 +185,7 @@ export default function crear_equipo(props) {
             })
             .catch(function (error) {
                 console.log(error);
-            }); */
+            });
     };
 
     const handleSelectedValueChangeRol = (value, userId) => {
@@ -215,20 +217,18 @@ export default function crear_equipo(props) {
             idUsuario: userId, // El ID del usuario
             idRolEquipo: value, // El ID del rol seleccionado
         };
-    
+
         // Verificar si el usuario ya tiene un rol en el arreglo
         const userIndex = userRoleData.findIndex(
             (item) => item.idUsuario === userId
         );
-        console.log("user index:",userIndex);
-    
+
         if (userIndex === -1) {
             // Si el usuario no tiene un rol, agrégalo al arreglo
-            console.log("handleAutoSelectedValueChangeRol:",[...userRoleData, newUserRole]);
-            setUserRoleData([...userRoleData, newUserRole]);
+            const updatedUserRoleData = [...userRoleData, newUserRole];
+            setUserRoleData(updatedUserRoleData);
         }
     };
-    
 
     return (
         <div className="crear_equipo">
@@ -362,18 +362,12 @@ export default function crear_equipo(props) {
                                             idRol: 2,
                                             nombreRol: "Miembro",
                                         }}
-                                        onSelectAuto={(value, id) =>
-                                            handleAutoSelectedValueChangeRol(
-                                                value,
-                                                id
-                                            )
-                                        }
-                                        idUsuario={component.idUsuario}
-                                    />
-                                    {console.log(
-                                        `Los userDateRoles ${index} son :`,
-                                        userRoleData
-                                    )}
+                                    >
+                                        {handleAutoSelectedValueChangeRol(
+                                            2,
+                                            component.idUsuario
+                                        )}
+                                    </ComboBoxArray>
                                 </div>
                             );
                         })}
@@ -408,7 +402,7 @@ export default function crear_equipo(props) {
                             oneButton={false}
                             secondAction={() => {
                                 checkData();
-                                //router.back();
+                                router.back();
                             }}
                             textColor="blue"
                             verifyFunction={() => {

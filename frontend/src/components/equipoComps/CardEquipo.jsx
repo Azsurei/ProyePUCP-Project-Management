@@ -43,9 +43,9 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
             >
                 <div>
                     <p className="cardEquipoBigHeader">{team.nombre}</p>
-                    <p className="cardEquipoLeaderLbl mb-2">
+                    <p className="cardEquipoLeaderLbl mb-2 h-[52.81px]">
                         Líder:{" "}
-                        {capitalizeWords(
+                        {team.participantes.length===0? "No asignado":capitalizeWords(
                             `${team.participantes[0].nombres} ${team.participantes[0].apellidos}`
                         )}
                     </p>
@@ -75,7 +75,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="h-[50px]">
+                    <p className="h-[50px] mb-2">
                         Este equipo no cuenta con miembros
                     </p>
                 )}
