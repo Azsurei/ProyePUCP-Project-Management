@@ -9,5 +9,7 @@ routerKanban.get("/listarColumnasYTareas/:idProyecto",verifyToken, kanbanControl
 routerKanban.post("/cambiarPosicionTarea",verifyToken, kanbanController.cambiarPosicionTarea);
 routerKanban.post("/crearColumna",verifyToken, kanbanController.crearColumna);
 routerKanban.post("/cambiarPosicionColumna",verifyToken, kanbanController.cambiarPosicionColumna);
+routerKanban.post("/renombarColumna",verifyToken, kanbanController.renombrarColumna);
+routerKanban.post("/eliminarColumna",verifyToken, kanbanController.eliminarColumna);
 
 module.exports.routerKanban = routerKanban;
