@@ -458,9 +458,8 @@ export default function Cronograma(props) {
                 tareasPosteriores: listPosteriores,
             };
             console.log(objTareaNueva,null,2);
-            resolve("exito");
 
-            /*
+            
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/cronograma/insertarTarea";
@@ -514,7 +513,7 @@ export default function Cronograma(props) {
                     console.log(error);
                     reject(error);
                 });
-            */
+            
         });
     }
 
