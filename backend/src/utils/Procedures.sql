@@ -3187,3 +3187,15 @@ BEGIN
     WHERE idInteresado = _idInteresado
     AND activo = 1;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_INTERESADO_ESTRATEGIA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADO_ESTRATEGIA(
+    IN _idInteresado INT
+)
+BEGIN
+    SELECT *
+    FROM InteresadoRequerimiento
+    WHERE idInteresado = _idInteresado
+    AND activo = 1;
+END$

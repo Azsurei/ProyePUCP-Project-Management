@@ -88,6 +88,10 @@ async function listarInteresado(req,res,next){
         const [results1] = await connection.query(query1,[idInteresado]);
         interesado.requeriments = results1[0];
 
+        const query2 = `CALL LISTAR_INTERESADO_ESTRATEGIA(?);`;
+        const [results2] = await connection.query(query2,[idInteresado]);
+        interesado.strategies = results2[0];
+
         res.status(200).json({
             interesado,
             message: "Interesado obtenidos exitosamente"
@@ -103,5 +107,6 @@ module.exports = {
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,
-    listarInteresados
+    listarInteresados,
+    listarInteresado
 };
