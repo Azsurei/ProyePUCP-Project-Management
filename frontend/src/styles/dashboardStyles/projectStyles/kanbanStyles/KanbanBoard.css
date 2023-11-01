@@ -10,6 +10,7 @@
     @apply bg-rose-900 rounded-xl;
 }
 
+
 .TaskContainerCard::-webkit-scrollbar {
     width: 4px;
 }
@@ -19,6 +20,29 @@
 }
 
 .TaskContainerCard::-webkit-scrollbar-thumb{
+    @apply bg-sky-500 rounded-xl;
+    @apply bg-rose-900 rounded-xl;
+}
+
+
+.ColumnContainer{
+    transition: background-color 0.2s ease-in, border 0.2s ease-in;
+}
+
+.TaskContainerCard{
+   transition: none;
+}
+
+
+.ColumnContentTasks::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ColumnContentTasks::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+.ColumnContentTasks::-webkit-scrollbar-thumb{
     @apply bg-sky-500 rounded-xl;
     @apply bg-rose-900 rounded-xl;
 }

@@ -41,7 +41,8 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
                 style={style}
                 className="
             opacity-30
-            bg-white p-2.5 h-[100px]
+            bg-taskBackgroundColor
+            p-2.5 h-[100px]
         min-h-[100px] items-center flex text-left rounded-xl
         border-2 border-rose-500
         cursor-grab relative TaskContainerCard
@@ -59,7 +60,9 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
             {...attributes}
             {...listeners}
             onClick={openViewTask}
-            className="TaskContainerCard bg-white p-2.5 h-[100px]
+            className="TaskContainerCard 
+            bg-taskBackgroundColor
+            p-2.5 h-[100px]
             min-h-[100px] items-center flex text-left rounded-xl
             hover:ring-2 hover:ring-inset hover:ring-rose-500
             cursor-grab relative"
@@ -83,8 +86,17 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
                     onClick={() => {
                         deleteTask(task.idTarea);
                     }}
-                    className="stroke-black absolute right-4 top-1/2 
-                                -translate-y-1/2 bg-slate-100 p-1 rounded opacity-60 hover:opacity-100"
+                    className=" absolute right-4 top-1/2 
+                                -translate-y-1/2 
+                                bg-columnBackgroundColor 
+                                stroke-gray-500
+                        transition-colors duration-75
+                        hover:stroke-black
+                        dark:hover:stroke-white
+                                p-1 
+                                rounded 
+                                opacity-60 
+                                hover:opacity-100"
                 >
                     <TrashIcon />
                 </button>

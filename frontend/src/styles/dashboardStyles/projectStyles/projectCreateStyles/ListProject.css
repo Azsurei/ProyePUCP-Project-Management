@@ -43,7 +43,7 @@
 .ProjectCard:hover {
     /* box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5); */
     /* background-color: #507fd1c5; */
-    background-color: rgb(238, 238, 238);
+    /* background-color: rgb(238, 238, 238); */
     cursor: pointer;
     transform: scale(1.02);
 
@@ -92,7 +92,6 @@
     flex-shrink: 0;
     border-radius: 100%; */
 
-    background-color: lightgray;
     display: flex;
     justify-content: center;
     align-items: center;

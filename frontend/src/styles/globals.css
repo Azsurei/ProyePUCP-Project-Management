@@ -13,17 +13,33 @@
     padding: 0;
 }
 
+*{
+    transition: background-color 0.2s ease-in;
+}
+
 @layer base {
     :root {
         --color-mainBackground: 255 255 255;
         --color-mainHeaders: 23 43 77;
         --color-mainSidebar: 245 245 245;
+        --color-mainUserIcon: 211 211 211;
+
+    
+        --color-columnBackgroundColor: 241 245 249;
+        --color-taskBackgroundColor: 255 255 255; 
     }
 
     :root[class="dark"]{
-        --color-mainBackground: 30 30 30;
+        /* --color-mainBackground: 30 30 30; */
+        --color-mainBackground: 9 9 11;
         --color-mainHeaders: 255 255 255;
-        --color-mainSidebar: 50 50 50;
+        /* --color-mainSidebar: 50 50 50; */
+        --color-mainSidebar: 30 30 30;
+        --color-mainUserIcon: 148 163 184;
+
+
+        --color-columnBackgroundColor: 22 28 34;
+        --color-taskBackgroundColor: 13 17 23;
     }
 }
 
@@ -51,7 +67,7 @@ body {
     overflow-x: none;
 }
 
-body > div {
+body > div:first-child {
     height: 100%;
 }
 

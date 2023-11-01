@@ -20,7 +20,6 @@ export default function DateInput({
     const inputStyle = {
         width: "100%",
         overflowY: "auto",
-        borderColor: isInvalid ? "red" : "rgb(228, 228, 231)",
         borderWidth: "2px",
         borderRadius: "8px",
         padding: ".2rem .4rem",
@@ -38,9 +37,10 @@ export default function DateInput({
         borderColor: 'rgb(244, 244, 245)'
     };
 
+    const str = " bg-inherit border-solid border" + (isInvalid ? "-danger ":"-[#e4e4e7] ") + "dark:border-solid dark:border" + (isInvalid ? "-danger":"-default-200");
     return (
         <input
-            className={className}
+            className={className + str}
             type="date"
             id="inputBoxGeneric"
             style={isEditable===true ? inputStyle : viewOnly}

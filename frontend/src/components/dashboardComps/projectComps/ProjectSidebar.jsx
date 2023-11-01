@@ -79,7 +79,7 @@ function MemberIcon(props) {
                         radius="md"
                         src={props.imgLink}
                         fallback={
-                            <p className="memberIcon bg-[#d3d3d3] dark:bg-slate-400">
+                            <p className="memberIcon bg-mainUserIcon">
                                 {props.name[0]}
                                 {props.lastName[0]}
                             </p>

@@ -65,7 +65,7 @@ export default function RootLayout({ children, params }) {
                         flex: "1",
                         position: "relative",
                     }}
-                    className="h-[100%] overflow-auto bg-mainSidebar"
+                    className="h-[100%] overflow-auto bg-mainBackground"
                 >
                     {isLoadingSmall && (
                         <div

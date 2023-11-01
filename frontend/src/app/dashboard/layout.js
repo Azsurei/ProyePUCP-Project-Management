@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        height: "100%",
+                        height: "100vh",
                     }}
                 >
                     <DashboardNav

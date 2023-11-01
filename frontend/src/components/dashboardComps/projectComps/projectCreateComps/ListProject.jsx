@@ -57,7 +57,7 @@ function ProjectCard(props) {
     });
 
     return (
-        <li className="ProjectCard bg-mainBackground" onClick={props.onClick}>
+        <li className="ProjectCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-slate-600" onClick={props.onClick}>
             <p className="cardTitleProject">{props.name}</p>
 
             <p className="cardDates">
@@ -84,12 +84,12 @@ function ProjectCard(props) {
                             //isBordered
                             //as="button"
                             key={member.idUsuario}
-                            className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                            className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem] bg-mainUserIcon"
                             radius="md"
                             src={member.imgLink}
                             fallback={
                                 <p
-                                    className="membersIcon"
+                                    className="membersIcon bg-mainUserIcon"
                                     key={member.idUsuario}
                                 >
                                     {member.nombres[0]}
