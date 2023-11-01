@@ -73,24 +73,49 @@ const {
 } = useDisclosure();
 
 //Fin Modales
-
+const [presupuestoId, setPresupuestoId] = useState("");
+//const router=userRouter();
+let idHerramientaCreada;
+let flag=0;
+useEffect(() => {
+    const fetchData = async () => {
+        try {
+          const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+          const herramientas = response.data.herramientas;
+          for (const herramienta of herramientas) {
+            if (herramienta.idHerramienta === 13) {
+                idHerramientaCreada = herramienta.idHerramientaCreada;
+                setPresupuestoId(idHerramientaCreada)
+                console.log("idPresupuesto es:", idHerramientaCreada);
+                flag = 1;
+                break; // Puedes salir del bucle si has encontrado la herramienta
+            }
+        }
+          console.log(`Esta es el id presupuesto:`, data);
+            console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+        } catch (error) {
+          console.error('Error al obtener el presupuesto:', error);
+        }
+      };
+        fetchData();
+}, []);
 
   
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
 }
 
-function priceRow(qty, unit, time) {
-  return qty * unit* time;
+function subtotalRow(cantidadRecurso, tarifaUnitaria, fechaInicio) {
+  return cantidadRecurso * tarifaUnitaria* fechaInicio;
 }
 
-function createRow(desc, qty, unit,time) {
-  const price = priceRow(qty, unit,time);
-  return { desc, qty, unit, time, price };
+function createRow(descripcion, cantidadRecurso, tarifaUnitaria,fechaInicio) {
+  const subtotal = subtotalRow(cantidadRecurso, tarifaUnitaria,fechaInicio);
+  return { descripcion, cantidadRecurso, tarifaUnitaria, fechaInicio, subtotal };
 }
 
 function subtotal(items) {
-  return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
+  return items.map(({ subtotal }) => subtotal).reduce((sum, i) => sum + i, 0);
 }
 
 const rows = [
@@ -98,9 +123,30 @@ const rows = [
   createRow('Estimacion #2', 4, 50,2),
   createRow('Estimacion #3', 2, 200,3),
 ];
+const [lineasEstimacion, setLineasEstimacion] = useState([]);
 
+    //Aqui va el data table de Iwa
+    
+    
+    const DataTable = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
+              const data = response.data.lineasEstimacionCosto;
+              setLineasEstimacion(data);
+              console.log(`Esta es la data:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.lineasEstimacionCosto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };
+    useEffect(() => {
+      DataTable();
+    }, [presupuestoId]);
 //Calculos
-const invoiceSubtotal = subtotal(rows);
+const invoiceSubtotal = subtotal(lineasEstimacion);
 const invoiceReserva = Reserva/100 * invoiceSubtotal;
 
 const invoiceLineaBase = invoiceSubtotal + invoiceReserva;
@@ -118,8 +164,9 @@ const invoiceIGV= IGV/100 * invoiceTotalGanancia;
 const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
 
-
 //Fin Calculos
+
+// Calcula el subtotal
 
     return (
         <div className="mainDivPresupuesto">
@@ -434,15 +481,25 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
               
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.desc}>
-                  <TableCell>{row.desc}</TableCell>
-                  <TableCell align="right">{row.qty}</TableCell>
-                  <TableCell align="right">{row.unit}</TableCell>
-                  <TableCell align="right">{row.time}</TableCell>
-                  <TableCell align="right">{ccyFormat(row.price)}</TableCell>
+            {lineasEstimacion.map((row) => {
+              // Convierte la fecha en un objeto Date
+              const fecha = new Date(row.fechaInicio);
+              // Obtiene los componentes de la fecha
+              const day = fecha.getDate().toString().padStart(2, '0');
+              const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+              const year = fecha.getFullYear().toString().slice(-2);
+
+              return (
+                <TableRow key={row.descripcion}>
+                  <TableCell>{row.descripcion}</TableCell>
+                  <TableCell align="right">{row.cantidadRecurso}</TableCell>
+                  <TableCell align="right">{row.tarifaUnitaria}</TableCell>
+                  <TableCell align="right">{`${day}/${month}/${year}`}</TableCell>
+                  <TableCell align="right">{ccyFormat(row.subtotal)}</TableCell>
                 </TableRow>
-              ))}
+              );
+            })}
+
 
               <TableRow>
                 <TableCell rowSpan={9} />
