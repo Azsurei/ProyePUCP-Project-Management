@@ -60,7 +60,7 @@ async function insertarInteresado(req,res,next){
     }
 }
 
-async function listarInteresado(req,res,next){
+async function listarInteresados(req,res,next){
     const {idProyecto} = req.params;
     const query = `CALL LISTAR_CATALOGO_INTERESADOS(?);`;
     try {
@@ -76,9 +76,32 @@ async function listarInteresado(req,res,next){
         next(error);
     }
 }
+
+async function listarInteresado(req,res,next){
+    const {idInteresado} = req.params;
+    try {
+        const query = `CALL LISTAR_CATALOGO_INTERESADO_X_ID(?);`;
+        const [results] = await connection.query(query,[idInteresado]);
+        const interesado = results[0];
+
+        const query1 = `CALL LISTAR_INTERESADO_REQUERIMIENTO(?);`;
+        const [results1] = await connection.query(query1,[idInteresado]);
+        interesado.requeriments = results1[0];
+
+        res.status(200).json({
+            interesado,
+            message: "Interesado obtenidos exitosamente"
+        });
+        console.log('Se listo el interesado correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 module.exports = {
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,
-    listarInteresado
+    listarInteresados
 };
