@@ -3210,3 +3210,87 @@ BEGIN
     UPDATE InteresadoRequerimiento SET activo = 0 WHERE idInteresado = _idInteresado;
     UPDATE InteresadoEstrategia SET activo = 0 WHERE idInteresado = _idInteresado;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_INTERESADO_REQUERIMIENTO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CATALOGO_INTERESADO_REQUERIMIENTO(
+    IN _idRequerimiento INT
+)
+BEGIN
+    UPDATE InteresadoRequerimiento SET activo = 0 WHERE idRequerimiento = _idRequerimiento;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_INTERESADO_ESTRATEGIA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CATALOGO_INTERESADO_ESTRATEGIA(
+    IN _idEstrategia INT
+)
+BEGIN
+    UPDATE InteresadoEstrategia SET activo = 0 WHERE idEstrategia = _idEstrategia;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_CATALOGO_INTERESADO_X_ID;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_CATALOGO_INTERESADO_X_ID(
+    IN _idInteresado INT,
+    IN _nombreCompleto VARCHAR(200),
+    IN _rolEnProyecto VARCHAR(200),
+    IN _organizacion VARCHAR(200),
+    IN _cargo VARCHAR(200),
+    IN _correo VARCHAR(200),
+    IN _telefono VARCHAR(12),
+    IN _datosContacto VARCHAR(200),
+    IN _idNivelAutoridad INT,
+    IN _idNivelAdhesionActual INT,
+    IN _idNivelAdhesionDeseado INT
+)
+BEGIN
+    UPDATE Interesado 
+    SET nombreCompleto = _nombreCompleto,
+        rolEnProyecto = _rolEnProyecto,
+        organizacion = _organizacion,
+        cargo = _cargo,
+        correo = _correo,
+        telefono = _telefono,
+        datosContacto = _datosContacto,
+        idNivelAutoridad = _idNivelAutoridad,
+        idNivelAdhesionActual = _idNivelAdhesionActual,
+        idNivelAdhesionDeseado = _idNivelAdhesionDeseado
+    WHERE idInteresado = _idInteresado;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_CATALOGO_INTERESADO_REQUERIMIENTO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_CATALOGO_INTERESADO_REQUERIMIENTO(
+    IN _idRequerimiento INT,
+    IN _descripcion VARCHAR(200)
+)
+BEGIN
+    UPDATE InteresadoRequerimiento 
+    SET descripcion = _descripcion
+    WHERE idRequerimiento = _idRequerimiento;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_CATALOGO_INTERESADO_REQUERIMIENTO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_CATALOGO_INTERESADO_REQUERIMIENTO(
+    IN _idRequerimiento INT,
+    IN _descripcion VARCHAR(200)
+)
+BEGIN
+    UPDATE InteresadoRequerimiento 
+    SET descripcion = _descripcion
+    WHERE idRequerimiento = _idRequerimiento;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_CATALOGO_INTERESADO_ESTRATEGIA;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_CATALOGO_INTERESADO_ESTRATEGIA(
+    IN _idEstrategia INT,
+    IN _descripcion VARCHAR(200)
+)
+BEGIN
+    UPDATE InteresadoEstrategia 
+    SET descripcion = _descripcion
+    WHERE idEstrategia = _idEstrategia;
+END$
