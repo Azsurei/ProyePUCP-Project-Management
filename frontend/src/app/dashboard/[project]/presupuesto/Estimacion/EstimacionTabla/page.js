@@ -105,13 +105,13 @@ function ccyFormat(num) {
   return `${num.toFixed(2)}`;
 }
 
-function subtotalRow(cantidadRecurso, tarifaUnitaria, fechaInicio) {
-  return cantidadRecurso * tarifaUnitaria* fechaInicio;
+function subtotalRow(cantidadRecurso, tarifaUnitaria, tiempoRequerido) {
+  return cantidadRecurso * tarifaUnitaria* tiempoRequerido;
 }
 
-function createRow(descripcion, cantidadRecurso, tarifaUnitaria,fechaInicio) {
-  const subtotal = subtotalRow(cantidadRecurso, tarifaUnitaria,fechaInicio);
-  return { descripcion, cantidadRecurso, tarifaUnitaria, fechaInicio, subtotal };
+function createRow(descripcion, cantidadRecurso, tarifaUnitaria,tiempoRequerido) {
+  const subtotal = subtotalRow(cantidadRecurso, tarifaUnitaria,tiempoRequerido);
+  return { descripcion, cantidadRecurso, tarifaUnitaria, tiempoRequerido, subtotal };
 }
 
 function subtotal(items) {
@@ -482,19 +482,13 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
             </TableHead>
             <TableBody>
             {lineasEstimacion.map((row) => {
-              // Convierte la fecha en un objeto Date
-              const fecha = new Date(row.fechaInicio);
-              // Obtiene los componentes de la fecha
-              const day = fecha.getDate().toString().padStart(2, '0');
-              const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
-              const year = fecha.getFullYear().toString().slice(-2);
 
               return (
                 <TableRow key={row.descripcion}>
                   <TableCell>{row.descripcion}</TableCell>
                   <TableCell align="right">{row.cantidadRecurso}</TableCell>
                   <TableCell align="right">{row.tarifaUnitaria}</TableCell>
-                  <TableCell align="right">{`${day}/${month}/${year}`}</TableCell>
+                  <TableCell align="right">{row.tiempoRequerido}</TableCell>
                   <TableCell align="right">{ccyFormat(row.subtotal)}</TableCell>
                 </TableRow>
               );
