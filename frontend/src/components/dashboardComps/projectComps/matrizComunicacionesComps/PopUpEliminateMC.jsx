@@ -86,6 +86,7 @@ function PopUpEliminateMC({ modal, toggle, taskName, idComunicacion, refresh}) {
             isOpen={isOpen} 
             onOpenChange={onOpenChange}
             placement="top-center"
+            onClose={toggle}
           >
             <ModalContent>
               {(onClose) => (

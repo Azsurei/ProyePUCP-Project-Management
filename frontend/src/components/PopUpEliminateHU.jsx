@@ -77,6 +77,7 @@ function PopUpEliminate({ modal, toggle, taskName, idHistoriaDeUsuario , refresh
             isOpen={isOpen} 
             onOpenChange={onOpenChange}
             placement="top-center"
+            onClose={toggle}
           >
             <ModalContent>
               {(onClose) => (

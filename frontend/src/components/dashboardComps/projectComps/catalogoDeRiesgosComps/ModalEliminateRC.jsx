@@ -51,6 +51,7 @@ function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
             isOpen={isOpen} 
             onOpenChange={onOpenChange}
             placement="top-center"
+            onClose={toggle}
           >
             <ModalContent>
               {(onClose) => (

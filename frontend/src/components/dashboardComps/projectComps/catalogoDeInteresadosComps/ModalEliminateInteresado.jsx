@@ -51,11 +51,12 @@ function ModalEliminateInteresado({ modal, toggle, taskName, idInteresado, refre
             isOpen={isOpen} 
             onOpenChange={onOpenChange}
             placement="top-center"
+            onClose={toggle}
           >
             <ModalContent>
               {(onClose) => (
                 <>
-                  <ModalHeader className="flex flex-col gap-1">Eliminar informacion del interesado {idInteresado}</ModalHeader>
+                  <ModalHeader className="flex flex-col gap-1">Eliminar informacion del interesado</ModalHeader>
                   <ModalBody>
                   <h3 className="advertisement">
                             ¿Estás seguro que desea eliminar el siguiente interesado?
