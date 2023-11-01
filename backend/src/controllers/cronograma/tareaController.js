@@ -25,7 +25,7 @@ async function crear(req, res, next) {
         await usuarioXTareaController.funcCrearUsuariosXTarea(usuarios, idTarea);
         //await insertarTareas(subTareas);  --Ya no insertamos subTareas en esta seccion, se insertan como normales
         await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
-
+        console.log(`Tarea ${idTarea} creada`);
         res.status(200).json({ message: `Tarea ${idTarea} creada` });
     } catch (error) {
         next(error);
@@ -116,24 +116,9 @@ async function insertarTareasPosteriores(
 ) {
     if (tareas) {
         for (const tarea of tareas) {
-            const idTarea = await insertarTarea({
-                idCronograma: originalTareaData.idCronograma,
-                idTareaEstado: 1,
-                idSubGrupo: originalTareaData.idSubGrupo,
-                idPadre: null,
-                idTareaAnterior: idTareaPrevia,
-                sumillaTarea: tarea.sumillaTarea,
-                descripcion: tarea.descripcion,
-                fechaInicio: originalTareaData.fechaFin,
-                fechaFin: tarea.fechaFin,
-                cantSubtareas: 0,
-                cantPosteriores: 0,
-                horasPlaneadas: null,
-                usuarios: originalTareaData.usuarios,
-                subTareas: null,
-                tareasPosteriores: null,
-            });
-            await insertarUsuarios(originalTareaData.usuarios, idTarea);
+            const idTarea = await insertarTarea(originalTareaData.idCronograma,1,originalTareaData.idSubGrupo,null,idTareaPrevia,tarea.sumillaTarea,
+                tarea.descripcion,originalTareaData.fechaFin,tarea.fechaFin,0,0,null,1);
+            await usuarioXTareaController.funcCrearUsuariosXTarea(originalTareaData.usuarios, idTarea);
         }
     }
 }
