@@ -429,7 +429,7 @@ routerProyecto.get("/listarProyectos", verifyToken, async (req, res) => {
                 ]);
                 proyecto.miembros = results_users[0];
             }
-            console.log(JSON.stringify(proyectos, null, 2));
+            //console.log(JSON.stringify(proyectos, null, 2));
 
             res.status(200).json({
                 proyectos,
