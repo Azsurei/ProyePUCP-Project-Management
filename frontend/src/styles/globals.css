@@ -13,6 +13,21 @@
     padding: 0;
 }
 
+@layer base {
+    :root {
+        --color-mainBackground: 255 255 255;
+        --color-mainHeaders: 23 43 77;
+        --color-mainSidebar: 245 245 245;
+    }
+
+    :root[class="dark"]{
+        --color-mainBackground: 30 30 30;
+        --color-mainHeaders: 255 255 255;
+        --color-mainSidebar: 50 50 50;
+    }
+}
+
+
 html {
     box-sizing: border-box;
     height: 100%;
@@ -57,3 +72,5 @@ code {
     display: flex;
     flex-direction: column;
 }
+
+

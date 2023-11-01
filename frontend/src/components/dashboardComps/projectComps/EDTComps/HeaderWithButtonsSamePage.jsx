@@ -20,7 +20,7 @@ export default function HeaderWithButtonsSamePage({
             <p id="HeaderBreadcrumb">{breadcrump}</p>
             <div id="HeaderXbuttonXBackContainer">
                 <div id="HeaderXBackContainer">
-                    <p id="MainHeader">{children}</p>
+                    <p id="MainHeader" className="text-mainHeaders">{children}</p>
                     {haveReturn && (
                         <img
                             src="/icons/icon-goBack.svg"
