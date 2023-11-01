@@ -4,7 +4,7 @@ import Link from "next/link";
 
 function DashboardSecondNav() {
     return (
-        <ul className="DashboardSecondNav bg-text-mainHeaders">
+        <ul className="DashboardSecondNav">
             <li>
                 <img src="/icons/sidebarIcon1.svg" className='sideIcon'></img>
                 <Link href='/dashboard'><p>Principal</p></Link>

@@ -267,7 +267,7 @@ export default function Dashboard() {
 
     return (
         <div className="mainDiv bg-mainSidebar">
-            <div className="headerDiv">
+            <div className="headerDiv text-mainHeaders">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
                     <BreadcrumbsItem href="/dashboard" text="Proyectos" />
