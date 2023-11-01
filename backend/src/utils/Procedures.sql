@@ -3018,3 +3018,66 @@ BEGIN
     FROM InteresadoAdhesion
     WHERE activo = 1;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_INTERESADO_ADHESION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_INTERESADO_ADHESION()
+BEGIN
+	SELECT *
+    FROM InteresadoAdhesion
+    WHERE activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO(
+    IN _idProyecto INT,
+    IN _nombreCompleto VARCHAR(200),
+    IN _rolEnProyecto VARCHAR(200),
+    IN _organizacion VARCHAR(200),
+    IN _cargo VARCHAR(200),
+    IN _correo VARCHAR(200),
+    IN _telefono VARCHAR(12),
+    IN _datosContacto VARCHAR(200),
+    IN _idNivelAutoridad INT,
+    IN _idNivelAdhesionActual INT,
+    IN _idNivelAdhesionDeseado INT
+)
+BEGIN
+	DECLARE _idInteresado INT;
+    SET @_idCatalogoInteresado = (SELECT idCatalogoInteresado FROM CatalogoInteresado WHERE idProyecto = _idProyecto AND activo = 1);
+	INSERT INTO Interesado(idCatalogoInteresado,nombreCompleto,rolEnProyecto,organizacion,cargo,correo,telefono,datosContacto,
+        idNivelAutoridad,idNivelAdhesionActual,idNivelAdhesionDeseado,activo) 
+    VALUES(@_idCatalogoInteresado,_nombreCompleto,_rolEnProyecto,_organizacion,_cargo,_correo,_telefono,_datosContacto,
+        _idNivelAutoridad,_idNivelAdhesionActual,_idNivelAdhesionDeseado,1);
+    SET _idInteresado = @@last_insert_id;
+    SELECT _idInteresado AS idInteresado;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO_REQUERIMIENTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO_REQUERIMIENTO(
+    IN _idInteresado INT,
+    IN _descripcion VARCHAR(200)
+)
+BEGIN
+	DECLARE _idRequerimiento INT;
+	INSERT INTO InteresadoRequerimiento(idInteresado,descripcion,activo) 
+    VALUES(_idInteresado,_descripcion,1);
+    SET _idRequerimiento = @@last_insert_id;
+    SELECT _idRequerimiento AS idRequerimiento;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_INTERESADO_ESTRATEGIA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_INTERESADO_ESTRATEGIA(
+    IN _idInteresado INT,
+    IN _descripcion VARCHAR(200)
+)
+BEGIN
+	DECLARE _idEstrategia INT;
+	INSERT INTO InteresadoEstrategia(idInteresado,descripcion,activo) 
+    VALUES(_idInteresado,_descripcion,1);
+    SET _idEstrategia = @@last_insert_id;
+    SELECT _idEstrategia AS idEstrategia;
+END$

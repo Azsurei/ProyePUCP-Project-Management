@@ -5,5 +5,6 @@ const catalogoInteresadosController = require("../controllers/catalogoInteresado
 
 routerCatalogoInteresados.get("/listarAutoridad", catalogoInteresadosController.listarAutoridad);
 routerCatalogoInteresados.get("/listarAdhesion", catalogoInteresadosController.listarAdhesion);
+routerCatalogoInteresados.get("/insertarInteresado", catalogoInteresadosController.insertarInteresado);
 
 module.exports.routerCatalogoInteresados = routerCatalogoInteresados;
