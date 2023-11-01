@@ -78,7 +78,7 @@ async function modificar(req, res, next) {
         await funcEliminarTareasPosteriores(tareasPosterioresEliminadas);
         await funcModificarTareasPosteriores(tareasPosterioresSinTocar);
 
-        await usuarioXTareaController.funcEliminarUsuariosXTarea(
+        await usuarioXTareaController.funcEliminarUsuariosXTarea(   //barre todos los usuarios de la tarea
             usuariosEliminados,
             idTarea
         );

@@ -194,7 +194,7 @@
 }
 
 .subTareasViewContainer, .posterioresViewContainer{
-    background-color: rgb(243, 242, 242);
+    /* background-color: rgb(243, 242, 242); */
     height: auto;
     width: 100%;
     border-radius: 10px;
@@ -210,10 +210,7 @@
 }
 
 .cardTareasPosteriores{
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    /* background-color: white; */
     border-radius: 10px;
     width: 100%;
 
@@ -243,7 +240,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: rgba(9, 30, 66, 0.06);
+    /* background-color: rgba(9, 30, 66, 0.06); */
     border-radius: 3px;
     font-weight: 500;
 
@@ -264,7 +261,7 @@
 
 
 .contUsers{
-    background-color: rgb(243, 242, 242);
+    /* background-color: rgb(243, 242, 242); */
     height: auto;
     width: 100%;
     border-radius: 10px;
