@@ -161,6 +161,30 @@ async function insertarRequirementStrategies(req,res,next){
     }
 }
 
+async function modificarInteresados(req,res,next){
+    const {idInteresado, cargo, correoElectronico, idAdhesionActual, idAdhesionDeseada, idAutoridad, informacionContacto, nombre, numeroTelefono, organizacion, rol,
+        requeriments,strategies} = req.body;
+    try {
+        const query = `CALL MODIFICAR_CATALOGO_INTERESADO_X_ID(?,?,?,?,?,?,?,?,?,?,?);`;
+        await connection.query(query,[idInteresado,nombre,rol,organizacion,cargo,correoElectronico,numeroTelefono,informacionContacto,idAutoridad,
+            idAdhesionActual,idAdhesionDeseada]);
+        const query1 = `CALL MODIFICAR_CATALOGO_INTERESADO_REQUERIMIENTO(?,?);`;
+        for(const requirement of requeriments){
+            await connection.query(query1,[requirement.idRequirements,requirement.requirements]);
+        }
+        const query2 = `CALL MODIFICAR_CATALOGO_INTERESADO_ESTRATEGIA(?,?);`;
+        for(const strategy of strategies){
+            await connection.query(query2,[strategy.idStrategies,strategy.strategies]);
+        }
+        res.status(200).json({
+            message: "Interesado, Requerimientos y Estrategias modificados exitosamente"
+        });
+        console.log('Se modifico el Interesado y los Requerimientos y Estrategias correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 
 module.exports = {
     listarAutoridad,
@@ -170,5 +194,6 @@ module.exports = {
     listarInteresado,
     eliminarInteresado,
     eliminarRequirementStrategies,
-    insertarRequirementStrategies
+    insertarRequirementStrategies,
+    modificarInteresados
 };

@@ -13,5 +13,6 @@ routerCatalogoInteresados.delete("/eliminarInteresado", catalogoInteresadosContr
 
 routerCatalogoInteresados.delete("/eliminarRequirementStrategies", catalogoInteresadosController.eliminarRequirementStrategies);
 routerCatalogoInteresados.post("/insertarRequirementStrategies", catalogoInteresadosController.insertarRequirementStrategies);
+routerCatalogoInteresados.put("/modificarInteresados", catalogoInteresadosController.modificarInteresados);
 
 module.exports.routerCatalogoInteresados = routerCatalogoInteresados;
