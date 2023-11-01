@@ -407,14 +407,17 @@ export default function Ingresos(props) {
                         </Link>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginLeft: 'auto' }}>
+
+                                <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                                    Filtrar
+                                </Button>
+                                
                                 <Button onPress={onModalCrear} color="primary" startContent={<AssignmentIcon />} 
                                         isDisabled={!cardSelected} className="btnAddEgreso">
                                         Registrar Egreso
                                 </Button>
 
-                                <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                                    Filtrar
-                                </Button>
+
                         </div>
 
 

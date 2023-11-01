@@ -338,16 +338,15 @@ export default function Ingresos(props) {
 
                     <div className="buttonContainer">
 
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
-
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion/EstimacionTabla"}>
                             <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
                                 Ver Tabla
                             </Button>
                         </Link>
 
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                            Filtrar
+                        </Button>
 
                         <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar

@@ -307,8 +307,6 @@ export default function Ingresos(props) {
     }, [lineasIngreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
     
 
-
-    
     return (
 
         
@@ -369,16 +367,17 @@ export default function Ingresos(props) {
                             variant="faded"
                         />
 
-                    <div className="buttonContainer">
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
+                        <div className="buttonContainer">
+                            <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                                Filtrar
+                            </Button>
 
-                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
-                            Agregar
-                        </Button>
-                       
+                            <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                                Agregar
+                            </Button>
+                        
                         </div>
+                        
                     </div>
                     <div className="divListaIngreso">
                         <IngresosList lista = {filteredItems} refresh ={DataTable}></IngresosList>
