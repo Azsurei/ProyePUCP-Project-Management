@@ -166,6 +166,8 @@ export default function EstimacionCosto(props) {
                     idProyecto: projectId,
                     descripcion:descripcionLinea,
                     tarifaUnitaria: monto,
+                    //Se añade tiempoRequerido
+                    tiempoRequerido:mesesRequerido,
                     cantidadRecurso: cantRecurso,
                     subtotal:parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
                     fechaInicio:fecha,
