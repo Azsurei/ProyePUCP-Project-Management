@@ -69,7 +69,7 @@ const memberData = [
 
 function MemberIcon(props) {
     return (
-        <li className="memberContainer relative">
+        <li className="memberContainer">
             <Popover placement="top" showArrow={true}>
                 <PopoverTrigger>
                     <Avatar
@@ -79,7 +79,7 @@ function MemberIcon(props) {
                         radius="md"
                         src={props.imgLink}
                         fallback={
-                            <p className="memberIcon">
+                            <p className="memberIcon bg-[#d3d3d3] dark:bg-slate-400">
                                 {props.name[0]}
                                 {props.lastName[0]}
                             </p>
@@ -107,7 +107,9 @@ function DropDownItem(props) {
         router.push(props.goTo);
     };
     return (
-        <li className="DropDownItem" onClick={prenderLoadYPush}>
+        <li className="DropDownItem
+            text-[#414141] hover:bg-[#dad9d8] dark:text-slate-200 dark:hover:bg-[#414141]
+            " onClick={prenderLoadYPush}>
             {/* <Link
                 href={props.goTo}
                 style={{ display: "flex", alignItems: "center", gap: ".7rem" }}
@@ -437,7 +439,7 @@ function ProjectSidebar(props) {
         <nav
             className={`ProjectSidebar ${
                 isOpen ? "openSidebar" : "closedSidebar"
-            }`}
+            } bg-mainSidebar`}
         >
             <div className="contenedorTodo">
                 <div className="btnOpenSidebar" onClick={handleButtonClick}>
@@ -447,7 +449,7 @@ function ProjectSidebar(props) {
                         }`}
                     ></div>
                 </div>
-                <p className="SidebarHeader">{props.projectName}</p>
+                <p className="SidebarHeader text-mainHeaders">{props.projectName}</p>
                 <p className="dates">13/09/2023 - 20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
                     <p className="teamHeader">Tu rol:</p>
@@ -488,7 +490,7 @@ function ProjectSidebar(props) {
             <Link href={stringBase + "/settings"}>
                 <div
                     className="text-medium font-medium 
-            bg-slate-300 
+            bg-slate-300 dark:bg-slate-600
             flex justify-center 
             rounded-md py-[.3rem] 
             cursor-pointer"
