@@ -34,7 +34,8 @@ async function insertarInteresado(req,res,next){
         const query = `CALL INSERTAR_INTERESADO(?,?,?,?,?,?,?,?,?,?,?);`;
         const [results] = await connection.query(query,[idProyecto,nombre,rol,organizacion,cargo,correoElectronico,numeroTelefono,informacionContacto,idAutoridad,
             idAdhesionActual,idAdhesionDeseada]);
-        const idInteresado = results[0][0].idInteresado;
+        console.log(results);
+        const idInteresado = results[0].idInteresado;
         //Iteracion Requerimientos
         for(const requeriment of requeriments){
             await connection.query(`
