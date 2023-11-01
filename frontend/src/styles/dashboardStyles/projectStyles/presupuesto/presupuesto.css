@@ -152,11 +152,50 @@
 
 }
 
+.btnAddIngreso:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+
+.btnEditarEstimacion{
+    border-radius: 10px;
+    background-color: #1962F0;
+    border: #1962F0 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 130px;
+    color: white;
+    margin-left: auto;
+
+}
+
+.btnEditarEstimacion:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.btnEditEstimacion{
+
+    border-radius: 10px;
+    background-color: #1962F0;
+    border: #1962F0 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 150px;
+    color: white;
+    margin-left: auto;
+
+
+}
+
 .btnAddEgreso{
 
     border-radius: 10px;
-    background-color: #008CBA;
-    border: #008CBA 1px solid;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
     font-size: 0.8rem;
     font-weight: 600;
     height: 36px;
@@ -165,7 +204,11 @@
  
     justify-content: center;
 
+}
 
+.btnAddEgreso:hover{
+    cursor: pointer;
+    opacity: 0.8;
 }
 
 .btnFiltro{
@@ -180,6 +223,12 @@
     margin-left: auto;
 
 }
+
+.btnFiltro:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
 
 .divFiltroPresupuesto{
 
@@ -223,6 +272,14 @@
     align-items: center; /* Alinea verticalmente si es necesario */
     gap: 2rem;
 }
+
+.buttonContainerEstimacionTabla{
+    display: flex;
+    align-items: center; /* Alinea verticalmente si es necesario */
+    gap: 2rem;
+    margin-left:auto;
+}
+
 .nombreProyecto{
     color: #000;
     font-family: Montserrat;

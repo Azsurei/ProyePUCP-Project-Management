@@ -353,15 +353,10 @@ export default function Ingresos(props) {
         return filteredTemplates;
     }, [lineasIngreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
     
-    const [monedas, setMonedas] = useState([]);
-    const handleMonedaSelect = () => {
-        setIsSelected(!isSelected);
-        if (isSelected) {
-            setselectedMoneda(2);
-        } else {
-            setselectedMoneda(1);
-        }
-    }
+
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
 
     
     return (
@@ -391,7 +386,7 @@ export default function Ingresos(props) {
                     <div className="containerHeader">
                         <div className="titlePresupuesto">Ingresos</div>
                         <div>
-                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
                                  {isSelected ? "Soles" : "Dolares"}
                             </Switch>  
                         </div>
@@ -431,19 +426,20 @@ export default function Ingresos(props) {
                             variant="faded"
                         />
 
-                    <div className="buttonContainer">
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
+                        <div className="buttonContainer">
+                            <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                                Filtrar
+                            </Button>
 
-                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
-                            Agregar
-                        </Button>
-                       
+                            <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                                Agregar
+                            </Button>
+                        
                         </div>
+                        
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {filteredItems} refresh ={DataTable}></IngresosList>
+                        <IngresosList lista = {filteredItems} refresh ={DataTable} changeMoneda = {handleSelectedMoneda} valueMoneda = {isSelected}></IngresosList>
                     </div>
 
                 

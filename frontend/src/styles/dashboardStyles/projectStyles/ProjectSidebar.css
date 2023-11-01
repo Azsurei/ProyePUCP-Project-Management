@@ -20,8 +20,7 @@
 
     font-family: 'Montserrat', sans-serif;
 
-    transition: width 0.3s ease-in-out;
-
+    transition: width 0.3s ease-in-out, background-color 0.2s ease-in;
 }
 
 .ProjectSidebar::-webkit-scrollbar {
@@ -298,6 +297,7 @@
     color: #414141;
 
      cursor: pointer;
+     transition: none;
 }
 
 .DropDownItem:hover{

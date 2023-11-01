@@ -112,9 +112,8 @@ export default function Presupuesto(props) {
 
 
     const [selectedMoneda, setselectedMoneda] = useState("");
-    const handleSelectedValueMoneda = (value) => {
-        setselectedMoneda(value);
-        setValidTipoMoneda(true);
+    const handleSelectedValueMoneda = () => {
+        setIsSelected(!isSelected);
         
     };
 
@@ -202,7 +201,7 @@ export default function Presupuesto(props) {
                     <div className="containerHeader">
                         <div className="titlePresupuesto">Presupuesto</div>
                         <div>
-                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedValueMoneda}>
                                  {isSelected ? "Soles" : "Dolares"}
                             </Switch>  
                         </div>

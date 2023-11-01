@@ -93,4 +93,9 @@
     
 }
 
+.MuiTableContainer-root::-webkit-scrollbar	{
+    width: 20px;
+
+}
+
 

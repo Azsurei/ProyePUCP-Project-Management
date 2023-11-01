@@ -45,6 +45,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../../layout";
 import { set } from "date-fns";
+import { is } from "date-fns/locale";
 
 
 export default function Historial(props) {
@@ -202,26 +203,64 @@ export default function Historial(props) {
             nombreMoneda: "Dolar",
         }
     ];
+    const [presupuestoDisponible, setPresupuestoDisponible] = useState(0);
     const totalCalculate = () => {
-        const totalI = lineasIngreso.reduce((total, item) => total + item.monto, 0);
-        const totalE = lineasEgreso.reduce((total, item) => total + item.costoReal, 0);
+        const totalI = lineasIngreso.reduce((total, item) => {
+            if (isSelected && item.idMoneda === 1) {
+              return total + (item.monto * 3.9);
+            } else if (!isSelected && item.idMoneda === 2) {
+              return total + (item.monto / 3.9);
+            } else {
+                return total + item.monto;
+            }
+          }, 0);
+        const totalE = lineasEgreso.reduce((total, item) => {
+            if (isSelected && item.idMoneda === 1) {
+              return total + (item.costoReal * 3.9);
+            } else if (!isSelected && item.idMoneda === 2) {
+              return total + (item.costoReal / 3.9);
+            } else {
+                return total + item.costoReal;
+            }
+          }, 0);
         const porcentaje = totalI ? (((totalI - totalE) / totalI)) * 100 : 0;
-        setIngresosTotales(totalI);
+        setIngresosTotales(totalI.toFixed(2));
         console.log("Ingresos Totales",totalI);
-        setEgresosTotales( totalE);
+        setEgresosTotales( totalE.toFixed(2));
         console.log("Egresos totales",totalE);
         setPerformance(porcentaje);
+        setPresupuestoDisponible(totalI.toFixed(2) - totalE.toFixed(2));
         console.log("Performance",porcentaje);
-    }    
+    }
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };        
     useEffect(() => {
         
-        
+        ObtenerPresupuesto();
         DataTable();
       }, [presupuestoId]);
       
     useEffect(() => {
         totalCalculate();
-    }, [lineasIngreso, lineasEgreso]);
+    }, [lineasIngreso, lineasEgreso, isSelected]);
 
 
     const hasSearchFilter = Boolean(filterValue);
@@ -303,6 +342,11 @@ export default function Historial(props) {
     
         return filteredEgresos;
     }, [lineasEgreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
+
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
+    const monedaSymbol = !isSelected ? "$" : "S/";
     return (
 
         
@@ -323,7 +367,7 @@ export default function Historial(props) {
                     <div className="containerHeader">
                         <div className="titlePresupuesto">Historial</div>
                         <div>
-                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
                                  {isSelected ? "Soles" : "Dolares"}
                             </Switch>  
                         </div>
@@ -375,7 +419,7 @@ export default function Historial(props) {
                     </div>
                     <div className="containerData">
                         <div className="divHistorial w-1/2">
-                        <HistorialList listaIngresos={filteredItems} listaEgreso = {filteredEgresos} refresh={DataTable}></HistorialList>
+                        <HistorialList listaIngresos={filteredItems} listaEgreso = {filteredEgresos} refresh={DataTable} valueMoneda = {isSelected}></HistorialList>
 
                         </div>
                         <div className="justify-center items-center w-1/2">
@@ -401,15 +445,15 @@ export default function Historial(props) {
                                     <div className="dataBalance ">
                                         <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
                                             <div className="titleBalanceData" style={{ textAlign: "left" }}>Ingresos: </div>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>S/ {IngresosTotales}</div>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{monedaSymbol} {IngresosTotales}</div>
                                         </div>
                                         <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
                                             <div className="titleBalanceData" style={{ textAlign: "left" }}>Egresos: </div>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>S/{EgresosTotales}</div>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{monedaSymbol} {EgresosTotales}</div>
                                         </div>
                                         <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
                                             <div className="titleBalanceData" style={{ textAlign: "left" }}>Disponible: </div>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{IngresosTotales - EgresosTotales > 0 ? `S/ ${IngresosTotales - EgresosTotales}` : 'Sin fondos disponibles'}</div>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{IngresosTotales - EgresosTotales > 0 ? `${monedaSymbol} ${presupuestoDisponible}` : 'Sin fondos disponibles'}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -15,12 +15,14 @@ function CardEgreso({
     costoRealEgreso,
     horaEgreso,
     refresh,
+    initialMoneda,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
+    const [costoAdapt, setCostoAdapt] = useState(costoRealEgreso);
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
@@ -38,7 +40,25 @@ function CardEgreso({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoEgreso);
-    const monedaSymbol = EgresoObject.nombreMoneda === "Dolar" ? "$" : "S/";
+    const monedaSymbol = !initialMoneda ? "$" : "S/";
+    useEffect(() => {
+        console.log("initialMoneda", initialMoneda);
+        console.log("IngresoObject.idMoneda", EgresoObject.idMoneda);
+        if (initialMoneda && EgresoObject.idMoneda === 1) {
+          const nuevoMonto = (costoRealEgreso * 3.9).toFixed(2); // Redondear a 2 decimales
+          setCostoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else if (!initialMoneda && EgresoObject.idMoneda === 2) {
+          // Segunda situación
+          const nuevoMonto = (costoRealEgreso / 3.9).toFixed(2); // Redondear a 2 decimales
+          setCostoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else {
+          const nuevoMonto = costoRealEgreso.toFixed(2); // Redondear a 2 decimales
+          setCostoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        }
+      }, [initialMoneda]);
     return (
         <li
             className="IngresoCard"
@@ -53,7 +73,7 @@ function CardEgreso({
                     <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPagoEgresoHistorial"}>Cant. {cantidad}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgresoHistorial"}>{monedaSymbol} {costoRealEgreso}</p>
+                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgresoHistorial"}>{monedaSymbol} {costoAdapt}</p>
                     {/* <p className="titleHoraIngreso">{horaEgreso}</p> */}
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
@@ -96,7 +116,7 @@ function CardEgreso({
 export default function EgresosList(props) {
     const router = useRouter();
 
-    const { lista, refresh } = props;
+    const { lista, refresh, valueMoneda } = props;
 
     if (props.lista.length === 0) {
         return (
@@ -151,6 +171,7 @@ export default function EgresosList(props) {
                                     costoRealEgreso={component.costoReal}
                                     horaEgreso={horaEgreso}
                                     refresh={refresh}
+                                    initialMoneda = {valueMoneda}
                                 />
                             ))}
                         </ul>

@@ -40,8 +40,6 @@ export default function CatalogoDeInteresadosRegister(props) {
     const isTextTooLong5 = contactInformation.length > 400;
     const isTextTooLong6 = email.length > 100;
     const isTextTooLong7 = phone.length > 100;
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
 
@@ -468,7 +466,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

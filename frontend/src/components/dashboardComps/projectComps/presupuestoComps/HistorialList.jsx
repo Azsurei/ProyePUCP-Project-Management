@@ -14,12 +14,13 @@ function CardEgreso({
     costoRealEgreso,
     horaEgreso,
     refresh,
+    initialMoneda,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-
+    const [costoAdapt, setCostoAdapt] = useState(costoRealEgreso);
 
 
     const imageEgresoOptions = {
@@ -28,7 +29,25 @@ function CardEgreso({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoEgreso);
-    const monedaSymbol = EgresoObject.nombreMoneda === "USD" ? "$" : "S/";
+    const monedaSymbol = !initialMoneda ? "$" : "S/";
+    useEffect(() => {
+        console.log("initialMoneda", initialMoneda);
+        console.log("IngresoObject.idMoneda", EgresoObject.idMoneda);
+        if (initialMoneda && EgresoObject.idMoneda === 1) {
+          const nuevoMonto = (costoRealEgreso * 3.9).toFixed(2); // Redondear a 2 decimales
+          setCostoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else if (!initialMoneda && EgresoObject.idMoneda === 2) {
+          // Segunda situación
+          const nuevoMonto = (costoRealEgreso / 3.9).toFixed(2); // Redondear a 2 decimales
+          setCostoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else {
+          const nuevoMonto = costoRealEgreso.toFixed(2); // Redondear a 2 decimales
+          setCostoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        }
+      }, [initialMoneda]);
     return (
         <li
             className="IngresoCard"
@@ -43,7 +62,7 @@ function CardEgreso({
                     <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPagoEgresoHistorial"}>Cant. {cantidad}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgresoHistorial"}>{monedaSymbol} {costoRealEgreso}</p>
+                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgresoHistorial"}>{monedaSymbol} {costoAdapt}</p>
                     
                 </div>
                 
@@ -59,13 +78,14 @@ function CardIngresos({
     montoIngreso,
     horaIngreso,
     refresh,
+    initialMoneda,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
-
+    const [montoAdapt, setMontoAdapt] = useState(montoIngreso);
 
     const imageIngresoOptions = {
         "Efectivo": "/icons/icon-Efectivo.svg",
@@ -76,7 +96,25 @@ function CardIngresos({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoIngreso);
-    const monedaSymbol = IngresoObject.nombreMoneda === "USD" ? "$" : "S/";
+    const monedaSymbol = !initialMoneda ? "$" : "S/";
+    useEffect(() => {
+        console.log("initialMoneda", initialMoneda);
+        console.log("IngresoObject.idMoneda", IngresoObject.idMoneda);
+        if (initialMoneda && IngresoObject.idMoneda === 1) {
+          const nuevoMonto = (montoIngreso * 3.9).toFixed(2); // Redondear a 2 decimales
+          setMontoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else if (!initialMoneda && IngresoObject.idMoneda === 2) {
+          // Segunda situación
+          const nuevoMonto = (montoIngreso / 3.9).toFixed(2); // Redondear a 2 decimales
+          setMontoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else {
+          const nuevoMonto = montoIngreso.toFixed(2); // Redondear a 2 decimales
+          setMontoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        }
+      }, [initialMoneda]);
     return (
         <li
             className="IngresoCard"
@@ -91,7 +129,7 @@ function CardIngresos({
                     <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>{IngresoObject.descripcionTransaccionTipo}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoIngreso}</p>
+                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoAdapt}</p>
                     <p className="titleHoraIngreso">{IngresoObject.descripcionIngresoTipo}</p>
                 </div>
             </div>
@@ -159,7 +197,7 @@ function renderGroups(groups, fechaKeyProperty) {
 
 export default function HistorialList(props) {
     const router = useRouter();
-    const { listaIngresos, listaEgreso , refresh} = props;
+    const { listaIngresos, listaEgreso , refresh, valueMoneda} = props;
     useEffect(() => {
         const handleRefresh = async () => {
             refresh();
@@ -205,6 +243,7 @@ export default function HistorialList(props) {
                     IngresoObject={item}
                     cantidad={item.cantidad}
                     montoIngreso={item.monto}
+                    initialMoneda = {valueMoneda}
                     />
                   );
                 } else {
@@ -216,6 +255,7 @@ export default function HistorialList(props) {
                     EgresoObject={item}
                     cantidad={item.cantidad}
                     costoRealEgreso={item.costoReal}
+                    initialMoneda = {valueMoneda}
                     />
                   );
                 }

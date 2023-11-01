@@ -49,7 +49,7 @@ function ColumnContainer({
                 ref={setNodeRef}
                 style={style}
                 className="
-        bg-slate-100
+        bg-slate-100 dark:bg-black
         opacity-40
         border-2
         border-rose-500
@@ -69,10 +69,11 @@ function ColumnContainer({
             ref={setNodeRef}
             style={style}
             className="
-            bg-slate-100
+            ColumnContainer
+            bg-columnBackgroundColor
             w-[350px]
-            h-[100%]
-            min-h-[100%]
+            h-full
+            min-h-full
             rounded-md
             flex
             flex-col
@@ -88,27 +89,29 @@ function ColumnContainer({
                     }
                 }}
                 className="
-            bg-white
-            text-md
-            h-[60px]
-            cursor-grab
-            rounded-md
-            rounded-b-none
-            p-3
-            font-bold
-            border-slate-100
-            border-4
-            flex
-            items-center
-            justify-between"
+                ColumnContainer
+                bg-taskBackgroundColor
+                text-md
+                h-[60px]
+                cursor-grab
+                rounded-md
+                rounded-b-none
+                p-3
+                font-bold
+                border-columnBackgroundColor
+                border-4
+                flex
+                items-center
+                justify-between"
             >
                 <div className="flex gap-2 items-center">
                     <div
                         className="
+                    ColumnContainer
                     flex
                     justify-center
                     items-center
-                    bg-slate-100
+                    bg-columnBackgroundColor
                     px-2
                     py-1
                     text-sm
@@ -120,7 +123,7 @@ function ColumnContainer({
                     {!editMode && column.nombre}
                     {editMode && (
                         <input
-                            className="bg-white focus:border-rose-500 border rounded outline-none px-2"
+                            className="ColumnContainer bg-white focus:border-rose-500 border rounded outline-none px-2"
                             value={column.nombre}
                             onChange={(e) =>
                                 updateColumn(
@@ -153,9 +156,11 @@ function ColumnContainer({
                             deleteColumn(column.idColumnaKanban, column.nombre);
                         }}
                         className="
+                        bg-columnBackgroundColor
                         stroke-gray-500
+                        transition-colors duration-75
                         hover:stroke-black
-                        hover: bg-slate-100
+                        dark:hover:stroke-white
                         rounded
                         px-1
                         py-1"
@@ -166,7 +171,7 @@ function ColumnContainer({
             </div>
 
             {/****************Main content **************/}
-            <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+            <div className="ColumnContainer ColumnContentTasks flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
                 <SortableContext items={tasksIds}>
                     {tasks.map((task) => (
                         <TaskCard
@@ -182,8 +187,8 @@ function ColumnContainer({
 
             {/****************Main footer **************/}
             <button
-                className="flex gap-2 items-center border-slate-100 border-2 rounded-md p-4
-            border-x-slate-100 hover:bg-white hover:text-rose-500 active:bg-slate-50"
+                className="ColumnContainer flex gap-2 items-center border-columnBackgroundColor border-4 rounded-md p-4
+                 hover:text-rose-500 hover:bg-taskBackgroundColor"
                 onClick={() => {
                     createTask(column.idColumnaKanban);
                 }}

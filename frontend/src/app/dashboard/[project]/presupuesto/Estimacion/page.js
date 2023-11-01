@@ -269,10 +269,29 @@ export default function EstimacionCosto(props) {
           };
             fetchData();
     };
-
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };    
         
     useEffect(() => {
-    
+        ObtenerPresupuesto();
         DataTable();
       }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
@@ -300,7 +319,9 @@ export default function EstimacionCosto(props) {
     }, [lineasEstimacion, filterValue, fechaInicio, fechaFin, filtrarFecha]);
 
     
-
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
 
     return (
 
@@ -329,7 +350,7 @@ export default function EstimacionCosto(props) {
                     <div className="containerHeader">
                         <div className="titlePresupuesto">Estimacion de Costos</div>
                         <div>
-                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
                                  {isSelected ? "Soles" : "Dolares"}
                             </Switch>  
                         </div>
@@ -371,16 +392,15 @@ export default function EstimacionCosto(props) {
 
                     <div className="buttonContainer">
 
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
-
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion/EstimacionTabla"}>
                             <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
                                 Ver Tabla
                             </Button>
                         </Link>
 
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                            Filtrar
+                        </Button>
 
                         <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar
@@ -390,7 +410,7 @@ export default function EstimacionCosto(props) {
                     </div>
 
                     <div className="divListaIngreso">
-                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false}></EstimacionCostoList>
+                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false} changeMoneda = {handleSelectedMoneda} valueMoneda = {isSelected}></EstimacionCostoList>
                     </div>
 
 
