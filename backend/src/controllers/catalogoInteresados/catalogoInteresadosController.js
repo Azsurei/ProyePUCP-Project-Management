@@ -35,13 +35,13 @@ async function insertarInteresado(req,res,next){
         const [results] = await connection.query(query,[idProyecto,nombre,rol,organizacion,cargo,correoElectronico,numeroTelefono,informacionContacto,idAutoridad,
             idAdhesionActual,idAdhesionDeseada]);
         console.log(results);
-        const idInteresado = results[0].idInteresado;
+        const idInteresado = results[0][0].idInteresado;
         //Iteracion Requerimientos
         for(const requeriment of requeriments){
             await connection.query(`
                 CALL INSERTAR_INTERESADO_REQUERIMIENTO(
                 ${idInteresado},
-                ${requeriment.requeriments});
+                ${requeriment.requirements});
             `);
         }
         //Iteracion Estrategia

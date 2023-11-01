@@ -3149,7 +3149,7 @@ CREATE PROCEDURE LISTAR_CATALOGO_INTERESADOS(
     IN _idProyecto INT
 )
 BEGIN
-    SELECT i.idInteresado, i.idCatalogoInteresado, i.nombreCompleto, i.rolEnProyecto , i.organizacion, i.cargo, i.correo, i.telefeno, i.datosContacto,
+    SELECT i.idInteresado, i.idCatalogoInteresado, i.nombreCompleto, i.rolEnProyecto , i.organizacion, i.cargo, i.correo, i.telefono, i.datosContacto,
         i.idNivelAutoridad, ia.nombreAutoridad, i.idNivelAdhesionActual, iaa.nombreAdhesion as "nombreAdhesionActual", i.idNivelAdhesionDeseado , iad.nombreAdhesion as "nombreAdhesionDeseado",i.activo
     FROM Interesado AS i
     LEFT JOIN CatalogoInteresado AS ci ON i.idCatalogoInteresado = ci.idCatalogoInteresado
@@ -3195,7 +3195,7 @@ CREATE PROCEDURE LISTAR_INTERESADO_ESTRATEGIA(
 )
 BEGIN
     SELECT *
-    FROM InteresadoRequerimiento
+    FROM InteresadoEstrategia
     WHERE idInteresado = _idInteresado
     AND activo = 1;
 END$

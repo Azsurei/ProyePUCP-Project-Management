@@ -1178,16 +1178,15 @@ Content-Type:  application/json
 
 //Listar interesados Catalogo de interesados
 ### GET
-GET http://localhost:8080/api/proyecto/catalogoInteresados/listarInteresado/16 HTTP/1.1
+GET http://localhost:8080/api/proyecto/catalogoInteresados/listarInteresado/156 HTTP/1.1
 Content-Type:  application/json
 
 //Insertar interesados Catalogo de interesados
-### GET
-GET http://localhost:8080/api/proyecto/catalogoInteresados/insertarInteresado/ HTTP/1.1
+### POST
+POST http://localhost:8080/api/proyecto/catalogoInteresados/insertarInteresado/ HTTP/1.1
 Content-Type: application/json
-
 {
-  "idLineaEgreso": 1,
+  "cargo": "cargo",
   "idMoneda": 2,
   "idLineaEstimacionCosto": 3,
   "descripcion": "Descripción de la línea de egreso modificada",
