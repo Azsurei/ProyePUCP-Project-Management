@@ -4,7 +4,9 @@ async function crear(req,res,next){
     const {idProyecto} = req.body;
     try {
         const idRetrospectiva=await funcCrear(idProyecto);
-        res.status(200).json({message: `Retrospectiva ${idRetrospectiva}creada`});
+        res.status(200).json({
+            idRetrospectiva,
+            message: `Retrospectiva ${idRetrospectiva}creada`});
     } catch (error) {
         next(error);
     }
@@ -21,8 +23,6 @@ async function funcCrear(idProyecto){
         throw error;
     }
 }
-
-
 
 
 module.exports={

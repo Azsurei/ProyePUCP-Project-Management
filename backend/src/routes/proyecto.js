@@ -13,7 +13,7 @@ const routerCatalagoRiesgos = require('./catalogoRiesgos').routerCatalagoRiesgos
 const routerActaReunion = require('./actaReunion').routerActaReunion;
 const routerKanban = require("./kanban").routerKanban;
 const routerCatalogoInteresados = require('./catalogoInteresados').routerCatalogoInteresados;
-
+const routerRetrospectiva = require("./retrospectiva").routerRetrospectiva;
 const routerProyecto = express.Router();
 
 const proyectoController = require("../controllers/proyectoController");
@@ -31,6 +31,7 @@ routerProyecto.use("/catalogoRiesgos", routerCatalagoRiesgos);
 routerProyecto.use("/actaReunion", routerActaReunion);
 routerProyecto.use("/kanban",routerKanban);
 routerProyecto.use("/catalogoInteresados", routerCatalogoInteresados);
+routerProyecto.use("/retrospectiva", routerRetrospectiva);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 
