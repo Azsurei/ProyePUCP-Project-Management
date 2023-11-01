@@ -186,7 +186,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                 Interesados/ Registrar interesado
             </div>
             <div className="interesedRegisterCI">
-                <div className="titleInteresedRegisterCI">
+                <div className="titleInteresedRegisterCI text-mainHeaders">
                     Registrar nuevo interesado
                 </div>
                 <div className="containerInputCI">
