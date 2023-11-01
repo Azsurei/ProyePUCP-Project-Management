@@ -51,7 +51,7 @@ body {
     overflow-x: none;
 }
 
-body > div:first-child {
+body > div {
     height: 100%;
 }
 
