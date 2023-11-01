@@ -78,31 +78,40 @@ async function listarInteresados(req,res,next){
     }
 }
 
-async function listarInteresado(req,res,next){
-    const {idInteresado} = req.params;
+async function listarInteresado(req, res, next) {
+    const { idInteresado } = req.params;
     try {
         const query = `CALL LISTAR_CATALOGO_INTERESADO_X_ID(?);`;
-        const [results] = await connection.query(query,[idInteresado]);
+        const [results] = await connection.query(query, [idInteresado]);
         const interesado = results[0];
-
+        
         const query1 = `CALL LISTAR_INTERESADO_REQUERIMIENTO(?);`;
-        const [results1] = await connection.query(query1,[idInteresado]);
-        interesado.requeriments = results1[0];
+        const [results1] = await connection.query(query1, [idInteresado]);
+        const requeriments = results1[0];
+
+        // Asignar requeriments al objeto interesado
+        interesado.requeriments = requeriments;
 
         const query2 = `CALL LISTAR_INTERESADO_ESTRATEGIA(?);`;
-        const [results2] = await connection.query(query2,[idInteresado]);
-        interesado.strategies = results2[0];
+        const [results2] = await connection.query(query2, [idInteresado]);
+        const strategies = results2[0];
+
+        // Asignar strategies al objeto interesado
+        interesado.strategies = strategies;
 
         res.status(200).json({
             interesado,
-            message: "Interesado obtenidos exitosamente"
+            requeriments,
+            strategies,
+            message: "Interesado obtenido exitosamente"
         });
-        console.log('Se listo el interesado correctamente');
+        console.log('Se listó el interesado correctamente');
     } catch (error) {
         console.log(error);
         next(error);
     }
 }
+
 
 async function eliminarInteresado(req,res,next){
     const {idInteresado} = req.body;
