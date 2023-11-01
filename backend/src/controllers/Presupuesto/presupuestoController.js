@@ -63,11 +63,11 @@ async function listarLineasTodas(req, res, next) {
     }
 }
     
-async function listarLineasIngresoYEgresoXIdProyecto(req, res, next) {
-    const {idProyecto} = req.params;
+async function listarLineasIngresoYEgresoXIdPresupuesto(req, res, next) {
+    const {idPresupuesto} = req.params;
     try {
-        const lineasIngreso = await ingresoController.funcListarLineasXIdProyecto(idProyecto);
-        const lineasEgreso = await egresoController.funcListarLineasXIdProyecto(idProyecto);
+        const lineasIngreso = await ingresoController.funcListarLineasXIdPresupuesto(idPresupuesto);
+        const lineasEgreso = await egresoController.funcListarLineasXIdPresupuesto(idPresupuesto);
 
         const lineas= {
             lineasIngreso,
@@ -91,5 +91,5 @@ module.exports = {
     modificar,
     listarLineasTodas,
     listarXIdPresupuesto,
-    listarLineasIngresoYEgresoXIdProyecto
+    listarLineasIngresoYEgresoXIdPresupuesto
 };
