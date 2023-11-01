@@ -24,7 +24,43 @@ async function listarAdhesion(req,res,next){
         next(error);
     }
 }
+
+
+async function insertarInteresado(req,res,next){
+    const {cargo, correoElectronico, idAdhesionActual, idAdhesionDeseada, idAutoridad, idProyecto, informacionContacto, nombre, numeroTelefono, organizacion, rol,
+        requeriments,strategies} = req.body;
+    try {
+        // Insertar Interesado
+        const query = `CALL INSERTAR_INTERESADO(?,?,?,?,?,?,?,?,?,?,?);`;
+        const [results] = await connection.query(query,[idProyecto,nombre,rol,organizacion,cargo,correoElectronico,numeroTelefono,informacionContacto,idAutoridad,
+            idAdhesionActual,idAdhesionDeseada]);
+        const idInteresado = results[0][0].idInteresado;
+        //Iteracion Requerimientos
+        for(const requeriment of requeriments){
+            await connection.query(`
+                CALL INSERTAR_INTERESADO_REQUERIMIENTO(
+                ${idInteresado},
+                ${requeriment.descripcion});
+            `);
+        }
+        //Iteracion Estrategia
+        for(const strategy of strategies){
+            await connection.query(`
+                CALL INSERTAR_INTERESADO_ESTRATEGIA(
+                ${idInteresado},
+                ${strategy.descripcion});
+            `);
+        } 
+        res.status(200).json({
+            message: "Se ha insertado exitosamente"
+        });
+    } catch (error) {
+        console.error("Error en la inserción:", error);
+        res.status(500).send("Error en la inserción: " + error.message);
+    }
+}
 module.exports = {
     listarAutoridad,
-    listarAdhesion
+    listarAdhesion,
+    insertarInteresado
 };
