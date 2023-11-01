@@ -3166,7 +3166,7 @@ CREATE PROCEDURE LISTAR_CATALOGO_INTERESADO_X_ID(
     IN _idInteresado INT
 )
 BEGIN
-    SELECT i.idInteresado, i.idCatalogoInteresado, i.nombreCompleto, i.rolEnProyecto , i.organizacion, i.cargo, i.correo, i.telefeno, i.datosContacto,
+    SELECT i.idInteresado, i.idCatalogoInteresado, i.nombreCompleto, i.rolEnProyecto , i.organizacion, i.cargo, i.correo, i.telefono, i.datosContacto,
         i.idNivelAutoridad, ia.nombreAutoridad, i.idNivelAdhesionActual, iaa.nombreAdhesion as "nombreAdhesionActual", i.idNivelAdhesionDeseado , iad.nombreAdhesion as "nombreAdhesionDeseado",i.activo
     FROM Interesado AS i
     LEFT JOIN InteresadoAutoridad AS ia ON i.idNivelAutoridad = ia.idInteresadoAutoridad
@@ -3198,4 +3198,15 @@ BEGIN
     FROM InteresadoEstrategia
     WHERE idInteresado = _idInteresado
     AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_INTERESADO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CATALOGO_INTERESADO_X_ID(
+    IN _idInteresado INT
+)
+BEGIN
+	UPDATE Interesado SET activo = 0 WHERE idInteresado = _idInteresado;
+    UPDATE InteresadoRequerimiento SET activo = 0 WHERE idInteresado = _idInteresado;
+    UPDATE InteresadoEstrategia SET activo = 0 WHERE idInteresado = _idInteresado;
 END$

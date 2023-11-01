@@ -9,5 +9,6 @@ routerCatalogoInteresados.get("/listarAdhesion", catalogoInteresadosController.l
 routerCatalogoInteresados.post("/insertarInteresado", catalogoInteresadosController.insertarInteresado);
 routerCatalogoInteresados.get("/listarInteresados/:idProyecto", catalogoInteresadosController.listarInteresados);
 routerCatalogoInteresados.get("/listarInteresado/:idInteresado", catalogoInteresadosController.listarInteresado);
+routerCatalogoInteresados.delete("/eliminarInteresado", catalogoInteresadosController.eliminarInteresado);
 
 module.exports.routerCatalogoInteresados = routerCatalogoInteresados;

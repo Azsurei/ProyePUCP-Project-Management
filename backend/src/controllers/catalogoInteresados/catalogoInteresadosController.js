@@ -104,10 +104,26 @@ async function listarInteresado(req,res,next){
     }
 }
 
+async function eliminarInteresado(req,res,next){
+    const {idInteresado} = req.body;
+    const query = `CALL ELIMINAR_CATALOGO_INTERESADO_X_ID(?);`;
+    try {
+        await connection.query(query,[idInteresado]);
+        res.status(200).json({
+            message: "Interesado eliminado exitosamente"
+        });
+        console.log('Se elimino el interesado correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 module.exports = {
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,
     listarInteresados,
-    listarInteresado
+    listarInteresado,
+    eliminarInteresado
 };
