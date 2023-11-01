@@ -7,6 +7,6 @@ routerCatalogoInteresados.get("/listarAutoridad", catalogoInteresadosController.
 routerCatalogoInteresados.get("/listarAdhesion", catalogoInteresadosController.listarAdhesion);
 
 routerCatalogoInteresados.post("/insertarInteresado", catalogoInteresadosController.insertarInteresado);
-routerCatalogoInteresados.get("/listarInteresado/:idProyecto", catalogoInteresadosController.listarInteresado);
+routerCatalogoInteresados.get("/listarInteresados/:idProyecto", catalogoInteresadosController.listarInteresados);
 
 module.exports.routerCatalogoInteresados = routerCatalogoInteresados;

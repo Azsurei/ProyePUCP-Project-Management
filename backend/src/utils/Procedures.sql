@@ -3149,7 +3149,6 @@ CREATE PROCEDURE LISTAR_CATALOGO_INTERESADOS(
     IN _idProyecto INT
 )
 BEGIN
-    SET @_idCatalogoInteresado = (SELECT idCatalogoInteresado FROM CatalogoInteresado WHERE idProyecto = _idProyecto AND activo = 1);
     SELECT i.idInteresado, i.idCatalogoInteresado, i.nombreCompleto, i.rolEnProyecto , i.organizacion, i.cargo, i.correo, i.telefeno, i.datosContacto,
         i.idNivelAutoridad, ia.nombreAutoridad, i.idNivelAdhesionActual, iaa.nombreAdhesion as "nombreAdhesionActual", i.idNivelAdhesionDeseado , iad.nombreAdhesion as "nombreAdhesionDeseado",i.activo
     FROM Interesado AS i
@@ -3158,5 +3157,21 @@ BEGIN
     LEFT JOIN InteresadoAdhesion AS iaa ON i.idNivelAdhesionActual = iaa.idInteresadoAdhesionActual
     LEFT JOIN InteresadoAdhesion AS iad ON i.idNivelAdhesionDeseado = iad.idInteresadoAdhesionActual
     WHERE ci.idProyecto = _idProyecto
+    AND i.activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CATALOGO_INTERESADO_X_ID;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CATALOGO_INTERESADO_X_ID(
+    IN _idInteresado INT
+)
+BEGIN
+    SELECT i.idInteresado, i.idCatalogoInteresado, i.nombreCompleto, i.rolEnProyecto , i.organizacion, i.cargo, i.correo, i.telefeno, i.datosContacto,
+        i.idNivelAutoridad, ia.nombreAutoridad, i.idNivelAdhesionActual, iaa.nombreAdhesion as "nombreAdhesionActual", i.idNivelAdhesionDeseado , iad.nombreAdhesion as "nombreAdhesionDeseado",i.activo
+    FROM Interesado AS i
+    LEFT JOIN InteresadoAutoridad AS ia ON i.idNivelAutoridad = ia.idInteresadoAutoridad
+    LEFT JOIN InteresadoAdhesion AS iaa ON i.idNivelAdhesionActual = iaa.idInteresadoAdhesionActual
+    LEFT JOIN InteresadoAdhesion AS iad ON i.idNivelAdhesionDeseado = iad.idInteresadoAdhesionActual
+    WHERE i.idInteresado = _idInteresado
     AND i.activo = 1;
 END$
