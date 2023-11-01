@@ -59,8 +59,26 @@ async function insertarInteresado(req,res,next){
         res.status(500).send("Error en la inserción: " + error.message);
     }
 }
+
+async function listarInteresado(req,res,next){
+    const {idProyecto} = req.params;
+    const query = `CALL LISTAR_CATALOGO_INTERESADOS(?);`;
+    try {
+        const [results] = await connection.query(query,[idProyecto]);
+        const interesados = results[0];
+        res.status(200).json({
+            interesados,
+            message: "Interesados obtenidos exitosamente"
+        });
+        console.log('Se listaron los interesados correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 module.exports = {
     listarAutoridad,
     listarAdhesion,
-    insertarInteresado
+    insertarInteresado,
+    listarInteresado
 };
