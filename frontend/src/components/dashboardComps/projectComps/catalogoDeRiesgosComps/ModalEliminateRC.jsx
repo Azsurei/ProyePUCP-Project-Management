@@ -20,6 +20,7 @@ function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
                 console.log("Eliminado correcto");
                 // Llamar a refresh() aquí después de la solicitud HTTP exitosa
                 refresh();
+                toggle();
                 onClose();
             })
             .catch((error) => {
@@ -69,7 +70,11 @@ function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
                     
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="danger" variant="flat" onPress={onClose}>
+                    <Button color="danger" variant="flat" onPress={()=> {
+                        onClose();
+                        toggle();
+                        
+                    }}>
                       Cancelar
                     </Button>
                     <Button color="primary" onPress={() => Eliminate(idRiesgo, onClose)}>

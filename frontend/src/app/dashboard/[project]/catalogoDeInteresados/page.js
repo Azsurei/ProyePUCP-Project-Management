@@ -56,6 +56,7 @@ export default function CatalogoDeInteresados(props) {
             // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
             setData(response.data.interesados);
             setIsLoadingSmall(false);
+            
             console.log(`Esta es la data:`, data);
             console.log(`Datos obtenidos exitosamente:`, response.data.interesados);
           } catch (error) {
@@ -75,7 +76,9 @@ export default function CatalogoDeInteresados(props) {
     const toggleModal = (task) => {
         setSelectedTask(task);
         console.log("El id del objeto es: ", selectedTask);
+        console.log("El modal es: ", modal1);
         setModal1(!modal1);
+        
     };
     const setRoutering = (objectID) => {
         setObjectRC(objectID);

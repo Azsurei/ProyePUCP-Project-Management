@@ -20,6 +20,7 @@ function PopUpEliminateMC({ modal, toggle, taskName, idComunicacion, refresh}) {
                 console.log("Eliminado correcto");
                 // Llamar a refresh() aquí después de la solicitud HTTP exitosa
                 refresh();
+                toggle();
                 onClose();
             })
             .catch((error) => {
@@ -104,7 +105,11 @@ function PopUpEliminateMC({ modal, toggle, taskName, idComunicacion, refresh}) {
                     
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="danger" variant="flat" onPress={onClose}>
+                    <Button color="danger" variant="flat" onPress={()=> {
+                        onClose();
+                        toggle();
+                        
+                    }}>
                       Cancelar
                     </Button>
                     <Button color="primary" onPress={() => Eliminate(idComunicacion, onClose)}>
