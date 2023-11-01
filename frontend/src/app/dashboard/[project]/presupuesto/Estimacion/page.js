@@ -40,7 +40,7 @@ import { set } from "date-fns";
 import { tr } from "date-fns/locale";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 
-export default function Ingresos(props) {
+export default function EstimacionCosto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -48,7 +48,31 @@ export default function Ingresos(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+    const [presupuestoId, setPresupuestoId] = useState("");
+    //const router=userRouter();
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    setPresupuestoId(idHerramientaCreada)
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag = 1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+              console.log(`Esta es el id presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener el presupuesto:', error);
+            }
+          };
+            fetchData();
+    }, []);
     //const router=userRouter();
 
     const onSearchChange = (value) => {
@@ -109,7 +133,7 @@ export default function Ingresos(props) {
     //Funciones
 
     let idHerramientaCreada;
-
+    let flag=0;
     function insertarLineaEstimacion() {
         return new Promise((resolve, reject) => {
         let flag=0;
@@ -232,7 +256,7 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
               setLineasEstimacion(data);
               console.log(`Esta es la data:`, data);
@@ -248,7 +272,7 @@ export default function Ingresos(props) {
     useEffect(() => {
     
         DataTable();
-      }, [projectId]);
+      }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
     const filteredItems = React.useMemo(() => {
         let filteredTemplates = [...lineasEstimacion];
