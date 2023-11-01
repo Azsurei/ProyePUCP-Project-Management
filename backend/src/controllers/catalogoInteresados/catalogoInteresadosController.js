@@ -41,7 +41,7 @@ async function insertarInteresado(req,res,next){
             await connection.query(`
                 CALL INSERTAR_INTERESADO_REQUERIMIENTO(
                 ${idInteresado},
-                ${requeriment.descripcion});
+                ${requeriment.requeriments});
             `);
         }
         //Iteracion Estrategia
@@ -49,7 +49,7 @@ async function insertarInteresado(req,res,next){
             await connection.query(`
                 CALL INSERTAR_INTERESADO_ESTRATEGIA(
                 ${idInteresado},
-                ${strategy.descripcion});
+                ${strategy.strategies});
             `);
         } 
         res.status(200).json({
