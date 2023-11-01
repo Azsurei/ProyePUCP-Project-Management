@@ -6,30 +6,30 @@ import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDis
 import {useEffect, useState} from "react";
 function ModalEliminateInteresado({ modal, toggle, taskName, idInteresado, refresh}) {
 
-    // const Eliminate = (idRiesgo, onClose) => {
-    //     console.log("Id: ", idRiesgo);
+    const Eliminate = (idInteresado, onClose) => {
+        console.log("Id: ", idInteresado);
         
-    //     const data = {
-    //         idRiesgo: idRiesgo // Ajusta el nombre del campo según la estructura esperada por el servidor
-    //     };
+        const data = {
+            idInteresado: idInteresado // Ajusta el nombre del campo según la estructura esperada por el servidor
+        };
 
-    //     axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/eliminarunRiesgo", { data })
-    //         .then((response) => {
-    //             // Manejar la respuesta de la solicitud POST
-    //             console.log("Respuesta del servidor:", response.data);
-    //             console.log("Eliminado correcto");
-    //             // Llamar a refresh() aquí después de la solicitud HTTP exitosa
-    //             refresh();
-    //             onClose();
-    //         })
-    //         .catch((error) => {
-    //             // Manejar errores si la solicitud POST falla
-    //             console.error("Error al realizar la solicitud POST:", error);
-    //         });
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoInteresados/eliminarInteresado", { data })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Eliminado correcto");
+                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+                refresh();
+                onClose();
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
 
             
            
-    // };
+    };
 
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [startModal, setStartModal] = useState(false);
