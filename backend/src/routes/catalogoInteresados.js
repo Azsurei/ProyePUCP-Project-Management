@@ -11,4 +11,7 @@ routerCatalogoInteresados.get("/listarInteresados/:idProyecto", catalogoInteresa
 routerCatalogoInteresados.get("/listarInteresado/:idInteresado", catalogoInteresadosController.listarInteresado);
 routerCatalogoInteresados.delete("/eliminarInteresado", catalogoInteresadosController.eliminarInteresado);
 
+routerCatalogoInteresados.delete("/eliminarRequirementStrategies", catalogoInteresadosController.eliminarRequirementStrategies);
+routerCatalogoInteresados.post("/insertarRequirementStrategies", catalogoInteresadosController.insertarRequirementStrategies);
+
 module.exports.routerCatalogoInteresados = routerCatalogoInteresados;

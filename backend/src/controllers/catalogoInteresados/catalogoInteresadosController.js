@@ -119,11 +119,56 @@ async function eliminarInteresado(req,res,next){
     }
 }
 
+async function eliminarRequirementStrategies(req,res,next){
+    const {requeriments,strategies} = req.body;
+    try {
+        const query = `CALL ELIMINAR_CATALOGO_INTERESADO_REQUERIMIENTO(?);`;
+        for(const requirement of requeriments){
+            await connection.query(query,[requirement.idRequirements]);
+        }
+        const query1 = `CALL ELIMINAR_CATALOGO_INTERESADO_ESTRATEGIA(?);`;
+        for(const strategy of strategies){
+            await connection.query(query1,[strategy.idStrategies]);
+        }
+        res.status(200).json({
+            message: "Requerimientos y Estrategias eliminado exitosamente"
+        });
+        console.log('Se elimino los Requerimientos y Estrategias correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function insertarRequirementStrategies(req,res,next){
+    const {idInteresado,requeriments,strategies} = req.body;
+    try {
+        const query = `CALL INSERTAR_INTERESADO_REQUERIMIENTO(?,?);`;
+        for(const requirement of requeriments){
+            await connection.query(query,[idInteresado,requirement.requirements]);
+        }
+        const query1 = `CALL INSERTAR_INTERESADO_ESTRATEGIA(?,?);`;
+        for(const strategy of strategies){
+            await connection.query(query1,[idInteresado,strategy.strategies]);
+        }
+        res.status(200).json({
+            message: "Requerimientos y Estrategias insertado exitosamente"
+        });
+        console.log('Se inserto los Requerimientos y Estrategias correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+
 module.exports = {
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,
     listarInteresados,
     listarInteresado,
-    eliminarInteresado
+    eliminarInteresado,
+    eliminarRequirementStrategies,
+    insertarRequirementStrategies
 };

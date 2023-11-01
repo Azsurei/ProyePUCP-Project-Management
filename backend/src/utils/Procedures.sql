@@ -3210,3 +3210,21 @@ BEGIN
     UPDATE InteresadoRequerimiento SET activo = 0 WHERE idInteresado = _idInteresado;
     UPDATE InteresadoEstrategia SET activo = 0 WHERE idInteresado = _idInteresado;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_INTERESADO_REQUERIMIENTO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CATALOGO_INTERESADO_REQUERIMIENTO(
+    IN _idRequerimiento INT
+)
+BEGIN
+    UPDATE InteresadoRequerimiento SET activo = 0 WHERE idRequerimiento = _idRequerimiento;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_INTERESADO_ESTRATEGIA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_CATALOGO_INTERESADO_ESTRATEGIA(
+    IN _idEstrategia INT
+)
+BEGIN
+    UPDATE InteresadoEstrategia SET activo = 0 WHERE idEstrategia = _idEstrategia;
+END$
