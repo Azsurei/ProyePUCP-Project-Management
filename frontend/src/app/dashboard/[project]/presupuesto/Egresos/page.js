@@ -41,14 +41,40 @@ import EstimacionCostoList from "@/components/dashboardComps/projectComps/presup
 import { set } from "date-fns";
 export const UserCardsContextOne = React.createContext();
 
-export default function Ingresos(props) {
+export default function Egresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+    const [presupuestoId, setPresupuestoId] = useState("");
+    //const router=userRouter();
 
+    let idHerramientaCreada;
+    let flag=0;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    setPresupuestoId(idHerramientaCreada)
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag = 1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+              console.log(`Esta es el id presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener el presupuesto:', error);
+            }
+          };
+            fetchData();
+    }, []);
     //const router=userRouter();
 
     const onSearchChange = (value) => {
@@ -262,7 +288,7 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
               setLineasEstimacion(data);
               console.log(`Esta es la data:`, data);
@@ -277,7 +303,7 @@ export default function Ingresos(props) {
     const DataEgresos= async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEgresoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEgresoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEgreso;
               setLineasEgreso(data);
               console.log(`Esta es la data:`, data);
@@ -293,7 +319,7 @@ export default function Ingresos(props) {
     useEffect(() => {
         DataEgresos();
         DataTable();
-      }, [projectId]);
+      }, [presupuestoId]);
 
     const hasSearchFilter = Boolean(filterValue);
     const hasSearchFilterEgreso = Boolean(filterEgreso);

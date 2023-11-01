@@ -59,7 +59,7 @@ export default function Presupuesto(props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [validMonto, setValidMonto] = useState(true);
     const [validcantMeses, setValidcantMeses] = useState(true);
-
+    const [presupuestoID, setPresupuestoID] = useState(null);
     const [validTipoMoneda, setValidTipoMoneda] = useState(true);
 
     let idHerramientaCreada;
@@ -78,6 +78,7 @@ export default function Presupuesto(props) {
                 for (const herramienta of herramientas) {
                     if (herramienta.idHerramienta === 13) {
                         idHerramientaCreada = herramienta.idHerramientaCreada;
+                        setPresupuestoId(idHerramientaCreada)
                         console.log("idPresupuesto es:", idHerramientaCreada);
                         flag = 1;
                         break; // Puedes salir del bucle si has encontrado la herramienta

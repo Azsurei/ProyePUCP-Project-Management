@@ -46,7 +46,7 @@ import { SmallLoadingScreen } from "../../layout";
 import { set } from "date-fns";
 
 
-export default function Ingresos(props) {
+export default function Historial(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -54,7 +54,31 @@ export default function Ingresos(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100`;
     const stringUrlPrueba2 = "http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100";
-    
+    const [presupuestoId, setPresupuestoId] = useState("");
+    //const router=userRouter();
+
+    let idHerramientaCreada;
+    let flag=0;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    setPresupuestoId(idHerramientaCreada)
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag = 1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+            } catch (error) {
+              console.error('Error al obtener el presupuesto:', error);
+            }
+          };
+            fetchData();
+    }, []);
 
     //const router=userRouter();
     const [listUsers, setListUsers] = useState([]);
@@ -153,7 +177,7 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineas;
               setLineasIngreso(response.data.lineas.lineasIngreso);
               setLineasEgreso(response.data.lineas.lineasEgreso);
@@ -191,7 +215,7 @@ export default function Ingresos(props) {
         
         
         DataTable();
-      }, [projectId]);
+      }, [presupuestoId]);
       
     useEffect(() => {
         totalCalculate();
@@ -297,15 +321,15 @@ export default function Ingresos(props) {
 
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
+                                <button className="btnCommon btnFlujo btnDisabled btnSelected sm:w-1 sm:h-1" type="button" disabled>Flujo</button>
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
-                                <button className="btnCommon btnHistorial btnDisabled btnSelected sm:w-1 sm:h-1" disabled type="button">Historial</button> 
+                                <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                         </Link>
                         
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Ingreso"}>
-                                <button className="btnCommon btnIngreso  sm:w-1 sm:h-1"   type="button">Ingresos</button>
+                                <button className="btnCommon btnIngreso sm:w-1 sm:h-1" type="button">Ingresos</button>
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Egresos"}>
@@ -313,7 +337,7 @@ export default function Ingresos(props) {
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
-                                <button className="btnCommon btnEstimacion  sm:w-1 sm:h-1"  type="button">Estimacion</button>
+                                <button className="btnCommon btnEstimacion sm:w-1 sm:h-1" type="button">Estimacion</button>
                         </Link>
 
                         <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">

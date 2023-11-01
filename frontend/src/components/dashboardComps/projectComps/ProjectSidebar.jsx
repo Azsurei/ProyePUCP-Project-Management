@@ -369,7 +369,7 @@ function ProjectSidebar(props) {
             position: 8,
             optIcon: "/icons/sideBarDropDown_icons/sbdd12.svg",
             optName: "Catalogo de interesados",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/catalogoDeInteresados`,
         },
         {
             id: 7,
