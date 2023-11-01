@@ -162,9 +162,9 @@ export default function CatalogoDeInteresadosRegister(props) {
             strategies: strategies,
         };
         console.log("El postData es :", postData);
-        /*         axios
+        axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRiesgo",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoInteresados/insertarInteresado",
                 postData
             )
             .then((response) => {
@@ -176,7 +176,7 @@ export default function CatalogoDeInteresadosRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
     };
 
     return (
@@ -186,7 +186,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                 Interesados/ Registrar interesado
             </div>
             <div className="interesedRegisterCI">
-                <div className="titleInteresedRegisterCI">
+                <div className="titleInteresedRegisterCI text-mainHeaders">
                     Registrar nuevo interesado
                 </div>
                 <div className="containerInputCI">

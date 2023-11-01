@@ -6,7 +6,7 @@ function UsersScreen () {
     return (
         <div className="flex flex-col flex-1 h-[100%] space-y-2">
             <div className="flex flex-col mb-3">
-                <p className="text-2xl font-medium text-172B4D">Usuarios</p>
+                <p className="text-2xl font-medium text-mainHeaders">Usuarios</p>
                 <p className="text-slate-400">
                     Añade usuarios o elimina algunos de tu proyecto
                 </p>
@@ -24,7 +24,7 @@ function ToolsScreen () {
     return (
         <div className="flex flex-col flex-1 h-[100%] space-y-2">
             <div className="flex flex-col mb-3">
-                <p className="text-2xl font-medium text-172B4D">Herramientas</p>
+                <p className="text-2xl font-medium text-mainHeaders">Herramientas</p>
                 <p className="text-slate-400">
                     Personaliza tus herramientas
                 </p>
@@ -41,7 +41,7 @@ function DatesScreen () {
     return (
         <div className="flex flex-col flex-1 h-[100%] space-y-2">
             <div className="flex flex-col mb-3">
-                <p className="text-2xl font-medium text-172B4D">Fechas</p>
+                <p className="text-2xl font-medium text-mainHeaders">Fechas</p>
                 <p className="text-slate-400">
                     Modifica datos del proyecto
                 </p>
@@ -59,14 +59,14 @@ function DatesScreen () {
 
 export default function Settings() {
     const [settingsState, setSettingsState] = useState("users");
-    const btnStyle = "group hover:underline font-medium px-4 py-2 rounded-md cursor-pointer";
-    const btnStyleActive = "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] cursor-pointer";
+    const btnStyle = "group hover:underline  font-medium px-4 py-2 rounded-md cursor-pointer";
+    const btnStyleActive = "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] dark:bg-[#414141] cursor-pointer";
 
     return (
-        <div className="w-[100%] flex justify-center">
+        <div className="w-[100%] min-h-full flex justify-center bg-mainBackground">
             <div className="flex flex-col w-[100%] max-w-[1200px] h-[100%] p-[2.5rem] space-y-7 font-[Montserrat]">
                 <div className="flex flex-col">
-                    <p className="text-4xl font-semibold text-172B4D">
+                    <p className="text-4xl font-semibold text-mainHeaders">
                         Configura tu proyecto
                     </p>
                     <p className="text-slate-400">

@@ -650,7 +650,7 @@ export default function Cronograma(props) {
     }, [selectedSubteam]);
 
     return (
-        <div className="cronogramaDiv">
+        <div className="cronogramaDiv bg-mainBackground">
             {
                 <Modal
                     onOpenChange={onOpenChange}

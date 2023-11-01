@@ -57,7 +57,7 @@ function ProjectCard(props) {
     });
 
     return (
-        <li className="ProjectCard" onClick={props.onClick}>
+        <li className="ProjectCard bg-mainBackground" onClick={props.onClick}>
             <p className="cardTitleProject">{props.name}</p>
 
             <p className="cardDates">
