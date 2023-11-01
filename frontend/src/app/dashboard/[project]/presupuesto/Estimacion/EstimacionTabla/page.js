@@ -416,7 +416,8 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
             <BreadcrumbsItem href="/" text="Inicio" />
             <BreadcrumbsItem href="/dashboard" text="Proyectos" />
             <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
-            <BreadcrumbsItem href="" text="Presupuesto" />
+            <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId+"/Estimacion"}  text="Estimación"/>
+            <BreadcrumbsItem href="" text="Lista Estimación" />
 
         </Breadcrumbs>
 
@@ -424,11 +425,8 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
             <div className="titlePresupuesto">Presupuesto</div>
 
             <div className="buttonsPresu">
-                <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                        <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
-                </Link>
 
-                <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
+                <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                         <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                 </Link>
                 

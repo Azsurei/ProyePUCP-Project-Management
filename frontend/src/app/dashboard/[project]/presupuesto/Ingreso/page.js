@@ -393,10 +393,6 @@ export default function Ingresos(props) {
                     </div>
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
-                        </Link>
-
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
                                 <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                         </Link>
                         
