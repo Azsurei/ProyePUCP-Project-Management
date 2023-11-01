@@ -72,8 +72,8 @@ export default function RootLayout({ children }) {
                             flex: "1",
                             overflow: "auto",
                             display: "flex",
-                            backgroundColor: "#F5F5F5",
                         }}
+                        className="bg-mainSidebar"
                     >
                         {children}
                     </div>
