@@ -30,6 +30,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Switch,
   } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -46,7 +47,7 @@ export default function Egresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
+    const [isSelected, setIsSelected] = useState(false);
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
@@ -409,8 +410,15 @@ export default function Egresos(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Egresos</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Egresos</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                                 <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>

@@ -29,6 +29,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Switch,
   } from "@nextui-org/react";
 
 import {
@@ -49,38 +50,15 @@ export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
     const decodedUrl = decodeURIComponent(props.params.project);
-
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
     const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
-    const [presupuestoId, setPresupuestoId] = useState("");
+    
     //const router=userRouter();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
-              const herramientas = response.data.herramientas;
-              for (const herramienta of herramientas) {
-                if (herramienta.idHerramienta === 13) {
-                    idHerramientaCreada = herramienta.idHerramientaCreada;
-                    setPresupuestoId(idHerramientaCreada)
-                    console.log("idPresupuesto es:", idHerramientaCreada);
-                    flag = 1;
-                    break; // Puedes salir del bucle si has encontrado la herramienta
-                }
-            }
-              console.log(`Esta es el id presupuesto:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
-            } catch (error) {
-              console.error('Error al obtener el presupuesto:', error);
-            }
-          };
-            fetchData();
-    }, []);
 
     const onSearchChange = (value) => {
         if(value) {
@@ -91,6 +69,7 @@ export default function Ingresos(props) {
         
     };
     const [filterValue, setFilterValue] = React.useState("");
+    const [isSelected, setIsSelected] = useState(false);
 
     useEffect(()=>{setIsLoadingSmall(false)},[])
 
@@ -144,9 +123,33 @@ export default function Ingresos(props) {
 
 
     //Funciones
-    
 
     let idHerramientaCreada;
+    const [presupuestoId, setPresupuestoId] = useState("");
+    //const router=userRouter();
+
+
+    let flag=0;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    setPresupuestoId(idHerramientaCreada)
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag = 1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+            } catch (error) {
+              console.error('Error al obtener el presupuesto:', error);
+            }
+          };
+            fetchData();
+    }, []);
 
     function insertarLineaIngreso() {
         return new Promise((resolve, reject) => {
@@ -165,7 +168,6 @@ export default function Ingresos(props) {
             for (const herramienta of herramientas) {
                 if (herramienta.idHerramienta === 13) {
                     idHerramientaCreada = herramienta.idHerramientaCreada;
-                    
                     console.log("idPresupuesto es:", idHerramientaCreada);
                     flag=1;
                     break; // Puedes salir del bucle si has encontrado la herramienta
@@ -291,10 +293,30 @@ export default function Ingresos(props) {
             fetchData();
     };
 
-        
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };    
     useEffect(() => {
     
         DataTable();
+        ObtenerPresupuesto();
       }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
     // const filteredItems = React.useMemo(() => {
@@ -331,7 +353,15 @@ export default function Ingresos(props) {
         return filteredTemplates;
     }, [lineasIngreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
     
-
+    const [monedas, setMonedas] = useState([]);
+    const handleMonedaSelect = () => {
+        setIsSelected(!isSelected);
+        if (isSelected) {
+            setselectedMoneda(2);
+        } else {
+            setselectedMoneda(1);
+        }
+    }
 
     
     return (
@@ -357,11 +387,18 @@ export default function Ingresos(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Ingresos</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Ingresos</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
-                    <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo btnDisabled btnSelected sm:w-1 sm:h-1" type="button" disabled>Flujo</button>
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
+                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
@@ -369,7 +406,7 @@ export default function Ingresos(props) {
                         </Link>
                         
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Ingreso"}>
-                                <button className="btnCommon btnIngreso sm:w-1 sm:h-1" type="button">Ingresos</button>
+                                <button className="btnCommon btnIngreso btnDisabled btnSelected sm:w-1 sm:h-1"  disabled type="button">Ingresos</button>
                         </Link>
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Egresos"}>
@@ -379,6 +416,7 @@ export default function Ingresos(props) {
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
                                 <button className="btnCommon btnEstimacion sm:w-1 sm:h-1" type="button">Estimacion</button>
                         </Link>
+
 
                     </div>
                     <div className="divFiltroPresupuesto">

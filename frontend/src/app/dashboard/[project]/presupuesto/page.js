@@ -26,11 +26,13 @@ import {
     ModalFooter,
     Button,
     useDisclosure,
+    Switch,
   } from "@nextui-org/react";
 
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { Sol } from "public/icons/Sol";
 import { SmallLoadingScreen } from "../layout";
 import {ExportIcon} from "@/../public/icons/ExportIcon";
 import { set } from "date-fns";
@@ -118,7 +120,7 @@ export default function Presupuesto(props) {
 
     const [monto, setMonto] = useState("");
     const [cantMeses,setCantMeses]=useState("");
-
+    const [isSelected, setIsSelected] = React.useState(true);
 
     function modificarPresupuesto() {
         return new Promise((resolve, reject) => {
@@ -197,7 +199,15 @@ export default function Presupuesto(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Presupuesto</div>
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Presupuesto</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
+                    
 
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>

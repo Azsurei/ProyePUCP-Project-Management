@@ -36,6 +36,7 @@ import {
     CardHeader,
     CardFooter,
     Chip,
+    Switch,
   } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -54,6 +55,7 @@ export default function Historial(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100`;
     const stringUrlPrueba2 = "http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdProyecto/100";
+    const [isSelected, setIsSelected] = useState(false);
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
 
@@ -317,8 +319,15 @@ export default function Historial(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Historial</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Historial</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={setIsSelected}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                                 <button className="btnCommon btnFlujo btnDisabled btnSelected sm:w-1 sm:h-1" type="button" disabled>Flujo</button>

@@ -334,3 +334,11 @@
 .textBalance {
     width: 90%;
 }
+.containerHeader{
+    display: inline-flex;
+    justify-content: space-between;
+    
+    max-height: 40px;
+
+    align-items: center;
+}
