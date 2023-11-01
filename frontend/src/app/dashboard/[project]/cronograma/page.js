@@ -129,6 +129,7 @@ export default function Cronograma(props) {
     const [validFechas, setValidFechas] = useState(true);
 
     const [listPosteriores, setListPosteriores] = useState([]);
+    const [listPosterioresOriginal, setListPosterioresOriginal] = useState([]);
 
     const [tabSelected, setTabSelected] = useState("users");
     const [modal, setModal] = useState(false);
@@ -140,6 +141,7 @@ export default function Cronograma(props) {
     //3 para editar una tarea
     //4 si es que esta agregando una tarea hija
     const [isEditable, setIsEditable] = useState(false);
+    const [idTareaToEdit, setIdTareaToEdit] = useState(null);
 
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [selectedSubteam, setSelectedSubteam] = useState(null);
@@ -196,6 +198,7 @@ export default function Cronograma(props) {
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
         setListPosteriores(tarea.tareasPosteriores);
+        setListPosterioresOriginal(tarea.tareasPosteriores);
         for (const task of tarea.tareasPosteriores) {
             task.fechaFin = dbDateToInputDate(task.fechaFin);
         }
@@ -254,6 +257,7 @@ export default function Cronograma(props) {
     };
 
     const handleEdit = (tarea) => {
+        setIdTareaToEdit(tarea.idTarea);
         setTareaPadre(tarea.idPadre);
         setTareaName(tarea.sumillaTarea);
         setTareaDescripcion(tarea.descripcion);
@@ -273,6 +277,7 @@ export default function Cronograma(props) {
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
         setListPosteriores(tarea.tareasPosteriores);
+        setListPosterioresOriginal(tarea.tareasPosteriores);
         for (const task of tarea.tareasPosteriores) {
             task.fechaFin = dbDateToInputDate(task.fechaFin);
         }
@@ -457,9 +462,8 @@ export default function Cronograma(props) {
                 subTareas: null,
                 tareasPosteriores: listPosteriores,
             };
-            console.log(objTareaNueva,null,2);
+            console.log(objTareaNueva, null, 2);
 
-            
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/cronograma/insertarTarea";
@@ -513,7 +517,6 @@ export default function Cronograma(props) {
                     console.log(error);
                     reject(error);
                 });
-            
         });
     }
 
@@ -532,22 +535,53 @@ export default function Cronograma(props) {
         return new Promise((resolve, reject) => {
             setToggleNew(false);
 
-            setTimeout(() => {
-                resolve("Promise resolved successfully");
-            }, 2000);
+            //seearch tareasPOsterioresAgregadas, tareasPosterioresSinTocar
+            
 
-            const tareasURL =
+            const objToEdit = {
+                idTarea: idTareaToEdit,
+                sumillaTarea: tareaName,
+                descripcion: tareaDescripcion,
+                idTareaEstado: parseInt(tareaEstado[0], 10),
+                fechaInicio: fechaInicio,
+                fechaFin: fechaFin,
+                idEquipo:
+                    selectedSubteam === null ? null : selectedSubteam.idEquipo,
+                tareasPosterioresAgregadas: null,
+                tareasPosterioresEliminadas: null,
+                tareasPosterioresSinTocar: null,
+                usuariosAgregados: null,
+                usuariosEliminados: null,
+            };
+
+            console.log(objToEdit);
+
+            const editURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                projectId;
+                "/api/proyecto/cronograma/actualizarTarea";
             axios
-                .get(tareasURL)
+                .put(editURL, objToEdit)
                 .then(function (response) {
-                    console.log(response);
-                    setListTareas(response.data.tareasOrdenadas);
-                    console.log(response.data.tareasOrdenadas);
+                    console.log(response.data.message);
+                    //actualizamos lista de tareas
 
-                    resolve(response);
+                    const tareasURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            console.log(response);
+                            setListTareas(response.data.tareasOrdenadas);
+                            console.log(response.data.tareasOrdenadas);
+
+                            resolve(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            reject(error);
+                        });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -1353,6 +1387,7 @@ export default function Cronograma(props) {
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedUsers}
                     idProyecto={projectId}
+                    listAllUsers={false}
                 ></ModalUser>
             )}
 

@@ -22,17 +22,29 @@ function DashboardNav({ userName, userLastName, userObj }) {
     const router = useRouter();
     const [theme, setTheme] = useState("light");
 
-    useEffect(()=>{
-        if(theme === "dark"){
-            document.querySelector('html').classList.add('dark');
-        } else {
-            document.querySelector('html').classList.remove('dark');
-        }
-    },[theme]);
+    const setLightMode = () => {
+        document.querySelector("html").classList.remove("dark");
+        localStorage.setItem("selectedTheme", "light");
+    };
 
-    const handleChangeTheme = () => {
-        setTheme(prevTheme => prevTheme === "light" ? "dark" : "light");
-    }
+    const setDarkMode = () => {
+        document.querySelector("html").classList.add("dark");
+        localStorage.setItem("selectedTheme", "dark");
+    };
+
+    const toggleTheme = (e) => {
+        if (e.target.checked) setLightMode();
+        else setDarkMode();
+    };
+
+
+    //useEffect(() => {
+        const selectedTheme = localStorage.getItem("selectedTheme");
+        if (selectedTheme === "dark") {
+            document.querySelector("html").classList.add("dark");
+            localStorage.setItem("selectedTheme", "dark");
+        }
+    //},[]);
 
     const handleSignOut = () => {
         // Eliminar cookie del backend
@@ -63,14 +75,13 @@ function DashboardNav({ userName, userLastName, userObj }) {
             <ul className="NavIconList">
                 <li>
                     <Switch
-                        defaultSelected
+                        defaultSelected={selectedTheme === "light"}
                         size="lg"
                         color="primary"
                         startContent={<SunIcon />}
                         endContent={<MoonIcon />}
-                        onChange={handleChangeTheme}
-                    >
-                    </Switch>
+                        onChange={toggleTheme}
+                    ></Switch>
                 </li>
                 <li>
                     <img src="/icons/icon-help.svg" alt="" className="icon" />
