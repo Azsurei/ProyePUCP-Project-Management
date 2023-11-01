@@ -31,7 +31,7 @@ routerPresupuesto.get("/listarLineaIngresoXNombreFechas/:idPresupuesto/:descripc
 routerPresupuesto.delete("/eliminarLineaIngreso",ingresoController.eliminarLineaIngreso);
 
 // Egreso e ingreso
-routerPresupuesto.get("/listarLineasIngresoYEgresoXIdProyecto/:idProyecto",presupuestoController.listarLineasIngresoYEgresoXIdProyecto);
+routerPresupuesto.get("/listarLineasIngresoYEgresoXIdPresupuesto/:idPresupuesto",presupuestoController.listarLineasIngresoYEgresoXIdPresupuesto);
 
 // Egresos
 routerPresupuesto.post("/insertarEgreso",egresoController.crear);

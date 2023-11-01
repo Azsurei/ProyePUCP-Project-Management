@@ -844,6 +844,67 @@ BEGIN
     SELECT _idRetrospectiva AS idRetrospectiva;
 END$
 
+----------------------
+-- Linea Retrospectiva
+----------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_LINEA_RETROSPECTIVA(
+    IN _idRetrospectiva INT,
+    IN _idEquipo INT,
+    IN _cantBien INT,
+    IN _cantMal INT,
+    IN _cantQueHacer INT
+)
+BEGIN
+	DECLARE _idLineaRetrospectiva INT;
+	INSERT INTO LineaRetrospectiva(idRetrospectiva,idEquipo,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
+    VALUES(_idRetrospectiva,_idEquipo,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
+    SET _idLineaRetrospectiva = @@last_insert_id;
+    SELECT _idLineaRetrospectiva AS idLineaRetrospectiva;
+END$
+
+CALL INSERTAR_LINEA_RETROSPECTIVA(34,93,3,1,2);
+
+select * from LineaRetrospectiva;
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_RETROSPECTIVA_X_ID_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_RETROSPECTIVA_X_ID_RETROSPECTIVA(
+    IN _idRetrospectiva INT
+)
+BEGIN
+    SELECT lr.cantBien, lr.cantMal,lr.cantQueHacer
+    FROM LineaRetrospectiva lr 
+    WHERE lr.idRetrospectiva = _idRetrospectiva 
+    AND lr.activo=1;
+END$
+
+------------------------------------
+-- ItemLineaRetrospectiva
+------------------------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_ITEM_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ITEM_LINEA_RETROSPECTIVA(
+    IN _idLineaRetrospectiva INT,
+    IN _idCriterioRetrospectiva INT,
+    IN _descripcion INT
+)
+BEGIN
+	DECLARE _idItemLineaRetrospectiva INT;
+	INSERT INTO ItemLineaRetrospectiva(idLineaRetrospectiva,idCriterioRetrospectiva,descripcion,fechaCreacion,activo) 
+    VALUES(_idLineaRetrospectiva,_idCriterioRetrospectiva,_descripcion,curdate(),1);
+    SET _idItemLineaRetrospectiva = @@last_insert_id;
+    SELECT _idItemLineaRetrospectiva AS idItemLineaRetrospectiva;
+END$
+
+
+#############################
+## AUTOEVALUACION
+#############################
+
 DROP PROCEDURE IF EXISTS INSERTAR_AUTOEVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_AUTOEVALUACION(

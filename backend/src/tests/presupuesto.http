@@ -125,3 +125,10 @@ Content-Type: application/json
   "fechaRegistro": "2023-10-25",
   "cantidad": 4
 }
+
+
+
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdPresupuesto/40 HTTP/1.1
+Content-Type:  application/json

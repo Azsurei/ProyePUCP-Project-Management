@@ -88,3 +88,8 @@ CALL INSERTAR_COMUNICACION_FORMATO('WORD');
 CALL INSERTAR_COMUNICACION_FORMATO('Documento Excel');
 CALL INSERTAR_COMUNICACION_FORMATO('Informe Verbal');
 CALL INSERTAR_COMUNICACION_FORMATO('Otros');
+
+-- INSERTS CRITERIO RETROSPECTIVA
+
+INSERT INTO CriterioRetrospectiva (descripcion,fechaCreacion,activo) VALUES ('¿Qué salió bien?',CURDATE(), 1);
+INSERT INTO CriterioRetrospectiva (descripcion,fechaCreacion,activo) VALUES ('¿Qué salió mal?',CURDATE(), 1);

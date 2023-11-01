@@ -1,0 +1,11 @@
+###
+POST http://localhost:8080/api/proyecto/retrospectiva/insertarLineaRetrospectiva HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idRetrospectiva": 34,
+  "idEquipo": 94,
+  "cantBien": 3,
+  "cantMal": 1,
+  "cantQueHacer": 2
+}

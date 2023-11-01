@@ -16,7 +16,6 @@ async function crear(req, res, next) {
         cantPosteriores,
         horasPlaneadas,
         usuarios,
-        subTareas,
         tareasPosteriores,
     } = req.body;
 
