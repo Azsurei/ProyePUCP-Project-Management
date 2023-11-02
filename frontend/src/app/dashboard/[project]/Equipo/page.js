@@ -52,6 +52,7 @@ export default function Equipo(props) {
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [roles, setRoles] = useState([]);
+    const [rolesOriginales, setRolesOriginales] = useState([]);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -74,7 +75,7 @@ export default function Equipo(props) {
         // Agrega idRol y nombreRol a cada miembro en newMiembrosList
         const membersWithRoles = newMiembrosList.map((member) => ({
             ...member,
-            idRol: 0, // Establece el valor adecuado para idRol
+            idRolEquipo: 0, // Establece el valor adecuado para idRol
             nombreRol: "", // Establece el valor adecuado para nombreRol
         }));
 
@@ -272,6 +273,7 @@ export default function Equipo(props) {
             // Aquí puedes manejar la respuesta de la petición
             console.log("Respuesta de la petición de roles:", response.data);
             setRoles(response.data.roles);
+            setRolesOriginales(response.data.roles);
             // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
         })
         .catch(function (error) {
@@ -337,7 +339,9 @@ export default function Equipo(props) {
     };
 
     const onSubmitParticipantesRoles = () => {
+        console.log("Todos los roles originales son:", rolesOriginales);
         console.log("Todos los roles que mandaré son:", roles);
+        
         const selectedTeamOriginal = selectedTeamOriginales;
         const selectedTeamModified = selectedTeam;
 
