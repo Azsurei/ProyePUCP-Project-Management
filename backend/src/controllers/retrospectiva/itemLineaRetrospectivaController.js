@@ -32,9 +32,9 @@ async function listarXIdLineaRetrospectiva(req,res,next){
         for(const criterio of criterios){
             criterio.items = await funcListarXIdLineaRetrospectivaYCriterio(idLineaRetrospectiva,criterio.idCriterioRetrospectiva);
         }
-        const itemLineasRetrospectiva = criterios;
+        const LineaRetrospectiva = criterios;
         res.status(200).json({
-            itemLineasRetrospectiva,
+            LineaRetrospectiva,
             message: "ItemLineasRetrospectiva listadas correctamente"
         });
     } catch (error) {

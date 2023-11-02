@@ -93,3 +93,4 @@ CALL INSERTAR_COMUNICACION_FORMATO('Otros');
 
 INSERT INTO CriterioRetrospectiva (descripcion,fechaCreacion,activo) VALUES ('¿Qué salió bien?',CURDATE(), 1);
 INSERT INTO CriterioRetrospectiva (descripcion,fechaCreacion,activo) VALUES ('¿Qué salió mal?',CURDATE(), 1);
+INSERT INTO CriterioRetrospectiva (descripcion,fechaCreacion,activo) VALUES ('¿Qué vamos a hacer?',CURDATE(), 1);
