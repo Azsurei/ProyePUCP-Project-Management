@@ -13,6 +13,7 @@ export default function PopUpRolEquipo({
     toggle,
     handleAddRoles,
     initialListRoles,
+    participantes,
 }) {
     const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
@@ -27,9 +28,16 @@ export default function PopUpRolEquipo({
     };
 
     const EliminateRoles = (rol) => {
-        setListRoles((prevRoles) => {
-            return prevRoles.filter((role) => role.idRol !== rol.idRol);
-        });
+        const isRolInUse = participantes.some(
+            (participante) => participante.nombreRol === rol.nombreRol
+        );
+        if (isRolInUse) {
+            toast.error("No se puede eliminar el rol porque está en uso.");
+        } else {
+            setListRoles((prevRoles) => {
+                return prevRoles.filter((role) => role.idRol !== rol.idRol);
+            });
+        }
     };
 
     return (
@@ -110,19 +118,20 @@ export default function PopUpRolEquipo({
                                                         {role.nombreRol}
                                                     </p>
                                                 </div>
-                                                {role.nombreRol !==
-                                                    "Miembro" && role.nombreRol!="Líder" && (
-                                                    <img
-                                                        src="/icons/icon-trash.svg"
-                                                        alt="delete"
-                                                        className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
-                                                        onClick={() => {
-                                                            EliminateRoles(
-                                                                role
-                                                            );
-                                                        }}
-                                                    />
-                                                )}
+                                                {role.nombreRol !== "Miembro" &&
+                                                    role.nombreRol !=
+                                                        "Líder" && (
+                                                        <img
+                                                            src="/icons/icon-trash.svg"
+                                                            alt="delete"
+                                                            className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
+                                                            onClick={() => {
+                                                                EliminateRoles(
+                                                                    role
+                                                                );
+                                                            }}
+                                                        />
+                                                    )}
                                             </li>
                                         );
                                     })}

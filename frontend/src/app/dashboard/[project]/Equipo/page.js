@@ -17,7 +17,7 @@ import { ExportIcon } from "@/components/equipoComps/ExportIcon";
 import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 import CardTarea from "@/components/equipoComps/CardTarea";
 import ComboBoxArrayEquipo from "@/components/equipoComps/ComboBoxArrayEquipo";
-import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
+import PopUpRolModifyEquipo from "@/components/equipoComps/PopUpRolModifyEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import { useRouter } from "next/navigation";
@@ -846,11 +846,12 @@ export default function Equipo(props) {
                         </div>
                     </div>
                     {modal && (
-                        <PopUpRolEquipo
+                        <PopUpRolModifyEquipo
                             modal={modal}
                             toggle={() => toggleModal()} // Pasa la función como una función de flecha
                             handleAddRoles={handleAddRoles}
                             initialListRoles={roles}
+                            participantes={selectedTeam.participantes}
                         />
                     )}
                     {modal2 && (
