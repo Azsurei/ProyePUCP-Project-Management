@@ -52,8 +52,15 @@ export default function CatalogoDeInteresadosRegister(props) {
     const [catalogoInteresados, setCatalogoInteresados] = useState(null);
 
     useEffect(() => {
-        if (catalogoInteresados && catalogoInteresados.interesado) {
+        if (
+            catalogoInteresados &&
+            catalogoInteresados.interesado &&
+            catalogoInteresados.requeriments &&
+            catalogoInteresados.strategies
+        ) {
             const ciData = catalogoInteresados.interesado[0];
+            const ciData1 = catalogoInteresados.requeriments;
+            const ciData2 = catalogoInteresados.strategies;
             console.log("F: La data es:", ciData);
             setAutority(ciData.idNivelAutoridad);
             setSelectedNameAutority(ciData.nombreAutoridad);
@@ -69,10 +76,10 @@ export default function CatalogoDeInteresadosRegister(props) {
             setPhone(ciData.telefono);
             setContactInformation(ciData.datosContacto);
 
-            /*             const requirementsOriginal = ciData.planRespuesta;
+            const requirementsOriginal = ciData1;
             const requirementsActualizados = requirementsOriginal.map(
                 (requirement) => ({
-                    idRequirements: requirement.idPlanRespuesta || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    idRequirements: requirement.idRequerimiento || "", // Puedes agregar un valor predeterminado en caso de que falte
                     requirements: requirement.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
                 })
             );
@@ -80,16 +87,16 @@ export default function CatalogoDeInteresadosRegister(props) {
             setRequirementsOriginales(requirementsActualizados);
             setQuantity1(requirementsActualizados.length);
 
-            const strategiesOriginal = ciData.planContigencia;
+            const strategiesOriginal = ciData2;
             const strategiesActualizados = strategiesOriginal.map(
                 (strategy) => ({
-                    idPlanContingencia: strategy.idPlanContingencia || "", // Puedes agregar un valor predeterminado en caso de que falte
-                    contingencyPlans: strategy.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    idStrategies: strategy.idEstrategia || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    strategies: strategy.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
                 })
             );
             setStrategies(strategiesActualizados);
             setStrategiesOriginales(strategiesActualizados);
-            setQuantity2(strategiesActualizados.length); */
+            setQuantity2(strategiesActualizados.length);
             console.log("Terminó de cargar los datos");
             setIsLoadingSmall(false);
         }
@@ -255,6 +262,10 @@ export default function CatalogoDeInteresadosRegister(props) {
     };
 
     const onSubmit = () => {
+        console.log("Original:", requirementsOriginales);
+        console.log("Nuevo:", requirements);
+        console.log("Original1:", strategiesOriginales);
+        console.log("Nuevo1:", strategies);
         const {
             modifiedArray: modifiedArray,
             deletedArray: deletedArray,
@@ -262,7 +273,7 @@ export default function CatalogoDeInteresadosRegister(props) {
         } = findModifiedDeletedAdded(
             requirementsOriginales,
             requirements,
-            "idPlanRespuesta"
+            "idRequirements"
         );
 
         const {
@@ -272,7 +283,7 @@ export default function CatalogoDeInteresadosRegister(props) {
         } = findModifiedDeletedAdded(
             strategiesOriginales,
             strategies,
-            "idPlanContingencia"
+            "idStrategies"
         );
 
         console.log("Modified:", modifiedArray);
@@ -282,8 +293,7 @@ export default function CatalogoDeInteresadosRegister(props) {
         console.log("Deleted1:", deletedArray1);
         console.log("Added1:", addedArray1);
 
-        //modificas esto
-/*         const putData = {
+        const putData = {
             idInteresado: parseInt(props.params.updateCI),
             idAutoridad: autority,
             idAdhesionActual: currentAdhesion,
@@ -295,26 +305,76 @@ export default function CatalogoDeInteresadosRegister(props) {
             correoElectronico: email,
             numeroTelefono: phone,
             informacionContacto: contactInformation,
-            requeriments: requirements,
-            strategies: strategies,
+            requeriments: modifiedArray,
+            strategies: modifiedArray1,
         };
         console.log("Actualizado correctamente");
-        console.log(putData); */
-        /*         axios
-            .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRiesgo",
-                postData
+        console.log(putData);
+        const postData = {
+            idInteresado: parseInt(props.params.updateCI),
+            requeriments: addedArray,
+            strategies: addedArray1,
+        };
+        console.log("Agregado correctamente");
+        console.log(postData);
+        const deleteData = {
+            idInteresado: parseInt(props.params.updateCI),
+            requeriments: deletedArray,
+            strategies: deletedArray1,
+        };
+        console.log("Eliminado correctamente");
+        console.log(deleteData);
+
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/modificarInteresados",
+                putData
             )
             .then((response) => {
-                // Manejar la respuesta de la solicitud POST
+                // Manejar la respuesta de la solicitud PUT
                 console.log("Respuesta del servidor:", response.data);
                 console.log("Registro correcto");
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            });
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/insertarRequirementStrategies",
+                postData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/eliminarRequirementStrategies",
+                {
+                    data: deleteData,
+                }
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
     };
 
     return (
@@ -606,7 +666,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
