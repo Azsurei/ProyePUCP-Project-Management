@@ -48,3 +48,28 @@
     color: white;
     margin-left: auto;
 }
+.divFiltrosReporte{
+
+    display: flex;
+    justify-content: space-between; /* Espacio entre los elementos */
+    align-items: flex-start;
+    gap: 5%;
+    
+}
+.btnFiltro{
+    border-radius: 10px;
+    background-color: #1962F0;
+    border: #1962F0 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 140px;
+    color: white;
+    /* margin-left: auto; */
+
+}
+.buttonReporteContainer {
+    display: flex;
+    align-items: center; /* Alinea verticalmente si es necesario */
+    gap: 2rem;
+}
