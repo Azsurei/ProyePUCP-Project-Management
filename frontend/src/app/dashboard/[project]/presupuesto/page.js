@@ -15,6 +15,7 @@ import HistorialList from "@/components/dashboardComps/projectComps/presupuestoC
 import { Toaster, toast } from "sonner";
 import { ExportIcon } from "@/../public/icons/ExportIcon";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 axios.defaults.withCredentials = true;
 import {
     Modal, 
@@ -46,6 +47,7 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { SmallLoadingScreen } from "../layout";
 import { set } from "date-fns";
 import { is } from "date-fns/locale";
+import { Today } from "@mui/icons-material";
 
 
 export default function Historial(props) {
@@ -92,16 +94,21 @@ export default function Historial(props) {
                 axios.get(stringURLListarPresupuesto)
                     .then(response => {
                         const presupuesto = response.data.presupuesto;
-                        if (presupuesto[0] && parseFloat(presupuesto[0].presupuestoInicial) === 0.00) {
+                        if (presupuesto[0] && ( parseFloat(presupuesto[0].presupuestoInicial) === 0.00 || presupuesto[0].presupuestoInicial === null)) {
                             console.log("Presupuesto Nuevo");
                             onOpen();
                         } else {
+                            console.log(presupuesto[0].presupuestoInicial);
                             console.log("Si tiene presupuesto inicial");
                         }
                     })
                     .catch(error => {
                         console.error("Error al llamar a la API:", error);
                     });
+
+
+
+
             }
 
 
@@ -143,7 +150,7 @@ export default function Historial(props) {
     };
 
     const [montoInicial,setMontoInicial]=useState("");
-    const [cantMeses,setCantMeses]=useState("");
+    const [cantMeses,setCantMeses]=useState(0);
 
     function modificarPresupuesto() {
         return new Promise((resolve, reject) => {
@@ -167,7 +174,7 @@ export default function Historial(props) {
     
                     const data = {
                         idMoneda: selectedMoneda,
-                        presupuestoInicial: parseFloat(monto),
+                        presupuestoInicial: parseFloat(montoInicial),
                         cantidadMeses: cantMeses,
                         idPresupuesto: idPresupuestoCreado
                     };
@@ -183,7 +190,11 @@ export default function Historial(props) {
                             reject(error);
                         });
                 });
+
+                insertarLineaIngreso();
         });
+
+
     }
 
     const nuevoPresupuestoInicial = () => {
@@ -195,8 +206,69 @@ export default function Historial(props) {
             error: "Error al agregar presupuesto",
             position: "bottom-right",
         });
+
     };
 
+
+
+    function insertarLineaIngreso() {
+        
+        let flag=0;
+        const stringUrlTipoTransaccion = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/insertarLineaIngreso`;
+        
+        console.log(projectId);
+        const stringURLListaHerramientas=process.env.NEXT_PUBLIC_BACKEND_URL+"/api/herramientas/"+projectId+"/listarHerramientasDeProyecto";
+        
+
+        axios.get(stringURLListaHerramientas)
+        .then(function (response) {
+            const herramientas = response.data.herramientas;
+    
+            // Itera sobre las herramientas para encontrar la que tiene idHerramienta igual a 13
+            for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag=1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+
+            if(flag===1){
+                axios.post(stringUrlTipoTransaccion, {
+                    idProyecto: projectId,
+                    idPresupuesto:idHerramientaCreada,
+                    idMoneda: selectedMoneda,
+                    idTransaccionTipo:1,
+                    idIngresoTipo:1,
+                    descripcion:"Presupuesto Inicial",
+                    monto:parseFloat(montoInicial).toFixed(2),
+                    cantidad:1,
+                    fechaTransaccion:new Date(),
+                })
+        
+                .then(function (response) {
+                    console.log(response);
+                    console.log("Linea Ingresada");
+                    DataTable();
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }else{
+                console.log("No se encontró la herramienta");
+            }
+            
+
+        })
+        .catch(function (error) {
+            console.error('Error al hacer Listado Herramienta', error);
+            reject(error);
+        });
+
+       
+    }
 
     //Fin Funcion
 
@@ -350,40 +422,7 @@ export default function Historial(props) {
 
 
     const hasSearchFilter = Boolean(filterValue);
-    // const {filteredItems, filteredEgresos} = React.useMemo(() => {
-    //     let filteredTemplates = [...lineasIngreso];
-    //     let filteredEgresos = [...lineasEgreso];
-    //     // Filtro de búsqueda
-    //     if (hasSearchFilter) {
-    //         filteredTemplates = filteredTemplates.filter((item) =>
-    //             item.descripcion.toLowerCase().includes(filterValue.toLowerCase())
-    //         );
-    //     }
-    //     if (hasSearchFilter) {
-    //         filteredEgresos = filteredEgresos.filter((item2) =>
-    //             item2.descripcion.toLowerCase().includes(filterValue.toLowerCase())
-    //         );
-    //     }
-    
-    //     // Filtro por fechas
-    //     if (fechaInicio && fechaFin && filtrarFecha) {
-    //         const fechaInicioTimestamp = Date.parse(fechaInicio);
-    //         const fechaFinTimestamp = Date.parse(fechaFin);
-    //         filteredTemplates = filteredTemplates.filter((item) => {
-    //             const itemFechaTimestamp = Date.parse(item.fechaTransaccion); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
-    //             return itemFechaTimestamp >= fechaInicioTimestamp && itemFechaTimestamp <= fechaFinTimestamp;
-    //         });
-    //         filteredEgresos = filteredEgresos.filter((item2) => {
-    //             const itemFechaTimestamp2 = Date.parse(item2.fechaRegistro); // Asumiendo que tienes una propiedad 'fecha' en tus objetos.
-    //             return itemFechaTimestamp2 >= fechaInicioTimestamp && itemFechaTimestamp2 <= fechaFinTimestamp;
-    //         });
-    //     }
-    
-    //     return {
-    //         filteredTemplates,
-    //         filteredEgresos,
-    //       };
-    // }, [lineasIngreso, lineasEgreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
+
     const filteredItems = React.useMemo(() => {
         let filteredTemplates = [...lineasIngreso];
     
@@ -500,6 +539,12 @@ export default function Historial(props) {
                         />
 
                     <div className="buttonContainer">
+
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Flujo"}>
+                            <Button  color="primary" startContent={<AssessmentIcon />} className="btnAddIngreso">
+                                Flujo de Caja
+                            </Button>
+                        </Link>
                         <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
                             Filtrar
                         </Button>
@@ -796,7 +841,8 @@ export default function Historial(props) {
 
                                             />
                                             </div>
-
+                                            {cantMeses<0?setCantMeses(0):""}
+              
                                             <div className="alertMoneda" >
                                                 <p className="text-tiny text-danger">            
                                                     {
