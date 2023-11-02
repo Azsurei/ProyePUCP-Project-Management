@@ -75,8 +75,8 @@ export default function Equipo(props) {
         // Agrega idRol y nombreRol a cada miembro en newMiembrosList
         const membersWithRoles = newMiembrosList.map((member) => ({
             ...member,
-            idRolEquipo: 0, // Establece el valor adecuado para idRol
-            nombreRol: "", // Establece el valor adecuado para nombreRol
+            idRolEquipo: 2, // Establece el valor adecuado para idRol
+            nombreRol: "Miembro", // Establece el valor adecuado para nombreRol
         }));
 
         // Concatena los nuevos miembros a selectedTeam.participantes
@@ -101,29 +101,6 @@ export default function Equipo(props) {
             setReloadData(false);
         }
     }, [modal]);
-
-    /*     const handleSelectedValueChangeRol = (value, userId) => {
-        // Crear un objeto para el nuevo rol del usuario
-        const newUserRole = {
-            idUsuario: userId, // El ID del usuario
-            idRolEquipo: value, // El ID del rol seleccionado
-        };
-
-        // Verificar si el usuario ya tiene un rol en el arreglo
-        const userIndex = userRoleData.findIndex(
-            (item) => item.idUsuario === userId
-        );
-
-        if (userIndex !== -1) {
-            // Si el usuario ya tiene un rol, actualiza el rol existente
-            const updatedUserRoleData = [...userRoleData];
-            updatedUserRoleData[userIndex] = newUserRole;
-            setUserRoleData(updatedUserRoleData);
-        } else {
-            // Si el usuario no tiene un rol, agrégalo al arreglo
-            setUserRoleData([...userRoleData, newUserRole]);
-        }
-    }; */
 
     const handleSelectedValueChangeRol = (value, name, userId) => {
         // Crea una copia profunda de selectedTeam para evitar mutar el estado directamente
@@ -263,22 +240,25 @@ export default function Equipo(props) {
         setScreenState(1);
     };
 
-    useEffect(() => {   
+    useEffect(() => {
         axios
-        .get(
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-                `/api/proyecto/equipo/listarRol/${selectedTeam?.idEquipo}`
-        )
-        .then((response) => {
-            // Aquí puedes manejar la respuesta de la petición
-            console.log("Respuesta de la petición de roles:", response.data);
-            setRoles(response.data.roles);
-            setRolesOriginales(response.data.roles);
-            // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
-        })
-        .catch(function (error) {
-            console.log("Error al cargar el rol del equipo: ", error);
-        });
+            .get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/equipo/listarRol/${selectedTeam?.idEquipo}`
+            )
+            .then((response) => {
+                // Aquí puedes manejar la respuesta de la petición
+                console.log(
+                    "Respuesta de la petición de roles:",
+                    response.data
+                );
+                setRoles(response.data.roles);
+                setRolesOriginales(response.data.roles);
+                // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
+            })
+            .catch(function (error) {
+                console.log("Error al cargar el rol del equipo: ", error);
+            });
     }, [selectedTeam]);
 
     const checkIfMultipleLeadersExist = () => {
@@ -338,10 +318,58 @@ export default function Equipo(props) {
         return { modifiedArray, deletedArray, addedArray };
     };
 
+    const findModifiedDeletedAddedForRoles = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (!newItem.idEquipoXRolEquipo) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
+    };
+
     const onSubmitParticipantesRoles = () => {
         console.log("Todos los roles originales son:", rolesOriginales);
         console.log("Todos los roles que mandaré son:", roles);
-        
+
+        // Comparar cambios en los roles
+        const {
+            modifiedArray: modifiedRoles,
+            deletedArray: deletedRoles,
+            addedArray: addedRoles,
+        } = findModifiedDeletedAddedForRoles(
+            rolesOriginales,
+            roles,
+            "idRol"
+        );
+
+        console.log("Modified Roles:", modifiedRoles);
+        console.log("Deleted Roles:", deletedRoles);
+        console.log("Added Roles:", addedRoles);
+
+
         const selectedTeamOriginal = selectedTeamOriginales;
         const selectedTeamModified = selectedTeam;
 
@@ -380,10 +408,10 @@ export default function Equipo(props) {
             miembrosEliminados: deletedParticipants,
         };
         console.log("Eliminado correctamente");
-        console.log(deleteData); */ 
+        console.log(deleteData); */
 
         // Resto del código
-/*         axios
+        /*         axios
             .put(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/modificarMiembroEquipo",
@@ -605,7 +633,7 @@ export default function Equipo(props) {
                                 {updateState ? (
                                     <>
                                         <Button
-                                            color="secondary"    
+                                            color="secondary"
                                             startContent={<AddIcon />}
                                             onClick={() => toggleModal()}
                                         >
@@ -725,14 +753,21 @@ export default function Equipo(props) {
                                                 <div className="col-span-3 flex mt-4">
                                                     <ComboBoxArrayEquipo
                                                         people={roles}
-                                                        onSelect={(value,name) =>
+                                                        onSelect={(
+                                                            value,
+                                                            name
+                                                        ) =>
                                                             handleSelectedValueChangeRol(
                                                                 value,
                                                                 name,
                                                                 member.idUsuario
                                                             )
                                                         }
-                                                        autoSelectedValue={{idRol:member.idRol, nombreRol:member.nombreRol}}
+                                                        autoSelectedValue={{
+                                                            idRol: member.idRol,
+                                                            nombreRol:
+                                                                member.nombreRol,
+                                                        }}
                                                     />
                                                 </div>
                                                 <div className="col-span-1 flex mt-4 justify-center">
