@@ -582,6 +582,7 @@ ENGINE = InnoDB;
 CREATE TABLE LineaRetrospectiva(
 	idLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
 	idRetrospectiva INT,
+    idSprint INT,
     idEquipo INT,
     cantBien INT,
     cantMal INT,
@@ -589,9 +590,10 @@ CREATE TABLE LineaRetrospectiva(
     fechaCreacion DATE,
     activo TINYINT,
     FOREIGN KEY (idRetrospectiva) REFERENCES Retrospectiva(idRetrospectiva),
-    FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+    FOREIGN KEY (idSprint) REFERENCES Sprint(idSprint)
 )
 ENGINE = InnoDB;
+
 
 CREATE TABLE CriterioRetrospectiva(
 	idCriterioRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
@@ -613,6 +615,8 @@ CREATE TABLE ItemLineaRetrospectiva(
     FOREIGN KEY (idCriterioRetrospectiva) REFERENCES CriterioRetrospectiva(idCriterioRetrospectiva)
 )
 ENGINE = InnoDB;
+
+SELECT * FROM ItemLineaRetrospectiva;
 
 CREATE TABLE ItemLineaRetrospectiva(
 	idItemLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
