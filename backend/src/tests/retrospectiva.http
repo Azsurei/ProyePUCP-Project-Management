@@ -40,6 +40,7 @@ Content-Type:  application/json
 
 POST http://localhost:8080/api/proyecto/retrospectiva/insertarItemLineaRetrospectiva HTTP/1.1
 Content-Type:  application/json
+
 {
   "idLineaRetrospectiva": 7,
   "idCriterioRetrospectiva": 3,
