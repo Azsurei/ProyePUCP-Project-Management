@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        height: "100%",
+                        height: "100vh",
                     }}
                 >
                     <DashboardNav
@@ -72,8 +72,8 @@ export default function RootLayout({ children }) {
                             flex: "1",
                             overflow: "auto",
                             display: "flex",
-                            backgroundColor: "#F5F5F5",
                         }}
+                        className="bg-mainContent"
                     >
                         {children}
                     </div>

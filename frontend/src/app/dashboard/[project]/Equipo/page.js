@@ -16,7 +16,7 @@ import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { ExportIcon } from "@/components/equipoComps/ExportIcon";
 import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 import CardTarea from "@/components/equipoComps/CardTarea";
-import MyCombobox from "@/components/ComboBox";
+import ComboBoxArrayEquipo from "@/components/equipoComps/ComboBoxArrayEquipo";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
@@ -50,6 +50,7 @@ export default function Equipo(props) {
     const [modal, setModal] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [reloadData, setReloadData] = useState(false);
+    const [roles, setRoles] = useState([]);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -94,6 +95,29 @@ export default function Equipo(props) {
             setReloadData(false);
         }
     }, [modal]);
+
+    /*     const handleSelectedValueChangeRol = (value, userId) => {
+        // Crear un objeto para el nuevo rol del usuario
+        const newUserRole = {
+            idUsuario: userId, // El ID del usuario
+            idRolEquipo: value, // El ID del rol seleccionado
+        };
+
+        // Verificar si el usuario ya tiene un rol en el arreglo
+        const userIndex = userRoleData.findIndex(
+            (item) => item.idUsuario === userId
+        );
+
+        if (userIndex !== -1) {
+            // Si el usuario ya tiene un rol, actualiza el rol existente
+            const updatedUserRoleData = [...userRoleData];
+            updatedUserRoleData[userIndex] = newUserRole;
+            setUserRoleData(updatedUserRoleData);
+        } else {
+            // Si el usuario no tiene un rol, agrégalo al arreglo
+            setUserRoleData([...userRoleData, newUserRole]);
+        }
+    }; */
 
     const handleSelectedValueChangeRol = (value, name, userId) => {
         // Crea una copia profunda de selectedTeam para evitar mutar el estado directamente
@@ -167,13 +191,12 @@ export default function Equipo(props) {
                             equipo.tareasFinished = tareasFinished;
                             console.log(
                                 "este equipo tuvo " +
-                                tareasTotales +
+                                    tareasTotales +
                                     " y " +
                                     tareasFinished
                             );
 
                             setListComps(teamsArray);
-                            
                         })
                         .catch(function (error) {
                             console.log(
@@ -184,8 +207,6 @@ export default function Equipo(props) {
                 }
                 setIsLoadingSmall(false);
                 console.log("ya pase");
-                
-                
             })
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
@@ -233,9 +254,25 @@ export default function Equipo(props) {
                     error
                 );
             });
-
         setScreenState(1);
     };
+
+    useEffect(() => {   
+        axios
+        .get(
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/equipo/listarRol/${selectedTeam?.idEquipo}`
+        )
+        .then((response) => {
+            // Aquí puedes manejar la respuesta de la petición
+            console.log("Respuesta de la petición de roles:", response.data);
+            setRoles(response.data.roles);
+            // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
+        })
+        .catch(function (error) {
+            console.log("Error al cargar el rol del equipo: ", error);
+        });
+    }, [selectedTeam]);
 
     const checkIfLeaderExists = () => {
         // Verifica si al menos un participante tiene el rol de líder
@@ -652,7 +689,7 @@ export default function Equipo(props) {
                             {updateState ? (
                                 <>
                                     {selectedTeam.participantes.map(
-                                        (member) => (
+                                        (member, index) => (
                                             <React.Fragment
                                                 key={member.idUsuario}
                                             >
@@ -662,11 +699,11 @@ export default function Equipo(props) {
                                                 >
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos !==
-                                                        null
-                                                            ? member
-                                                                  .apellidos[0]
-                                                            : ""}
+                                                            (member.apellidos !==
+                                                            null
+                                                                ? member
+                                                                      .apellidos[0]
+                                                                : "")}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">
@@ -685,30 +722,13 @@ export default function Equipo(props) {
                                                 </div>
 
                                                 <div className="col-span-3 flex mt-4">
-                                                    <MyCombobox
-                                                        urlApi={
-                                                            process.env
-                                                                .NEXT_PUBLIC_BACKEND_URL +
-                                                            `/api/proyecto/equipo/listarRol/${selectedTeam.idEquipo}`
-                                                        }
-                                                        property="roles"
-                                                        nameDisplay="nombreRol"
-                                                        hasColor={false}
-                                                        onSelect2={(
-                                                            value,
-                                                            name
-                                                        ) =>
+                                                    <ComboBoxArrayEquipo
+                                                        people={roles}
+                                                        onSelect={(value) =>
                                                             handleSelectedValueChangeRol(
                                                                 value,
-                                                                name,
-                                                                member.idUsuario
+                                                                component.idUsuario
                                                             )
-                                                        }
-                                                        idParam="idRolEquipo"
-                                                        valorParam="nombreRol"
-                                                        reloadData={reloadData}
-                                                        initialName={
-                                                            member.nombreRol
                                                         }
                                                     />
                                                 </div>
@@ -749,11 +769,11 @@ export default function Equipo(props) {
                                                 <div className="col-span-6 flex mt-4">
                                                     <p className="membersIcon1">
                                                         {member.nombres[0] +
-                                                            member.apellidos !==
-                                                        null
-                                                            ? member
-                                                                  .apellidos[0]
-                                                            : ""}
+                                                            (member.apellidos !==
+                                                            null
+                                                                ? member
+                                                                      .apellidos[0]
+                                                                : "")}
                                                     </p>
                                                     <div>
                                                         <div className="text-lg">

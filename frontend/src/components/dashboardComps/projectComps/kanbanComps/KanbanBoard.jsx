@@ -88,17 +88,21 @@ export default function KanbanBoard({ projectId }) {
 
     return (
         <div
-            className="generalKanbanCompCont
-    m-auto
-    flex
-    w-full
-    flex-1
-    items-center
-    overflow-x-auto
-    overflow-y-hidden
-    py-[20px]"
+            className="
+            generalKanbanCompCont
+            m-auto
+            flex
+            w-full
+            flex-1
+            min-h-[500px]
+            relative
+            items-center
+            overflow-x-auto
+            overflow-y-hidden
+            py-[20px]
+            "
         >
-            <p
+            {/* <p
                 className="w-[100px]"
                 onClick={() => {
                     console.log("COLUMNAS: " + JSON.stringify(columns));
@@ -122,7 +126,7 @@ export default function KanbanBoard({ projectId }) {
                 }}
             >
                 {"Click me"}
-            </p>
+            </p> */}
             <DndContext
                 sensors={sensors}
                 onDragStart={onDragStart}
@@ -132,8 +136,8 @@ export default function KanbanBoard({ projectId }) {
                 <div
                     className={
                         columns.length !== 0
-                            ? "flex gap-4 h-[100%] min-h-[100%]"
-                            : "flex gap-1 h-[100%] min-h-[100%]"
+                            ? "flex gap-4 flex-1 absolute top-[20px] bottom-[0px]"
+                            : "flex gap-1 flex-1 absolute top-[20px] bottom-[0px]"
                     }
                 >
                     <div className="flex gap-8 h-full min-h-full">
@@ -170,9 +174,9 @@ export default function KanbanBoard({ projectId }) {
                         min-w-[350px]
                         cursor-pointer
                         rounded-lg
-                        bg-slate-100
+                        bg-columnBackgroundColor
                         border-2
-                        border-white
+                        border-taskBackgroundColor
                         p-4
                         ring-rose-500
                         hover:ring-2

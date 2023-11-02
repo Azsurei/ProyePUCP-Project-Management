@@ -4,16 +4,16 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link} from "@nextui-org/react";
 import {useEffect, useState} from "react";
-function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
+function ModalEliminateInteresado({ modal, toggle, taskName, idInteresado, refresh}) {
 
-    const Eliminate = (idRiesgo, onClose) => {
-        console.log("Id: ", idRiesgo);
+    const Eliminate = (idInteresado, onClose) => {
+        console.log("Id: ", idInteresado);
         
         const data = {
-            idRiesgo: idRiesgo // Ajusta el nombre del campo según la estructura esperada por el servidor
+            idInteresado: idInteresado // Ajusta el nombre del campo según la estructura esperada por el servidor
         };
 
-        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/eliminarunRiesgo", { data })
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoInteresados/eliminarInteresado", { data })
             .then((response) => {
                 // Manejar la respuesta de la solicitud POST
                 console.log("Respuesta del servidor:", response.data);
@@ -56,10 +56,10 @@ function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
             <ModalContent>
               {(onClose) => (
                 <>
-                  <ModalHeader className="flex flex-col gap-1">Eliminar informacion del riesgo {idRiesgo}</ModalHeader>
+                  <ModalHeader className="flex flex-col gap-1">Eliminar informacion del interesado</ModalHeader>
                   <ModalBody>
                   <h3 className="advertisement">
-                            ¿Estás seguro que desea eliminar el siguiente riesgo?
+                            ¿Estás seguro que desea eliminar el siguiente interesado?
                     </h3>
 
                     <Input
@@ -78,7 +78,7 @@ function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
                     }}>
                       Cancelar
                     </Button>
-                    <Button color="primary" onPress={() => Eliminate(idRiesgo, onClose)}>
+                    <Button color="primary" onPress={() => Eliminate(idInteresado, onClose)}>
                       Aceptar
                     </Button>
                   </ModalFooter>
@@ -91,4 +91,4 @@ function ModalEliminateRC({ modal, toggle, taskName, idRiesgo, refresh}) {
     );
 }
 
-export default ModalEliminateRC;
+export default ModalEliminateInteresado;

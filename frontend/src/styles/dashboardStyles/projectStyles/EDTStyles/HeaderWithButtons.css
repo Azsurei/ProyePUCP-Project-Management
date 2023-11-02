@@ -39,7 +39,7 @@
 #HeaderWithButtons #HeaderXbuttonXBackContainer #HeaderXBackContainer #MainHeader{
     font-weight: 700;
     font-size: 30px;
-    color: #172B4D;
+    /* color: #172B4D; */
     
     white-space: normal; /* Allow text to wrap when necessary */
     overflow-wrap: break-word; /* Allow word breaking when necessary */

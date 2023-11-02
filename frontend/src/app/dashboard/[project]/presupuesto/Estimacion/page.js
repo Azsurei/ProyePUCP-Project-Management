@@ -29,6 +29,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Switch,
   } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -40,7 +41,7 @@ import { set } from "date-fns";
 import { tr } from "date-fns/locale";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 
-export default function Ingresos(props) {
+export default function EstimacionCosto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -48,7 +49,32 @@ export default function Ingresos(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+    const [isSelected, setIsSelected] = useState(false);
+    const [presupuestoId, setPresupuestoId] = useState("");
+    //const router=userRouter();
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    setPresupuestoId(idHerramientaCreada)
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag = 1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+              console.log(`Esta es el id presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener el presupuesto:', error);
+            }
+          };
+            fetchData();
+    }, []);
     //const router=userRouter();
 
     const onSearchChange = (value) => {
@@ -109,7 +135,7 @@ export default function Ingresos(props) {
     //Funciones
 
     let idHerramientaCreada;
-
+    let flag=0;
     function insertarLineaEstimacion() {
         return new Promise((resolve, reject) => {
         let flag=0;
@@ -140,6 +166,8 @@ export default function Ingresos(props) {
                     idProyecto: projectId,
                     descripcion:descripcionLinea,
                     tarifaUnitaria: monto,
+                    //Se añade tiempoRequerido
+                    tiempoRequerido:mesesRequerido,
                     cantidadRecurso: cantRecurso,
                     subtotal:parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
                     fechaInicio:fecha,
@@ -232,7 +260,7 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
               setLineasEstimacion(data);
               console.log(`Esta es la data:`, data);
@@ -243,12 +271,31 @@ export default function Ingresos(props) {
           };
             fetchData();
     };
-
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };    
         
     useEffect(() => {
-    
+        ObtenerPresupuesto();
         DataTable();
-      }, [projectId]);
+      }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
     const filteredItems = React.useMemo(() => {
         let filteredTemplates = [...lineasEstimacion];
@@ -274,7 +321,9 @@ export default function Ingresos(props) {
     }, [lineasEstimacion, filterValue, fechaInicio, fechaFin, filtrarFecha]);
 
     
-
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
 
     return (
 
@@ -299,14 +348,18 @@ export default function Ingresos(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Estimacion de Costos</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Estimacion de Costos</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
-                        </Link>
 
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                                 <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                         </Link>
                         
@@ -338,16 +391,15 @@ export default function Ingresos(props) {
 
                     <div className="buttonContainer">
 
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
-
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion/EstimacionTabla"}>
                             <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
                                 Ver Tabla
                             </Button>
                         </Link>
 
+                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                            Filtrar
+                        </Button>
 
                         <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
                             Agregar
@@ -357,7 +409,7 @@ export default function Ingresos(props) {
                     </div>
 
                     <div className="divListaIngreso">
-                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false}></EstimacionCostoList>
+                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false} changeMoneda = {handleSelectedMoneda} valueMoneda = {isSelected}></EstimacionCostoList>
                     </div>
 
 

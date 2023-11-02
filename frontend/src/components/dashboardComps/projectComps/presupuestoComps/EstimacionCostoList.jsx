@@ -20,6 +20,7 @@ function CardEstimacionCosto({
     refresh,
     canSelect,
     onSelect,
+    initialMoneda,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
@@ -27,7 +28,8 @@ function CardEstimacionCosto({
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
     const [isSelected, setIsSelected] = useState(false);
-
+    const [tarifaAdapt, setTarifaAdapt] = useState(tarifaEstimacion);
+    const [subtotalAdapt, setSubtotalAdapt] = useState("");
 
     const toggleModal = (task) => {
         setSelectedTask(task);
@@ -62,7 +64,31 @@ function CardEstimacionCosto({
     };
     
 
-    const monedaSymbol = EstimacionObject.nombreMoneda === "USD" ? "$" : "S/";
+    const monedaSymbol = !initialMoneda ? "$" : "S/";
+    useEffect(() => {
+        console.log("initialMoneda", initialMoneda);
+        console.log("IngresoObject.idMoneda", EstimacionObject.idMoneda);
+        if (initialMoneda && EstimacionObject.idMoneda === 1) {
+          const nuevoMonto = (tarifaEstimacion * 3.9).toFixed(2); // Redondear a 2 decimales
+          const nuevoSubtotal = (EstimacionObject.subtotal * 3.9).toFixed(2);
+          setTarifaAdapt(nuevoMonto);
+          setSubtotalAdapt(nuevoSubtotal);
+          console.log("montoAdapt", nuevoMonto);
+        } else if (!initialMoneda && EstimacionObject.idMoneda === 2) {
+          // Segunda situación
+          const nuevoMonto = (tarifaEstimacion / 3.9).toFixed(2); // Redondear a 2 decimales
+          const nuevoSubtotal = (EstimacionObject.subtotal / 3.9).toFixed(2);
+          setTarifaAdapt(nuevoMonto);
+          setSubtotalAdapt(nuevoSubtotal);
+          console.log("montoAdapt", nuevoMonto);
+        } else {
+          const nuevoMonto = tarifaEstimacion.toFixed(2); // Redondear a 2 decimales
+            const nuevoSubtotal = EstimacionObject.subtotal.toFixed(2);
+          setTarifaAdapt(nuevoMonto);
+            setSubtotalAdapt(nuevoSubtotal);
+          console.log("montoAdapt", nuevoMonto);
+        }
+      }, [initialMoneda]);
     return (
         <li
             className={isSelected ? "IngresoCard active" : "IngresoCard"}
@@ -78,8 +104,8 @@ function CardEstimacionCosto({
                     <p className="titleEstimacionPago">Cant. {EstimacionObject.cantidadRecurso}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className="titleTarifaEstimacion">{monedaSymbol} {tarifaEstimacion}</p>
-                    <p className="titleHoraIngreso">Subtotal: {monedaSymbol} {EstimacionObject.subtotal}</p>
+                    <p className="titleTarifaEstimacion">{monedaSymbol} {tarifaAdapt}</p>
+                    <p className="titleHoraIngreso">Subtotal: {monedaSymbol} {subtotalAdapt}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
                 {isEdit && (
@@ -126,7 +152,7 @@ function CardEstimacionCosto({
 export default function EstimacionCostoList(props) {
     const router = useRouter();
 
-    const { lista, refresh , isEdit , isSelected} = props;
+    const { lista, refresh , isEdit , isSelected, changeMoneda, valueMoneda} = props;
     console.log("listaEstimaciones", lista);
     if (props.lista.length === 0) {
         return (
@@ -189,6 +215,7 @@ export default function EstimacionCostoList(props) {
                                     refresh={refresh}
                                     canSelect={isSelected}
                                     onSelect={(selectedData, isSelected) => handleCardSelect(selectedData, isSelected)}
+                                    initialMoneda = {valueMoneda}
                                 />
                             ))}
                         </ul>

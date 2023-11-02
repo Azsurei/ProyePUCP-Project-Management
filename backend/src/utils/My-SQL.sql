@@ -1185,7 +1185,7 @@ CREATE TABLE Interesado(
     organizacion VARCHAR(200),
     cargo VARCHAR(200),
     correo VARCHAR(200),
-    telefeno VARCHAR(12),
+    telefono VARCHAR(12),
     datosContacto VARCHAR(200),
     idNivelAutoridad INT,
     idNivelAdhesionActual INT,

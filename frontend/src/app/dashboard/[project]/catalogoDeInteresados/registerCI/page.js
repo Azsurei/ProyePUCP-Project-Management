@@ -40,8 +40,6 @@ export default function CatalogoDeInteresadosRegister(props) {
     const isTextTooLong5 = contactInformation.length > 400;
     const isTextTooLong6 = email.length > 100;
     const isTextTooLong7 = phone.length > 100;
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
 
@@ -162,9 +160,9 @@ export default function CatalogoDeInteresadosRegister(props) {
             strategies: strategies,
         };
         console.log("El postData es :", postData);
-        /*         axios
+        axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRiesgo",
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoInteresados/insertarInteresado",
                 postData
             )
             .then((response) => {
@@ -176,7 +174,7 @@ export default function CatalogoDeInteresadosRegister(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
     };
 
     return (
@@ -186,7 +184,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                 Interesados/ Registrar interesado
             </div>
             <div className="interesedRegisterCI">
-                <div className="titleInteresedRegisterCI">
+                <div className="titleInteresedRegisterCI text-mainHeaders">
                     Registrar nuevo interesado
                 </div>
                 <div className="containerInputCI">
@@ -468,7 +466,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

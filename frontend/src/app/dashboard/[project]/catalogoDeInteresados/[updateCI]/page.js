@@ -28,10 +28,17 @@ export default function CatalogoDeInteresadosRegister(props) {
     const [phone, setPhone] = useState("");
     const [contactInformation, setContactInformation] = useState("");
     const [autority, setAutority] = useState(null);
+    const [selectedNameAutority, setSelectedNameAutority] = useState("");
     const [currentAdhesion, setCurrentAdhesion] = useState(null);
+    const [selectedNameCurrentAdhesion, setSelectedNameCurrentAdhesion] =
+        useState("");
     const [futureAdhesion, setFutureAdhesion] = useState(null);
+    const [selectedNameFutureAdhesion, setSelectedNameFutureAdhesion] =
+        useState("");
     const [requirements, setRequirements] = useState([]);
+    const [requirementsOriginales, setRequirementsOriginales] = useState([]);
     const [strategies, setStrategies] = useState([]);
+    const [strategiesOriginales, setStrategiesOriginales] = useState([]);
 
     const isTextTooLong1 = name.length > 100;
     const isTextTooLong2 = role.length > 100;
@@ -40,23 +47,72 @@ export default function CatalogoDeInteresadosRegister(props) {
     const isTextTooLong5 = contactInformation.length > 400;
     const isTextTooLong6 = email.length > 100;
     const isTextTooLong7 = phone.length > 100;
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoInteresados, setCatalogoInteresados] = useState(null);
 
     useEffect(() => {
+        if (
+            catalogoInteresados &&
+            catalogoInteresados.interesado &&
+            catalogoInteresados.requeriments &&
+            catalogoInteresados.strategies
+        ) {
+            const ciData = catalogoInteresados.interesado[0];
+            const ciData1 = catalogoInteresados.requeriments;
+            const ciData2 = catalogoInteresados.strategies;
+            console.log("F: La data es:", ciData);
+            setAutority(ciData.idNivelAutoridad);
+            setSelectedNameAutority(ciData.nombreAutoridad);
+            setCurrentAdhesion(ciData.idNivelAdhesionActual);
+            setSelectedNameCurrentAdhesion(ciData.nombreAdhesionActual);
+            setFutureAdhesion(ciData.idNivelAdhesionDeseado);
+            setSelectedNameFutureAdhesion(ciData.nombreAdhesionDeseado);
+            setName(ciData.nombreCompleto);
+            setRole(ciData.rolEnProyecto);
+            setOrganization(ciData.organizacion);
+            setCharge(ciData.cargo);
+            setEmail(ciData.correo);
+            setPhone(ciData.telefono);
+            setContactInformation(ciData.datosContacto);
+
+            const requirementsOriginal = ciData1;
+            const requirementsActualizados = requirementsOriginal.map(
+                (requirement) => ({
+                    idRequirements: requirement.idRequerimiento || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    requirements: requirement.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setRequirements(requirementsActualizados);
+            setRequirementsOriginales(requirementsActualizados);
+            setQuantity1(requirementsActualizados.length);
+
+            const strategiesOriginal = ciData2;
+            const strategiesActualizados = strategiesOriginal.map(
+                (strategy) => ({
+                    idStrategies: strategy.idEstrategia || "", // Puedes agregar un valor predeterminado en caso de que falte
+                    strategies: strategy.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
+                })
+            );
+            setStrategies(strategiesActualizados);
+            setStrategiesOriginales(strategiesActualizados);
+            setQuantity2(strategiesActualizados.length);
+            console.log("Terminó de cargar los datos");
+            setIsLoadingSmall(false);
+        }
+    }, [catalogoInteresados]);
+
+    useEffect(() => {
         const stringURLCI =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCI}`;
+            `/api/proyecto/catalogoInteresados/listarInteresado/${props.params.updateCI}`;
         axios
             .get(stringURLCI)
             .then(function (response) {
                 const ciData = response.data;
                 console.log("ID CI:", props.params.updateCI);
                 console.log("DATA:", ciData);
-                setCatalogoRiesgos(ciData);
+                setCatalogoInteresados(ciData);
             })
             .catch(function (error) {
                 console.log(error);
@@ -66,59 +122,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                 console.log("Finalizó la carga de datos");
             });
     }, []);
-
-    useEffect(() => {
-        if (catalogoInteresados && catalogoInteresados.riesgo) {
-            const ciData = catalogoInteresados.riesgo;
-            console.log("F: La data es:", ciData);
-            setProbability(ciData.idProbabilidad);
-            setValorProbability(ciData.valorProbabilidad);
-            setSelectedNameProbability(ciData.nombreProbabilidad);
-            setImpact(ciData.idImpacto);
-            setValorImpact(ciData.valorImpacto);
-            setSelectedNameImpact(ciData.nombreImpacto);
-            setName(ciData.nombreRiesgo);
-            setFechaInicio(
-                new Date(ciData.fechaIdentificacion).toISOString().split("T")[0]
-            );
-            const miembro = {
-                correoElectronico: ciData.correoElectronico,
-                idUsuario: ciData.duenoRiesgo,
-                apellidos: ciData.apellidos,
-                nombres: ciData.nombres,
-            };
-            setSelectedMiembrosList([miembro]);
-            setDetail(ciData.detalleRiesgo);
-            setCause(ciData.causaRiesgo);
-            setImpactDetail(ciData.impactoRiesgo);
-            setIsSelected(ciData.estado === "Activo" ? true : false);
-            setSelectedMiembrosList1(ciData.responsables);
-            setSelectedMiembrosList1Originales(ciData.responsables);
-            const responsesPlansOriginal = ciData.planRespuesta;
-            const responsesPlansActualizados = responsesPlansOriginal.map(
-                (responsesPlans) => ({
-                    idPlanRespuesta: responsesPlans.idPlanRespuesta || "", // Puedes agregar un valor predeterminado en caso de que falte
-                    responsePlans: responsesPlans.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
-                })
-            );
-            setResponsePlans(responsesPlansActualizados);
-            setResponsePlansOriginales(responsesPlansActualizados);
-            setQuantity1(responsesPlansActualizados.length);
-            const contingencyPlansOriginal = ciData.planContigencia;
-            const contingencyPlansActualizados = contingencyPlansOriginal.map(
-                (contingencyPlans) => ({
-                    idPlanContingencia:
-                        contingencyPlans.idPlanContingencia || "", // Puedes agregar un valor predeterminado en caso de que falte
-                    contingencyPlans: contingencyPlans.descripcion || "", // Puedes agregar un valor predeterminado en caso de que falte
-                })
-            );
-            setContingencyPlans(contingencyPlansActualizados);
-            setContingencyPlansOriginales(contingencyPlansActualizados);
-            setQuantity2(contingencyPlansActualizados.length);
-            console.log("Terminó de cargar los datos");
-            setIsLoadingSmall(false);
-        }
-    }, [catalogoInteresados]);
 
     const handleSelectedValueChangeAutority = (value) => {
         setAutority(value);
@@ -216,9 +219,82 @@ export default function CatalogoDeInteresadosRegister(props) {
         );
     }
 
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        // Encuentra elementos modificados y eliminados
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                    modifiedArray.push(newItem);
+                } */
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
+    };
+
     const onSubmit = () => {
-        const postData = {
-            idProyecto: parseInt(projectId),
+        console.log("Original:", requirementsOriginales);
+        console.log("Nuevo:", requirements);
+        console.log("Original1:", strategiesOriginales);
+        console.log("Nuevo1:", strategies);
+        const {
+            modifiedArray: modifiedArray,
+            deletedArray: deletedArray,
+            addedArray: addedArray,
+        } = findModifiedDeletedAdded(
+            requirementsOriginales,
+            requirements,
+            "idRequirements"
+        );
+
+        const {
+            modifiedArray: modifiedArray1,
+            deletedArray: deletedArray1,
+            addedArray: addedArray1,
+        } = findModifiedDeletedAdded(
+            strategiesOriginales,
+            strategies,
+            "idStrategies"
+        );
+
+        console.log("Modified:", modifiedArray);
+        console.log("Deleted:", deletedArray);
+        console.log("Added:", addedArray);
+        console.log("Modified1:", modifiedArray1);
+        console.log("Deleted1:", deletedArray1);
+        console.log("Added1:", addedArray1);
+
+        const putData = {
+            idInteresado: parseInt(props.params.updateCI),
             idAutoridad: autority,
             idAdhesionActual: currentAdhesion,
             idAdhesionDeseada: futureAdhesion,
@@ -229,25 +305,76 @@ export default function CatalogoDeInteresadosRegister(props) {
             correoElectronico: email,
             numeroTelefono: phone,
             informacionContacto: contactInformation,
-            requeriments: requirements,
-            strategies: strategies,
+            requeriments: modifiedArray,
+            strategies: modifiedArray1,
         };
-        console.log("El postData es :", postData);
-        /*         axios
-            .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRiesgo",
-                postData
+        console.log("Actualizado correctamente");
+        console.log(putData);
+        const postData = {
+            idInteresado: parseInt(props.params.updateCI),
+            requeriments: addedArray,
+            strategies: addedArray1,
+        };
+        console.log("Agregado correctamente");
+        console.log(postData);
+        const deleteData = {
+            idInteresado: parseInt(props.params.updateCI),
+            requeriments: deletedArray,
+            strategies: deletedArray1,
+        };
+        console.log("Eliminado correctamente");
+        console.log(deleteData);
+
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/modificarInteresados",
+                putData
             )
             .then((response) => {
-                // Manejar la respuesta de la solicitud POST
+                // Manejar la respuesta de la solicitud PUT
                 console.log("Respuesta del servidor:", response.data);
                 console.log("Registro correcto");
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
+                // Manejar errores si la solicitud PUT falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            });
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/insertarRequirementStrategies",
+                postData
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/eliminarRequirementStrategies",
+                {
+                    data: deleteData,
+                }
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
     };
 
     return (
@@ -413,7 +540,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeAutority}
                             idParam="idInteresadoAutoridad"
-                            initialName="Seleccione un nivel"
+                            initialName={selectedNameAutority}
                         />
                     </div>
                     <div className="containerComboCI">
@@ -432,7 +559,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeCurrentAdhesion}
                             idParam="idInteresadoAdhesionActual"
-                            initialName="Seleccione un nivel"
+                            initialName={selectedNameCurrentAdhesion}
                         />
                     </div>
                     <div className="containerComboCI">
@@ -451,7 +578,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             hasColor={false}
                             onSelect={handleSelectedValueChangeFutureAdhesion}
                             idParam="idInteresadoAdhesionActual"
-                            initialName="Seleccione un nivel"
+                            initialName={selectedNameFutureAdhesion}
                         />
                     </div>
                 </div>
@@ -539,7 +666,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     onSubmit();
-                                    //router.back();
+                                    router.back();
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
@@ -547,19 +674,23 @@ export default function CatalogoDeInteresadosRegister(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos y se excedió el límite de caractéres")
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos")
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        toast.error("Se excedió el límite de caractéres")
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
                                         return true;

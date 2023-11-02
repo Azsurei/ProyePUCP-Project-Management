@@ -10,7 +10,7 @@ export default function CardSelectedUser({
     const apellidos =
         usuarioObject.apellidos === null ? "" : usuarioObject.apellidos;
     return (
-        <div className="CardSelectedUser">
+        <div className="CardSelectedUser bg-mainBackground dark:rounded-[10px]">
             <div className="containerLeft">
                 {/* <p className="profilePic">{nombres[0] + apellidos[0]}</p> */}
                 <Avatar

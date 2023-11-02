@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
 import { useRouter } from "next/navigation";
@@ -11,12 +11,40 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Switch,
 } from "@nextui-org/react";
 import axios from "axios";
+import { SunIcon } from "./SunIcon";
+import { MoonIcon } from "./MoonIcon";
 axios.defaults.withCredentials = true;
 
 function DashboardNav({ userName, userLastName, userObj }) {
     const router = useRouter();
+    const [theme, setTheme] = useState("light");
+
+    const setLightMode = () => {
+        document.querySelector("html").classList.remove("dark");
+        localStorage.setItem("selectedTheme", "light");
+    };
+
+    const setDarkMode = () => {
+        document.querySelector("html").classList.add("dark");
+        localStorage.setItem("selectedTheme", "dark");
+    };
+
+    const toggleTheme = (e) => {
+        if (e.target.checked) setLightMode();
+        else setDarkMode();
+    };
+
+
+    //useEffect(() => {
+        const selectedTheme = localStorage.getItem("selectedTheme");
+        if (selectedTheme === "dark") {
+            document.querySelector("html").classList.add("dark");
+            localStorage.setItem("selectedTheme", "dark");
+        }
+    //},[]);
 
     const handleSignOut = () => {
         // Eliminar cookie del backend
@@ -32,7 +60,7 @@ function DashboardNav({ userName, userLastName, userObj }) {
     };
 
     return (
-        <nav className="DashboardNav">
+        <nav className="DashboardNav bg-mainBackground">
             <img
                 src="/icons/logoProyePUCP_en_svg.svg"
                 alt=""
@@ -45,6 +73,16 @@ function DashboardNav({ userName, userLastName, userObj }) {
             />
 
             <ul className="NavIconList">
+                <li>
+                    <Switch
+                        defaultSelected={selectedTheme === "light"}
+                        size="lg"
+                        color="primary"
+                        startContent={<SunIcon />}
+                        endContent={<MoonIcon />}
+                        onChange={toggleTheme}
+                    ></Switch>
+                </li>
                 <li>
                     <img src="/icons/icon-help.svg" alt="" className="icon" />
                     <p className="textGuide">Ayuda</p>
@@ -94,17 +132,20 @@ function DashboardNav({ userName, userLastName, userObj }) {
                                             backgroundColor:
                                                 "background-color: rgb(212, 212, 216)",
                                             cursor: "pointer",
-                                            borderRadius: '100%',
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            fontSize: '1.2rem',
-                                            width: '48px',
-                                            height: '48px',
-                                            color: 'black'
+                                            borderRadius: "100%",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            fontSize: "1.2rem",
+                                            width: "48px",
+                                            height: "48px",
+                                            color: "black",
                                         }}
                                     >
-                                        {userObj.nombres[0] + (userObj.apellidos!==null ? userObj.apellidos[0] : "")}
+                                        {userObj.nombres[0] +
+                                            (userObj.apellidos !== null
+                                                ? userObj.apellidos[0]
+                                                : "")}
                                     </p>
                                 }
                             />

@@ -11,7 +11,10 @@ import {
     Textarea,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { dbDateToInputDate, inputDateToDisplayDate } from "@/common/dateFunctions";
+import {
+    dbDateToInputDate,
+    inputDateToDisplayDate,
+} from "@/common/dateFunctions";
 
 export default function ModalPosterior({
     idCronograma,
@@ -27,8 +30,7 @@ export default function ModalPosterior({
     const [validDescripcion, setValidDescripcion] = useState(true);
 
     const [fechaInicio, setFechaInicio] = useState(startDate);
-    const [fechaFin, setFechaFin] = useState("");
-    const [validFechaFin, setValidFechaFin] = useState(true);
+    const [fechaFin, setFechaFin] = useState(null);
 
     const [validFechas, setValidFechas] = useState(true);
 
@@ -38,20 +40,51 @@ export default function ModalPosterior({
         setFechaInicio(startDate);
     }, [startDate]);
 
+    const cleanStates = () => {
+        setNombreTarea("");
+        setDescripcionTarea("");
+        setFechaFin("");
+
+        setValidName(true);
+        setValidDescripcion(true);
+        setValidFechas(true);
+    }
+
     return (
         <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
             size="xl"
+            isDismissable={false}
             classNames={
                 {
-                    //closeButton: "hidden",
+                    closeButton: "hidden",
                 }
             }
         >
             <ModalContent>
                 {(onClose) => {
                     const finalizarModal = () => {
+                        let allValid = true;
+                        if (nombreTarea === "") {
+                            setValidName(false);
+                            allValid = false;
+                        }
+                        if (descripcionTarea === "") {
+                            setValidDescripcion(false);
+                            allValid = false;
+                        }
+                        if (fechaFin <= fechaInicio) {
+                            setValidFechas("isFalse");
+                            allValid = false;
+                        }
+                        if (fechaFin === "" || fechaFin === null) {
+                            setValidFechas("isEmpty");
+                            allValid = false;
+                        }
+                        if (!allValid) {
+                            return;
+                        }
                         const objTarea = {
                             index: null,
                             idCronograma: idCronograma,
@@ -72,6 +105,7 @@ export default function ModalPosterior({
                         };
                         addTareaPosterior(objTarea);
                         console.log(startDate + "  " + fechaInicio);
+                        cleanStates();
                         onClose();
                     };
                     return (
@@ -123,7 +157,7 @@ export default function ModalPosterior({
                                             minRows={2}
                                             size="sm"
                                             onChange={() => {
-                                                setValidName(true);
+                                                setValidDescripcion(true);
                                             }}
                                         />
                                     </div>
@@ -134,11 +168,7 @@ export default function ModalPosterior({
                                                 value={fechaInicio}
                                                 isEditable={false}
                                                 className={""}
-                                                isInvalid={
-                                                    validFechas === true
-                                                        ? false
-                                                        : true
-                                                }
+                                                isInvalid={false}
                                                 onChangeHandler={(e) => {
                                                     setFechaInicio(
                                                         e.target.value
@@ -163,6 +193,13 @@ export default function ModalPosterior({
                                                     setValidFechas(true);
                                                 }}
                                             ></DateInput>
+                                            <div className="flex relative flex-col gap-1.5 pt-1 px-1">
+                                                <p className="text-tiny text-danger">
+                                                    
+                                                    {validFechas==="isFalse" && "Fecha fin no puede ser menor a la fecha inicio"}
+                                                    {validFechas==="isEmpty" && "Este campo no puede estar vacio"}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -171,7 +208,10 @@ export default function ModalPosterior({
                                 <Button
                                     color="danger"
                                     variant="light"
-                                    onPress={onClose}
+                                    onPress={()=>{
+                                        cleanStates();
+                                        onClose();
+                                    }}
                                 >
                                     Cancelar
                                 </Button>

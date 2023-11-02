@@ -29,6 +29,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Switch,
   } from "@nextui-org/react";
 
 import {
@@ -55,7 +56,7 @@ export default function Ingresos(props) {
     const stringUrlTipoIngreso = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
     const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
-
+    
     //const router=userRouter();
 
 
@@ -68,6 +69,7 @@ export default function Ingresos(props) {
         
     };
     const [filterValue, setFilterValue] = React.useState("");
+    const [isSelected, setIsSelected] = useState(false);
 
     useEffect(()=>{setIsLoadingSmall(false)},[])
 
@@ -123,6 +125,31 @@ export default function Ingresos(props) {
     //Funciones
 
     let idHerramientaCreada;
+    const [presupuestoId, setPresupuestoId] = useState("");
+    //const router=userRouter();
+
+
+    let flag=0;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 13) {
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    setPresupuestoId(idHerramientaCreada)
+                    console.log("idPresupuesto es:", idHerramientaCreada);
+                    flag = 1;
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+            } catch (error) {
+              console.error('Error al obtener el presupuesto:', error);
+            }
+          };
+            fetchData();
+    }, []);
 
     function insertarLineaIngreso() {
         return new Promise((resolve, reject) => {
@@ -254,7 +281,7 @@ export default function Ingresos(props) {
     const DataTable = async () => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/${projectId}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasIngreso;
               setLineasIngreso(data);
               console.log(`Esta es la data:`, data);
@@ -266,11 +293,31 @@ export default function Ingresos(props) {
             fetchData();
     };
 
-        
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };    
     useEffect(() => {
     
         DataTable();
-      }, [projectId]);
+        ObtenerPresupuesto();
+      }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
     // const filteredItems = React.useMemo(() => {
     //     let filteredTemplates = [...lineasIngreso]
@@ -307,6 +354,9 @@ export default function Ingresos(props) {
     }, [lineasIngreso, filterValue, fechaInicio, fechaFin, filtrarFecha]);
     
 
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
 
     
     return (
@@ -332,14 +382,17 @@ export default function Ingresos(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Ingresos</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Ingresos</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
-                        </Link>
-
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
                                 <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                         </Link>
                         
@@ -369,19 +422,20 @@ export default function Ingresos(props) {
                             variant="faded"
                         />
 
-                    <div className="buttonContainer">
-                        <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                        </Button>
+                        <div className="buttonContainer">
+                            <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                                Filtrar
+                            </Button>
 
-                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
-                            Agregar
-                        </Button>
-                       
+                            <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                                Agregar
+                            </Button>
+                        
                         </div>
+                        
                     </div>
                     <div className="divListaIngreso">
-                        <IngresosList lista = {filteredItems} refresh ={DataTable}></IngresosList>
+                        <IngresosList lista = {filteredItems} refresh ={DataTable} changeMoneda = {handleSelectedMoneda} valueMoneda = {isSelected}></IngresosList>
                     </div>
 
                 

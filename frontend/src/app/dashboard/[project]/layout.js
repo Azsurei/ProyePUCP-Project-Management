@@ -63,10 +63,9 @@ export default function RootLayout({ children, params }) {
                 <div
                     style={{
                         flex: "1",
-                        backgroundColor: "white",
                         position: "relative",
                     }}
-                    className="h-[100%] overflow-auto"
+                    className="h-[100%] overflow-auto bg-mainBackground"
                 >
                     {isLoadingSmall && (
                         <div
@@ -74,7 +73,6 @@ export default function RootLayout({ children, params }) {
                                 position: "absolute",
                                 width: "100%",
                                 height: "100%",
-                                background: "white",
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "center",
@@ -82,6 +80,7 @@ export default function RootLayout({ children, params }) {
                                 gap: ".2rem",
                                 zIndex: 10
                             }}
+                            className="bg-mainBackground"
                         >
                             <p
                                 style={{

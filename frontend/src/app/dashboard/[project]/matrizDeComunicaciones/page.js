@@ -407,8 +407,8 @@ export default function MatrizDeComunicaciones(props){
                 Inicio / Proyectos / Nombre del proyecto / MatrizDeComunicaciones
             </div>
             <div className="matrizComunicaciones">
-                <div className="titleComunicaciones">Matriz de Comunicaciones</div>
-                <div>
+                <div className="titleComunicaciones h-auto my-4 text-center">Matriz de Comunicaciones</div>
+                <div className="w-auto h-auto">
                        <MyDynamicTable 
                             label ="Tabla Matriz de Comunicaciones" 
                             bottomContent={bottomContent} 

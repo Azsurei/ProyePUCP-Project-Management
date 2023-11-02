@@ -39,10 +39,10 @@ export default function Project(props) {
                     style={{
                         fontFamily: "Montserrat",
                         fontSize: "1.5rem",
-                        color: "#172B4D",
                         fontWeight: "400",
                         margin: "0 0",
                     }}
+                    className="text-mainHeaders"
                 >
                     Bienvenido a tu proyecto!
                 </p>
@@ -50,11 +50,11 @@ export default function Project(props) {
                     style={{
                         fontFamily: "Montserrat",
                         fontSize: "3rem",
-                        color: "#172B4D",
                         fontWeight: "600",
                         margin: "0 0",
                         lineHeight: "40px",
                     }}
+                    className="text-mainHeaders"
                 >
                     {projectName}
                 </p>

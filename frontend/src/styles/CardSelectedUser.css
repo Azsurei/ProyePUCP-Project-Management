@@ -1,12 +1,12 @@
 .CardSelectedUser{
-    background-color: white;
+    /* background-color: white; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: .4rem .4rem;
 
-    border-radius: 5px;
+    border-radius: 10px;
     border-style: solid;
     border-color: #DFDFDF;
     border-width: 1px;

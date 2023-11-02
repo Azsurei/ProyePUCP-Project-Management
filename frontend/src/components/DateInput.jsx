@@ -3,7 +3,7 @@ export default function DateInput({
     isInvalid,
     value,
     onChangeHandler,
-    isEditable
+    isEditable,
 }) {
     // #inputBoxGeneric{
     //     width: 100%;
@@ -20,7 +20,6 @@ export default function DateInput({
     const inputStyle = {
         width: "100%",
         overflowY: "auto",
-        borderColor: isInvalid ? "red" : "rgb(228, 228, 231)",
         borderWidth: "2px",
         borderRadius: "8px",
         padding: ".2rem .4rem",
@@ -34,17 +33,29 @@ export default function DateInput({
         borderRadius: "8px",
         padding: ".2rem .4rem",
         resize: "none",
-        backgroundColor: 'rgb(244, 244, 245)',
-        borderColor: 'rgb(244, 244, 245)'
+        backgroundColor: "rgb(244, 244, 245)",
+        borderColor: "rgb(244, 244, 245)",
     };
+
+    const twStyle1 =
+        "transition-all ease-in duration-[0.2s] w-full overflow-y-auto border-2 rounded-[8px] py-[.2rem] px-[.4rem] resize-none bg-inherit " +
+        (isInvalid ? "border-danger " : "border-[#e4e4e7] ") +
+        "dark:border-solid " +
+        (isInvalid ? "dark:border-danger" : "dark:border-default-200");
+
+    const twStyle2 =
+        "transition-all ease-in duration-[0.2s] w-full overflow-y-auto border-2 rounded-[8px] py-[.2rem] px-[.4rem] resize-none bg-default-100 " +
+        (isInvalid ? "border-danger " : "border-default-100 ") +
+        "dark:border-solid " +
+        (isInvalid ? "dark:border-danger" : "dark:border-default-100");
 
     return (
         <input
-            className={className}
+            className={isEditable ? twStyle1 : twStyle2}
             type="date"
-            id="inputBoxGeneric"
-            style={isEditable===true ? inputStyle : viewOnly}
-            readOnly={isEditable===true ? false : true}
+            //id="inputBoxGeneric"
+            //style={isEditable===true ? inputStyle : viewOnly}
+            readOnly={isEditable === true ? false : true}
             name="datepicker"
             value={value}
             onChange={onChangeHandler}

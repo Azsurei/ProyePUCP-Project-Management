@@ -7,6 +7,7 @@ module.exports = {
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
         "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
     ],
+    darkMode: "class",
     theme: {
         extend: {
             fontFamily: {
@@ -23,9 +24,20 @@ module.exports = {
             },
             textColor: {
                 '172B4D': '#172B4D',
+            },
+            colors: {
+                'mainBackground': 'rgb(var(--color-mainBackground) / <alpha-value>)',
+                'mainHeaders': 'rgb(var(--color-mainHeaders) / <alpha-value>)',
+                'mainSidebar': 'rgb(var(--color-mainSidebar) / <alpha-value>)',
+                'mainUserIcon': 'rgb(var(--color-mainUserIcon) / <alpha-value>)',
+                'mainContent': 'rgb(var(--color-mainContent) / <alpha-value>)',
+
+
+                //about kanban
+                'columnBackgroundColor': 'rgb(var(--color-columnBackgroundColor) / <alpha-value>)',
+                'taskBackgroundColor' : 'rgb(var(--color-taskBackgroundColor) / <alpha-value>)',
             }
         },
     },
-    darkMode: "class",
     plugins: [nextui()],
 };
