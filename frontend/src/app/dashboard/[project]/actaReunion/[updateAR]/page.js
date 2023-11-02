@@ -26,6 +26,7 @@ import AcuerdosListEditableInput from "@/components/dashboardComps/projectComps/
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
+import { TopicEditableList } from "@/components/dashboardComps/projectComps/actaReunionComps/TopicsEditableList";
 
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
@@ -173,10 +174,19 @@ export default function editarActaReunion(props) {
             && actaReunion.lineaActaReunion.temasReunion)
         {
             const temas = actaReunion.lineaActaReunion.temasReunion.map((_, index) => ({
-                descripcion: `Tema ${index + 1}`
+                value: `tema${index + 1}`,
+                label: `Tema ${index + 1}`
             }));
             setNumeroTemas(temas);
             setListTemas(actaReunion.lineaActaReunion.temasReunion);
+
+            const acuerdos = actaReunion.lineaActaReunion.temasReunion.reduce((acc, tema) => {
+                if (Array.isArray(tema.acuerdos)) {
+                    return [...acc, ...tema.acuerdos];
+                }
+                return acc;
+            }, []);
+            setListAcuerdos(acuerdos);
         }
     }, [actaReunion]);
 
@@ -202,6 +212,13 @@ export default function editarActaReunion(props) {
             }
         ];
         setListTemas(newList_T);
+        setNumeroTemas(prevTemas => [
+            ...prevTemas, 
+            {
+              value: `tema${prevTemas.length + 1}`,
+              label: `Tema ${prevTemas.length + 1}`
+            }
+          ]);
     }
 
     const handleAddAcuerdo = ()=>{
@@ -229,14 +246,14 @@ export default function editarActaReunion(props) {
     const handleChangeTema = (e, index) => {
         const updatedEntregables = [...listTemas];
         updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
+        //console.log(updatedEntregables);
         setListTemas(updatedEntregables);
     };
 
     const handleChangeAcuerdo = (e, index) => {
         const updatedEntregables = [...listAcuerdos];
         updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
+        //console.log(updatedEntregables);
         setListAcuerdos(updatedEntregables);
     };
 
@@ -255,6 +272,10 @@ export default function editarActaReunion(props) {
         }
         console.log(updatedEntregables);
         setListTemas(updatedEntregables);
+
+        const updatedNumTemas = [...numeroTemas];
+        updatedNumTemas.splice(index - 1, 1);
+        setNumeroTemas(updatedNumTemas);
     }
 
     const handleRemoveAcuerdo = (index) => {
@@ -276,6 +297,11 @@ export default function editarActaReunion(props) {
         console.log(updatedEntregables);
         setListComentarios(updatedEntregables);
     }
+
+    useEffect(() => {
+        console.log("Nombres de Temas:", numeroTemas);
+    }, [numeroTemas]);
+    
 
 // *********************************************************************************************
 // About User Information
@@ -426,6 +452,81 @@ export default function editarActaReunion(props) {
     };
 
 // *********************************************************************************************
+// Edit Meeting Record
+// *********************************************************************************************
+    const editMeeting = () => {
+        const idLineaActaReunion = idLineaActa;
+        const nombreReunion = titleValue;
+        const fechaReunion = dateValue;
+        const horaReunion = timeValue;
+        const motivo = motiveValue;
+        const nombreConvocante = convocante.nombres + " " + convocante.apellidos;
+        const temas = listTemas.map(value => ({
+            descripcion: value.data,
+            acuerdos: listAcuerdos,
+        }));
+        const participantes = selectedMiembrosList.map(participante => ({ // assuming you have a list of participants
+            idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
+            asistio: false,
+        }));
+        const comentarios = listComentarios.map(value => ({ // assuming you have a list of comments
+            descripcion: value.data,
+        }));
+
+        const meetingLine = {
+            idLineaActaReunion,
+            nombreReunion,
+            fechaReunion,
+            horaReunion,
+            nombreConvocante,
+            motivo,
+            temas,
+            participantes,
+            comentarios
+        };
+
+        // Convert the meeting object to JSON format
+        const meetingJSON = JSON.stringify(meetingLine, null, 2);
+
+        // Now you can save meetingJSON to a file or send it in a request
+        console.log(meetingJSON);
+        console.log("Seleccionados: ",selectedMiembrosList);
+        console.log('id de Linea de acta reunion:', idLineaActaReunion);
+        console.log("Titulo de Reunion: ", nombreReunion);
+        console.log("Convocante de Reunion: ", nombreConvocante);
+        console.log("Fecha de Reunion: ", fechaReunion);
+        console.log("Hora de Reunion: ", horaReunion);
+        console.log("Motivo de Reunion: ", motivo);
+        console.log("Participantes: ", participantes);
+
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/modificarLineaActaReunion",
+                {
+                    idLineaActaReunion: idLineaActaReunion,
+                    nombreReunion: nombreReunion,
+                    fechaReunion: fechaReunion,
+                    horaReunion: horaReunion,
+                    nombreConvocante: nombreConvocante,
+
+                    motivo: motivo,
+                    temas: temas,
+                    participantes: participantes,
+                    comentarios: comentarios,
+
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                console.log("Conexion correcta");
+                router.back();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+// *********************************************************************************************
 // Page
 // *********************************************************************************************
     return (
@@ -452,6 +553,16 @@ export default function editarActaReunion(props) {
                             </div>
                             */}
                             {actaReunion && (
+                                <input 
+                                    className="lineMeetingTitle"
+                                    maxLength="50"    
+                                    value={isEditMode ? titleValue : actaReunion.lineaActaReunion.nombreReunion}
+                                    placeholder="Ingrese el título de la reunión"
+                                    readOnly={!isEditMode}
+                                    onChange={setTitleValue}
+                                ></input>
+                                
+                                /*
                                 <Input
                                     className="max-w-[1000px]"
                                     isRequired
@@ -465,6 +576,7 @@ export default function editarActaReunion(props) {
                                     isReadOnly={!isEditMode}
                                     onValueChange={setTitleValue}
                                 />
+                            */
                             )}
 
 
@@ -538,7 +650,15 @@ export default function editarActaReunion(props) {
                             <div className="meetingMotive">
                                 <h2 className="font-medium">Motivo</h2>
                                 {actaReunion && (
-                                    <Input
+                                    <input 
+                                        className="lineMeetingMotive"
+                                        maxLength="100"    
+                                        value={isEditMode ? titleValue : actaReunion.lineaActaReunion.motivo}
+                                        placeholder="Ingrese el motivo de la reunión"
+                                        onChange={setMotiveValue}
+                                        readOnly={!isEditMode}
+                                    ></input>
+                                    /*<Input
                                         className="max-w-[1000px] mt-5"
                                         isRequired
                                         key="meetingMotive"
@@ -549,7 +669,7 @@ export default function editarActaReunion(props) {
                                         value={isEditMode ? motiveValue : actaReunion.lineaActaReunion.motivo}
                                         isReadOnly={!isEditMode}
                                         onValueChange={setMotiveValue}
-                                    />
+                                    />*/
                                 )}
 
                             </div>
@@ -662,8 +782,21 @@ export default function editarActaReunion(props) {
                             </button>
 
                         </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8">
+                        <CardBody className="mt-0 py-0 pl-8 pb-0 mb-0">
                             <div className="topicsContainer">
+                                <TopicEditableList
+                                    beEditable={true}
+                                    handleChanges={handleChangeTema}
+                                    handleRemove={handleRemoveTema}
+                                    ListInputs={listTemas}
+                                    acuerdos={listAcuerdos}
+                                    participantes={participantes}
+                                    setAcuerdos={setListAcuerdos}
+                                    typeFault="temas"
+                                    typeName="Tema"
+                                >
+                                </TopicEditableList>
+                                {/*}
                                 <ListEditableInput
                                     beEditable={true}
                                     handleChanges={handleChangeTema}
@@ -672,6 +805,7 @@ export default function editarActaReunion(props) {
                                     typeFault="temas"
                                     typeName="Tema">
                                 </ListEditableInput>
+                            */}
                             </div>
                         </CardBody>
                         <CardFooter></CardFooter>
@@ -704,7 +838,8 @@ export default function editarActaReunion(props) {
                                     handleChanges={handleChangeAcuerdo}
                                     handleRemove={handleRemoveAcuerdo}
                                     ListInputs={listAcuerdos}
-                                    temas={numeroTemas}
+                                    numeroTemas={numeroTemas}
+                                    typeFault="acuerdos"
                                     typeName="Acuerdo">
                                 </AcuerdosListEditableInput>
                             </div>

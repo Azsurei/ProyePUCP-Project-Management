@@ -139,14 +139,38 @@
     }
   }
 
-  .lineMeetingTitle h1 {
+  .lineMeetingTitle {
+    position: relative;
     display: flex;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     align-items: center;
     color: #172B4D;
     font-weight: 600;
     font-family: Montserrat;
   }
+
+  .lineMeetingTitle:focus {
+    outline: none;
+    border: none;
+  }
+
+  .lineMeetingTitle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    height: 1em;
+    width: 2px;
+    background-color: #000;
+    animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% {
+      opacity: 0;
+  }
+}
 
   .convenourTitle {
     font-size: 1.2rem;
@@ -194,12 +218,29 @@
     color: #172B4D;
   }
 
-  .meetingMotive p {
+  .lineMeetingMotive {
     display: flex;
-    font-size: 1rem;
+    font-size: 1.1rem;
     align-items: flex-start;
-    padding: 1px;
+    padding: 5px;
     color: #949494;
     font-weight: 500;
     font-family: Montserrat;
   }
+
+  .lineMeetingMotive:focus {
+    outline: none;
+    border: none;
+  }
+
+  .lineMeetingMotive::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    height: 1em;
+    width: 2px;
+    background-color: #000;
+    animation: blink 1s step-start infinite;
+}
