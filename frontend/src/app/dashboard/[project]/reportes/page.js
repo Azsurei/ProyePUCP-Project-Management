@@ -56,6 +56,48 @@ export default function Reportes(props) {
     //0 para la vista de reportes generados previamente
     //1 para la vista de seleccion de tipo de nuevo reporte
 
+    const [cardActive, setCardActive] = useState(null);
+    const cardsContentArray = [
+        {
+            id: "rep1",
+            title: "Vista de estados de entregables",
+            description:
+                "Este tipo de reporte de 'Entregables' proporciona una visión detallada del estado actual de los entregables y " +
+                "las tareas asociadas en tu proyecto. Te permite supervisar el progreso, identificar obstáculos y tomar decisiones informadas para mantener tu proyecto en el camino correcto",
+            imgLink: "/images/report_1.webp",
+        },
+        {
+            id: "rep2",
+            title: "Reporte tareas y progreso",
+            description:
+                "El reporte de visualización de Tareas te brinda una perspectiva detallada y organizada de las tareas asignadas en tu" +
+                " proyecto. Este informe se centra en la disposición de las tareas por sprint, permitiéndote gestionar eficazmente la ejecución " +
+                "y el seguimiento de tus actividades. Además, te proporciona una vista general que resalta la panorámica completa de todas las " +
+                "tareas, lo que facilita la comprensión y la toma de decisiones estratégicas en tu gestión de proyectos.",
+            imgLink: "/images/report_2.webp",
+        },
+        {
+            id: "rep3",
+            title: "Informe de flujo de gastos",
+            description:
+                "Este informe proporciona un detallado flujo de ingresos, egresos y estimaciones, " +
+                "permitiéndote evaluar de manera precisa la rentabilidad y la ejecución de tus proyectos. Además, te ofrece una panorámica completa de los aspectos " +
+                "financieros y operativos. Este reporte es esencial " +
+                "para la gestión efectiva de proyectos y la optimización de los recursos disponibles.",
+            imgLink: "/images/report_3.webp",
+        },
+        {
+            id: "rep4",
+            title: "Resumen de riesgos",
+            description:
+                "El reporte de 'Identificación de Riesgos' te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. " +
+                "Este informe proporciona una evaluación detallada de los riesgos potenciales, identificando sus causas, impacto y probabilidad de ocurrencia. " +
+                "Te permite tomar medidas preventivas y desarrollar estrategias de contingencia, lo que contribuye a minimizar posibles interrupciones y " +
+                "garantiza una ejecución exitosa.",
+            imgLink: "/images/report_4.webp",
+        },
+    ];
+
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
@@ -162,11 +204,19 @@ export default function Reportes(props) {
                         Crea un nuevo reporte
                     </HeaderWithButtonsSamePage>
 
-                    <div className="flex flex-row gap-5 flex-1 mt-3">
-                        <ReportTypeCard />
-                        <ReportTypeCard />
-                        <ReportTypeCard />
-                        <ReportTypeCard />
+                    <div className="flex flex-row gap-3 flex-1 mt-3  overflow-x-auto">
+                        {cardsContentArray.map((card) => {
+                            return (
+                                <ReportTypeCard
+                                    key={card.id}
+                                    title={card.title}
+                                    description={card.description}
+                                    img={card.imgLink}
+                                    isActive={cardActive === card.id}
+                                    setActive={()=>{setCardActive(card.id)}}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
             )}
