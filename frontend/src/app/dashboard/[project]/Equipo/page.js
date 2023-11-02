@@ -237,14 +237,10 @@ export default function Equipo(props) {
                     error
                 );
             });
-        setScreenState(1);
-    };
-
-    useEffect(() => {
         axios
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/equipo/listarRol/${selectedTeam?.idEquipo}`
+                    `/api/proyecto/equipo/listarRol/${team.idEquipo}`
             )
             .then((response) => {
                 // Aquí puedes manejar la respuesta de la petición
@@ -259,7 +255,8 @@ export default function Equipo(props) {
             .catch(function (error) {
                 console.log("Error al cargar el rol del equipo: ", error);
             });
-    }, [selectedTeam]);
+        setScreenState(1);
+    };
 
     const checkIfMultipleLeadersExist = () => {
         // Filtra los participantes que tienen el rol de líder
@@ -359,16 +356,11 @@ export default function Equipo(props) {
             modifiedArray: modifiedRoles,
             deletedArray: deletedRoles,
             addedArray: addedRoles,
-        } = findModifiedDeletedAddedForRoles(
-            rolesOriginales,
-            roles,
-            "idRol"
-        );
+        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRol");
 
         console.log("Modified Roles:", modifiedRoles);
         console.log("Deleted Roles:", deletedRoles);
         console.log("Added Roles:", addedRoles);
-
 
         const selectedTeamOriginal = selectedTeamOriginales;
         const selectedTeamModified = selectedTeam;
@@ -382,6 +374,15 @@ export default function Equipo(props) {
             selectedTeamOriginal.participantes,
             selectedTeamModified.participantes,
             "idUsuario"
+        );
+
+        console.log(
+            "Todos los participantes originales son:",
+            selectedTeamOriginal.participantes
+        );
+        console.log(
+            "Todos los participantes que mandaré son:",
+            selectedTeamModified.participantes
         );
 
         // Resto del código para manejar las diferencias
@@ -648,6 +649,10 @@ export default function Equipo(props) {
                                                 ) {
                                                     onSubmitParticipantesRoles();
                                                     setUpdateState(false);
+                                                    setSelectedTeamOriginales(
+                                                        selectedTeam
+                                                    );
+                                                    setRolesOriginales(roles);
                                                     toast.success(
                                                         "Se ha modificado exitosamente"
                                                     );
@@ -668,6 +673,7 @@ export default function Equipo(props) {
                                                 setSelectedTeam(
                                                     selectedTeamOriginales
                                                 );
+                                                setRoles(rolesOriginales);
                                             }}
                                         >
                                             Cancelar
@@ -676,19 +682,19 @@ export default function Equipo(props) {
                                 ) : (
                                     <>
                                         <Button
-                                            color="success"
-                                            startContent={<ExportIcon />}
-                                            className="text-white"
-                                        >
-                                            Exportar
-                                        </Button>
-                                        <Button
                                             color="warning"
                                             startContent={<UpdateIcon />}
                                             className="text-white"
                                             onPress={() => setUpdateState(true)}
                                         >
                                             Editar
+                                        </Button>
+                                        <Button
+                                            color="success"
+                                            startContent={<ExportIcon />}
+                                            className="text-white"
+                                        >
+                                            Exportar
                                         </Button>
                                     </>
                                 )}

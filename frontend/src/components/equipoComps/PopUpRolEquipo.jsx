@@ -20,9 +20,6 @@ export default function PopUpRolEquipo({
     const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
-    const [eliminateError, setEliminateError] = useState("");
-    const [noRol, setNoRol] = useState("");
-    const [isSelected, setIsSelected] = useState(false);
     const [addRol, setAddRol] = useState(false);
     const [quantity, setQuantity] = useState(3);
 
@@ -36,22 +33,6 @@ export default function PopUpRolEquipo({
         setListRoles((prevRoles) => {
             return prevRoles.filter((role) => role.idRol !== rol.idRol);
         });
-    };
-
-    const [selectedRoles, setSelectedRoles] = useState(new Set());
-
-    //agregamos el rol a la lista de roles
-    const handleConfirmButtonClick = () => {
-        if (newRolName.trim() === "") {
-            setAddErrorRol("El nombre del rol no puede estar vacío.");
-        } else if (listRoles.some((rol) => rol.nombre === newRolName)) {
-            setAddErrorRol("El nombre del rol ya existe en la lista.");
-        } else {
-            setAddErrorRol("");
-            setListRoles([...listRoles, newRolName]);
-            setNewRolName("");
-            setAddRol(false);
-        }
     };
 
     return (
