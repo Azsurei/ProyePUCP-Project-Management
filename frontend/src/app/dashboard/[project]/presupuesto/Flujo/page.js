@@ -42,40 +42,23 @@ export default function EstimacionTabla(props) {
 const decodedUrl = decodeURIComponent(props.params.project);
 const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
 const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
 
 const [Gestion, setGestion] = useState(0.00);
-const [pGestion, setpGestion] = useState(0.00);
 
 const [Reserva, setReserva] = useState(0.00);
-const [pReserva, setpReserva] = useState(0.00);
 
 const [IGV, setIGV] = useState(0.00);
-const [pIGV, setpIGV] = useState(0.00);
 
 const [Ganancia, setGanancia] = useState(0.00);
-const [pGanancia, setpGanancia] = useState(0.00);
 
 
 
-//Validciones
-const [validGestion, setValidGestion] = useState(true);
-const [validReserva, setValidReserva] = useState(true);
-const [validIGV, setValidIGV] = useState(true);
-const [validGanancia, setValidGanancia] = useState(true);
-
-
-
-// Modales
-const {
-  isOpen: isModalConfigurarOpen,
-  onOpen: ondModalConfigurar,
-  onOpenChange: onModalConfigurarChange,
-} = useDisclosure();
-
-//Fin Modales
 const [presupuestoId, setPresupuestoId] = useState("");
-//const router=userRouter();
+
+const [cantMeses, setcantMeses] = useState(1);
+
+const [mesActual, setmesActual] = useState("");
+
 let idHerramientaCreada;
 let flag=0;
 useEffect(() => {
@@ -97,9 +80,37 @@ useEffect(() => {
         } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
         }
+
+        if (flag === 1) {
+    
+          // Aquí encadenamos el segundo axios
+          const stringURLListarPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/listarPresupuesto/"+idHerramientaCreada;
+          axios.get(stringURLListarPresupuesto)
+              .then(response => {
+                  const presupuesto = response.data.presupuesto;
+
+                  const fechaCreacionString = presupuesto[0].fechaCreacion;
+                  const fechaCreacion = new Date(fechaCreacionString);
+
+                  const mes = fechaCreacion.getUTCMonth() + 1;
+                  console.log("Cantidad Meses:"+presupuesto[0].cantidadMeses);
+                  setcantMeses(presupuesto[0].cantidadMeses);
+
+                  console.log("Mes:"+mes);
+                  setmesActual(mes);
+                  
+              })
+              .catch(error => {
+                  console.error("Error al llamar a la API:", error);
+              });
+        }
+
+
+
       };
         fetchData();
 }, []);
+
 
   
 function ccyFormat(num) {
@@ -119,66 +130,44 @@ function subtotal(items) {
   return items.map(({ subtotal }) => subtotal).reduce((sum, i) => sum + i, 0);
 }
 
-const rows = [
-  createRow('Estimacion #1', 1, 500,1),
-  createRow('Estimacion #2', 4, 50,2),
-  createRow('Estimacion #3', 2, 200,3),
-];
-const [lineasEstimacion, setLineasEstimacion] = useState([]);
+
+const [lineaIngreso, setLineaIngreso] = useState([]);
 
     //Aqui va el data table de Iwa
+
     
     
-    const DataTable = async () => {
-        const fetchData = async () => {
-            try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
-              const data = response.data.lineasEstimacionCosto;
-              setLineasEstimacion(data);
-              console.log(`Esta es la data:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.lineasEstimacionCosto);
-            } catch (error) {
-              console.error('Error al obtener las líneas de ingreso:', error);
-            }
-          };
-            fetchData();
-    };
-    useEffect(() => {
-      DataTable();
-    }, [presupuestoId]);
-//Calculos
-const invoiceSubtotal = subtotal(lineasEstimacion);
-const invoiceReserva = Reserva/100 * invoiceSubtotal;
-
-const invoiceLineaBase = invoiceSubtotal + invoiceReserva;
-
-const invoiceGestion = Gestion/100 * invoiceLineaBase;
-
-const invoicePresupuesto= invoiceLineaBase + invoiceGestion;
-
-const invoiceGanancia = Ganancia/100 * invoicePresupuesto;
-
-const invoiceTotalGanancia= invoicePresupuesto + invoiceGanancia;
-
-const invoiceIGV= IGV/100 * invoiceTotalGanancia;
-
-const invoiceTotal=invoiceIGV+invoicePresupuesto;
+const DataTable = async () => {
+    const fetchData = async () => {
+        try {
+          const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
+          const data = response.data.lineasIngreso;
+          setLineaIngreso(data);
+          console.log(`Esta es la data:`, data);
+            console.log(`Datos obtenidos exitosamente:`, response.data.lineasIngreso);
+        } catch (error) {
+          console.error('Error al obtener las líneas de ingreso:', error);
+        }
+      };
+        fetchData();
+};
+useEffect(() => {
+  DataTable();
+}, [presupuestoId]);
 
 
-//Fin Calculos
+const meses = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre'
+];
 
-// Calcula el subtotal
+// Filtrar los meses a partir del mes actual
+const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + cantMeses);
 
-    return (
+
+
+
+return (
         <div className="mainDivPresupuesto">
-        <Toaster 
-            richColors 
-            closeButton={true}
-            toastOptions={{
-                style: { fontSize: "1rem" },
-            }}
-        />
-
 
         <Breadcrumbs>
             <BreadcrumbsItem href="/" text="Inicio" />
@@ -227,52 +216,69 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
                 
             </div>
 
-            <div className="subtitlePresupuesto">Flujo de Caja</div>
+        <div className="subtitlePresupuesto">Flujo de Caja</div>
             
         <TableContainer component={Paper} >
           <Table sx={{ minWidth: 700 }} aria-label="spanning table">
             <TableHead>
               <TableRow>
-                <TableCell align="right" colSpan={2}>
-                  Cant. Recurso
+              <TableCell>Meses</TableCell>
+
+                {mesesMostrados.map((mes, index) => (
+                <TableCell className="Meses" key={index} align="left">
+                  {mes}
                 </TableCell>
-                <TableCell align="right">Tarifa</TableCell>
-                <TableCell align="right">Tiempo Req</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
+                  ))}
+
               </TableRow>
               
             </TableHead>
+
             <TableBody>
-            {lineasEstimacion.map((row) => {
+
+            <TableRow>
+              <TableCell className="IngEgTexto" align="left">Ingresos</TableCell>
+            </TableRow>
+              
+            {lineaIngreso.map((row) => {
 
               return (
                 <TableRow key={row.descripcion}>
                   <TableCell>{row.descripcion}</TableCell>
-                  <TableCell align="right">{row.cantidadRecurso}</TableCell>
-                  <TableCell align="right">{row.tarifaUnitaria}</TableCell>
-                  <TableCell align="right">{row.tiempoRequerido}</TableCell>
-                  <TableCell align="right">{ccyFormat(row.subtotal)}</TableCell>
+                  <TableCell align="left">{row.monto}</TableCell>
                 </TableRow>
               );
-            })}
+              })}
+            
+
+ 
+
+            <TableRow>
+              <TableCell className="conceptoCell" align="left">Total Ingresos</TableCell>
+
+            </TableRow>
 
 
-              <TableRow>
-                <TableCell rowSpan={3} />
-                <TableCell colSpan={2} align="right">TOTAL</TableCell>
-                <TableCell colSpan={2}
-                  align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
-              </TableRow>
+            <TableRow>
+              <TableCell className="IngEgTexto" align="left">Egresos</TableCell>
 
-          
+            </TableRow>
 
+            <TableRow>
+              <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
 
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
+
+            </TableRow>
 
               </TableBody>
             </Table>
           </TableContainer>
 
-                </div>
-        </div>
+          </div>
+      </div>
     );
 }

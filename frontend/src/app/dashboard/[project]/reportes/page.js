@@ -1,9 +1,8 @@
-"use client"
-import React from "react";
+"use client";
+import React, { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-import { useContext, useState } from "react";
 import { 
     Button,
     Input,
@@ -19,6 +18,9 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
+import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import ReportTypeCard from "@/components/dashboardComps/projectComps/reportesComps/ReportTypeCard";
 export default function Reportes(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -49,69 +51,125 @@ export default function Reportes(props) {
         { name: "Reporte de Avance", uid: "active" },
         { name: "Grupo de Reporte", uid: "active" },
     ];
+
+    const [screenState, setScreenState] = useState(0);
+    //0 para la vista de reportes generados previamente
+    //1 para la vista de seleccion de tipo de nuevo reporte
+
+    useEffect(() => {
+        setIsLoadingSmall(false);
+    }, []);
+
+    //esta sera la pantalla de vista de reportes generados y la pantalla para crear uno nuevo (seleccionar cual)
+
     return (
         <div className="divHistorialReportes">
-             <Breadcrumbs>
-                    <BreadcrumbsItem href="/" text="Inicio" />
-                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
-                    <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
-                    <BreadcrumbsItem href="" text="Historial de Reportes" />
-            </Breadcrumbs>
-            <div className="historialReportes">
-                <div className="headHistorialReportes">
-                    <div className="titleHistorialReporte">Historial de Reportes</div>
-                    <Button color="primary" startContent={<PlusIcon />} className="btnCreateReporte">
-                            Nuevo
-                    </Button>
-                       
-                </div>
-                <div className="divFiltrosReporte">
-                    <Input
-                        isClearable
-                        className="w-2/4 sm:max-w-[50%]"
-                        placeholder="Buscar reporte..."
-                        startContent={<SearchIcon />}
-                        value={filterValue}
-                        onClear={() => onClear("")}
-                        onValueChange={onSearchChange}
-                        variant="faded"
-                    />
-                    <div className="buttonReporteContainer">
-                    <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                            Filtrar
-                    </Button>
-                    <Dropdown>
-                            <DropdownTrigger className="btnFiltro">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto']"
-                                >
-                                    Proyectos
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={toolsFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setToolsFilter}
+            {screenState === 0 && (
+                <div className="flex-1 border border-green-400">
+                    <Breadcrumbs>
+                        <BreadcrumbsItem href="/" text="Inicio" />
+                        <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                        <BreadcrumbsItem
+                            href={"/dashboard/" + projectName + "=" + projectId}
+                            text={projectName}
+                        />
+                        <BreadcrumbsItem href="" text="Historial de Reportes" />
+                    </Breadcrumbs>
+                    <div className="historialReportes">
+                        <div className="headHistorialReportes">
+                            <div className="titleHistorialReporte text-mainHeaders">
+                                Historial de Reportes
+                            </div>
+                            <Button
+                                color="primary"
+                                startContent={<PlusIcon />}
+                                className="btnCreateReporte"
+                                onClick={() => {
+                                    setScreenState(1);
+                                }}
                             >
-                                {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                    </Dropdown>
+                                Nuevo
+                            </Button>
+                        </div>
+                        <div className="divFiltrosReporte">
+                            <Input
+                                isClearable
+                                className="w-2/4 sm:max-w-[50%]"
+                                placeholder="Buscar reporte..."
+                                startContent={<SearchIcon />}
+                                value={filterValue}
+                                onClear={() => onClear("")}
+                                onValueChange={onSearchChange}
+                                variant="faded"
+                            />
+                            <div className="buttonReporteContainer"> 
+                                <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
+                                 Filtrar
+                                </Button>
+                                <Dropdown>
+                                    <DropdownTrigger className="btnFiltro">
+                                        <Button
+                                            endContent={
+                                                <ChevronDownIcon className="text-small" />
+                                            }
+                                            variant="flat"
+                                            className="font-['Roboto']"
+                                        >
+                                            Proyectos
+                                        </Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu
+                                            disallowEmptySelection
+                                             aria-label="Table Columns"
+                                            closeOnSelect={false}
+                                            selectedKeys={toolsFilter}
+                                            selectionMode="multiple"
+                                            onSelectionChange={setToolsFilter}
+                                        >
+                                            {toolsOptions.map((status) => (
+                                                <DropdownItem
+                                                    key={status.uid}
+                                                 >
+                                                    {status.name}
+                                                </DropdownItem>
+                                            ))}
+                                        </DropdownMenu>
+                                </Dropdown>
+                            </div>
+                        </div> 
+                    </div>
+                    
+                    <div className="mt-5 ">
+                        aqui vera los reportes rpeviamente generados (cards)
                     </div>
                 </div>
-            </div>
+            )}
+
+            {screenState === 1 && (
+                <div className="flex-1 flex flex-col">
+                    <HeaderWithButtonsSamePage
+                        haveReturn={true}
+                        haveAddNew={false}
+                        handlerReturn={() => {
+                            setScreenState(0);
+                        }}
+                        breadcrump={
+                            "Inicio / Proyectos / " +
+                            projectName +
+                            " / Historial de Reportes"
+                        }
+                    >
+                        Crea un nuevo reporte
+                    </HeaderWithButtonsSamePage>
+
+                    <div className="flex flex-row gap-5 flex-1 mt-3">
+                        <ReportTypeCard />
+                        <ReportTypeCard />
+                        <ReportTypeCard />
+                        <ReportTypeCard />
+                    </div>
+                </div>
+            )}
             <Modal size="xl" isOpen={isModalFechaOpen} onOpenChange={onModalFechachange}>
                     <ModalContent>
                         {(onClose) => {
