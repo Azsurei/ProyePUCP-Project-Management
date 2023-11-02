@@ -21,6 +21,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ReportTypeCard from "@/components/dashboardComps/projectComps/reportesComps/ReportTypeCard";
+import DateInput from "@/components/DateInput";
 export default function Reportes(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -179,10 +180,6 @@ export default function Reportes(props) {
                                 </Dropdown>
                             </div>
                         </div> 
-                    </div>
-                    
-                    <div className="mt-5 ">
-                        aqui vera los reportes rpeviamente generados (cards)
                     </div>
                 </div>
             )}

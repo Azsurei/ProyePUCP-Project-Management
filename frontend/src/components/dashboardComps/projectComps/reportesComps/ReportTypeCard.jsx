@@ -9,18 +9,18 @@ function ReportTypeCard({ title, description, img, isActive, setActive }) {
             }
             onClick={setActive}
         >
-            <div className={"flex justify-center rounded-xl bg-mainSidebar group-hover:bg-slate-300 dark:group-hover:bg-slate-700 transition-height ease-in duration-300 delay-200 " + (isActive ? "h-[400px]" : "h-[200px]")} >
+            <div className={"flex overflow-x-hidden justify-center rounded-xl bg-mainSidebar group-hover:bg-slate-300 dark:group-hover:bg-slate-700 transition-height ease-in duration-300 delay-200 " + (isActive ? "h-[400px]" : "h-[200px]")} >
                 <Image
                     //width={"100%"}
                     height={"100%"}
                     alt="NextUI hero Image with delay"
                     src={img}
-                    className=" h-full"
+                    className=" h-full min-w-[200px]"
                 />
             </div>
 
             <div className="flex flex-col gap-2 mt-2">
-                <p className={"transition-all ease-in duration-400 delay-200 font-semibold font-[Montserrat] text-mainHeaders " + (isActive ? "text-3xl" : "text-2xl")} >
+                <p className={"transition-all ease duration-200 font-semibold font-[Montserrat] text-mainHeaders " + (isActive ? "text-3xl" : "text-2xl")} >
                     {title}
                 </p>
 
