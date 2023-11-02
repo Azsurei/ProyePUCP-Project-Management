@@ -18,22 +18,25 @@ function EditableTopic(props) {
     };
 
     const handleAddAcuerdo = ()=>{
-        const newList_A =  [
+        const nuevosAcuerdos =  [
             ...props.acuerdos,
             {
                 index: props.acuerdos.length + 1,
                 data: '',
-                date: null,
+                date: '',
+                responsables: [],
             }
         ];
-        props.setAcuerdos(newList_A);
+        //props.setAcuerdos(newList_A);
+        props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
     }
 
     const handleChangeAcuerdo = (e, index) => {
         const updatedEntregables = [...props.acuerdos];
         updatedEntregables[index - 1].data = e.target.value;
         console.log(updatedEntregables);
-        props.setAcuerdos(updatedEntregables);
+        //props.setAcuerdos(updatedEntregables);
+        props.updateAcuerdos(props.number - 1, updatedEntregables);
     };
 
     const handleRemoveAcuerdo = (index) => {
@@ -43,8 +46,21 @@ function EditableTopic(props) {
             updatedEntregables[i].index = updatedEntregables[i].index - 1;
         }
         console.log(updatedEntregables);
-        props.setAcuerdos(updatedEntregables);
+        //props.setAcuerdos(updatedEntregables);
+        props.updateAcuerdos(props.number - 1, updatedEntregables);
     }
+
+    const updateResponsables = (index, nuevosResponsables) => {
+        const nuevosAcuerdos = [...props.acuerdos];
+        nuevosAcuerdos[index].responsables = nuevosResponsables;
+        props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
+    };
+
+    const handleDateChange = (e, index) => {
+        const nuevosAcuerdos = [...props.acuerdos];
+        nuevosAcuerdos[index - 1].date = e.target.value;
+        props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
+    };
 
     return (
         <li className="EditableTopic">
@@ -55,6 +71,7 @@ function EditableTopic(props) {
                 <div className="inputAndDeleteContainer">
                     <Textarea
                         isInvalid={false}
+                        isDisabled={!props.beEditable}
                         //errorMessage="Este campo no puede estar vacio"
                         key={"bordered"}
                         variant={"bordered"}
@@ -88,6 +105,7 @@ function EditableTopic(props) {
                 >
                     {mostrarAcuerdos ? "▲ Ocultar acuerdos" : "▼   Ver acuerdos"}  
                 </button>
+                {props.beEditable && (
                 <button
                     onClick={() => {
                         setMostrarAcuerdos(true);
@@ -97,6 +115,7 @@ function EditableTopic(props) {
                 >
                     Agregar Acuerdo   
                 </button>
+                )}
             </div>
             
             {mostrarAcuerdos && (
@@ -109,11 +128,13 @@ function EditableTopic(props) {
                     <CardBody className="mt-0 py-0 pl-8">
                         <div className="agreementsContainer w-full">
                             <AcuerdosListEditableInput
-                                beEditable={true}
+                                beEditable={props.beEditable}
                                 handleChanges={handleChangeAcuerdo}
                                 handleRemove={handleRemoveAcuerdo}
                                 ListInputs={props.acuerdos}
                                 participantes={props.participantes}
+                                updateResponsables={updateResponsables}
+                                handleDateChange={handleDateChange}
                                 typeFault="acuerdos"
                                 typeName="Acuerdo">
                             </AcuerdosListEditableInput>
@@ -144,8 +165,8 @@ export function TopicEditableList(props) {
                         handleChanges={props.handleChanges}
                         handleRemove={props.handleRemove}
                         beEditable={props.beEditable}
-                        acuerdos={props.acuerdos}
-                        setAcuerdos={props.setAcuerdos}
+                        acuerdos={item.acuerdos}
+                        updateAcuerdos={props.updateAcuerdos}
                         participantes={props.participantes}
                     ></EditableTopic>
                 );
