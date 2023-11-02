@@ -1,6 +1,6 @@
-import { Image } from "@nextui-org/react";
+import { Button, Image } from "@nextui-org/react";
 
-function ReportTypeCard({ title, description, img, isActive, setActive }) {
+function ReportTypeCard({ title, description, img, hrefGoTo, isActive, setActive }) {
     return (
         <div
             className={
@@ -25,6 +25,12 @@ function ReportTypeCard({ title, description, img, isActive, setActive }) {
                 </p>
 
                 <p>{description}</p>
+            </div>
+
+            <div className="flex-1 flex justify-center items-center">
+            <Button color="primary" className="rounded-md" href={hrefGoTo}>
+                Generar registro
+            </Button>
             </div>
         </div>
     );
