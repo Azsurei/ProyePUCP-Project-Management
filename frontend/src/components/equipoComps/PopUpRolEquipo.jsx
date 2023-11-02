@@ -133,7 +133,7 @@ export default function PopUpRolEquipo({
                                                     </p>
                                                 </div>
                                                 {role.nombreRol !==
-                                                    "Miembro" && (
+                                                    "Miembro" && role.nombreRol!="Líder" && (
                                                     <img
                                                         src="/icons/icon-trash.svg"
                                                         alt="delete"

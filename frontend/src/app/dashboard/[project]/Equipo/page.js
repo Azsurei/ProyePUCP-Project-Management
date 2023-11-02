@@ -22,6 +22,7 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import { AddIcon } from "@/components/equipoComps/AddIcon";
 
 axios.defaults.withCredentials = true;
 
@@ -63,6 +64,10 @@ export default function Equipo(props) {
 
     const toggleModal2 = () => {
         setModal2(!modal2);
+    };
+
+    const handleAddRoles = (newRoles) => {
+        setRoles(newRoles);
     };
 
     const returnListOfMiembros = (newMiembrosList) => {
@@ -128,7 +133,7 @@ export default function Equipo(props) {
                     // Si el usuario coincide, actualiza el idRol
                     return {
                         ...participant,
-                        idRol: value, // Actualiza el idRol con el nuevo valor
+                        idRolEquipo: value, // Actualiza el idRol con el nuevo valor
                         nombreRol: name, // Actualiza el nombreRol con el nuevo valor
                     };
                 }
@@ -274,20 +279,10 @@ export default function Equipo(props) {
         });
     }, [selectedTeam]);
 
-    const checkIfLeaderExists = () => {
-        // Verifica si al menos un participante tiene el rol de líder
-        console.log("El selectedTeam para verificar líder es:", selectedTeam);
-        const isLeader = selectedTeam.participantes.some(
-            (participant) => participant.nombreRol === "Lider"
-        );
-
-        return isLeader;
-    };
-
     const checkIfMultipleLeadersExist = () => {
         // Filtra los participantes que tienen el rol de líder
         const leaderParticipants = selectedTeam.participantes.filter(
-            (participant) => participant.nombreRol === "Lider"
+            (participant) => participant.nombreRol === "Líder"
         );
 
         // Verifica si tienes más de un líder
@@ -342,6 +337,7 @@ export default function Equipo(props) {
     };
 
     const onSubmitParticipantesRoles = () => {
+        console.log("Todos los roles que mandaré son:", roles);
         const selectedTeamOriginal = selectedTeamOriginales;
         const selectedTeamModified = selectedTeam;
 
@@ -363,7 +359,7 @@ export default function Equipo(props) {
 
         // Realizar solicitudes PUT, POST y DELETE según sea necesario
         // ...
-        const putData = {
+        /* const putData = {
             idEquipo: selectedTeam.idEquipo,
             miembrosModificados: modifiedParticipants,
         };
@@ -380,9 +376,10 @@ export default function Equipo(props) {
             miembrosEliminados: deletedParticipants,
         };
         console.log("Eliminado correctamente");
-        console.log(deleteData);
+        console.log(deleteData); */ 
+
         // Resto del código
-        axios
+/*         axios
             .put(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/modificarMiembroEquipo",
@@ -431,7 +428,7 @@ export default function Equipo(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
-            });
+            }); */
     };
 
     return (
@@ -604,11 +601,17 @@ export default function Equipo(props) {
                                 {updateState ? (
                                     <>
                                         <Button
+                                            color="secondary"    
+                                            startContent={<AddIcon />}
+                                            onClick={() => toggleModal()}
+                                        >
+                                            Agregar rol
+                                        </Button>
+                                        <Button
                                             color="primary"
                                             startContent={<SaveIcon />}
                                             onPress={() => {
                                                 if (
-                                                    checkIfLeaderExists() &&
                                                     !checkIfMultipleLeadersExist()
                                                 ) {
                                                     onSubmitParticipantesRoles();
@@ -616,15 +619,9 @@ export default function Equipo(props) {
                                                     toast.success(
                                                         "Se ha modificado exitosamente"
                                                     );
-                                                } else if (
-                                                    checkIfMultipleLeadersExist()
-                                                ) {
-                                                    toast.error(
-                                                        "Solo puede haber un líder"
-                                                    );
                                                 } else {
                                                     toast.error(
-                                                        "Un miembro debe tener el rol de líder"
+                                                        "Solo puede haber máximo un líder"
                                                     );
                                                 }
                                             }}
@@ -724,12 +721,14 @@ export default function Equipo(props) {
                                                 <div className="col-span-3 flex mt-4">
                                                     <ComboBoxArrayEquipo
                                                         people={roles}
-                                                        onSelect={(value) =>
+                                                        onSelect={(value,name) =>
                                                             handleSelectedValueChangeRol(
                                                                 value,
-                                                                component.idUsuario
+                                                                name,
+                                                                member.idUsuario
                                                             )
                                                         }
+                                                        autoSelectedValue={{idRol:member.idRol, nombreRol:member.nombreRol}}
                                                     />
                                                 </div>
                                                 <div className="col-span-1 flex mt-4 justify-center">
@@ -805,7 +804,8 @@ export default function Equipo(props) {
                         <PopUpRolEquipo
                             modal={modal}
                             toggle={() => toggleModal()} // Pasa la función como una función de flecha
-                            idEquipo={selectedTeam.idEquipo}
+                            handleAddRoles={handleAddRoles}
+                            initialListRoles={roles}
                         />
                     )}
                     {modal2 && (
