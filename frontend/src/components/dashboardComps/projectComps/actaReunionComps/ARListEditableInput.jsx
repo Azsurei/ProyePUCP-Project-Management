@@ -10,6 +10,7 @@ import {
     Button,
 } from "@nextui-org/react";
 import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import ModalParticipantes from "./ModalParticipantes";
 
 import React, { useEffect, useState } from "react";
 
@@ -50,7 +51,7 @@ function ModalDetalleResponsables({isOpen, onOpenChange, responsables, removeRes
 }
 
 function EditableInput(props) {
-    const [responsables, setResponsables] = useState([]);
+    //const [responsables, setResponsables] = useState(props.responsables || []);
     const [modal, setModal] = useState(false);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
@@ -58,20 +59,31 @@ function EditableInput(props) {
         setModal(!modal);
     };
 
-    const returnResponsables = (newMiembrosList) => {
-        const newMembrsList = [...responsables, ...newMiembrosList];
+    const handleResponsablesChange = (newResponsables) => {
+        setResponsables(newResponsables);
+        props.updateResponsables(props.number - 1, newResponsables);
+    };
 
-        setResponsables(newMembrsList);
+    const returnResponsables = (newMiembrosList) => {
+        const newMembrsList = [...props.responsables, ...newMiembrosList];
+        props.updateResponsables(props.number - 1, newMembrsList);
+        //setResponsables(newMembrsList);
         setModal(!modal);
     };
 
     const removeResponsable = (miembro) => {
-        const newMembrsList = responsables.filter(
+        const newMembrsList = props.responsables.filter(
             (item) => item.idUsuario !== miembro.idUsuario
         );
-        setResponsables(newMembrsList);
+        props.updateResponsables(props.number - 1, newMembrsList);
+        //setResponsables(newMembrsList);
         console.log(newMembrsList);
     };
+
+    const handleDateChange = (e) => {
+        //setFecha(e.target.value);
+        props.handleDateChange(e, props.number);
+    }
 /*
     useEffect(() => {
         console.log("Los responsables son: " + responsables);
@@ -86,6 +98,7 @@ function EditableInput(props) {
                         <p>Acuerdo {props.number}</p>
                         <Textarea
                             isInvalid={false}
+                            isDisabled={!props.beEditable}
                             key={"bordered"}
                             variant={"bordered"}
                             labelPlacement="outside"
@@ -103,26 +116,26 @@ function EditableInput(props) {
                     <div className="flex flex-col">
                         <div className="titleResponsbles flex align-center">
                             <p>Responsable</p>
+                            {props.beEditable && (
                             <button
                                 onClick={toggleModal}
                                 className="ml-3 bg-[#f0ae19] text-white w-8 h-8
                                     rounded-full">
                                 <img src="/icons/icon-searchBar.svg"/>
                             </button>
+                            )}
                             {modal && (
-                                <ModalUsers
-                                    listAllUsers={true}
+                                <ModalParticipantes
+                                    participantes={props.participantes}
                                     handlerModalClose={toggleModal}
                                     handlerModalFinished={returnResponsables}
-                                    excludedUsers={[]}
-                                    //idProyecto={projectId}
-                                ></ModalUsers>
+                                ></ModalParticipantes>
                             )}
                         </div>
                         <div className="responsablesContainer">
-                            {responsables.length > 0 ? (
+                            {(props.responsables || []).length > 0 ? (
                                 <AvatarGroup isBordered max={4}>
-                                    {responsables.map((responsable, index) => (
+                                    {props.responsables.map((responsable, index) => (
                                         <Avatar key={responsable.idUsuario} src="" fallback={
                                             <Tooltip 
                                                 content={
@@ -146,7 +159,7 @@ function EditableInput(props) {
                             <ModalDetalleResponsables 
                                 isOpen={isOpen}
                                 onOpenChange={onOpenChange}
-                                responsables={responsables}
+                                responsables={props.responsables}
                                 removeResponsable={removeResponsable}
                             />
                         }
@@ -158,11 +171,10 @@ function EditableInput(props) {
                             type="date"
                             id="acuerdoDatePicker"
                             name="fecha"
-                            value={props.fecha}
-                            onChange={(e) => {
-                                props.handleChanges(e, props.number);
-                            }}
+                            value={props.date}
+                            onChange={handleDateChange}
                             className="w-full col-span-12 md:col-span-6 mb-6 md:mb-0"
+                            readOnly={!props.beEditable}
                         ></input>
                     </div>
                     {props.beEditable && (
@@ -198,10 +210,12 @@ export default function AcuerdosListEditableInput(props) {
                         data={item.data}
                         handleChanges={props.handleChanges}
                         handleRemove={props.handleRemove}
+                        handleDateChange={props.handleDateChange}
                         beEditable={props.beEditable}
+                        responsables={item.responsables}
+                        updateResponsables={props.updateResponsables}
                         participantes={props.participantes}
-                        fecha={item.fecha}
-                        tema={item.tema}
+                        date={item.date}
                     ></EditableInput>
                 );
             })}

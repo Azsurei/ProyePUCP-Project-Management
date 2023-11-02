@@ -66,7 +66,7 @@ export default function Reportes(props) {
                 "Este tipo de reporte de 'Entregables' proporciona una visión detallada del estado actual de los entregables y " +
                 "las tareas asociadas en tu proyecto. Te permite supervisar el progreso, identificar obstáculos y tomar decisiones informadas para mantener tu proyecto en el camino correcto",
             imgLink: "/images/report_1.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/repotes/reporteEntregables"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteEntregables"
         },
         {
             id: "rep2",
@@ -77,7 +77,7 @@ export default function Reportes(props) {
                 "y el seguimiento de tus actividades. Además, te proporciona una vista general que resalta la panorámica completa de todas las " +
                 "tareas, lo que facilita la comprensión y la toma de decisiones estratégicas en tu gestión de proyectos.",
             imgLink: "/images/report_2.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/repotes/reporteTareas"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteTareas"
         },
         {
             id: "rep3",
@@ -88,7 +88,7 @@ export default function Reportes(props) {
                 "financieros y operativos. Este reporte es esencial " +
                 "para la gestión efectiva de proyectos y la optimización de los recursos disponibles.",
             imgLink: "/images/report_3.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/repotes/reportePresupuesto"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuesto"
         },
         {
             id: "rep4",
@@ -99,7 +99,7 @@ export default function Reportes(props) {
                 "Te permite tomar medidas preventivas y desarrollar estrategias de contingencia, lo que contribuye a minimizar posibles interrupciones y " +
                 "garantiza una ejecución exitosa.",
             imgLink: "/images/report_4.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/repotes/reporteRiesgos"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteRiesgos"
         },
     ];
 
@@ -213,6 +213,7 @@ export default function Reportes(props) {
                                     title={card.title}
                                     description={card.description}
                                     img={card.imgLink}
+                                    hrefGoTo={card.hrefGoTo}
                                     isActive={cardActive === card.id}
                                     setActive={()=>{setCardActive(card.id)}}
                                 />

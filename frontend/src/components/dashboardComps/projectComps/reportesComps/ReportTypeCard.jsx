@@ -1,6 +1,9 @@
 import { Button, Image } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 function ReportTypeCard({ title, description, img, hrefGoTo, isActive, setActive }) {
+    const router = useRouter();
+
     return (
         <div
             className={
@@ -28,7 +31,7 @@ function ReportTypeCard({ title, description, img, hrefGoTo, isActive, setActive
             </div>
 
             <div className="flex-1 flex justify-center items-center">
-            <Button color="primary" className="rounded-md" href={hrefGoTo}>
+            <Button color="primary" className="rounded-md" onClick={()=>{router.push(hrefGoTo)}}>
                 Generar registro
             </Button>
             </div>
