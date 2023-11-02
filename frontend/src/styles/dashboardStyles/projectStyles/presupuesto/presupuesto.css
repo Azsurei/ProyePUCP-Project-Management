@@ -399,3 +399,28 @@
 
     align-items: center;
 }
+
+.conceptoCell{
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+}
+
+.IngEgTexto{
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 800;
+}
+
+.Meses{
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+
+}
