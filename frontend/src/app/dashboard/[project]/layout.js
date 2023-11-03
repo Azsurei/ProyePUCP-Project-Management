@@ -22,7 +22,7 @@ export default function RootLayout({ children, params }) {
 
     const { sessionData, setSession } = useContext(SessionContext);
     const [rolHasBeenAsigned, setRolAsigned] = useState(false);
-    const [ isSidebarDone, setIsSidebarDone] = useState(false);
+    const [isSidebarDone, setIsSidebarDone] = useState(false);
 
     const [projectRolData, setProjectRolData] = useState({
         rolInProject: 1,
@@ -30,6 +30,8 @@ export default function RootLayout({ children, params }) {
     });
 
     useEffect(() => {
+        setIsLoadingSmall(true);
+        console.log("entro a project");
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/usuario/verRolUsuarioEnProyecto";
@@ -70,8 +72,10 @@ export default function RootLayout({ children, params }) {
             .get(stringURL2)
             .then(function (response) {
                 setHerramientasInfo(response.data.herramientas);
-                console.log("============= LAYOUT HERRAMIENTAS TERMINO DE CARGAR");
-                setIsLoadingSmall(false);
+                console.log(
+                    "============= LAYOUT HERRAMIENTAS TERMINO DE CARGAR"
+                );
+                //setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -88,7 +92,7 @@ export default function RootLayout({ children, params }) {
                     projectIdRole={projectRolData.rolInProject}
                     projectNameRole={projectRolData.rolNameInProject}
                     currentUrl={params.project}
-                    handlerImDone={()=>{
+                    handlerImDone={() => {
                         setIsSidebarDone(true);
                         console.log("============ SIDEBAR TERMINO DE CARGAR");
                     }}
@@ -134,7 +138,10 @@ export default function RootLayout({ children, params }) {
                                 </Box>
                             </div>
                         )}
-                        {herramientasInfo!==null && rolHasBeenAsigned && isSidebarDone && children}
+                        {herramientasInfo !== null &&
+                            rolHasBeenAsigned &&
+                            isSidebarDone &&
+                            children}
                     </div>
                 </HerramientasInfo.Provider>
             </SmallLoadingScreen.Provider>
