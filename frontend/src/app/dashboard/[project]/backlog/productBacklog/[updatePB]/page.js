@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/ContainerScenario2";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
-import { SmallLoadingScreen } from "../../../layout";
+import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -28,10 +28,11 @@ export default function ProductBacklogUpdate(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const idHU = props.params.updatePB;
-    const decodedUrl = decodeURIComponent(props.params.project); //borrar
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1); //borrar
-    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarEpicas`; //borrar
-    const stringURLBacklog = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarBacklog`;
+    const decodedUrl = decodeURIComponent(props.params.project); 
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1); 
+    const {herramientasInfo} = useContext(HerramientasInfo);
+    const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
+    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -103,27 +104,7 @@ export default function ProductBacklogUpdate(props) {
     }, [historiaUsuario]);
 
     const [modal, setModal] = useState(false);
-    const [backlog, setBacklog] = useState([]);
 
-    useEffect(() => {
-        const fetchBacklog = async () => {
-            try {
-                const response = await axios.get(stringURLBacklog);
-                if (response.status === 200) {
-                    setBacklog(response.data.backlog);
-                    console.log(
-                        "Se obtuvo el backlog correctamente",
-                        response.data.backlog
-                    );
-                }
-                setIsLoadingSmall(false);
-            } catch (error) {
-                setError("Error al obtener el backlog: " + error.message);
-            }
-        };
-
-        fetchBacklog();
-    }, []);
     const toggleModal = () => {
         setModal(!modal);
     };
@@ -137,7 +118,9 @@ export default function ProductBacklogUpdate(props) {
     }, [modal]);
 
     useEffect(() => {
-        const stringURLHU = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
+        const stringURLHU =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            `/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
         axios
             .get(stringURLHU)
             .then(function (response) {
@@ -337,7 +320,8 @@ export default function ProductBacklogUpdate(props) {
         console.log(deleteData);
         axios
             .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/backlog/hu/modificarHistoriaDeUsuario",
                 putData
             )
             .then((response) => {
@@ -349,30 +333,40 @@ export default function ProductBacklogUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud PUT falla
                 console.error("Error al realizar la solicitud PUT:", error);
-            }); 
-        axios.post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/insertarCriterioRequisito", postData)
+            });
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/backlog/hu/insertarCriterioRequisito",
+                postData
+            )
             .then((response) => {
-              // Manejar la respuesta de la solicitud POST
-              console.log("Respuesta del servidor (POST):", response.data);
-              console.log("Registro correcto (POST)");
-              // Realizar acciones adicionales si es necesario
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
-              // Manejar errores si la solicitud POST falla
-              console.error("Error al realizar la solicitud POST:", error);
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
             });
-        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/eliminarCriterioRequisito", {
-                data: deleteData
-              })
-                .then((response) => {
-                  // Manejar la respuesta de la solicitud DELETE
-                  console.log("Respuesta del servidor (DELETE):", response.data);
-                  console.log("Eliminación correcta (DELETE)");
-                  // Realizar acciones adicionales si es necesario
-                })
-                .catch((error) => {
-                  // Manejar errores si la solicitud DELETE falla
-                  console.error("Error al realizar la solicitud DELETE:", error);
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/backlog/hu/eliminarCriterioRequisito",
+                {
+                    data: deleteData,
+                }
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
             });
     };
 
@@ -486,7 +480,10 @@ export default function ProductBacklogUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasPrioridad"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            }
                             property="historiasPrioridad"
                             nameDisplay="nombre"
                             hasColor={true}
@@ -523,7 +520,10 @@ export default function ProductBacklogUpdate(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasEstado"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/backlog/hu/listarHistoriasEstado"
+                            }
                             property="historiasEstado"
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}
@@ -701,8 +701,11 @@ export default function ProductBacklogUpdate(props) {
                         modal={modal}
                         toggle={() => toggleModal()} // Pasa la función como una función de flecha
                         url={stringURLEpics}
-                        backlogID={backlog[0].idProductBacklog}
-                        urlEliminate={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/eliminarEpica`}
+                        backlogID={idProductBacklog}
+                        urlEliminate={
+                            process.env.NEXT_PUBLIC_BACKEND_URL +
+                            `/api/proyecto/backlog/hu/eliminarEpica`
+                        }
                     />
                 )}
             </div>
