@@ -381,11 +381,11 @@ export default function CatalogoDeInteresadosRegister(props) {
         <div className="containerRegisterCI">
             <div className="headerRegisterCI">
                 Inicio / Proyectos / Nombre del proyecto / Catálogo de
-                Interesados/ Registrar interesado
+                Interesados/ Actualizar interesado
             </div>
             <div className="interesedRegisterCI">
                 <div className="titleInteresedRegisterCI">
-                    Registrar nuevo interesado
+                    Actualizar interesado
                 </div>
                 <div className="containerInputCI">
                     <Input
