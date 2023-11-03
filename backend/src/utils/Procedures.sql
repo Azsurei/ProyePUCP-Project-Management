@@ -38,6 +38,19 @@ BEGIN
   END IF;
 END$
 DROP PROCEDURE INSERTAR_PROYECTO;
+-- CAMBIAR PASSWORD
+DROP PROCEDURE IF EXISTS CAMBIAR_PASSWORD_CUENTA_USUARIO;
+
+DELIMITER $
+CREATE PROCEDURE CAMBIAR_PASSWORD_CUENTA_USUARIO(
+    IN _idUsuario INT,
+    IN _password VARCHAR(200)
+)
+BEGIN
+	UPDATE Usuario 
+    SET password = MD5(_password) 
+    WHERE idUsuario = _idUsuario AND activo = 1;
+END$
 ------------
 -- Proyecto
 ------------
@@ -853,14 +866,15 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_RETROSPECTIVA(
     IN _idRetrospectiva INT,
     IN _idSprint INT,
+    IN _titulo VARCHAR(255),
     IN _cantBien INT,
     IN _cantMal INT,
     IN _cantQueHacer INT
 )
 BEGIN
 	DECLARE _idLineaRetrospectiva INT;
-	INSERT INTO LineaRetrospectiva(idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
-    VALUES(_idRetrospectiva,_idSprint,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
+	INSERT INTO LineaRetrospectiva(idRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
+    VALUES(_idRetrospectiva,_idSprint,_titulo,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
     SET _idLineaRetrospectiva = @@last_insert_id;
     SELECT _idLineaRetrospectiva AS idLineaRetrospectiva;
 END$
@@ -870,13 +884,14 @@ DELIMITER $
 CREATE PROCEDURE MODIFICAR_LINEA_RETROSPECTIVA(
     IN _idLineaRetrospectiva INT,
 	IN _idSprint INT,
+    IN _titulo VARCHAR(255),
     IN _cantBien INT,
     IN _cantMal INT,
     IN _cantQueHacer INT
 )
 BEGIN
 	UPDATE LineaRetrospectiva
-    SET cantBien = _cantBien, cantMal = _cantMal, cantQueHacer = _cantQueHacer, idSprint = _idSprint
+    SET cantBien = _cantBien, cantMal = _cantMal, cantQueHacer = _cantQueHacer, idSprint = _idSprint, titulo = _titulo
     WHERE idLineaRetrospectiva = _idLineaRetrospectiva AND activo =1;
 END$
 
@@ -890,7 +905,7 @@ CREATE PROCEDURE LISTAR_LINEA_RETROSPECTIVA_X_ID_RETROSPECTIVA(
     IN _idRetrospectiva INT
 )
 BEGIN
-    SELECT lr.idLineaRetrospectiva,lr.cantBien, lr.cantMal,lr.cantQueHacer
+    SELECT lr.idLineaRetrospectiva,lr.titulo,lr.cantBien, lr.cantMal,lr.cantQueHacer
     FROM LineaRetrospectiva lr 
     WHERE lr.idRetrospectiva = _idRetrospectiva 
     AND lr.activo=1;

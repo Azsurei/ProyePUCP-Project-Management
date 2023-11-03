@@ -583,7 +583,7 @@ CREATE TABLE LineaRetrospectiva(
 	idLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
 	idRetrospectiva INT,
     idSprint INT,
-    idEquipo INT,
+    titulo VARCHAR(255),
     cantBien INT,
     cantMal INT,
     cantQueHacer INT,
@@ -593,6 +593,8 @@ CREATE TABLE LineaRetrospectiva(
     FOREIGN KEY (idSprint) REFERENCES Sprint(idSprint)
 )
 ENGINE = InnoDB;
+
+ALTER TABLE LineaRetrospectiva ADD COLUMN titulo VARCHAR(255);
 
 
 CREATE TABLE CriterioRetrospectiva(
