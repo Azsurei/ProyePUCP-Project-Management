@@ -864,15 +864,18 @@ POST http://localhost:8080/api/proyecto/autoEvaluacion/crearAutoEvaluacion HTTP/
 Content-Type:  application/json
 
 {
-  "idProyecto": 148,
-  "criterio1": "Hola",
-  "criterio2": "Hola",
-  "criterio3": "Hola",
-  "criterio4": "Hola"
+  "idProyecto": 173,
+  "nombre": "Prueba",
+  "criterio1": "Prueba1",
+  "criterio2": "Prueba2",
+  "criterio3": "Prueba3",
+  "criterio4": "Prueba4",
+  "fechaInicio": "2023-10-25",
+  "fechaFin": "2023-10-26"
 }
 
 ###LISTAR AUTOEVALUACION
-GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/148/93 HTTP/1.1
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarTodasAutoEvaluacion/173 HTTP/1.1
 Content-Type:  application/json
 
 ###

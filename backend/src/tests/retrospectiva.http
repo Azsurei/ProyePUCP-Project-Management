@@ -1,11 +1,71 @@
+####
+### LINEAS RETROSPECTIVA
 ###
 POST http://localhost:8080/api/proyecto/retrospectiva/insertarLineaRetrospectiva HTTP/1.1
 Content-Type:  application/json
 
 {
   "idRetrospectiva": 34,
-  "idEquipo": 94,
+  "idSprint": 1,
+  "titulo": "prueba update tabla",
   "cantBien": 3,
   "cantMal": 1,
   "cantQueHacer": 2
 }
+
+###
+GET http://localhost:8080/api/proyecto/retrospectiva/listarLineasRetrospectivaXIdRetrospectiva/34 HTTP/1.1
+Content-Type:  application/json
+
+###
+PUT http://localhost:8080/api/proyecto/retrospectiva/modificarLineaRetrospectiva HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idLineaRetrospectiva": 7,
+    "idSprint": 1,
+    "cantBien": 3,
+    "cantMal": 1,
+    "cantQueHacer": 20
+}
+
+###
+DELETE http://localhost:8080/api/proyecto/retrospectiva/eliminarLineaRetrospectiva HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idLineaRetrospectiva": 3
+}
+
+### ITEM LINEA RETROSPECTIVA
+
+POST http://localhost:8080/api/proyecto/retrospectiva/insertarItemLineaRetrospectiva HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idLineaRetrospectiva": 7,
+  "idCriterioRetrospectiva": 3,
+  "descripcion": "Se hizo lo que se tenia que hacer prueba 3"
+}
+
+###
+GET http://localhost:8080/api/proyecto/retrospectiva/listarItemLineasRetrospectivaXIdLineaRetrospectiva/7 HTTP/1.1
+Content-Type:  application/json
+
+### 
+PUT http://localhost:8080/api/proyecto/retrospectiva/modificarItemLineaRetrospectiva HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idItemLineaRetrospectiva": 10,
+    "descripcion": "nueva descripcion probando"
+}
+
+###
+DELETE http://localhost:8080/api/proyecto/retrospectiva/eliminarItemLineaRetrospectiva HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idItemLineaRetrospectiva": 8
+}
+

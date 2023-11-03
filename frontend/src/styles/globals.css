@@ -24,6 +24,7 @@
         --color-mainSidebar: 245 245 245;
         --color-mainUserIcon: 211 211 211;
         --color-mainContent: 245 245 245;
+        --color-mainNavBar: 23 37 84;
     
         --color-columnBackgroundColor: 241 245 249;
         --color-taskBackgroundColor: 255 255 255; 
@@ -37,6 +38,7 @@
         --color-mainSidebar: 30 30 30;
         --color-mainUserIcon: 148 163 184;
         --color-mainContent: 0 0 0;
+        --color-mainNavBar: 9 9 11;
 
 
         --color-columnBackgroundColor: 22 28 34;

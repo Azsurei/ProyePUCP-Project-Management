@@ -406,21 +406,43 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
+
+}
+
+.descripcionIngEg{
+
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    width: 20rem;
+
 }
 
 .IngEgTexto{
     color: #172B4D;
     font-family: Roboto;
-    font-size: 14px;
-    font-style: italic;
+    font-size: 15px;
+    font-style: normal;
     font-weight: 800;
+
 }
 
 .Meses{
     color: #172B4D;
     font-family: Roboto;
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 500;
+    
+
+}
+
+.Totales{
+    color: #172B4D;
+    font-family: Roboto;
+    font-weight: 800;
+    font-size: 15px;
 
 }

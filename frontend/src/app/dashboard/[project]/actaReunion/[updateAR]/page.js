@@ -26,6 +26,7 @@ import AcuerdosListEditableInput from "@/components/dashboardComps/projectComps/
 import ListEditableInput from "@/components/dashboardComps/projectComps/EDTComps/ListEditableInput";
 import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/ButtonAddNew";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
+import { TopicEditableList } from "@/components/dashboardComps/projectComps/actaReunionComps/TopicsEditableList";
 
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
@@ -165,18 +166,21 @@ export default function editarActaReunion(props) {
     const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
     const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
 
-    const [numeroTemas, setNumeroTemas] = useState([]);
 
     useEffect(() => {
         if (actaReunion
             && actaReunion.lineaActaReunion
             && actaReunion.lineaActaReunion.temasReunion)
         {
-            const temas = actaReunion.lineaActaReunion.temasReunion.map((_, index) => ({
-                descripcion: `Tema ${index + 1}`
-            }));
-            setNumeroTemas(temas);
             setListTemas(actaReunion.lineaActaReunion.temasReunion);
+
+            const acuerdos = actaReunion.lineaActaReunion.temasReunion.reduce((acc, tema) => {
+                if (Array.isArray(tema.acuerdos)) {
+                    return [...acc, ...tema.acuerdos];
+                }
+                return acc;
+            }, []);
+            setListAcuerdos(acuerdos);
         }
     }, [actaReunion]);
 
@@ -198,22 +202,18 @@ export default function editarActaReunion(props) {
             ...listTemas,
             {
                 index: listTemas.length + 1,
-                data: ''
+                data: '',
+                acuerdos: [],
             }
         ];
         setListTemas(newList_T);
     }
 
-    const handleAddAcuerdo = ()=>{
-        const newList_A =  [
-            ...listAcuerdos,
-            {
-                index: listAcuerdos.length + 1,
-                data: ''
-            }
-        ];
-        setListAcuerdos(newList_A);
-    }
+    const updateAcuerdos = (indexTema, nuevosAcuerdos) => {
+        const temasActualizados = [...listTemas];
+        temasActualizados[indexTema].acuerdos = nuevosAcuerdos;
+        setListTemas(temasActualizados);
+    };
 
     const handleAddComentario = ()=>{
         const newList_C =  [
@@ -229,15 +229,8 @@ export default function editarActaReunion(props) {
     const handleChangeTema = (e, index) => {
         const updatedEntregables = [...listTemas];
         updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
+        //console.log(updatedEntregables);
         setListTemas(updatedEntregables);
-    };
-
-    const handleChangeAcuerdo = (e, index) => {
-        const updatedEntregables = [...listAcuerdos];
-        updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
-        setListAcuerdos(updatedEntregables);
     };
 
     const handleChangeComentario = (e, index) => {
@@ -255,16 +248,9 @@ export default function editarActaReunion(props) {
         }
         console.log(updatedEntregables);
         setListTemas(updatedEntregables);
-    }
 
-    const handleRemoveAcuerdo = (index) => {
-        const updatedEntregables = [...listAcuerdos];
-        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-        for (let i = index - 1; i < updatedEntregables.length; i++) {
-            updatedEntregables[i].index = updatedEntregables[i].index - 1;
-        }
-        console.log(updatedEntregables);
-        setListAcuerdos(updatedEntregables);
+        const updatedNumTemas = [...numeroTemas];
+        updatedNumTemas.splice(index - 1, 1);
     }
 
     const handleRemoveComentario = (index) => {
@@ -392,37 +378,112 @@ export default function editarActaReunion(props) {
 // *********************************************************************************************
 // Handle Participants
 // *********************************************************************************************
-    const [participantes, setParticipantes] = useState([]);
+    const [participantsList, setParticipantsList] = useState([]);
 
     useEffect(() => {
         if (actaReunion
             && actaReunion.lineaActaReunion
             && actaReunion.lineaActaReunion.participantesXReunion) {
-            const participantesTransformados =
-                actaReunion.lineaActaReunion.participantesXReunion.map(participante => {
-                    return {
-                        idUsuario: participante.idUsuario,
-                        nombreCompleto: `${participante.nombres} ${participante.apellidos}`,
-                        asistio: false,
-                    };
-                });
-            setParticipantes(participantesTransformados);
-        }
+                setParticipantsList(actaReunion.lineaActaReunion.participantesXReunion);
+            }
     }, [actaReunion]);
 
     const handleAsistenciaChange = (idUsuario) => {
-        const nuevosParticipantes = participantes.map(participante => {
+        const nuevosParticipantes = participantsList.map(participante => {
             if (participante.idUsuario === idUsuario) {
                 return { ...participante, asistio: !participante.asistio };
             }
             return participante;
         });
-        setParticipantes(nuevosParticipantes);
+        setParticipantsList(nuevosParticipantes);
     };
 
-    const handleBorrarParticipante = (idUsuario) => {
-        const nuevosParticipantes = participantes.filter(participante => participante.idUsuario !== idUsuario);
-        setParticipantes(nuevosParticipantes);
+    const handleBorrarParticipante = (participante) => {
+        const nuevosParticipantes = participantsList.filter(
+            (item) => item.idUsuario !== participante.idUsuario
+            );
+        setParticipantsList(nuevosParticipantes);
+    };
+
+    const returnListParticipantes = (newParticipantes) => {
+        const newList = [...participantsList, ...newParticipantes];
+        setParticipantsList(newList);
+        setModal2(!modal2);
+    }
+
+// *********************************************************************************************
+// Edit Meeting Record
+// *********************************************************************************************
+    const saveMeetingChanges = () => {
+        const idLineaActaReunion = idLineaActa;
+        const nombreReunion = titleValue;
+        const fechaReunion = dateValue;
+        const horaReunion = timeValue;
+        const motivo = motiveValue;
+        const nombreConvocante = convocante.nombres + " " + convocante.apellidos;
+        const temas = listTemas.map(value => ({
+            descripcion: value.data,
+            acuerdos: value.acuerdos,
+        }));
+        const participantes = participantsList.map(participante => ({ // assuming you have a list of participants
+            idUsuarioXRolXProyecto: participante.idUsuario,
+            asistio: participante.asistio,
+        }));
+        const comentarios = listComentarios.map(value => ({ // assuming you have a list of comments
+            descripcion: value.data,
+        }));
+
+        const meetingLine = {
+            idLineaActaReunion,
+            nombreReunion,
+            fechaReunion,
+            horaReunion,
+            nombreConvocante,
+            motivo,
+            temas,
+            participantes,
+            comentarios
+        };
+
+        // Convert the meeting object to JSON format
+        const meetingJSON = JSON.stringify(meetingLine, null, 2);
+
+        // Now you can save meetingJSON to a file or send it in a request
+        console.log(meetingJSON);
+        console.log("Seleccionados: ",participantsList);
+        console.log('id de Linea de acta reunion:', idLineaActaReunion);
+        console.log("Titulo de Reunion: ", nombreReunion);
+        console.log("Convocante de Reunion: ", nombreConvocante);
+        console.log("Fecha de Reunion: ", fechaReunion);
+        console.log("Hora de Reunion: ", horaReunion);
+        console.log("Motivo de Reunion: ", motivo);
+        console.log("Participantes: ", participantes);
+        console.log("Temas de Reunion: ", listTemas);
+
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/modificarLineaActaReunion",
+                {
+                    idLineaActaReunion: idLineaActaReunion,
+                    nombreReunion: nombreReunion,
+                    fechaReunion: fechaReunion,
+                    horaReunion: horaReunion,
+                    nombreConvocante: nombreConvocante,
+
+                    motivo: motivo,
+                    temas: temas,
+                    participantes: participantes,
+                    comentarios: comentarios,
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                console.log("Se actualizó el Acta de Reunión correctamente");
+                router.back();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
 // *********************************************************************************************
@@ -437,34 +498,24 @@ export default function editarActaReunion(props) {
                                hrefForButton={'/dashboard/' + projectName+'='+projectId + '/actaReunion'}
                                breadcrump={'Inicio / Proyectos / ' + projectName + ' / Acta de Reunion / Editar Reunion'}
                                btnText={'Volver'}>Editar Acta de Reunion</HeaderWithButtons>
-            <div style={{ padding: '10px' }}>
-                <button onClick={toggleEditMode}>
-                    {isEditMode ? 'Guardar Cambios' : 'Editar'}
-                </button>
+            <div className="flex align-end">
+                {!isEditMode && (
+                    <button className="btnEditar" onClick={toggleEditMode}>Editar</button>
+                )}
             </div>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
                     <Card className="p-5 pt-3">
                         <CardBody>
-                            {/*
-                            <div className="lineMeetingTitle">
-                                <h1>Reunión para ver temas de gastos</h1>
-                            </div>
-                            */}
                             {actaReunion && (
-                                <Input
-                                    className="max-w-[1000px]"
-                                    isRequired
-                                    key="meetingTitle"
-                                    size="lg"
-                                    type="title"
-                                    label="Título de Reunión"
-                                    labelPlacement="outside"
-                                    placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
+                                <input 
+                                    className="lineMeetingTitle"
+                                    maxLength="50"    
                                     value={isEditMode ? titleValue : actaReunion.lineaActaReunion.nombreReunion}
-                                    isReadOnly={!isEditMode}
-                                    onValueChange={setTitleValue}
-                                />
+                                    placeholder="Ingrese el título de la reunión"
+                                    readOnly={!isEditMode}
+                                    onChange={setTitleValue}
+                                ></input>
                             )}
 
 
@@ -538,18 +589,14 @@ export default function editarActaReunion(props) {
                             <div className="meetingMotive">
                                 <h2 className="font-medium">Motivo</h2>
                                 {actaReunion && (
-                                    <Input
-                                        className="max-w-[1000px] mt-5"
-                                        isRequired
-                                        key="meetingMotive"
-                                        size="lg"
-                                        type="title"
-                                        labelPlacement="outside"
-                                        placeholder="Ingrese el motivo de la reunion"
-                                        value={isEditMode ? motiveValue : actaReunion.lineaActaReunion.motivo}
-                                        isReadOnly={!isEditMode}
-                                        onValueChange={setMotiveValue}
-                                    />
+                                    <input 
+                                        className="lineMeetingMotive"
+                                        maxLength="100"    
+                                        value={isEditMode ? titleValue : actaReunion.lineaActaReunion.motivo}
+                                        placeholder="Ingrese el motivo de la reunión"
+                                        onChange={setMotiveValue}
+                                        readOnly={!isEditMode}
+                                    ></input>
                                 )}
 
                             </div>
@@ -564,79 +611,55 @@ export default function editarActaReunion(props) {
                     <Card className="mx-auto">
                         <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg
                             font-bold text-blue-950 font-sans">
-                            <h3>Personas Convocadas</h3>
+                                <div className="personasConvocadas flex align-center">
+                                    <h3>Personas Convocadas</h3>
+                                    {isEditMode && (
+                                        <button
+                                            onClick={toggleModal2}
+                                            className="ml-3 bg-[#f0ae19] text-white w-8 h-8
+                                                rounded-full">
+                                            <img src="/icons/icon-searchBar.svg"/>
+                                        </button>
+                                    )}
+                                </div>
                         </CardHeader>
                         <CardBody className="py-0 mt-0 ml-2">
                             <div className="flex justify-between mb-2">
                                 <span className="text-mg font-semibold">Lista de Miembros</span>
                                 <span className="text-mg font-semibold mr-6">Asistencia</span>
                             </div>
-                            {participantes.map(participante => (
+                            {participantsList.map(participante => (
                                 <div
                                     key={participante.idUsuario}
                                     className="flex justify-between items-center p-2 rounded-lg"
                                 >
-                                    <span className="text-gray-700">{participante.nombreCompleto}</span>
+                                    <span className="text-gray-700">{participante.nombres} {participante.apellidos}</span>
                                     <div className="flex items-center">
                                         <Checkbox
+                                            isReadOnly={!isEditMode}
                                             isSelected={participante.asistio}
+                                            size="lg"
                                             onValueChange={() => handleAsistenciaChange(participante.idUsuario)}
                                             className="mr-4"
                                         >
                                         </Checkbox>
                                         <button
-                                            onClick={() => handleBorrarParticipante(participante.idUsuario)}
+                                            onClick={() => handleBorrarParticipante(participante)}
                                             className="text-red-500 hover:text-red-700"
                                         >
                                             X
                                         </button>
                                     </div>
-
                                 </div>
                             ))}
-                            {/*
-                            <p>Lista de Miembros</p>
-                            {/**** Selector de Miembros *****
-                            <div className="SelectedUsersContainer">
-                                <div
-                                    className="containerToPopUpUsrSearch"
-                                    style={{ width: '80%', padding: '0.2rem 0' }}
-                                    onClick={toggleModal2}
-                                >
-                                    <p>Buscar nuevo participante</p>
-                                    <img
-                                        src="/icons/icon-searchBar.svg"
-                                        alt=""
-                                        className="icnSearch"
-                                        style={{ width: '20px' }}
-                                    />
-                                </div>
-
-                                <ul className="listUsersContainer"
-                                style={{ width: '80%', padding: '0.2rem 0' }}>
-                                    {selectedMiembrosList.map((component) => {
-                                        return (
-                                            <CardSelectedUser
-                                                key={component.id}
-                                                name={component.name}
-                                                lastName={component.lastName}
-                                                usuarioObject={component}
-                                                email={component.email}
-                                                removeHandler={removeMiembro}
-                                            ></CardSelectedUser>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
                             {modal2 && (
                                 <ModalUsers
                                     idProyecto={projectId}
                                     handlerModalClose={toggleModal2}
-                                    handlerModalFinished={returnListOfMiembros}
-                                    excludedUsers={selectedMiembrosList}
+                                    handlerModalFinished={returnListParticipantes}
+                                    excludedUsers={participantsList}
                                 ></ModalUsers>
                             )}
-                            {/* Fin del selector de miembros */}
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
@@ -653,6 +676,7 @@ export default function editarActaReunion(props) {
                                     ¿De qué temas se hablará en la reunión? ¡Asegúrate de ser claro!
                                 </p>
                             </div>
+                            {isEditMode && (
                             <button
                                 onClick={handleAddTema}
                                 className="bg-[#f0ae19] text-white w-8 h-8
@@ -660,59 +684,27 @@ export default function editarActaReunion(props) {
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
-
+                            )}
                         </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8">
+                        <CardBody className="mt-0 py-0 pl-8 pb-0 mb-0">
                             <div className="topicsContainer">
-                                <ListEditableInput
-                                    beEditable={true}
+                                <TopicEditableList
+                                    beEditable={isEditMode}
                                     handleChanges={handleChangeTema}
                                     handleRemove={handleRemoveTema}
                                     ListInputs={listTemas}
+                                    participantes={participantsList}
+                                    updateAcuerdos={updateAcuerdos}
+                                    editMode={isEditMode}
                                     typeFault="temas"
-                                    typeName="Tema">
-                                </ListEditableInput>
+                                    typeName="Tema"
+                                >
+                                </TopicEditableList>
                             </div>
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
                 </div>
-
-                <div className="agreements p-5">
-                    <Card className="mx-auto">
-                        <CardHeader>
-                            <div className="flex flex-col p-2">
-                                <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
-                                    Acuerdos
-                                </h3>
-                                <p className="littleComment ml-2 text-small text-default-500">
-                                    ¿A que acuerdos se llegaron en la reunión? ¡Recuerda ser responsable y razonable!
-                                </p>
-                            </div>
-                            <button
-                                onClick={handleAddAcuerdo}
-                                className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer
-                                transform transition-transform hover:-translate-y-1 hover:shadow-md">
-                                <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
-                            </button>
-                        </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8">
-                            <div className="topicsContainer">
-                                <AcuerdosListEditableInput
-                                    beEditable={true}
-                                    handleChanges={handleChangeAcuerdo}
-                                    handleRemove={handleRemoveAcuerdo}
-                                    ListInputs={listAcuerdos}
-                                    temas={numeroTemas}
-                                    typeName="Acuerdo">
-                                </AcuerdosListEditableInput>
-                            </div>
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
-                </div>
-
                 <div className="pendingComments p-5">
                     <Card className="mx-auto">
                         <CardHeader>
@@ -724,6 +716,7 @@ export default function editarActaReunion(props) {
                                     ¿Aún tienes algo que acotar?
                                 </p>
                             </div>
+                            {isEditMode && (
                             <button
                                 onClick={handleAddComentario}
                                 className="bg-[#f0ae19] text-white w-8 h-8
@@ -731,6 +724,7 @@ export default function editarActaReunion(props) {
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
+                            )}
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
@@ -769,41 +763,45 @@ export default function editarActaReunion(props) {
                     )}
                     */}
                 </div>
-                <div className="twoButtons1">
-                    <div className="buttonContainer">
-                        <Modal
-                            nameButton="Descartar"
-                            textHeader="Descartar Registro"
-                            textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
-                            colorButton="w-36 bg-slate-100 text-black font-semibold"
-                            oneButton={false}
-                            secondAction={() => router.back()}
-                            textColor="red"
-                        />
-                        <Modal
-                            nameButton="Aceptar"
-                            textHeader="Registrar Acta de Reunión"
-                            textBody="¿Seguro que quiere registrar el Acta de Reunión?"
-                            colorButton="w-36 bg-blue-950 text-white font-semibold"
-                            oneButton={false}
-                            secondAction={() => {
-                                //createMeeting();
-                                router.back();
-                            }}
-                            textColor="blue"
-                            verifyFunction={() => {
-                                if (verifyFieldsEmpty()) {
-                                    setFieldsEmpty(true);
-                                    return false;
-                                } else {
-                                    setFieldsEmpty(false);
-                                    return true;
-                                }
-                            }}
-                        />
+                {isEditMode && (
+                    <div className="twoButtons1">
+                        <div className="buttonContainer">
+                            <Modal
+                                nameButton="Descartar"
+                                textHeader="Descartar Modificación"
+                                textBody="¿Seguro que quiere descartar la modificación de el Acta de Reunión?"
+                                colorButton="w-36 bg-slate-100 text-black font-semibold"
+                                oneButton={false}
+                                secondAction={() => {
+                                    toggleEditMode();
+                                    router.refresh();
+                                }}
+                                textColor="red"
+                            />
+                            <Modal
+                                nameButton="Aceptar"
+                                textHeader="Modificar Acta de Reunión"
+                                textBody="¿Seguro que quiere modificar el Acta de Reunión?"
+                                colorButton="w-36 bg-blue-950 text-white font-semibold"
+                                oneButton={false}
+                                secondAction={() => {
+                                    saveMeetingChanges();
+                                    router.back();
+                                }}
+                                textColor="blue"
+                                verifyFunction={() => {
+                                    if (verifyFieldsEmpty()) {
+                                        setFieldsEmpty(true);
+                                        return false;
+                                    } else {
+                                        setFieldsEmpty(false);
+                                        return true;
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
-                </div>
-
+                )}
             </div>
 
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
