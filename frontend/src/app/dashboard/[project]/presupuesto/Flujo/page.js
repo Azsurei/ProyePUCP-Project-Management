@@ -191,6 +191,13 @@ const ingresosPorTipo = {};
 // Iterar sobre las líneas de ingreso
 lineaIngreso.forEach((row) => {
   // Comprobar si el tipo de ingreso ya existe en el objeto
+
+  const fechaCreacion = new Date(row.fechaTransaccion);
+
+  const mes = fechaCreacion.getUTCMonth() + 1;
+  const mesReal=mes-mesActual+1;
+
+
   if (ingresosPorTipo[row.idIngresoTipo]) {
     // Si existe, suma el monto al tipo de ingreso existente
     ingresosPorTipo[row.idIngresoTipo].monto += row.monto;
