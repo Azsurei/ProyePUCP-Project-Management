@@ -15,6 +15,7 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosUpdate(props) {
@@ -258,20 +259,20 @@ export default function CatalogoDeRiesgosUpdate(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
-            detail === "" ||
+            name.trim() === "" ||
+            detail.trim() === "" ||
             probability === null ||
             impact === null ||
             fechaInicio === null ||
-            cause === "" ||
-            impactDetail === "" ||
+            cause.trim() === "" ||
+            impactDetail.trim() === "" ||
             selectedMiembrosList.length === 0 ||
             selectedMiembrosList1.length === 0 ||
             responsePlans.some(
-                (responsePlans) => responsePlans.responsePlans === ""
+                (responsePlans) => responsePlans.responsePlans.trim() === ""
             ) ||
             contingencyPlans.some(
-                (contingencyPlans) => contingencyPlans.contingencyPlans === ""
+                (contingencyPlans) => contingencyPlans.contingencyPlans.trim() === ""
             )
         );
     }
@@ -867,26 +868,25 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(true);
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(false);
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        setFieldsExcessive(true);
-                                        setFieldsEmpty(false);
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
-                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -913,6 +913,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     idProyecto={projectId}
                 ></ModalUsersOne>
             )}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

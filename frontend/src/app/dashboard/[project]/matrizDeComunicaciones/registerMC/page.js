@@ -81,9 +81,9 @@ export default function MatrizComunicacionesRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            sumilla === "" ||
-            detail === "" ||
-            groupReceiver === "" ||
+            sumilla.trim() === "" ||
+            detail.trim() === "" ||
+            groupReceiver.trim() === "" ||
             canal === null ||
             frecuency === null ||
             format === null ||

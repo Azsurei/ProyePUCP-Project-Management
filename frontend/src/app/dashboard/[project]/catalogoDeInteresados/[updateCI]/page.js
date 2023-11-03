@@ -195,11 +195,11 @@ export default function CatalogoDeInteresadosRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
+            name.trim() === "" ||
             requirements.some(
-                (requirements) => requirements.requirements === ""
+                (requirements) => requirements.requirements.trim() === ""
             ) ||
-            strategies.some((strategies) => strategies.strategies === "")
+            strategies.some((strategies) => strategies.strategies.trim() === "")
         );
     }
 
