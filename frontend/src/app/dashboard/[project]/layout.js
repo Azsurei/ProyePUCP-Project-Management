@@ -10,6 +10,7 @@ import { SessionContext } from "../layout";
 axios.defaults.withCredentials = true;
 
 export const SmallLoadingScreen = createContext();
+export const HerramientasInfo = createContext();
 
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
@@ -17,31 +18,59 @@ export default function RootLayout({ children, params }) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const [isLoadingSmall, setIsLoadingSmall] = useState(true);
+    const [herramientasInfo, setHerramientasInfo] = useState(null);
 
     const { sessionData, setSession } = useContext(SessionContext);
+    const [rolHasBeenAsigned, setRolAsigned] = useState(false);
+    const [ isSidebarDone, setIsSidebarDone] = useState(false);
 
-
-    const [projectRolData, setProjectRolData] = useState({rolInProject:1, rolNameInProject: ""});
+    const [projectRolData, setProjectRolData] = useState({
+        rolInProject: 1,
+        rolNameInProject: "",
+    });
 
     useEffect(() => {
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verRolUsuarioEnProyecto";
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/usuario/verRolUsuarioEnProyecto";
 
         axios
-            .post(stringURL,{
+            .post(stringURL, {
                 idUsuario: sessionData.idUsuario,
-                idProyecto: projectId
+                idProyecto: projectId,
             })
-            .then(function (response) {
-                const new_session = {...sessionData};
-                new_session.rolInProject = response.data.rol.idRol;
-                new_session.rolNameInProject = response.data.rol.nombre;
+            .then(function (responseFirst) {
+                const new_session = { ...sessionData };
+                new_session.rolInProject = responseFirst.data.rol.idRol;
+                new_session.rolNameInProject = responseFirst.data.rol.nombre;
                 setSession(new_session);
 
-                console.log("Bienvenido Usuario => " + JSON.stringify(new_session));
+                console.log(
+                    "Bienvenido Usuario => " + JSON.stringify(new_session)
+                );
 
-                setProjectRolData({rolInProject: response.data.rol.idRol, rolNameInProject: response.data.rol.nombre});
+                setProjectRolData({
+                    rolInProject: responseFirst.data.rol.idRol,
+                    rolNameInProject: responseFirst.data.rol.nombre,
+                });
                 //setIsLoading(false);
+                setRolAsigned(true);
+                console.log("============= LAYOUT ROLES TERMINO DE CARGAR");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        const stringURL2 =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/herramientas/" +
+            projectId +
+            "/listarHerramientasDeProyecto";
+        axios
+            .get(stringURL2)
+            .then(function (response) {
+                setHerramientasInfo(response.data.herramientas);
+                console.log("============= LAYOUT HERRAMIENTAS TERMINO DE CARGAR");
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -59,46 +88,55 @@ export default function RootLayout({ children, params }) {
                     projectIdRole={projectRolData.rolInProject}
                     projectNameRole={projectRolData.rolNameInProject}
                     currentUrl={params.project}
-                ></ProjectSidebar>
-                <div
-                    style={{
-                        flex: "1",
-                        position: "relative",
+                    handlerImDone={()=>{
+                        setIsSidebarDone(true);
+                        console.log("============ SIDEBAR TERMINO DE CARGAR");
                     }}
-                    className="h-[100%] overflow-auto bg-mainBackground"
-                >
-                    {isLoadingSmall && (
-                        <div
-                            style={{
-                                position: "absolute",
-                                width: "100%",
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                gap: ".2rem",
-                                zIndex: 10
-                            }}
-                            className="bg-mainBackground"
-                        >
-                            <p
+                ></ProjectSidebar>
+
+                <HerramientasInfo.Provider value={{ herramientasInfo }}>
+                    <div
+                        style={{
+                            flex: "1",
+                            position: "relative",
+                        }}
+                        className="h-[100%] overflow-auto bg-mainBackground"
+                    >
+                        {isLoadingSmall && (
+                            <div
                                 style={{
-                                    fontFamily: "Montserrat",
-                                    fontSize: "2.5rem",
-                                    color: "lightgray",
-                                    fontWeight: "700",
+                                    position: "absolute",
+                                    width: "100%",
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gap: ".2rem",
+                                    zIndex: 10,
                                 }}
+                                className="bg-mainBackground"
                             >
-                                ProyePUCP
-                            </p>
-                            <Box sx={{ width: "170px", color: "lightgray" }}>
-                                <LinearProgress color="inherit" />
-                            </Box>
-                        </div>
-                    )}
-                    {children}
-                </div>
+                                <p
+                                    style={{
+                                        fontFamily: "Montserrat",
+                                        fontSize: "2.5rem",
+                                        color: "lightgray",
+                                        fontWeight: "700",
+                                    }}
+                                >
+                                    ProyePUCP
+                                </p>
+                                <Box
+                                    sx={{ width: "170px", color: "lightgray" }}
+                                >
+                                    <LinearProgress color="inherit" />
+                                </Box>
+                            </div>
+                        )}
+                        {herramientasInfo!==null && rolHasBeenAsigned && isSidebarDone && children}
+                    </div>
+                </HerramientasInfo.Provider>
             </SmallLoadingScreen.Provider>
         </div>
     );

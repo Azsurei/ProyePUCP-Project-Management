@@ -107,9 +107,12 @@ function DropDownItem(props) {
         router.push(props.goTo);
     };
     return (
-        <li className="DropDownItem
+        <li
+            className="DropDownItem
             text-[#414141] hover:bg-[#dad9d8] dark:text-slate-200 dark:hover:bg-[#414141]
-            " onClick={prenderLoadYPush}>
+            "
+            onClick={prenderLoadYPush}
+        >
             {/* <Link
                 href={props.goTo}
                 style={{ display: "flex", alignItems: "center", gap: ".7rem" }}
@@ -204,14 +207,11 @@ function ProjectSidebar(props) {
         axios
             .get(stringURL)
             .then(function (response) {
-                console.log(response);
                 toolsArray = response.data.herramientas;
-                console.log(toolsArray);
 
                 let newDataArray1 = [];
                 let newDataArray2 = [];
                 for (const tool of toolsArray) {
-                    console.log("in first iteration");
                     if (
                         tool.idHerramienta === 9 ||
                         tool.idHerramienta === 10 ||
@@ -230,7 +230,6 @@ function ProjectSidebar(props) {
                         );
                     }
                 }
-
                 newDataArray1.sort((a, b) => a.position - b.position);
                 newDataArray2.sort((a, b) => a.position - b.position);
 
@@ -247,28 +246,26 @@ function ProjectSidebar(props) {
                     tittleTitle: "Herramientas",
                     dataItems: newDataArray2,
                 });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
 
-        const stringURL_2 =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/listarUsuariosXidRolXidProyecto";
+                const stringURL_2 =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/listarUsuariosXidRolXidProyecto";
+                axios
+                    .post(stringURL_2, {
+                        idRol: 3,
+                        idProyecto: props.projectId,
+                    })
+                    .then(function (response) {
+                        const members_data = response.data.usuarios;
 
-        axios
-            .post(stringURL_2, {
-                idRol: 3,
-                idProyecto: props.projectId,
-            })
-            .then(function (response) {
-                console.log(response);
-                const members_data = response.data.usuarios;
+                        setMembersData(members_data);
 
-                setMembersData(members_data);
-                console.log(members_data);
-
-                setIsLoading(false);
+                        setIsLoading(false);
+                        props.handlerImDone();
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             })
             .catch(function (error) {
                 console.log(error);
@@ -449,7 +446,9 @@ function ProjectSidebar(props) {
                         }`}
                     ></div>
                 </div>
-                <p className="SidebarHeader text-mainHeaders">{props.projectName}</p>
+                <p className="SidebarHeader text-mainHeaders">
+                    {props.projectName}
+                </p>
                 <p className="dates">13/09/2023 - 20/10/2023 (50 dias)</p>
                 <div className="teamContainer">
                     <p className="teamHeader">Tu rol:</p>

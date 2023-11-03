@@ -9,31 +9,63 @@ import {
 } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { SmallLoadingScreen } from "../../layout";
-import "@/styles/dashboardStyles/projectStyles/reportesStyles/reporteEntregablesStyles/repEntregables.css"
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
+import "@/styles/dashboardStyles/projectStyles/reportesStyles/reporteEntregablesStyles/repEntregables.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
+const mockUsers = [
+    {
+        idUsuario: 4,
+        nombres: "Renzo Gabriel",
+        apellidos: "Pinto Quiroz",
+        correoElectronico: "a20201491@pucp.edu.pe",
+        imgLink: "/images/ronaldo_user.png",
+    },
+    {
+        idUsuario: 5,
+        nombres: "Renzo Gabriel",
+        apellidos: "Pinto Quiroz",
+        correoElectronico: "a20201491@pucp.edu.pe",
+        imgLink: "/images/ronaldo_user.png",
+    },
+    {
+        idUsuario: 6,
+        nombres: "Renzo Gabriel",
+        apellidos: "Pinto Quiroz",
+        correoElectronico: "a20201491@pucp.edu.pe",
+        imgLink: "/images/ronaldo_user.png",
+    },
+];
 
-const mockUser = {
-    idUsuario: 4,
-    nombres: "Renzo Gabriel",
-    apellidos: "Pinto Quiroz",
-    correoElectronico: "a20201491@pucp.edu.pe",
-    imgLink: "/images/ronaldo_user.png"
-}
-
-
+const mockEntregablesArray = [
+    {
+        idEntregable: 1,
+        nombre: "El mejor entregable",
+    },
+    {
+        idEntregable: 2,
+        nombre: "Backlog",
+    },
+    {
+        idEntregable: 3,
+        nombre: "Historias de usuario",
+    },
+];
 
 function ReporteEntregables(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
+    const [selectedEntregable, setSelectedEntregable] = useState(null);
     const [listTareas, setListTareas] = useState([]);
 
     useEffect(() => {
+        console.log("empezando en reporte");
+        setIsLoadingSmall(true);
         const tareasURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/cronograma/listarTareasXidProyecto/" +
@@ -43,14 +75,21 @@ function ReporteEntregables(props) {
             .then(function (response) {
                 console.log(response.data.tareasOrdenadas);
                 setListTareas(response.data.tareasOrdenadas);
+                console.log("te muestro tus ids papi " + JSON.stringify(herramientasInfo,null,2));
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
             });
     }, []);
 
+    const btnStyle =
+        "group hover:underline  font-medium px-4 py-2 rounded-md cursor-pointer";
+    const btnStyleActive =
+        "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] dark:bg-[#414141] cursor-pointer";
+
     return (
-        <div className="flex h-full flex-col p-[2.5rem] font-[Montserrat] gap-y-6 ">
+        <div className="flex h-full flex-col p-[2.5rem] font-[Montserrat] gap-y-6 min-h-[800px]">
             <div className="flex flex-row justify-between items-center">
                 <p className="text-4xl text-mainHeaders font-semibold">
                     Reporte de entregables
@@ -62,10 +101,28 @@ function ReporteEntregables(props) {
 
             <Divider></Divider>
 
-            <div className="flex flex-row overflow-hidden gap-x-4 mt-2">
-                <div className="w-[15%]">
-                    <p>Entregable 1</p>
-                    <p>Entregable 2</p>
+            <div className="flex flex-row overflow-hidden gap-x-4 mt-2 flex-1">
+                <div className="w-[15%] flex flex-col space-y-1">
+                    {mockEntregablesArray.map((entregable) => {
+                        return (
+                            <p
+                                key={entregable.idEntregable}
+                                className={
+                                    selectedEntregable ===
+                                    entregable.idEntregable
+                                        ? btnStyleActive
+                                        : btnStyle
+                                }
+                                onClick={() => {
+                                    setSelectedEntregable(
+                                        entregable.idEntregable
+                                    );
+                                }}
+                            >
+                                {entregable.nombre}
+                            </p>
+                        );
+                    })}
                 </div>
 
                 <Divider orientation="vertical" />
@@ -147,8 +204,10 @@ function ReporteEntregables(props) {
                                 );
                             })}
                         </div>
-                        <div className="w-[30%] bg-mainSidebar rounded-xl p-3 
-                            flex flex-col items-start">
+                        <div
+                            className="w-[30%] bg-mainSidebar rounded-xl p-3 
+                            flex flex-col items-start"
+                        >
                             <p className="text-xl font-semibold text-mainHeaders  mb-3">
                                 Grafico de contribucion
                             </p>
@@ -174,29 +233,20 @@ function ReporteEntregables(props) {
                                 />
                             </div>
 
-                            <div className="participantsContainer flex-1 w-full overflow-y-scroll 
+                            <div
+                                className="participantsContainer flex-1 w-full overflow-y-scroll 
                                 pr-2 flex flex-col gap-y-2 pb-1
-                            ">
-                                <CardSelectedUser
-                                    isEditable={false}
-                                    usuarioObject={mockUser}
-                                />
-                                <CardSelectedUser
-                                    isEditable={false}
-                                    usuarioObject={mockUser}
-                                />
-                                <CardSelectedUser
-                                    isEditable={false}
-                                    usuarioObject={mockUser}
-                                />
-                                <CardSelectedUser
-                                    isEditable={false}
-                                    usuarioObject={mockUser}
-                                />
-                                <CardSelectedUser
-                                    isEditable={false}
-                                    usuarioObject={mockUser}
-                                />
+                            "
+                            >
+                                {mockUsers.map((user) => {
+                                    return (
+                                        <CardSelectedUser
+                                            key={user.idUsuario}
+                                            isEditable={false}
+                                            usuarioObject={user}
+                                        />
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

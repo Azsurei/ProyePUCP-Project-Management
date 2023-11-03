@@ -10,16 +10,16 @@ axios.defaults.withCredentials = true;
 export const SessionContext = createContext();
 
 export default function RootLayout({ children }) {
-    const [sessionData, setSessionData] = useState({ nombres: "", apellidos: "" });
+    const [sessionData, setSessionData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const setSession = (session) => {
         setSessionData(session);
-        console.log(session);
     }
 
 
     useEffect(() => {
+        setIsLoading(true);
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verInfoUsuario";
 
@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
                         }}
                         className="bg-mainContent"
                     >
-                        {children}
+                        {sessionData!== null && children}
                     </div>
                 </div>
             </SessionContext.Provider>
