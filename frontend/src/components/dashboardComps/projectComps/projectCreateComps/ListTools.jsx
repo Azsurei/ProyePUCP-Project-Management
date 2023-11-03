@@ -27,8 +27,15 @@ import {
 axios.defaults.withCredentials = true;
 
 function CardSelectTools(props) {
-	const [isSelected, setIsSelected] = useState(false);
 
+    const {
+        isOpen: isModalFechaOpen,
+        onOpen: onModalFecha,
+        onOpenChange: onModalFechachange,
+    } = useDisclosure();
+    
+	const [isSelected, setIsSelected] = useState(false);
+    
 	const { addToolToList, removeToolInList } = useContext(ToolCardsContext);
 
 	const handleSelectedOn = () => {
@@ -52,7 +59,6 @@ function CardSelectTools(props) {
 
             <div className="buttonContatinerTool">
                 
-                {showPlantillaButton && <Button  startContent={<ContentPasteGoIcon/>} className="buttonOneTool2">Plantilla</Button>}
 
                 {isSelected != true &&<Button  onPress={handleSelectedOn} startContent={<PlusIcon/>} className="buttonOneTool">Agregar</Button>}
                            
@@ -98,20 +104,24 @@ export default function ListTools(addToolToList, removeToolInList, props) {
 	
 
     return (
-        <ul className="ListToolsUl">
-            {listTools.map((component) => {
-                return (
-                    <CardSelectTools
-                        key={component.idHerramienta}
-						id={component.idHerramienta}
-                        name={component.nombre}
-                        description={component.descripcion}
-						herramientaObject = {component}
-                        addToolToList={addToolToList}
-                        removeToolInList={removeToolInList}
-                    ></CardSelectTools>
-                );
-            })}
-        </ul>
+
+        <div>
+   
+            <ul className="ListToolsUl">
+                {listTools.map((component) => {
+                    return (
+                        <CardSelectTools
+                            key={component.idHerramienta}
+                            id={component.idHerramienta}
+                            name={component.nombre}
+                            description={component.descripcion}
+                            herramientaObject = {component}
+                            addToolToList={addToolToList}
+                            removeToolInList={removeToolInList}
+                        ></CardSelectTools>
+                    );
+                })}
+            </ul>
+        </div>
     );
 }
