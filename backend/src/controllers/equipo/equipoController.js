@@ -374,7 +374,7 @@ async function rolAgregado(req, res, next) {
             const idUsuarioXEquipoXRolEquipo = results1[0][0].idUsuarioXEquipoXRolEquipo;
             console.log(`Se inserto el miembro ${idUsuarioXEquipoXRolEquipo}!`);
         }
-        const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO(?,?,?);`;
+        const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
         for (const miembroModificado of miembrosModificados) {
             const results2 = await connection.query(query2, [miembroModificado.idUsuario, idEquipo, miembroModificado.nombreRol]);
             const idUsuario = results2[0][0].idUsuario;
