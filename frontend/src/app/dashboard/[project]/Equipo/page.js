@@ -439,28 +439,11 @@ export default function Equipo(props) {
         console.log("Agregado correctamente");
         console.log(casoAgregarRol);
 
-        // Resto del código
-        /*         axios
-            .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/modificarMiembroEquipo",
-                putData
-            )
-            .then((response) => {
-                // Manejar la respuesta de la solicitud PUT
-                console.log("Respuesta del servidor:", response.data);
-                console.log("Actualización correcta");
-                // Realizar acciones adicionales si es necesario
-            })
-            .catch((error) => {
-                // Manejar errores si la solicitud PUT falla
-                console.error("Error al realizar la solicitud PUT:", error);
-            });
         axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/insertarMiembrosEquipo",
-                postData
+                    "/api/proyecto/equipo/rolEliminado",
+                casoEliminarRol
             )
             .then((response) => {
                 // Manejar la respuesta de la solicitud POST
@@ -472,24 +455,6 @@ export default function Equipo(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
-        axios
-            .delete(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/eliminarMiembroEquipo",
-                {
-                    data: deleteData,
-                }
-            )
-            .then((response) => {
-                // Manejar la respuesta de la solicitud DELETE
-                console.log("Respuesta del servidor (DELETE):", response.data);
-                console.log("Eliminación correcta (DELETE)");
-                // Realizar acciones adicionales si es necesario
-            })
-            .catch((error) => {
-                // Manejar errores si la solicitud DELETE falla
-                console.error("Error al realizar la solicitud DELETE:", error);
-            }); */
     };
 
     return (

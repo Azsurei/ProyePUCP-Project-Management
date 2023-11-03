@@ -263,8 +263,8 @@ export default function crear_equipo(props) {
             <div className="participantes">
                 <h3>Líder del Equipo</h3>
                 <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
+                    <Button
+                        color="primary"
                         style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal1}
                     >
@@ -275,7 +275,7 @@ export default function crear_equipo(props) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </div>
+                    </Button>
 
                     {selectedUniqueMemberList.map((component, index) => {
                         return (
@@ -311,8 +311,8 @@ export default function crear_equipo(props) {
             <div className="participantes">
                 <h3>Participantes</h3>
                 <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
+                    <Button
+                        color="primary"
                         style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal2}
                     >
@@ -323,7 +323,7 @@ export default function crear_equipo(props) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </div>
+                    </Button>
 
                     <ul
                         className="listUsersContainer"
