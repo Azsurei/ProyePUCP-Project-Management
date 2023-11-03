@@ -14,7 +14,7 @@ import {
     CardHeader,
     CardBody,
     CardFooter,
-    Button, Spacer,
+    Button, Spacer, Select, SelectItem,
 } from "@nextui-org/react";
 
 import ModalUsersOne from "@/components/ModalUsersOne";
@@ -31,6 +31,64 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
 
 axios.defaults.withCredentials = true;
+
+function EditableItem({ item, onChangeAcuerdo, onRemoveAcuerdo, temas, onTemaChange, isAcuerdo }) {
+    const [selectedTema, setSelectedTema] = useState(0);
+
+    const handleTemaChange = (e) => {
+        const selectedTemaIndex = e.target.value;
+        setSelectedTema(selectedTemaIndex);
+        onChangeAcuerdo(item.id, item.descripcion, selectedTemaIndex);
+    };
+
+    const handleDescripcionChange = (e) => {
+        onChangeAcuerdo(item.id, e.target.value, selectedTema);
+    };
+
+
+    return (
+        <div className="flex items-center mb-2">
+            <Select
+                label="Selecciona un tema"
+                className="mr-2"
+                value={selectedTema}
+                onChange={handleTemaChange}
+            >
+                {temas && temas.map((tema) => (
+                    <SelectItem key={tema.index} value={tema.index}>
+                        {tema.data}
+                    </SelectItem>
+                ))}
+            </Select>
+            <Input
+                type="text"
+                value={item.descripcion}
+                onChange={handleDescripcionChange}
+            />
+            <Button onClick={() => onRemoveAcuerdo(item.id)} className="p-2 bg-red-500 text-white rounded">
+                X
+            </Button>
+        </div>
+    );
+}
+
+function EditableList({ items, onAdd, onChange, onRemove, temas, onTemaChange, isAcuerdo }) {
+    return (
+        <div>
+            {items.map((item) => (
+                <EditableItem
+                    key={item.id}
+                    item={item}
+                    onChangeAcuerdo={onChange}
+                    onRemoveAcuerdo={onRemove}
+                    temas={temas}
+                    onTemaChange={onTemaChange}
+                    isAcuerdo={isAcuerdo}
+                />
+            ))}
+        </div>
+    );
+}
 
 export default function crearActaReunion(props) {
 // *********************************************************************************************
@@ -111,10 +169,10 @@ export default function crearActaReunion(props) {
 // *********************************************************************************************
 // Handlers of Topics, Agreements and Comments
 // *********************************************************************************************
-    const [listTemas, setListTemas] = useState([{index: 1, data: ''}]);
-    const [listAcuerdos, setListAcuerdos] = useState([{index: 1, data: ''}]);
-    const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
+    const [listTemas, setListTemas] = useState([]);
+    const [listAcuerdos, setListAcuerdos] = useState([]);
 
+    // Funciones para temas
     const handleAddTema = ()=>{
         const newList_T =  [
             ...listTemas,
@@ -126,47 +184,11 @@ export default function crearActaReunion(props) {
         setListTemas(newList_T);
     }
 
-    const handleAddAcuerdo = ()=>{
-        const newList_A =  [
-            ...listAcuerdos,
-            {
-                index: listAcuerdos.length + 1,
-                data: ''
-            }
-        ];
-        setListAcuerdos(newList_A);
-    }
-
-    const handleAddComentario = ()=>{
-        const newList_C =  [
-            ...listComentarios,
-            {
-                index: listComentarios.length + 1,
-                data: ''
-            }
-        ];
-        setListComentarios(newList_C);
-    }
-
     const handleChangeTema = (e, index) => {
-        const updatedEntregables = [...listTemas];
-        updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
-        setListTemas(updatedEntregables);
-    };
-
-    const handleChangeAcuerdo = (e, index) => {
-        const updatedEntregables = [...listAcuerdos];
-        updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
-        setListAcuerdos(updatedEntregables);
-    };
-
-    const handleChangeComentario = (e, index) => {
-        const updatedEntregables = [...listComentarios];
-        updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
-        setListComentarios(updatedEntregables);
+        const updated = [...listTemas];
+        updated[index - 1].data = e.target.value;
+        console.log(updated);
+        setListTemas(updated);
     };
 
     const handleRemoveTema = (index) => {
@@ -179,16 +201,48 @@ export default function crearActaReunion(props) {
         setListTemas(updatedEntregables);
     }
 
-    const handleRemoveAcuerdo = (index) => {
-        const updatedEntregables = [...listAcuerdos];
-        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-        for (let i = index - 1; i < updatedEntregables.length; i++) {
-            updatedEntregables[i].index = updatedEntregables[i].index - 1;
-        }
-        console.log(updatedEntregables);
-        setListAcuerdos(updatedEntregables);
-    }
 
+    // Funciones para acuerdos
+    const handleAddAcuerdo = (idTema, descripcionAcuerdo) => {
+        const nuevoAcuerdo = {
+            id: Date.now(),
+            idTema: 0,
+            descripcion: descripcionAcuerdo,
+        };
+        setListAcuerdos([...listAcuerdos, nuevoAcuerdo]);
+    };
+
+    const handleChangeAcuerdo = (acuerdoId, nuevaDescripcion, temaselect) => {
+        const acuerdosActualizados = listAcuerdos.map(acuerdo =>
+            acuerdo.id === acuerdoId ? { ...acuerdo, descripcion: nuevaDescripcion, idTema: temaselect } : acuerdo
+        );
+        setListAcuerdos(acuerdosActualizados);
+        console.log(listAcuerdos);
+    };
+
+    const handleRemoveAcuerdo = (acuerdoId) => {
+        const acuerdosActualizados = listAcuerdos.filter(acuerdo => acuerdo.id !== acuerdoId);
+        setListAcuerdos(acuerdosActualizados);
+    };
+
+//-----------------------------------------------------------
+    const [listComentarios, setListComentarios] = useState([{index: 1, data: ''}]);
+    const handleAddComentario = ()=>{
+        const newList_C =  [
+            ...listComentarios,
+            {
+                index: listComentarios.length + 1,
+                data: ''
+            }
+        ];
+        setListComentarios(newList_C);
+    }
+    const handleChangeComentario = (e, index) => {
+        const updatedEntregables = [...listComentarios];
+        updatedEntregables[index - 1].data = e.target.value;
+        console.log(updatedEntregables);
+        setListComentarios(updatedEntregables);
+    };
     const handleRemoveComentario = (index) => {
         const updatedEntregables = [...listComentarios];
         updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
@@ -320,9 +374,13 @@ export default function crearActaReunion(props) {
         const horaReunion = timeValue;
         const motivo = motiveValue;
         const nombreConvocante = convocante.nombres + " " + convocante.apellidos;
-        const temas = listTemas.map(value => ({
-            descripcion: value.data,
-            acuerdos: [],
+        const temas = listTemas.map((tema) => ({
+            descripcion: tema.data,
+            acuerdos: listAcuerdos
+                .filter((acuerdo) => acuerdo.idTema === tema.index.toString())
+                .map((acuerdo) => ({
+                    descripcion: acuerdo.descripcion,
+                })),
         }));
         const participantes = selectedMiembrosList.map(participante => ({ // assuming you have a list of participants
             idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
@@ -331,6 +389,11 @@ export default function crearActaReunion(props) {
         const comentarios = listComentarios.map(value => ({ // assuming you have a list of comments
             descripcion: value.data,
         }));
+
+        console.log("Temas:");
+        console.log(listTemas);
+        console.log("Acuerdos:");
+        console.log(listAcuerdos);
 
         const meeting = {
             idActaReunion,
@@ -597,7 +660,7 @@ export default function crearActaReunion(props) {
                                 </p>
                             </div>
                             <button
-                                onClick={handleAddAcuerdo}
+                                onClick={() => handleAddAcuerdo()}
                                 className="bg-[#f0ae19] text-white w-8 h-8
                                 rounded-full absolute right-4 top-4 cursor-pointer
                                 transform transition-transform hover:-translate-y-1 hover:shadow-md">
@@ -606,13 +669,15 @@ export default function crearActaReunion(props) {
                         </CardHeader>
                         <CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
-                                <ListEditableInput
-                                    beEditable={true}
-                                    handleChanges={handleChangeAcuerdo}
-                                    handleRemove={handleRemoveAcuerdo}
-                                    ListInputs={listAcuerdos}
-                                    typeName="Acuerdo">
-                                </ListEditableInput>
+                                <EditableList
+                                    items={listAcuerdos}
+                                    onAdd={() => handleAddAcuerdo()}
+                                    onChange={handleChangeAcuerdo}
+                                    onRemove={handleRemoveAcuerdo}
+                                    temas={listTemas}
+                                    onTemaChange={handleChangeTema}
+                                    isAcuerdo={true}
+                                />
                             </div>
                         </CardBody>
                         <CardFooter></CardFooter>
