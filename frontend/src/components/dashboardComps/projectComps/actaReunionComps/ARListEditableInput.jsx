@@ -16,33 +16,43 @@ import React, { useEffect, useState } from "react";
 
 function ModalDetalleResponsables({isOpen, onOpenChange, responsables, removeResponsable}) {
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
           <ModalContent>
             {(onClose) => (
                 <>
-                    <ModalHeader>Responsables del Acuerdo</ModalHeader>
-                    <ModalBody>
+                    <ModalHeader className="p-5 pb-0">
+                        <h2 className="responsablesDelAcuerdo">Responsables del Acuerdo</h2>
+                    </ModalHeader>
+                    <ModalBody className="pb-3">
+                        <p className="pb-2">Elige a quienes se encargarán de cumplir con el acuerdo</p>
                         {responsables.length > 0 ? (
                             responsables.map((responsable, index) => (
                                 <div 
                                     key={index} 
-                                    style={{ display: 'flex', justifyContent: 'space-between', 
-                                        alignItems: 'center', marginBottom: '10px' }}>
-                                    <span>{responsable.nombres} {responsable.apellidos}</span>
-                                    <Button size="xs" color="error" onClick={() => removeResponsable(responsable)}>
-                                        X
-                                    </Button>
-                                </div>
+                                    className="flex items-center justify-between mb-2.5"
+                                    >
+                                    <div className="flex items-center">
+                                        <span className="bg-gray-300 cursor-pointer rounded-full flex justify-center 
+                                                    items-center text-base w-12 h-12 text-black mr-5">
+                                        {responsable.nombres[0] + responsable.apellidos[0]}
+                                        </span>
+                                        <span className="text-lg font-normal text-gray-400 mr-5">
+                                        {responsable.nombres} {responsable.apellidos}
+                                        </span>
+                                    </div>
+                                    <img
+                                        src="/icons/icon-cross.svg"
+                                        alt="Eliminar"
+                                        className="iconDeleteInput cursor-pointer"
+                                        onClick={() => {props.removeResponsable(responsable);}}
+                                    />
+                                    </div>
+
                             ))
                         ) : (
                             <p>No hay responsables</p>
                         )}
                     </ModalBody>
-                    <ModalFooter>
-                        <Button color="danger" variant="light" onPress={onClose}>
-                            Cerrar
-                        </Button>
-                    </ModalFooter>
                 </>
             )} 
           </ModalContent>
@@ -129,6 +139,7 @@ function EditableInput(props) {
                                     participantes={props.participantes}
                                     handlerModalClose={toggleModal}
                                     handlerModalFinished={returnResponsables}
+                                    responsables={props.responsables}
                                 ></ModalParticipantes>
                             )}
                         </div>

@@ -208,10 +208,9 @@ export default function Cronograma(props) {
         setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
-        if(tarea.idEntregable === null){
+        if (tarea.idEntregable === null) {
             setTareaEntregable(new Set([]));
-        }
-        else{
+        } else {
             setTareaEntregable(new Set([tarea.idEntregable.toString()]));
         }
 
@@ -300,13 +299,11 @@ export default function Cronograma(props) {
         setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
-        if(tarea.idEntregable === null){
+        if (tarea.idEntregable === null) {
             setTareaEntregable(new Set([]));
-        }
-        else{
+        } else {
             setTareaEntregable(new Set([tarea.idEntregable.toString()]));
         }
-    
 
         setListPosteriores(tarea.tareasPosteriores);
         setListPosterioresOriginal(tarea.tareasPosteriores);
@@ -462,12 +459,16 @@ export default function Cronograma(props) {
                             .then(function (response) {
                                 console.log(response);
                                 console.log("Respuesta conseguida");
-                                const entregablesArray = response.data.entregables.map((entregable) => {
-                                    return {
-                                        ...entregable,
-                                        idEntregableString: entregable.idEntregable.toString()
-                                    };
-                                })
+                                const entregablesArray =
+                                    response.data.entregables.map(
+                                        (entregable) => {
+                                            return {
+                                                ...entregable,
+                                                idEntregableString:
+                                                    entregable.idEntregable.toString(),
+                                            };
+                                        }
+                                    );
 
                                 setListEntregables(entregablesArray);
 
@@ -716,12 +717,16 @@ export default function Cronograma(props) {
                             axios
                                 .get(entregablesURL)
                                 .then(function (response) {
-                                    const entregablesArray = response.data.entregables.map((entregable) => {
-                                        return {
-                                            ...entregable,
-                                            idEntregableString: entregable.idEntregable.toString()
-                                        };
-                                    })
+                                    const entregablesArray =
+                                        response.data.entregables.map(
+                                            (entregable) => {
+                                                return {
+                                                    ...entregable,
+                                                    idEntregableString:
+                                                        entregable.idEntregable.toString(),
+                                                };
+                                            }
+                                        );
                                     setListEntregables(entregablesArray);
 
                                     setIsLoadingSmall(false);
@@ -884,16 +889,26 @@ export default function Cronograma(props) {
                     </HeaderWithButtonsSamePage>
 
                     {/* <AgendaTable listTareas={listTareas}></AgendaTable> */}
-                    <div className="pb-[60px]">
-                        <ListTareas
-                            listTareas={listTareas}
-                            leftMargin={"0px"}
-                            handleVerDetalle={handleVerDetalle}
-                            handleAddNewSon={handleAddNewSon}
-                            handleEdit={handleEdit}
-                            handleDelete={handleDelete}
-                        ></ListTareas>
-                    </div>
+
+                    {listTareas.length === 0 && (
+                        <div className="w-[100%] h-[70vh] flex justify-center items-center flex-col gap-3">
+                            <p className="m-0 font-medium">Tu calendario no cuenta con tareas por el momento</p>
+                            <img src="/images/empty-calendar.png" className="h-[20%]  m-0"/>
+                            
+                        </div>
+                    )}
+                    {listTareas.length !== 0 && (
+                        <div className="pb-[60px]">
+                            <ListTareas
+                                listTareas={listTareas}
+                                leftMargin={"0px"}
+                                handleVerDetalle={handleVerDetalle}
+                                handleAddNewSon={handleAddNewSon}
+                                handleEdit={handleEdit}
+                                handleDelete={handleDelete}
+                            ></ListTareas>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -1121,17 +1136,20 @@ export default function Cronograma(props) {
                                 //     id: dropBoxItems.find(item => item.itemKey === e.target.value).id,
                                 //     itemKey: e.target.value
                                 // }
-                                if(e.target.value === ""){
+                                if (e.target.value === "") {
                                     console.log("caso 1");
                                     setTareaEntregable(new Set([]));
-                                }
-                                else{
-                                    console.log("caso 2 con "+e.target.value + " " + tareaEntregable[0]);
+                                } else {
+                                    console.log(
+                                        "caso 2 con " +
+                                            e.target.value +
+                                            " " +
+                                            tareaEntregable[0]
+                                    );
                                     setTareaEntregable([e.target.value]);
                                     setValidEntregable(true);
                                     console.log(tareaEntregable);
                                 }
-                                
                             }}
                             selectedKeys={tareaEntregable}
                         >
@@ -1542,7 +1560,10 @@ export default function Cronograma(props) {
                                         setValidFechas("isEmpty");
                                         allValid = false;
                                     }
-                                    if (tareaEntregable[0] === undefined || tareaEntregable[0] === null) {
+                                    if (
+                                        tareaEntregable[0] === undefined ||
+                                        tareaEntregable[0] === null
+                                    ) {
                                         setValidEntregable(false);
                                         allValid = false;
                                     }

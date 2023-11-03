@@ -6,6 +6,7 @@ const tareaController = require("../controllers/cronograma/tareaController");
 
 
 routerCronograma.post("/insertarCronograma",verifyToken, cronogramaController.crear);
+routerCronograma.put("/actualizarCronograma",verifyToken, cronogramaController.actualizar);
 routerCronograma.post("/insertarTarea", tareaController.crear);
 
 routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);

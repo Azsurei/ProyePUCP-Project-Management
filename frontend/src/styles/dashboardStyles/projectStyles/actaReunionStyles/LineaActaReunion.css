@@ -256,6 +256,8 @@
     color: #949494;
     font-weight: 500;
     font-family: Montserrat;
+    width: 100%;
+    min-width: 600px;
   }
 
   .lineMeetingMotive:focus {

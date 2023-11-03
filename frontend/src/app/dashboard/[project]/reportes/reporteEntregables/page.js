@@ -11,7 +11,9 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reporteEntregablesStyles/repEntregables.css";
-import CardSelectedUser from "@/components/CardSelectedUser";
+import CardContribuyente from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/CardContribuyente";
+import PieChart from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/PieChart";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 
 const mockUsers = [
@@ -62,7 +64,18 @@ function ReporteEntregables(props) {
     const [selectedEntregable, setSelectedEntregable] = useState(null);
     const [listEntregables, setListEntregables] = useState([]);
     const [listTareas, setListTareas] = useState([]);
-    const [listUsers, setListUsers] = useState([]);
+    const [listContribuyentes, setListContribuyentes] = useState([]);
+    const [activeContribuyente, setActiveContribuyente] = useState(null);
+    const [chartData, setChartData] = useState(null);
+
+    //entregable general data
+    const [entregableName, setEntregableName] = useState("");
+    const [entregableChipColor, setEntregableChipColor] = useState("default");
+    const [entregableProgress, setEntregableProgress] = useState(0);
+    const [entregableComponentName, setEntregableComponentName] = useState("");
+    const [entregableDescripcion, setEntregableDescripcion] = useState("");
+    const [entregableFechaInicio, setEntregableFechaInicio] = useState("");
+    const [entregableFechaFin, setEntregableFechaFin] = useState("");
 
     useEffect(() => {
         console.log("empezando en reporte");
@@ -79,10 +92,21 @@ function ReporteEntregables(props) {
                 setSelectedEntregable(
                     response.data.entregables[0].idEntregable
                 );
-                setListTareas(response.data.entregables[0].tareasEntregable);
 
+                setListTareas(response.data.entregables[0].tareasEntregable);
                 getEntregableStatistics(response.data.entregables[0]);
-                //setListUsers(response.data.entregables[0].)
+                setEntregableName(response.data.entregables[0].nombre);
+                setEntregableComponentName(
+                    response.data.entregables[0].ComponenteEDTNombre
+                );
+                setEntregableDescripcion(
+                    response.data.entregables[0].descripcion
+                );
+                setEntregableFechaInicio(
+                    response.data.entregables[0].fechaInicio
+                );
+                setEntregableFechaFin(response.data.entregables[0].fechaFin);
+
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -126,6 +150,17 @@ function ReporteEntregables(props) {
                                     );
                                     setListTareas(entregable.tareasEntregable);
                                     getEntregableStatistics(entregable);
+                                    setEntregableName(entregable.nombre);
+                                    setEntregableComponentName(
+                                        entregable.ComponenteEDTNombre
+                                    );
+                                    setEntregableDescripcion(
+                                        entregable.descripcion
+                                    );
+                                    setEntregableFechaInicio(
+                                        entregable.fechaInicio
+                                    );
+                                    setEntregableFechaFin(entregable.fechaFin);
                                 }}
                             >
                                 {entregable.nombre}
@@ -141,16 +176,18 @@ function ReporteEntregables(props) {
                         <div className="w-[70%] text-lg">
                             <div className="flex flex-row items-center gap-x-4 mb-3">
                                 <p className="text-3xl text-mainHeaders font-semibold">
-                                    Entregable X
+                                    {entregableName}
                                 </p>
                                 <Chip
-                                    color="warning"
+                                    color={entregableChipColor}
                                     size="lg"
                                     variant="flat"
                                     radius="lg"
                                     className=" min-h-[40px] text-lg"
                                 >
-                                    Atrasado
+                                    {entregableProgress < 1 && "No iniciado"}
+                                    {entregableProgress > 1 && entregableProgress < 100 && "En progreso"}
+                                    {entregableProgress === 100 && "Finalizado"}
                                 </Chip>
                             </div>
 
@@ -158,17 +195,21 @@ function ReporteEntregables(props) {
                                 <Progress
                                     size="md"
                                     aria-label="Loading..."
-                                    value={30}
+                                    value={entregableProgress}
+                                    color={entregableChipColor}
                                 />
-                                <p className="text-lg font-semibold tracking-widest text-mainHeaders">
-                                    33%
+                                <p className="text-lg font-semibold text-mainHeaders">
+                                    {entregableProgress + "%"}
                                 </p>
                             </div>
 
                             <p className="text-gray-400">
-                                Descripcion: Lorem ipsum dolor sit amet,
-                                consectetur adipiscing elit. Vestibulum eget
-                                felis in libero tincidunt vulputate.
+                                {"Componente EDT asociado: " +
+                                    entregableComponentName}
+                            </p>
+
+                            <p className="text-gray-400">
+                                {"Descripcion: " + entregableDescripcion}
                             </p>
                             <div className="flex flex-row item-center gap-3 ">
                                 <p className="font-medium flex items-center">
@@ -180,7 +221,7 @@ function ReporteEntregables(props) {
                                     variant="flat"
                                     className="min-h-[35px] text-base"
                                 >
-                                    23/10/2023
+                                    {dbDateToDisplayDate(entregableFechaInicio)}
                                 </Chip>
                                 <p>-</p>
                                 <Chip
@@ -189,7 +230,7 @@ function ReporteEntregables(props) {
                                     variant="flat"
                                     className="min-h-[35px] text-base"
                                 >
-                                    23/10/2023
+                                    {dbDateToDisplayDate(entregableFechaFin)}
                                 </Chip>
                             </div>
 
@@ -223,26 +264,16 @@ function ReporteEntregables(props) {
                                 Grafico de contribucion
                             </p>
                             <div
-                                className="w-full h-[30%] p-7 
+                                className="w-full h-[40%]
                                 bg-mainBackground rounded-xl 
                                 flex justify-center
                                 border-[1px] border-[#797979]
                                 mb-3
                             "
                             >
-                                <CircularProgress
-                                    aria-label="circular"
-                                    classNames={{
-                                        svgWrapper: "h-full w-full",
-                                        svg: "transition-all ease-in duration-300 w-full h-full dark:drop-shadow-md",
-                                        indicator: "stroke-primary",
-                                        track: "transition-all ease-in duration-300 stroke-mainSidebar",
-                                        value: "text-3xl font-semibold text-mainHeaders",
-                                    }}
-                                    value={70}
-                                    strokeWidth={4}
-                                    showValueLabel={true}
-                                />
+                                {chartData !== null && (
+                                    <PieChart data={chartData} />
+                                )}
                             </div>
 
                             <div
@@ -250,12 +281,18 @@ function ReporteEntregables(props) {
                                 pr-2 flex flex-col gap-y-2 pb-1
                             "
                             >
-                                {listUsers.map((user) => {
+                                {listContribuyentes.map((contribuyente) => {
                                     return (
-                                        <CardSelectedUser
-                                            key={user.idUsuario}
-                                            isEditable={false}
-                                            usuarioObject={user}
+                                        <CardContribuyente
+                                            key={contribuyente.idContribuyente}
+                                            contribuyente={contribuyente}
+                                            user={contribuyente.usuario}
+                                            equipo={contribuyente.equipo}
+                                            isEquipo={
+                                                contribuyente.usuario === null
+                                                    ? true
+                                                    : false
+                                            }
                                         />
                                     );
                                 })}
@@ -268,75 +305,190 @@ function ReporteEntregables(props) {
     );
 
     function getEntregableStatistics(entregable) {
-        //conseguimos a todos los usuarios de las tareas asociadas a este entregable
-
-        //necesitamos un arreglo con todos los usuarios contribuyentes (sumamos a todos los participantes de las tareas sin repetirlos)
-        // for (const tarea of entregable.tareasEntregable) {
-        //     if (tarea.idEquipo !== null) {
-        //         //caso especial
-        //     } else {
-        //         //caso de usuarios normales
-        //         const contribuyentes = new Set();
-
-        //         tasks.forEach((task) => {
-        //             task.usuarios.forEach((usuario) => {
-        //                 contribuyentes.add(usuario);
-        //             });
-        //         });
-
-        //         // Convierte el Set de contribuyentes nuevamente a un array
-        //         const listaContribuyentes = [...contribuyentes];
-        //     }
-        // }
         const contribuyentes = [];
 
+        //agregamos sin repetir a los equipos y usuarios al arreglo de contribuyentes
+        const participanteEstructura = {
+            idContribuyente: 1,
+            usuario: 1,
+            equipo: 1,
+            tareasAsignadas: 1,
+            porcentajeTotal: 1,
+        };
+
         entregable.tareasEntregable.forEach((tarea) => {
-            tarea.usuarios = tarea.usuarios.map((usuario) => {
-                return {
-                    ...usuario,
-                    tareasAsignadas: 0,
-                };
-            });
-            console.log("REMMAPEANDO USUARIOS:");
-            console.log(tarea.usuarios);
-
-            tarea.usuarios.forEach((usuario) => {
-                usuario.tareasAsignadas = usuario.tareasAsignadas + 1;
-
-                let flagHasBeenAdded = 0;
-                for(const contribuyente of contribuyentes){
-                    if(contribuyente.idUsuario === usuario.idUsuario){
-                        flagHasBeenAdded = 1;
-                        break;
+            //iteramos tareas de un entregable
+            if (tarea.idEquipo !== null) {
+                let flagHasBeenAddedE = 0;
+                for (const contribuyente of contribuyentes) {
+                    if (contribuyente.equipo !== null) {
+                        if (contribuyente.equipo.idEquipo === tarea.idEquipo) {
+                            flagHasBeenAddedE = 1;
+                            break;
+                        }
                     }
                 }
 
-                if(flagHasBeenAdded === 0){
-                    contribuyentes.push(usuario);
+                if (flagHasBeenAddedE === 0) {
+                    console.log(
+                        "agregando nuevo equipo " + tarea.equipo.nombre
+                    );
+                    contribuyentes.push({
+                        idContribuyente: contribuyentes.length + 1,
+                        usuario: null,
+                        equipo: tarea.equipo,
+                        tareasAsignadas: 1,
+                        porcentajeTotal: 0,
+                    });
+                } else {
+                    //buscamos al equipo en contribuyentes y aumentamos su asigned +1
+                    console.log(
+                        "agregando +1 tarea a el equipo " + tarea.equipo.nombre
+                    );
+                    const indexYaAsignado = contribuyentes.findIndex(
+                        (elemento) =>
+                            elemento.equipo?.idEquipo === tarea.equipo.idEquipo
+                    );
+                    contribuyentes[indexYaAsignado].tareasAsignadas =
+                        contribuyentes[indexYaAsignado].tareasAsignadas + 1;
                 }
-            });
+            } else {
+                tarea.usuarios.forEach((usuario) => {
+                    //itereamos usuarios de la tarea
+
+                    let flagHasBeenAdded = 0;
+                    for (const contribuyente of contribuyentes) {
+                        if (
+                            contribuyente.usuario?.idUsuario ===
+                            usuario.idUsuario
+                        ) {
+                            flagHasBeenAdded = 1;
+                            break;
+                        }
+                    }
+
+                    if (flagHasBeenAdded === 0) {
+                        console.log(
+                            "agregando nuevo usuario " + usuario.nombres
+                        );
+                        contribuyentes.push({
+                            idContribuyente: contribuyentes.length + 1,
+                            usuario: usuario,
+                            equipo: null,
+                            tareasAsignadas: 1,
+                            porcentajeTotal: 0,
+                        });
+                    } else {
+                        //buscamos al usuario en contribuyentes y aumentamos su asigned +1
+                        console.log(
+                            "agregando +1 tarea a el usuario " + usuario.nombres
+                        );
+
+                        const indexYaAsignado = contribuyentes.findIndex(
+                            (elemento) =>
+                                elemento.usuario?.idUsuario ===
+                                usuario.idUsuario
+                        );
+                        contribuyentes[indexYaAsignado].tareasAsignadas =
+                            contribuyentes[indexYaAsignado].tareasAsignadas + 1;
+                    }
+                });
+            }
         });
 
-        // //por usuario, scamos el porcentaje de contribucion por tarea * peso de tarea, y al final sumamos todos lesos porcentajes
         const listaContribuyentes = [...contribuyentes];
-        for(const usuario of listaContribuyentes){
 
+        for (const contribuyente of listaContribuyentes) {
             let contribPorTarea = 0;
-            for(const tarea of entregable.tareasEntregable){
-                if(tarea.usuarios.includes(usuario)){
-                    contribPorTarea += 1/tarea.usuarios.length * (1/entregable.tareasEntregable.length);
+            for (const tarea of entregable.tareasEntregable) {
+                if (tarea.idEquipo !== null) {
+                    if (tarea.idEquipo === contribuyente.equipo?.idEquipo) {
+                        contribPorTarea +=
+                            1 / entregable.tareasEntregable.length;
+                    }
+                } else {
+                    const usuarioEncontrado = tarea.usuarios.find(
+                        (user) =>
+                            user.idUsuario === contribuyente.usuario?.idUsuario
+                    );
+
+                    if (usuarioEncontrado) {
+                        contribPorTarea +=
+                            (1 / tarea.usuarios.length) *
+                            (1 / entregable.tareasEntregable.length);
+                    }
                 }
             }
-            usuario.porcentajeTotal = contribPorTarea * 100;
+            contribuyente.porcentajeTotal = contribPorTarea * 100;
         }
 
-
-
-
-        //porcentaje por cada tarea sumado
-
         console.log(JSON.stringify(listaContribuyentes, null, 2));
-        setListUsers(listaContribuyentes);
+
+        console.log("LISTA LABELS");
+        console.log(
+            listaContribuyentes.map((contrib) => {
+                if (contrib.usuario === null) {
+                    return contrib.equipo.nombre;
+                } else {
+                    return contrib.usuario.nombres;
+                }
+            })
+        );
+        console.log("LISTA DATA");
+        console.log(
+            listaContribuyentes.map((contrib) => {
+                return contrib.porcentajeTotal;
+            })
+        );
+
+        setChartData({
+            labels: listaContribuyentes.map((contrib) => {
+                if (contrib.usuario === null) {
+                    return contrib.equipo.nombre;
+                } else {
+                    return contrib.usuario.nombres;
+                }
+            }),
+            datasets: [
+                {
+                    label: "% Contribucion",
+                    data: listaContribuyentes.map((contrib) => {
+                        return contrib.porcentajeTotal;
+                    }),
+                    backgroundColor: listaContribuyentes.map((contrib) => {
+                        return randomHex();
+                    }),
+                },
+            ],
+        });
+
+        //get finished tasks / total tasks
+        let finishedTasks = 0;
+        let totalTasks = 0;
+        entregable.tareasEntregable.forEach((tarea) => {
+            if (tarea.idTareaEstado === 4) {
+                finishedTasks++;
+            }
+            totalTasks++;
+        });
+        const finalProgress = (finishedTasks / totalTasks) * 100;
+        const formattedProgress =
+            typeof finalProgress === "number"
+                ? finalProgress.toFixed(2)
+                : finalProgress;
+        setEntregableProgress(formattedProgress);
+
+        //assign colors
+        if(formattedProgress <= 10) setEntregableChipColor("danger");
+        if(formattedProgress > 10 && formattedProgress <= 50) setEntregableChipColor("warning");
+        if(formattedProgress > 50 && formattedProgress < 100) setEntregableChipColor("primary");
+        if(formattedProgress === 100) setEntregableChipColor("success");
+
+        setListContribuyentes(listaContribuyentes);
+    }
+
+    function randomHex() {
+        return "#" + Math.floor(Math.random() * 16777215).toString(16);
     }
 }
 
