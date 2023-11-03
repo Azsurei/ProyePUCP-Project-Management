@@ -131,9 +131,37 @@ END$
 ----------------------------------------------
 -- Sprints
 ----------------------------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_SPRINT;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_SPRINT(
+	IN  _idProductBacklog INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaInicio DATE,
+	IN _fechaFin DATE,
+    IN _estado INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+	DECLARE _idSprint INT;
+	INSERT INTO Sprint(idProductBacklog,descripcion,fechaInicio,fechaFin,estado,activo,nombre) 
+    VALUES(_idProductBacklog,_descripcion,_fechaInicio,_fechaFin,_estado,1,_nombre);
+    SET _idSprint = @@last_insert_id;
+    SELECT _idSprint AS idSprint;
+END$
+
+
 DROP PROCEDURE IF EXISTS LISTAR_SPRINTS_X_ID_BACKLOG;
 DELIMITER $
 CREATE PROCEDURE LISTAR_SPRINTS_X_ID_BACKLOG(
+	IN _idProductBacklog INT
+)
+BEGIN
+	SELECT *FROM Sprint sp WHERE sp.idProductBacklog = _idProductBacklog AND sp.activo =1;
+END$
+
+DROP PROCEDURE IF EXISTS CAMBIAR_ESTADO_SPRINT;
+DELIMITER $
+CREATE PROCEDURE CAMBIAR_ESTADO_SPRINT(
 	IN _idProductBacklog INT
 )
 BEGIN
