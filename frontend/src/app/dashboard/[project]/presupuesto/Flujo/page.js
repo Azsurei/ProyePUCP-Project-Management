@@ -236,6 +236,9 @@ const descripcionTipo = {
 
 
 
+
+
+
 return (
         <div className="mainDivPresupuesto">
 
@@ -344,15 +347,23 @@ return (
 
             </TableRow>
 
-            {lineaEgreso.map((row) => {
+            {lineaEgreso.map((egreso, index) => (
+  <TableRow key={index}>
+    <TableCell>{egreso.descripcion}</TableCell>
+    {mesesMostrados.map((mes, mesIndex) => {
+      const fechaGasto = new Date(egreso.fechaRegistro);
+      const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
 
-                return (
-                  <TableRow key={row.descripcion}>
-                    <TableCell>{row.descripcion}</TableCell>
-                    <TableCell align="left">{row.costoReal}</TableCell>
-                  </TableRow>
-                );
-              })}
+      return (
+        <TableCell key={mesIndex} align="left">
+          {mesIndex === (mesReal - 1)  // Restamos 1 porque mesReal ya está ajustado
+            ? parseFloat(egreso.costoReal)
+            : 0}
+        </TableCell>
+      );
+    })}
+  </TableRow>
+))}
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
