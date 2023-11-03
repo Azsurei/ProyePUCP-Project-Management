@@ -235,8 +235,23 @@ const descripcionTipo = {
 };
 
 
+function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
+  const totalEgresosPorMes = Array.from({ length: mesesMostrados.length }, () => 0);
 
+  lineaEgreso.forEach((egreso) => {
+    const fechaGasto = new Date(egreso.fechaRegistro);
+    const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
+    const montoReal = parseFloat(egreso.costoReal);
 
+    if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
+      totalEgresosPorMes[mesReal - 1] += montoReal;
+    }
+  });
+
+  return totalEgresosPorMes;
+}
+
+const totalEgresosPorMes = calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual);
 
 
 return (
@@ -365,11 +380,15 @@ return (
   </TableRow>
 ))}
 
-            <TableRow>
-              <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
-              <TableCell className="Totales" align="left">{totalEgresos}</TableCell>
+<TableRow>
+  <TableCell className="conceptoCell" align="left">Total Egresos por Mes</TableCell>
+  {totalEgresosPorMes.map((total, index) => (
+    <TableCell key={index} align="left">
+      {total}
+    </TableCell>
+  ))}
+</TableRow>
 
-            </TableRow>
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
