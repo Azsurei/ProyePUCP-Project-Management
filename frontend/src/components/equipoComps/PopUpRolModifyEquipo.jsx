@@ -19,7 +19,6 @@ export default function PopUpRolEquipo({
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
     const [addRol, setAddRol] = useState(false);
-    const [quantity, setQuantity] = useState(3);
 
     const handleInsertRol = () => {
         setNewRolName("");
@@ -39,6 +38,10 @@ export default function PopUpRolEquipo({
             });
         }
     };
+
+    function generateId() {
+        return Math.floor(Math.random() * 100001);
+    }
 
     return (
         modal && (
@@ -78,11 +81,23 @@ export default function PopUpRolEquipo({
                                             "El nombre del rol ya existe en la lista."
                                         );
                                     } else {
+                                        // Generar un nuevo idRol único
+                                        let newIdRol;
+                                        do {
+                                            newIdRol = generateId();
+                                        } while (
+                                            participantes.some(
+                                                (participante) => participante.idRolEquipo === newIdRol
+                                            ) || 
+                                            listRoles.some(
+                                                (rol) => rol.idRol === newIdRol
+                                            )
+                                        );
+
                                         const newRol = {
-                                            idRol: quantity,
+                                            idRol: newIdRol,
                                             nombreRol: newRolName,
                                         };
-                                        setQuantity(quantity + 1);
 
                                         setListRoles([newRol, ...listRoles]);
                                         console.log(
