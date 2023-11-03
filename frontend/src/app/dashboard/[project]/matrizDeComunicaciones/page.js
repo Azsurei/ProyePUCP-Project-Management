@@ -270,15 +270,15 @@ export default function MatrizDeComunicaciones(props){
                             </DropdownMenu>
                         </Dropdown> */}
                         <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <button className="" type="button" onClick={() => {
+                            <button className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14" type="button" onClick={() => {
                                     setRoutering(data)
                                  }}>
-                        <img src="/icons/editar.svg"/>
-                    </button>
-                    <button className="" type="button" onClick={() => toggleModal(data)}>
-                        <img src="/icons/eliminar.svg"/>
-                    </button>
-                </div>
+                                <img src="/icons/editar.svg"/>
+                            </button>
+                            <button className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14" type="button" onClick={() => toggleModal(data)}>
+                                <img src="/icons/eliminar.svg"/>
+                            </button>
+                        </div>
                     </div>
                 );
             default:
