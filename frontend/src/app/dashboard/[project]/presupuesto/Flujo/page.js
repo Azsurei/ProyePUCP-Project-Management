@@ -1,6 +1,5 @@
 "use client"
-import { useState, useEffect, useCallback, use } from "react";
-import Link from "next/link";
+import { createContext, useContext, useEffect, useState } from "react";import Link from "next/link";
 import React from "react";
 import axios from "axios";
 import Table from '@mui/material/Table';
@@ -16,6 +15,7 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 import EditIcon from '@mui/icons-material/Edit';
 import HistoryIcon from '@mui/icons-material/History';
+import { SmallLoadingScreen } from "../../layout";
 import {
     Input,
     DropdownTrigger,
@@ -37,7 +37,7 @@ import BuildIcon from '@mui/icons-material/Build';
 import { set } from "date-fns";
 
 export default function EstimacionTabla(props) {
-// const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
 const decodedUrl = decodeURIComponent(props.params.project);
 const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -52,6 +52,7 @@ const [mesActual, setmesActual] = useState("");
 let idHerramientaCreada;
 let flag=0;
 useEffect(() => {
+    setIsLoadingSmall(false)
     const fetchData = async () => {
         try {
           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
