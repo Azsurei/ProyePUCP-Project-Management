@@ -90,9 +90,9 @@ function EditableInput(props) {
     }, [responsables])
 */
     return (
-        <li className="EditableInput">
-            <div className="ml-2">
-                <div className="inputXdeleteContainer flex items-center gap-5">
+        <li className="EditableInput w-full">
+            <div className="ml-2 w-full">
+                <div className="inputXdeleteContainer flex align-center gap-8 w-full">
                     <p className="check">✔</p>
                     <div className="inputContainer flex flex-col">
                         <p>Acuerdo {props.number}</p>
@@ -119,9 +119,9 @@ function EditableInput(props) {
                             {props.beEditable && (
                             <button
                                 onClick={toggleModal}
-                                className="ml-3 bg-[#f0ae19] text-white w-8 h-8
+                                className="ml-3 bg-[#f0ae19] text-white w-7 h-7
                                     rounded-full">
-                                <img src="/icons/icon-searchBar.svg"/>
+                                <img src="/icons/icon-searchBar.svg" class="mr-1"/>
                             </button>
                             )}
                             {modal && (
@@ -201,10 +201,10 @@ export default function AcuerdosListEditableInput(props) {
     }
     return (
         <ul className="ListEditableInput">
-            {props.ListInputs.map((item) => {
+            {props.ListInputs.map((item, index) => {
                 return (
                     <EditableInput
-                        key={item.index}
+                        key={index}
                         typeName={props.typeName}
                         number={item.index}
                         data={item.data}

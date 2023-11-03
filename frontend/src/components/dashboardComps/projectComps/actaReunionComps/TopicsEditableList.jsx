@@ -119,12 +119,11 @@ function EditableTopic(props) {
             </div>
             
             {mostrarAcuerdos && (
-            <div className="agreementsPerTopic p-2 w-full">
+            <div className="agreementsPerTopic p-2">
                 <Card 
-                    //className="mx-auto w-full"
+                    className="w-full"
                     shadow="none"
-                    isBlurred="false"
-                >
+                    isBlurred="false">
                     <CardBody className="mt-0 py-0 pl-8">
                         <div className="agreementsContainer w-full">
                             <AcuerdosListEditableInput
@@ -155,10 +154,10 @@ export function TopicEditableList(props) {
     }
     return (
         <ul className="ListEditableInput">
-            {props.ListInputs.map((item) => {
+            {props.ListInputs.map((item, index) => {
                 return (
                     <EditableTopic
-                        key={item.index}
+                        key={index}
                         typeName={props.typeName}
                         number={item.index}
                         data={item.data}
