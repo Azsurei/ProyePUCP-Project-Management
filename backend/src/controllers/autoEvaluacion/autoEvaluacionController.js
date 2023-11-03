@@ -32,8 +32,11 @@ async function crearAutoEvaluacionTest(req,res,next){
 
 async function listarAutoEvaluacion(req,res,next){
     const {idProyecto, idUsuario} = req.params;
+    const querydatos = `CALL LISTAR_AUTOEVALUACION_DATOS(?);`;
     const query = `CALL LISTAR_AUTOEVALUACION_X_USUARIO(?,?);`;
     try {
+        const datos = await connection.query(querydatos,[idProyecto]);
+        autoEvaluacion = datos[0][0];
         const results = await connection.query(query,[idProyecto,idUsuario]);
         const evaluados = results[0][0];
         for(const usuarioEvaluado of evaluados){
@@ -48,6 +51,7 @@ async function listarAutoEvaluacion(req,res,next){
         }
         else{
             res.status(200).json({
+                autoEvaluacion,
                 evaluados,
                 message: "Autoevaluacion listada"
             });
