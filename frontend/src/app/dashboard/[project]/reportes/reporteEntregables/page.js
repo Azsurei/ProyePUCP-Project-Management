@@ -55,7 +55,6 @@ const mockEntregablesArray = [
 
 function ReporteEntregables(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const { herramientasInfo } = useContext(HerramientasInfo);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -68,14 +67,12 @@ function ReporteEntregables(props) {
         setIsLoadingSmall(true);
         const tareasURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+            "/api/proyecto/reportes/generarReporteEntregables/" +
             projectId;
         axios
             .get(tareasURL)
             .then(function (response) {
-                console.log(response.data.tareasOrdenadas);
-                setListTareas(response.data.tareasOrdenadas);
-                console.log("te muestro tus ids papi " + JSON.stringify(herramientasInfo,null,2));
+                console.log(response);
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -220,6 +217,7 @@ function ReporteEntregables(props) {
                             "
                             >
                                 <CircularProgress
+                                    aria-label="circular"
                                     classNames={{
                                         svgWrapper: "h-full w-full",
                                         svg: "transition-all ease-in duration-300 w-full h-full dark:drop-shadow-md",

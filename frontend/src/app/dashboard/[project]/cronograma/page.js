@@ -82,6 +82,8 @@ export default function Cronograma(props) {
         },
     ];
 
+    const [listEntregables, setListEntregables] = useState([]);
+
     const colorDropbox = ["default", "primary", "danger", "success"];
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -430,7 +432,21 @@ export default function Cronograma(props) {
                         setListTareas(response.data.tareasOrdenadas);
                         console.log(response.data.tareasOrdenadas);
 
-                        setIsLoadingSmall(false);
+                        const entregablesURL =
+                            process.env.NEXT_PUBLIC_BACKEND_URL +
+                            "/api/proyecto/cronograma/listarEntregablesXidProyecto/" +
+                            projectId;  //PENDIENTE REVISAR SI FUNCIONA
+                        axios
+                            .get(entregablesURL)
+                            .then(function (response) {
+                                console.log(response);
+
+                                setIsLoadingSmall(false);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -1034,6 +1050,40 @@ export default function Cronograma(props) {
                         )}
                     </div>
 
+                    <div className="flex flex-col gap-1">
+                        <p>Entregable Asociado</p>
+                        <Select
+                            //variant="bordered"
+                            isDisabled={stateSecond === 2 ? true : false}
+                            aria-label="cbo-lbl-ent"
+                            label=""
+                            placeholder="Selecciona un entregable"
+                            labelPlacement="outside"
+                            classNames={{ trigger: "h-10" }}
+                            size="md"
+                            //color={}
+                            onChange={(e) => {
+                                // const state = {
+                                //     id: dropBoxItems.find(item => item.itemKey === e.target.value).id,
+                                //     itemKey: e.target.value
+                                // }
+                                setTareaEstado([e.target.value]);
+                                console.log(tareaEstado);
+                            }}
+                            selectedKeys={tareaEstado}
+                        >
+                            {dropBoxItems.map((items) => (
+                                <SelectItem
+                                    key={items.itemKey}
+                                    value={items.itemKey}
+                                    color={items.color}
+                                >
+                                    {items.texto}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
+
                     <div className="containerPosteriores mt-3">
                         <div className="posterioresHeader">
                             <p>Tareas posteriores</p>
@@ -1119,7 +1169,9 @@ export default function Cronograma(props) {
                                         </div>
 
                                         <div className="flex flex-col flex-1 justify-start items-start">
-                                            <p className="text-large font-medium">Fecha fin</p>
+                                            <p className="text-large font-medium">
+                                                Fecha fin
+                                            </p>
                                             <p>
                                                 {inputDateToDisplayDate(
                                                     tPost.fechaFin
