@@ -1117,7 +1117,7 @@ CREATE PROCEDURE INSERTAR_AUTOEVALUACION_X_IDPROYECTO(
 BEGIN
 	DECLARE _idAutoEvaluacionXProyecto INT;
     SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
-    INSERT INTO AutoEvaluacionXProyecto(idAutoevaluacion,nombre,fechaInicio,fechaFin,activo) 
+    INSERT INTO AutoEvaluacionXProyecto(idAutoevaluacion,nombre,fechaInicio,fechaFin,estado) 
     VALUES(@_idAutoevaluacion,_nombre,_fechaInicio,_fechaFin,0);
     SET _idAutoEvaluacionXProyecto = @@last_insert_id;
     SELECT _idAutoEvaluacionXProyecto AS idAutoEvaluacionXProyecto;
@@ -2970,7 +2970,7 @@ BEGIN
     LEFT JOIN Usuario AS ur ON ue.idUsuarioEvaluado = ur.idUsuario
     LEFT JOIN AutoEvaluacionXProyecto AS ae ON ue.idAutoEvaluacionXProyecto = ae.idAutoEvaluacionXProyecto
     LEFT JOIN Autoevaluacion AS a ON a.idAutoevaluacion = ae.idAutoevaluacion
-	WHERE a.idProyecto = _idProyecto AND ae.activo=1 AND ue.idUsuario = _idUsuario;
+	WHERE a.idProyecto = _idProyecto AND ae.estado=1 AND ue.idUsuario = _idUsuario;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_AUTOEVALUACION;
@@ -3483,4 +3483,31 @@ BEGIN
     LEFT JOIN UsuarioXEvaluacion AS ue ON ce.idUsuarioEvaluacion = ue.idUsuarioEvaluacion
     WHERE ue.idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
     GROUP BY ce.criterio;
+END$
+
+DROP PROCEDURE IF EXISTS ACTIVAR_AUTOEVALUACION_X_ID;
+DELIMITER $
+CREATE PROCEDURE ACTIVAR_AUTOEVALUACION_X_ID(
+    IN _idProyecto INT,
+    IN _idAutoEvaluacionXProyecto INT
+)
+BEGIN
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+    UPDATE AutoEvaluacionXProyecto 
+    SET estado = 0
+    WHERE idAutoevaluacion = @_idAutoevaluacion;
+    UPDATE AutoEvaluacionXProyecto 
+    SET estado = 1
+    WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto;
+END$
+
+DROP PROCEDURE IF EXISTS FINALIZAR_AUTOEVALUACION_X_ID;
+DELIMITER $
+CREATE PROCEDURE FINALIZAR_AUTOEVALUACION_X_ID(
+    IN _idAutoEvaluacionXProyecto INT
+)
+BEGIN
+    UPDATE AutoEvaluacionXProyecto 
+    SET estado = 1
+    WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto;
 END$

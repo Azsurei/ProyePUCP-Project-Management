@@ -136,11 +136,42 @@ async function listarTodasAutoEvaluacion(req,res,next){
     }
 }
 
+async function activarAutoEvaluacion(req,res,next){
+    const {idProyecto, idAutoEvaluacionXProyecto} = req.body;
+    try {
+        const query = `CALL ACTIVAR_AUTOEVALUACION_X_ID(?,?);`;
+        await connection.query(query,[idProyecto,idAutoEvaluacionXProyecto]);
+        res.status(200).json({
+            message: "Autoevaluacion activada"
+        });
+        console.log('Se activo la autoevalaucion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function finalizarAutoEvaluacion(req,res,next){
+    const {idAutoEvaluacionXProyecto} = req.body;
+    try {
+        const query = `CALL FINALIZAR_AUTOEVALUACION_X_ID(?);`;
+        await connection.query(query,[idAutoEvaluacionXProyecto]);
+        res.status(200).json({
+            message: "Autoevaluacion finalizada"
+        });
+        console.log('Se finalizo la autoevaluacion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 
 module.exports = {
     crearAutoEvaluacionTest,
     listarAutoEvaluacion,
     actualizarAutoEvaluacion,
     crearAutoEvaluacion,
-    listarTodasAutoEvaluacion
+    listarTodasAutoEvaluacion,
+    activarAutoEvaluacion,
+    finalizarAutoEvaluacion
 };

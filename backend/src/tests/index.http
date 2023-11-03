@@ -875,12 +875,21 @@ Content-Type:  application/json
 }
 
 ###LISTAR TODA AUTOEVALUACION
-GET http://localhost:8080/api/proyecto/autoEvaluacion/listarTodasAutoEvaluacion/173 HTTP/1.1
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarTodasAutoEvaluacion/148 HTTP/1.1
 Content-Type:  application/json
 
 ###LISTAR AUTOEVALUACION
-GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/173/79 HTTP/1.1
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/148/79 HTTP/1.1
 Content-Type:  application/json
+
+###ACTIVAR AUTOEVALUACION
+PUT http://localhost:8080/api/proyecto/autoEvaluacion/activarAutoEvaluacion HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProyecto": 148,
+  "idAutoEvaluacionXProyecto": 7
+}
 
 ###
 
