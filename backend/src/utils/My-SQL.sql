@@ -582,6 +582,7 @@ ENGINE = InnoDB;
 CREATE TABLE LineaRetrospectiva(
 	idLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
 	idRetrospectiva INT,
+    idSprint INT,
     idEquipo INT,
     cantBien INT,
     cantMal INT,
@@ -589,9 +590,10 @@ CREATE TABLE LineaRetrospectiva(
     fechaCreacion DATE,
     activo TINYINT,
     FOREIGN KEY (idRetrospectiva) REFERENCES Retrospectiva(idRetrospectiva),
-    FOREIGN KEY (idEquipo) REFERENCES Equipo(idEquipo)
+    FOREIGN KEY (idSprint) REFERENCES Sprint(idSprint)
 )
 ENGINE = InnoDB;
+
 
 CREATE TABLE CriterioRetrospectiva(
 	idCriterioRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
@@ -613,6 +615,8 @@ CREATE TABLE ItemLineaRetrospectiva(
     FOREIGN KEY (idCriterioRetrospectiva) REFERENCES CriterioRetrospectiva(idCriterioRetrospectiva)
 )
 ENGINE = InnoDB;
+
+SELECT * FROM ItemLineaRetrospectiva;
 
 CREATE TABLE ItemLineaRetrospectiva(
 	idItemLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
@@ -739,8 +743,9 @@ CREATE TABLE Sprint(
     descripcion VARCHAR(255),
     fechaInicio DATE,
     fechaFin DATE,
-    estaCompletado TINYINT,
+    estado INT,
     activo TINYINT,
+    nombre VARCHAR(500),
 	FOREIGN KEY (idProductBacklog) REFERENCES ProductBacklog(idProductBacklog)
 )
 ENGINE = InnoDB;
@@ -1027,11 +1032,11 @@ DROP TABLE IF EXISTS UsuarioXEvaluacion;
 CREATE TABLE UsuarioXEvaluacion (
     idUsuarioEvaluacion INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT,
-    idAutoevaluacion INT,
+    idAutoEvaluacionXProyecto INT,
     idUsuarioEvaluado INT,
     observaciones VARCHAR(500),
     activo TINYINT NOT NULL DEFAULT 1,
-    FOREIGN KEY (idAutoevaluacion) REFERENCES Autoevaluacion (idAutoevaluacion) ,
+    FOREIGN KEY (idAutoEvaluacionXProyecto) REFERENCES AutoEvaluacionXProyecto (idAutoEvaluacionXProyecto) ,
     FOREIGN KEY (idUsuario) REFERENCES Usuario (idUsuario),
     FOREIGN KEY (idUsuarioEvaluado) REFERENCES Usuario (idUsuario) 
 )
@@ -1045,6 +1050,18 @@ CREATE TABLE CriterioEvaluacion (
     nota INT,
     activo TINYINT NOT NULL DEFAULT 1,
     FOREIGN KEY (idUsuarioEvaluacion) REFERENCES UsuarioXEvaluacion (idUsuarioEvaluacion) 
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS AutoEvaluacionXProyecto;
+CREATE TABLE AutoEvaluacionXProyecto (
+    idAutoEvaluacionXProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idAutoevaluacion INT,
+    nombre VARCHAR(500),
+    fechaInicio DATE,
+    fechaFin DATE,
+    activo TINYINT NOT NULL DEFAULT 0,
+    FOREIGN KEY (idAutoevaluacion) REFERENCES Autoevaluacion (idAutoevaluacion) 
 )
 ENGINE = InnoDB;
 

@@ -8,6 +8,7 @@ import DateInput from "@/components/DateInput";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import {
+    Avatar,
     Checkbox,
     CheckboxGroup,
     Select,
@@ -44,6 +45,7 @@ import {
     dbDateToInputDate,
     inputDateToDisplayDate,
 } from "@/common/dateFunctions";
+import CrossIcon from "@/components/dashboardComps/projectComps/cronogramaComps/CrossIcon";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -128,7 +130,8 @@ export default function Cronograma(props) {
     const [fechaFin, setFechaFin] = useState("");
     const [validFechas, setValidFechas] = useState(true);
 
-    const [listPosteriores, setListPosteriores] = useState([]);
+    const [listPosteriores, setListPosteriores] = useState([]); //mandamos a insertar
+    const [listPosterioresOriginal, setListPosterioresOriginal] = useState([]); //mandamos a eliminar
 
     const [tabSelected, setTabSelected] = useState("users");
     const [modal, setModal] = useState(false);
@@ -140,12 +143,14 @@ export default function Cronograma(props) {
     //3 para editar una tarea
     //4 si es que esta agregando una tarea hija
     const [isEditable, setIsEditable] = useState(false);
+    const [idTareaToEdit, setIdTareaToEdit] = useState(null);
 
     const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedUsersOriginal, setSelectedUsersOriginal] = useState([]);
     const [selectedSubteam, setSelectedSubteam] = useState(null);
     const [validAsigned, setValidAsigned] = useState(true);
 
-    const [selectedSubteamUsers, setSelectedSubteamUsers] = useState([]);
+    //const [selectedSubteamUsers, setSelectedSubteamUsers] = useState([]);
     const [validSelectedSubteamUsers, setValidSelectedSubteamUsers] =
         useState(true);
 
@@ -176,6 +181,8 @@ export default function Cronograma(props) {
     };
 
     const handleVerDetalle = (tarea) => {
+        console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
+        setIdTareaToEdit(tarea.idTarea);
         //toma una tarea, deberemos setear el estado de la pantalla en todo no editable y con los nuevos valores
         setTareaPadre(tarea.idPadre);
         setTareaName(tarea.sumillaTarea);
@@ -196,24 +203,27 @@ export default function Cronograma(props) {
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
         setListPosteriores(tarea.tareasPosteriores);
+        setListPosterioresOriginal(tarea.tareasPosteriores);
         for (const task of tarea.tareasPosteriores) {
             task.fechaFin = dbDateToInputDate(task.fechaFin);
         }
 
         if (tarea.idEquipo === null) {
             setSelectedUsers(tarea.usuarios);
+            setSelectedUsersOriginal(tarea.usuarios);
             setSelectedSubteam(null);
-            setSelectedSubteamUsers([]);
+            //setSelectedSubteamUsers([]);
             setTabSelected("users");
         } else {
             setSelectedSubteam(tarea.equipo);
             setSelectedUsers([]);
+            setSelectedUsersOriginal([]);
 
             let newUsrLst = [];
             for (const user of tarea.usuarios) {
                 newUsrLst.push(user.idUsuario);
             }
-            setSelectedSubteamUsers(newUsrLst);
+            //setSelectedSubteamUsers(newUsrLst);
             setValidSelectedSubteamUsers(true);
 
             setTabSelected("subteams");
@@ -241,6 +251,7 @@ export default function Cronograma(props) {
 
         setSelectedSubteam(null);
         setSelectedUsers([]);
+        setSelectedUsersOriginal([]);
         setTabSelected("users");
 
         setValidName(true);
@@ -254,6 +265,8 @@ export default function Cronograma(props) {
     };
 
     const handleEdit = (tarea) => {
+        console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
+        setIdTareaToEdit(tarea.idTarea);
         setTareaPadre(tarea.idPadre);
         setTareaName(tarea.sumillaTarea);
         setTareaDescripcion(tarea.descripcion);
@@ -273,24 +286,27 @@ export default function Cronograma(props) {
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
         setListPosteriores(tarea.tareasPosteriores);
+        setListPosterioresOriginal(tarea.tareasPosteriores);
         for (const task of tarea.tareasPosteriores) {
             task.fechaFin = dbDateToInputDate(task.fechaFin);
         }
 
         if (tarea.idEquipo === null) {
             setSelectedUsers(tarea.usuarios);
+            setSelectedUsersOriginal(tarea.usuarios);
             setSelectedSubteam(null);
-            setSelectedSubteamUsers([]);
+            //setSelectedSubteamUsers([]);
             setTabSelected("users");
         } else {
             setSelectedSubteam(tarea.equipo);
             setSelectedUsers([]);
+            setSelectedUsersOriginal([]);
 
             let newUsrLst = [];
             for (const user of tarea.usuarios) {
                 newUsrLst.push(user.idUsuario);
             }
-            setSelectedSubteamUsers(newUsrLst);
+            //setSelectedSubteamUsers(newUsrLst);
             setValidSelectedSubteamUsers(true);
 
             setTabSelected("subteams");
@@ -376,7 +392,9 @@ export default function Cronograma(props) {
     };
 
     const removeUser = (user) => {
-        const newList = selectedUsers.filter((item) => item.id !== user.id);
+        const newList = selectedUsers.filter(
+            (item) => item.idUsuario !== user.idUsuario
+        );
         setSelectedUsers(newList);
         console.log(newList);
     };
@@ -425,16 +443,6 @@ export default function Cronograma(props) {
 
     function promiseRegistrarTarea() {
         return new Promise((resolve, reject) => {
-            let selectedSubteamUsersWithId;
-            if (selectedSubteam !== null) {
-                //remapeamos array para darle un nombre al atributo
-                selectedSubteamUsersWithId = selectedSubteamUsers.map((id) => {
-                    return {
-                        idUsuario: id,
-                    };
-                });
-            }
-
             setToggleNew(false);
             const objTareaNueva = {
                 idCronograma: cronogramaId,
@@ -450,43 +458,17 @@ export default function Cronograma(props) {
                 cantSubtareas: 0,
                 cantPosteriores: 0,
                 horasPlaneadas: null,
-                usuarios:
-                    selectedUsers.length === 0
-                        ? selectedSubteamUsersWithId
-                        : selectedUsers, //veriifcar posible error
+                usuarios: selectedUsers, //veriifcar posible error
                 subTareas: null,
                 tareasPosteriores: listPosteriores,
             };
-            console.log(objTareaNueva,null,2);
+            console.log(objTareaNueva, null, 2);
 
-            
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/cronograma/insertarTarea";
             axios
-                .post(newURL, {
-                    idCronograma: cronogramaId,
-                    idTareaEstado: parseInt(tareaEstado[0], 10), //No iniciado
-                    idSubGrupo:
-                        selectedSubteam === null
-                            ? null
-                            : selectedSubteam.idEquipo,
-                    idPadre: tareaPadre !== null ? tareaPadre.idTarea : null,
-                    idTareaAnterior: null,
-                    sumillaTarea: tareaName,
-                    descripcion: tareaDescripcion,
-                    fechaInicio: fechaInicio,
-                    fechaFin: fechaFin,
-                    cantSubtareas: 0,
-                    cantPosteriores: 0,
-                    horasPlaneadas: null,
-                    usuarios:
-                        selectedUsers.length === 0
-                            ? selectedSubteamUsersWithId
-                            : selectedUsers, //veriifcar posible error
-                    subTareas: null,
-                    tareasPosteriores: listPosteriores,
-                })
+                .post(newURL, objTareaNueva)
                 .then(function (response) {
                     console.log(response.data.message);
                     //actualizamos lista de tareas
@@ -511,13 +493,14 @@ export default function Cronograma(props) {
                 })
                 .catch(function (error) {
                     console.log(error);
+                    console.log("error!!!");
                     reject(error);
                 });
-            
         });
     }
 
     const registrarTarea = () => {
+        console.log("entrando?");
         toast.promise(promiseRegistrarTarea, {
             loading: "Registrando tu nueva tarea...",
             success: (data) => {
@@ -532,22 +515,87 @@ export default function Cronograma(props) {
         return new Promise((resolve, reject) => {
             setToggleNew(false);
 
-            setTimeout(() => {
-                resolve("Promise resolved successfully");
-            }, 2000);
+            //sobre usuariosAgregados y usuariosEliminados
+            console.log(
+                "ORIGINAL === " + JSON.stringify(selectedUsersOriginal, null, 2)
+            );
+            console.log(
+                "MODIFICADO === " + JSON.stringify(selectedUsers, null, 2)
+            );
 
-            const tareasURL =
+            // Identificar usuarios eliminados
+            const deletedUsers = selectedUsersOriginal.filter(
+                (userOriginal) => {
+                    return !selectedUsers.some(
+                        (userEdited) =>
+                            userOriginal.idUsuario === userEdited.idUsuario
+                    );
+                }
+            );
+
+            // Identificar usuarios agregados
+            const addedUsers = selectedUsers.filter((userEdited) => {
+                return !selectedUsersOriginal.some(
+                    (userOriginal) =>
+                        userOriginal.idUsuario === userEdited.idUsuario
+                );
+            });
+
+            console.log("Usuarios eliminados:", deletedUsers);
+            console.log("Usuarios agregados:", addedUsers);
+
+            //sobre tareas posteriores agregadas
+            console.log(
+                "LISTA DE POSTERIORES : " +
+                    JSON.stringify(listPosteriores, null, 2)
+            );
+
+            //como conseguimos los nuevos? nuevaLista - listaOriginal
+
+            const objToEdit = {
+                idCronograma: cronogramaId,
+                idTarea: idTareaToEdit,
+                sumillaTarea: tareaName,
+                descripcion: tareaDescripcion,
+                idTareaEstado: parseInt(tareaEstado[0], 10),
+                fechaInicio: fechaInicio,
+                fechaFin: fechaFin,
+                idEquipo:
+                    selectedSubteam === null ? null : selectedSubteam.idEquipo,
+                tareasPosterioresAgregadas: listPosteriores,
+                tareasPosterioresEliminadas: listPosterioresOriginal,
+                usuariosAgregados: selectedUsers, //al final se barren todos los antiguos xde, se deben agregar todos dnv
+                usuariosEliminados: deletedUsers,
+            };
+
+            console.log(objToEdit);
+
+            const editURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                projectId;
+                "/api/proyecto/cronograma/actualizarTarea";
             axios
-                .get(tareasURL)
+                .put(editURL, objToEdit)
                 .then(function (response) {
-                    console.log(response);
-                    setListTareas(response.data.tareasOrdenadas);
-                    console.log(response.data.tareasOrdenadas);
+                    console.log(response.data.message);
+                    //actualizamos lista de tareas
 
-                    resolve(response);
+                    const tareasURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    axios
+                        .get(tareasURL)
+                        .then(function (response) {
+                            console.log(response);
+                            setListTareas(response.data.tareasOrdenadas);
+                            console.log(response.data.tareasOrdenadas);
+
+                            resolve(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            reject(error);
+                        });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -637,17 +685,17 @@ export default function Cronograma(props) {
         setValidAsigned(true);
     }, [selectedUsers]);
 
-    useEffect(() => {
-        if (selectedSubteam !== null && stateSecond !== 2) {
-            console.log("voy a setear todos true");
-            let newUsrLst = [];
-            for (const user of selectedSubteam.participantes) {
-                newUsrLst.push(user.idUsuario);
-            }
-            setSelectedSubteamUsers(newUsrLst);
-            setValidSelectedSubteamUsers(true);
-        }
-    }, [selectedSubteam]);
+    // useEffect(() => {
+    //     if (selectedSubteam !== null && stateSecond !== 2) {
+    //         console.log("voy a setear todos true");
+    //         let newUsrLst = [];
+    //         for (const user of selectedSubteam.participantes) {
+    //             newUsrLst.push(user.idUsuario);
+    //         }
+    //         setSelectedSubteamUsers(newUsrLst);
+    //         setValidSelectedSubteamUsers(true);
+    //     }
+    // }, [selectedSubteam]);
 
     return (
         <div className="cronogramaDiv bg-mainBackground">
@@ -947,7 +995,23 @@ export default function Cronograma(props) {
                                         validFechas === true ? false : true
                                     }
                                     onChangeHandler={(e) => {
-                                        setFechaFin(e.target.value);
+                                        //verificamos que sea menor a todas las fechas de las posteriores
+                                        const isEarlierThanAll =
+                                            listPosteriores.every(
+                                                (tareaPost) =>
+                                                    e.target.value <
+                                                    tareaPost.fechaFin
+                                            );
+                                        console.log(isEarlierThanAll);
+                                        if (isEarlierThanAll === true) {
+                                            setFechaFin(e.target.value);
+                                        } else {
+                                            toast.error(
+                                                "La fecha no puede ser mayor a la de una tarea posterior",
+                                                { position: "top-center" }
+                                            );
+                                        }
+
                                         setValidFechas(true);
                                     }}
                                 ></DateInput>
@@ -970,13 +1034,22 @@ export default function Cronograma(props) {
                         )}
                     </div>
 
-                    <div className="containerPosteriores">
+                    <div className="containerPosteriores mt-3">
                         <div className="posterioresHeader">
                             <p>Tareas posteriores</p>
                             {stateSecond !== 2 && (
                                 <div
-                                    className="btnToPopUp"
-                                    onClick={onModalPosteriorOpen}
+                                    className="btnToPopUp bg-mainSidebar"
+                                    onClick={() => {
+                                        if (fechaFin !== "") {
+                                            onModalPosteriorOpen();
+                                        } else {
+                                            toast.warning(
+                                                "Primero añade una fecha de fin a la tarea",
+                                                { position: "top-center" }
+                                            );
+                                        }
+                                    }}
                                 >
                                     <p>Añadir</p>
                                 </div>
@@ -987,7 +1060,7 @@ export default function Cronograma(props) {
                             la tarea previa y su fecha de inicio sera en la
                             fecha fin de la previa.
                         </p>
-                        <div className="posterioresViewContainer">
+                        <div className="posterioresViewContainer bg-mainSidebar">
                             {listPosteriores.length === 0 && (
                                 <p className="noUsersMsg">
                                     No ha creado tareas posteriores
@@ -995,35 +1068,74 @@ export default function Cronograma(props) {
                             )}
                             {listPosteriores.map((tPost, index) => {
                                 return (
+                                    // <div
+                                    //     className="cardTareasPosteriores bg-mainBackground"
+                                    //     key={index}
+                                    // >
+                                    //     <div className="flex flex-row justify-between">
+                                    //         <p>
+                                    //             {tPost.sumillaTarea}
+                                    //             {" | Concluirá el "}
+                                    //             {inputDateToDisplayDate(
+                                    //                 tPost.fechaFin
+                                    //             )}
+                                    //         </p>
+
+                                    //         {stateSecond !== 2 && (
+                                    //             <img
+                                    //                 src="/icons/icon-crossBlack.svg"
+                                    //                 onClick={() => {
+                                    //                     removeTareaPosterior(
+                                    //                         index + 1
+                                    //                     );
+                                    //                 }}
+                                    //             ></img>
+                                    //         )}
+                                    //     </div>
+
+                                    //     <p className="pl-5">
+                                    //         {"Descripción: " +
+                                    //             tPost.descripcion}
+                                    //     </p>
+                                    // </div>
                                     <div
-                                        className="cardTareasPosteriores"
                                         key={index}
+                                        className="
+                                        cardTareasPosteriores
+                                        bg-mainBackground
+                                        flex
+                                        flex-row
+                                        items-center
+                                        space-x-4
+                                        "
                                     >
-                                        <div className="flex flex-row justify-between">
-                                            <p>
+                                        <div className="flex flex-col flex-1">
+                                            <p className="text-large font-medium">
                                                 {tPost.sumillaTarea}
-                                                {" | Concluirá el "}
+                                            </p>
+                                            <p className="pl-2">
+                                                {tPost.descripcion}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-col flex-1 justify-start items-start">
+                                            <p className="text-large font-medium">Fecha fin</p>
+                                            <p>
                                                 {inputDateToDisplayDate(
                                                     tPost.fechaFin
                                                 )}
                                             </p>
-
-                                            {stateSecond !== 2 && (
-                                                <img
-                                                    src="/icons/icon-crossBlack.svg"
-                                                    onClick={() => {
-                                                        removeTareaPosterior(
-                                                            index + 1
-                                                        );
-                                                    }}
-                                                ></img>
-                                            )}
                                         </div>
 
-                                        <p className="pl-5">
-                                            {"Descripción: " +
-                                                tPost.descripcion}
-                                        </p>
+                                        {stateSecond !== 2 && (
+                                            <CrossIcon
+                                                handlerOnClick={() => {
+                                                    removeTareaPosterior(
+                                                        index + 1
+                                                    );
+                                                }}
+                                            ></CrossIcon>
+                                        )}
                                     </div>
                                 );
                             })}
@@ -1031,7 +1143,7 @@ export default function Cronograma(props) {
                     </div>
 
                     <p style={{ paddingTop: ".7rem" }}>
-                        Asigna miembros a tu tarea!
+                        Asigna miembros a tu tarea
                     </p>
                     <div className="containerTab">
                         <div className="flex flex-wrap gap-4">
@@ -1054,7 +1166,7 @@ export default function Cronograma(props) {
                         {tabSelected === "users"
                             ? stateSecond !== 2 && (
                                   <div
-                                      className="btnToPopUp"
+                                      className="btnToPopUp bg-mainSidebar"
                                       onClick={() => {
                                           setModal(true);
                                       }}
@@ -1069,7 +1181,7 @@ export default function Cronograma(props) {
                               )
                             : stateSecond !== 2 && (
                                   <div
-                                      className="btnToPopUp"
+                                      className="btnToPopUp bg-mainSidebar"
                                       onClick={onModalSubEOpen}
                                   >
                                       <p>Buscar un subequipo</p>
@@ -1087,8 +1199,8 @@ export default function Cronograma(props) {
                             className={
                                 validAsigned === true &&
                                 validSelectedSubteamUsers === true
-                                    ? "contUsers"
-                                    : "contUsers invalid"
+                                    ? "contUsers bg-mainSidebar"
+                                    : "contUsers invalid bg-mainSidebar"
                             }
                         >
                             {tabSelected === "users" ? (
@@ -1109,7 +1221,7 @@ export default function Cronograma(props) {
                                     </p>
                                 )
                             ) : selectedSubteam !== null ? (
-                                <div className="cardSubteam">
+                                <div className="cardSubteam bg-mainBackground">
                                     <div className="cardSubteam_Header">
                                         <div className="flex gap-[1rem]">
                                             <div className="cardLeftSide">
@@ -1118,12 +1230,13 @@ export default function Cronograma(props) {
                                                     style={{
                                                         fontFamily: "Roboto",
                                                     }}
+                                                    className="text-mainHeaders"
                                                 >
                                                     {selectedSubteam.nombre}
                                                 </p>
                                             </div>
 
-                                            {stateSecond !== 2 && (
+                                            {/* {stateSecond !== 2 && (
                                                 <div className="flex items-center">
                                                     <div
                                                         className="membersSelectAll"
@@ -1145,17 +1258,7 @@ export default function Cronograma(props) {
                                                         Seleccionar todos
                                                     </div>
                                                 </div>
-                                            )}
-
-                                            <div
-                                                onClick={() => {
-                                                    console.log(
-                                                        selectedSubteamUsers
-                                                    );
-                                                }}
-                                            >
-                                                ver estado
-                                            </div>
+                                            )} */}
                                         </div>
 
                                         {stateSecond !== 2 && (
@@ -1163,14 +1266,14 @@ export default function Cronograma(props) {
                                                 src="/icons/icon-crossBlack.svg"
                                                 onClick={() => {
                                                     setSelectedSubteam(null);
-                                                    setSelectedSubteamUsers([]);
+                                                    //setSelectedSubteamUsers([]);
                                                 }}
                                             ></img>
                                         )}
                                     </div>
 
                                     {/* <div className="SubTeamUsersContainerSelected"> */}
-                                    <CheckboxGroup
+                                    {/* <CheckboxGroup
                                         isDisabled={
                                             stateSecond === 2 ? true : false
                                         }
@@ -1186,7 +1289,8 @@ export default function Cronograma(props) {
                                             base: "pl-[1.6rem]",
                                             wrapper: "gap-[1.8rem] ",
                                         }}
-                                    >
+                                    > */}
+                                    <div className="flex flex-row gap-x-[1.8rem] gap-y-[.5rem] pl-[1.6rem] flex-wrap pb-2">
                                         {selectedSubteam.participantes.map(
                                             (user) => {
                                                 return (
@@ -1194,22 +1298,36 @@ export default function Cronograma(props) {
                                                         className="SingleUserIconContainerSelected"
                                                         key={user.idUsuario}
                                                     >
-                                                        <Checkbox
-                                                            value={
-                                                                user.idUsuario
+                                                        {/* <Checkbox
+                                                                value={
+                                                                    user.idUsuario
+                                                                }
+                                                                onChange={() => {
+                                                                    setValidSelectedSubteamUsers(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                            ></Checkbox> */}
+
+                                                        <Avatar
+                                                            //isBordered
+                                                            //as="button"
+                                                            className="transition-transform w-[40px] min-w-[40px] h-[40x] min-h-[40px] bg-mainUserIcon"
+                                                            src={user.imgLink}
+                                                            fallback={
+                                                                <p className="SingleUserIconSelected bg-mainUserIcon">
+                                                                    {user
+                                                                        .nombres[0] +
+                                                                        (user.apellidos !==
+                                                                        null
+                                                                            ? user
+                                                                                  .apellidos[0]
+                                                                            : "")}
+                                                                </p>
                                                             }
-                                                            onChange={() => {
-                                                                setValidSelectedSubteamUsers(
-                                                                    true
-                                                                );
-                                                            }}
-                                                        ></Checkbox>
-                                                        <div className="SingleUserIconSelected">
-                                                            {user.nombres[0] +
-                                                                user
-                                                                    .apellidos[0]}
-                                                        </div>
-                                                        <div className="SingleUserNameSelected">
+                                                        />
+
+                                                        <div className="">
                                                             {user.nombres +
                                                                 " " +
                                                                 user.apellidos}
@@ -1218,7 +1336,8 @@ export default function Cronograma(props) {
                                                 );
                                             }
                                         )}
-                                    </CheckboxGroup>
+                                    </div>
+                                    {/* </CheckboxGroup> */}
                                     {/* </div> */}
                                 </div>
                             ) : (
@@ -1317,14 +1436,6 @@ export default function Cronograma(props) {
                                         allValid = false;
                                     }
                                     if (
-                                        selectedSubteam !== null &&
-                                        selectedSubteamUsers.length === 0
-                                    ) {
-                                        setValidSelectedSubteamUsers(false);
-                                        allValid = false;
-                                    }
-
-                                    if (
                                         selectedSubteam === null &&
                                         selectedUsers.length !== 0
                                     ) {
@@ -1353,15 +1464,15 @@ export default function Cronograma(props) {
                     handlerModalFinished={returnListOfUsers}
                     excludedUsers={selectedUsers}
                     idProyecto={projectId}
+                    listAllUsers={false}
                 ></ModalUser>
             )}
 
             <Toaster
                 richColors
-                theme={"light"}
                 closeButton={true}
                 toastOptions={{
-                    style: { fontSize: "1.2rem" },
+                    style: { fontSize: "1rem" },
                 }}
             />
         </div>

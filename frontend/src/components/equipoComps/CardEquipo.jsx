@@ -36,7 +36,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
         <>
             <div //estaba en 70
                 className="w-full shadow-md 
-                border border-gray-300 rounded-lg card-hover my-2 overflow-hidden p-[1rem]"
+                border border-gray-300 rounded-lg card-hover hover:bg-[#5088e9] dark:hover:bg-[rgba(238,238,238,0.1)] my-2 overflow-hidden p-[1rem]"
                 onClick={() => {
                     handleSeeTeam(team);
                 }}

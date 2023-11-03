@@ -266,7 +266,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="mainDiv bg-mainSidebar">
+        <div className="mainDiv">
             <div className="headerDiv text-mainHeaders">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />

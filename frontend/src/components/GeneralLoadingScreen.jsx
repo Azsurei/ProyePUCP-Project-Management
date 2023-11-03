@@ -14,8 +14,7 @@ export default function GeneralLoadingScreen({isLoading}) {
         justifyContent: "center",
         alignItems: "center",
         gap: "1rem",
-        zIndex: "999999",
-        backgroundColor: "white"
+        zIndex: "999999"
     };
 
     const titleStyle = {
@@ -27,7 +26,7 @@ export default function GeneralLoadingScreen({isLoading}) {
 
     if(isLoading){
         return (
-            <div style={screenStyle} className="generalLoadingScreen">
+            <div style={screenStyle} className="generalLoadingScreen bg-mainBackground">
                 <p style={titleStyle}>ProyePUCP</p>
     
                 <Box sx={{ width: "300px", color: "lightgray" }}>

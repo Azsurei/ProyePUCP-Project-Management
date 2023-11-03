@@ -30,25 +30,14 @@ function CardUser({ usuarioObject }) {
             className={isSelected ? "UserCard active" : "UserCard"}
             onClick={isSelected ? handleSelectedOff : handleSelectedOn}
         >
-            {/* <img
-                className="imgageUserDefault"
-                src="/images/userDefaultList.png"
-                //src={usuarioObject.imgLink}
-            /> */}
-            {/* <p className="usrLeftIconNull">
-                {usuarioObject.nombres[0] +
-                    (usuarioObject.apellidos !== null
-                        ? usuarioObject.apellidos[0]
-                        : "")}
-            </p> */}
 
             <Avatar
                 //isBordered
                 //as="button"
-                className="transition-transform w-[48px] min-w-[48px] h-[48px] min-h-[48px]"
+                className="transition-transform w-[48px] min-w-[48px] h-[48px] min-h-[48px] bg-mainUserIcon"
                 src={usuarioObject.imgLink}
                 fallback={
-                    <p className="usrLeftIconNull">
+                    <p className="usrLeftIconNull bg-mainUserIcon">
                         {usuarioObject.nombres[0] +
                             (usuarioObject.apellidos !== null
                                 ? usuarioObject.apellidos[0]

@@ -10,8 +10,7 @@
     flex-direction: row;
     justify-content: center;
     gap: 2rem;
-
-    background-color:  #172B4D;
+    
     overflow: auto;
     overflow-anchor: auto;
 

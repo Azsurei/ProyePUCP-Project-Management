@@ -29,6 +29,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Switch,
   } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -48,6 +49,7 @@ export default function EstimacionCosto(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+    const [isSelected, setIsSelected] = useState(false);
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
 
@@ -164,6 +166,8 @@ export default function EstimacionCosto(props) {
                     idProyecto: projectId,
                     descripcion:descripcionLinea,
                     tarifaUnitaria: monto,
+                    //Se añade tiempoRequerido
+                    tiempoRequerido:mesesRequerido,
                     cantidadRecurso: cantRecurso,
                     subtotal:parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
                     fechaInicio:fecha,
@@ -267,10 +271,29 @@ export default function EstimacionCosto(props) {
           };
             fetchData();
     };
-
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };    
         
     useEffect(() => {
-    
+        ObtenerPresupuesto();
         DataTable();
       }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
@@ -298,7 +321,9 @@ export default function EstimacionCosto(props) {
     }, [lineasEstimacion, filterValue, fechaInicio, fechaFin, filtrarFecha]);
 
     
-
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
 
     return (
 
@@ -323,14 +348,18 @@ export default function EstimacionCosto(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Estimacion de Costos</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Estimacion de Costos</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
-                        </Link>
 
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                                 <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                         </Link>
                         
@@ -380,7 +409,7 @@ export default function EstimacionCosto(props) {
                     </div>
 
                     <div className="divListaIngreso">
-                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false}></EstimacionCostoList>
+                        <EstimacionCostoList lista = {filteredItems} refresh ={DataTable} isEdit={true} isSelect = {false} changeMoneda = {handleSelectedMoneda} valueMoneda = {isSelected}></EstimacionCostoList>
                     </div>
 
 

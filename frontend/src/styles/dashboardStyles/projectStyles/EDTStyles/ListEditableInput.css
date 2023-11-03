@@ -18,8 +18,9 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-
+    max-width: 40rem;
     gap: 1rem;
+    border-color: rgb(150, 150, 150);
 }
 
 .EditableInput .inputXdeleteContainer .inputBox{
@@ -57,3 +58,8 @@
     -moz-box-shadow: none;
     box-shadow: none;
 }
+
+.check {
+    color: #f0ae19;
+}
+

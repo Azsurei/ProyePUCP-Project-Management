@@ -73,7 +73,6 @@ export default function RootLayout({ children, params }) {
                                 position: "absolute",
                                 width: "100%",
                                 height: "100%",
-                                background: "white",
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "center",
@@ -81,6 +80,7 @@ export default function RootLayout({ children, params }) {
                                 gap: ".2rem",
                                 zIndex: 10
                             }}
+                            className="bg-mainBackground"
                         >
                             <p
                                 style={{

@@ -30,6 +30,9 @@ module.exports = {
                 'mainHeaders': 'rgb(var(--color-mainHeaders) / <alpha-value>)',
                 'mainSidebar': 'rgb(var(--color-mainSidebar) / <alpha-value>)',
                 'mainUserIcon': 'rgb(var(--color-mainUserIcon) / <alpha-value>)',
+                'mainContent': 'rgb(var(--color-mainContent) / <alpha-value>)',
+                'mainNavBar': 'rgb(var(--color-mainNavBar) / <alpha-value>)',
+
 
                 //about kanban
                 'columnBackgroundColor': 'rgb(var(--color-columnBackgroundColor) / <alpha-value>)',

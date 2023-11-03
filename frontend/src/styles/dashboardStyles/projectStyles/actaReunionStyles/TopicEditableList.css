@@ -1,0 +1,192 @@
+.TopicEditableList{
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.EditableTopic{
+    display: flex;
+    flex-direction: column;
+}
+
+.EditableTopic .inputAndDeleteContainer {
+    width: 100%; /* O el ancho que prefieras */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+.EditableTopic .newInputEntrName{
+    color: #f0ae19;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.topicContainer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/*
+.EditableTopic .inputAndDeleteContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 1rem;
+}
+*/
+.EditableTopic .inputAndDeleteContainer .inputBox{
+    flex: 1;
+    overflow-y: auto;
+
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+}
+
+.EditableTopic .inputAndDeleteContainer .inputBox.nonEditable{
+    flex: 1;
+    overflow-y: auto;
+
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+
+    background-color: rgb(236, 236, 236);
+    resize: none;
+}
+
+
+.EditableTopic .inputAndDeleteContainer .inputBox.nonEditable:focus{
+    border-color: rgb(211, 211, 211);
+    background-color: rgb(236, 236, 236);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.btnMostrarAcuerdos {
+    color: #f0ae19;
+    background: none;
+    border: none;
+    border-radius: 20px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: 5px;
+    font-weight: 500;
+    text-align: left;
+    max-width: 12rem;
+}
+
+.btnMostrarAcuerdos:hover {
+    background-color: #fff8b8;
+}
+
+/*********************************************************************************************
+/ ARListEditableInput
+/*********************************************************************************************/
+.ListEditableInput{
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.EditableInput{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.EditableInput .newInputEntrName{
+    color: rgb(150, 150, 150);
+}
+
+/*
+.inputXdeleteContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+*/
+.inputXdeleteContainer .inputBox{
+    flex: 1;
+    overflow-y: auto;
+
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+}
+
+.inputXdeleteContainer .inputBox.nonEditable{
+    flex: 1;
+    overflow-y: auto;
+
+    border-color: rgb(211, 211, 211);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+
+    background-color: rgb(236, 236, 236);
+    resize: none;
+}
+
+
+.inputXdeleteContainer .inputBox.nonEditable:focus{
+    border-color: rgb(211, 211, 211);
+    background-color: rgb(236, 236, 236);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 0 .4rem;
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.check {
+    color: #f0ae19;
+}
+
+.iconDeleteInput {
+    filter: grayscale(100%);
+    background: none;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.iconDeleteInput:hover {
+    background-color: #ffc7c7;
+}
+
+#acuerdoDatePicker {
+    width: 200px; /* Personaliza el ancho según tus necesidades */
+    height: 40px; /* Personaliza la altura según tus necesidades */
+     /* Agrega un borde de 1 píxel sólido con color gris (#ccc) */
+    border-radius: 15px; /* Agrega esquinas redondeadas */
+    background-color: #fff;
+    border-color: rgb(211, 211, 211);
+    color: #333;
+    margin: 5px 0;
+    margin-right: 1.5rem;
+    padding: 0.8rem;
+    transition: background-color 0.1s;
+  }
+
+  .titleResponsbles img {
+    filter: brightness(0) invert(1); /* Aplica un filtro blanco (escala de grises) */
+    margin-left: 5px; /* Ajusta el margen izquierdo para posicionar a la derecha */
+  }

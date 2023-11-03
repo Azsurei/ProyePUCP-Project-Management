@@ -1,10 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/PopUpEpica.css";
-import ListRol from "@/components/equipoComps/ListRol";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-import axios from "axios";
-axios.defaults.withCredentials = true;
 import { Input, Button } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/LisEpic.css";
 import { Toaster, toast } from "sonner";
@@ -20,9 +17,6 @@ export default function PopUpRolEquipo({
     const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
-    const [eliminateError, setEliminateError] = useState("");
-    const [noRol, setNoRol] = useState("");
-    const [isSelected, setIsSelected] = useState(false);
     const [addRol, setAddRol] = useState(false);
     const [quantity, setQuantity] = useState(3);
 
@@ -36,22 +30,6 @@ export default function PopUpRolEquipo({
         setListRoles((prevRoles) => {
             return prevRoles.filter((role) => role.idRol !== rol.idRol);
         });
-    };
-
-    const [selectedRoles, setSelectedRoles] = useState(new Set());
-
-    //agregamos el rol a la lista de roles
-    const handleConfirmButtonClick = () => {
-        if (newRolName.trim() === "") {
-            setAddErrorRol("El nombre del rol no puede estar vacío.");
-        } else if (listRoles.some((rol) => rol.nombre === newRolName)) {
-            setAddErrorRol("El nombre del rol ya existe en la lista.");
-        } else {
-            setAddErrorRol("");
-            setListRoles([...listRoles, newRolName]);
-            setNewRolName("");
-            setAddRol(false);
-        }
     };
 
     return (
@@ -133,7 +111,7 @@ export default function PopUpRolEquipo({
                                                     </p>
                                                 </div>
                                                 {role.nombreRol !==
-                                                    "Miembro" && (
+                                                    "Miembro" && role.nombreRol!="Líder" && (
                                                     <img
                                                         src="/icons/icon-trash.svg"
                                                         alt="delete"

@@ -6,6 +6,7 @@ import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
 import ModalEliminateIngreso from "./ModalEliminateIngreso";
 import EditIngreso from "./EditIngreso";
+import { set } from "date-fns";
 
 
 axios.defaults.withCredentials = true;
@@ -17,12 +18,15 @@ function CardIngresos({
     montoIngreso,
     horaIngreso,
     refresh,
+    handleMoneda,
+    initialMoneda,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
+    const [montoAdapt, setMontoAdapt] = useState(montoIngreso);
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal1(!modal1);
@@ -44,7 +48,26 @@ function CardIngresos({
         // Agrega más opciones según sea necesario
     };
     const isEgreso= ["Licencia de Software", "Ingeniero Industrial"].includes(tipoIngreso);
-    const monedaSymbol = IngresoObject.nombreMoneda === "USD" ? "$" : "S/";
+    const monedaSymbol = !initialMoneda ? "$" : "S/";
+    useEffect(() => {
+        console.log("initialMoneda", initialMoneda);
+        console.log("IngresoObject.idMoneda", IngresoObject.idMoneda);
+        if (initialMoneda && IngresoObject.idMoneda === 1) {
+          const nuevoMonto = (montoIngreso * 3.9).toFixed(2); // Redondear a 2 decimales
+          setMontoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else if (!initialMoneda && IngresoObject.idMoneda === 2) {
+          // Segunda situación
+          const nuevoMonto = (montoIngreso / 3.9).toFixed(2); // Redondear a 2 decimales
+          setMontoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        } else {
+          const nuevoMonto = montoIngreso.toFixed(2); // Redondear a 2 decimales
+          setMontoAdapt(nuevoMonto);
+          console.log("montoAdapt", nuevoMonto);
+        }
+      }, [initialMoneda]);
+      
     return (
         <li
             className="IngresoCard"
@@ -59,7 +82,7 @@ function CardIngresos({
                     <p className={isEgreso ? "titleTipoPagoEgresoHistorial" : "titleTipoPago"}>{IngresoObject.descripcionTransaccionTipo}</p>
                 </div>
                 <div style={{ marginTop: "12px", marginLeft: "auto" }}>
-                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoIngreso}</p>
+                    <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoAdapt}</p>
                     <p className="titleHoraIngreso">{IngresoObject.descripcionIngresoTipo}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
@@ -103,7 +126,7 @@ function CardIngresos({
 export default function IngresosList(props) {
     const router = useRouter();
 
-    const { lista, refresh } = props;
+    const { lista, refresh, changeMoneda, valueMoneda } = props;
     console.log("listaIngresos", lista);
     if (props.lista.length === 0) {
         return (
@@ -119,6 +142,7 @@ export default function IngresosList(props) {
     useEffect(() => {
         const handleRefresh = async () => {
             refresh();
+            
             console.log("refreshed");
         };
         handleRefresh();
@@ -158,6 +182,8 @@ export default function IngresosList(props) {
                                     montoIngreso={component.monto}
                                     horaIngreso={horaIngreso}
                                     refresh={refresh}
+                                    handleMoneda = {changeMoneda}
+                                    initialMoneda = {valueMoneda}
                                 />
                             ))}
                         </ul>

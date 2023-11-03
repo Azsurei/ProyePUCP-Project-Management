@@ -20,8 +20,25 @@ async function crear(req, res, next) {
     } = req.body;
 
     try {
-        const idTarea = await insertarTarea(idCronograma, idTareaEstado, idSubGrupo, idPadre, idTareaAnterior, sumillaTarea, descripcion, fechaInicio, fechaFin, cantSubtareas, cantPosteriores, horasPlaneadas,0 );
-        await usuarioXTareaController.funcCrearUsuariosXTarea(usuarios, idTarea);
+        const idTarea = await insertarTarea(
+            idCronograma,
+            idTareaEstado,
+            idSubGrupo,
+            idPadre,
+            idTareaAnterior,
+            sumillaTarea,
+            descripcion,
+            fechaInicio,
+            fechaFin,
+            cantSubtareas,
+            cantPosteriores,
+            horasPlaneadas,
+            0
+        );
+        await usuarioXTareaController.funcCrearUsuariosXTarea(
+            usuarios,
+            idTarea
+        );
         //await insertarTareas(subTareas);  --Ya no insertamos subTareas en esta seccion, se insertan como normales
         await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
         console.log(`Tarea ${idTarea} creada`);
@@ -32,28 +49,72 @@ async function crear(req, res, next) {
     }
 }
 
-async function modificar(req,res,next){
-    const {idTarea,sumillaTarea,descripcion,idTareaEstado,fechaInicio,fechaFin,idEquipo,
-        tareasPosterioresAgregadas,tareasPosterioresEliminadas,tareasPosterioresSinTocar,
-        usuariosAgregados,usuariosEliminados} = req.body;
+async function modificar(req, res, next) {
+    const {
+        idCronograma,
+        idTarea,
+        sumillaTarea,
+        descripcion,
+        idTareaEstado,
+        fechaInicio,
+        fechaFin,
+        idEquipo,
+        tareasPosterioresAgregadas,
+        tareasPosterioresEliminadas,
+        usuariosAgregados,
+        usuariosEliminados,
+    } = req.body;
     try {
-        await funcModificar(idTarea,sumillaTarea,descripcion,idTareaEstado,fechaInicio,fechaFin,idEquipo);
-        await funcAgregarTareasPosteriores(tareasPosterioresAgregadas,idTarea);
+        await funcModificar(
+            idTarea,
+            sumillaTarea,
+            descripcion,
+            idTareaEstado,
+            fechaInicio,
+            fechaFin,
+            idEquipo
+        );
+
         await funcEliminarTareasPosteriores(tareasPosterioresEliminadas);
-        await funcModificarTareasPosteriores(tareasPosterioresSinTocar);
+        await funcAgregarTareasPosteriores(tareasPosterioresAgregadas, usuariosAgregados, idTarea, idCronograma, fechaFin);
         
-        await usuarioXTareaController.funcEliminarUsuariosXTarea(usuariosEliminados,idTarea);
-        await usuarioXTareaController.funcCrearUsuariosXTarea(usuariosAgregados,idTarea);
+
+        await usuarioXTareaController.funcEliminarUsuariosXTarea(
+            //barre todos los usuarios de la tarea
+            usuariosEliminados,
+            idTarea
+        );
+        await usuarioXTareaController.funcCrearUsuariosXTarea(
+            usuariosAgregados,
+            idTarea
+        );
+
+        res.status(200).json({ message: `Tarea ${idTarea} modificada` });
     } catch (error) {
         next(error);
     }
 }
 
-
-async function funcModificar(idTarea,sumillaTarea,descripcion,idTareaEstado,fechaInicio,fechaFin,idEquipo){
+async function funcModificar(
+    idTarea,
+    sumillaTarea,
+    descripcion,
+    idTareaEstado,
+    fechaInicio,
+    fechaFin,
+    idEquipo
+) {
     try {
         const query = `CALL MODIFICAR_TAREA(?,?,?,?,?,?,?);`;
-        await connection.query(query,[idTarea,sumillaTarea,descripcion,idTareaEstado,fechaInicio,fechaFin,idEquipo]);
+        await connection.query(query, [
+            idTarea,
+            sumillaTarea,
+            descripcion,
+            idTareaEstado,
+            fechaInicio,
+            fechaFin,
+            idEquipo,
+        ]);
     } catch (error) {
         console.log(error);
         return -1;
@@ -61,31 +122,81 @@ async function funcModificar(idTarea,sumillaTarea,descripcion,idTareaEstado,fech
     return idTarea;
 }
 
-async function funcAgregarTareasPosteriores(tareasPosterioresAgregadas,idTarea){
-    if(tareasPosterioresAgregadas){
-        for(const tarea of tareasPosterioresAgregadas){
-            [results] = insertarTarea(tarea.idCronograma,tarea.idTareaEstado,tarea.idSubGrupo,idTarea,tarea.idTareaAnterior,tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.cantSubtareas,tarea.cantPosteriores,tarea.horasPlaneadas,1);
+async function funcAgregarTareasPosteriores(
+    tareasPosterioresAgregadas,
+    usuariosAgregados,
+    idTareaAnterior,
+    idCronograma,
+    fechaFinNueva
+) {
+    console.log("================== ID DE TAREA ANTERIOR ES ============", idTareaAnterior);
+    if (tareasPosterioresAgregadas) {
+        for (const tarea of tareasPosterioresAgregadas) {
+            const idTareaPosterior = await insertarTarea(
+                idCronograma,
+                tarea.idTareaEstado,
+                tarea.idSubGrupo,
+                null,
+                idTareaAnterior,
+                tarea.sumillaTarea,
+                tarea.descripcion,
+                fechaFinNueva,
+                tarea.fechaFin,
+                tarea.cantSubtareas,
+                tarea.cantPosteriores,
+                tarea.horasPlaneadas,
+                1
+            );
+
+            await usuarioXTareaController.funcCrearUsuariosXTarea(
+                usuariosAgregados,
+                idTareaPosterior
+            );
         }
     }
 }
 
-async function funcEliminarTareasPosteriores(tareasPosterioresEliminadas){
-    if(tareasPosterioresEliminadas){
-        for(const tarea of tareasPosterioresEliminadas){
-            await funcEliminarTarea(tarea.idTarea);
+async function funcEliminarTareasPosteriores(tareasPosterioresEliminadas) {
+    if (tareasPosterioresEliminadas) {
+        for (const tarea of tareasPosterioresEliminadas) {
+            //usamos un delete solo en este caso ya que las tareas posteriores son prescindibles, 
+            //no contienen data importante mas que una fecha
+            await funcDeletearTarea(tarea.idTarea);
         }
     }
 }
 
-async function funcModificarTareasPosteriores(tareasPosteriores){
-    if(tareasPosteriores){
-        for(const tarea of tareasPosteriores){
-            await funcModificar(tarea.idTarea,tarea.sumillaTarea,tarea.descripcion,tarea.idTareaEstado,tarea.fechaInicio,tarea.fechaFin,tarea.idEquipo);
+async function funcModificarTareasPosteriores(tareasPosteriores) {
+    if (tareasPosteriores) {
+        for (const tarea of tareasPosteriores) {
+            await funcModificar(
+                tarea.idTarea,
+                tarea.sumillaTarea,
+                tarea.descripcion,
+                tarea.idTareaEstado,
+                tarea.fechaInicio,
+                tarea.fechaFin,
+                tarea.idEquipo
+            );
         }
     }
 }
 
-async function insertarTarea(idCronograma,idTareaEstado,idSubGrupo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubtareas,cantPosteriores,horasPlaneadas,esPosterior) {
+async function insertarTarea(
+    idCronograma,
+    idTareaEstado,
+    idSubGrupo,
+    idPadre,
+    idTareaAnterior,
+    sumillaTarea,
+    descripcion,
+    fechaInicio,
+    fechaFin,
+    cantSubtareas,
+    cantPosteriores,
+    horasPlaneadas,
+    esPosterior
+) {
     const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?);`;
     const [results] = await connection.query(query, [
         idCronograma,
@@ -100,13 +211,10 @@ async function insertarTarea(idCronograma,idTareaEstado,idSubGrupo,idPadre,idTar
         cantSubtareas,
         cantPosteriores,
         horasPlaneadas,
-        esPosterior
+        esPosterior,
     ]);
     return results[0][0].idTarea;
 }
-
-
-
 
 async function insertarTareasPosteriores(
     tareas,
@@ -115,9 +223,25 @@ async function insertarTareasPosteriores(
 ) {
     if (tareas) {
         for (const tarea of tareas) {
-            const idTarea = await insertarTarea(originalTareaData.idCronograma,1,originalTareaData.idSubGrupo,null,idTareaPrevia,tarea.sumillaTarea,
-                tarea.descripcion,originalTareaData.fechaFin,tarea.fechaFin,0,0,null,1);
-            await usuarioXTareaController.funcCrearUsuariosXTarea(originalTareaData.usuarios, idTarea);
+            const idTarea = await insertarTarea(
+                originalTareaData.idCronograma,
+                1,
+                originalTareaData.idSubGrupo,
+                originalTareaData.idPadre, // (?)
+                idTareaPrevia,
+                tarea.sumillaTarea,
+                tarea.descripcion,
+                originalTareaData.fechaFin,
+                tarea.fechaFin,
+                0,
+                0,
+                null,
+                1
+            );
+            await usuarioXTareaController.funcCrearUsuariosXTarea(
+                originalTareaData.usuarios,
+                idTarea
+            );
         }
     }
 }
@@ -144,12 +268,7 @@ async function listarXIdProyecto(req, res, next) {
                     tarea.idEquipo,
                 ]);
                 tarea.equipo.participantes = participantes[0];
-
-                const query5 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
-                const [usuarios] = await connection.query(query5, [
-                    tarea.idTarea,
-                ]);
-                tarea.usuarios = usuarios[0];
+                tarea.usuarios = [];
             } else {
                 const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
                 const [usuarios] = await connection.query(query3, [
@@ -173,10 +292,6 @@ async function listarXIdProyecto(req, res, next) {
     }
 }
 
-
-
-
-
 async function eliminarTarea(req, res, next) {
     const { tarea } = req.body;
     try {
@@ -195,7 +310,9 @@ async function eliminarTarea(req, res, next) {
 
 async function eliminarRecursivo(tarea) {
     //eliminamos tarea recibida
-    console.log("Eliminando tarea '" + tarea.sumillaTarea + "' con ID " + tarea.idTarea);
+    console.log(
+        "Eliminando tarea '" + tarea.sumillaTarea + "' con ID " + tarea.idTarea
+    );
 
     await funcEliminarTarea(tarea.idTarea);
 
@@ -219,8 +336,17 @@ async function funcEliminarTarea(idTarea) {
     }
 }
 
+async function funcDeletearTarea(idTarea){
+    try {
+        const query = `CALL DELETEAR_TAREA(?);`;
+        await connection.query(query, [idTarea]);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Funcion para agregar las tareas posteriores como atributo a las tareas originales
-function repositionPosteriores(tareas){
+function repositionPosteriores(tareas) {
     const result = {};
 
     // Organizar las tareas por idPadre
@@ -287,5 +413,5 @@ module.exports = {
     crear,
     listarXIdProyecto,
     eliminarTarea,
-    modificar
+    modificar,
 };

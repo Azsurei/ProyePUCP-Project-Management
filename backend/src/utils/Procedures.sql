@@ -852,17 +852,32 @@ DROP PROCEDURE IF EXISTS INSERTAR_LINEA_RETROSPECTIVA;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_RETROSPECTIVA(
     IN _idRetrospectiva INT,
-    IN _idEquipo INT,
+    IN _idSprint INT,
     IN _cantBien INT,
     IN _cantMal INT,
     IN _cantQueHacer INT
 )
 BEGIN
 	DECLARE _idLineaRetrospectiva INT;
-	INSERT INTO LineaRetrospectiva(idRetrospectiva,idEquipo,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
-    VALUES(_idRetrospectiva,_idEquipo,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
+	INSERT INTO LineaRetrospectiva(idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
+    VALUES(_idRetrospectiva,_idSprint,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
     SET _idLineaRetrospectiva = @@last_insert_id;
     SELECT _idLineaRetrospectiva AS idLineaRetrospectiva;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_LINEA_RETROSPECTIVA(
+    IN _idLineaRetrospectiva INT,
+	IN _idSprint INT,
+    IN _cantBien INT,
+    IN _cantMal INT,
+    IN _cantQueHacer INT
+)
+BEGIN
+	UPDATE LineaRetrospectiva
+    SET cantBien = _cantBien, cantMal = _cantMal, cantQueHacer = _cantQueHacer, idSprint = _idSprint
+    WHERE idLineaRetrospectiva = _idLineaRetrospectiva AND activo =1;
 END$
 
 CALL INSERTAR_LINEA_RETROSPECTIVA(34,93,3,1,2);
@@ -875,12 +890,34 @@ CREATE PROCEDURE LISTAR_LINEA_RETROSPECTIVA_X_ID_RETROSPECTIVA(
     IN _idRetrospectiva INT
 )
 BEGIN
-    SELECT lr.cantBien, lr.cantMal,lr.cantQueHacer
+    SELECT lr.idLineaRetrospectiva,lr.cantBien, lr.cantMal,lr.cantQueHacer
     FROM LineaRetrospectiva lr 
     WHERE lr.idRetrospectiva = _idRetrospectiva 
     AND lr.activo=1;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_LINEA_RETROSPECTIVA_X_ID_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_LINEA_RETROSPECTIVA_X_ID_LINEA_RETROSPECTIVA(
+    IN _idLineaRetrospectiva INT
+)
+BEGIN
+	UPDATE LineaRetrospectiva
+    SET activo = 0 WHERE idLineaRetrospectiva = _idLineaRetrospectiva;
+END$
+------------------------------------
+-- Criterios Retrospectiva
+------------------------------------
+DROP PROCEDURE IF EXISTS LISTAR_CRITERIOS_RETROSPECTIVA_TODOS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRITERIOS_RETROSPECTIVA_TODOS()
+BEGIN
+    SELECT idCriterioRetrospectiva, descripcion FROM CriterioRetrospectiva
+    WHERE activo = 1;
+END$
+
+SELECT * FROM ItemLineaRetrospectiva;
+SELECT * FROM Sprint;
 ------------------------------------
 -- ItemLineaRetrospectiva
 ------------------------------------
@@ -890,7 +927,7 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_ITEM_LINEA_RETROSPECTIVA(
     IN _idLineaRetrospectiva INT,
     IN _idCriterioRetrospectiva INT,
-    IN _descripcion INT
+    IN _descripcion VARCHAR(255)
 )
 BEGIN
 	DECLARE _idItemLineaRetrospectiva INT;
@@ -900,6 +937,53 @@ BEGIN
     SELECT _idItemLineaRetrospectiva AS idItemLineaRetrospectiva;
 END$
 
+
+
+DROP PROCEDURE IF EXISTS LISTAR_ITEM_RETROSPECTIVA_X_ID_LINEA_RETROSPECTIVA_CRITERIO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ITEM_RETROSPECTIVA_X_ID_LINEA_RETROSPECTIVA_CRITERIO(
+    IN _idLineaRetrospectiva INT,
+    IN _idCriterioRetrospectiva INT
+)
+BEGIN
+    SELECT ilr.idItemLineaRetrospectiva,ilr.descripcion
+    FROM ItemLineaRetrospectiva ilr
+    WHERE ilr.idLineaRetrospectiva = _idLineaRetrospectiva AND ilr.idCriterioRetrospectiva = _idCriterioRetrospectiva 
+    AND ilr.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_ITEM_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ITEM_LINEA_RETROSPECTIVA(
+    IN _idItemLineaRetrospectiva INT,
+    IN _descripcion VARCHAR(255)
+)
+BEGIN
+	UPDATE ItemLineaRetrospectiva
+    SET descripcion = _descripcion WHERE idItemLineaRetrospectiva = _idItemLineaRetrospectiva AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ITEM_LINEA_RETROSPECTIVA_X_ID_ITEM_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ITEM_LINEA_RETROSPECTIVA_X_ID_ITEM_LINEA_RETROSPECTIVA(
+    IN _idItemLineaRetrospectiva INT
+)
+BEGIN
+	UPDATE ItemLineaRetrospectiva
+    SET activo = 0 WHERE idItemLineaRetrospectiva = _idItemLineaRetrospectiva;
+END$
+
+SELECT * FROM ItemLineaRetrospectiva;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ITEM_LINEA_RETROSPECTIVA_X_ID_LINEA_RETROSPECTIVA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ITEM_LINEA_RETROSPECTIVA_X_ID_LINEA_RETROSPECTIVA(
+    IN _idLineaRetrospectiva INT
+)
+BEGIN
+	UPDATE ItemLineaRetrospectiva
+    SET activo = 0 WHERE idLineaRetrospectiva = _idLineaRetrospectiva;
+END$
 
 #############################
 ## AUTOEVALUACION
@@ -974,6 +1058,22 @@ BEGIN
     WHERE idProyecto = (SELECT p.idProyecto  FROM Proyecto p WHERE p.idProyecto = _idProyecto);
 END $
 
+DROP PROCEDURE IF EXISTS INSERTAR_AUTOEVALUACION_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_AUTOEVALUACION_X_IDPROYECTO(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(500),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+	DECLARE _idAutoEvaluacionXProyecto INT;
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+    INSERT INTO AutoEvaluacionXProyecto(idAutoevaluacion,nombre,fechaInicio,fechaFin,activo) 
+    VALUES(@_idAutoevaluacion,_nombre,_fechaInicio,_fechaFin,0);
+    SET _idAutoEvaluacionXProyecto = @@last_insert_id;
+    SELECT _idAutoEvaluacionXProyecto AS idAutoEvaluacionXProyecto;
+END$
 
 ---------------------------------------
 -- Tarea
@@ -2761,15 +2861,14 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_USUARIO_EVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_USUARIO_EVALUACION(
-    IN _idProyecto INT,
+    IN _idAutoEvaluacionXProyecto INT,
     IN _idUsuario INT,
     IN _idUsuarioEvaluado INT
 )
 BEGIN
 	DECLARE _idUsuarioEvaluacion INT;
-    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
-	INSERT INTO UsuarioXEvaluacion(idUsuario,idAutoevaluacion,idUsuarioEvaluado,activo) 
-    VALUES(_idUsuario,@_idAutoevaluacion,_idUsuarioEvaluado,1);
+	INSERT INTO UsuarioXEvaluacion(idUsuario,idAutoEvaluacionXProyecto,idUsuarioEvaluado,activo) 
+    VALUES(_idUsuario,_idAutoEvaluacionXProyecto,_idUsuarioEvaluado,1);
     SET _idUsuarioEvaluacion = @@last_insert_id;
     SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
 END$
@@ -2822,8 +2921,6 @@ BEGIN
     SELECT *
 	FROM CriterioEvaluacion
 	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
-<<<<<<< HEAD
-=======
 END$
 
 DROP PROCEDURE IF EXISTS ACTUALIZAR_OBSERVACION_X_ID;
@@ -2862,7 +2959,14 @@ BEGIN
 	WHERE up.idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
 END$
 
-
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACIONES_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACIONES_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT *
+	FROM AutoEvaluacionXProyecto
+	WHERE idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
+END$
 ------------
 -- Rol Equipo
 ------------
@@ -3293,4 +3397,16 @@ BEGIN
     UPDATE InteresadoEstrategia 
     SET descripcion = _descripcion
     WHERE idEstrategia = _idEstrategia;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT *
+    FROM Autoevaluacion
+    WHERE idAutoevaluacion = @_idAutoevaluacion;
 END$

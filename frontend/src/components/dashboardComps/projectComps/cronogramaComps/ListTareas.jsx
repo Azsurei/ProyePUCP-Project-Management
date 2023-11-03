@@ -159,6 +159,7 @@ function CardTarea({
                         listTareas={tarea.tareasHijas}
                         leftMargin={"40px"}
                         handleVerDetalle={handleVerDetalle}
+                        handleEdit={handleEdit}
                         handleAddNewSon={handleAddNewSon}
                         handleDelete={handleDelete}
                     ></ListTareas>

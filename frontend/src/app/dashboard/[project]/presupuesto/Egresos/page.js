@@ -30,6 +30,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Switch,
   } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -46,7 +47,7 @@ export default function Egresos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
+    const [isSelected, setIsSelected] = useState(false);
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
@@ -315,10 +316,31 @@ export default function Egresos(props) {
             fetchData();
     };
 
+    const [presupuesto, setPresupuesto] = useState([]);
+    const ObtenerPresupuesto = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+              const data = response.data.presupuesto;
+              setPresupuesto(data);
+              if (presupuesto.idMoneda === 1) {
+                setIsSelected(false);
+              } else { 
+                setIsSelected(true);
+              }
+              console.log(`Esta es la data de presupuesto:`, data);
+                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+            } catch (error) {
+              console.error('Error al obtener las líneas de ingreso:', error);
+            }
+          };
+            fetchData();
+    };    
         
     useEffect(() => {
         DataEgresos();
         DataTable();
+        ObtenerPresupuesto();   
       }, [presupuestoId]);
 
     const hasSearchFilter = Boolean(filterValue);
@@ -385,6 +407,9 @@ export default function Egresos(props) {
     
         return filteredEgresos;
     }, [lineasEgreso, filterEgreso, fechaInicio, fechaFin, filtrarFecha]);
+    const handleSelectedMoneda = () => {
+        setIsSelected(!isSelected);   
+    };
     return (
 
         
@@ -409,14 +434,17 @@ export default function Egresos(props) {
                 </Breadcrumbs>
 
                 <div className="presupuesto">
-                    <div className="titlePresupuesto">Egresos</div>
-
+                    
+                    <div className="containerHeader">
+                        <div className="titlePresupuesto">Egresos</div>
+                        <div>
+                            <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
+                                 {isSelected ? "Soles" : "Dolares"}
+                            </Switch>  
+                        </div>
+                    </div>
                     <div className="buttonsPresu">
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
-                                <button className="btnCommon btnFlujo  sm:w-1 sm:h-1" type="button">Flujo</button>
-                        </Link>
-
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Historial"}>
                                 <button className="btnCommon btnHistorial sm:w-1 sm:h-1" type="button">Historial</button> 
                         </Link>
                         
@@ -480,14 +508,14 @@ export default function Egresos(props) {
                             <UserCardsContextOne.Provider
                                 value={{ addEstimacionesList, removeEstimacionesInList }}
                                 >
-                                <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false} isSelected = {true} onCardSelect={handleCardSelect}></EstimacionCostoList>
+                                <EstimacionCostoList lista = {filteredItems} refresh = {DataTable} isEdit={false} isSelected = {true} onCardSelect={handleCardSelect} valueMoneda = {isSelected}></EstimacionCostoList>
                             </UserCardsContextOne.Provider>
                             
                         </div>
                         
                         <div className="divListaIngreso w-1/2">
 
-                            <EgresosList lista = {filteredEgresos} refresh ={DataEgresos}></EgresosList>
+                            <EgresosList lista = {filteredEgresos} refresh ={DataEgresos} valueMoneda = {isSelected}></EgresosList>
                         </div> 
                     </div>
                     

@@ -10,7 +10,6 @@ async function crear(req,res,next){
     } catch (error) {
         next(error);
     }
-
 }
 
 async function funcCrear(idProyecto){
