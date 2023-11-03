@@ -196,9 +196,19 @@ lineaIngreso.forEach((row) => {
 
   const mes = fechaCreacion.getUTCMonth() + 1;
   const mesReal=mes-mesActual+1;
+  const idTipo=row.idIngresoTipo;
 
+  if(!ingresosPorTipo[idTipo]){
+    ingresosPorTipo[idTipo]={};
+  }
 
-  if (ingresosPorTipo[row.idIngresoTipo]) {
+  if(!ingresosPorTipo[idTipo[mesReal]]){
+    ingresosPorTipo[idTipo][mesReal]=0;
+  }
+
+  ingresosPorTipo[idTipo][mesReal]+=row.monto;
+
+  /* if (ingresosPorTipo[row.idIngresoTipo]) {
     // Si existe, suma el monto al tipo de ingreso existente
     ingresosPorTipo[row.idIngresoTipo].monto += row.monto;
   } else {
@@ -208,20 +218,28 @@ lineaIngreso.forEach((row) => {
       monto: row.monto,
     };
   }
+  */
 });
 
 function obtenerDescripcionPorTipo(idIngresoTipo) {
   const tiposDeIngreso = {
-    1: 'Prestamo',
-    2: 'Donaciones',
-    3: 'Patrocinador',
-    4: 'Pago Cliente',
-    // Agrega más tipos de ingreso si es necesario
-  };
+      1: 'Prestamo',
+      2: 'Donaciones',
+      3: 'Patrocinador',
+      4: 'Pago Cliente',
+      // Agrega más tipos de ingreso si es necesario
+    };
 
   return tiposDeIngreso[idIngresoTipo] || 'Tipo de ingreso desconocido';
 }
 
+const descripcionTipo = {
+  1: 'Prestamo',
+  2: 'Donaciones',
+  3: 'Patrocinador',
+  4: 'Pago Cliente',
+  // Agrega más tipos de ingreso si es necesario
+};
 
 
 
@@ -301,8 +319,11 @@ return (
               
 {Object.values(ingresosPorTipo).map((tipoIngreso, index) => (
   <TableRow key={index}>
-    <TableCell>{tipoIngreso.descripcion}</TableCell>
-    <TableCell align="left">{tipoIngreso.monto}</TableCell>
+    <TableCell>{descripcionTipo[index+1]}</TableCell>
+    <TableCell align="left">{tipoIngreso[1]}</TableCell>
+    <TableCell align="left">{tipoIngreso[2]}</TableCell>
+    <TableCell align="left">{tipoIngreso[3]}</TableCell>
+
   </TableRow>
 ))}
             
