@@ -3523,3 +3523,60 @@ BEGIN
     FROM AutoEvaluacionXProyecto
     WHERE idAutoevaluacion = @_idAutoevaluacion AND estado=1;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ROLES_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ROLES_EQUIPO(
+    IN _idEquipoXRolEquipo INT,
+    IN _idRol INT
+)
+BEGIN
+    UPDATE EquipoXRolEquipo
+    SET activo = 0
+    WHERE idEquipoXRolEquipo = _idEquipoXRolEquipo 
+    AND idRol = _idRol;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT,
+    IN _idRolEquipo INT
+)
+BEGIN
+	DECLARE _idUsuarioXEquipoXRolEquipo INT;
+	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+    VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
+    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT,
+    IN _idRolEquipo INT
+)
+BEGIN
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET idRolEquipo = _idRolEquipo
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT
+)
+BEGIN
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET activo = 0
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
+END$

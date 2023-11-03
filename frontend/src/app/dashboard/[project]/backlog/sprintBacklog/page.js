@@ -46,6 +46,7 @@ const dataSprints = [
         tareas: [
             {
                 id: 9,
+                idSprint: 1,
                 sumilla: "Sumilla de tarea 9",
                 fechaInicio: "2021-09-18",
                 fechaFin: "2021-09-25",
@@ -53,6 +54,7 @@ const dataSprints = [
             },
             {
                 id: 10,
+                idSprint: 1,
                 sumilla: "Sumilla de tarea 10",
                 fechaInicio: "2021-09-18",
                 fechaFin: "2021-09-25",
@@ -70,6 +72,7 @@ const dataSprints = [
         tareas: [
             {
                 id: 1,
+                idSprint: 2,
                 sumilla: "Sumilla de tarea 1",
                 fechaInicio: "2021-09-04",
                 fechaFin: "2021-09-11",
@@ -77,6 +80,7 @@ const dataSprints = [
             },
             {
                 id: 2,
+                idSprint: 2,
                 sumilla: "Sumilla de tarea 2",
                 fechaInicio: "2021-09-04",
                 fechaFin: "2021-09-11",
@@ -84,6 +88,7 @@ const dataSprints = [
             },
             {
                 id: 3,
+                idSprint: 2,
                 sumilla: "Sumilla de tarea 3",
                 fechaInicio: "2021-09-04",
                 fechaFin: "2021-09-11",
@@ -91,6 +96,7 @@ const dataSprints = [
             },
             {
                 id: 4,
+                idSprint: 2,
                 sumilla: "Sumilla de tarea 4",
                 fechaInicio: "2021-09-04",
                 fechaFin: "2021-09-11",
@@ -98,6 +104,7 @@ const dataSprints = [
             },
             {
                 id: 5,
+                idSprint: 2,
                 sumilla: "Sumilla de tarea 5",
                 fechaInicio: "2021-09-04",
                 fechaFin: "2021-09-11",
@@ -115,6 +122,7 @@ const dataSprints = [
         tareas: [
             {
                 id: 6,
+                idSprint: 3,
                 sumilla: "Sumilla de tarea 6",
                 fechaInicio: "2021-09-11",
                 fechaFin: "2021-09-18",
@@ -122,6 +130,7 @@ const dataSprints = [
             },
             {
                 id: 7,
+                idSprint: 3,
                 sumilla: "Sumilla de tarea 7",
                 fechaInicio: "2021-09-11",
                 fechaFin: "2021-09-18",
@@ -129,6 +138,7 @@ const dataSprints = [
             },
             {
                 id: 8,
+                idSprint: 3,
                 sumilla: "Sumilla de tarea 8",
                 fechaInicio: "2021-09-11",
                 fechaFin: "2021-09-18",
@@ -146,6 +156,7 @@ const dataSprints = [
         tareas: [
             {
                 id: 11,
+                idSprint: 4,    
                 sumilla: "Sumilla de tarea 6",
                 fechaInicio: "2021-09-11",
                 fechaFin: "2021-09-18",
@@ -153,6 +164,7 @@ const dataSprints = [
             },
             {
                 id: 12,
+                idSprint: 4,
                 sumilla: "Sumilla de tarea 7",
                 fechaInicio: "2021-09-11",
                 fechaFin: "2021-09-18",
@@ -160,6 +172,7 @@ const dataSprints = [
             },
             {
                 id: 13,
+                idSprint: 4,
                 sumilla: "Sumilla de tarea 8",
                 fechaInicio: "2021-09-11",
                 fechaFin: "2021-09-18",
@@ -188,6 +201,7 @@ export default function SprintBacklog(props) {
 
     // Variables principales
     const [sprints, setSprints] = useState([]);
+    const [sprintsResumed, setSprintsResumed] = useState([]); // [idSprint, nombreSprint, estado]
 
     // Manejo de carga de datos
     const getSprints = async () => {
@@ -199,14 +213,28 @@ export default function SprintBacklog(props) {
                     projectId
             );
             setSprints(response.data);
+            setSprintsResumed(
+                response.data.map((sprint) => ({
+                    id: sprint.id,
+                    nombre: sprint.nombre,
+                    estado: sprint.estado,
+                }))
+            );
         } catch (error) {
             console.log(error);
         } finally {
             setSprints(dataSprints);
+            setSprintsResumed(
+                dataSprints.map((sprint) => ({
+                    id: sprint.id,
+                    nombre: sprint.nombre,
+                    estado: sprint.estado,
+                }))
+            );
             setIsLoadingSmall(false);
         }
     };
-
+    
     useEffect(() => {
         getSprints();
     }, []);
@@ -284,10 +312,12 @@ export default function SprintBacklog(props) {
                                     {sprint.tareas.map((tarea) => (
                                         <CardTask
                                             key={tarea.id}
+                                            idSprint={tarea.idSprint}
                                             sumilla={tarea.sumilla}
                                             fechaInicio={tarea.fechaInicio}
                                             fechaFin={tarea.fechaFin}
                                             estado={tarea.estado}
+                                            sprints={sprintsResumed}
                                         />
                                     ))}
                                 </div>
@@ -308,10 +338,12 @@ export default function SprintBacklog(props) {
                                     {sprint.tareas.map((tarea) => (
                                         <CardTask
                                             key={tarea.id}
+                                            idSprint={tarea.idSprint}
                                             sumilla={tarea.sumilla}
                                             fechaInicio={tarea.fechaInicio}
                                             fechaFin={tarea.fechaFin}
                                             estado={tarea.estado}
+                                            sprints={sprintsResumed}
                                         />
                                     ))}
                                 </div>
@@ -342,6 +374,7 @@ export default function SprintBacklog(props) {
                                     {sprint.tareas.map((tarea) => (
                                         <CardTask
                                             key={tarea.id}
+                                            idSprint={tarea.idSprint}
                                             sumilla={tarea.sumilla}
                                             fechaInicio={tarea.fechaInicio}
                                             fechaFin={tarea.fechaFin}
@@ -364,20 +397,49 @@ export default function SprintBacklog(props) {
 }
 
 function CardTask(props) {
-    const { sumilla, fechaInicio, fechaFin, estado } = props;
+    const { idSprint, sumilla, fechaInicio, fechaFin, estado, sprints } = props;
+
+    function getChipColorAndText(estado) {
+        switch (estado) {
+            case 0:
+                return { colorChip: "default", textoChip: "No Iniciado" };
+            case 1:
+                return { colorChip: "primary", textoChip: "Activo" };
+            case 2:
+                return { colorChip: "success", textoChip: "Finalizado" };
+            default:
+                return { colorChip: "default", textoChip: "No Iniciado" };
+        }
+    }
+    const { colorChip, textoChip } = getChipColorAndText(estado);
 
     return (
-        <div className="flex flex-row items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] rounded-md">
-            <p className="flex-1 grow-[3]">{sumilla}</p>
-            <p className="flex-1 grow-[2]">{`Desde: ${fechaInicio} - Hasta: ${fechaFin}`}</p>
-            <Chip
-                className="capitalize roboto"
-                color="default"
-                size="sm"
-                variant="flat"
-            >
-                {estado}
-            </Chip>
+        <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
+            <p className="flex-1 grow-[6]">{sumilla}</p>
+            <p className="flex-1 grow-[4]">{`Desde: ${fechaInicio} - Hasta: ${fechaFin}`}</p>
+            <div className="flex flex-1 grow-[2] justify-center items-center">
+                <Chip
+                    className="capitalize roboto"
+                    color={colorChip}
+                    size="sm"
+                    variant="flat"
+                >
+                    {textoChip}
+                </Chip>
+            </div>
+
+            <div className="flex flex-row">
+                <Button isIconOnly variant="light">
+                    <img
+                        src="/icons/eye.svg"
+                        alt="Ver tarea"
+                        className="w-4/6 h-4/6"
+                    />
+                </Button>
+                {sprints && (
+                    <DropdownTask idSprintActual={idSprint} sprints={sprints} />
+                )}
+            </div>
         </div>
     );
 }
@@ -413,6 +475,38 @@ function DropdownSprint(props) {
                         <DropdownItem key={"complete"} color="success">
                             Completar Sprint
                         </DropdownItem>
+                    </DropdownSection>
+                </DropdownMenu>
+            </Dropdown>
+        </div>
+    );
+}
+function DropdownTask(props) {
+    const { idSprintActual, sprints } = props;
+    const unfinishedSprints = sprints.filter((sprint) => sprint.estado !== "Completado");
+
+    return (
+        <div className="relative flex justify-end items-center gap-2">
+            <Dropdown
+                placement="bottom-end"
+                className="bg-background border-1 border-default-200"
+            >
+                <DropdownTrigger>
+                    <Button isIconOnly variant="light">
+                        <img
+                            src="/icons/changeSprint.svg"
+                            alt="Alternar de Sprint"
+                            className="w-4/6 h-4/6"
+                        />
+                    </Button>
+                </DropdownTrigger>
+                <DropdownMenu disabledKeys={[idSprintActual.toString()]}>
+                    <DropdownSection title="Cambiar de sprint" showDivider>
+                        {unfinishedSprints.map((sprint) => (
+                            <DropdownItem key={sprint.id}>
+                                {sprint.nombre}
+                            </DropdownItem>
+                        ))}
                     </DropdownSection>
                 </DropdownMenu>
             </Dropdown>
@@ -512,8 +606,7 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
                                     fechaFin: "",
                                 });
                                 onClose();
-                            }
-                            else{
+                            } else {
                                 setStatusForm("valid");
                             }
                         } catch (error) {

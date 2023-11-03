@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -26,26 +27,28 @@ function getCurrentDate() {
 
 function capitalizeWords(str) {
     // Dividimos la cadena en palabras usando el espacio como separador
-    const words = str.split(' ');
-  
+    const words = str.split(" ");
+
     // Iteramos por cada palabra y aplicamos la capitalización
     const capitalizedWords = words.map((word) => {
-      // Convierte la primera letra a mayúscula y el resto a minúscula
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        // Convierte la primera letra a mayúscula y el resto a minúscula
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     });
-  
+
     // Unimos las palabras nuevamente en una cadena
-    return capitalizedWords.join(' ');
-  }
-  
+    return capitalizedWords.join(" ");
+}
+
 export default function ProductBacklogRegister(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-    const {herramientasInfo} = useContext(HerramientasInfo);
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
-    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
+    const stringURLEpics =
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+        `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -65,7 +68,7 @@ export default function ProductBacklogRegister(props) {
     const [modal, setModal] = useState(false);
     const [reloadData, setReloadData] = useState(false);
 
-  // Esta función se llama cuando deseas recargar los datos
+    // Esta función se llama cuando deseas recargar los datos
     const handleReloadData = () => {
         setReloadData(true);
     };
@@ -77,7 +80,7 @@ export default function ProductBacklogRegister(props) {
 
     useEffect(() => {
         const stringURLUsuario =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURLUsuario)
@@ -200,7 +203,8 @@ export default function ProductBacklogRegister(props) {
         console.log(postData);
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/insertarHistoriaDeUsuario",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/backlog/hu/insertarHistoriaDeUsuario",
                 postData
             )
             .then((response) => {
@@ -217,22 +221,22 @@ export default function ProductBacklogRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
-            como === "" ||
-            quiero === "" ||
-            para === "" ||
+            name.trim() === "" ||
+            como.trim() === "" ||
+            quiero.trim() === "" ||
+            para.trim() === "" ||
             selectedValueEpic === null ||
             selectedValuePriority === null ||
             selectedValueState === null ||
             requirementFields.some(
-                (requirement) => requirement.requirement === ""
+                (requirement) => requirement.requirement.trim() === ""
             ) ||
             scenarioFields.some(
                 (scenario) =>
-                    scenario.scenario === "" ||
-                    scenario.dadoQue === "" ||
-                    scenario.cuando === "" ||
-                    scenario.entonces === ""
+                    scenario.scenario.trim() === "" ||
+                    scenario.dadoQue.trim() === "" ||
+                    scenario.cuando.trim() === "" ||
+                    scenario.entonces.trim() === ""
             )
         );
     }
@@ -321,7 +325,10 @@ export default function ProductBacklogRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasPrioridad"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/backlog/hu/listarHistoriasPrioridad"
+                            }
                             property="historiasPrioridad"
                             nameDisplay="nombre"
                             hasColor={true}
@@ -345,10 +352,18 @@ export default function ProductBacklogRegister(props) {
                             <div className="iconLabel2">
                                 <p className="profilePic">
                                     {datosUsuario?.nombres[0] +
-                                        (datosUsuario?.apellidos!==null? datosUsuario?.apellidos[0] : "")}
+                                        (datosUsuario?.apellidos !== null
+                                            ? datosUsuario?.apellidos[0]
+                                            : "")}
                                 </p>
                                 <div className="labelDatoUsuario">
-                                    {capitalizeWords(`${datosUsuario?.nombres} ${datosUsuario?.apellidos!==null? datosUsuario?.apellidos: ""}`)}
+                                    {capitalizeWords(
+                                        `${datosUsuario?.nombres} ${
+                                            datosUsuario?.apellidos !== null
+                                                ? datosUsuario?.apellidos
+                                                : ""
+                                        }`
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -360,7 +375,10 @@ export default function ProductBacklogRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/hu/listarHistoriasEstado"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/backlog/hu/listarHistoriasEstado"
+                            }
                             property="historiasEstado"
                             nameDisplay="descripcion"
                             onSelect={handleSelectedValueChangeState}
@@ -500,26 +518,25 @@ export default function ProductBacklogRegister(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(true);
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(false);
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        setFieldsExcessive(true);
-                                        setFieldsEmpty(false);
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
-                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -533,10 +550,22 @@ export default function ProductBacklogRegister(props) {
                         toggle={() => toggleModal()} // Pasa la función como una función de flecha
                         url={stringURLEpics}
                         backlogID={idProductBacklog}
-                        urlEliminate={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/eliminarEpica`}
+                        urlEliminate={
+                            process.env.NEXT_PUBLIC_BACKEND_URL +
+                            `/api/proyecto/backlog/hu/eliminarEpica`
+                        }
                     />
                 )}
             </div>
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </form>
     );
 }
