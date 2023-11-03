@@ -89,7 +89,7 @@ export default function Reportes(props) {
                 "financieros y operativos. Este reporte es esencial " +
                 "para la gestión efectiva de proyectos y la optimización de los recursos disponibles.",
             imgLink: "/images/report_3.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuesto"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuestos"
         },
         {
             id: "rep4",

@@ -16,6 +16,7 @@ import {
     CardHeader,
     CardFooter,
     Chip,
+    Divider,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -24,9 +25,8 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
-import  ReactApexChart  from 'react-apexcharts'
+import BarGraphic from "@/components/BarGraphic";
 export default function ReportesPresupuestos(props) {
     // const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -113,28 +113,26 @@ export default function ReportesPresupuestos(props) {
                         />
                         <BreadcrumbsItem href="" text="Historial de Reportes" />
                     </Breadcrumbs>
-                    <div className="titleHistorialReporte text-mainHeaders">
-                        Reporte de Presupuesto
-                    </div>
-                    <div className="ReportesPresupuesto">
-                    {isClient && ( // Renderiza el gráfico solo en el lado del cliente
-                        <div className="GraficoReportePresupuesto">
-                            <ReactApexChart
-                            options={options}
-                            series={series}
-                            type="bar"
-                            />
+                    <div className="flex flex-row justify-between items-center">
+                        <div className="titleHistorialReporte text-mainHeaders">
+                            Reporte de Presupuesto
                         </div>
-                    )}
-                    <div className="flex-1 h-auto">
-                        <Card className="ProgressPresupuesto h-auto">
+                        <Button color="warning" className="text-white">
+                            Guardar reporte
+                        </Button>
+                     </div>
+    
+                    <div className="ReportesPresupuesto">
+                        <BarGraphic options={options} series={series} client={isClient}/>
+                    <div className="flex-1 h-auto max-h-800">
+                        <Card className="ProgressPresupuesto">
                                 {/* <CardHeader className="p-0">
                                     <p className="titleHistorialReporte">Balance</p>
                                 </CardHeader> */}
-                                <CardBody className=" my-0 p-0 flex-none w-70">
+                                <CardBody className=" mt-12 p-0 flex-none w-70">
                                     <CircularProgress
                                         classNames={{
-                                        svg: "w-60 h-60 drop-shadow-md",
+                                        svg: "w-64 h-64 drop-shadow-md",
                                         indicator: "text-green-500",
                                         track: "stroke-current text-red-500",
                                         value: "text-3xl font-semibold",
@@ -144,50 +142,67 @@ export default function ReportesPresupuestos(props) {
                                     showValueLabel={true}
                                     />
                                 </CardBody>
-                                <div>
+                                <div className="mt-4">
                                     <CardHeader className="p-0">
                                         <p className="titleHistorialReporte">Ingresos vs Egresos</p>
                                     </CardHeader>
-                                    <Card className="">
+                                    <Card className="mt-8">
                                         <CardBody>
-                                            <div className="flex" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
+                                            <Chip color="success" variant="flat">
                                                 <div className="titleBalanceData" style={{ textAlign: "left" }}>Ingresos: </div>
-                                                <div className="titleBalanceData" style={{ textAlign: "right" }}>S/ {sumaIngresos}</div>
-                                            </div>
-                                            <div className="flex" style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
+                                            </Chip >
+                                            <div className="titleBalanceData" style={{ color: "#29C85F", textAlign: "right" }}>S/ {sumaIngresos}</div>
+                                            <Chip color="danger" variant="flat">
                                                 <div className="titleBalanceData" style={{ textAlign: "left" }}>Egresos: </div>
-                                                <div className="titleBalanceData" style={{ textAlign: "right" }}>S/ {-1*sumaEgresos}</div>
-                                            </div>
-                                            <div className="flex" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
+                                            </Chip>
+                                                
+                                            <div className="titleBalanceData" style={{color: "#CE3B3B", textAlign: "right" }}>S/ {-1*sumaEgresos}</div>
+                                            <Chip variant="flat">
                                                 <div className="titleBalanceData" style={{ textAlign: "left" }}>Disponible: </div>
-                                                <div className="titleBalanceData" style={{ textAlign: "right" }}>S/ {sumaIngresos + sumaEgresos > 0 ? ` ${sumaIngresos + sumaEgresos}` : 'Sin fondos disponibles'}</div>
-                                            </div>
+                                            </Chip>
+                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>S/ {sumaIngresos + sumaEgresos > 0 ? ` ${sumaIngresos + sumaEgresos}` : 'Sin fondos disponibles'}</div>
                                         </CardBody>
                                     </Card> 
                                 </div>
 
                         </Card>
                         <div className="flex">
-                            <Card>
+                            <Card className="w-1/2 m-4" style={{ border: '2px solid #29C85F' }}>
+                                <CardHeader className="flex gap-3">
+                                    <p className="titleBalanceData text-md">Presupuesto Inicial</p>
+                                </CardHeader>
+                                <Divider/>
                                 <CardBody>
-                                    <p>Presupuesto Inicial</p>
+                                    <p className="titleBalanceData">S/ 200000.00</p>
                                 </CardBody>
                             </Card>
-                            <Card>
+                            <Card className="w-1/2 m-4" style={{ border: '2px solid #F0AE19' }}>
+                                <CardHeader className="flex gap-3">
+                                    <p className="titleBalanceData text-md">Gasto planificado</p>
+                                </CardHeader>
+                                <Divider/>
                                 <CardBody>
-                                    <p>Gasto Planificado.</p>
+                                    <p className="titleBalanceData">S/ 150000.00</p>
                                 </CardBody>
                             </Card>
                         </div>
                         <div className="flex">
-                            <Card>
+                            <Card className="w-1/2 m-4" style={{ border: '2px solid #CE3B3B' }}>
+                                <CardHeader className="flex gap-3">
+                                    <p className="titleBalanceData text-md">Gasto total</p>
+                                </CardHeader>
+                                <Divider/>
                                 <CardBody>
-                                    <p>Gasto Total</p>
+                                    <p className="titleBalanceData">S/ 100000.00</p>
                                 </CardBody>
                             </Card>
-                            <Card>
+                            <Card className="w-1/2 m-4" style={{ border: '2px solid #1962F0' }}>
+                                <CardHeader className="flex gap-3">
+                                    <p className="titleBalanceData text-md">Estado del presupuesto</p>
+                                </CardHeader>
+                                <Divider/>
                                 <CardBody>
-                                    <p>Estado del Presupuesto</p>
+                                    <p className="titleBalanceData">Cumple</p>
                                 </CardBody>
                             </Card>
                         </div>  
