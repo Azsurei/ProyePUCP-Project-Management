@@ -195,30 +195,23 @@ lineaIngreso.forEach((row) => {
   const fechaCreacion = new Date(row.fechaTransaccion);
 
   const mes = fechaCreacion.getUTCMonth() + 1;
-  const mesReal=mes-mesActual+1;
-  const idTipo=row.idIngresoTipo;
+  const mesReal = mes - mesActual + 1;
+  const idTipo = row.idIngresoTipo;
 
-  if(!ingresosPorTipo[idTipo]){
-    ingresosPorTipo[idTipo]={};
+  if (!ingresosPorTipo[idTipo]) {
+    ingresosPorTipo[idTipo] = {};
   }
 
-  if(!ingresosPorTipo[idTipo[mesReal]]){
-    ingresosPorTipo[idTipo][mesReal]=0;
+  if (!ingresosPorTipo[idTipo][mesReal]) {
+    ingresosPorTipo[idTipo][mesReal] = 0;
   }
 
-  ingresosPorTipo[idTipo][mesReal]+=row.monto;
+  ingresosPorTipo[idTipo][mesReal] += row.monto;
 
-  /* if (ingresosPorTipo[row.idIngresoTipo]) {
-    // Si existe, suma el monto al tipo de ingreso existente
-    ingresosPorTipo[row.idIngresoTipo].monto += row.monto;
-  } else {
-    // Si no existe, crea una nueva entrada en el objeto
-    ingresosPorTipo[row.idIngresoTipo] = {
-      descripcion: obtenerDescripcionPorTipo(row.idIngresoTipo), // Reemplaza obtenerDescripcionPorTipo con la lógica real
-      monto: row.monto,
-    };
+  if (idTipo === 1) {
+    console.log(ingresosPorTipo[idTipo][mesReal]);
   }
-  */
+
 });
 
 function obtenerDescripcionPorTipo(idIngresoTipo) {
@@ -317,20 +310,29 @@ return (
               <TableCell className="IngEgTexto" align="left">Ingresos</TableCell>
             </TableRow>
               
-{Object.values(ingresosPorTipo).map((tipoIngreso, index) => (
-  <TableRow key={index}>
-    <TableCell>{descripcionTipo[index+1]}</TableCell>
-    <TableCell align="left">{tipoIngreso[1]}</TableCell>
-    <TableCell align="left">{tipoIngreso[2]}</TableCell>
-    <TableCell align="left">{tipoIngreso[3]}</TableCell>
-
+            {Object.keys(descripcionTipo).map((idTipo) => (
+  <TableRow key={idTipo}>
+    <TableCell>{descripcionTipo[idTipo]}</TableCell>
+    {mesesMostrados.map((mes, index) => (
+      <TableCell key={index} align="left">
+                {ingresosPorTipo[idTipo] && ingresosPorTipo[idTipo][index + 1] !== undefined
+          ? parseFloat(ingresosPorTipo[idTipo][index + 1])
+          : 0}
+      </TableCell>
+    ))}
   </TableRow>
-))}
-            
+))}      
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Ingresos</TableCell>
-              <TableCell className="Totales" align="left">{totalIngresos}</TableCell>
+              {mesesMostrados.map((mes, index) => (
+  <TableCell className="conceptoCell" key={index} align="left">
+    {ingresosPorTipo && Object.keys(descripcionTipo).reduce((total, idTipo) => {
+      const ingresoPorTipo = ingresosPorTipo[idTipo];
+      return total + (ingresoPorTipo && ingresoPorTipo[index + 1] ? parseFloat(ingresoPorTipo[index + 1]) : 0);
+    }, 0)}
+  </TableCell>
+))}
 
             </TableRow>
 
