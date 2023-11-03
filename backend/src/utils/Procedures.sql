@@ -99,6 +99,14 @@ DROP PROCEDURE IF EXISTS LISTAR_COMPONENTES_EDT_X_ID_EDT;
 DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_NOMBRE_CORREO;
 CREATE PROCEDURE LISTAR_HERRAMIENTAS;
 
+#################################################
+## BACKLOG
+#################################################
+
+-------------------------------------------------
+-- Backlog
+-------------------------------------------------
+
 DROP PROCEDURE IF EXISTS INSERTAR_PRODUCT_BACKLOG;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRODUCT_BACKLOG(
@@ -120,6 +128,20 @@ BEGIN
 	SELECT *FROM ProductBacklog pb WHERE _idProyecto = pb.idProyecto AND pb.activo =1;
 END$
 
+----------------------------------------------
+-- Sprints
+----------------------------------------------
+DROP PROCEDURE IF EXISTS LISTAR_SPRINTS_X_ID_BACKLOG;
+DELIMITER $
+CREATE PROCEDURE LISTAR_SPRINTS_X_ID_BACKLOG(
+	IN _idProductBacklog INT
+)
+BEGIN
+	SELECT *FROM Sprint sp WHERE sp.idProductBacklog = _idProductBacklog AND sp.activo =1;
+END$
+----------------------------------------------
+-- Epicas
+----------------------------------------------
 DELIMITER $
 CREATE PROCEDURE INSERTAR_EPICA(
 	IN  _idProductBacklog INT,
@@ -132,6 +154,7 @@ BEGIN
     SELECT _id_Epica AS idEpica;
 END$
 
+
 DROP PROCEDURE LISTAR_EPICAS_X_ID_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_EPICAS_X_ID_PROYECTO(
@@ -141,7 +164,17 @@ BEGIN
 	SELECT *FROM Epica p WHERE p.idProductBacklog = (SELECT idProductBacklog FROM ProductBacklog b WHERE b.idProyecto = _idProyecto AND b.activo=1) 
     AND p.activo =1;
 END$
-CALL LISTAR_EPICAS_X_ID_PROYECTO(6);
+SELECT * FROM Epica;
+CALL LISTAR_EPICAS_X_ID_BACKLOG(73);
+DROP PROCEDURE IF EXISTS LISTAR_EPICAS_X_ID_BACKLOG;
+DELIMITER $
+CREATE PROCEDURE LISTAR_EPICAS_X_ID_BACKLOG(
+	IN _idBacklog INT
+)
+BEGIN
+	SELECT e.idEpica, e.nombre, e.fechaCreacion FROM Epica e WHERE e.idProductBacklog = _idBacklog 
+    AND e.activo =1;
+END$
 
 CREATE PROCEDURE LISTAR_HISTORIAS_DE_USUARIO_X_ID_EPICA(
 	IN _idEpica INT
@@ -1127,6 +1160,18 @@ BEGIN
 	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
     WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto) AND t.idTareaEstado = te.idTareaEstado
+    AND t.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_TAREAS_X_ID_SPRINT;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TAREAS_X_ID_SPRINT(
+    IN _idSprint INT
+)
+BEGIN
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
+    FROM Tarea t, TareaEstado te
+    WHERE  t.idSprint = _idSprint
     AND t.activo=1;
 END$
 

@@ -259,6 +259,7 @@ CREATE TABLE Tarea(
     idEquipo INT,
     idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
     idTareaAnterior INT,
+    idSprint INT,
 	sumillaTarea VARCHAR(255),
     descripcion VARCHAR (500),
     fechaInicio DATE,
@@ -273,6 +274,7 @@ CREATE TABLE Tarea(
     FOREIGN KEY (idTareaEstado) REFERENCES TareaEstado(idTareaEstado)
 )
 ENGINE = InnoDB;
+
 
 
 DROP TABLE IF EXISTS TareaEstado;
