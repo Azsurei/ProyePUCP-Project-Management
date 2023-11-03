@@ -2968,8 +2968,9 @@ BEGIN
 	FROM UsuarioXEvaluacion AS ue
     LEFT JOIN Usuario AS u ON ue.idUsuario = u.idUsuario
     LEFT JOIN Usuario AS ur ON ue.idUsuarioEvaluado = ur.idUsuario
-    LEFT JOIN Autoevaluacion AS ae ON ue.idAutoEvaluacion = ae.idAutoevaluacion
-	WHERE ae.idProyecto = _idProyecto AND ae.activo=1 AND ue.idUsuario = _idUsuario;
+    LEFT JOIN AutoEvaluacionXProyecto AS ae ON ue.idAutoEvaluacionXProyecto = ae.idAutoEvaluacionXProyecto
+    LEFT JOIN Autoevaluacion AS a ON a.idAutoevaluacion = ae.idAutoevaluacion
+	WHERE a.idProyecto = _idProyecto AND ae.activo=1 AND ue.idUsuario = _idUsuario;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CRITERIO_AUTOEVALUACION;
