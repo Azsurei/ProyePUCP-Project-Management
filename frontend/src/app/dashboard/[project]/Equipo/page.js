@@ -23,6 +23,7 @@ import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.cs
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
+import { Avatar, Progress } from "@nextui-org/react";
 
 axios.defaults.withCredentials = true;
 
@@ -636,7 +637,7 @@ export default function Equipo(props) {
                                         <Button
                                             color="secondary"
                                             startContent={<AddIcon />}
-                                            onClick={() => toggleModal()}
+                                            onPress={() => toggleModal()}
                                         >
                                             Agregar rol
                                         </Button>
@@ -732,15 +733,26 @@ export default function Equipo(props) {
                                                     className="col-span-6 flex mt-4"
                                                     key={member.idUsuario}
                                                 >
-                                                    <p className="membersIcon1">
-                                                        {member.nombres[0] +
-                                                            (member.apellidos !==
-                                                            null
-                                                                ? member
-                                                                      .apellidos[0]
-                                                                : "")}
-                                                    </p>
-                                                    <div>
+                                                    <Avatar
+                                                        //isBordered
+                                                        //as="button"
+                                                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                                        src={
+                                                            member.imgLink
+                                                        }
+                                                        fallback={
+                                                            <p className="membersIcon1 bg-mainUserIcon">
+                                                                {member
+                                                                    .nombres[0] +
+                                                                    (member.apellidos !==
+                                                                    null
+                                                                        ? member
+                                                                              .apellidos[0]
+                                                                        : "")}
+                                                            </p>
+                                                        }
+                                                    />
+                                                    <div className="ml-4">
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
                                                             {member.apellidos !==
@@ -811,15 +823,26 @@ export default function Equipo(props) {
                                                 key={member.idUsuario}
                                             >
                                                 <div className="col-span-6 flex mt-4">
-                                                    <p className="membersIcon1">
-                                                        {member.nombres[0] +
-                                                            (member.apellidos !==
-                                                            null
-                                                                ? member
-                                                                      .apellidos[0]
-                                                                : "")}
-                                                    </p>
-                                                    <div>
+                                                <Avatar
+                                                        //isBordered
+                                                        //as="button"
+                                                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                                        src={
+                                                            member.imgLink
+                                                        }
+                                                        fallback={
+                                                            <p className="membersIcon1 bg-mainUserIcon">
+                                                                {member
+                                                                    .nombres[0] +
+                                                                    (member.apellidos !==
+                                                                    null
+                                                                        ? member
+                                                                              .apellidos[0]
+                                                                        : "")}
+                                                            </p>
+                                                        }
+                                                    />
+                                                    <div className="ml-4">
                                                         <div className="text-lg">
                                                             {member.nombres}{" "}
                                                             {member.apellidos !==

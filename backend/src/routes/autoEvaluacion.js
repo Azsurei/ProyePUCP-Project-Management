@@ -5,6 +5,8 @@ const autoEvaluacionController = require("../controllers/autoEvaluacion/autoEval
 
 routerAutoEvaluacion.post("/crearAutoEvaluacion", autoEvaluacionController.crearAutoEvaluacion);
 routerAutoEvaluacion.get("/listarTodasAutoEvaluacion/:idProyecto", autoEvaluacionController.listarTodasAutoEvaluacion);
+routerAutoEvaluacion.put("/activarAutoEvaluacion", autoEvaluacionController.activarAutoEvaluacion);
+routerAutoEvaluacion.put("/finalizarAutoEvaluacion", autoEvaluacionController.finalizarAutoEvaluacion);
 
 routerAutoEvaluacion.get("/listarAutoEvaluacion/:idProyecto/:idUsuario", autoEvaluacionController.listarAutoEvaluacion);
 routerAutoEvaluacion.put("/actualizarAutoEvaluacion", autoEvaluacionController.actualizarAutoEvaluacion);
