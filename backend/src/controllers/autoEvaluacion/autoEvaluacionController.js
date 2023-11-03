@@ -5,7 +5,7 @@ const connection = require("../../config/db");
 //Pero uno solo va a estar activo
 //
 
-async function crearAutoEvaluacion(req,res,next){
+async function crearAutoEvaluacionTest(req,res,next){
     const {idProyecto, criterio1, criterio2, criterio3, criterio4} = req.body;
     const query = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
     try {
@@ -90,8 +90,59 @@ async function actualizarAutoEvaluacion(req,res,next){
     }
 }
 
+async function crearAutoEvaluacion(req,res,next){
+    const {idProyecto,nombre, criterio1, criterio2, criterio3, criterio4, fechaInicio, fechaFin} = req.body;
+    try {
+        //Creamos una AutoEvaluacion en la tabla AutoEvaluacionXProyecto 
+        const query = `CALL INSERTAR_AUTOEVALUACION_X_IDPROYECTO(?,?,?,?);`;
+        const results = await connection.query(query,[idProyecto,nombre,fechaInicio,fechaFin]);
+        const idAutoEvaluacionXProyecto = results[0][0];
+        //Obtenemos los miembros del proyecto
+        const query1 = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
+        const results1 = await connection.query(query1,[idProyecto]);
+        const usuariosXProyecto = results1[0][0];
+        //Creamos los criterios para cada miembro
+        for(const usuarioEvualador of usuariosXProyecto){
+            for(const usuarioEvaluado of usuariosXProyecto){
+                const query2 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
+                const results2 = await connection.query(query2,[idAutoEvaluacionXProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
+                const idUsuarioEvaluacion = results2[0][0][0].idUsuarioEvaluacion;
+                const query3 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?,?,?,?,?);`;
+                const results3 = await connection.query(query3,[idUsuarioEvaluacion,criterio1,criterio2,criterio3,criterio4]);
+            }
+        }
+        res.status(200).json({
+            message: "Autoevaluacion creada"
+        });
+        console.log('Se creo la autoevalaucion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function listarTodasAutoEvaluacion(req,res,next){
+    const {idProyecto} = req.params;
+    const query = `CALL LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO(?);`;
+    try {
+        const results = await connection.query(query,[idProyecto]);
+        const autoEvaluaciones = results[0][0];
+        res.status(200).json({
+            autoEvaluaciones,
+            message: "Autoevaluaciones listada"
+        });
+        console.log('Se listó las autoevalauciones correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+
 module.exports = {
-    crearAutoEvaluacion,
+    crearAutoEvaluacionTest,
     listarAutoEvaluacion,
-    actualizarAutoEvaluacion
+    actualizarAutoEvaluacion,
+    crearAutoEvaluacion,
+    listarTodasAutoEvaluacion
 };

@@ -1058,6 +1058,22 @@ BEGIN
     WHERE idProyecto = (SELECT p.idProyecto  FROM Proyecto p WHERE p.idProyecto = _idProyecto);
 END $
 
+DROP PROCEDURE IF EXISTS INSERTAR_AUTOEVALUACION_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_AUTOEVALUACION_X_IDPROYECTO(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(500),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+	DECLARE _idAutoEvaluacionXProyecto INT;
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+    INSERT INTO AutoEvaluacionXProyecto(idAutoevaluacion,nombre,fechaInicio,fechaFin,activo) 
+    VALUES(@_idAutoevaluacion,_nombre,_fechaInicio,_fechaFin,0);
+    SET _idAutoEvaluacionXProyecto = @@last_insert_id;
+    SELECT _idAutoEvaluacionXProyecto AS idAutoEvaluacionXProyecto;
+END$
 
 ---------------------------------------
 -- Tarea
@@ -2845,15 +2861,14 @@ END$
 DROP PROCEDURE IF EXISTS INSERTAR_USUARIO_EVALUACION;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_USUARIO_EVALUACION(
-    IN _idProyecto INT,
+    IN _idAutoEvaluacionXProyecto INT,
     IN _idUsuario INT,
     IN _idUsuarioEvaluado INT
 )
 BEGIN
 	DECLARE _idUsuarioEvaluacion INT;
-    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
-	INSERT INTO UsuarioXEvaluacion(idUsuario,idAutoevaluacion,idUsuarioEvaluado,activo) 
-    VALUES(_idUsuario,@_idAutoevaluacion,_idUsuarioEvaluado,1);
+	INSERT INTO UsuarioXEvaluacion(idUsuario,idAutoEvaluacionXProyecto,idUsuarioEvaluado,activo) 
+    VALUES(_idUsuario,_idAutoEvaluacionXProyecto,_idUsuarioEvaluado,1);
     SET _idUsuarioEvaluacion = @@last_insert_id;
     SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
 END$
@@ -2906,8 +2921,6 @@ BEGIN
     SELECT *
 	FROM CriterioEvaluacion
 	WHERE idUsuarioEvaluacion = _idUsuarioEvaluacion AND activo=1;
-<<<<<<< HEAD
-=======
 END$
 
 DROP PROCEDURE IF EXISTS ACTUALIZAR_OBSERVACION_X_ID;
@@ -2946,7 +2959,14 @@ BEGIN
 	WHERE up.idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
 END$
 
-
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACIONES_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACIONES_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT *
+	FROM AutoEvaluacionXProyecto
+	WHERE idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
+END$
 ------------
 -- Rol Equipo
 ------------
@@ -3377,4 +3397,16 @@ BEGIN
     UPDATE InteresadoEstrategia 
     SET descripcion = _descripcion
     WHERE idEstrategia = _idEstrategia;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT *
+    FROM Autoevaluacion
+    WHERE idAutoevaluacion = @_idAutoevaluacion;
 END$
