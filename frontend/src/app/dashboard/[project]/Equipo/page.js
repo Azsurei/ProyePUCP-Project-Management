@@ -348,6 +348,25 @@ export default function Equipo(props) {
         return { modifiedArray, deletedArray, addedArray };
     };
 
+    const separarPorRol = (arrParticipantes, arrAddedRoles) => {
+        const participantesConNuevoRol = [];
+        const participantesSinNuevoRol = [];
+
+        arrParticipantes.forEach((participante) => {
+            const tieneNuevoRol = arrAddedRoles.some(
+                (addedRol) => addedRol.idRol === participante.idRolEquipo
+            );
+
+            if (tieneNuevoRol) {
+                participantesConNuevoRol.push(participante);
+            } else {
+                participantesSinNuevoRol.push(participante);
+            }
+        });
+
+        return { participantesConNuevoRol, participantesSinNuevoRol };
+    };
+
     const onSubmitParticipantesRoles = () => {
         console.log("Todos los roles originales son:", rolesOriginales);
         console.log("Todos los roles que mandaré son:", roles);
@@ -391,26 +410,34 @@ export default function Equipo(props) {
         console.log("Deleted Participants:", deletedParticipants);
         console.log("Added Participants:", addedParticipants);
 
-        // Realizar solicitudes PUT, POST y DELETE según sea necesario
-        // ...
-        /* const putData = {
+        //segmentando los participantes modificados y agregados por rol
+        const {
+            participantesConNuevoRol: addedParticipantesNewRol,
+            participantesSinNuevoRol: addedParticipantesNoRol,
+        } = separarPorRol(addedParticipants, addedRoles);
+
+        const {
+            participantesConNuevoRol: modifiedParticipantesNewRol,
+            participantesSinNuevoRol: modifiedParticipantesNoRol,
+        } = separarPorRol(modifiedParticipants, addedRoles);
+
+        const casoEliminarRol = {
             idEquipo: selectedTeam.idEquipo,
-            miembrosModificados: modifiedParticipants,
+            miembrosAgregados: addedParticipantesNoRol,
+            miembrosModificados: modifiedParticipantesNoRol,
+            miembrosEliminados: deletedParticipants,
+            rolesEliminados: deletedRoles,
         };
-        console.log("Actualizado correctamente");
-        console.log(putData);
-        const postData = {
+        console.log("Realizado correctamente");
+        console.log(casoEliminarRol);
+        const casoAgregarRol = {
             idEquipo: selectedTeam.idEquipo,
-            miembros: addedParticipants,
+            miembrosAgregados: addedParticipantesNewRol,
+            miembrosModificados: modifiedParticipantesNewRol,
+            rolesAgregados: addedRoles,
         };
         console.log("Agregado correctamente");
-        console.log(postData);
-        const deleteData = {
-            idEquipo: selectedTeam.idEquipo,
-            miembrosEliminados: deletedParticipants,
-        };
-        console.log("Eliminado correctamente");
-        console.log(deleteData); */
+        console.log(casoAgregarRol);
 
         // Resto del código
         /*         axios
@@ -737,9 +764,7 @@ export default function Equipo(props) {
                                                         //isBordered
                                                         //as="button"
                                                         className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
-                                                        src={
-                                                            member.imgLink
-                                                        }
+                                                        src={member.imgLink}
                                                         fallback={
                                                             <p className="membersIcon1 bg-mainUserIcon">
                                                                 {member
@@ -823,13 +848,11 @@ export default function Equipo(props) {
                                                 key={member.idUsuario}
                                             >
                                                 <div className="col-span-6 flex mt-4">
-                                                <Avatar
+                                                    <Avatar
                                                         //isBordered
                                                         //as="button"
                                                         className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
-                                                        src={
-                                                            member.imgLink
-                                                        }
+                                                        src={member.imgLink}
                                                         fallback={
                                                             <p className="membersIcon1 bg-mainUserIcon">
                                                                 {member
