@@ -529,7 +529,7 @@ export default function KanbanBoard({ projectId }) {
             })
             .then(function (response) {
                 const str = "Tarea " + sumillaTarea + " movida con exito";
-                toast.success(str);
+                //toast.success(str);
             })
             .catch(function (error) {
                 console.log(error);
@@ -548,7 +548,7 @@ export default function KanbanBoard({ projectId }) {
             })
             .then(function (response) {
                 const str = "Columna " + nombre + " movida con exito";
-                toast.success(str);
+                //toast.success(str);
             })
             .catch(function (error) {
                 console.log(error);

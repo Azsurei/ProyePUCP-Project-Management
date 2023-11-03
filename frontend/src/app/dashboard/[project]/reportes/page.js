@@ -64,7 +64,7 @@ export default function Reportes(props) {
             id: "rep1",
             title: "Vista de estados de entregables",
             description:
-                "Este tipo de reporte de 'Entregables' proporciona una visión detallada del estado actual de los entregables y " +
+                "Este tipo de reporte de entregables proporciona una visión detallada del estado actual de los entregables y " +
                 "las tareas asociadas en tu proyecto. Te permite supervisar el progreso, identificar obstáculos y tomar decisiones informadas para mantener tu proyecto en el camino correcto",
             imgLink: "/images/report_1.webp",
             hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteEntregables"
@@ -75,8 +75,7 @@ export default function Reportes(props) {
             description:
                 "El reporte de visualización de Tareas te brinda una perspectiva detallada y organizada de las tareas asignadas en tu" +
                 " proyecto. Este informe se centra en la disposición de las tareas por sprint, permitiéndote gestionar eficazmente la ejecución " +
-                "y el seguimiento de tus actividades. Además, te proporciona una vista general que resalta la panorámica completa de todas las " +
-                "tareas, lo que facilita la comprensión y la toma de decisiones estratégicas en tu gestión de proyectos.",
+                "y el seguimiento de tus actividades.",
             imgLink: "/images/report_2.webp",
             hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteTareas"
         },
@@ -86,8 +85,7 @@ export default function Reportes(props) {
             description:
                 "Este informe proporciona un detallado flujo de ingresos, egresos y estimaciones, " +
                 "permitiéndote evaluar de manera precisa la rentabilidad y la ejecución de tus proyectos. Además, te ofrece una panorámica completa de los aspectos " +
-                "financieros y operativos. Este reporte es esencial " +
-                "para la gestión efectiva de proyectos y la optimización de los recursos disponibles.",
+                "financieros y operativos.",
             imgLink: "/images/report_3.webp",
             hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuestos"
         },
@@ -95,10 +93,8 @@ export default function Reportes(props) {
             id: "rep4",
             title: "Resumen de riesgos",
             description:
-                "El reporte de 'Identificación de Riesgos' te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. " +
-                "Este informe proporciona una evaluación detallada de los riesgos potenciales, identificando sus causas, impacto y probabilidad de ocurrencia. " +
-                "Te permite tomar medidas preventivas y desarrollar estrategias de contingencia, lo que contribuye a minimizar posibles interrupciones y " +
-                "garantiza una ejecución exitosa.",
+                "El reporte de Resumen de Riesgos te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. " +
+                "Este informe proporciona una evaluación detallada de los riesgos potenciales, identificando sus causas, impacto y probabilidad de ocurrencia.",
             imgLink: "/images/report_4.webp",
             hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteRiesgos"
         },
@@ -111,9 +107,9 @@ export default function Reportes(props) {
     //esta sera la pantalla de vista de reportes generados y la pantalla para crear uno nuevo (seleccionar cual)
 
     return (
-        <div className="divHistorialReportes">
+        <div className="divHistorialReportes ">
             {screenState === 0 && (
-                <div className="flex-1 border border-green-400">
+                <div className="flex-1">
                     <Breadcrumbs>
                         <BreadcrumbsItem href="/" text="Inicio" />
                         <BreadcrumbsItem href="/dashboard" text="Proyectos" />
