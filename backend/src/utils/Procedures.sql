@@ -3495,7 +3495,7 @@ BEGIN
     SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
     UPDATE AutoEvaluacionXProyecto 
     SET estado = 0
-    WHERE idAutoevaluacion = @_idAutoevaluacion;
+    WHERE idAutoevaluacion = @_idAutoevaluacion AND estado != 2;
     UPDATE AutoEvaluacionXProyecto 
     SET estado = 1
     WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto;
