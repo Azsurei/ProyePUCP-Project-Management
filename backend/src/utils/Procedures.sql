@@ -2959,7 +2959,14 @@ BEGIN
 	WHERE up.idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
 END$
 
-
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACIONES_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACIONES_X_IDPROYECTO(IN _idProyecto INT)
+BEGIN
+    SELECT *
+	FROM AutoEvaluacionXProyecto
+	WHERE idProyecto = _idProyecto AND up.activo=1 AND up.idRol=3;
+END$
 ------------
 -- Rol Equipo
 ------------
@@ -3398,7 +3405,8 @@ CREATE PROCEDURE LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO(
     IN _idProyecto INT
 )
 BEGIN
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
     SELECT *
     FROM Autoevaluacion
-    WHERE idProyecto = _idProyecto;
+    WHERE idAutoevaluacion = @_idAutoevaluacion;
 END$
