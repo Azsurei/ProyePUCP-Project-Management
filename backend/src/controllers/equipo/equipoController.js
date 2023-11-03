@@ -365,8 +365,8 @@ async function rolAgregado(req, res, next) {
     const query = `CALL AGREGAR_ROLES_EQUIPO(?,?);`;
     try {
         for (const rolAgregados of rolesAgregados) {
-            await connection.query(query, [idEquipo, rolAgregados.nombre]);
-            console.log(`Se inserto el rol ${rolAgregados.nombre}!`);
+            await connection.query(query, [idEquipo, rolAgregados.nombreRol]);
+            console.log(`Se inserto el rol ${rolAgregados.nombreRol}!`);
         }
         const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
         for (const miembroAgregado of miembrosAgregados) {
