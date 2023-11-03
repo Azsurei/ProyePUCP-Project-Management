@@ -1,6 +1,6 @@
 import React from "react";
 
-export const BudgetIcon = ({ size = 120, color = "green", ...props }) => (
+export const BudgetIcon = ({ size = 90, color = "#29C85F", ...props }) => (
   <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
