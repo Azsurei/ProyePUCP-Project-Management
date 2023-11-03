@@ -21,11 +21,8 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ReportTypeCard from "@/components/dashboardComps/projectComps/reportesComps/ReportTypeCard";
-<<<<<<< HEAD
 import ListReport from "@/components/dashboardComps/projectComps/reportesComps/ListReport";
-=======
 import DateInput from "@/components/DateInput";
->>>>>>> f6eb53f45365049be2dd0278772965b7931527a1
 export default function Reportes(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -192,11 +189,6 @@ export default function Reportes(props) {
                             <ListReport></ListReport>
                         </div>
                     </div>
-<<<<<<< HEAD
-                    
-
-=======
->>>>>>> f6eb53f45365049be2dd0278772965b7931527a1
                 </div>
             )}
 
