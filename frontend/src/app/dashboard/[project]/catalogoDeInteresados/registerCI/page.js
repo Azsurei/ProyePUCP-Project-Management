@@ -212,7 +212,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCI"
                         value={role}
                         onValueChange={setRole}
@@ -230,7 +229,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCI"
                         value={organization}
                         onValueChange={setOrganization}
@@ -248,7 +246,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCI"
                         value={charge}
                         onValueChange={setCharge}
@@ -270,7 +267,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                         startContent={
                             <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                         }
-                        isRequired
                         className="custom-labelCI"
                         value={email}
                         onValueChange={setEmail}
@@ -289,7 +285,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCI"
                         value={phone}
                         onValueChange={setPhone}
@@ -308,7 +303,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCI"
                         minRows="5"
                         maxRows="7"
