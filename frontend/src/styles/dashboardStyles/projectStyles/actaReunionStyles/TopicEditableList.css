@@ -187,6 +187,7 @@
     border: none;
     border-radius: 20px;
     cursor: pointer;
+    justify-content: flex-end;
 }
 
 .iconDeleteInput:hover {
@@ -210,4 +211,12 @@
   .titleResponsbles img {
     filter: brightness(0) invert(1); /* Aplica un filtro blanco (escala de grises) */
     margin-left: 5px; /* Ajusta el margen izquierdo para posicionar a la derecha */
+  }
+
+  .responsablesDelAcuerdo {
+    font-size: 1.5rem;
+    color: #172B4D;
+    font-weight: 700;
+    padding: 1rem;
+    padding-left: 0.2rem;
   }
