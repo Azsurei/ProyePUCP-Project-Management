@@ -104,11 +104,11 @@ async function crearAutoEvaluacion(req,res,next){
         //Creamos los criterios para cada miembro
         for(const usuarioEvualador of usuariosXProyecto){
             for(const usuarioEvaluado of usuariosXProyecto){
-                const query1 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
-                const results1 = await connection.query(query1,[idProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
-                const idUsuarioEvaluacion = results1[0][0][0].idUsuarioEvaluacion;
-                const query2 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?,?,?,?,?);`;
-                const results2 = await connection.query(query2,[idUsuarioEvaluacion,criterio1,criterio2,criterio3,criterio4]);
+                const query2 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
+                const results2 = await connection.query(query2,[idAutoEvaluacionXProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
+                const idUsuarioEvaluacion = results2[0][0][0].idUsuarioEvaluacion;
+                const query3 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?,?,?,?,?);`;
+                const results3 = await connection.query(query3,[idUsuarioEvaluacion,criterio1,criterio2,criterio3,criterio4]);
             }
         }
         res.status(200).json({
@@ -120,6 +120,7 @@ async function crearAutoEvaluacion(req,res,next){
         next(error);
     }
 }
+
 module.exports = {
     crearAutoEvaluacionTest,
     listarAutoEvaluacion,
