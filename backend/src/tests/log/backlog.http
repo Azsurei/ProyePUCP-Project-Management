@@ -1,0 +1,10 @@
+
+#### EPICAS
+###
+GET http://localhost:8080/api/proyecto/backlog/listarEpicas/73 HTTP/1.1
+Content-Type: application/json
+
+#### SPRINTS ####
+###
+GET http://localhost:8080/api/proyecto/backlog/listarSprintsXIdBacklog/15 HTTP/1.1
+Content-Type: application/json

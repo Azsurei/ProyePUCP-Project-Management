@@ -2,7 +2,8 @@ const express = require('express');
 const connection = require('../config/db');
 const { verifyToken } = require('../middleware/middlewares');
 const routerHistoriaDeUsuario = require('./historiaDeUsuario').routerHistoriaDeUsuario;
-
+const sprintController = require('../controllers/backlog/sprintController');
+const epicaController = require('../controllers/backlog/epicaController');
 const routerBacklog = express.Router();
 
 routerBacklog.use("/hu",routerHistoriaDeUsuario);
@@ -27,26 +28,11 @@ routerBacklog.get("/:idProyecto/listarBacklog",verifyToken,async(req,res)=>{
         res.status(500).send("Error al obtener los proyectos: " + error.message);
     }
 })
+// Listado de epicas por id de backlog
+routerBacklog.get("/listarEpicasXIdBacklog/:idBacklog",epicaController.listarEpicasXIdBacklog);
 
-routerBacklog.get("/:idProyecto/listarEpicas",verifyToken,async(req,res)=>{
-    const { idProyecto} = req.params;
-    console.log(`Llegue a recibir solicitud listar epicas del proyecto${idProyecto}`);
-    const query = `
-        CALL LISTAR_EPICAS_X_ID_PROYECTO(?);
-    `;
-    try {
-        const [results] = await connection.query(query,[idProyecto]);
-        res.status(200).json({
-            epicas: results[0],
-            message: "Epicas obtenidas exitosamente"
-        });
-        console.log(`Se han listado las epicas para el proyecto ${idProyecto}!`);
-    } catch (error) {
-        console.error("Error al obtener las epicas:", error);
-        res.status(500).send("Error al obtener las epicas: " + error.message);
-    }
-})
-
+// Listado de sprints por id de backlog
+routerBacklog.get("/listarSprintsXIdBacklog/:idBacklog",sprintController.listarSprintsXIdBacklog);
 // Ver si es factible tener el id del proyecto en el URL, en el otro caso solo seria backlog/idEPica
 routerBacklog.get("/:idEpica/listarHUs",verifyToken,async(req,res)=>{
     const {idEpica} = req.params;

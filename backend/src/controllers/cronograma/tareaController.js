@@ -409,9 +409,21 @@ function structureData(data) {
     return result[null];
 }
 
+async function funcListarTareasXIdSprint(idSprint) {
+    try {
+        const query = `CALL LISTAR_TAREAS_X_ID_SPRINT(?);`;
+        const [results] = await connection.query(query, [idSprint]);
+        const tareas = results[0];
+    } catch (error) {
+        console.log(error);
+    }
+    return tareas;
+}
+
 module.exports = {
     crear,
     listarXIdProyecto,
     eliminarTarea,
     modificar,
+    funcListarTareasXIdSprint,
 };

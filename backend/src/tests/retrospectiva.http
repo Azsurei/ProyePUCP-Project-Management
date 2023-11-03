@@ -7,6 +7,7 @@ Content-Type:  application/json
 {
   "idRetrospectiva": 34,
   "idSprint": 1,
+  "titulo": "prueba update tabla",
   "cantBien": 3,
   "cantMal": 1,
   "cantQueHacer": 2

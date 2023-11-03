@@ -259,6 +259,7 @@ CREATE TABLE Tarea(
     idEquipo INT,
     idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
     idTareaAnterior INT,
+    idSprint INT,
 	sumillaTarea VARCHAR(255),
     descripcion VARCHAR (500),
     fechaInicio DATE,
@@ -273,6 +274,7 @@ CREATE TABLE Tarea(
     FOREIGN KEY (idTareaEstado) REFERENCES TareaEstado(idTareaEstado)
 )
 ENGINE = InnoDB;
+
 
 
 DROP TABLE IF EXISTS TareaEstado;
@@ -583,7 +585,7 @@ CREATE TABLE LineaRetrospectiva(
 	idLineaRetrospectiva INT AUTO_INCREMENT PRIMARY KEY,
 	idRetrospectiva INT,
     idSprint INT,
-    idEquipo INT,
+    titulo VARCHAR(255),
     cantBien INT,
     cantMal INT,
     cantQueHacer INT,
@@ -593,6 +595,8 @@ CREATE TABLE LineaRetrospectiva(
     FOREIGN KEY (idSprint) REFERENCES Sprint(idSprint)
 )
 ENGINE = InnoDB;
+
+ALTER TABLE LineaRetrospectiva ADD COLUMN titulo VARCHAR(255);
 
 
 CREATE TABLE CriterioRetrospectiva(
