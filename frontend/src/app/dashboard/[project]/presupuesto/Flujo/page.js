@@ -383,19 +383,14 @@ return (
 <TableRow>
   <TableCell className="conceptoCell" align="left">Total Egresos por Mes</TableCell>
   {totalEgresosPorMes.map((total, index) => (
-    <TableCell key={index} align="left">
+    <TableCell className="conceptoCell" key={index} align="left">
       {total}
     </TableCell>
   ))}
 </TableRow>
 
 
-            <TableRow>
-              <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
-              <TableCell className="Totales" align="left">{totalAcumulado}</TableCell>
 
-
-            </TableRow>
 
               </TableBody>
             </Table>
