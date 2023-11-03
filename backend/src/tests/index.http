@@ -879,7 +879,7 @@ GET http://localhost:8080/api/proyecto/autoEvaluacion/listarTodasAutoEvaluacion/
 Content-Type:  application/json
 
 ###LISTAR AUTOEVALUACION
-GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/173 HTTP/1.1
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacion/173/79 HTTP/1.1
 Content-Type:  application/json
 
 ###
@@ -933,253 +933,47 @@ Content-Type:  application/json
 {
   "evaluados": [
     {
-      "idUsuarioEvaluacion": 1,
-      "idUsuario": 95,
-      "nombreEvaluador": "RENZO GABRIEL",
-      "apellidoEvaluador": "PINTO QUIROZ",
-      "idUsuarioEvaluado": 95,
-      "nombreEvaluado": "RENZO GABRIEL",
-      "apellidoEvaluado": "PINTO QUIROZ",
-      "activo": 1,
-      "observaciones": null,
-      "criterios": [
-        {
-          "idCriterioEvaluacion": 1,
-          "idUsuarioEvaluacion": 1,
-          "criterio": "Dominio Técnico",
-          "nota": 2,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 2,
-          "idUsuarioEvaluacion": 1,
-          "criterio": "Compromiso con los trabajos",
-          "nota": 3,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 3,
-          "idUsuarioEvaluacion": 1,
-          "criterio": "Comunicación con sus compañeros",
-          "nota": 4,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 4,
-          "idUsuarioEvaluacion": 1,
-          "criterio": "Comprensión del proyecto",
-          "nota": 5,
-          "activo": 1
-        }
-      ]
-    },
-    {
-      "idUsuarioEvaluacion": 2,
-      "idUsuario": 95,
-      "nombreEvaluador": "RENZO GABRIEL",
-      "apellidoEvaluador": "PINTO QUIROZ",
-      "idUsuarioEvaluado": 78,
-      "nombreEvaluado": "Gabriel",
-      "apellidoEvaluado": "Duran",
-      "activo": 1,
-      "observaciones": "Hola123",
-      "criterios": [
-        {
-          "idCriterioEvaluacion": 5,
-          "idUsuarioEvaluacion": 2,
-          "criterio": "Dominio Técnico",
-          "nota": 4,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 6,
-          "idUsuarioEvaluacion": 2,
-          "criterio": "Compromiso con los trabajos",
-          "nota": 5,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 7,
-          "idUsuarioEvaluacion": 2,
-          "criterio": "Comunicación con sus compañeros",
-          "nota": 5,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 8,
-          "idUsuarioEvaluacion": 2,
-          "criterio": "Comprensión del proyecto",
-          "nota": 1,
-          "activo": 1
-        }
-      ]
-    },
-    {
-      "idUsuarioEvaluacion": 3,
-      "idUsuario": 95,
-      "nombreEvaluador": "RENZO GABRIEL",
-      "apellidoEvaluador": "PINTO QUIROZ",
-      "idUsuarioEvaluado": 77,
-      "nombreEvaluado": "Renzo Gabriel",
-      "apellidoEvaluado": "Pinto Quiroz",
-      "activo": 1,
-      "observaciones": null,
-      "criterios": [
-        {
-          "idCriterioEvaluacion": 9,
-          "idUsuarioEvaluacion": 3,
-          "criterio": "Dominio Técnico",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 10,
-          "idUsuarioEvaluacion": 3,
-          "criterio": "Compromiso con los trabajos",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 11,
-          "idUsuarioEvaluacion": 3,
-          "criterio": "Comunicación con sus compañeros",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 12,
-          "idUsuarioEvaluacion": 3,
-          "criterio": "Comprensión del proyecto",
-          "nota": 0,
-          "activo": 1
-        }
-      ]
-    },
-    {
-      "idUsuarioEvaluacion": 4,
-      "idUsuario": 95,
-      "nombreEvaluador": "RENZO GABRIEL",
-      "apellidoEvaluador": "PINTO QUIROZ",
-      "idUsuarioEvaluado": 81,
-      "nombreEvaluado": "Andrea",
-      "apellidoEvaluado": "Gonzales",
+      "idUsuarioEvaluacion": 5,
+      "idUsuario": 79,
+      "nombreEvaluador": "Juan Angelo",
+      "apellidoEvaluador": "Flores Rubio",
+      "idUsuarioEvaluado": 79,
+      "nombreEvaluado": "Juan Angelo",
+      "apellidoEvaluado": "Flores Rubio",
       "activo": 1,
       "observaciones": null,
       "criterios": [
         {
           "idCriterioEvaluacion": 13,
-          "idUsuarioEvaluacion": 4,
-          "criterio": "Dominio Técnico",
-          "nota": 0,
+          "idUsuarioEvaluacion": 5,
+          "criterio": "Hola",
+          "nota": 4,
           "activo": 1
         },
         {
           "idCriterioEvaluacion": 14,
-          "idUsuarioEvaluacion": 4,
-          "criterio": "Compromiso con los trabajos",
-          "nota": 0,
+          "idUsuarioEvaluacion": 5,
+          "criterio": "Hola",
+          "nota": 5,
           "activo": 1
         },
         {
           "idCriterioEvaluacion": 15,
-          "idUsuarioEvaluacion": 4,
-          "criterio": "Comunicación con sus compañeros",
-          "nota": 0,
+          "idUsuarioEvaluacion": 5,
+          "criterio": "Hola",
+          "nota": 4,
           "activo": 1
         },
         {
           "idCriterioEvaluacion": 16,
-          "idUsuarioEvaluacion": 4,
-          "criterio": "Comprensión del proyecto",
-          "nota": 0,
-          "activo": 1
-        }
-      ]
-    },
-    {
-      "idUsuarioEvaluacion": 5,
-      "idUsuario": 95,
-      "nombreEvaluador": "RENZO GABRIEL",
-      "apellidoEvaluador": "PINTO QUIROZ",
-      "idUsuarioEvaluado": 80,
-      "nombreEvaluado": "Renzo Gabriel",
-      "apellidoEvaluado": "Pinto Quiroz",
-      "activo": 1,
-      "observaciones": null,
-      "criterios": [
-        {
-          "idCriterioEvaluacion": 17,
           "idUsuarioEvaluacion": 5,
-          "criterio": "Dominio Técnico",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 18,
-          "idUsuarioEvaluacion": 5,
-          "criterio": "Compromiso con los trabajos",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 19,
-          "idUsuarioEvaluacion": 5,
-          "criterio": "Comunicación con sus compañeros",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 20,
-          "idUsuarioEvaluacion": 5,
-          "criterio": "Comprensión del proyecto",
-          "nota": 0,
-          "activo": 1
-        }
-      ]
-    },
-    {
-      "idUsuarioEvaluacion": 6,
-      "idUsuario": 95,
-      "nombreEvaluador": "RENZO GABRIEL",
-      "apellidoEvaluador": "PINTO QUIROZ",
-      "idUsuarioEvaluado": 93,
-      "nombreEvaluado": "Diego Gustavo",
-      "apellidoEvaluado": "Veramendi Malpartida",
-      "activo": 1,
-      "observaciones": null,
-      "criterios": [
-        {
-          "idCriterioEvaluacion": 21,
-          "idUsuarioEvaluacion": 6,
-          "criterio": "Dominio Técnico",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 22,
-          "idUsuarioEvaluacion": 6,
-          "criterio": "Compromiso con los trabajos",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 23,
-          "idUsuarioEvaluacion": 6,
-          "criterio": "Comunicación con sus compañeros",
-          "nota": 0,
-          "activo": 1
-        },
-        {
-          "idCriterioEvaluacion": 24,
-          "idUsuarioEvaluacion": 6,
-          "criterio": "Comprensión del proyecto",
-          "nota": 0,
+          "criterio": "Hola",
+          "nota": 3,
           "activo": 1
         }
       ]
     }
-  ],
-  "message": "Autoevaluacion listada"
+  ]
 }
 
 
