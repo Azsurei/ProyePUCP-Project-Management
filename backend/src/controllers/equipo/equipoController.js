@@ -360,6 +360,34 @@ async function rolEliminado(req, res, next) {
     }
 }
 
+async function rolAgregado(req, res, next) {
+    const {idEquipo, rolesAgregados, miembrosAgregados, miembrosModificados } = req.body;
+    const query = `CALL AGREGAR_ROLES_EQUIPO(?,?);`;
+    try {
+        for (const rolAgregados of rolesAgregados) {
+            await connection.query(query, [idEquipo, rolAgregados.nombre]);
+            console.log(`Se inserto el rol ${rolAgregados.nombre}!`);
+        }
+        const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
+        for (const miembroAgregado of miembrosAgregados) {
+            const results1 = await connection.query(query1, [miembroAgregado.idUsuario, idEquipo, miembroAgregado.nombreRol]);
+            const idUsuarioXEquipoXRolEquipo = results1[0][0].idUsuarioXEquipoXRolEquipo;
+            console.log(`Se inserto el miembro ${idUsuarioXEquipoXRolEquipo}!`);
+        }
+        const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO(?,?,?);`;
+        for (const miembroModificado of miembrosModificados) {
+            const results2 = await connection.query(query2, [miembroModificado.idUsuario, idEquipo, miembroModificado.nombreRol]);
+            const idUsuario = results2[0][0].idUsuario;
+            console.log(`Se modifico el miembro ${idUsuario}!`);
+        }
+        res.status(200).json({
+            message: "Roles agregados y miembro agregado y modificado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
@@ -374,5 +402,6 @@ module.exports = {
     modificarMiembroEquipo,
     eliminarMiembroEquipo,
     insertarMiembrosEquipo,
-    rolEliminado
+    rolEliminado,
+    rolAgregado
 };
