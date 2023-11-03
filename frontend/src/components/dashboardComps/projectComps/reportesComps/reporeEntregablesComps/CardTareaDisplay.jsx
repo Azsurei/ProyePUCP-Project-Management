@@ -11,7 +11,7 @@ function UsersDisplay({ listUsers }) {
                 <Avatar
                     isBordered={false}
                     color={"primary"}
-                    className="w-[40px] h-[40px] text-tiny"
+                    className="w-[35px] h-[35px] text-tiny"
                     fallback={<p id="MoreUsrsIcn">+{count}</p>}
                 />
             )}
@@ -43,7 +43,7 @@ function UsersDisplay({ listUsers }) {
                                 isBordered
                                 color="default"
                                 src={user.imgLink}
-                                className="w-[45px] h-[45px] text-tiny"
+                                className="w-[40px] h-[40px] text-tiny"
                                 fallback={
                                     <p id="UsrNoIcon">
                                         {user.nombres[0] + user.apellidos[0]}
