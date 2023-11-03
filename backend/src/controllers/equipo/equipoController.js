@@ -326,6 +326,40 @@ async function insertarMiembrosEquipo(req, res, next) {
     }
 }
 
+async function rolEliminado(req, res, next) {
+    const {idEquipo, rolesEliminados, miembrosAgregados, miembrosModificados, miembrosEliminados } = req.body;
+    const query = `CALL ELIMINAR_ROLES_EQUIPO(?,?);`;
+    try {
+        for (const rolEliminado of rolesEliminados) {
+            await connection.query(query, [rolEliminado.idEquipoXRolEquipo, rolEliminado.idRol]);
+            console.log(`Se elimino el rol ${rolEliminado.idRol}!`);
+        }
+        const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO(?,?,?);`;
+        for (const miembroAgregado of miembrosAgregados) {
+            const results1 = await connection.query(query1, [miembroAgregado.idUsuario, idEquipo, miembroAgregado.idRolEquipo]);
+            const idUsuarioXEquipoXRolEquipo = results1[0][0].idUsuarioXEquipoXRolEquipo;
+            console.log(`Se inserto el miembro ${idUsuarioXEquipoXRolEquipo}!`);
+        }
+        const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO(?,?,?);`;
+        for (const miembroModificado of miembrosModificados) {
+            const results2 = await connection.query(query2, [miembroModificado.idUsuario, idEquipo, miembroModificado.idRolEquipo]);
+            const idUsuario = results2[0][0].idUsuario;
+            console.log(`Se modifico el miembro ${idUsuario}!`);
+        }
+        const query3 = `CALL ELIMINAR_MIEMBRO_EQUIPO(?,?);`;
+        for (const miembrosEliminado of miembrosEliminados) {
+            const results3 = await connection.query(query3, [miembrosEliminado.idUsuario, idEquipo]);
+            const idUsuario = results3[0][0].idUsuario;
+            console.log(`Se elimino el miembro ${idUsuario}!`);
+        }
+        res.status(200).json({
+            message: "Role eliminado y miembro agregado, modificado y eliminado exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     insertarEquipoYParticipantes,
     listarXIdProyecto,
@@ -340,4 +374,5 @@ module.exports = {
     modificarMiembroEquipo,
     eliminarMiembroEquipo,
     insertarMiembrosEquipo,
+    rolEliminado
 };
