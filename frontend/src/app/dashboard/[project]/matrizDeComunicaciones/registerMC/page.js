@@ -10,6 +10,7 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 function capitalizeWords(str) {
@@ -80,9 +81,9 @@ export default function MatrizComunicacionesRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            sumilla === "" ||
-            detail === "" ||
-            groupReceiver === "" ||
+            sumilla.trim() === "" ||
+            detail.trim() === "" ||
+            groupReceiver.trim() === "" ||
             canal === null ||
             frecuency === null ||
             format === null ||
@@ -112,7 +113,8 @@ export default function MatrizComunicacionesRegister(props) {
         console.log("El postData es :", postData);
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/matrizDeComunicaciones/insertarMatrizComunicacion",
                 postData
             )
             .then((response) => {
@@ -164,7 +166,10 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarCanales"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/matrizDeComunicaciones/listarCanales"
+                            }
                             property="canales"
                             nameDisplay="nombreCanal"
                             hasColor={false}
@@ -180,7 +185,10 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFrecuencia"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/matrizDeComunicaciones/listarFrecuencia"
+                            }
                             property="frecuencias"
                             nameDisplay="nombreFrecuencia"
                             hasColor={false}
@@ -196,7 +204,10 @@ export default function MatrizComunicacionesRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/matrizDeComunicaciones/listarFormato"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/matrizDeComunicaciones/listarFormato"
+                            }
                             property="formatos"
                             nameDisplay="nombreFormato"
                             hasColor={false}
@@ -218,11 +229,17 @@ export default function MatrizComunicacionesRegister(props) {
                                 <div className="iconLabel2MC">
                                     <p className="profilePicMC">
                                         {component.nombres[0] +
-                                            (component.apellidos!==null? component.apellidos[0] : "")}
+                                            (component.apellidos !== null
+                                                ? component.apellidos[0]
+                                                : "")}
                                     </p>
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
-                                            `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
+                                            `${component.nombres} ${
+                                                component.apellidos !== null
+                                                    ? component.apellidos
+                                                    : ""
+                                            }`
                                         )}
                                     </div>
                                 </div>
@@ -274,27 +291,6 @@ export default function MatrizComunicacionesRegister(props) {
                     />
                 </div>
                 <div className="containerBottomMC">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
                     <div className="twoButtonsMC">
                         <div className="buttonContainerMC">
                             <Modal
@@ -322,26 +318,25 @@ export default function MatrizComunicacionesRegister(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(true);
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(false);
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        setFieldsExcessive(true);
-                                        setFieldsEmpty(false);
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
-                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -359,6 +354,15 @@ export default function MatrizComunicacionesRegister(props) {
                     idProyecto={projectId}
                 ></ModalUsersOne>
             )}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

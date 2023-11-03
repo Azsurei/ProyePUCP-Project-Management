@@ -14,6 +14,7 @@ import ContainerScenario2 from "@/components/dashboardComps/projectComps/product
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -28,11 +29,13 @@ export default function ProductBacklogUpdate(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const idHU = props.params.updatePB;
-    const decodedUrl = decodeURIComponent(props.params.project); 
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1); 
-    const {herramientasInfo} = useContext(HerramientasInfo);
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
-    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
+    const stringURLEpics =
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+        `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -372,22 +375,22 @@ export default function ProductBacklogUpdate(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
-            como === "" ||
-            quiero === "" ||
-            para === "" ||
+            name.trim() === "" ||
+            como.trim() === "" ||
+            quiero.trim() === "" ||
+            para.trim() === "" ||
             selectedValueEpic === null ||
             selectedValuePriority === null ||
             selectedValueState === null ||
             requirementFields.some(
-                (requirement) => requirement.requirement === ""
+                (requirement) => requirement.requirement.trim() === ""
             ) ||
             scenarioFields.some(
                 (scenario) =>
-                    scenario.scenario === "" ||
-                    scenario.dadoQue === "" ||
-                    scenario.cuando === "" ||
-                    scenario.entonces === ""
+                    scenario.scenario.trim() === "" ||
+                    scenario.dadoQue.trim() === "" ||
+                    scenario.cuando.trim() === "" ||
+                    scenario.entonces.trim() === ""
             )
         );
     }
@@ -664,31 +667,29 @@ export default function ProductBacklogUpdate(props) {
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
-                                    //FALTA HACER LA VERIFICACIÓN DE LOS CAMPOS
                                     if (
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(true);
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(false);
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        setFieldsExcessive(true);
-                                        setFieldsEmpty(false);
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
-                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -709,6 +710,15 @@ export default function ProductBacklogUpdate(props) {
                     />
                 )}
             </div>
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </form>
     );
 }

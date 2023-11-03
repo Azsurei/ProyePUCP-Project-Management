@@ -15,6 +15,7 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosRegister(props) {
@@ -178,20 +179,20 @@ export default function CatalogoDeRiesgosRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
-            detail === "" ||
+            name.trim() === "" ||
+            detail.trim() === "" ||
             probability === null ||
             impact === null ||
             fechaInicio === null ||
-            cause === "" ||
-            impactDetail === "" ||
+            cause.trim() === "" ||
+            impactDetail.trim() === "" ||
             selectedMiembrosList.length === 0 ||
             selectedMiembrosList1.length === 0 ||
             responsePlans.some(
-                (responsePlans) => responsePlans.responsePlans === ""
+                (responsePlans) => responsePlans.responsePlans.trim() === ""
             ) ||
             contingencyPlans.some(
-                (contingencyPlans) => contingencyPlans.contingencyPlans === ""
+                (contingencyPlans) => contingencyPlans.contingencyPlans.trim() === ""
             )
         );
     }
@@ -231,7 +232,8 @@ export default function CatalogoDeRiesgosRegister(props) {
         console.log("El postData es :", postData);
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/insertarRiesgo",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoRiesgos/insertarRiesgo",
                 postData
             )
             .then((response) => {
@@ -302,7 +304,10 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarProbabilidades"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/catalogoRiesgos/listarProbabilidades"
+                            }
                             property="probabilidades"
                             nameDisplay="nombreProbabilidad"
                             hasColor={false}
@@ -320,7 +325,10 @@ export default function CatalogoDeRiesgosRegister(props) {
                             className="iconLabel"
                         />
                         <MyCombobox
-                            urlApi={process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarImpacto"}
+                            urlApi={
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/catalogoRiesgos/listarImpacto"
+                            }
                             property="impacto"
                             nameDisplay="nombreImpacto"
                             hasColor={false}
@@ -399,11 +407,17 @@ export default function CatalogoDeRiesgosRegister(props) {
                                 <div className="iconLabel2CR">
                                     <p className="profilePicCR">
                                         {component.nombres[0] +
-                                         (component.apellidos!==null? component.apellidos[0] : "")}
+                                            (component.apellidos !== null
+                                                ? component.apellidos[0]
+                                                : "")}
                                     </p>
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
+                                            `${component.nombres} ${
+                                                component.apellidos !== null
+                                                    ? component.apellidos
+                                                    : ""
+                                            }`
                                         )}
                                     </div>
                                 </div>
@@ -416,7 +430,10 @@ export default function CatalogoDeRiesgosRegister(props) {
                     </div>
                 </div>
                 <div className="titleButtonCR">
-                    <h4 style={{ fontWeight: 600 }}>Responsables del riesgo<span className="text-red-500"> *</span></h4>
+                    <h4 style={{ fontWeight: 600 }}>
+                        Responsables del riesgo
+                        <span className="text-red-500"> *</span>
+                    </h4>
                 </div>
                 <div className="containerResponsables">
                     <ButtonIconLabel
@@ -433,11 +450,17 @@ export default function CatalogoDeRiesgosRegister(props) {
                                     <div className="iconLabel3CR">
                                         <p className="profilePicCR">
                                             {component.nombres[0] +
-                                                (component.apellidos!==null? component.apellidos[0] : "")}
+                                                (component.apellidos !== null
+                                                    ? component.apellidos[0]
+                                                    : "")}
                                         </p>
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
-                                                `${component.nombres} ${component.apellidos!==null? component.apellidos: ""}`
+                                                `${component.nombres} ${
+                                                    component.apellidos !== null
+                                                        ? component.apellidos
+                                                        : ""
+                                                }`
                                             )}
                                         </div>
                                     </div>
@@ -573,27 +596,6 @@ export default function CatalogoDeRiesgosRegister(props) {
                     </div>
                 </div>
                 <div className="containerBottomCR">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
                     <div className="twoButtonsCR">
                         <div className="buttonContainerCR">
                             <Modal
@@ -621,26 +623,25 @@ export default function CatalogoDeRiesgosRegister(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(true);
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        setFieldsEmpty(true);
-                                        setFieldsExcessive(false);
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        setFieldsExcessive(true);
-                                        setFieldsEmpty(false);
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
-                                        setFieldsExcessive(false);
-                                        setFieldsEmpty(false);
                                         return true;
                                     }
                                 }}
@@ -667,6 +668,15 @@ export default function CatalogoDeRiesgosRegister(props) {
                     idProyecto={projectId}
                 ></ModalUsersOne>
             )}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

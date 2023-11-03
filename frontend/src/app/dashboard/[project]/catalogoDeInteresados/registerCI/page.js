@@ -119,11 +119,11 @@ export default function CatalogoDeInteresadosRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
+            name.trim() === "" ||
             requirements.some(
-                (requirements) => requirements.requirements === ""
+                (requirements) => requirements.requirements.trim() === ""
             ) ||
-            strategies.some((strategies) => strategies.strategies === "")
+            strategies.some((strategies) => strategies.strategies.trim() === "")
         );
     }
 
@@ -162,7 +162,8 @@ export default function CatalogoDeInteresadosRegister(props) {
         console.log("El postData es :", postData);
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoInteresados/insertarInteresado",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/insertarInteresado",
                 postData
             )
             .then((response) => {
@@ -468,19 +469,23 @@ export default function CatalogoDeInteresadosRegister(props) {
                                         verifyFieldsEmpty() &&
                                         verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos y se excedió el límite de caractéres")
+                                        toast.error(
+                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos")
+                                        toast.error("Faltan completar campos");
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
-                                        toast.error("Se excedió el límite de caractéres")
+                                        toast.error(
+                                            "Se excedió el límite de caractéres"
+                                        );
                                         return false;
                                     } else {
                                         return true;
