@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@nextui-org/react";
 import { UpdateIcon } from "@/components/equipoComps/UpdateIcon";
 
-function ReturnIcon() {
+function ReturnIcon({onClick}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,6 +14,7 @@ function ReturnIcon() {
             strokeWidth={1.5}
             stroke="currentColor"
             className="w-[26px] h-[26px] mt-[0.12rem] p-[3px] rounded-[100%] hover:bg-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+            onClick={onClick}
         >
             <path
                 strokeLinecap="round"
@@ -49,7 +50,7 @@ export default function HeaderWithButtonsSamePage({
                         //     id="HeaderIconGoBack"
                         //     onClick={handlerReturn}
                         // />
-                        <ReturnIcon/>
+                        <ReturnIcon onClick={handlerReturn}/>
                     )}
                 </div>
                 {haveAddNew && (

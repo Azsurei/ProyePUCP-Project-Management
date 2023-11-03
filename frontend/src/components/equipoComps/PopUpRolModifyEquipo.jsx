@@ -13,12 +13,12 @@ export default function PopUpRolEquipo({
     toggle,
     handleAddRoles,
     initialListRoles,
+    participantes,
 }) {
     const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
     const [addErrorRol, setAddErrorRol] = useState("");
     const [addRol, setAddRol] = useState(false);
-    const [quantity, setQuantity] = useState(3);
 
     const handleInsertRol = () => {
         setNewRolName("");
@@ -27,10 +27,21 @@ export default function PopUpRolEquipo({
     };
 
     const EliminateRoles = (rol) => {
-        setListRoles((prevRoles) => {
-            return prevRoles.filter((role) => role.idRol !== rol.idRol);
-        });
+        const isRolInUse = participantes.some(
+            (participante) => participante.nombreRol === rol.nombreRol
+        );
+        if (isRolInUse) {
+            toast.error("No se puede eliminar el rol porque está en uso.");
+        } else {
+            setListRoles((prevRoles) => {
+                return prevRoles.filter((role) => role.idRol !== rol.idRol);
+            });
+        }
     };
+
+    function generateId() {
+        return Math.floor(Math.random() * 100001);
+    }
 
     return (
         modal && (
@@ -70,11 +81,23 @@ export default function PopUpRolEquipo({
                                             "El nombre del rol ya existe en la lista."
                                         );
                                     } else {
+                                        // Generar un nuevo idRol único
+                                        let newIdRol;
+                                        do {
+                                            newIdRol = generateId();
+                                        } while (
+                                            participantes.some(
+                                                (participante) => participante.idRolEquipo === newIdRol
+                                            ) || 
+                                            listRoles.some(
+                                                (rol) => rol.idRol === newIdRol
+                                            )
+                                        );
+
                                         const newRol = {
-                                            idRol: quantity,
+                                            idRol: newIdRol,
                                             nombreRol: newRolName,
                                         };
-                                        setQuantity(quantity + 1);
 
                                         setListRoles([newRol, ...listRoles]);
                                         console.log(
@@ -110,19 +133,20 @@ export default function PopUpRolEquipo({
                                                         {role.nombreRol}
                                                     </p>
                                                 </div>
-                                                {role.nombreRol !==
-                                                    "Miembro" && role.nombreRol!="Líder" && (
-                                                    <img
-                                                        src="/icons/icon-trash.svg"
-                                                        alt="delete"
-                                                        className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
-                                                        onClick={() => {
-                                                            EliminateRoles(
-                                                                role
-                                                            );
-                                                        }}
-                                                    />
-                                                )}
+                                                {role.nombreRol !== "Miembro" &&
+                                                    role.nombreRol !=
+                                                        "Líder" && (
+                                                        <img
+                                                            src="/icons/icon-trash.svg"
+                                                            alt="delete"
+                                                            className="mb-4 cursor-pointer mr-2 absolute right-0 top-1/2 transform -translate-y-1/2"
+                                                            onClick={() => {
+                                                                EliminateRoles(
+                                                                    role
+                                                                );
+                                                            }}
+                                                        />
+                                                    )}
                                             </li>
                                         );
                                     })}
