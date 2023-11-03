@@ -21,6 +21,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ReportTypeCard from "@/components/dashboardComps/projectComps/reportesComps/ReportTypeCard";
+import ListReport from "@/components/dashboardComps/projectComps/reportesComps/ListReport";
 import DateInput from "@/components/DateInput";
 export default function Reportes(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -88,7 +89,7 @@ export default function Reportes(props) {
                 "financieros y operativos. Este reporte es esencial " +
                 "para la gestión efectiva de proyectos y la optimización de los recursos disponibles.",
             imgLink: "/images/report_3.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuesto"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuestos"
         },
         {
             id: "rep4",
@@ -184,6 +185,9 @@ export default function Reportes(props) {
                                 </Dropdown>
                             </div>
                         </div> 
+                        <div className="mt-5 ">
+                            <ListReport></ListReport>
+                        </div>
                     </div>
                 </div>
             )}

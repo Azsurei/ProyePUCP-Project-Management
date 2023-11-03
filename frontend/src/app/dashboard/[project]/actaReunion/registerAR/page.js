@@ -95,8 +95,10 @@ export default function crearActaReunion(props) {
 // Various Variables
 // *********************************************************************************************
 // Router. Helps you to move between pages
-    const router = useRouter();
 
+    const router = useRouter();
+    const previousUrl = props.searchParams.previousUrl;
+    console.log('Query :', previousUrl);
 // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -441,7 +443,6 @@ export default function crearActaReunion(props) {
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
-                router.back();
             })
             .catch(function (error) {
                 console.log(error);
@@ -648,7 +649,7 @@ export default function crearActaReunion(props) {
                     </Card>
                 </div>
 
-                <div className="agreements p-5">
+                {/*<div className="agreements p-5">
                     <Card className="mx-auto">
                         <CardHeader>
                             <div className="flex flex-col p-2">
@@ -682,7 +683,7 @@ export default function crearActaReunion(props) {
                         </CardBody>
                         <CardFooter></CardFooter>
                     </Card>
-                </div>
+                </div>*/}
 
                 <div className="pendingComments p-5">
                     <Card className="mx-auto">
@@ -751,8 +752,7 @@ export default function crearActaReunion(props) {
                             secondAction={() => {
                                 resetConvocante();
                                 createMeeting();
-                                router.back();
-                                router.back();
+                                router.push(previousUrl);
                             }}
                             textColor="blue"
                             verifyFunction={() => {

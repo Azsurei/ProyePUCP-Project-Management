@@ -13,7 +13,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import { useRouter } from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
-import { SmallLoadingScreen } from "../../../layout";
+import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -43,8 +43,9 @@ export default function ProductBacklogRegister(props) {
     const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarEpicas`;
-    const stringURLBacklog = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/${projectId}/listarBacklog`;
+    const {herramientasInfo} = useContext(HerramientasInfo);
+    const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
+    const stringURLEpics = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -62,7 +63,6 @@ export default function ProductBacklogRegister(props) {
     const [fieldsEmpty, setFieldsEmpty] = useState(false);
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
-    const [backlog, setBacklog] = useState([]);
     const [reloadData, setReloadData] = useState(false);
 
   // Esta función se llama cuando deseas recargar los datos
@@ -70,25 +70,6 @@ export default function ProductBacklogRegister(props) {
         setReloadData(true);
     };
 
-    useEffect(() => {
-        const fetchBacklog = async () => {
-            try {
-                const response = await axios.get(stringURLBacklog);
-                if (response.status === 200) {
-                    setBacklog(response.data.backlog);
-                    console.log(
-                        "Se obtuvo el backlog correctamente",
-                        response.data.backlog
-                    );
-                }
-                setIsLoadingSmall(false);
-            } catch (error) {
-                setError("Error al obtener el backlog: " + error.message);
-            }
-        };
-
-        fetchBacklog();
-    }, []);
     const toggleModal = () => {
         handleReloadData();
         setModal(!modal);
@@ -551,7 +532,7 @@ export default function ProductBacklogRegister(props) {
                         modal={modal}
                         toggle={() => toggleModal()} // Pasa la función como una función de flecha
                         url={stringURLEpics}
-                        backlogID={backlog[0].idProductBacklog}
+                        backlogID={idProductBacklog}
                         urlEliminate={process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/backlog/hu/eliminarEpica`}
                     />
                 )}

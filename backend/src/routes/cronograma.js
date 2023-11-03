@@ -14,6 +14,7 @@ routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);
 
 routerCronograma.post("/listarCronograma", cronogramaController.listar);
 routerCronograma.get("/listarTareasXidProyecto/:idProyecto", tareaController.listarXIdProyecto);
+routerCronograma.get("/listarEntregablesXidProyecto/:idProyecto", cronogramaController.listarEntregablesXidProyecto);
 
 routerCronograma.delete("/eliminarTarea", tareaController.eliminarTarea);
 

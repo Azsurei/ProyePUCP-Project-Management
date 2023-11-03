@@ -33,8 +33,22 @@ async function listar(req,res,next){
     }
 }
 
+
+async function listarEntregablesXidProyecto(req,res,next){
+    const {idProyecto} = req.params;
+    try {
+        const query = `CALL LISTAR_ENTREGABLES_X_ID_PROYECTO(?);`;
+        const [results] = await connection.query(query,[idProyecto]);
+        res.status(200).json({entregables: results[0]});
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 module.exports = {
     crear,
     actualizar,
-    listar
+    listar,
+    listarEntregablesXidProyecto
 };

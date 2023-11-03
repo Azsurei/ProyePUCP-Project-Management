@@ -32,8 +32,11 @@ async function crearAutoEvaluacionTest(req,res,next){
 
 async function listarAutoEvaluacion(req,res,next){
     const {idProyecto, idUsuario} = req.params;
+    const querydatos = `CALL LISTAR_AUTOEVALUACION_DATOS(?);`;
     const query = `CALL LISTAR_AUTOEVALUACION_X_USUARIO(?,?);`;
     try {
+        const datos = await connection.query(querydatos,[idProyecto]);
+        autoEvaluacion = datos[0][0];
         const results = await connection.query(query,[idProyecto,idUsuario]);
         const evaluados = results[0][0];
         for(const usuarioEvaluado of evaluados){
@@ -42,21 +45,13 @@ async function listarAutoEvaluacion(req,res,next){
                 usuarioEvaluado.criterios = criterios[0][0];
         }
         if(evaluados.length === 0){
-            const query3 = `CALL VERIFICAR_EXISTE_EVALUACION(?);`;
-            const results4 = await connection.query(query3,[idProyecto]);
-            if(results4[0][0].length === 0){
-                res.status(204).json({
-                    message: "Autoevaluacion no creada"
-                });
-            }
-            else{
-                res.status(205).json({
-                    message: "Solo miembro tiene autoevalaucion"
-                });
-            }
+            res.status(204).json({
+                message: "Autoevaluacion no creada"
+            });
         }
         else{
             res.status(200).json({
+                autoEvaluacion,
                 evaluados,
                 message: "Autoevaluacion listada"
             });
@@ -96,7 +91,8 @@ async function crearAutoEvaluacion(req,res,next){
         //Creamos una AutoEvaluacion en la tabla AutoEvaluacionXProyecto 
         const query = `CALL INSERTAR_AUTOEVALUACION_X_IDPROYECTO(?,?,?,?);`;
         const results = await connection.query(query,[idProyecto,nombre,fechaInicio,fechaFin]);
-        const idAutoEvaluacionXProyecto = results[0][0];
+        const idAutoEvaluacionXProyecto = results[0][0][0].idAutoEvaluacionXProyecto;
+        console.log(idAutoEvaluacionXProyecto);
         //Obtenemos los miembros del proyecto
         const query1 = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
         const results1 = await connection.query(query1,[idProyecto]);
@@ -127,6 +123,12 @@ async function listarTodasAutoEvaluacion(req,res,next){
     try {
         const results = await connection.query(query,[idProyecto]);
         const autoEvaluaciones = results[0][0];
+        const query1 = `CALL LISTAR_CRITERIOS_X_IDAUTOEVALUACION(?);`;
+        for(const autoEvaluacion of autoEvaluaciones){
+            let results1 = await connection.query(query1,[autoEvaluacion.idAutoEvaluacionXProyecto]);
+            let criterio = await results1[0][0];
+            autoEvaluacion.criterios = criterio;
+        }
         res.status(200).json({
             autoEvaluaciones,
             message: "Autoevaluaciones listada"
@@ -138,11 +140,42 @@ async function listarTodasAutoEvaluacion(req,res,next){
     }
 }
 
+async function activarAutoEvaluacion(req,res,next){
+    const {idProyecto, idAutoEvaluacionXProyecto} = req.body;
+    try {
+        const query = `CALL ACTIVAR_AUTOEVALUACION_X_ID(?,?);`;
+        await connection.query(query,[idProyecto,idAutoEvaluacionXProyecto]);
+        res.status(200).json({
+            message: "Autoevaluacion activada"
+        });
+        console.log('Se activo la autoevalaucion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function finalizarAutoEvaluacion(req,res,next){
+    const {idAutoEvaluacionXProyecto} = req.body;
+    try {
+        const query = `CALL FINALIZAR_AUTOEVALUACION_X_ID(?);`;
+        await connection.query(query,[idAutoEvaluacionXProyecto]);
+        res.status(200).json({
+            message: "Autoevaluacion finalizada"
+        });
+        console.log('Se finalizo la autoevaluacion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 
 module.exports = {
     crearAutoEvaluacionTest,
     listarAutoEvaluacion,
     actualizarAutoEvaluacion,
     crearAutoEvaluacion,
-    listarTodasAutoEvaluacion
+    listarTodasAutoEvaluacion,
+    activarAutoEvaluacion,
+    finalizarAutoEvaluacion
 };

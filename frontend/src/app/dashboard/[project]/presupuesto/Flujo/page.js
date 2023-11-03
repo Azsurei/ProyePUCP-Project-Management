@@ -1,6 +1,5 @@
 "use client"
-import { useState, useEffect, useCallback, use } from "react";
-import Link from "next/link";
+import { createContext, useContext, useEffect, useState } from "react";import Link from "next/link";
 import React from "react";
 import axios from "axios";
 import Table from '@mui/material/Table';
@@ -16,6 +15,7 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 import EditIcon from '@mui/icons-material/Edit';
 import HistoryIcon from '@mui/icons-material/History';
+import { SmallLoadingScreen } from "../../layout";
 import {
     Input,
     DropdownTrigger,
@@ -37,21 +37,11 @@ import BuildIcon from '@mui/icons-material/Build';
 import { set } from "date-fns";
 
 export default function EstimacionTabla(props) {
-// const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
 const decodedUrl = decodeURIComponent(props.params.project);
 const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
 const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
-const [Gestion, setGestion] = useState(0.00);
-
-const [Reserva, setReserva] = useState(0.00);
-
-const [IGV, setIGV] = useState(0.00);
-
-const [Ganancia, setGanancia] = useState(0.00);
-
-
 
 const [presupuestoId, setPresupuestoId] = useState("");
 
@@ -62,6 +52,7 @@ const [mesActual, setmesActual] = useState("");
 let idHerramientaCreada;
 let flag=0;
 useEffect(() => {
+    setIsLoadingSmall(false)
     const fetchData = async () => {
         try {
           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
@@ -69,7 +60,7 @@ useEffect(() => {
           for (const herramienta of herramientas) {
             if (herramienta.idHerramienta === 13) {
                 idHerramientaCreada = herramienta.idHerramientaCreada;
-                setPresupuestoId(idHerramientaCreada)
+                setPresupuestoId(idHerramientaCreada);
                 console.log("idPresupuesto es:", idHerramientaCreada);
                 flag = 1;
                 break; // Puedes salir del bucle si has encontrado la herramienta
@@ -82,7 +73,7 @@ useEffect(() => {
         }
 
         if (flag === 1) {
-    
+
           // Aquí encadenamos el segundo axios
           const stringURLListarPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/listarPresupuesto/"+idHerramientaCreada;
           axios.get(stringURLListarPresupuesto)
@@ -105,10 +96,9 @@ useEffect(() => {
               });
         }
 
-
-
       };
-        fetchData();
+      fetchData();
+
 }, []);
 
 
@@ -131,29 +121,62 @@ function subtotal(items) {
 }
 
 
+
+
 const [lineaIngreso, setLineaIngreso] = useState([]);
+const [lineaEgreso, setLineaEgreso] = useState([]);
+const [totalIngresos, setTotalIngresos] = useState(0);
+const [totalEgresos, setTotalEgresos] = useState(0);
+const [totalAcumulado, setTotalAcumulado] = useState(0);
 
-    //Aqui va el data table de Iwa
-
-    
-    
+  
 const DataTable = async () => {
     const fetchData = async () => {
         try {
           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
-          const data = response.data.lineasIngreso;
-          setLineaIngreso(data);
-          console.log(`Esta es la data:`, data);
-            console.log(`Datos obtenidos exitosamente:`, response.data.lineasIngreso);
+          const dataIngreso = response.data.lineasIngreso;
+          setLineaIngreso(dataIngreso);
+          console.log(`Datos obtenidos exitosamente:`, dataIngreso);
+          
+
+          const responseEgreso = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/proyecto/presupuesto/listarLineasEgresoXIdPresupuesto/${presupuestoId}`);
+          
+          const dataEgreso = responseEgreso.data.lineasEgreso;
+          setLineaEgreso(dataEgreso);
+          console.log('Líneas de Egreso obtenidas exitosamente:', dataEgreso);
+
         } catch (error) {
-          console.error('Error al obtener las líneas de ingreso:', error);
+          console.error('Error al obtener las líneas de ingreso o egreso:', error);
         }
-      };
-        fetchData();
+
+        console.log('Data Ingreso:', lineaIngreso);
+        console.log('Data Egreso:', lineaEgreso);
+
+      } 
+
+    fetchData();
 };
 useEffect(() => {
   DataTable();
 }, [presupuestoId]);
+
+useEffect(() => {
+  // Calcula el total de ingresos
+  const ingresosTotal = lineaIngreso.reduce((total, row) => {
+    return total + row.monto;
+  }, 0);
+  setTotalIngresos(ingresosTotal);
+
+  // Calcula el total de egresos
+  const egresosTotal = lineaEgreso.reduce((total, row) => {
+    return total + row.costoReal;
+  }, 0);
+  setTotalEgresos(egresosTotal);
+
+  const totalAcumulado = ingresosTotal - egresosTotal;
+  setTotalAcumulado(totalAcumulado);
+
+}, [lineaIngreso, lineaEgreso]);
 
 
 const meses = [
@@ -163,6 +186,60 @@ const meses = [
 // Filtrar los meses a partir del mes actual
 const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + cantMeses);
 
+const ingresosPorTipo = {};
+
+// Iterar sobre las líneas de ingreso
+lineaIngreso.forEach((row) => {
+  // Comprobar si el tipo de ingreso ya existe en el objeto
+
+  const fechaCreacion = new Date(row.fechaTransaccion);
+
+  const mes = fechaCreacion.getUTCMonth() + 1;
+  const mesReal=mes-mesActual+1;
+  const idTipo=row.idIngresoTipo;
+
+  if(!ingresosPorTipo[idTipo]){
+    ingresosPorTipo[idTipo]={};
+  }
+
+  if(!ingresosPorTipo[idTipo[mesReal]]){
+    ingresosPorTipo[idTipo][mesReal]=0;
+  }
+
+  ingresosPorTipo[idTipo][mesReal]+=row.monto;
+
+  /* if (ingresosPorTipo[row.idIngresoTipo]) {
+    // Si existe, suma el monto al tipo de ingreso existente
+    ingresosPorTipo[row.idIngresoTipo].monto += row.monto;
+  } else {
+    // Si no existe, crea una nueva entrada en el objeto
+    ingresosPorTipo[row.idIngresoTipo] = {
+      descripcion: obtenerDescripcionPorTipo(row.idIngresoTipo), // Reemplaza obtenerDescripcionPorTipo con la lógica real
+      monto: row.monto,
+    };
+  }
+  */
+});
+
+function obtenerDescripcionPorTipo(idIngresoTipo) {
+  const tiposDeIngreso = {
+      1: 'Prestamo',
+      2: 'Donaciones',
+      3: 'Patrocinador',
+      4: 'Pago Cliente',
+      // Agrega más tipos de ingreso si es necesario
+    };
+
+  return tiposDeIngreso[idIngresoTipo] || 'Tipo de ingreso desconocido';
+}
+
+const descripcionTipo = {
+  1: 'Prestamo',
+  2: 'Donaciones',
+  3: 'Patrocinador',
+  4: 'Pago Cliente',
+  // Agrega más tipos de ingreso si es necesario
+};
 
 
 
@@ -240,21 +317,20 @@ return (
               <TableCell className="IngEgTexto" align="left">Ingresos</TableCell>
             </TableRow>
               
-            {lineaIngreso.map((row) => {
+{Object.values(ingresosPorTipo).map((tipoIngreso, index) => (
+  <TableRow key={index}>
+    <TableCell>{descripcionTipo[index+1]}</TableCell>
+    <TableCell align="left">{tipoIngreso[1]}</TableCell>
+    <TableCell align="left">{tipoIngreso[2]}</TableCell>
+    <TableCell align="left">{tipoIngreso[3]}</TableCell>
 
-              return (
-                <TableRow key={row.descripcion}>
-                  <TableCell>{row.descripcion}</TableCell>
-                  <TableCell align="left">{row.monto}</TableCell>
-                </TableRow>
-              );
-              })}
+  </TableRow>
+))}
             
-
- 
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Ingresos</TableCell>
+              <TableCell className="Totales" align="left">{totalIngresos}</TableCell>
 
             </TableRow>
 
@@ -262,15 +338,30 @@ return (
             <TableRow>
               <TableCell className="IngEgTexto" align="left">Egresos</TableCell>
 
+
+
             </TableRow>
+
+            {lineaEgreso.map((row) => {
+
+                return (
+                  <TableRow key={row.descripcion}>
+                    <TableCell>{row.descripcion}</TableCell>
+                    <TableCell align="left">{row.costoReal}</TableCell>
+                  </TableRow>
+                );
+              })}
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
+              <TableCell className="Totales" align="left">{totalEgresos}</TableCell>
 
             </TableRow>
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
+              <TableCell className="Totales" align="left">{totalAcumulado}</TableCell>
+
 
             </TableRow>
 
@@ -280,5 +371,5 @@ return (
 
           </div>
       </div>
-    );
+  );
 }

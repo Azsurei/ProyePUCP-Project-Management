@@ -1,16 +1,16 @@
 .participantsContainer::-webkit-scrollbar {
     width: 4px;
     margin-left: 20px;
-    border: 1px red solid;
+    border: 1px rgb(65, 65, 65) solid;
+    border-radius: 10px;
 }
 
 .participantsContainer::-webkit-scrollbar:horizontal {
     height: 8px;
-    border: 1px red solid;
+    border: 1px black solid;
 }
 
 .participantsContainer::-webkit-scrollbar-thumb{
-    @apply bg-sky-500 rounded-xl;
-    @apply bg-slate-400 rounded-xl;
+    @apply bg-mainHeaders rounded-xl;
     
 }

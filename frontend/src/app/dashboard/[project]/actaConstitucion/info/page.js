@@ -2,6 +2,9 @@
 import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps/TextInfoCard";
 import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
 import Button from "@/components/dashboardComps/projectComps/appConstComps/Button";
+import Link from "next/link";
+
+
 import React, { useState, useEffect, useReducer, useContext } from "react";
 import AddIcon from "@/components/dashboardComps/projectComps/appConstComps/AddIcon.svg";
 import EditIcon from "../../../../../../public/images/EditIcon.svg";
@@ -10,7 +13,7 @@ import CrossIcon from "../../../../../../public/images/CrossIcon.svg";
 import axios from "axios";
 import { SmallLoadingScreen } from "../../layout";
 axios.defaults.withCredentials = true;
-
+import SaveIcon from '@mui/icons-material/Save';
 import "../../../../../styles/dashboardStyles/projectStyles/actaConstStyles/TextInfoCard.css";
 import "../../../../../styles/dashboardStyles/projectStyles/actaConstStyles/CardItem.css";
 import "@/styles/dashboardStyles/projectStyles/actaConstStyles/infoPage.css";
@@ -25,7 +28,12 @@ import {
     Button as NextUIButton,
     CircularProgress,
 } from "@nextui-org/react";
+import {Input} from "@nextui-org/react";
+
 import { flushSync } from "react-dom";
+import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
+import { set } from "date-fns";
+
 
 function DetailCard({
     detail,
@@ -133,6 +141,15 @@ export default function Info(props) {
 
     // Para eliminar campo
     const [fieldToDelete, setFieldToDelete] = useState(null);
+
+    const { 
+        isOpen: isModalPlantilla, 
+        onOpen: onModalPlantilla, 
+        onOpenChange: onModalPlantillaChange 
+    
+    
+    } = useDisclosure();
+
 
     useEffect(() => {
         setIsLoadingSmall(true);
@@ -287,8 +304,107 @@ export default function Info(props) {
             });
     };
 
+
+    const [nombrePlantilla, setNombrePlantilla] = useState("");
+    const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
     return (
         <div className="ACInfoContainer">
+
+            {<Modal size="md" isOpen={isModalPlantilla} onOpenChange={onModalPlantillaChange}>
+                    <ModalContent>
+                        {(onClose) => {
+                        const finalizarModal = async () => {
+                            let Isvalid = true;
+
+                            if(nombrePlantilla===""){
+                                setValidNombrePlantilla(false);
+                                Isvalid = false;
+                            }
+
+                            if(Isvalid === true){
+                                try {
+                                    //await guardarPlantilla();
+                                    setNombrePlantilla("");
+                                    setValidNombrePlantilla(true);
+                                    
+                                } catch (error) {
+                                    console.error('Error al Guardar Plantilla:', error);
+                                }
+
+                                onClose();
+                            
+                            }
+                        };
+                        return (
+                            <>
+
+                            <ModalHeader className="flex flex-col gap-1">
+                                        Guardado de Plantilla
+                                    </ModalHeader>
+                                    <ModalBody>
+                                    <p
+                                        style={{
+                                            color: "#494949",
+                                            fontSize: "16px",
+                                            fontStyle: "normal",
+                                            fontWeight: 400,
+                                        }}
+                                        >
+                                    Se guardarán los campos en una plantilla para poder usarlos en otros proyectos.
+                                    </p>
+
+                                    <Input type="email" variant={"underlined"} label="Nombre Plantilla" 
+                                        value={nombrePlantilla}
+                                        onValueChange={setNombrePlantilla}
+                                        isInvalid={!validNombrePlantilla}
+                                        onChange={()=>{setValidNombrePlantilla(true)}}    
+                                        errorMessage={
+                                                    !validNombrePlantilla
+                                                        ? "Ingrese un nombre"
+                                                        : ""
+                                            }
+                                    
+                                    />
+
+                                    <div>
+
+
+                                    </div>
+                                </ModalBody>
+                                  
+
+                            <ModalFooter>
+                                <Button
+                                className="text-white"
+                                variant="light"
+   
+                                onClick={() => {
+                                    onClose(); // Cierra el modal
+                                    setNombrePlantilla("");
+                                    setValidNombrePlantilla(true);
+  
+                                }}
+                                style={{ color: "#EA541D" }}
+                                >
+                                Cancelar
+                                
+                                </Button>
+                                <Button
+                                style={{ backgroundColor: "#e74c3c" }}
+                                appearance="primary"
+                                className="text-white"
+                                onClick={finalizarModal}
+                                >
+                                Seleccionar
+                                </Button>
+                            </ModalFooter>
+                            </>
+                        );
+                        }}
+                    </ModalContent>
+            </Modal>
+            }
+
             {!isEditActive ? (
                 <ButtonPanel margin="10px 0 15px" align="right">
                     <Button
@@ -322,6 +438,33 @@ export default function Info(props) {
                             <div>Agregar Campo</div>
                         </div>
                     </Button>
+
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={onModalPlantilla}
+                    >
+                        <div>
+                            <SaveIcon />
+                            <div>Guardar Plantilla</div>
+                        </div>
+                    </Button>
+                    
+                    <Link href={"/dashboard/"+projectName+"="+projectId+"/actaConstitucion/info/plantillas"}>
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        
+                    >
+                        <div>
+                            <ContentPasteGoIcon />
+                            <div>Plantillas</div>
+                        </div>
+                    </Button>
+                    </Link>
+                    
                 </ButtonPanel>
             ) : (
                 <ButtonPanel margin="10px 0 15px" align="right">
@@ -347,6 +490,8 @@ export default function Info(props) {
                             <div>Cancelar</div>
                         </div>
                     </Button>
+
+                    
                 </ButtonPanel>
             )}
 

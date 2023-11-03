@@ -49,3 +49,26 @@
 .newFieldConfirm:hover, .newFieldCancel:hover{
     transform: scale(1.2);
 }
+
+.buttonOneTool2{
+
+    border-radius: 5px;
+    background-color: #4898E9;
+    /* border: #F0AE19 1px solid; */
+    border-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    height: 30px;
+    width: 6.5rem;
+    color: white;
+    transition: background-color 0.15s ease-in;
+    font-size: 12px;
+    margin-left: 1rem;
+}
+
+.buttonOneTool2:hover {
+    background-color: #4CAF50;
+    transition: background-color 0.15s ease-in;
+    
+    cursor: pointer;
+}
