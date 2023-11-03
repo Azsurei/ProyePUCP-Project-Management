@@ -494,7 +494,7 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
             isOpen={isOpen}
             onOpenChange={onOpenChange}
             isDismissable={false}
-            isKeyboardDismissDisabled={false}
+            isKeyboardDismissDisabled={true}
         >
             <ModalContent>
                 {(onClose) => {
@@ -504,7 +504,7 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
                             const response = await handleCreate(newSprint);
                             if (response) {
                                 // Considerar que aqui se debe verificar que el response sea correcto
-                                setStatusForm("valid");
+                                setStatusForm("init");
                                 setNewSprint({
                                     nombre: "",
                                     descripcion: "",
@@ -513,8 +513,11 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
                                 });
                                 onClose();
                             }
-                        } finally {
-                            setStatusForm("valid");
+                            else{
+                                setStatusForm("valid");
+                            }
+                        } catch (error) {
+                            console.log(error);
                         }
                     };
                     return (
