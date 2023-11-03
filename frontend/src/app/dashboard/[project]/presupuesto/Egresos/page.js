@@ -896,6 +896,7 @@ export default function Egresos(props) {
                                         >
                                             Cancelar
                                         </Button>
+                                        {cantRecurso<0?setcantRecurso(0):""}
                                         <Button
                                             color="primary"
                                             onPress={cerrarModal}
@@ -903,6 +904,7 @@ export default function Egresos(props) {
                                         >
                                             Agregar
                                         </Button>
+                                        
                                     </ModalFooter>
                                 </>
                             );

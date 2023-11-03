@@ -3,6 +3,7 @@ const connection = require("../config/db");
 const { verifyToken } = require("../middleware/middlewares");
 
 const routerUsuario = express.Router();
+const usuarioController = require("../controllers/usuario/usuarioController");
 
 routerUsuario.post("/listarUsuarios", verifyToken, async (req, res) => {
     const { nombreCorreo } = req.body;
@@ -111,5 +112,7 @@ routerUsuario.post(
         }
     }
 );
+
+routerUsuario.put("/cambiarPassword", usuarioController.cambiarPassword);
 
 module.exports.routerUsuario = routerUsuario;

@@ -2,9 +2,9 @@ const connection = require("../../config/db");
 const itemLineaRetrospectivaController = require("./itemLineaRetrospectivaController");
 
 async function crear(req,res,next){
-    const {idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer} = req.body;
+    const {idRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer} = req.body;
     try {
-        const idLineaRetrospectiva=await funcCrear(idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer);
+        const idLineaRetrospectiva=await funcCrear(idRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer);
         res.status(200).json({
             idLineaRetrospectiva,
             message: `Linea retrospectiva ${idLineaRetrospectiva} creada`});
@@ -13,10 +13,10 @@ async function crear(req,res,next){
     }
 }
 
-async function funcCrear(idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer){
+async function funcCrear(idRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer){
     try {
-        const query = 'CALL INSERTAR_LINEA_RETROSPECTIVA(?,?,?,?,?);';
-        const [result] = await connection.query(query,[idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer]);
+        const query = 'CALL INSERTAR_LINEA_RETROSPECTIVA(?,?,?,?,?,?);';
+        const [result] = await connection.query(query,[idRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer]);
         const idLineaRetrospectiva =result[0][0].idLineaRetrospectiva;
         return idLineaRetrospectiva;
     } catch (error) {
@@ -41,10 +41,10 @@ async function listarXIdRetrospectiva(req,res,next){
 }
 
 async function modificar(req,res,next){
-    const {idLineaRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer} = req.body;
+    const {idLineaRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer} = req.body;
     try {
-        const query = `CALL MODIFICAR_LINEA_RETROSPECTIVA(?,?,?,?,?);`;
-        await connection.query(query,[idLineaRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer]);
+        const query = `CALL MODIFICAR_LINEA_RETROSPECTIVA(?,?,?,?,?,?);`;
+        await connection.query(query,[idLineaRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer]);
         res.status(200).json({message: `Linea retrospectiva ${idLineaRetrospectiva} modificada`});
     } catch (error) {
         next(error);

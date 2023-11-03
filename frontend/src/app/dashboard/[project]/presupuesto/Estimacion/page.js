@@ -889,6 +889,10 @@ export default function EstimacionCosto(props) {
                                         >
                                             Cancelar
                                         </Button>
+                                        {mesesRequerido<0?setmesesRequerido(0):""}
+                                        {cantRecurso<0?setcantRecurso(0):""}
+                                        {monto<0?setMonto(0):""}
+                                        
                                         <Button
                                             color="primary"
                                             onPress={cerrarModal}

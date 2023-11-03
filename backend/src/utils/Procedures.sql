@@ -38,6 +38,19 @@ BEGIN
   END IF;
 END$
 DROP PROCEDURE INSERTAR_PROYECTO;
+-- CAMBIAR PASSWORD
+DROP PROCEDURE IF EXISTS CAMBIAR_PASSWORD_CUENTA_USUARIO;
+
+DELIMITER $
+CREATE PROCEDURE CAMBIAR_PASSWORD_CUENTA_USUARIO(
+    IN _idUsuario INT,
+    IN _password VARCHAR(200)
+)
+BEGIN
+	UPDATE Usuario 
+    SET password = MD5(_password) 
+    WHERE idUsuario = _idUsuario AND activo = 1;
+END$
 ------------
 -- Proyecto
 ------------
@@ -86,6 +99,14 @@ DROP PROCEDURE IF EXISTS LISTAR_COMPONENTES_EDT_X_ID_EDT;
 DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_X_NOMBRE_CORREO;
 CREATE PROCEDURE LISTAR_HERRAMIENTAS;
 
+#################################################
+## BACKLOG
+#################################################
+
+-------------------------------------------------
+-- Backlog
+-------------------------------------------------
+
 DROP PROCEDURE IF EXISTS INSERTAR_PRODUCT_BACKLOG;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_PRODUCT_BACKLOG(
@@ -107,6 +128,20 @@ BEGIN
 	SELECT *FROM ProductBacklog pb WHERE _idProyecto = pb.idProyecto AND pb.activo =1;
 END$
 
+----------------------------------------------
+-- Sprints
+----------------------------------------------
+DROP PROCEDURE IF EXISTS LISTAR_SPRINTS_X_ID_BACKLOG;
+DELIMITER $
+CREATE PROCEDURE LISTAR_SPRINTS_X_ID_BACKLOG(
+	IN _idProductBacklog INT
+)
+BEGIN
+	SELECT *FROM Sprint sp WHERE sp.idProductBacklog = _idProductBacklog AND sp.activo =1;
+END$
+----------------------------------------------
+-- Epicas
+----------------------------------------------
 DELIMITER $
 CREATE PROCEDURE INSERTAR_EPICA(
 	IN  _idProductBacklog INT,
@@ -119,6 +154,7 @@ BEGIN
     SELECT _id_Epica AS idEpica;
 END$
 
+
 DROP PROCEDURE LISTAR_EPICAS_X_ID_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_EPICAS_X_ID_PROYECTO(
@@ -128,7 +164,17 @@ BEGIN
 	SELECT *FROM Epica p WHERE p.idProductBacklog = (SELECT idProductBacklog FROM ProductBacklog b WHERE b.idProyecto = _idProyecto AND b.activo=1) 
     AND p.activo =1;
 END$
-CALL LISTAR_EPICAS_X_ID_PROYECTO(6);
+SELECT * FROM Epica;
+CALL LISTAR_EPICAS_X_ID_BACKLOG(73);
+DROP PROCEDURE IF EXISTS LISTAR_EPICAS_X_ID_BACKLOG;
+DELIMITER $
+CREATE PROCEDURE LISTAR_EPICAS_X_ID_BACKLOG(
+	IN _idBacklog INT
+)
+BEGIN
+	SELECT e.idEpica, e.nombre, e.fechaCreacion FROM Epica e WHERE e.idProductBacklog = _idBacklog 
+    AND e.activo =1;
+END$
 
 CREATE PROCEDURE LISTAR_HISTORIAS_DE_USUARIO_X_ID_EPICA(
 	IN _idEpica INT
@@ -853,14 +899,15 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_LINEA_RETROSPECTIVA(
     IN _idRetrospectiva INT,
     IN _idSprint INT,
+    IN _titulo VARCHAR(255),
     IN _cantBien INT,
     IN _cantMal INT,
     IN _cantQueHacer INT
 )
 BEGIN
 	DECLARE _idLineaRetrospectiva INT;
-	INSERT INTO LineaRetrospectiva(idRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
-    VALUES(_idRetrospectiva,_idSprint,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
+	INSERT INTO LineaRetrospectiva(idRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer,fechaCreacion,activo) 
+    VALUES(_idRetrospectiva,_idSprint,_titulo,_cantBien,_cantMal,_cantQueHacer,curdate(),1);
     SET _idLineaRetrospectiva = @@last_insert_id;
     SELECT _idLineaRetrospectiva AS idLineaRetrospectiva;
 END$
@@ -870,13 +917,14 @@ DELIMITER $
 CREATE PROCEDURE MODIFICAR_LINEA_RETROSPECTIVA(
     IN _idLineaRetrospectiva INT,
 	IN _idSprint INT,
+    IN _titulo VARCHAR(255),
     IN _cantBien INT,
     IN _cantMal INT,
     IN _cantQueHacer INT
 )
 BEGIN
 	UPDATE LineaRetrospectiva
-    SET cantBien = _cantBien, cantMal = _cantMal, cantQueHacer = _cantQueHacer, idSprint = _idSprint
+    SET cantBien = _cantBien, cantMal = _cantMal, cantQueHacer = _cantQueHacer, idSprint = _idSprint, titulo = _titulo
     WHERE idLineaRetrospectiva = _idLineaRetrospectiva AND activo =1;
 END$
 
@@ -890,7 +938,7 @@ CREATE PROCEDURE LISTAR_LINEA_RETROSPECTIVA_X_ID_RETROSPECTIVA(
     IN _idRetrospectiva INT
 )
 BEGIN
-    SELECT lr.idLineaRetrospectiva,lr.cantBien, lr.cantMal,lr.cantQueHacer
+    SELECT lr.idLineaRetrospectiva,lr.titulo,lr.cantBien, lr.cantMal,lr.cantQueHacer
     FROM LineaRetrospectiva lr 
     WHERE lr.idRetrospectiva = _idRetrospectiva 
     AND lr.activo=1;
@@ -1112,6 +1160,18 @@ BEGIN
 	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
     WHERE  t.idCronograma=  (SELECT c.idCronograma FROM Cronograma c WHERE c.idProyecto = _idProyecto) AND t.idTareaEstado = te.idTareaEstado
+    AND t.activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_TAREAS_X_ID_SPRINT;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TAREAS_X_ID_SPRINT(
+    IN _idSprint INT
+)
+BEGIN
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
+    FROM Tarea t, TareaEstado te
+    WHERE  t.idSprint = _idSprint
     AND t.activo=1;
 END$
 
