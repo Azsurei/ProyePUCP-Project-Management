@@ -3407,6 +3407,19 @@ CREATE PROCEDURE LISTAR_TODAS_AUTOEVALUACIONES_X_IDPROYECTO(
 BEGIN
     SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
     SELECT *
-    FROM Autoevaluacion
+    FROM AutoEvaluacionXProyecto
     WHERE idAutoevaluacion = @_idAutoevaluacion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CRITERIOS_X_IDAUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CRITERIOS_X_IDAUTOEVALUACION(
+    IN _idAutoEvaluacionXProyecto INT
+)
+BEGIN
+    SELECT ce.criterio
+    FROM CriterioEvaluacion AS ce
+    LEFT JOIN UsuarioXEvaluacion AS ue ON ce.idUsuarioEvaluacion = ue.idUsuarioEvaluacion
+    WHERE ue.idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
+    GROUP BY ce.criterio;
 END$

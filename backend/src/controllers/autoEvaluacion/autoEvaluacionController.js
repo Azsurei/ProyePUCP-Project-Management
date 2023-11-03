@@ -96,7 +96,8 @@ async function crearAutoEvaluacion(req,res,next){
         //Creamos una AutoEvaluacion en la tabla AutoEvaluacionXProyecto 
         const query = `CALL INSERTAR_AUTOEVALUACION_X_IDPROYECTO(?,?,?,?);`;
         const results = await connection.query(query,[idProyecto,nombre,fechaInicio,fechaFin]);
-        const idAutoEvaluacionXProyecto = results[0][0];
+        const idAutoEvaluacionXProyecto = results[0][0][0].idAutoEvaluacionXProyecto;
+        console.log(idAutoEvaluacionXProyecto);
         //Obtenemos los miembros del proyecto
         const query1 = `CALL LISTAR_MIEMBRO_X_IDPROYECTO(?);`;
         const results1 = await connection.query(query1,[idProyecto]);
@@ -127,6 +128,12 @@ async function listarTodasAutoEvaluacion(req,res,next){
     try {
         const results = await connection.query(query,[idProyecto]);
         const autoEvaluaciones = results[0][0];
+        const query1 = `CALL LISTAR_CRITERIOS_X_IDAUTOEVALUACION(?);`;
+        for(const autoEvaluacion of autoEvaluaciones){
+            let results1 = await connection.query(query1,[autoEvaluacion.idAutoEvaluacionXProyecto]);
+            let criterio = await results1[0][0];
+            autoEvaluacion.criterios = criterio;
+        }
         res.status(200).json({
             autoEvaluaciones,
             message: "Autoevaluaciones listada"
