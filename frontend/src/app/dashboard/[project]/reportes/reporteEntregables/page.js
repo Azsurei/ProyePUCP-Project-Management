@@ -60,7 +60,9 @@ function ReporteEntregables(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const [selectedEntregable, setSelectedEntregable] = useState(null);
+    const [listEntregables, setListEntregables] = useState([]);
     const [listTareas, setListTareas] = useState([]);
+    const [listUsers, setListUsers] = useState([]);
 
     useEffect(() => {
         console.log("empezando en reporte");
@@ -72,7 +74,15 @@ function ReporteEntregables(props) {
         axios
             .get(tareasURL)
             .then(function (response) {
-                console.log(response);
+                console.log(JSON.stringify(response.data.entregables, null, 2));
+                setListEntregables(response.data.entregables);
+                setSelectedEntregable(
+                    response.data.entregables[0].idEntregable
+                );
+                setListTareas(response.data.entregables[0].tareasEntregable);
+
+                getEntregableStatistics(response.data.entregables[0]);
+                //setListUsers(response.data.entregables[0].)
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -100,7 +110,7 @@ function ReporteEntregables(props) {
 
             <div className="flex flex-row overflow-hidden gap-x-4 mt-2 flex-1">
                 <div className="w-[15%] flex flex-col space-y-1">
-                    {mockEntregablesArray.map((entregable) => {
+                    {listEntregables.map((entregable) => {
                         return (
                             <p
                                 key={entregable.idEntregable}
@@ -114,6 +124,8 @@ function ReporteEntregables(props) {
                                     setSelectedEntregable(
                                         entregable.idEntregable
                                     );
+                                    setListTareas(entregable.tareasEntregable);
+                                    getEntregableStatistics(entregable);
                                 }}
                             >
                                 {entregable.nombre}
@@ -192,14 +204,16 @@ function ReporteEntregables(props) {
                                 <p className="w-[20%]">FECHAS</p>
                             </div>
 
-                            {listTareas.map((tarea) => {
-                                return (
-                                    <CardTareaDisplay
-                                        key={tarea.idTarea}
-                                        tarea={tarea}
-                                    />
-                                );
-                            })}
+                            <div className="flex flex-col space-y-1">
+                                {listTareas.map((tarea) => {
+                                    return (
+                                        <CardTareaDisplay
+                                            key={tarea.idTarea}
+                                            tarea={tarea}
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
                         <div
                             className="w-[30%] bg-mainSidebar rounded-xl p-3 
@@ -236,7 +250,7 @@ function ReporteEntregables(props) {
                                 pr-2 flex flex-col gap-y-2 pb-1
                             "
                             >
-                                {mockUsers.map((user) => {
+                                {listUsers.map((user) => {
                                     return (
                                         <CardSelectedUser
                                             key={user.idUsuario}
@@ -252,6 +266,78 @@ function ReporteEntregables(props) {
             </div>
         </div>
     );
+
+    function getEntregableStatistics(entregable) {
+        //conseguimos a todos los usuarios de las tareas asociadas a este entregable
+
+        //necesitamos un arreglo con todos los usuarios contribuyentes (sumamos a todos los participantes de las tareas sin repetirlos)
+        // for (const tarea of entregable.tareasEntregable) {
+        //     if (tarea.idEquipo !== null) {
+        //         //caso especial
+        //     } else {
+        //         //caso de usuarios normales
+        //         const contribuyentes = new Set();
+
+        //         tasks.forEach((task) => {
+        //             task.usuarios.forEach((usuario) => {
+        //                 contribuyentes.add(usuario);
+        //             });
+        //         });
+
+        //         // Convierte el Set de contribuyentes nuevamente a un array
+        //         const listaContribuyentes = [...contribuyentes];
+        //     }
+        // }
+        const contribuyentes = [];
+
+        entregable.tareasEntregable.forEach((tarea) => {
+            tarea.usuarios = tarea.usuarios.map((usuario) => {
+                return {
+                    ...usuario,
+                    tareasAsignadas: 0,
+                };
+            });
+            console.log("REMMAPEANDO USUARIOS:");
+            console.log(tarea.usuarios);
+
+            tarea.usuarios.forEach((usuario) => {
+                usuario.tareasAsignadas = usuario.tareasAsignadas + 1;
+
+                let flagHasBeenAdded = 0;
+                for(const contribuyente of contribuyentes){
+                    if(contribuyente.idUsuario === usuario.idUsuario){
+                        flagHasBeenAdded = 1;
+                        break;
+                    }
+                }
+
+                if(flagHasBeenAdded === 0){
+                    contribuyentes.push(usuario);
+                }
+            });
+        });
+
+        // //por usuario, scamos el porcentaje de contribucion por tarea * peso de tarea, y al final sumamos todos lesos porcentajes
+        const listaContribuyentes = [...contribuyentes];
+        for(const usuario of listaContribuyentes){
+
+            let contribPorTarea = 0;
+            for(const tarea of entregable.tareasEntregable){
+                if(tarea.usuarios.includes(usuario)){
+                    contribPorTarea += 1/tarea.usuarios.length * (1/entregable.tareasEntregable.length);
+                }
+            }
+            usuario.porcentajeTotal = contribPorTarea * 100;
+        }
+
+
+
+
+        //porcentaje por cada tarea sumado
+
+        console.log(JSON.stringify(listaContribuyentes, null, 2));
+        setListUsers(listaContribuyentes);
+    }
 }
 
 export default ReporteEntregables;

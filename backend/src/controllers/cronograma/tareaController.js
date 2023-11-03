@@ -17,6 +17,7 @@ async function crear(req, res, next) {
         horasPlaneadas,
         usuarios,
         tareasPosteriores,
+        idEntregable    //==================
     } = req.body;
 
     try {
@@ -33,13 +34,14 @@ async function crear(req, res, next) {
             cantSubtareas,
             cantPosteriores,
             horasPlaneadas,
-            0
+            0,
+            idEntregable    //==================
         );
         await usuarioXTareaController.funcCrearUsuariosXTarea(
             usuarios,
             idTarea
         );
-        //await insertarTareas(subTareas);  --Ya no insertamos subTareas en esta seccion, se insertan como normales
+        
         await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
         console.log(`Tarea ${idTarea} creada`);
         res.status(200).json({ message: `Tarea ${idTarea} creada` });
@@ -63,6 +65,7 @@ async function modificar(req, res, next) {
         tareasPosterioresEliminadas,
         usuariosAgregados,
         usuariosEliminados,
+        idEntregable    //====================
     } = req.body;
     try {
         await funcModificar(
@@ -72,11 +75,12 @@ async function modificar(req, res, next) {
             idTareaEstado,
             fechaInicio,
             fechaFin,
-            idEquipo
+            idEquipo,
+            idEntregable  //====================
         );
 
         await funcEliminarTareasPosteriores(tareasPosterioresEliminadas);
-        await funcAgregarTareasPosteriores(tareasPosterioresAgregadas, usuariosAgregados, idTarea, idCronograma, fechaFin);
+        await funcAgregarTareasPosteriores(tareasPosterioresAgregadas, usuariosAgregados, idTarea, idCronograma, fechaFin, idEntregable);
         
 
         await usuarioXTareaController.funcEliminarUsuariosXTarea(
@@ -102,10 +106,11 @@ async function funcModificar(
     idTareaEstado,
     fechaInicio,
     fechaFin,
-    idEquipo
+    idEquipo,
+    idEntregable
 ) {
     try {
-        const query = `CALL MODIFICAR_TAREA(?,?,?,?,?,?,?);`;
+        const query = `CALL MODIFICAR_TAREA(?,?,?,?,?,?,?,?);`;
         await connection.query(query, [
             idTarea,
             sumillaTarea,
@@ -114,6 +119,7 @@ async function funcModificar(
             fechaInicio,
             fechaFin,
             idEquipo,
+            idEntregable
         ]);
     } catch (error) {
         console.log(error);
@@ -127,7 +133,8 @@ async function funcAgregarTareasPosteriores(
     usuariosAgregados,
     idTareaAnterior,
     idCronograma,
-    fechaFinNueva
+    fechaFinNueva,
+    idEntregable
 ) {
     console.log("================== ID DE TAREA ANTERIOR ES ============", idTareaAnterior);
     if (tareasPosterioresAgregadas) {
@@ -145,7 +152,8 @@ async function funcAgregarTareasPosteriores(
                 tarea.cantSubtareas,
                 tarea.cantPosteriores,
                 tarea.horasPlaneadas,
-                1
+                1,
+                idEntregable
             );
 
             await usuarioXTareaController.funcCrearUsuariosXTarea(
@@ -195,9 +203,10 @@ async function insertarTarea(
     cantSubtareas,
     cantPosteriores,
     horasPlaneadas,
-    esPosterior
+    esPosterior,
+    idEntregable
 ) {
-    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
     const [results] = await connection.query(query, [
         idCronograma,
         idTareaEstado,
@@ -212,6 +221,7 @@ async function insertarTarea(
         cantPosteriores,
         horasPlaneadas,
         esPosterior,
+        idEntregable
     ]);
     return results[0][0].idTarea;
 }
@@ -236,7 +246,8 @@ async function insertarTareasPosteriores(
                 0,
                 0,
                 null,
-                1
+                1,
+                originalTareaData.idEntregable
             );
             await usuarioXTareaController.funcCrearUsuariosXTarea(
                 originalTareaData.usuarios,
@@ -297,6 +308,8 @@ async function eliminarTarea(req, res, next) {
     try {
         //await connection.query(query,[idTarea]);
         await eliminarRecursivo(tarea);
+
+        //FALTA QUE AQUI SE ELIMINEN TODAS LAS POSTERIORES
 
         res.status(200).json({
             message: "Tarea eliminada e hijas tambien si tuviera",
