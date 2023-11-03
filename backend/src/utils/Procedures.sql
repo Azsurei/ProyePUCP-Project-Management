@@ -3613,7 +3613,7 @@ BEGIN
     SET _idRolEquipo = @@last_insert_id;
     -- Luego a la tabla EquipoXRolEquipo
     INSERT INTO EquipoXRolEquipo(idEquipo,idRolEquipo,activo) 
-    VALUES(_idEquipo,idRolEquipo,1);
+    VALUES(_idEquipo,_idRolEquipo,1);
     SET _idEquipoXRolEquipo = @@last_insert_id;
 END$
 
