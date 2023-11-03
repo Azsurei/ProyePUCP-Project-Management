@@ -891,6 +891,15 @@ Content-Type:  application/json
   "idAutoEvaluacionXProyecto": 7
 }
 
+###FINALIZAR AUTOEVALUACION
+PUT http://localhost:8080/api/proyecto/autoEvaluacion/finalizarAutoEvaluacion HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idAutoEvaluacionXProyecto": 7
+}
+
+
 ###
 
 DELETE http://localhost:8080/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion HTTP/1.1

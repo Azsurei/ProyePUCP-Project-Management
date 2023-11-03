@@ -3508,6 +3508,18 @@ CREATE PROCEDURE FINALIZAR_AUTOEVALUACION_X_ID(
 )
 BEGIN
     UPDATE AutoEvaluacionXProyecto 
-    SET estado = 1
+    SET estado = 2
     WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_DATOS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACION_DATOS(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT nombre, fechaInicio, fechaFin
+    FROM AutoEvaluacionXProyecto
+    WHERE idAutoevaluacion = @_idAutoevaluacion AND estado=1;
 END$
