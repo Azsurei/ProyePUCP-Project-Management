@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/CrearEquipo.css";
 import React, { useEffect, useState } from "react";
-import { Avatar, Progress } from "@nextui-org/react";
+import { Avatar, Progress, Tooltip } from "@nextui-org/react";
 
 const CardEquipo = ({ team, handleSeeTeam }) => {
     const totalTareas =
@@ -42,12 +42,18 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                 }}
             >
                 <div>
-                    <p className="cardEquipoBigHeader">{team.nombre}</p>
+                    <Tooltip content={team.nombre}>
+                        <p className="cardEquipoBigHeader truncate pr-4">
+                            {team.nombre}
+                        </p>
+                    </Tooltip>
                     <p className="cardEquipoLeaderLbl mb-2 h-[52.81px]">
                         Líder:{" "}
-                        {team.participantes.length===0? "No asignado":capitalizeWords(
-                            `${team.participantes[0].nombres} ${team.participantes[0].apellidos}`
-                        )}
+                        {team.participantes.length === 0
+                            ? "No asignado"
+                            : capitalizeWords(
+                                  `${team.participantes[0].nombres} ${team.participantes[0].apellidos}`
+                              )}
                     </p>
                 </div>
 

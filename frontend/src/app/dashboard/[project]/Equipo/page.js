@@ -455,6 +455,23 @@ export default function Equipo(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
+
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/rolAgregado",
+                casoAgregarRol
+            )
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST2):", response.data);
+                console.log("Registro correcto (POST2)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST2:", error);
+            });
     };
 
     return (
