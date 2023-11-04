@@ -7,6 +7,7 @@ async function crear(req,res,next){
         const query = `CALL INSERTAR_SPRINT(?,?,?,?,?,?);`;
         const [results] = await connection.query(query,[idProductBacklog,descripcion,fechaInicio,fechaFin,estado,nombre]);
         const idSprint = results[0][0].idSprint;
+        console.log(`Sprint ${idSprint} creado`);
         res.status(200).json({idSprint, message: "Sprint creado"});
     } catch (error) {
         console.log(error);
@@ -16,18 +17,14 @@ async function crear(req,res,next){
 
 async function listarSprintsXIdBacklog(req,res,next){
     const {idBacklog} = req.params;
-    sprints.sinSprint=[];
+    
     try {
         const sprints = await funcListarSprintsXIdBacklog(idBacklog);
+        sprints.sinSprint=[];
         for(const sprint of sprints){
             const tareaAux = await tareaController.funcListarTareasXIdSprint(sprint.idSprint);
-            if(tareaAux.idTarea >0){
-                sprint.tareas = tareaAux;
-            
-            }else{
-                sprints.sinSprint.push(tareaAux);
-            }
         }
+        console.log(`Sprints listados por id de backlog ${idBacklog}`)
         res.status(200).json({sprints, message: "Sprints listados"});
     } catch (error) {
         console.log(error);
@@ -42,7 +39,35 @@ async function funcListarSprintsXIdBacklog(idBacklog){
     return sprints;
 }
 
+async function modificarEstado(req,res,next){
+    const {idSprint,estado} = req.body;
+    try{
+        const query = `CALL MODIFICAR_ESTADO_SPRINT(?,?);`;
+        await connection.query(query,[idSprint,estado]);
+        res.status(200).json({message: "Estado de sprint modificado"});
+    }catch(error){
+        next(error);
+    }
+}
+
+async function eliminarSprint(req,res,next){
+    const {idSprint,tareas} = req.body;
+    try{
+        for(const tarea of tareas){
+            await tareaController.funcEliminarTarea(tarea.idTarea);
+        }
+        const query = `CALL ELIMINAR_SPRINT(?);`;
+        await connection.query(query,[idSprint]);
+        res.status(200).json({message: "Sprint eliminado"});
+    }catch(error){
+        next(error);
+    }
+}
+
+
 module.exports = {
     crear,
-    listarSprintsXIdBacklog
+    listarSprintsXIdBacklog,
+    modificarEstado,
+    eliminarSprint
 }

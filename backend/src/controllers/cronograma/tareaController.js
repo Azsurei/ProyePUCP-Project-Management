@@ -8,6 +8,7 @@ async function crear(req, res, next) {
         idSubGrupo,
         idPadre,
         idTareaAnterior,
+        idSprint,
         sumillaTarea,
         descripcion,
         fechaInicio,
@@ -26,6 +27,7 @@ async function crear(req, res, next) {
             idSubGrupo,
             idPadre,
             idTareaAnterior,
+            idSprint,
             sumillaTarea,
             descripcion,
             fechaInicio,
@@ -148,10 +150,7 @@ async function funcAgregarTareasPosteriores(
                 1
             );
 
-            await usuarioXTareaController.funcCrearUsuariosXTarea(
-                usuariosAgregados,
-                idTareaPosterior
-            );
+            await usuarioXTareaController.funcCrearUsuariosXTarea(usuariosAgregados,idTareaPosterior);
         }
     }
 }
@@ -188,6 +187,7 @@ async function insertarTarea(
     idSubGrupo,
     idPadre,
     idTareaAnterior,
+    idSprint,
     sumillaTarea,
     descripcion,
     fechaInicio,
@@ -197,13 +197,14 @@ async function insertarTarea(
     horasPlaneadas,
     esPosterior
 ) {
-    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
     const [results] = await connection.query(query, [
         idCronograma,
         idTareaEstado,
         idSubGrupo,
         idPadre,
         idTareaAnterior,
+        idSprint,
         sumillaTarea,
         descripcion,
         fechaInicio,
@@ -229,6 +230,7 @@ async function insertarTareasPosteriores(
                 originalTareaData.idSubGrupo,
                 originalTareaData.idPadre, // (?)
                 idTareaPrevia,
+                tarea.idSprint,
                 tarea.sumillaTarea,
                 tarea.descripcion,
                 originalTareaData.fechaFin,
@@ -414,16 +416,42 @@ async function funcListarTareasXIdSprint(idSprint) {
         const query = `CALL LISTAR_TAREAS_X_ID_SPRINT(?);`;
         const [results] = await connection.query(query, [idSprint]);
         const tareas = results[0];
+        return tareas;
     } catch (error) {
         console.log(error);
     }
-    return tareas;
+
 }
 
+async function modificarIdSprintDeTareas(req, res, next) {
+    const {tareasModificadas} = req.body;
+    try {
+        for(const tarea of tareasModificadas){
+            await funcModificarTareaIdSprint(tarea.idTarea,tarea.idSprint);
+        }
+        res.status(200).json({message: "Tareas modificadas"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcModificarTareaIdSprint(idTarea,idSprint){
+    try {
+        const query = `CALL MODIFICAR_TAREA_ID_SPRINT(?,?);`;
+        const [results]=await connection.query(query, [idTarea,idSprint]);
+        console.log(`Tarea ${idTarea} modificada, nuevo sprint: ${idSprint}`);
+        return 1.
+    } catch (error) {
+        console.log(error);
+    }
+}
 module.exports = {
     crear,
     listarXIdProyecto,
     eliminarTarea,
+    funcEliminarTarea,
     modificar,
     funcListarTareasXIdSprint,
+    modificarIdSprintDeTareas,
+    eliminarRecursivo
 };

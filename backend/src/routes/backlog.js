@@ -30,9 +30,11 @@ routerBacklog.get("/:idProyecto/listarBacklog",verifyToken,async(req,res)=>{
 })
 // Listado de epicas por id de backlog
 routerBacklog.get("/listarEpicasXIdBacklog/:idBacklog",epicaController.listarEpicasXIdBacklog);
-
-// Listado de sprints por id de backlog
+routerBacklog.post("/insertarSprint",sprintController.crear);
 routerBacklog.get("/listarSprintsXIdBacklog/:idBacklog",sprintController.listarSprintsXIdBacklog);
+routerBacklog.put("/actualizarEstadoSprint",sprintController.modificarEstado);
+routerBacklog.delete("/eliminarSprint",sprintController.eliminarSprint);
+
 // Ver si es factible tener el id del proyecto en el URL, en el otro caso solo seria backlog/idEPica
 routerBacklog.get("/:idEpica/listarHUs",verifyToken,async(req,res)=>{
     const {idEpica} = req.params;
