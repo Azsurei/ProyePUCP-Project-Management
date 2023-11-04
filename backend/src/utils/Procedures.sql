@@ -3545,10 +3545,11 @@ CREATE PROCEDURE LISTAR_AUTOEVALUACION_MIEMBROS(
     IN _idAutoEvaluacionXProyecto INT
 )
 BEGIN
-    SELECT idUsuarioEvaluado
-    FROM UsuarioXEvaluacion
-    WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
-    GROUP BY idUsuarioEvaluado;
+    SELECT ue.idUsuarioEvaluado, u.nombres, u.apellidos
+    FROM UsuarioXEvaluacion AS ue
+    LEFT JOIN Usuario AS u ON ue.idUsuarioEvaluado = u.idUsuario
+    WHERE ue.idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
+    GROUP BY ue.idUsuarioEvaluado;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_OBSERVACIONES;
