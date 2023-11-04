@@ -899,6 +899,10 @@ Content-Type:  application/json
   "idAutoEvaluacionXProyecto": 7
 }
 
+###LISTAR AUTOEVALUACION CON NOTAS
+GET http://localhost:8080/api/proyecto/autoEvaluacion/listarAutoEvaluacionNotas/7 HTTP/1.1
+Content-Type:  application/json
+
 
 ###
 
