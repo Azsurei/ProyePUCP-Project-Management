@@ -45,7 +45,6 @@ function EditableItem({ item, onChangeAcuerdo, onRemoveAcuerdo, temas, onTemaCha
         onChangeAcuerdo(item.id, e.target.value, selectedTema);
     };
 
-
     return (
         <div className="flex items-center mb-2">
             <Select
@@ -98,7 +97,6 @@ export default function crearActaReunion(props) {
 
     const router = useRouter();
     const previousUrl = props.searchParams.previousUrl;
-    console.log('Query :', previousUrl);
 // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -668,7 +666,7 @@ export default function crearActaReunion(props) {
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                         </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8">
+                        {/*<CardBody className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
                                 <EditableList
                                     items={listAcuerdos}
@@ -740,7 +738,7 @@ export default function crearActaReunion(props) {
                             textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
                             colorButton="w-36 bg-slate-100 text-black font-semibold"
                             oneButton={false}
-                            secondAction={() => router.back()}
+                            secondAction={() => {}}
                             textColor="red"
                         />
                         <Modal
