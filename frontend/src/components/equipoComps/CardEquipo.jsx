@@ -42,7 +42,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                 }}
             >
                 <div>
-                    <Tooltip content={team.nombre}>
+                    <Tooltip showArrow={true} color="foreground" content={team.nombre}>
                         <p className="cardEquipoBigHeader truncate pr-4">
                             {team.nombre}
                         </p>
