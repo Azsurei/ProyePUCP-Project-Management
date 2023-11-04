@@ -12,6 +12,9 @@
   }
   
   .modalContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -23,15 +26,15 @@
   .modalButtons {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: auto;
   }
 
   .userCard {
     list-style: none;
-    padding: 10px;
+    padding: 15px;
     margin: 5px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
   }
@@ -43,6 +46,21 @@
   .userCard.selected {
     background-color: rgb(57, 255, 192);
     border-color: rgb(57, 255, 192);
+    font-weight: 600;
   }
 
   
+.selectParticipantesTitle {
+  font-size: 1.3rem;
+  color: #172B4D;
+  font-weight: 700;
+  padding: 0.8rem;
+  padding-left: 0.5rem;
+}
+
+.errorMessage {
+  color: red; /* Color de texto para el mensaje de error */
+  text-align: center; /* Centrar el mensaje */
+  padding: 10px; /* Un poco de padding para no pegarlo al borde */
+  margin-top: 20px; /* Espacio entre la lista y el mensaje de error */
+}

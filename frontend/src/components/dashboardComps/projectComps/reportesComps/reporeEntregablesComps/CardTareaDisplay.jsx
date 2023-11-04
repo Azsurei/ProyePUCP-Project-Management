@@ -1,5 +1,4 @@
 import { Avatar, AvatarGroup, Chip, Tooltip } from "@nextui-org/react";
-import GroupUserIcons from "../../cronogramaComps/GroupUserIcons";
 
 function UsersDisplay({ listUsers }) {
     return (
@@ -75,9 +74,9 @@ function CardTareaDisplay({
         " - " +
         formattedEndDate.toLocaleDateString();
 
-    const toggleOpen = () => {
-        setHijosIsOpen(!hijosIsOpen);
-    };
+    // const toggleOpen = () => {
+    //     setHijosIsOpen(!hijosIsOpen);
+    // };
 
     return (
         <div
@@ -88,11 +87,11 @@ function CardTareaDisplay({
             }}
         >
             <div className="containerNombreTarea flex-1">
-                {tarea.tareasHijas.length !== 0 && (
+                {/* {tarea.tareasHijas.length !== 0 && (
                     <div className="containerChevron" onClick={toggleOpen}>
                         <img src="/icons/chevron-down.svg" />
                     </div>
-                )}
+                )} */}
                 <div className="flex flex-col">
                     <p>{tarea.sumillaTarea}</p>
                     {/* {tarea.tareasPosteriores.length !== 0 && (
@@ -106,7 +105,7 @@ function CardTareaDisplay({
                 </div>
             </div>
 
-            <div className="containerSelectedUsers w-[30%] flex items-center py-1 pl-1">
+            <div className="w-[30%] flex items-center justify-start py-1 pl-1">
                 {tarea.idEquipo !== null ? (
                     <div className="tareaContainerSubteam">
                         <img src="/icons/sideBarDropDown_icons/sbdd14.svg"></img>

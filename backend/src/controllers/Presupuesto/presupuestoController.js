@@ -30,7 +30,7 @@ async function listarXIdPresupuesto(req,res,next){
     try {
         const query = `CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
         const [results] = await connection.query(query,[idPresupuesto]);
-        presupuesto = results[0];
+        const presupuesto = results[0];
         
         res.status(200).json({
             presupuesto,
@@ -45,8 +45,8 @@ async function listarLineasTodas(req, res, next) {
     const {idPresupuesto} = req.params;
     try {
         const lineasIngreso = await ingresoController.funcListarLineasXIdPresupuesto(idPresupuesto);
-        const lineasEgreso = await egresoController.funcListarLineasXIdProyecto(idPresupuesto);
-        const lineasEstimacionCosto = await estimacionCostoController.funcListarLineasXIdProyecto(idPresupuesto);
+        const lineasEgreso = await egresoController.funcListarLineasXIdPresupuesto(idPresupuesto);
+        const lineasEstimacionCosto = await estimacionCostoController.funcListarLineasXIdPresupuesto(idPresupuesto);
 
         const lineasPresupuesto = {
             lineasIngreso,

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Cronograma = ({ size = 120, color = "purple", ...props }) => (
+export const Cronograma = ({ size = 90, color = "#CD519D", ...props }) => (
   <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}

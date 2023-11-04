@@ -3559,7 +3559,7 @@ BEGIN
     SET @_idAutoevaluacion = (SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto AND activo = 1);
     UPDATE AutoEvaluacionXProyecto 
     SET estado = 0
-    WHERE idAutoevaluacion = @_idAutoevaluacion;
+    WHERE idAutoevaluacion = @_idAutoevaluacion AND estado != 2;
     UPDATE AutoEvaluacionXProyecto 
     SET estado = 1
     WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto;
@@ -3586,4 +3586,139 @@ BEGIN
     SELECT nombre, fechaInicio, fechaFin
     FROM AutoEvaluacionXProyecto
     WHERE idAutoevaluacion = @_idAutoevaluacion AND estado=1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ROLES_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ROLES_EQUIPO(
+    IN _idEquipoXRolEquipo INT,
+    IN _idRol INT
+)
+BEGIN
+    UPDATE EquipoXRolEquipo
+    SET activo = 0
+    WHERE idEquipoXRolEquipo = _idEquipoXRolEquipo 
+    AND idRolEquipo = _idRol;
+    UPDATE RolEquipo
+    SET activo = 0
+    WHERE idRolEquipo = _idRol;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT,
+    IN _idRolEquipo INT
+)
+BEGIN
+	DECLARE _idUsuarioXEquipoXRolEquipo INT;
+	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+    VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
+    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT,
+    IN _idRolEquipo INT
+)
+BEGIN
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET idRolEquipo = _idRolEquipo
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT
+)
+BEGIN
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET activo = 0
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_MIEMBRO_EQUIPO(
+    IN _idUsuario INT,
+    IN _idEquipo INT
+)
+BEGIN
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET activo = 0
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS AGREGAR_ROLES_EQUIPO;
+DELIMITER $
+CREATE PROCEDURE AGREGAR_ROLES_EQUIPO(
+    IN _idEquipo INT,
+    IN _nombre VARCHAR(200)
+)
+BEGIN
+    DECLARE _idRolEquipo INT;
+	DECLARE _idEquipoXRolEquipo INT;
+    -- Insertamos el rol primero en la tabla RolEquipo
+	INSERT INTO RolEquipo(nombreRol,activo) 
+    VALUES(_nombre,1);
+    SET _idRolEquipo = @@last_insert_id;
+    -- Luego a la tabla EquipoXRolEquipo
+    INSERT INTO EquipoXRolEquipo(idEquipo,idRolEquipo,activo) 
+    VALUES(_idEquipo,_idRolEquipo,1);
+    SET _idEquipoXRolEquipo = @@last_insert_id;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
+    IN _idUsuario INT,
+    IN _idEquipo INT,
+    IN _nombreRol VARCHAR(200)
+)
+BEGIN
+	DECLARE _idUsuarioXEquipoXRolEquipo INT;
+    SET @_idRolEquipo = (
+        SELECT ere.idRolEquipo 
+        FROM EquipoXRolEquipo AS ere 
+        LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
+        WHERE ere.idEquipo = _idEquipo
+        AND re.nombreRol = _nombreRol);
+	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+    VALUES(_idUsuario,_idEquipo,@_idRolEquipo,1);
+    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
+    IN _idUsuario INT,
+    IN _idEquipo INT,
+    IN _nombreRol VARCHAR(200)
+)
+BEGIN
+    SET @_idRolEquipo = (
+        SELECT ere.idRolEquipo 
+        FROM EquipoXRolEquipo AS ere 
+        LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
+        WHERE ere.idEquipo = _idEquipo
+        AND re.nombreRol = _nombreRol);
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET idRolEquipo = @_idRolEquipo
+    WHERE idEquipo = _idEquipo 
+    AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
 END$

@@ -195,30 +195,23 @@ lineaIngreso.forEach((row) => {
   const fechaCreacion = new Date(row.fechaTransaccion);
 
   const mes = fechaCreacion.getUTCMonth() + 1;
-  const mesReal=mes-mesActual+1;
-  const idTipo=row.idIngresoTipo;
+  const mesReal = mes - mesActual + 1;
+  const idTipo = row.idIngresoTipo;
 
-  if(!ingresosPorTipo[idTipo]){
-    ingresosPorTipo[idTipo]={};
+  if (!ingresosPorTipo[idTipo]) {
+    ingresosPorTipo[idTipo] = {};
   }
 
-  if(!ingresosPorTipo[idTipo[mesReal]]){
-    ingresosPorTipo[idTipo][mesReal]=0;
+  if (!ingresosPorTipo[idTipo][mesReal]) {
+    ingresosPorTipo[idTipo][mesReal] = 0;
   }
 
-  ingresosPorTipo[idTipo][mesReal]+=row.monto;
+  ingresosPorTipo[idTipo][mesReal] += row.monto;
 
-  /* if (ingresosPorTipo[row.idIngresoTipo]) {
-    // Si existe, suma el monto al tipo de ingreso existente
-    ingresosPorTipo[row.idIngresoTipo].monto += row.monto;
-  } else {
-    // Si no existe, crea una nueva entrada en el objeto
-    ingresosPorTipo[row.idIngresoTipo] = {
-      descripcion: obtenerDescripcionPorTipo(row.idIngresoTipo), // Reemplaza obtenerDescripcionPorTipo con la lógica real
-      monto: row.monto,
-    };
+  if (idTipo === 1) {
+    console.log(ingresosPorTipo[idTipo][mesReal]);
   }
-  */
+
 });
 
 function obtenerDescripcionPorTipo(idIngresoTipo) {
@@ -242,6 +235,43 @@ const descripcionTipo = {
 };
 
 
+function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
+  const totalEgresosPorMes = Array.from({ length: mesesMostrados.length }, () => 0);
+
+  lineaEgreso.forEach((egreso) => {
+    const fechaGasto = new Date(egreso.fechaRegistro);
+    const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
+    const montoReal = parseFloat(egreso.costoReal);
+
+    if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
+      totalEgresosPorMes[mesReal - 1] += montoReal;
+    }
+  });
+
+  return totalEgresosPorMes;
+}
+
+const totalEgresosPorMes = calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual);
+
+const accumulatedTotals = Array.from({ length: mesesMostrados.length }, () => 0);
+
+for (let i = 0; i < mesesMostrados.length; i++) {
+  let monthlyTotalIncome = 0;
+  let monthlyTotalExpenses = 0;
+
+  // Calculate total income for the current month
+  Object.keys(descripcionTipo).forEach((idTipo) => {
+    if (ingresosPorTipo[idTipo] && ingresosPorTipo[idTipo][i + 1] !== undefined) {
+      monthlyTotalIncome += parseFloat(ingresosPorTipo[idTipo][i + 1]);
+    }
+  });
+
+  // Calculate total expenses for the current month
+  monthlyTotalExpenses = totalEgresosPorMes[i];
+
+  // Calculate the accumulated total for the current month
+  accumulatedTotals[i] = monthlyTotalIncome - monthlyTotalExpenses;
+}
 
 return (
         <div className="mainDivPresupuesto">
@@ -317,20 +347,29 @@ return (
               <TableCell className="IngEgTexto" align="left">Ingresos</TableCell>
             </TableRow>
               
-{Object.values(ingresosPorTipo).map((tipoIngreso, index) => (
-  <TableRow key={index}>
-    <TableCell>{descripcionTipo[index+1]}</TableCell>
-    <TableCell align="left">{tipoIngreso[1]}</TableCell>
-    <TableCell align="left">{tipoIngreso[2]}</TableCell>
-    <TableCell align="left">{tipoIngreso[3]}</TableCell>
-
+            {Object.keys(descripcionTipo).map((idTipo) => (
+  <TableRow key={idTipo}>
+    <TableCell>{descripcionTipo[idTipo]}</TableCell>
+    {mesesMostrados.map((mes, index) => (
+      <TableCell key={index} align="left">
+                {ingresosPorTipo[idTipo] && ingresosPorTipo[idTipo][index + 1] !== undefined
+          ? parseFloat(ingresosPorTipo[idTipo][index + 1])
+          : 0}
+      </TableCell>
+    ))}
   </TableRow>
-))}
-            
+))}      
 
             <TableRow>
               <TableCell className="conceptoCell" align="left">Total Ingresos</TableCell>
-              <TableCell className="Totales" align="left">{totalIngresos}</TableCell>
+              {mesesMostrados.map((mes, index) => (
+  <TableCell className="conceptoCell" key={index} align="left">
+    {ingresosPorTipo && Object.keys(descripcionTipo).reduce((total, idTipo) => {
+      const ingresoPorTipo = ingresosPorTipo[idTipo];
+      return total + (ingresoPorTipo && ingresoPorTipo[index + 1] ? parseFloat(ingresoPorTipo[index + 1]) : 0);
+    }, 0)}
+  </TableCell>
+))}
 
             </TableRow>
 
@@ -342,28 +381,43 @@ return (
 
             </TableRow>
 
-            {lineaEgreso.map((row) => {
+            {lineaEgreso.map((egreso, index) => (
+  <TableRow key={index}>
+    <TableCell>{egreso.descripcion}</TableCell>
+    {mesesMostrados.map((mes, mesIndex) => {
+      const fechaGasto = new Date(egreso.fechaRegistro);
+      const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
 
-                return (
-                  <TableRow key={row.descripcion}>
-                    <TableCell>{row.descripcion}</TableCell>
-                    <TableCell align="left">{row.costoReal}</TableCell>
-                  </TableRow>
-                );
-              })}
+      return (
+        <TableCell key={mesIndex} align="left">
+          {mesIndex === (mesReal - 1)  // Restamos 1 porque mesReal ya está ajustado
+            ? parseFloat(egreso.costoReal)
+            : 0}
+        </TableCell>
+      );
+    })}
+  </TableRow>
+))}
 
-            <TableRow>
-              <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
-              <TableCell className="Totales" align="left">{totalEgresos}</TableCell>
+<TableRow>
+  <TableCell className="conceptoCell" align="left">Total Egresos por Mes</TableCell>
+  {totalEgresosPorMes.map((total, index) => (
+    <TableCell className="conceptoCell" key={index} align="left">
+      {total}
+    </TableCell>
+  ))}
+</TableRow>
 
-            </TableRow>
+<TableRow>
+  <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
+  {accumulatedTotals.map((total, index) => (
+    <TableCell className="Totales" key={index} align="left">
+      {total}
+    </TableCell>
+  ))}
+</TableRow>
 
-            <TableRow>
-              <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
-              <TableCell className="Totales" align="left">{totalAcumulado}</TableCell>
 
-
-            </TableRow>
 
               </TableBody>
             </Table>

@@ -195,11 +195,11 @@ export default function CatalogoDeInteresadosRegister(props) {
 
     function verifyFieldsEmpty() {
         return (
-            name === "" ||
+            name.trim() === "" ||
             requirements.some(
-                (requirements) => requirements.requirements === ""
+                (requirements) => requirements.requirements.trim() === ""
             ) ||
-            strategies.some((strategies) => strategies.strategies === "")
+            strategies.some((strategies) => strategies.strategies.trim() === "")
         );
     }
 
@@ -381,11 +381,11 @@ export default function CatalogoDeInteresadosRegister(props) {
         <div className="containerRegisterCI">
             <div className="headerRegisterCI">
                 Inicio / Proyectos / Nombre del proyecto / Catálogo de
-                Interesados/ Registrar interesado
+                Interesados/ Actualizar interesado
             </div>
             <div className="interesedRegisterCI">
                 <div className="titleInteresedRegisterCI">
-                    Registrar nuevo interesado
+                    Actualizar interesado
                 </div>
                 <div className="containerInputCI">
                     <Input

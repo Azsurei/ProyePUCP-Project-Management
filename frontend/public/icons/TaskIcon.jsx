@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TaskIcon = ({ size = 120, color = "yellow", ...props }) => (
+export const TaskIcon = ({ size = 90, color = "#F0AE19", ...props }) => (
   <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}

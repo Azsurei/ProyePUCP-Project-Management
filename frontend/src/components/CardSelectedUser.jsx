@@ -19,7 +19,7 @@ export default function CardSelectedUser({
                     className="transition-transform w-[50px] min-w-[50px] h-[50x] min-h-[50px]"
                     src={usuarioObject.imgLink}
                     fallback={
-                        <p className="profilePic">
+                        <p className="profilePic bg-mainUserIcon">
                             {usuarioObject.nombres[0] +
                                 (usuarioObject.apellidos !== null
                                     ? usuarioObject.apellidos[0]

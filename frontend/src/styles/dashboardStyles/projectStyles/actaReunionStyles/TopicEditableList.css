@@ -93,6 +93,18 @@
     background-color: #fff8b8;
 }
 
+.agreementsPerTopic {
+    width: 100%;
+}
+
+.agreementsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Esto hará que todos los elementos hijos se estiren al ancho total */
+}
+
+
+
 /*********************************************************************************************
 / ARListEditableInput
 /*********************************************************************************************/
@@ -112,14 +124,23 @@
     color: rgb(150, 150, 150);
 }
 
-/*
-.inputXdeleteContainer{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
+.EditableInput .inputXdeleteContainer {
+    max-width: 80rem; /* O cualquier otro valor que prefieras */
+    height: 5rem;
+    gap: 2rem;
 }
-*/
+
+.inputXdeleteContainer {
+    display: flex;
+    justify-content: flex-start; /* Esto separa los elementos al inicio y al final del contenedor */
+    align-items: center; /* Centra los elementos verticalmente */
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.inputContainer {
+    width: 45%;
+}
+
 .inputXdeleteContainer .inputBox{
     flex: 1;
     overflow-y: auto;
@@ -166,6 +187,7 @@
     border: none;
     border-radius: 20px;
     cursor: pointer;
+    justify-content: flex-end;
 }
 
 .iconDeleteInput:hover {
@@ -189,4 +211,12 @@
   .titleResponsbles img {
     filter: brightness(0) invert(1); /* Aplica un filtro blanco (escala de grises) */
     margin-left: 5px; /* Ajusta el margen izquierdo para posicionar a la derecha */
+  }
+
+  .responsablesDelAcuerdo {
+    font-size: 1.5rem;
+    color: #172B4D;
+    font-weight: 700;
+    padding: 1rem;
+    padding-left: 0.2rem;
   }

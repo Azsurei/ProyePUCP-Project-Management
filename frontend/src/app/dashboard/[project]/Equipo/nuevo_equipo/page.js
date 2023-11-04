@@ -23,6 +23,7 @@ import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import { Button } from "@nextui-org/react";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 
@@ -133,6 +134,10 @@ export default function crear_equipo(props) {
         return teamName === "";
     }
 
+    function verifyFieldsExcessive() {
+        return teamName.length > 50;
+    }
+
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
@@ -157,7 +162,7 @@ export default function crear_equipo(props) {
                 },
                 ...userRoleData,
             ];
-        }else{
+        } else {
             todosUserRoleData = userRoleData;
         }
 
@@ -230,6 +235,8 @@ export default function crear_equipo(props) {
         }
     };
 
+    const isTextTooLong1 = teamName.length > 50;
+
     return (
         <div className="crear_equipo">
             <div className="header">
@@ -257,14 +264,21 @@ export default function crear_equipo(props) {
                     placeholder="Ingrese el nombre del equipo"
                     onChange={handleChangeTeamName}
                     variant="bordered"
+                    isInvalid={isTextTooLong1}
+                    maxLength="55"
+                    errorMessage={
+                        isTextTooLong1
+                            ? "El texto debe ser como máximo de 50 caracteres."
+                            : ""
+                    }
                 />
             </div>
             <div style={{ marginBottom: "20px" }}></div>
             <div className="participantes">
                 <h3>Líder del Equipo</h3>
                 <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
+                    <Button
+                        color="primary"
                         style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal1}
                     >
@@ -275,7 +289,7 @@ export default function crear_equipo(props) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </div>
+                    </Button>
 
                     {selectedUniqueMemberList.map((component, index) => {
                         return (
@@ -311,8 +325,8 @@ export default function crear_equipo(props) {
             <div className="participantes">
                 <h3>Participantes</h3>
                 <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
+                    <Button
+                        color="primary"
                         style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal2}
                     >
@@ -323,7 +337,7 @@ export default function crear_equipo(props) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </div>
+                    </Button>
 
                     <ul
                         className="listUsersContainer"
@@ -376,13 +390,6 @@ export default function crear_equipo(props) {
             </div>
             <div style={{ marginBottom: "20px" }}></div>
             <div className="containerButtonsCE">
-                {fieldsEmpty && (
-                    <IconLabel
-                        icon="/icons/alert.svg"
-                        label="Faltan completar campos"
-                        className="iconLabel3"
-                    />
-                )}
                 <div className="twoButtonsCE">
                     <div className="buttonContainerCE">
                         <Modal
@@ -406,11 +413,29 @@ export default function crear_equipo(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if (verifyFieldsEmpty()) {
-                                    setFieldsEmpty(true);
+                                if (
+                                    verifyFieldsEmpty() &&
+                                    verifyFieldsExcessive()
+                                ) {
+                                    toast.error(
+                                        "Faltan completar campos y se excedió el límite de caractéres"
+                                    );
+                                    return false;
+                                } else if (
+                                    verifyFieldsEmpty() &&
+                                    !verifyFieldsExcessive()
+                                ) {
+                                    toast.error("Faltan completar campos");
+                                    return false;
+                                } else if (
+                                    verifyFieldsExcessive() &&
+                                    !verifyFieldsEmpty()
+                                ) {
+                                    toast.error(
+                                        "Se excedió el límite de caractéres"
+                                    );
                                     return false;
                                 } else {
-                                    setFieldsEmpty(false);
                                     return true;
                                 }
                             }}
@@ -450,7 +475,15 @@ export default function crear_equipo(props) {
                 ></ModalUser>
             )}
 
-            {/* <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen> */}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }
