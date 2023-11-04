@@ -32,17 +32,36 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
         // Unimos las palabras nuevamente en una cadena
         return capitalizedWords.join(" ");
     }
+
+    const eliminarEquipo = (e) => {
+        e.stopPropagation();
+        console.log("Eliminar equipo con id",team.idEquipo);
+    }
+
+
     return (
         <>
             <div //estaba en 70
-                className="w-full shadow-md 
-                border border-gray-300 rounded-lg card-hover hover:bg-[#5088e9] dark:hover:bg-[rgba(238,238,238,0.1)] my-2 overflow-hidden p-[1rem]"
+                className="relative w-full shadow-md 
+                border border-gray-300 rounded-lg card-hover hover:bg-[#5088e9] dark:hover:bg-[rgba(238,238,238,0.1)] my-2 overflow-hidden p-[1rem] group"
                 onClick={() => {
                     handleSeeTeam(team);
                 }}
             >
+                <div className="absolute top-2 right-1">
+                    <img
+                        src="/icons/icon-trash.svg"
+                        alt="delete"
+                        className="mb-4 cursor-pointer opacity-0 group-hover:opacity-100"
+                        onClick={eliminarEquipo}
+                    />
+                </div>
                 <div>
-                    <Tooltip showArrow={true} color="foreground" content={team.nombre}>
+                    <Tooltip
+                        showArrow={true}
+                        color="foreground"
+                        content={team.nombre}
+                    >
                         <p className="cardEquipoBigHeader truncate pr-4">
                             {team.nombre}
                         </p>
