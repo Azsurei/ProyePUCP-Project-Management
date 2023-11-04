@@ -9,7 +9,6 @@
 /* Estilo para la tarjeta de equipo */
 .CardEquipo {
     /*margin: 0 50px 50px 0; /* Margen de 20px en los lados derecho e inferior de cada tarjeta */
-    width: calc(33.33% - 20px);
     margin: 0 20px 20px 0;
     box-sizing: border-box;
     transition: transform 0.3s, box-shadow 0.3s;

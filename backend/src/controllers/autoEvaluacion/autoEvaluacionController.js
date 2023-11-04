@@ -170,6 +170,39 @@ async function finalizarAutoEvaluacion(req,res,next){
     }
 }
 
+async function listarAutoEvaluacionNotas(req,res,next){
+    const {idAutoEvaluacionXProyecto} = req.params;
+    //Primero obtenemos los miembros que tienen autoevaluacion
+    const query = `CALL LISTAR_AUTOEVALUACION_MIEMBROS(?);`;
+    const query1 = `CALL LISTAR_AUTOEVALUACION_NOTAS(?,?);`;
+    const query2 = `CALL LISTAR_AUTOEVALUACION_OBSERVACIONES(?,?);`;
+    try {
+        const results = await connection.query(query,[idAutoEvaluacionXProyecto]);
+        const miembros = results[0][0];
+        //Sacamos las notas
+        for(let miembro of miembros){
+            console.log(miembro.idUsuarioEvaluado);
+            const results1 = await connection.query(query1,[idAutoEvaluacionXProyecto,miembro.idUsuarioEvaluado]);
+            let notas = results1[0][0];
+            miembro.notas = notas;
+        }
+        //Sacamos las observaciones
+        for(let miembro of miembros){
+            const results2 = await connection.query(query2,[idAutoEvaluacionXProyecto,miembro.idUsuarioEvaluado]);
+            let observaciones = results2[0][0];
+            miembro.observaciones = observaciones;
+        }
+        res.status(200).json({
+            miembros,
+            message: "Autoevaluacion "
+        });
+        console.log('Se finalizo la autoevaluacion correctamente');
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 module.exports = {
     crearAutoEvaluacionTest,
     listarAutoEvaluacion,
@@ -177,5 +210,6 @@ module.exports = {
     crearAutoEvaluacion,
     listarTodasAutoEvaluacion,
     activarAutoEvaluacion,
-    finalizarAutoEvaluacion
+    finalizarAutoEvaluacion,
+    listarAutoEvaluacionNotas
 };

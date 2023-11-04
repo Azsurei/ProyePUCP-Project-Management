@@ -73,8 +73,9 @@
     align-items: center; /* Alinea verticalmente si es necesario */
     gap: 2rem;
 }
-.ReportesPresupuesto {
+.ReportesPresupuesto, .ReporteRiesgos {
     display: flex;
+    width: 100%;
     justify-content: space-between; /* Espacio entre los elementos */
   }
 .GraficoReportePresupuesto {
@@ -117,4 +118,7 @@
     font-style: normal;
     margin: 0;
     padding: 5px 0;
+}
+.ListadoDeRiesgos {
+    width: 50%;
 }

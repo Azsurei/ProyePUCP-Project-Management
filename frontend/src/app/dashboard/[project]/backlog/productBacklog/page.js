@@ -152,7 +152,7 @@ export default function ProductBacklog(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(8);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "descripcion",
         direction: "ascending",
@@ -214,7 +214,7 @@ export default function ProductBacklog(props) {
     }, [page]);
 
     const onRowsPerPageChange = React.useCallback((e) => {
-        setRowsPerPage(Number(e.target.value));
+        setRowsPerPage(8);
         setPage(1);
     }, []);
 

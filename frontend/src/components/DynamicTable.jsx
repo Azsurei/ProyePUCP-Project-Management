@@ -21,6 +21,7 @@ export default function MyDynamicTable ({
     sortedItems,
     renderCell,
     idKey,
+    selectionMode,
 }) {
 
     
@@ -33,10 +34,10 @@ export default function MyDynamicTable ({
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
                 classNames={{
-                    wrapper: "max-h-[382px]",
+                    wrapper: "max-h-[100%]",
                 }}
                 selectedKeys={selectedKeys}
-                selectionMode="multiple"
+                selectionMode={selectionMode}
                 sortDescriptor={sortDescriptor}
                 topContent={topContent}
                 topContentPlacement="outside"

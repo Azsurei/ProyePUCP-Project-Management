@@ -38,6 +38,7 @@ export default function ReportePresupuestos(props) {
     const [lineasIngreso, setLineasIngreso] = useState([]);
     const [lineasEgreso, setLineasEgreso] = useState([]);
     const [lineasEstimacion, setLineasEstimacion] = useState([]);
+    const [vistaReporte, setVistaReporte] = useState(false);
     const DataTable = async () => {
         const fetchData = async () => {
             try {
@@ -49,6 +50,7 @@ export default function ReportePresupuestos(props) {
               console.log(`Esta son las lineas:`, data);
               console.log(`Esta son las lineas de ingreso:`, response.data.lineasPresupuesto.lineasIngreso);
               setIsLoadingSmall(false);
+              setVistaReporte(true);
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
@@ -170,116 +172,132 @@ export default function ReportePresupuestos(props) {
       const performance = (sumaIngresos + sumaEgresos) / sumaIngresos * 100;
       const monedaSymbol = isSelected ? "S/ " : "$ "
     return (
-        
-        <div className="divHistorialReportes">
-            <div className="flex-1 border border-green-400">
-                    <Breadcrumbs>
-                        <BreadcrumbsItem href="/" text="Inicio" />
-                        <BreadcrumbsItem href="/dashboard" text="Proyectos" />
-                        <BreadcrumbsItem
-                            href={"/dashboard/" + projectName + "=" + projectId}
-                            text={projectName}
-                        />
-                        <BreadcrumbsItem href="" text="Historial de Reportes" />
-                    </Breadcrumbs>
-                    <div className="flex flex-row justify-between items-center">
-                        <div className="titleHistorialReporte text-mainHeaders">
-                            Reporte de Presupuesto
-                        </div>
-                        <Button color="warning" className="text-white">
-                            Guardar reporte
-                        </Button>
-                     </div>
-    
-                    <div className="ReportesPresupuesto">
-                        <BarGraphic options={options} series={series} client={isClient}/>
-                    <div className="flex-1 h-auto max-h-800">
-                        <Card className="ProgressPresupuesto">
-                                <CardBody className=" mt-12 p-0 flex-none w-70">
-                                    <CircularProgress
-                                        classNames={{
-                                        svg: "w-64 h-64 drop-shadow-md",
-                                        indicator: "text-green-500",
-                                        track: "stroke-current text-red-500",
-                                        value: "text-3xl font-semibold",
-                                    }}
-                                    value={performance}
-                                    strokeWidth={4}
-                                    showValueLabel={true}
-                                    />
-                                </CardBody>
-                                <div className="mt-4">
-                                    <CardHeader className="p-0">
-                                        <p className="titleHistorialReporte">Ingresos vs Egresos</p>
-                                    </CardHeader>
-                                    <Card className="mt-8">
-                                        <CardBody>
-                                            <Chip color="success" variant="flat">
-                                                <div className="titleBalanceData" style={{ textAlign: "left" }}>Ingresos: </div>
-                                            </Chip >
-                                            <div className="titleBalanceData" style={{ color: "#29C85F", textAlign: "right" }}>{monedaSymbol} {sumaIngresos.toFixed(2)}</div>
-                                            <Chip color="danger" variant="flat">
-                                                <div className="titleBalanceData" style={{ textAlign: "left" }}>Egresos: </div>
-                                            </Chip>
-                                                
-                                            <div className="titleBalanceData" style={{color: "#CE3B3B", textAlign: "right" }}>{monedaSymbol} {egresosConvertidos.toFixed(2)}</div>
-                                            <Chip variant="flat">
-                                                <div className="titleBalanceData" style={{ textAlign: "left" }}>Disponible: </div>
-                                            </Chip>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{monedaSymbol} {sumaIngresos + sumaEgresos > 0 ? ` ${total.toFixed(2)}` : 'Sin fondos disponibles'}</div>
-                                        </CardBody>
-                                    </Card> 
+        <>
+        {vistaReporte && (
+                    <div className="divHistorialReportes">
+                    <div className="flex-1 border border-green-400">
+                            <Breadcrumbs>
+                                <BreadcrumbsItem href="/" text="Inicio" />
+                                <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                                <BreadcrumbsItem
+                                    href={"/dashboard/" + projectName + "=" + projectId}
+                                    text={projectName}
+                                />
+                                <BreadcrumbsItem href="" text="Historial de Reportes" />
+                            </Breadcrumbs>
+                            <div className="flex flex-row justify-between items-center">
+                                <div className="titleHistorialReporte text-mainHeaders">
+                                    Reporte de Presupuesto
                                 </div>
+                                <Button color="warning" className="text-white">
+                                    Guardar reporte
+                                </Button>
+                             </div>
+            
+                            <div className="ReportesPresupuesto">
+                                <BarGraphic options={options} series={series} client={isClient}/>
+                            <div className="flex-1 h-auto max-h-800">
+                                <Card className="ProgressPresupuesto">
+                                        <CardBody className=" mt-12 p-0 flex-none w-70">
+                                            <CircularProgress
+                                                classNames={{
+                                                svg: "w-64 h-64 drop-shadow-md",
+                                                indicator: "text-green-500",
+                                                track: "stroke-current text-red-500",
+                                                value: "text-3xl font-semibold",
+                                            }}
+                                            value={performance}
+                                            strokeWidth={4}
+                                            showValueLabel={true}
+                                            />
+                                        </CardBody>
+                                        <div className="mt-4">
+                                            <CardHeader className="p-0">
+                                                <p className="titleHistorialReporte">Ingresos vs Egresos</p>
+                                            </CardHeader>
+                                            <Card className="mt-8">
+                                                <CardBody>
+                                                    <Chip color="success" variant="flat">
+                                                        <div className="titleBalanceData" style={{ textAlign: "left" }}>Ingresos: </div>
+                                                    </Chip >
+                                                    <div className="titleBalanceData" style={{ color: "#29C85F", textAlign: "right" }}>{monedaSymbol} {sumaIngresos.toFixed(2)}</div>
+                                                    <Chip color="danger" variant="flat">
+                                                        <div className="titleBalanceData" style={{ textAlign: "left" }}>Egresos: </div>
+                                                    </Chip>
+                                                        
+                                                    <div className="titleBalanceData" style={{color: "#CE3B3B", textAlign: "right" }}>{monedaSymbol} {egresosConvertidos.toFixed(2)}</div>
+                                                    <Chip variant="flat">
+                                                        <div className="titleBalanceData" style={{ textAlign: "left" }}>Disponible: </div>
+                                                    </Chip>
+                                                    <div className="titleBalanceData" style={{ textAlign: "right" }}>{monedaSymbol} {sumaIngresos + sumaEgresos > 0 ? ` ${total.toFixed(2)}` : 'Sin fondos disponibles'}</div>
+                                                </CardBody>
+                                            </Card> 
+                                        </div>
+        
+                                </Card>
+                                <div className="flex">
+                                    <Card className="w-1/2 m-4" style={{ border: '2px solid #29C85F' }}>
+                                        <CardHeader className="flex gap-3">
+                                            <p className="titleBalanceData text-md"><strong>Presupuesto Inicial</strong></p>
+                                        </CardHeader>
+                                        <Divider/>
+                                        <CardBody>
+                                            {presupuesto && (
+                                              <Chip color="success" variant="flat">
+                                                <p className="titleBalanceData">{monedaSymbol} {montoInicial.toFixed(2)}</p>
+                                              </Chip>
+                                            )}
+                                            
+                                        </CardBody>
+                                    </Card>
+                                    <Card className="w-1/2 m-4" style={{ border: '2px solid #F0AE19' }}>
+                                        <CardHeader className="flex gap-3">
+                                            <p className="titleBalanceData text-md"><strong>Gasto planificado</strong></p>
+                                        </CardHeader>
+                                        <Divider/>
+                                        <CardBody>
+                                          <Chip color="primary" variant="flat">
+                                            <p className="titleBalanceData">{monedaSymbol} {sumaTotalEstimacion.toFixed(2)}</p>
+                                          </Chip>
+                                        </CardBody>
+                                    </Card>
+                                </div>
+                                <div className="flex">
+                                    <Card className="w-1/2 m-4" style={{ border: '2px solid #CE3B3B' }}>
+                                        <CardHeader className="flex gap-3">
+                                          
+                                            <p className="titleBalanceData text-md"><strong>Gasto total</strong></p>
+                                        </CardHeader>
+                                        <Divider/>
+                                        <CardBody>
+                                          <Chip color="danger" variant="flat">
+                                            <p className="titleBalanceData">{monedaSymbol} {egresosConvertidos.toFixed(2)}</p>
+                                          </Chip>
+                                        </CardBody>
+                                    </Card>
+                                    <Card className="w-1/2 m-4" style={{ border: '2px solid #1962F0' }}>
+                                        <CardHeader className="flex gap-3">
+                                            <p className="titleBalanceData text-md"><strong>Estado del presupuesto</strong></p>
+                                        </CardHeader>
+                                        <Divider/>
+                                        <CardBody>
+                                          <Chip variant="flat">
+                                            <p className="titleBalanceData">{sumaIngresos + sumaEgresos > 0 ? `Dentro del Presupuesto` : 'Sobre el Presupuesto'}</p>
+                                          </Chip>
+                                        </CardBody>
+                                    </Card>
+                                </div>  
+                            </div>
+          
+                            </div>
+                    </div>
+                </div>
+        )}
+        {!vistaReporte && (
+          <div>No hay reporte</div>
+        )}
 
-                        </Card>
-                        <div className="flex">
-                            <Card className="w-1/2 m-4" style={{ border: '2px solid #29C85F' }}>
-                                <CardHeader className="flex gap-3">
-                                    <p className="titleBalanceData text-md">Presupuesto Inicial</p>
-                                </CardHeader>
-                                <Divider/>
-                                <CardBody>
-                                    {presupuesto && (
-                                        <p className="titleBalanceData">S/ {montoInicial.toFixed(2)}</p>
-                                    )}
-                                    
-                                </CardBody>
-                            </Card>
-                            <Card className="w-1/2 m-4" style={{ border: '2px solid #F0AE19' }}>
-                                <CardHeader className="flex gap-3">
-                                    <p className="titleBalanceData text-md">Gasto planificado</p>
-                                </CardHeader>
-                                <Divider/>
-                                <CardBody>
-                                    <p className="titleBalanceData">{monedaSymbol} {sumaTotalEstimacion.toFixed(2)}</p>
-                                </CardBody>
-                            </Card>
-                        </div>
-                        <div className="flex">
-                            <Card className="w-1/2 m-4" style={{ border: '2px solid #CE3B3B' }}>
-                                <CardHeader className="flex gap-3">
-                                    <p className="titleBalanceData text-md">Gasto total</p>
-                                </CardHeader>
-                                <Divider/>
-                                <CardBody>
-                                    <p className="titleBalanceData">{monedaSymbol} {egresosConvertidos.toFixed(2)}</p>
-                                </CardBody>
-                            </Card>
-                            <Card className="w-1/2 m-4" style={{ border: '2px solid #1962F0' }}>
-                                <CardHeader className="flex gap-3">
-                                    <p className="titleBalanceData text-md">Estado del presupuesto</p>
-                                </CardHeader>
-                                <Divider/>
-                                <CardBody>
-                                    <p className="titleBalanceData">{sumaIngresos + sumaEgresos > 0 ? `Dentro del Presupuesto` : 'Sobre Presupuesto'}</p>
-                                </CardBody>
-                            </Card>
-                        </div>  
-                    </div>
-  
-                    </div>
-            </div>
-        </div> 
+        </> 
         
     );
 }
