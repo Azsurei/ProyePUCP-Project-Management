@@ -190,39 +190,40 @@ export default function editarActaReunion(props) {
 
             if(actaReunion.lineaActaReunion.nombreReunion){
                 setTitleValue(actaReunion.lineaActaReunion.nombreReunion);
-                console.log("-- Titulo de Reunion ", titleValue);
+
             }
 
             if(actaReunion.lineaActaReunion.fechaReunion){
                 setDateValue(actaReunion.lineaActaReunion.fechaReunion.split("T")[0]);
-                console.log("-- Fecha de Reunion ", dateValue);
+
             }
 
             if(actaReunion.lineaActaReunion.horaReunion){
                 setTimeValue(actaReunion.lineaActaReunion.horaReunion.substring(0, 5));
-                console.log("-- Hora de Reunion ", timeValue);
+
             }
 
             if(actaReunion.lineaActaReunion.motivo){
                 setMotiveValue(actaReunion.lineaActaReunion.motivo);
-                console.log("-- Motivo de Reunion", motiveValue);
+
             }
-            if(actaReunion.lineaActaReunion.temasReunion){
-                console.log("-- Acuerdos del tema", actaReunion.lineaActaReunion.temasReunion.acuerdos);
-                const temasConData = 
-                    actaReunion.lineaActaReunion.temasReunion.map(({descripcion, acuerdos, ...tema}, index) => ({
+            if (actaReunion.lineaActaReunion.temasReunion) {
+                const temasConData =
+                    actaReunion.lineaActaReunion.temasReunion.map((tema, index) => ({
                         ...tema,
                         index: index + 1,
-                        data: descripcion,
-                        acuerdos: tema.acuerdos ? 
-                            tema.acuerdos.map(({descripcion, fechaObjetivo, ...acuerdo}) => ({
+                        idTema: tema.idTemaReunion, // Changed from 'index' to 'idTema'
+                        data: tema.descripcion,
+                        acuerdos: tema.acuerdos ?
+                            tema.acuerdos.map((acuerdo) => ({
                                 ...acuerdo,
-                                data: descripcion,
-                                date: fechaObjetivo
+                                data: acuerdo.descripcion,
+                                date: acuerdo.fechaObjetivo
                             })) : [],
-                    }))
+                    }));
                 setListTemas(temasConData);
-                console.log("-- Temas de Reunion", listTemas);
+                console.log('Holaaaa');
+                console.log(listTemas);
             }
 
             if(actaReunion.lineaActaReunion.comentarios) {
@@ -232,7 +233,6 @@ export default function editarActaReunion(props) {
                         data: descripcion, 
                 }));
                 setListComentarios(comentariosConData);
-                console.log("-- Comentarios de Reunion", listComentarios);
             }     
         }
     }, [actaReunion]);
@@ -253,6 +253,8 @@ export default function editarActaReunion(props) {
 
     const updateAcuerdos = (indexTema, nuevosAcuerdos) => {
         const temasActualizados = [...listTemas];
+        console.log(temasActualizados[indexTema]);
+        console.log(nuevosAcuerdos);
         temasActualizados[indexTema].acuerdos = nuevosAcuerdos;
         setListTemas(temasActualizados);
         setHasChanges(true);
@@ -432,7 +434,7 @@ export default function editarActaReunion(props) {
 //  Editar Acta de Reunión (Función Principal)
 // *********************************************************************************************
     const saveMeetingChanges = () => {
-        const idLineaActaReunion = idLineaActa;
+        const idLineaActaReunion = Number(idLineaActa);
         const nombreReunion = titleValue;
         const fechaReunion = dateValue;
         const horaReunion = timeValue;
@@ -440,18 +442,20 @@ export default function editarActaReunion(props) {
         const nombreConvocante = convocante.nombres + " " + convocante.apellidos;
         const temas = listTemas.map((tema) => ({
             descripcion: tema.data,
+            idTemaReunion: tema.idTema,
             acuerdos: tema.acuerdos.map((acuerdo) => ({
-                idAcuerdo: acuerdo.idAcuerdo,
                 descripcion: acuerdo.data,
-                //idTemaReunion: tema.idTemaReunion,
                 fechaObjetivo: acuerdo.date,
                 responsables: acuerdo.responsables.map(responsable => ({
-                    idUsuarioXRolXProyecto: responsable.idUsuario
+                    idResponsableAcuerdo: responsable.idUsuario,
+                    idUsuarioXRolXProyecto: responsable.idUsuarioRolProyecto
                 }))
             }))
         }));
+        console.log('Temas', temas);
+        console.log(listTemas);
         const participantes = participantsList.map(participante => ({
-            idUsuarioXRolXProyecto: participante.idUsuario,
+            idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
             asistio: participante.asistio ?? false,
         }));
         const comentarios = listComentarios.map((comentario) => ({ 

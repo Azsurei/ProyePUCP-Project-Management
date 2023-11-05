@@ -3588,6 +3588,48 @@ BEGIN
     WHERE idAutoevaluacion = @_idAutoevaluacion AND estado=1;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_NOTAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACION_NOTAS(
+    IN _idAutoEvaluacionXProyecto INT,
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT ue.idUsuarioEvaluado, ce.criterio, AVG(ce.nota) AS "Promedio"
+    FROM UsuarioXEvaluacion  AS ue
+    LEFT JOIN CriterioEvaluacion AS ce ON ue.idUsuarioEvaluacion = ce.idUsuarioEvaluacion
+    WHERE ue.idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
+    AND ue.idUsuarioEvaluado = _idUsuario
+    GROUP BY ce.criterio;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_MIEMBROS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACION_MIEMBROS(
+    IN _idAutoEvaluacionXProyecto INT
+)
+BEGIN
+    SELECT ue.idUsuarioEvaluado, u.nombres, u.apellidos
+    FROM UsuarioXEvaluacion AS ue
+    LEFT JOIN Usuario AS u ON ue.idUsuarioEvaluado = u.idUsuario
+    WHERE ue.idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
+    GROUP BY ue.idUsuarioEvaluado;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_OBSERVACIONES;
+DELIMITER $
+CREATE PROCEDURE LISTAR_AUTOEVALUACION_OBSERVACIONES(
+    IN _idAutoEvaluacionXProyecto INT,
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT observaciones
+    FROM UsuarioXEvaluacion
+    WHERE idAutoEvaluacionXProyecto = _idAutoEvaluacionXProyecto
+    AND idUsuarioEvaluado = _idUsuario;
+END$
+
+
 DROP PROCEDURE IF EXISTS ELIMINAR_ROLES_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_ROLES_EQUIPO(

@@ -4,7 +4,7 @@ import {Button} from "@nextui-org/react";
 
 export default function IconLabel({icon,label1,label2,className,onClickFunction}) {
     return (
-        <Button className={className} onClick={onClickFunction}>
+        <Button color="primary" className={className} onClick={onClickFunction}>
             <img src={icon} className="iconoMC"/>
             <div className="labelMC">
                 {label1}{/* <span>{label2}</span> */}

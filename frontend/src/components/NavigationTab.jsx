@@ -13,10 +13,12 @@ export default function NavigationTab({ listNames, listGoTo }) {
     const btnWidth = "165px";
     const [currentActive, setCurrentActive] = useState(listNames[0]);
 
-    const normalStyle =
-        "navigationTabButton border border-gray-300 py-[7px] rounded-md bg-white flex justify-center";
-    const activeStyle =
-        "border border-gray-300 py-[7px] rounded-md bg-F0AE19 flex justify-center text-white font-normal cursor-pointer";
+    const twStyle1 =
+        "navigationTabButton border border-gray-300 py-[7px] rounded-md" + 
+        " bg-white dark:bg-mainBackground  flex justify-center cursor-pointer hover:bg-[#e9e9e9] dark:hover:bg-slate-800 transition-background duration-[0.15s] ease-in";
+    const twStyle2 =
+        "border border-gray-300 py-[7px] rounded-md bg-F0AE19 flex justify-center" +
+        " text-white font-normal cursor-pointer";
 
     return (
         <div className="flex font-[Roboto] font-medium flex-row space-x-3">
@@ -26,8 +28,8 @@ export default function NavigationTab({ listNames, listGoTo }) {
                             key={index}
                             className={
                                 currentActive === item
-                                    ? activeStyle
-                                    : normalStyle
+                                    ? twStyle2
+                                    : twStyle1
                             }
                             style={{ width: btnWidth }}
                             onClick={() => {

@@ -340,7 +340,13 @@ export default function Equipo(props) {
 
         // Encuentra elementos añadidos
         newArray.forEach((newItem) => {
-            if (!newItem.idEquipoXRolEquipo) {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
                 addedArray.push(newItem);
             }
         });

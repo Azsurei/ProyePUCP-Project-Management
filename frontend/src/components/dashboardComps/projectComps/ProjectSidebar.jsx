@@ -375,7 +375,7 @@ function ProjectSidebar(props) {
             position: 9,
             optIcon: "/icons/sideBarDropDown_icons/sbdd13.svg",
             optName: "Matriz de responsabilidades",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/matrizDeResponsabilidades`,
         },
         {
             id: 8,

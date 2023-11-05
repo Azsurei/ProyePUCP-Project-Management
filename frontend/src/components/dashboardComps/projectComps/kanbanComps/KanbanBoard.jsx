@@ -46,6 +46,8 @@ export default function KanbanBoard({ projectId }) {
     const [activeTask, setActiveTask] = useState(null);
     const [oldColumn, setOldColumn] = useState(null);
 
+    const [currentTaskViewing, setCurrentTaskViewing] = useState(null);
+
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -154,7 +156,7 @@ export default function KanbanBoard({ projectId }) {
                                     deleteTask={deleteTask}
                                     updateTask={updateTask}
                                     updateColumnNameDB={updateColumnNameDB}
-                                    openViewTask={onOpenViewTask}
+                                    openViewTask={openModalViewTask}
                                     tasks={tasks.filter(
                                         (task) =>
                                             task.idColumnaKanban ===
@@ -219,10 +221,34 @@ export default function KanbanBoard({ projectId }) {
             <ModalTaskView
                 isOpen={isOpenViewTask}
                 onOpenChange={onOpenChangeViewTask}
+                currentTask={currentTaskViewing}
             />
             <Toaster richColors position="top-center"></Toaster>
         </div>
     );
+
+    function openModalViewTask(taskId) {
+        setCurrentTaskViewing(null);
+        onOpenViewTask();
+        console.log("mostrando tarea " + taskId);
+
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/verInfoTarea/" +
+            taskId;
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                setCurrentTaskViewing(response.data.tareaData);
+                console.log(response.data.tareaData);
+            })
+            .catch(function (error) {
+                console.log(error);
+                toast.error(
+                    "Error en carga de tarea " + taskId + ". Recarge la pagina"
+                );
+            });
+    }
 
     function createTask(columnId) {
         const newTask = {
@@ -291,7 +317,8 @@ export default function KanbanBoard({ projectId }) {
 
         //sacamos el max posicionKanban de columna 0.
         const tareasCol0 = tasks.filter((task) => task.idColumnaKanban === 0);
-        let lastPosicionKanban = tareasCol0[tareasCol0.length - 1].posicionKanban;  //+1 para empezar en el siguiente
+        let lastPosicionKanban =
+            tareasCol0[tareasCol0.length - 1].posicionKanban; //+1 para empezar en el siguiente
         console.log("Empezaremos en " + lastPosicionKanban);
 
         const updatedTasks = tasks.map((task) => {
@@ -303,17 +330,21 @@ export default function KanbanBoard({ projectId }) {
                     0,
                     task.sumillaTarea
                 );
-                return { ...task, posicionKanban: lastPosicionKanban, idColumnaKanban: 0 };
+                return {
+                    ...task,
+                    posicionKanban: lastPosicionKanban,
+                    idColumnaKanban: 0,
+                };
             }
             return task;
         });
 
         updatedTasks.sort((a, b) => {
             if (a.idColumnaKanban === b.idColumnaKanban) {
-              return a.posicionKanban - b.posicionKanban;
+                return a.posicionKanban - b.posicionKanban;
             }
             return a.idColumnaKanban - b.idColumnaKanban;
-          });
+        });
 
         setTasks(updatedTasks);
     }
@@ -576,13 +607,13 @@ export default function KanbanBoard({ projectId }) {
             });
     }
 
-    function deleteColumnDB(idColumnaKanban, name){
+    function deleteColumnDB(idColumnaKanban, name) {
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/kanban/eliminarColumna";
         axios
             .post(stringURL, {
-                idColumnaKanban: idColumnaKanban
+                idColumnaKanban: idColumnaKanban,
             })
             .then(function (response) {
                 const str = "Columna " + name + " eliminada";

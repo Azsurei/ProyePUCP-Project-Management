@@ -11,4 +11,6 @@ routerAutoEvaluacion.put("/finalizarAutoEvaluacion", autoEvaluacionController.fi
 routerAutoEvaluacion.get("/listarAutoEvaluacion/:idProyecto/:idUsuario", autoEvaluacionController.listarAutoEvaluacion);
 routerAutoEvaluacion.put("/actualizarAutoEvaluacion", autoEvaluacionController.actualizarAutoEvaluacion);
 
+routerAutoEvaluacion.get("/listarAutoEvaluacionNotas/:idAutoEvaluacionXProyecto", autoEvaluacionController.listarAutoEvaluacionNotas);
+
 module.exports.routerAutoEvaluacion = routerAutoEvaluacion;

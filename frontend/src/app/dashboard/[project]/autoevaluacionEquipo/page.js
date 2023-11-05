@@ -543,12 +543,12 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
             axios
                 .get(
                     process.env.NEXT_PUBLIC_BACKEND_URL +
-                        `/api/proyecto/autoEvaluacion/obtenerResultadosAutoEvaluacion/` +
+                        `/api/proyecto/autoEvaluacion/listarAutoEvaluacionNotas/` +
                         idAutoEvaluacionXProyecto
                 )
                 .then((response) => {
                     console.log(response);
-                    setEvaluacion(response.data);
+                    setEvaluacion(response.data.miembros);
                     resolve();
                 })
                 .catch((error) => {
@@ -583,7 +583,7 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
             <Card className="w-full">
                 <CardHeader className="bg-[#172B4D] text-[#FFFFFF] montserrat text-2xl font-medium p-4">
                     <h3>
-                        {member.nombreEvaluado} {member.apellidoEvaluado}
+                        {member.nombres} {member.apellidos}
                     </h3>
                 </CardHeader>
                 <CardBody className="bg-[#EAEAEA]">
@@ -591,20 +591,16 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         <h4 className="montserrat font-semibold">
                             Criterios de evaluación:
                         </h4>
-                        {member.criterios.map((criterio) => (
-                            <div
-                                key={criterio.idCriterioEvaluacion}
-                                className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8"
-                            >
+                        {member.notas.map((criterio) => (
+                            <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
                                 <div>
                                     <label className="w-full font-medium break-words">
                                         {criterio.criterio}:
                                     </label>
                                     <p className="w-full font-normal break-words">
-                                        {criterio.notaPromedio} / 5
+                                        {criterio.Promedio} / 5
                                     </p>
                                 </div>
-                                
                             </div>
                         ))}
                     </div>
@@ -612,14 +608,23 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         <h4 className="montserrat font-semibold">
                             Observaciones:
                         </h4>
-                        {member.observaciones.map((observacion) => (
-                            <Textarea
-                                key={member.id}
-                                isDisabled={true}
-                                variant="faded"
-                                defaultValue={observacion.observacion}
-                            />
-                        ))}
+                        {member.observaciones &&
+                        member.observaciones.some(
+                            (observacion) => observacion.observaciones !== null
+                        ) ? (
+                            member.observaciones.map((observacion, index) =>
+                                observacion.observaciones !== null ? (
+                                    <Textarea
+                                        key={`observacion_${index}`}
+                                        isDisabled={true}
+                                        variant="faded"
+                                        defaultValue={observacion.observaciones}
+                                    />
+                                ) : null
+                            )
+                        ) : (
+                            <p className="p-4">No hay observaciones enviadas.</p>
+                        )}
                     </div>
                 </CardBody>
             </Card>
@@ -630,7 +635,7 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
         <>
             {statusInterface === "details" && (
                 <>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center items-right sm:gap-10 gap-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center items-right sm:gap-10 gap-4 mb-4">
                         <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
                             Resultados de autoevaluación
                         </h3>
