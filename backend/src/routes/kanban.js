@@ -12,4 +12,6 @@ routerKanban.post("/cambiarPosicionColumna",verifyToken, kanbanController.cambia
 routerKanban.post("/renombarColumna",verifyToken, kanbanController.renombrarColumna);
 routerKanban.post("/eliminarColumna",verifyToken, kanbanController.eliminarColumna);
 
+routerKanban.get("/verInfoTarea/:idTarea",verifyToken, kanbanController.listarInfoTarea);
+
 module.exports.routerKanban = routerKanban;

@@ -121,6 +121,21 @@ async function eliminarColumna(req,res,next){
 }
 
 
+async function listarInfoTarea(req,res,next){
+    const {idTarea} = req.params;
+    try{
+        const query = `CALL LISTAR_TAREA_X_ID_TAREA(?);`;
+        const [results] = await connection.query(query, [idTarea]);
+        res.status(200).json({
+            tareaData: results[0][0],
+            message: "Se listo la informacion de la tarea con exito"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 
 module.exports = {
     listarColumnas,
@@ -130,5 +145,6 @@ module.exports = {
     crearColumna,
     cambiarPosicionColumna,
     renombrarColumna,
-    eliminarColumna
+    eliminarColumna,
+    listarInfoTarea
 };

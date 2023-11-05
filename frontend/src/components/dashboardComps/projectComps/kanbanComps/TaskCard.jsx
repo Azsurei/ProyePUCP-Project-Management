@@ -59,7 +59,7 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
             style={style}
             {...attributes}
             {...listeners}
-            onClick={openViewTask}
+            onClick={()=>{openViewTask(task.idTarea)}}
             className="TaskContainerCard 
             bg-taskBackgroundColor
             p-2.5 h-[100px]
