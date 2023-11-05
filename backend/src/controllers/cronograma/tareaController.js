@@ -206,29 +206,31 @@ async function insertarTarea(
     esPosterior,
     idEntregable
 ) {
-<<<<<<< HEAD
-    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
-=======
-    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
->>>>>>> a971c092e137217ab1a692aad2a398eb543f7976
-    const [results] = await connection.query(query, [
-        idCronograma,
-        idTareaEstado,
-        idSubGrupo,
-        idPadre,
-        idTareaAnterior,
-        idSprint,
-        sumillaTarea,
-        descripcion,
-        fechaInicio,
-        fechaFin,
-        cantSubtareas,
-        cantPosteriores,
-        horasPlaneadas,
-        esPosterior,
-        idEntregable
-    ]);
-    return results[0][0].idTarea;
+    try {
+        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+        const [results] = await connection.query(query, [
+            idCronograma,
+            idTareaEstado,
+            idSubGrupo,
+            idPadre,
+            idTareaAnterior,
+            idSprint,
+            sumillaTarea,
+            descripcion,
+            fechaInicio,
+            fechaFin,
+            cantSubtareas,
+            cantPosteriores,
+            horasPlaneadas,
+            esPosterior,
+            idEntregable
+        ]);
+        let idTarea = results[0][0].idTarea;
+        console.log(`Tarea ${idTarea} creada`);
+        return idTarea;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 async function insertarTareasPosteriores(

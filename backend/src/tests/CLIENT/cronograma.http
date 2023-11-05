@@ -27,50 +27,46 @@ Content-Type:  application/json
     ],
     "subTareas": [
         {
-            "body": {
-                "idCronograma": 1,
-                "idTareaEstado": 2,
-                "idSubGrupo": 3,
-                "idPadre": 6,
-                "idTareaAnterior": null,
-                "idSprint": 3,
-                "sumillaTarea": "Subtarea 1",
-                "descripcion": "Descripción de la subtarea 1",
-                "fechaInicio": "2023-10-21",
-                "fechaFin": "2023-10-23",
-                "cantSubtareas": 0,
-                "cantPosteriores": 0,
-                "horasPlaneadas": 15,
-                "usuarios": [
-                    {
-                        "idUsuario": 78
-                    }
-                ]
-            }
+            "idCronograma": 1,
+            "idTareaEstado": 2,
+            "idSubGrupo": 3,
+            "idPadre": 6,
+            "idTareaAnterior": null,
+            "idSprint": 3,
+            "sumillaTarea": "Subtarea 1",
+            "descripcion": "Descripción de la subtarea 1",
+            "fechaInicio": "2023-10-21",
+            "fechaFin": "2023-10-23",
+            "cantSubtareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 15,
+            "usuarios": [
+                {
+                    "idUsuario": 78
+                }
+            ]
         }
     ],
     "tareasPosteriores": [
         {
-            "body": {
-                "idCronograma": 1,
-                "idTareaEstado": 2,
-                "idSubGrupo": 3,
-                "idPadre": 4,
-                "idTareaAnterior": 7,
-                "idSprint": 3,
-                "sumillaTarea": "Tarea posterior 1",
-                "descripcion": "Descripción de la tarea posterior 1",
-                "fechaInicio": "2023-10-26",
-                "fechaFin": "2023-10-28",
-                "cantSubtareas": 0,
-                "cantPosteriores": 0,
-                "horasPlaneadas": 10,
-                "usuarios": [
-                    {
-                        "idUsuario": 78
-                    }
-                ]
-            }
+            "idCronograma": 1,
+            "idTareaEstado": 2,
+            "idSubGrupo": 3,
+            "idPadre": 4,
+            "idTareaAnterior": 7,
+            "idSprint": 3,
+            "sumillaTarea": "Tarea posterior 1",
+            "descripcion": "Descripción de la tarea posterior 1",
+            "fechaInicio": "2023-10-26",
+            "fechaFin": "2023-10-28",
+            "cantSubtareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 10,
+            "usuarios": [
+                {
+                    "idUsuario": 78
+                }
+            ]
         }
     ]
 }
