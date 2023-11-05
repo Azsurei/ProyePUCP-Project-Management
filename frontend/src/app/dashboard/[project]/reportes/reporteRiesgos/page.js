@@ -21,13 +21,14 @@ import {
     Tooltip,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
-import BarGraphic from "@/components/BarGraphic";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { set } from "date-fns";
 import axios from "axios";
 import { id } from "date-fns/esm/locale";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
+import PieChart from "@/components/PieChart";
+import BarGraphic from "@/components/BarGraphic";
 axios.defaults.withCredentials = true;
 export default function ReporteRiesgos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
@@ -98,6 +99,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Insignificante',
+            probabilidad: 'Muy Baja'
         },
         {
             idRiesgo: 2,
@@ -110,6 +113,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Menor',
+            probabilidad: 'Baja'
         },
         {
             idRiesgo: 3,
@@ -122,6 +127,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Moderado',
+            probabilidad: 'Muy Baja'
         },
         {
             idRiesgo: 4,
@@ -134,6 +141,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Mayor',
+            probabilidad: 'Media'
         },
         {
             idRiesgo: 5,
@@ -146,6 +155,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Catastrofico',
+            probabilidad: 'Alta'
         },
         {
             idRiesgo: 6,
@@ -158,6 +169,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Insignificante',
+            probabilidad: 'Muy Alta'
         },
         {
             idRiesgo: 7,
@@ -170,6 +183,8 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Menor',
+            probabilidad: 'Muy Baja'
         },
         {
             idRiesgo: 8,
@@ -182,8 +197,138 @@ export default function ReporteRiesgos(props) {
                 correoElectronico: user.correoElectronico,
                 imgLink: user.imgLink,
             })),
+            impacto: 'Moderado',
+            probabilidad: 'Muy Baja'
         },
     ];
+    
+    const impactoCounts = {
+        "Insignificante": 0,
+        "Menor": 0,
+        "Moderado": 0,
+        "Mayor": 0,
+        "Catastrofico": 0,
+      };
+      
+      data.forEach(linea => {
+        impactoCounts[linea.impacto]++;
+      });
+      
+      const series = Object.values(impactoCounts);
+      const labels = Object.keys(impactoCounts);
+      
+      const options = {
+     
+        labels: labels,
+        responsive: [{
+          breakpoint: 1000,
+          options: {
+            chart: {
+              width: 1000
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      };
+
+      const seriesBar = [
+        {
+          name: "Muy Baja",
+          data: [data.filter((data) => data.probabilidad === "Muy Baja").length],
+          color: '#8DFFA6'
+        },
+        {
+          name: "Baja",
+          data: [data.filter((data) => data.probabilidad === "Baja").length],
+          color: '#16C78E'
+        },
+        {
+          name: "Media",
+          data: [data.filter((data) => data.probabilidad === "Media").length],
+          color: '#FFFA8D'
+        },
+        {
+          name: "Alta",
+          data: [data.filter((data) => data.probabilidad === "Alta").length],
+          color: '#F0AE19'
+        },
+        {
+          name: "Muy Alta",
+          data: [data.filter((data) => data.probabilidad === "Muy Alta").length],
+          color: '#FF4D4D'
+        },
+      ];
+      
+
+      const fechasSet = new Set();
+
+      data.forEach(data => {
+        const fecha = new Date(data.fechaIdentificacion);
+        fechasSet.add(fecha.toISOString().split('T')[0]);
+      });
+      
+      const fechasRiesgos = Array.from(fechasSet);
+
+
+      const optionsBar = {
+        chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+              dataLabels: {
+                total: {
+                  enabled: true,
+                  offsetX: 0,
+                  style: {
+                    fontSize: '13px',
+                    fontWeight: 900
+                  }
+                }
+              }
+            },
+          },
+          stroke: {
+            width: 1,
+            colors: ['#fff']
+          },
+          title: {
+            text: 'Grafico de Probabilidades'
+          },
+          xaxis: {
+            categories: [fechasRiesgos],
+            labels: {
+              formatter: function (val) {
+                return val;
+              }
+            }
+          },
+          yaxis: {
+            title: {
+              text: undefined
+            },
+          },
+          tooltip: {
+            y: {
+              formatter: function (val) {
+                return val;
+              }
+            }
+          },
+          fill: {
+            opacity: 1
+          },
+          legend: {
+            position: 'top',
+            horizontalAlign: 'left',
+            offsetX: 40
+          }
+      };
     
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
@@ -457,11 +602,11 @@ export default function ReporteRiesgos(props) {
                         />
                     </div>
                     <div className="GraficosRiesgos">
-                        <div className="GraficoCircular">
-
+                        <div className="GraficoCircular w-full">
+                            <PieChart options={options} series={series} client={isClient}/>
                         </div>
-                        <div className="Matriz">
-                            
+                        <div className="GraficoBarras">
+                            <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={650}/>
                         </div>
                     </div>
                 </div>
