@@ -195,7 +195,7 @@ export default function ReportePresupuestos(props) {
                              </div>
             
                             <div className="ReportesPresupuesto">
-                                <BarGraphic options={options} series={series} client={isClient}/>
+                                <BarGraphic options={options} series={series} client={isClient} height={700} width={"100%"}/>
                             <div className="flex-1 h-auto max-h-800">
                                 <Card className="ProgressPresupuesto">
                                         <CardBody className=" mt-12 p-0 flex-none w-70">
