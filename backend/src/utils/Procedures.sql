@@ -1221,12 +1221,26 @@ CREATE PROCEDURE LISTAR_TAREAS_X_ID_SPRINT(
     IN _idSprint INT
 )
 BEGIN
-	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
     WHERE  t.idSprint = _idSprint
     AND t.activo=1;
 END$
 
+
+DROP PROCEDURE IF EXISTS LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(
+    IN _idCronograma INT
+)
+BEGIN
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
+    FROM Tarea t, TareaEstado te
+    WHERE  t.idCronograma = _idCronograma AND idSprint = 0
+    AND t.activo=1;
+END$
+
+CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(56);
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
 DROP PROCEDURE IF EXISTS MODIFICAR_TAREA;

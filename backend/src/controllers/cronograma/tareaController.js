@@ -67,7 +67,7 @@ async function modificar(req, res, next) {
         tareasPosterioresEliminadas,
         usuariosAgregados,
         usuariosEliminados,
-        idEntregable    //====================
+        idEntregable                        //====================
     } = req.body;
     try {
         await funcModificar(
@@ -366,6 +366,8 @@ async function funcDeletearTarea(idTarea){
     }
 }
 
+
+
 // Funcion para agregar las tareas posteriores como atributo a las tareas originales
 function repositionPosteriores(tareas) {
     const result = {};
@@ -459,7 +461,18 @@ async function funcModificarTareaIdSprint(idTarea,idSprint){
         const query = `CALL MODIFICAR_TAREA_ID_SPRINT(?,?);`;
         const [results]=await connection.query(query, [idTarea,idSprint]);
         console.log(`Tarea ${idTarea} modificada, nuevo sprint: ${idSprint}`);
-        return 1.
+        return 1;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function funcListarTareasSinSprint(idCronograma){
+    try {
+        const query = `CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(?);`;
+        const [results] = await connection.query(query, [idCronograma]);
+        const tareas = results[0];
+        return tareas;
     } catch (error) {
         console.log(error);
     }
@@ -471,6 +484,7 @@ module.exports = {
     funcEliminarTarea,
     modificar,
     funcListarTareasXIdSprint,
+    funcListarTareasSinSprint,
     modificarIdSprintDeTareas,
     eliminarRecursivo
 };

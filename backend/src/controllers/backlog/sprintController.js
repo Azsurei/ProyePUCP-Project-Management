@@ -15,15 +15,24 @@ async function crear(req,res,next){
     }
 }
 
-async function listarSprintsXIdBacklog(req,res,next){
-    const {idBacklog} = req.params;
+async function listarSprintsXIdBacklogCronograma(req,res,next){
+    const {idBacklog,idCronograma} = req.params;
     
     try {
         const sprints = await funcListarSprintsXIdBacklog(idBacklog);
-        sprints.sinSprint=[];
         for(const sprint of sprints){
-            const tareaAux = await tareaController.funcListarTareasXIdSprint(sprint.idSprint);
+            const tareas = await tareaController.funcListarTareasXIdSprint(sprint.idSprint);
+            sprint.tareas = tareas;
         }
+        //Listar los sprints de sin sprint
+        // Crear un objeto para "Sin Sprint" y añadirlo al array de sprints
+        const tareasSinSprint = await tareaController.funcListarTareasSinSprint(idCronograma);
+        const sinSprint = {
+            idSprint: 0,
+            nombre: "Sin Sprint",
+            tareas: tareasSinSprint
+        };
+        sprints.push(sinSprint);
         console.log(`Sprints listados por id de backlog ${idBacklog}`)
         res.status(200).json({sprints, message: "Sprints listados"});
     } catch (error) {
@@ -54,7 +63,7 @@ async function eliminarSprint(req,res,next){
     const {idSprint,tareas} = req.body;
     try{
         for(const tarea of tareas){
-            await tareaController.funcEliminarTarea(tarea.idTarea);
+            await tareaController.funcModificarTareaIdSprint(tarea.idTarea,0);
         }
         const query = `CALL ELIMINAR_SPRINT(?);`;
         await connection.query(query,[idSprint]);
@@ -67,7 +76,7 @@ async function eliminarSprint(req,res,next){
 
 module.exports = {
     crear,
-    listarSprintsXIdBacklog,
+    listarSprintsXIdBacklogCronograma,
     modificarEstado,
     eliminarSprint
 }
