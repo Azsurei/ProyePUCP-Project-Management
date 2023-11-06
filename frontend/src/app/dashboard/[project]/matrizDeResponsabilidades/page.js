@@ -24,123 +24,161 @@ import {
 
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const [dataFromApi, setDataFromApi] = useState([
-        {
-            idRol: 1,
-            nombreRol: "ROL1",
-            idEntregable: 1,
-            nombreEntregable: "Entregable 1",
-            idResponsabilidad: 1,
-            nombreResponsabilidad: "Aprueba",
-            letraResponsabilidad: "A",
-            colorResponsabilidad: "bg-blue-600",
-        },
-        {
-            idRol: 2,
-            nombreRol: "ROL2",
-            idEntregable: 1,
-            nombreEntregable: "Entregable 1",
-            idResponsabilidad: 3,
-            nombreResponsabilidad: "Participa",
-            letraResponsabilidad: "P",
-            colorResponsabilidad: "bg-purple-600",
-        },
-        {
-            idRol: 3,
-            nombreRol: "ROL3",
-            idEntregable: 1,
-            nombreEntregable: "Entregable 1",
-            idResponsabilidad: 1,
-            nombreResponsabilidad: "Aprueba",
-            letraResponsabilidad: "A",
-            colorResponsabilidad: "bg-blue-600",
-        },
-        {
-            idRol: 4,
-            nombreRol: "ROL4",
-            idEntregable: 1,
-            nombreEntregable: "Entregable 1",
-            idResponsabilidad: 2,
-            nombreResponsabilidad: "Se le informa",
-            letraResponsabilidad: "I",
-            colorResponsabilidad: "bg-red-600",
-        },
-        {
-            idRol: 1,
-            nombreRol: "ROL1",
-            idEntregable: 2,
-            nombreEntregable: "Entregable 2",
-            idResponsabilidad: 2,
-            nombreResponsabilidad: "Se le informa",
-            letraResponsabilidad: "I",
-            colorResponsabilidad: "bg-red-600",
-        },
-        {
-            idRol: 2,
-            nombreRol: "ROL2",
-            idEntregable: 2,
-            nombreEntregable: "Entregable 2",
-            idResponsabilidad: 1,
-            nombreResponsabilidad: "Aprueba",
-            letraResponsabilidad: "A",
-            colorResponsabilidad: "bg-blue-600",
-        },
-        {
-            idRol: 3,
-            nombreRol: "ROL3",
-            idEntregable: 2,
-            nombreEntregable: "Entregable 2",
-            idResponsabilidad: 1,
-            nombreResponsabilidad: "Aprueba",
-            letraResponsabilidad: "A",
-            colorResponsabilidad: "bg-blue-600",
-        },
-        {
-            idRol: 4,
-            nombreRol: "ROL4",
-            idEntregable: 2,
-            nombreEntregable: "Entregable 2",
-            idResponsabilidad: 1,
-            nombreResponsabilidad: "Aprueba",
-            letraResponsabilidad: "A",
-            colorResponsabilidad: "bg-blue-600",
-        },
-    ]);
+    const [dataFromApi, setDataFromApi] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [entregables, setEntregables] = useState([]);
+    const [responsabilidades, setResponsabilidades] = useState([]);
 
-    const rolesMap = new Map();
-    const entregablesMap = new Map();
-    const responsabilidadesMap = new Map();
-    
-    dataFromApi.forEach((item) => {
-        rolesMap.set(item.idRol, {
-            id: item.idRol,
-            nombre: item.nombreRol,
-        });
-    
-        entregablesMap.set(item.idEntregable, {
-            id: item.idEntregable,
-            nombre: item.nombreEntregable,
-        });
-    
-        responsabilidadesMap.set(item.idResponsabilidad, {
-            id: item.idResponsabilidad,
-            nombre: item.nombreResponsabilidad,
-            letra: item.letraResponsabilidad,
-            color: item.colorResponsabilidad,
-        });
-    });
-    
-    const roles = Array.from(rolesMap.values());
-    const entregables = Array.from(entregablesMap.values());
-    const responsabilidades = Array.from(responsabilidadesMap.values());
+    useEffect(() => {
+        // Datos iniciales
+        const initialDataFromApi = [
+            {
+                idRol: 1,
+                nombreRol: "ROL1",
+                idEntregable: 1,
+                nombreEntregable: "Entregable 1",
+                idResponsabilidad: 1,
+                nombreResponsabilidad: "Aprueba",
+                letraResponsabilidad: "A",
+                colorResponsabilidad: "bg-blue-600",
+            },
+            {
+                idRol: 2,
+                nombreRol: "ROL2",
+                idEntregable: 1,
+                nombreEntregable: "Entregable 1",
+                idResponsabilidad: 3,
+                nombreResponsabilidad: "Participa",
+                letraResponsabilidad: "P",
+                colorResponsabilidad: "bg-purple-600",
+            },
+            {
+                idRol: 3,
+                nombreRol: "ROL3",
+                idEntregable: 1,
+                nombreEntregable: "Entregable 1",
+                idResponsabilidad: 1,
+                nombreResponsabilidad: "Aprueba",
+                letraResponsabilidad: "A",
+                colorResponsabilidad: "bg-blue-600",
+            },
+            {
+                idRol: 4,
+                nombreRol: "ROL4",
+                idEntregable: 1,
+                nombreEntregable: "Entregable 1",
+                idResponsabilidad: 2,
+                nombreResponsabilidad: "Se le informa",
+                letraResponsabilidad: "I",
+                colorResponsabilidad: "bg-red-600",
+            },
+            {
+                idRol: 1,
+                nombreRol: "ROL1",
+                idEntregable: 2,
+                nombreEntregable: "Entregable 2",
+                idResponsabilidad: 2,
+                nombreResponsabilidad: "Se le informa",
+                letraResponsabilidad: "I",
+                colorResponsabilidad: "bg-red-600",
+            },
+            {
+                idRol: 2,
+                nombreRol: "ROL2",
+                idEntregable: 2,
+                nombreEntregable: "Entregable 2",
+                idResponsabilidad: 1,
+                nombreResponsabilidad: "Aprueba",
+                letraResponsabilidad: "A",
+                colorResponsabilidad: "bg-blue-600",
+            },
+            {
+                idRol: 3,
+                nombreRol: "ROL3",
+                idEntregable: 2,
+                nombreEntregable: "Entregable 2",
+                idResponsabilidad: 1,
+                nombreResponsabilidad: "Aprueba",
+                letraResponsabilidad: "A",
+                colorResponsabilidad: "bg-blue-600",
+            },
+            {
+                idRol: 4,
+                nombreRol: "ROL4",
+                idEntregable: 2,
+                nombreEntregable: "Entregable 2",
+                idResponsabilidad: 1,
+                nombreResponsabilidad: "Aprueba",
+                letraResponsabilidad: "A",
+                colorResponsabilidad: "bg-blue-600",
+            },
+        ];
+        const initialRoles = [
+            { id: 1, nombre: "ROL1" },
+            { id: 2, nombre: "ROL2" },
+            { id: 3, nombre: "ROL3" },
+            { id: 4, nombre: "ROL4" },
+        ];
 
-    console.log("Roles", roles);
-    console.log("Entregables", entregables);
-    console.log("Responsabilidades", responsabilidades);
+        const initialEntregables = [
+            { id: 1, nombre: "Entregable 1" },
+            { id: 2, nombre: "Entregable 2" },
+            { id: 3, nombre: "Entregable 3" },
+        ];
+
+        const initialResponsabilidades = [
+            { id: 1, nombre: "Aprueba", letra: "A", color: "bg-blue-600" },
+            { id: 2, nombre: "Se le informa", letra: "I", color: "bg-red-600" },
+            { id: 3, nombre: "Participa", letra: "P", color: "bg-purple-600" },
+            // Agrega más responsabilidades según tus necesidades
+        ];
+
+        const completedData = [];
+
+        // Recorre todos los roles y entregables
+        initialRoles.forEach((rol) => {
+          initialEntregables.forEach((entregable) => {
+            // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
+            const existingData = initialDataFromApi.find(
+              (item) =>
+                item.idRol === rol.id && item.idEntregable === entregable.id
+            );
+      
+            if (existingData) {
+              // Si existe, simplemente agrega los datos existentes
+              completedData.push(existingData);
+            } else {
+              // Si no existe, crea una celda vacía o con valores predeterminados
+              completedData.push({
+                idRol: rol.id,
+                nombreRol: rol.nombre,
+                idEntregable: entregable.id,
+                nombreEntregable: entregable.nombre,
+                // Puedes definir valores predeterminados para otras propiedades
+                idResponsabilidad: 0,
+                nombreResponsabilidad: "",
+                letraResponsabilidad: "",
+                colorResponsabilidad: "",
+              });
+            }
+          });
+        });
+
+        console.log("Data from API", initialDataFromApi);
+        console.log("Roles", initialRoles);
+        console.log("Entregables", initialEntregables);
+        console.log("Responsabilidades", initialResponsabilidades);
+        // Establecer los datos iniciales en los hooks
+        setDataFromApi(completedData);
+        setRoles(initialRoles);
+        setEntregables(initialEntregables);
+        setResponsabilidades(initialResponsabilidades);
+        setIsLoadingSmall(false);
+    }, []);
 
     const columns = [
         { name: "Entregables", uid: "entregable" },
-        ...roles.map((role) => ({ name: role.nombre, uid: role.nombre})),
+        ...roles.map((role) => ({ name: role.nombre, uid: role.nombre })),
     ];
 
     const rows = entregables.map((entregable, index) => {
@@ -190,18 +228,22 @@ export default function MatrizDeResponsabilidades(props) {
     };
 
     const renderCell = React.useCallback((user, columnKey) => {
-        console.log("El key de la columna es:",columnKey);
+        console.log("El key de la columna es:", columnKey);
         const cellValue = user[columnKey];
         const color = getColorForResponsabilidad(cellValue);
-        const idEntregable = entregables.find((item) => item.nombre === user.entregable).id;
-        console.log("El id del entregable es:",idEntregable);
+        const entregableMatch = entregables.find(
+            (item) => item.nombre === user.entregable
+        );
+        
+        const idEntregable = entregableMatch ? entregableMatch.id : null;
+        console.log("El id del entregable es:", idEntregable);
         let idRol;
-        if(columnKey !== "entregable"){
-            idRol = roles.find((item) => item.nombre === columnKey).id;
-        }else{
+        if (columnKey !== "entregable") {
+            const roleMatch = roles.find((item) => item.nombre === columnKey);
+            idRol = roleMatch ? roleMatch.id : null;
+        } else {
             idRol = -1;
         }
-
 
         switch (columnKey) {
             case "entregable":
@@ -228,7 +270,13 @@ export default function MatrizDeResponsabilidades(props) {
                                     <DropdownItem
                                         key={item.letra}
                                         textValue={item.nombre}
-                                        onPress={() => changeCell(idRol,idEntregable,item)}
+                                        onPress={() =>
+                                            changeCell(
+                                                idRol,
+                                                idEntregable,
+                                                item
+                                            )
+                                        }
                                     >
                                         <div className="flex">
                                             <div className="inline w-1/4">
@@ -245,15 +293,13 @@ export default function MatrizDeResponsabilidades(props) {
                     </>
                 );
         }
-    }, []);
-
-    useEffect(() => {
-        setIsLoadingSmall(false);
-    }, []);
+    }, [dataFromApi, roles, entregables, responsabilidades]);
 
     return (
         <>
-            <div className="px-[1rem]">Inicio/Proyectos/Proyecto/Matriz de responsabilidades</div>
+            <div className="px-[1rem]">
+                Inicio/Proyectos/Proyecto/Matriz de responsabilidades
+            </div>
             <div className="text-[#172B4D] font-semibold text-[2rem] my-[0.5rem] px-[1rem]">
                 Matriz de responsabilidades
             </div>

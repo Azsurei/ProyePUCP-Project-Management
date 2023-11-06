@@ -41,6 +41,7 @@ export default function editarActaReunion(props) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const idLineaActa = searchParams.get('edit');
+    const idActa = searchParams.get('acta');
 //const receivedData = router.edit.data;
 // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -212,13 +213,12 @@ export default function editarActaReunion(props) {
                     actaReunion.lineaActaReunion.temasReunion.map((tema, index) => ({
                         ...tema,
                         index: index + 1,
-                        idTema: tema.idTemaReunion, // Changed from 'index' to 'idTema'
                         data: tema.descripcion,
                         acuerdos: tema.acuerdos ?
                             tema.acuerdos.map((acuerdo) => ({
                                 ...acuerdo,
                                 data: acuerdo.descripcion,
-                                date: acuerdo.fechaObjetivo
+                                date: acuerdo.fechaObjetivo.split('T')[0]
                             })) : [],
                     }));
                 setListTemas(temasConData);
@@ -253,7 +253,11 @@ export default function editarActaReunion(props) {
 
     const updateAcuerdos = (indexTema, nuevosAcuerdos) => {
         const temasActualizados = [...listTemas];
+        console.log("listTemas");
+        console.log(listTemas);
+        console.log("Temas debug");
         console.log(temasActualizados[indexTema]);
+        console.log("Nuevos acuerdos");
         console.log(nuevosAcuerdos);
         temasActualizados[indexTema].acuerdos = nuevosAcuerdos;
         setListTemas(temasActualizados);
@@ -442,21 +446,17 @@ export default function editarActaReunion(props) {
         const nombreConvocante = convocante.nombres + " " + convocante.apellidos;
         const temas = listTemas.map((tema) => ({
             descripcion: tema.data,
-            idTemaReunion: tema.idTema,
             acuerdos: tema.acuerdos.map((acuerdo) => ({
                 descripcion: acuerdo.data,
                 fechaObjetivo: acuerdo.date,
                 responsables: acuerdo.responsables.map(responsable => ({
-                    idResponsableAcuerdo: responsable.idUsuario,
                     idUsuarioXRolXProyecto: responsable.idUsuarioRolProyecto
                 }))
             }))
         }));
-        console.log('Temas', temas);
-        console.log(listTemas);
         const participantes = participantsList.map(participante => ({
             idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
-            asistio: participante.asistio ?? false,
+            asistio: true,
         }));
         const comentarios = listComentarios.map((comentario) => ({ 
             //...comentario,
@@ -477,45 +477,45 @@ export default function editarActaReunion(props) {
 
         // Convert the meeting object to JSON format
         const meetingJSON = JSON.stringify(meetingLine, null, 2);
-        console.log("Id de esta Linea: ", actaReunion.lineaActaReunion.idLineaActaReunion);
         // Now you can save meetingJSON to a file or send it in a request
         console.log(meetingJSON);
-        console.log("Seleccionados: ",participantsList);
-        console.log('id de Linea de acta reunion:', idLineaActaReunion);
-        console.log("Titulo de Reunion: ", nombreReunion);
-        console.log("Convocante de Reunion: ", nombreConvocante);
-        console.log("Fecha de Reunion: ", fechaReunion);
-        console.log("Hora de Reunion: ", horaReunion);
-        console.log("Motivo de Reunion: ", motivo);
-        console.log("Participantes: ", participantes);
-        console.log("Temas de Reunion: ", listTemas);
-        
+
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                idLineaActaReunion: idLineaActaReunion
+            }
+        });
+
         axios
-            .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/modificarLineaActaReunion",
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/crearLineaActaReunion",
                 {
-                    idLineaActaReunion: idLineaActaReunion,
+                    idActaReunion: idActa,
                     nombreReunion: nombreReunion,
                     fechaReunion: fechaReunion,
                     horaReunion: horaReunion,
                     nombreConvocante: nombreConvocante,
+
                     motivo: motivo,
                     temas: temas,
                     participantes: participantes,
                     comentarios: comentarios,
+
                 }
             )
             .then(function (response) {
                 console.log(response);
-                console.log("Se actualizó el Acta de Reunión correctamente");
-                router.back();
+                console.log("Conexion correcta");
             })
             .catch(function (error) {
-                console.log(error.response);
+                console.log(error);
             });
             
     };
-
+    const actualHref = '/dashboard/'+ projectName + '=' + projectId + '/actaReunion';
 // *********************************************************************************************
 // Página
 // *********************************************************************************************
@@ -807,7 +807,7 @@ export default function editarActaReunion(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     saveMeetingChanges();
-                                    //router.back();
+                                    router.push(actualHref);
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
