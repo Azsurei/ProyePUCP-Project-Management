@@ -15,113 +15,191 @@ import {
     Chip,
     Tooltip,
     getKeyValue,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    Button,
 } from "@nextui-org/react";
-
-const dataFromApi = [
-    {
-        idRol: 1,
-        nombreRol: "ROL1",
-        idEntregable: 1,
-        nombreEntregable: "Entregable 1",
-        idResponsabilidad: 1,
-        nombreResponsabilidad: "Aprueba",
-    },
-    {
-        idRol: 2,
-        nombreRol: "ROL2",
-        idEntregable: 1,
-        nombreEntregable: "Entregable 1",
-        idResponsabilidad: 1,
-        nombreResponsabilidad: "Aprueba",
-    },
-    {
-        idRol: 3,
-        nombreRol: "ROL3",
-        idEntregable: 1,
-        nombreEntregable: "Entregable 1",
-        idResponsabilidad: 1,
-        nombreResponsabilidad: "Aprueba",
-    },
-    {
-        idRol: 4,
-        nombreRol: "ROL4",
-        idEntregable: 1,
-        nombreEntregable: "Entregable 1",
-        idResponsabilidad: 2,
-        nombreResponsabilidad: "Se le informa",
-    },
-    {
-        idRol: 1,
-        nombreRol: "ROL1",
-        idEntregable: 2,
-        nombreEntregable: "Entregable 2",
-        idResponsabilidad: 2,
-        nombreResponsabilidad: "Se le informa",
-    },
-    {
-        idRol: 2,
-        nombreRol: "ROL2",
-        idEntregable: 2,
-        nombreEntregable: "Entregable 2",
-        idResponsabilidad: 1,
-        nombreResponsabilidad: "Aprueba",
-    },
-    {
-        idRol: 3,
-        nombreRol: "ROL3",
-        idEntregable: 2,
-        nombreEntregable: "Entregable 2",
-        idResponsabilidad: 1,
-        nombreResponsabilidad: "Aprueba",
-    },
-    {
-        idRol: 4,
-        nombreRol: "ROL4",
-        idEntregable: 2,
-        nombreEntregable: "Entregable 2",
-        idResponsabilidad: 1,
-        nombreResponsabilidad: "Aprueba",
-    },
-];
-
-const roles = Array.from(new Set(dataFromApi.map((item) => item.nombreRol)));
-const entregables = Array.from(
-    new Set(dataFromApi.map((item) => item.nombreEntregable))
-);
-
-console.log("Roles", roles);
-console.log("Entregables", entregables);
-
-const columns = [
-    { name: "Entregables", uid: "entregable" },
-    ...roles.map((role) => ({ name: role, uid: role.toLowerCase() })),
-];
-
-const rows = entregables.map((entregable, index) => {
-    const row = {
-        id: index,
-        entregable,
-    };
-    roles.forEach((role) => {
-        const dataForRoleAndEntregable = dataFromApi.find(
-            (item) =>
-                item.nombreRol === role && item.nombreEntregable === entregable
-        );
-        row[role.toLowerCase()] = dataForRoleAndEntregable
-            ? dataForRoleAndEntregable.nombreResponsabilidad
-            : ""; // Asegúrate de ajustar esto según la propiedad correcta en tus datos
-    });
-    return row;
-});
 
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const [dataFromApi, setDataFromApi] = useState([
+        {
+            idRol: 1,
+            nombreRol: "ROL1",
+            idEntregable: 1,
+            nombreEntregable: "Entregable 1",
+            idResponsabilidad: 1,
+            nombreResponsabilidad: "Aprueba",
+            letraResponsabilidad: "A",
+            colorResponsabilidad: "bg-blue-600",
+        },
+        {
+            idRol: 2,
+            nombreRol: "ROL2",
+            idEntregable: 1,
+            nombreEntregable: "Entregable 1",
+            idResponsabilidad: 1,
+            nombreResponsabilidad: "Aprueba",
+            letraResponsabilidad: "A",
+            colorResponsabilidad: "bg-blue-600",
+        },
+        {
+            idRol: 3,
+            nombreRol: "ROL3",
+            idEntregable: 1,
+            nombreEntregable: "Entregable 1",
+            idResponsabilidad: 1,
+            nombreResponsabilidad: "Aprueba",
+            letraResponsabilidad: "A",
+            colorResponsabilidad: "bg-blue-600",
+        },
+        {
+            idRol: 4,
+            nombreRol: "ROL4",
+            idEntregable: 1,
+            nombreEntregable: "Entregable 1",
+            idResponsabilidad: 2,
+            nombreResponsabilidad: "Se le informa",
+            letraResponsabilidad: "I",
+            colorResponsabilidad: "bg-red-600",
+        },
+        {
+            idRol: 1,
+            nombreRol: "ROL1",
+            idEntregable: 2,
+            nombreEntregable: "Entregable 2",
+            idResponsabilidad: 2,
+            nombreResponsabilidad: "Se le informa",
+            letraResponsabilidad: "I",
+            colorResponsabilidad: "bg-red-600",
+        },
+        {
+            idRol: 2,
+            nombreRol: "ROL2",
+            idEntregable: 2,
+            nombreEntregable: "Entregable 2",
+            idResponsabilidad: 1,
+            nombreResponsabilidad: "Aprueba",
+            letraResponsabilidad: "A",
+            colorResponsabilidad: "bg-blue-600",
+        },
+        {
+            idRol: 3,
+            nombreRol: "ROL3",
+            idEntregable: 2,
+            nombreEntregable: "Entregable 2",
+            idResponsabilidad: 1,
+            nombreResponsabilidad: "Aprueba",
+            letraResponsabilidad: "A",
+            colorResponsabilidad: "bg-blue-600",
+        },
+        {
+            idRol: 4,
+            nombreRol: "ROL4",
+            idEntregable: 2,
+            nombreEntregable: "Entregable 2",
+            idResponsabilidad: 1,
+            nombreResponsabilidad: "Aprueba",
+            letraResponsabilidad: "A",
+            colorResponsabilidad: "bg-blue-600",
+        },
+    ]);
+
+    const roles = Array.from(
+        new Set(dataFromApi.map((item) => item.nombreRol))
+    );
+    const entregables = Array.from(
+        new Set(dataFromApi.map((item) => item.nombreEntregable))
+    );
+    const responsabilidadesMap = new Map();
+    dataFromApi.forEach((item) => {
+        responsabilidadesMap.set(item.idResponsabilidad, {
+            id: item.idResponsabilidad,
+            nombre: item.nombreResponsabilidad,
+            letra: item.letraResponsabilidad,
+            color: item.colorResponsabilidad,
+        });
+    });
+
+    const responsabilidades = Array.from(responsabilidadesMap.values());
+
+    console.log("Roles", roles);
+    console.log("Entregables", entregables);
+    console.log("Responsabilidades", responsabilidades);
+
+    const columns = [
+        { name: "Entregables", uid: "entregable" },
+        ...roles.map((role) => ({ name: role, uid: role.toLowerCase() })),
+    ];
+
+    const rows = entregables.map((entregable, index) => {
+        const row = {
+            id: index,
+            entregable,
+        };
+        roles.forEach((role) => {
+            const dataForRoleAndEntregable = dataFromApi.find(
+                (item) =>
+                    item.nombreRol === role &&
+                    item.nombreEntregable === entregable
+            );
+            row[role.toLowerCase()] = dataForRoleAndEntregable
+                ? dataForRoleAndEntregable.letraResponsabilidad
+                : ""; // Asegúrate de ajustar esto según la propiedad correcta en tus datos
+        });
+        return row;
+    });
+
+    const getColorForResponsabilidad = (letraResponsabilidad) => {
+        const responsabilidad = responsabilidades.find(
+            (item) => item.letra === letraResponsabilidad
+        );
+        return responsabilidad ? responsabilidad.color : "";
+    };
     const renderCell = React.useCallback((user, columnKey) => {
+        const cellValue = user[columnKey];
+        const color = getColorForResponsabilidad(cellValue);
         switch (columnKey) {
             case "entregable":
-                return user[columnKey];
+                return cellValue;
             default:
-                return user[columnKey];
+                return (
+                    <>
+                        {/*                         <div className={`${color} cursor-pointer`}>
+                            {cellValue}
+                        </div> */}
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button
+                                    variant="bordered"
+                                    className={`${color}`}
+                                >
+                                    {cellValue}
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Dynamic Actions"
+                                items={responsabilidades}
+                                variant="flat"
+                            >
+                                {(item) => (
+                                    <DropdownItem key={item.id}>
+                                        <div className="flex">
+                                            <div className="inline w-1/4">
+                                                {item.letra}
+                                            </div>
+                                            <div className="inline w-3/4">
+                                                {item.nombre}
+                                            </div>
+                                        </div>
+                                    </DropdownItem>
+                                )}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </>
+                );
         }
     }, []);
 
@@ -138,14 +216,12 @@ export default function MatrizDeResponsabilidades(props) {
             <Table
                 aria-label="Example table with custom cells"
                 className="px-[1rem]"
-                removeWrapper
             >
                 <TableHeader columns={columns}>
                     {(column) => (
                         <TableColumn
                             key={column.uid}
-                            align="start"
-                            className="bg-blue-600 text-white"
+                            className="bg-blue-600 text-white text-center"
                         >
                             {column.name}
                         </TableColumn>
@@ -155,7 +231,7 @@ export default function MatrizDeResponsabilidades(props) {
                     {(item) => (
                         <TableRow key={item.id}>
                             {(columnKey) => (
-                                <TableCell>
+                                <TableCell className="text-center">
                                     {renderCell(item, columnKey)}
                                 </TableCell>
                             )}
