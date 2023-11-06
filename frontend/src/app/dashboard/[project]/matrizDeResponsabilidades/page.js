@@ -213,7 +213,7 @@ export default function MatrizDeResponsabilidades(props) {
                             <DropdownTrigger>
                                 <Button
                                     variant="bordered"
-                                    className={`${color}`}
+                                    className={`transition-transform ${color} hover:shadow-md hover:scale-105`}
                                 >
                                     {cellValue}
                                 </Button>
