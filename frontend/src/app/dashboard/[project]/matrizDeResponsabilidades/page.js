@@ -107,36 +107,26 @@ export default function MatrizDeResponsabilidades(props) {
         },
     ]);
 
+    const [roles, setRoles] = useState([
+        { id: 1, nombre: "ROL1" },
+        { id: 2, nombre: "ROL2" },
+        { id: 3, nombre: "ROL3" },
+        { id: 4, nombre: "ROL4" },
+    ]);
+    const [entregables, setEntregables] = useState([
+        { id: 1, nombre: "Entregable 1" },
+        { id: 2, nombre: "Entregable 2" },
+    ]);
+    const [responsabilidades, setResponsabilidades] = useState([
+        { id: 1, nombre: "Aprueba", letra: "A", color: "bg-blue-600" },
+        { id: 2, nombre: "Se le informa", letra: "I", color: "bg-red-600" },
+        { id: 3, nombre: "Participa", letra: "P", color: "bg-purple-600" },
+        // Agrega más responsabilidades según tus necesidades
+    ]);
+
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
-
-    const rolesMap = new Map();
-    const entregablesMap = new Map();
-    const responsabilidadesMap = new Map();
-    
-    dataFromApi.forEach((item) => {
-        rolesMap.set(item.idRol, {
-            id: item.idRol,
-            nombre: item.nombreRol,
-        });
-    
-        entregablesMap.set(item.idEntregable, {
-            id: item.idEntregable,
-            nombre: item.nombreEntregable,
-        });
-    
-        responsabilidadesMap.set(item.idResponsabilidad, {
-            id: item.idResponsabilidad,
-            nombre: item.nombreResponsabilidad,
-            letra: item.letraResponsabilidad,
-            color: item.colorResponsabilidad,
-        });
-    });
-    
-    const roles = Array.from(rolesMap.values());
-    const entregables = Array.from(entregablesMap.values());
-    const responsabilidades = Array.from(responsabilidadesMap.values());
 
     console.log("Roles", roles);
     console.log("Entregables", entregables);
@@ -144,7 +134,7 @@ export default function MatrizDeResponsabilidades(props) {
 
     const columns = [
         { name: "Entregables", uid: "entregable" },
-        ...roles.map((role) => ({ name: role.nombre, uid: role.nombre})),
+        ...roles.map((role) => ({ name: role.nombre, uid: role.nombre })),
     ];
 
     const rows = entregables.map((entregable, index) => {
@@ -194,18 +184,19 @@ export default function MatrizDeResponsabilidades(props) {
     };
 
     const renderCell = React.useCallback((user, columnKey) => {
-        console.log("El key de la columna es:",columnKey);
+        console.log("El key de la columna es:", columnKey);
         const cellValue = user[columnKey];
         const color = getColorForResponsabilidad(cellValue);
-        const idEntregable = entregables.find((item) => item.nombre === user.entregable).id;
-        console.log("El id del entregable es:",idEntregable);
+        const idEntregable = entregables.find(
+            (item) => item.nombre === user.entregable
+        ).id;
+        console.log("El id del entregable es:", idEntregable);
         let idRol;
-        if(columnKey !== "entregable"){
+        if (columnKey !== "entregable") {
             idRol = roles.find((item) => item.nombre === columnKey).id;
-        }else{
+        } else {
             idRol = -1;
         }
-
 
         switch (columnKey) {
             case "entregable":
@@ -232,7 +223,13 @@ export default function MatrizDeResponsabilidades(props) {
                                     <DropdownItem
                                         key={item.letra}
                                         textValue={item.nombre}
-                                        onPress={() => changeCell(idRol,idEntregable,item)}
+                                        onPress={() =>
+                                            changeCell(
+                                                idRol,
+                                                idEntregable,
+                                                item
+                                            )
+                                        }
                                     >
                                         <div className="flex">
                                             <div className="inline w-1/4">
@@ -253,7 +250,9 @@ export default function MatrizDeResponsabilidades(props) {
 
     return (
         <>
-            <div className="px-[1rem]">Inicio/Proyectos/Proyecto/Matriz de responsabilidades</div>
+            <div className="px-[1rem]">
+                Inicio/Proyectos/Proyecto/Matriz de responsabilidades
+            </div>
             <div className="text-[#172B4D] font-semibold text-[2rem] my-[0.5rem] px-[1rem]">
                 Matriz de responsabilidades
             </div>
