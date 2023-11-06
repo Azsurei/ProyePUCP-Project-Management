@@ -253,8 +253,8 @@ export default function MatrizDeResponsabilidades(props) {
 
     return (
         <>
-            <div>Inicio/Proyectos/Proyecto/Matriz de responsabilidades</div>
-            <div className="text-[#172B4D] font-semibold text-[2rem] my-[0.5rem]">
+            <div className="px-[1rem]">Inicio/Proyectos/Proyecto/Matriz de responsabilidades</div>
+            <div className="text-[#172B4D] font-semibold text-[2rem] my-[0.5rem] px-[1rem]">
                 Matriz de responsabilidades
             </div>
             <Table
