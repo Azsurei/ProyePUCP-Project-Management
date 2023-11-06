@@ -14,58 +14,44 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
 
 export default function ActaReunion(props) {
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
     const [reuniones, setReuniones] = useState({ pendientes: [], finalizadas: [] });
+    const router = useRouter();
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const [idActa, setidActa] = useState(null);
+    const [idActa, setIdActa] = useState(null); // Use camelCase for consistency
 
-
-// *********************************************************************************************
-// Searching Meeting Record ID
-// *********************************************************************************************
-
+    // Searching Meeting Record ID
     useEffect(() => {
         setIsLoadingSmall(true);
-        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+'/api/proyecto/actaReunion/listarActaReunionXIdProyecto/'+projectId;
+        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
         axios
             .get(stringURL)
             .then(({ data: { data: { idActaReunion } } }) => {
                 console.log("Listando ActasReunion. Respuesta del servidor:", idActaReunion);
-                setidActa(idActaReunion);
+                setIdActa(idActaReunion);
             })
             .catch((error) => {
                 console.error("Error fetching meeting record ID:", error);
+            })
+            .finally(() => {
+                setIsLoadingSmall(false);
             });
     }, [setIsLoadingSmall, projectId]);
 
     useEffect(() => {
         if (idActa) {
-            (async () => {
+            const fetchData = async () => {
+                setIsLoadingSmall(true);
                 try {
-                    setIsLoadingSmall(true);
-                    const resultado = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/${idActa}`, {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                    const resultado = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/${idActa}`);
                     const lineasActaReunion = resultado.data.lineasActaReunion;
                     console.log(lineasActaReunion);
 
-                    const pendientes = [];
-                    const finalizadas = [];
-                    const fechaActual = new Date();
-
-                    lineasActaReunion.forEach(reunion => {
-                        const fechaReunion = new Date(reunion.fechaReunion);
-                        if (fechaReunion >= fechaActual) {
-                            pendientes.push(reunion);
-                        } else {
-                            finalizadas.push(reunion);
-                        }
-                    });
+                    const pendientes = lineasActaReunion.filter(reunion => new Date(reunion.fechaReunion) >= new Date());
+                    const finalizadas = lineasActaReunion.filter(reunion => new Date(reunion.fechaReunion) < new Date());
                     setReuniones({ pendientes, finalizadas });
 
                 } catch (error) {
@@ -73,11 +59,12 @@ export default function ActaReunion(props) {
                 } finally {
                     setIsLoadingSmall(false);
                 }
-            })();
+            };
+
+            fetchData();
         }
     }, [idActa, setIsLoadingSmall]);
 
-    const router = useRouter();
     const handleEdit = (reunion) => {
 
         const idAR = reunion.idLineaActaReunion;
@@ -114,53 +101,55 @@ export default function ActaReunion(props) {
             : reunion.participantesXReunion ? [reunion.participantesXReunion] : [];
         return (
 
-                <div
-                    key={reunion.idLineaActaReunion}
-                    className="flex flex-wrap items-start my-4 space-x-4 justify-center">
-                    <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
-                        <CardHeader className="p-4">
-                            <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
-                        </CardHeader>
-                        <Divider />
-                        <CardBody className="flex-row justify-between items-center h-36">
-                            <div className="mr-4">
-                                <p className="text-blue-900 montserrat">Reunión convocada por:</p>
-                                <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
-                                <p className="text-gray-700 montserrat">Fecha: {new Date(reunion.fechaReunion).toLocaleDateString()}</p>
-                                <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
-                            </div>
-                            {participantes.length > 0 && (
-                                <>
-                                    <Divider orientation="vertical" />
-                                    <div className="flex text-gray-700 montserrat">Convocados :   </div>
-                                    <AvatarGroup isBordered max={3} >
-                                        {participantes.map((participante, index) => (
-                                            <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
-                                                <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
-                                                    {participante.nombres[0] + participante.apellidos[0]}
-                                                </p>
-                                            } />
-                                        ))}
-                                    </AvatarGroup>
-                                </>
-                            )}
-                        </CardBody>
-                    </Card>
-                    <div className="flex flex-col space-y-10 mt-10">
-                        <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
-                        <Modal
-                            nameButton="Eliminar"
-                            textHeader="Eliminar reunion"
-                            textBody="¿Seguro que quiere eliminar esta reunion?"
-                            colorButton="w-36 bg-red-600 text-white font-semibold"
-                            oneButton={false}
-                            secondAction={() => {
-                                handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
-                            }}
-                            textColor="red"
-                        />
-                    </div>
-                </div>
+            <div
+                key={reunion.idLineaActaReunion}
+                className="flex flex-wrap items-start my-4 space-x-4 justify-center">
+                <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
+                    <CardHeader className="p-4">
+                        <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody className="flex-row justify-between items-center h-36">
+                        <div className="mr-4">
+                            <p className="text-blue-900 montserrat">Reunión convocada por:</p>
+                            <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
+                            <p className="text-gray-700 montserrat">Fecha: {new Date(reunion.fechaReunion).toLocaleDateString()}</p>
+                            <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
+                        </div>
+                        {participantes.length > 0 && (
+                            <>
+                                <Divider orientation="vertical" />
+                                <div className="flex text-gray-700 montserrat">Convocados :   </div>
+                                <AvatarGroup isBordered max={3} >
+                                    {participantes.map((participante, index) => (
+                                        <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
+                                            <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
+                                                {participante.nombres[0] + participante.apellidos[0]}
+                                            </p>
+                                        } />
+                                    ))}
+                                </AvatarGroup>
+                                <Divider orientation="vertical" />
+                                <div className="flex flex-col space-y-2 mt-0.5">
+                                    <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
+                                    <Modal
+                                        nameButton="Eliminar"
+                                        textHeader="Eliminar reunion"
+                                        textBody="¿Seguro que quiere eliminar esta reunion?"
+                                        colorButton="w-36 bg-red-600 text-white font-semibold"
+                                        oneButton={false}
+                                        secondAction={() => {
+                                            handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
+                                        }}
+                                        textColor="red"
+                                    />
+                                </div>
+                            </>
+                        )}
+                    </CardBody>
+                </Card>
+
+            </div>
 
 
         );
