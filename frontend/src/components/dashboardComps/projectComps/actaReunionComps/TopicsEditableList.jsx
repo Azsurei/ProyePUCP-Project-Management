@@ -71,7 +71,7 @@ function EditableTopic(props) {
         <li className="EditableTopic">
             <div className="topicContainer">
                 <p className="newInputEntrName">
-                    {props.number}. 
+                    Tema.
                 </p>
                 <div className="inputAndDeleteContainer">
                     <Textarea
