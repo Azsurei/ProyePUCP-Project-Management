@@ -82,7 +82,7 @@ export default function ActaReunion(props) {
 
         const idAR = reunion.idLineaActaReunion;
 
-        router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion/e?edit='+ idAR);
+        router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion/e?edit='+ idAR + '&' + 'acta=' + idActa);
     };
 
     const handleDelete = async (id) => {
