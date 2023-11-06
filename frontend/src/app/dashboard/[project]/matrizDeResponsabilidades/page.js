@@ -107,14 +107,21 @@ export default function MatrizDeResponsabilidades(props) {
         },
     ]);
 
-    const roles = Array.from(
-        new Set(dataFromApi.map((item) => item.nombreRol))
-    );
-    const entregables = Array.from(
-        new Set(dataFromApi.map((item) => item.nombreEntregable))
-    );
+    const rolesMap = new Map();
+    const entregablesMap = new Map();
     const responsabilidadesMap = new Map();
+    
     dataFromApi.forEach((item) => {
+        rolesMap.set(item.idRol, {
+            id: item.idRol,
+            nombre: item.nombreRol,
+        });
+    
+        entregablesMap.set(item.idEntregable, {
+            id: item.idEntregable,
+            nombre: item.nombreEntregable,
+        });
+    
         responsabilidadesMap.set(item.idResponsabilidad, {
             id: item.idResponsabilidad,
             nombre: item.nombreResponsabilidad,
@@ -122,7 +129,9 @@ export default function MatrizDeResponsabilidades(props) {
             color: item.colorResponsabilidad,
         });
     });
-
+    
+    const roles = Array.from(rolesMap.values());
+    const entregables = Array.from(entregablesMap.values());
     const responsabilidades = Array.from(responsabilidadesMap.values());
 
     console.log("Roles", roles);
@@ -131,21 +140,21 @@ export default function MatrizDeResponsabilidades(props) {
 
     const columns = [
         { name: "Entregables", uid: "entregable" },
-        ...roles.map((role) => ({ name: role, uid: role.toLowerCase() })),
+        ...roles.map((role) => ({ name: role.nombre, uid: role.nombre})),
     ];
 
     const rows = entregables.map((entregable, index) => {
         const row = {
             id: index,
-            entregable,
+            entregable: entregable.nombre,
         };
         roles.forEach((role) => {
             const dataForRoleAndEntregable = dataFromApi.find(
                 (item) =>
-                    item.nombreRol === role &&
-                    item.nombreEntregable === entregable
+                    item.nombreRol === role.nombre &&
+                    item.nombreEntregable === entregable.nombre
             );
-            row[role.toLowerCase()] = dataForRoleAndEntregable
+            row[role.nombre] = dataForRoleAndEntregable
                 ? dataForRoleAndEntregable.letraResponsabilidad
                 : ""; // Asegúrate de ajustar esto según la propiedad correcta en tus datos
         });
@@ -158,18 +167,48 @@ export default function MatrizDeResponsabilidades(props) {
         );
         return responsabilidad ? responsabilidad.color : "";
     };
+
+    const changeCell = (idRol, idEntregable, item) => {
+        // Crea una copia del arreglo dataFromApi
+        const updatedData = [...dataFromApi];
+
+        // Encuentra el índice del objeto que deseas actualizar
+        const rowIndex = updatedData.findIndex(
+            (data) => data.idRol === idRol && data.idEntregable === idEntregable
+        );
+
+        // Si se encontró el índice, actualiza la propiedad letraResponsabilidad
+        if (rowIndex !== -1) {
+            updatedData[rowIndex].letraResponsabilidad = item.letra;
+            updatedData[rowIndex].colorResponsabilidad = item.color;
+            updatedData[rowIndex].nombreResponsabilidad = item.nombre;
+            updatedData[rowIndex].idResponsabilidad = item.id;
+        }
+
+        // Actualiza el estado con el nuevo arreglo
+        setDataFromApi(updatedData);
+    };
+
     const renderCell = React.useCallback((user, columnKey) => {
+        console.log("El key de la columna es:",columnKey);
         const cellValue = user[columnKey];
         const color = getColorForResponsabilidad(cellValue);
+        const idEntregable = entregables.find((item) => item.nombre === user.entregable).id;
+        console.log("El id del entregable es:",idEntregable);
+        let idRol;
+        if(columnKey !== "entregable"){
+            idRol = roles.find((item) => item.nombre === columnKey).id;
+        }else{
+            idRol = -1;
+        }
+
+
         switch (columnKey) {
             case "entregable":
                 return cellValue;
             default:
                 return (
                     <>
-                        {/*                         <div className={`${color} cursor-pointer`}>
-                            {cellValue}
-                        </div> */}
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button
@@ -183,9 +222,14 @@ export default function MatrizDeResponsabilidades(props) {
                                 aria-label="Dynamic Actions"
                                 items={responsabilidades}
                                 variant="flat"
+                                disabledKeys={cellValue}
                             >
                                 {(item) => (
-                                    <DropdownItem key={item.id}>
+                                    <DropdownItem
+                                        key={item.letra}
+                                        textValue={item.nombre}
+                                        onPress={() => changeCell(idRol,idEntregable,item)}
+                                    >
                                         <div className="flex">
                                             <div className="inline w-1/4">
                                                 {item.letra}
