@@ -3,8 +3,7 @@ import TextInfoCard from "@/components/dashboardComps/projectComps/appConstComps
 import ButtonPanel from "@/components/dashboardComps/projectComps/appConstComps/ButtonPanel";
 import Button from "@/components/dashboardComps/projectComps/appConstComps/Button";
 import Link from "next/link";
-
-
+import { Toaster, toast } from "sonner";
 import React, { useState, useEffect, useReducer, useContext } from "react";
 import AddIcon from "@/components/dashboardComps/projectComps/appConstComps/AddIcon.svg";
 import EditIcon from "../../../../../../public/images/EditIcon.svg";
@@ -33,7 +32,9 @@ import {Input} from "@nextui-org/react";
 import { flushSync } from "react-dom";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { set } from "date-fns";
+import { SessionContext } from "../../../layout";
 
+import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
 
 function DetailCard({
     detail,
@@ -122,6 +123,9 @@ export default function Info(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
+
+
+
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     // Manejando la carga de la lista de detalles de acta de constitucion
@@ -143,9 +147,17 @@ export default function Info(props) {
     const [fieldToDelete, setFieldToDelete] = useState(null);
 
     const { 
-        isOpen: isModalPlantilla, 
-        onOpen: onModalPlantilla, 
-        onOpenChange: onModalPlantillaChange 
+        isOpen: isModalSavePlantilla, 
+        onOpen: onSaveModalPlantilla, 
+        onOpenChange: onModaSavePlantillaChange 
+    
+    
+    } = useDisclosure();
+
+    const { 
+        isOpen: isModalPlantillas, 
+        onOpen: onModalPlantillas, 
+        onOpenChange: onModalPlantillasChange 
     
     
     } = useDisclosure();
@@ -201,6 +213,79 @@ export default function Info(props) {
                 console.log(error);
             });
     };
+
+
+    //Guardar Plantilla de AC
+
+    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // La función que recibiría la plantilla seleccionada
+    const handlePlantillaSelection = (plantilla) => {
+      setSelectedPlantilla(plantilla);
+    };
+    
+    const [nombrePlantilla, setNombrePlantilla] = useState("");
+    const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
+    const [IdUsuario, setIdUsuario] = useState("");
+
+    //obtener idUsuario
+    const {sessionData} = useContext(SessionContext);
+    useEffect(() => {
+        setIdUsuario(sessionData.idUsuario);
+    }, []);
+
+    const savePlantilla = () => {
+
+        return new Promise((resolve, reject) => {
+        //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
+        setIsLoadingSmall(true);
+        const updateURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/guardarPlantilla";
+        axios
+            .put(updateURL, {
+                //Se guardar los nombres en la Tabla: PlantillaACDato
+                //Tambien se deberia guardar el Nombre de la Plantilla
+                actaData: detailEdited,
+                nombrePlantilla: nombrePlantilla,
+                idUsuario: IdUsuario,
+            })
+            .then((response) => {
+                console.log(response.data.message);
+                setDetails([...detailEdited]);
+                setEditActive(false);
+                resolve(response);
+
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+                reject(error);
+            });
+
+        });
+    };
+
+    const guardarPlantillaNueva = async () => {
+        try {
+            toast.promise(savePlantilla, {
+                loading: "Guardando Plantilla Nueva...",
+                success: (data) => {
+                    DataTable();
+                    return "La plantilla se agregó con éxito!";
+                    
+                },
+                error: "Error al agregar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        } 
+    };
+
+
+    //Fin Plantilla AC
 
     const handleAddField = () => {
         setEditActive(false);
@@ -305,12 +390,18 @@ export default function Info(props) {
     };
 
 
-    const [nombrePlantilla, setNombrePlantilla] = useState("");
-    const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
+
     return (
         <div className="ACInfoContainer">
-
-            {<Modal size="md" isOpen={isModalPlantilla} onOpenChange={onModalPlantillaChange}>
+            <Toaster 
+                richColors 
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+                />
+            
+            {<Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModaSavePlantillaChange}>
                     <ModalContent>
                         {(onClose) => {
                         const finalizarModal = async () => {
@@ -322,8 +413,9 @@ export default function Info(props) {
                             }
 
                             if(Isvalid === true){
+                                console.log("IdUsuario: "+ sessionData.idUsuario);
                                 try {
-                                    //await guardarPlantilla();
+                                    await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
                                     
@@ -374,9 +466,8 @@ export default function Info(props) {
                                   
 
                             <ModalFooter>
-                                <Button
-                                className="text-white"
-                                variant="light"
+                                <NextUIButton
+                                color="danger" variant="light" 
    
                                 onClick={() => {
                                     onClose(); // Cierra el modal
@@ -384,19 +475,18 @@ export default function Info(props) {
                                     setValidNombrePlantilla(true);
   
                                 }}
-                                style={{ color: "#EA541D" }}
+                            
                                 >
                                 Cancelar
                                 
-                                </Button>
-                                <Button
-                                style={{ backgroundColor: "#e74c3c" }}
-                                appearance="primary"
-                                className="text-white"
+                                </NextUIButton>
+                                <NextUIButton
+                                color="primary"
+                                
                                 onClick={finalizarModal}
                                 >
-                                Seleccionar
-                                </Button>
+                                Guardar Plantilla
+                                </NextUIButton>
                             </ModalFooter>
                             </>
                         );
@@ -404,6 +494,19 @@ export default function Info(props) {
                     </ModalContent>
             </Modal>
             }
+
+        <ModalPlantilla
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)} // Cierra el modal cuando sea necesario
+            onPlantillaSelect={(plantilla) => {
+            // Realiza acciones con la plantilla seleccionada
+            //usarPlantilla(plantilla);
+            console.log("Plantilla seleccionada:", plantilla);
+            }}
+        />
+
+
+
 
             {!isEditActive ? (
                 <ButtonPanel margin="10px 0 15px" align="right">
@@ -443,7 +546,7 @@ export default function Info(props) {
                         appearance="primary"
                         state="default"
                         spacing="compact"
-                        onClick={onModalPlantilla}
+                        onClick={onSaveModalPlantilla}
                     >
                         <div>
                             <SaveIcon />
@@ -451,19 +554,18 @@ export default function Info(props) {
                         </div>
                     </Button>
                     
-                    <Link href={"/dashboard/"+projectName+"="+projectId+"/actaConstitucion/info/plantillas"}>
                     <Button
                         appearance="primary"
                         state="default"
                         spacing="compact"
-                        
+                        onClick={() => setIsModalOpen(true)}
+
                     >
                         <div>
                             <ContentPasteGoIcon />
                             <div>Plantillas</div>
                         </div>
                     </Button>
-                    </Link>
                     
                 </ButtonPanel>
             ) : (

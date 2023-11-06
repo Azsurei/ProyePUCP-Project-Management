@@ -400,7 +400,7 @@ return (
 ))}
 
 <TableRow>
-  <TableCell className="conceptoCell" align="left">Total Egresos por Mes</TableCell>
+  <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
   {totalEgresosPorMes.map((total, index) => (
     <TableCell className="conceptoCell" key={index} align="left">
       {total}
@@ -411,7 +411,7 @@ return (
 <TableRow>
   <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
   {accumulatedTotals.map((total, index) => (
-    <TableCell className="Totales" key={index} align="left">
+    <TableCell className="conceptoCell" key={index} align="left">
       {total}
     </TableCell>
   ))}

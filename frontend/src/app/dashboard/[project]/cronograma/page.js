@@ -497,6 +497,7 @@ export default function Cronograma(props) {
                     selectedSubteam === null ? null : selectedSubteam.idEquipo,
                 idPadre: tareaPadre !== null ? tareaPadre.idTarea : null,
                 idTareaAnterior: null,
+                idSprint: 0,
                 sumillaTarea: tareaName,
                 descripcion: tareaDescripcion,
                 fechaInicio: fechaInicio,
