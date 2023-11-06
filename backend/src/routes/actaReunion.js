@@ -31,9 +31,8 @@ routerActaReunion.get("/listarParticipanteXReunionXIdActaReunion/:idActaReunion"
 routerActaReunion.post("/crearTemaReunion", temaReunionController.crear);
 routerActaReunion.get("/listarTemaReunionXIdLineaActaReunion/:idLineaActaReunion", temaReunionController.listarXIdLineaActaReunion);
 
-
 // Acuerdo
-routerActaReunion.post("/crearAcuerdo", actaReunionController.crear);
+routerActaReunion.post("/crearAcuerdo", acuerdoController.crear);
 routerActaReunion.get("/listarAcuerdoXIdTemaReunion/:idTemaReunion", acuerdoController.listarXIdTemaReunion);
 
 // Responsable acuerdo

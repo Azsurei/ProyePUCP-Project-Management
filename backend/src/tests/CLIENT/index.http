@@ -854,7 +854,7 @@ GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdActa
 Content-Type: application/json
 
 ###
-GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/52 HTTP/1.1
+GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/104 HTTP/1.1
 Content-Type: application/json
 
 ////////////////////////////

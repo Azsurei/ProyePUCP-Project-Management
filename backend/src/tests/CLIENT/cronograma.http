@@ -1,0 +1,152 @@
+###
+
+POST http://localhost:8080/api/proyecto/cronograma/insertarTarea HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idCronograma": 56,
+    "idTareaEstado": 2,
+    "idSubGrupo": 3,
+    "idPadre": 4,
+    "idTareaAnterior": 5,
+    "idSprint": 0,
+    "sumillaTarea": "Sumilla de la tarea",
+    "descripcion": "Descripción detallada de la tarea",
+    "fechaInicio": "2023-10-20",
+    "fechaFin": "2023-10-25",
+    "cantSubtareas": 2,
+    "cantPosteriores": 1,
+    "horasPlaneadas": 40,
+    "usuarios": [
+        {
+            "idUsuario": 77
+        },
+        {
+            "idUsuario": 78
+        }
+    ],
+    "subTareas": [
+        {
+            "idCronograma": 56,
+            "idTareaEstado": 2,
+            "idSubGrupo": 3,
+            "idPadre": 6,
+            "idTareaAnterior": null,
+            "idSprint": 0,
+            "sumillaTarea": "Subtarea 1",
+            "descripcion": "Descripción de la subtarea 1",
+            "fechaInicio": "2023-10-21",
+            "fechaFin": "2023-10-23",
+            "cantSubtareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 15,
+            "usuarios": [
+                {
+                    "idUsuario": 78
+                }
+            ]
+        }
+    ],
+    "tareasPosteriores": [
+        {
+            "idCronograma": 56,
+            "idTareaEstado": 2,
+            "idSubGrupo": 3,
+            "idPadre": 4,
+            "idTareaAnterior": 7,
+            "idSprint": 0,
+            "sumillaTarea": "Tarea posterior 1",
+            "descripcion": "Descripción de la tarea posterior 1",
+            "fechaInicio": "2023-10-26",
+            "fechaFin": "2023-10-28",
+            "cantSubtareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 10,
+            "usuarios": [
+                {
+                    "idUsuario": 78
+                }
+            ]
+        }
+    ]
+}
+
+
+###
+### CREAMOS TAREAS ASIGNADAS A UN SPRINT
+POST http://localhost:8080/api/proyecto/cronograma/insertarTarea HTTP/1.1
+Content-Type:  application/json
+
+{
+    "idCronograma": 56,
+    "idTareaEstado": 2,
+    "idSubGrupo": 3,
+    "idPadre": 4,
+    "idTareaAnterior": 5,
+    "idSprint": 5,
+    "sumillaTarea": "Sumilla de la tarea",
+    "descripcion": "Descripción detallada de la tarea ASIGNADA",
+    "fechaInicio": "2023-10-20",
+    "fechaFin": "2023-10-25",
+    "cantSubtareas": 2,
+    "cantPosteriores": 1,
+    "horasPlaneadas": 40,
+    "usuarios": [
+        {
+            "idUsuario": 77
+        },
+        {
+            "idUsuario": 78
+        }
+    ],
+    "subTareas": [
+        {
+            "idCronograma": 56,
+            "idTareaEstado": 2,
+            "idSubGrupo": 3,
+            "idPadre": 6,
+            "idTareaAnterior": null,
+            "idSprint": 5,
+            "sumillaTarea": "Subtarea 1",
+            "descripcion": "Descripción de la subtarea 1 ASIGNADA",
+            "fechaInicio": "2023-10-21",
+            "fechaFin": "2023-10-23",
+            "cantSubtareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 15,
+            "usuarios": [
+                {
+                    "idUsuario": 78
+                }
+            ]
+        }
+    ],
+    "tareasPosteriores": [
+        {
+            "idCronograma": 56,
+            "idTareaEstado": 2,
+            "idSubGrupo": 3,
+            "idPadre": 4,
+            "idTareaAnterior": 7,
+            "idSprint": 5,
+            "sumillaTarea": "Tarea posterior 1",
+            "descripcion": "Descripción de la tarea posterior 1 ASIGNADA",
+            "fechaInicio": "2023-10-26",
+            "fechaFin": "2023-10-28",
+            "cantSubtareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 10,
+            "usuarios": [
+                {
+                    "idUsuario": 78
+                }
+            ]
+        }
+    ]
+}
+
+//Se insertan distintas tareas asociadas al sprint 0
+// Se listan las tareas de todo el product backlog
+
+//Se inserta un sprint al product backlog 78 
+// Se insertan tareas al cronograma 56

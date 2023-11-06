@@ -131,6 +131,25 @@ END$
 ----------------------------------------------
 -- Sprints
 ----------------------------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_SPRINT;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_SPRINT(
+	IN  _idProductBacklog INT,
+    IN _descripcion VARCHAR(255),
+    IN _fechaInicio DATE,
+	IN _fechaFin DATE,
+    IN _estado INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+	DECLARE _idSprint INT;
+	INSERT INTO Sprint(idProductBacklog,descripcion,fechaInicio,fechaFin,estado,activo,nombre) 
+    VALUES(_idProductBacklog,_descripcion,_fechaInicio,_fechaFin,_estado,1,_nombre);
+    SET _idSprint = @@last_insert_id;
+    SELECT _idSprint AS idSprint;
+END$
+
+
 DROP PROCEDURE IF EXISTS LISTAR_SPRINTS_X_ID_BACKLOG;
 DELIMITER $
 CREATE PROCEDURE LISTAR_SPRINTS_X_ID_BACKLOG(
@@ -139,6 +158,28 @@ CREATE PROCEDURE LISTAR_SPRINTS_X_ID_BACKLOG(
 BEGIN
 	SELECT *FROM Sprint sp WHERE sp.idProductBacklog = _idProductBacklog AND sp.activo =1;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_ESTADO_SPRINT;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ESTADO_SPRINT(
+	IN _idSprint INT,
+    IN _idEstado INT
+)
+BEGIN
+	UPDATE Sprint SET idEstado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_SPRINT;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_SPRINT(
+	IN _idSprint INT
+)
+BEGIN
+	UPDATE Sprint SET activo = 0 WHERE idSPrint = _idSprint AND activo = 1;
+END$
+
+SELECT * FROM Sprint;
+
 ----------------------------------------------
 -- Epicas
 ----------------------------------------------
@@ -1128,12 +1169,13 @@ END$
 ---------------------------------------
 DROP PROCEDURE IF EXISTS INSERTAR_TAREA;
 DELIMITER $
-CREATE PROCEDURE INSERTAR_TAREA(
+CREATE DEFINER=`admin`@`%` PROCEDURE `INSERTAR_TAREA`(
 	IN _idCronograma INT,
     IN _idTareaEstado INT,
     IN _idEquipo INT,
     IN _idPadre INT,
     IN _idTareaAnterior INT,
+    IN _idSprint INT,
     IN _sumillaTarea VARCHAR(255),
     IN _descripcion VARCHAR(500),
     IN _fechaInicio DATE,
@@ -1141,15 +1183,25 @@ CREATE PROCEDURE INSERTAR_TAREA(
     IN _cantSubtareas INT,
     IN _cantPosteriores INT,
     IN _horasPlaneadas TIME,
-    IN _esPosterior TINYINT
+    IN _esPosterior TINYINT,
+    IN _idEntregable INT
 )
 BEGIN
 	DECLARE _idTarea INT;
-	INSERT INTO Tarea(idCronograma,idTareaEstado,idEquipo,idPadre,idTareaAnterior,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,fechaUltimaModificacionEstado,esPosterior,activo) 
-    VALUES(_idCronograma,_idTareaEstado,_idEquipo,_idPadre,_idTareaAnterior,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,curdate(),_esPosterior,1);		
+	DECLARE _posicionKanban INT;
+    SELECT COALESCE(MAX(posicionKanban), -1) + 1  INTO _posicionKanban
+	FROM Tarea T
+    LEFT JOIN Cronograma CR ON CR.idCronograma = T.idCronograma
+	WHERE CR.idCronograma = _idCronograma
+	AND T.activo = 1 AND T.esPosterior = 0 AND CR.activo = 1;
+    
+	SET _posicionKanban = CASE WHEN _esPosterior = 1 THEN NULL ELSE _posicionKanban END;
+    
+	INSERT INTO Tarea(idCronograma,idTareaEstado,idEquipo,idPadre,idTareaAnterior,idSprint,sumillaTarea,descripcion,fechaInicio,fechaFin,cantSubTareas,cantPosteriores,horasPlaneadas,fechaUltimaModificacionEstado,esPosterior,idEntregable, posicionKanban, idColumnaKanban, activo) 
+    VALUES(_idCronograma,_idTareaEstado,_idEquipo,_idPadre,_idTareaAnterior,_idSprint,_sumillaTarea,_descripcion,_fechaInicio,_fechaFin,_cantSubtareas,_cantPosteriores,_horasPlaneadas,curdate(),_esPosterior,_idEntregable, _posicionKanban, 0, 1);		
     SET _idTarea = @@last_insert_id;
     SELECT _idTarea AS idTarea;
-END $
+END$
 
 DROP PROCEDURE IF EXISTS LISTAR_TAREAS_X_ID_PROYECTO;
 DELIMITER $
@@ -1169,12 +1221,26 @@ CREATE PROCEDURE LISTAR_TAREAS_X_ID_SPRINT(
     IN _idSprint INT
 )
 BEGIN
-	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
     WHERE  t.idSprint = _idSprint
     AND t.activo=1;
 END$
 
+
+DROP PROCEDURE IF EXISTS LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(
+    IN _idCronograma INT
+)
+BEGIN
+	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
+    FROM Tarea t, TareaEstado te
+    WHERE  t.idCronograma = _idCronograma AND idSprint = 0
+    AND t.activo=1;
+END$
+
+CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(56);
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
 DROP PROCEDURE IF EXISTS MODIFICAR_TAREA;
@@ -1195,6 +1261,18 @@ BEGIN
     WHERE idTarea = _idTarea AND activo = 1;
 END$
 
+SELECT * FROM Tarea;
+
+DROP PROCEDURE IF EXISTS MODIFICAR_TAREA_ID_SPRINT;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_TAREA_ID_SPRINT(
+    IN _idTarea INT,
+	IN _idSprint INT
+)
+BEGIN
+	UPDATE Tarea SET idSprint = _idSprint
+    WHERE idTarea = _idTarea AND activo = 1;
+END$
 --------------------------
 -- Tarea Estado
 --------------------------
