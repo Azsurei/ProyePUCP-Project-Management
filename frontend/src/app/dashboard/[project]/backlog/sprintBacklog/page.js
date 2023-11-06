@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useContext, useEffect } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { SmallLoadingScreen, HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -27,165 +27,144 @@ import {
     Button,
     Chip,
     Divider,
-    Modal,
+    Modal,  
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
     useDisclosure,
 } from "@nextui-org/react";
-import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 
 axios.defaults.withCredentials = true;
 
-const dataSprints = [
-    {
-        id: 1,
-        nombre: "Sin Sprint",
-        descripcion: "Descripcion del sprint 3",
-        tareas: [
-            {
-                id: 9,
-                idSprint: 1,
-                sumilla: "Sumilla de tarea 9",
-                fechaInicio: "2021-09-18",
-                fechaFin: "2021-09-25",
-                estado: "No iniciado",
-            },
-            {
-                id: 10,
-                idSprint: 1,
-                sumilla: "Sumilla de tarea 10",
-                fechaInicio: "2021-09-18",
-                fechaFin: "2021-09-25",
-                estado: "No iniciado",
-            },
-        ],
-    },
-    {
-        id: 2,
-        nombre: "Sprint 1",
-        descripcion: "Descripcion del sprint 1",
-        fechaInicio: "2021-09-04",
-        fechaFin: "2021-09-11",
-        estado: "No iniciado",
-        tareas: [
-            {
-                id: 1,
-                idSprint: 2,
-                sumilla: "Sumilla de tarea 1",
-                fechaInicio: "2021-09-04",
-                fechaFin: "2021-09-11",
-                estado: "No iniciado",
-            },
-            {
-                id: 2,
-                idSprint: 2,
-                sumilla: "Sumilla de tarea 2",
-                fechaInicio: "2021-09-04",
-                fechaFin: "2021-09-11",
-                estado: "No iniciado",
-            },
-            {
-                id: 3,
-                idSprint: 2,
-                sumilla: "Sumilla de tarea 3",
-                fechaInicio: "2021-09-04",
-                fechaFin: "2021-09-11",
-                estado: "No iniciado",
-            },
-            {
-                id: 4,
-                idSprint: 2,
-                sumilla: "Sumilla de tarea 4",
-                fechaInicio: "2021-09-04",
-                fechaFin: "2021-09-11",
-                estado: "No iniciado",
-            },
-            {
-                id: 5,
-                idSprint: 2,
-                sumilla: "Sumilla de tarea 5",
-                fechaInicio: "2021-09-04",
-                fechaFin: "2021-09-11",
-                estado: "No iniciado",
-            },
-        ],
-    },
-    {
-        id: 3,
-        nombre: "Sprint 2",
-        descripcion: "Descripcion del sprint 2",
-        fechaInicio: "2021-09-11",
-        fechaFin: "2021-09-18",
-        estado: "No iniciado",
-        tareas: [
-            {
-                id: 6,
-                idSprint: 3,
-                sumilla: "Sumilla de tarea 6",
-                fechaInicio: "2021-09-11",
-                fechaFin: "2021-09-18",
-                estado: "No iniciado",
-            },
-            {
-                id: 7,
-                idSprint: 3,
-                sumilla: "Sumilla de tarea 7",
-                fechaInicio: "2021-09-11",
-                fechaFin: "2021-09-18",
-                estado: "No iniciado",
-            },
-            {
-                id: 8,
-                idSprint: 3,
-                sumilla: "Sumilla de tarea 8",
-                fechaInicio: "2021-09-11",
-                fechaFin: "2021-09-18",
-                estado: "No iniciado",
-            },
-        ],
-    },
-    {
-        id: 4,
-        nombre: "Sprint 3",
-        descripcion: "Descripcion del sprint 2",
-        fechaInicio: "2021-09-11",
-        fechaFin: "2021-09-18",
-        estado: "Completado",
-        tareas: [
-            {
-                id: 11,
-                idSprint: 4,    
-                sumilla: "Sumilla de tarea 6",
-                fechaInicio: "2021-09-11",
-                fechaFin: "2021-09-18",
-                estado: "No iniciado",
-            },
-            {
-                id: 12,
-                idSprint: 4,
-                sumilla: "Sumilla de tarea 7",
-                fechaInicio: "2021-09-11",
-                fechaFin: "2021-09-18",
-                estado: "No iniciado",
-            },
-            {
-                id: 13,
-                idSprint: 4,
-                sumilla: "Sumilla de tarea 8",
-                fechaInicio: "2021-09-11",
-                fechaFin: "2021-09-18",
-                estado: "No iniciado",
-            },
-        ],
-    },
-];
+let idBacklog = 0;
+let idCronograma = 0;
 
+// Funciones de API
+const getSprints = async () => {
+    return new Promise((resolve, reject) => {
+        axios
+            .get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
+                    idBacklog + `/` + idCronograma  
+            )
+            .then((response) => {
+                console.log(response);
+                resolve(response.data.sprints);
+            })
+            .catch((error) => {
+                console.error(
+                    "Error al obtener los datos de sprints: ",
+                    error
+                );
+                reject(error);
+            });
+    });
+};
+const createSprint = async (newSprint) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/insertarSprint`,
+                {
+                    idProductBacklog: idBacklog,
+                    nombre: newSprint.nombre,
+                    descripcion: newSprint.descripcion,
+                    fechaInicio: newSprint.fechaInicio,
+                    fechaFin: newSprint.fechaFin,
+                    estado: 1,
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve();
+            })
+            .catch((error) => {
+                console.error("Error al crear el sprint: ", error);
+                reject(error);
+            });
+    });
+};
+const deleteSprint = async (idSprint) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/eliminarSprint/` +
+                    idSprint
+            )
+            .then((response) => {
+                console.log(response);
+                resolve();
+            })
+            .catch((error) => {
+                console.error("Error al eliminar el sprint: ", error);
+                reject(error);
+            });
+    });
+};
+const updateStatusSprint = async (idSprint, estado) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/actualizarEstadoSprint`,
+                {
+                    idSprint: idSprint,
+                    estado: estado,
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve();
+            })
+            .catch((error) => {
+                console.error(
+                    "Error al actualizar el estado del sprint: ",
+                    error
+                );
+                reject(error);
+            });
+    });
+};
+const updateSprint = async (sprint) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/actualizarSprint/` +
+                    sprint.id,
+                {
+                    sprint: sprint,
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve(true);
+            })
+            .catch((error) => {
+                console.error("Error al actualizar el sprint: ", error);
+                reject(error);
+            });
+    });
+};
+
+// Función principal
 export default function SprintBacklog(props) {
     // Variables de proyecto global
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    [idBacklog, idCronograma] = herramientasInfo
+        .filter((item) => [1, 4].includes(item.idHerramienta))
+        .map((item) => item.idHerramientaCreada);
+
+    // Decodificacion de URL
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     // Variables de modales
     const {
@@ -193,86 +172,80 @@ export default function SprintBacklog(props) {
         onOpen: onModalCreateOpen,
         onOpenChange: onModalCreateChange,
     } = useDisclosure();
+    const {	
+        isOpen: isModalInitOpen,
+        onOpen: onModalInitOpen,
+        onOpenChange: onModalInitChange,
+    } = useDisclosure();
+    const {	
+        isOpen: isModalFinishOpen,
+        onOpen: onModalFinishOpen,
+        onOpenChange: onModalFinishChange,
+    } = useDisclosure();
 
-    // Decodificacion de URL
-    const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
-    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     // Variables principales
     const [sprints, setSprints] = useState([]);
-    const [sprintsResumed, setSprintsResumed] = useState([]); // [idSprint, nombreSprint, estado]
+    const [statusInterface, setStatusInterface] = useState("inactive"); // ["active", "inactive"]
+    const [idSelectedSprint, setIdSelectedSprint] = useState(null);
 
-    // Manejo de carga de datos
-    const getSprints = async () => {
+    // Funciones principales
+    const handleGet = async () => {
         setIsLoadingSmall(true);
         try {
-            const response = await axios.get(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/Backlog/SprintBacklog/listarSprints/` +
-                    projectId
-            );
-            setSprints(response.data);
-            setSprintsResumed(
-                response.data.map((sprint) => ({
-                    id: sprint.id,
-                    nombre: sprint.nombre,
-                    estado: sprint.estado,
-                }))
-            );
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setSprints(dataSprints);
-            setSprintsResumed(
-                dataSprints.map((sprint) => ({
-                    id: sprint.id,
-                    nombre: sprint.nombre,
-                    estado: sprint.estado,
-                }))
-            );
+            const sprints = await getSprints();
+            setSprints(sprints);
             setIsLoadingSmall(false);
+        } catch (e) {
+            toast.error("Error al obtener los datos de los sprints.");
+            console.log(e);
         }
     };
-    
-    useEffect(() => {
-        getSprints();
-    }, []);
-
-    // Manejo de creación de sprint
-    function createSprint(newSprint) {
-        return new Promise((resolve, reject) => {
-            axios
-                .put(
-                    process.env.NEXT_PUBLIC_BACKEND_URL +
-                        `/api/proyecto/Backlog/SprintBacklog/crearSprint/` +
-                        projectId,
-                    {
-                        sprint: newSprint,
-                    }
-                )
-                .then((response) => {
-                    console.log(response);
-                    resolve();
-                })
-                .catch((error) => {
-                    console.error("Error al crear el sprint: ", error);
-                    reject(error);
-                });
-        });
-    }
-
     const handleCreate = async (newSprint) => {
         try {
             await createSprint(newSprint);
             toast.success("El sprint se ha creado exitosamente.");
-            getSprints();
+            await handleGet();
             return true;
         } catch (e) {
             toast.error("Error al crear el sprint.");
-            return true;
+            return false;
         }
     };
+    const handleStart = async () => {
+        try {
+            await updateStatusSprint(idSelectedSprint, 2);
+            toast.success("El sprint se ha iniciado exitosamente.");
+            await handleGet();
+        } catch (e) {
+            toast.error("Error al iniciar el sprint.");
+        } finally {
+            setIdSelectedSprint(null);
+        }
+    };
+    const handleFinish = async () => {
+        try {
+            await updateStatusSprint(idSelectedSprint, 3);
+            toast.success("El sprint se ha finalizado exitosamente.");
+            await handleGet();
+        } catch (e) {
+            toast.error("Error al finalizar el sprint.");
+        } finally {
+            setIdSelectedSprint(null);
+        }
+    };
+
+    // Efectos de renderizado
+    useEffect(() => {
+        handleGet();
+    }, []);
+    useEffect(() => {
+        if (sprints.filter((sprint) => sprint.estado === 2).length === 1) {
+            setStatusInterface("active");
+        } else {
+            setStatusInterface("inactive");
+        }
+    }, [sprints]);
 
     // Componente
     return (
@@ -280,7 +253,99 @@ export default function SprintBacklog(props) {
             <div className="flex flex-col py-4 lg:px-8 gap-4 mt-4">
                 <div className="flex flex-row items-center justify-between">
                     <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
-                        Sprints actuales
+                        Sprint actual
+                    </h3>
+                    {sprints.filter((sprint) => sprint.estado === 2).length ===
+                        1 && (
+                        <Button
+                            radius="sm"
+                            className="bg-[#172B4D] text-white text-md"
+                            onPress={() => {
+                                const selectedSprint = sprints.find(
+                                    (sprint) => sprint.estado === 2
+                                );
+                                if (selectedSprint) {
+                                    setIdSelectedSprint(
+                                        selectedSprint.idSprint
+                                    );
+                                    onModalFinishOpen();
+                                }
+                            }}
+                        >
+                            Finalizar Sprint
+                        </Button>
+                    )}
+                </div>
+                <Divider className="mb-2" />
+
+                {sprints
+                    .filter((sprint) => sprint.estado === 2)
+                    .map((sprint) => (
+                        <div key={sprint.idSprint}>
+                            <Accordion key={sprint.id} variant="shadow">
+                                <AccordionItem
+                                    key={sprint.idSprint}
+                                    aria-label={sprint.nombre}
+                                    title={sprint.nombre}
+                                    subtitle={`${dateFormat(
+                                        sprint.fechaInicio
+                                    )} - ${dateFormat(sprint.fechaFin)}`}
+                                    className="montserrat font-semibold p-1"
+                                >
+                                    <div className="px-10">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <p>
+                                                Descripción:{" "}
+                                                {sprint.descripcion}
+                                            </p>
+                                            <div className="flex flex-row gap-4">
+                                                <Button
+                                                    radius="sm"
+                                                    className="roboto text-md"
+                                                    variant="flat"
+                                                >
+                                                    Editar Sprint
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-4 my-4 items-center">
+                                            {sprint.tareas.length === 0 ? (
+                                                <>
+                                                    <Divider className="w-full" />
+                                                    <p className="text-default-500 font-medium">
+                                                        Actualmente no hay
+                                                        tareas asignadas a este
+                                                        sprint.
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                sprint.tareas.map((tarea) => (
+                                                    <div key={tarea.idTarea}>
+                                                        <CardTask
+                                                            tarea={tarea}
+                                                            sprints={sprints}
+                                                        />
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                </AccordionItem>
+                            </Accordion>
+                        </div>
+                    ))}
+                {sprints.filter((sprint) => sprint.estado === 2).length ===
+                    0 && (
+                    <div className="flex items-center justify-center my-6">
+                        <p className="roboto text-default-400">
+                            No existe un sprint activo en el proyecto.
+                        </p>
+                    </div>
+                )}
+
+                <div className="flex flex-row items-center justify-between mt-4">
+                    <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
+                        Sprints del proyecto
                     </h3>
                     <Button
                         radius="sm"
@@ -293,62 +358,111 @@ export default function SprintBacklog(props) {
                 <Divider className="mb-2" />
 
                 {sprints
-                    .filter(
-                        (sprint) =>
-                            sprint.estado !== "Completado" &&
-                            sprint.nombre !== "Sin Sprint"
-                    )
+                    .filter((sprint) => sprint.estado === 1)
                     .map((sprint) => (
-                        <Accordion key={sprint.id} variant="shadow">
-                            <AccordionItem
-                                key={sprint.id}
-                                aria-label={sprint.nombre}
-                                title={sprint.nombre}
-                                subtitle={`${sprint.fechaInicio} - ${sprint.fechaFin}`}
-                                className="montserrat font-semibold"
-                                startContent={<DropdownSprint />}
-                            >
-                                <div className="flex flex-col gap-4 px-10 mb-2">
-                                    {sprint.tareas.map((tarea) => (
-                                        <CardTask
-                                            key={tarea.id}
-                                            idSprint={tarea.idSprint}
-                                            sumilla={tarea.sumilla}
-                                            fechaInicio={tarea.fechaInicio}
-                                            fechaFin={tarea.fechaFin}
-                                            estado={tarea.estado}
-                                            sprints={sprintsResumed}
-                                        />
-                                    ))}
-                                </div>
-                            </AccordionItem>
-                        </Accordion>
+                        <div key={sprint.idSprint}>
+                            <Accordion key={sprint.id} variant="shadow">
+                                <AccordionItem
+                                    key={sprint.id}
+                                    aria-label={sprint.nombre}
+                                    title={sprint.nombre}
+                                    subtitle={`${dateFormat(
+                                        sprint.fechaInicio
+                                    )} - ${dateFormat(sprint.fechaFin)}`}
+                                    className="montserrat font-semibold p-1"
+                                >
+                                    <div className="px-10">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <p>
+                                                Descripción:{" "}
+                                                {sprint.descripcion}
+                                            </p>
+                                            <div className="flex flex-row gap-4">
+                                                <Button
+                                                    radius="sm"
+                                                    className="roboto text-md"
+                                                    variant="flat"
+                                                >
+                                                    Editar Sprint
+                                                </Button>
+                                                <Button
+                                                    radius="sm"
+                                                    className="roboto bg-[#172B4D] text-white text-md"
+                                                    isDisabled={
+                                                        statusInterface ===
+                                                        "active"
+                                                    }
+                                                    onPress={() => {
+                                                        setIdSelectedSprint(
+                                                            sprint.idSprint
+                                                        );
+                                                        onModalInitOpen();
+                                                    }}
+                                                >
+                                                    Iniciar Sprint
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-4 my-4 items-center">
+                                            {sprint.tareas.length === 0 ? (
+                                                <>
+                                                    <Divider className="w-full" />
+                                                    <p className="text-default-500 font-medium">
+                                                        Actualmente no hay
+                                                        tareas asignadas a este
+                                                        sprint.
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                sprint.tareas.map((tarea) => (
+                                                    <div key={tarea.idTarea}>
+                                                        <CardTask
+                                                            tarea={tarea}
+                                                            sprints={sprints}
+                                                        />
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                </AccordionItem>
+                            </Accordion>
+                        </div>
                     ))}
                 {sprints
-                    .filter((sprint) => sprint.nombre === "Sin Sprint")
+                    .filter((sprint) => sprint.idSprint === 0)
                     .map((sprint) => (
-                        <Accordion key={sprint.id} variant="shadow">
-                            <AccordionItem
-                                key={sprint.id}
-                                aria-label={sprint.nombre}
-                                title={sprint.nombre}
-                                className="montserrat font-semibold p-1"
-                            >
-                                <div className="flex flex-col gap-4 px-10 mb-2">
-                                    {sprint.tareas.map((tarea) => (
-                                        <CardTask
-                                            key={tarea.id}
-                                            idSprint={tarea.idSprint}
-                                            sumilla={tarea.sumilla}
-                                            fechaInicio={tarea.fechaInicio}
-                                            fechaFin={tarea.fechaFin}
-                                            estado={tarea.estado}
-                                            sprints={sprintsResumed}
-                                        />
-                                    ))}
-                                </div>
-                            </AccordionItem>
-                        </Accordion>
+                        <div key={sprint.idSprint}>
+                            <Accordion key={sprint.id} variant="shadow">
+                                <AccordionItem
+                                    key={sprint.id}
+                                    aria-label={sprint.nombre}
+                                    title={sprint.nombre}
+                                    className="montserrat font-semibold p-1"
+                                >
+                                    <div className="flex flex-col gap-4 px-10 mb-4">
+                                        {sprint.tareas.length === 0 ? (
+                                            <>
+                                                <Divider className="w-full" />
+                                                <p className="text-default-500 font-medium">
+                                                    Actualmente no hay tareas
+                                                    asignadas a este sprint.
+                                                </p>
+                                            </>
+                                        ) : (
+                                            sprint.tareas.map((tarea) => (
+                                                <div key={tarea.idTarea}>
+                                                    <CardTask
+                                                        tarea={tarea}
+                                                        sprints={sprints}
+                                                    />
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </AccordionItem>
+                            </Accordion>
+                        </div>
                     ))}
 
                 <div className="flex flex-row items-center justify-between mt-4">
@@ -359,32 +473,68 @@ export default function SprintBacklog(props) {
                 <Divider className="mb-2" />
 
                 {sprints
-                    .filter((sprint) => sprint.estado === "Completado")
+                    .filter((sprint) => sprint.estado === 3)
                     .map((sprint) => (
-                        <Accordion key={sprint.id} variant="shadow">
-                            <AccordionItem
-                                key={sprint.id}
-                                aria-label={sprint.nombre}
-                                title={sprint.nombre}
-                                subtitle={`${sprint.fechaInicio} - ${sprint.fechaFin}`}
-                                className="montserrat font-semibold"
-                                startContent={<DropdownSprint />}
-                            >
-                                <div className="flex flex-col gap-4 px-10 mb-2">
-                                    {sprint.tareas.map((tarea) => (
-                                        <CardTask
-                                            key={tarea.id}
-                                            idSprint={tarea.idSprint}
-                                            sumilla={tarea.sumilla}
-                                            fechaInicio={tarea.fechaInicio}
-                                            fechaFin={tarea.fechaFin}
-                                            estado={tarea.estado}
-                                        />
-                                    ))}
-                                </div>
-                            </AccordionItem>
-                        </Accordion>
+                        <div key={sprint.idSprint}>
+                            <Accordion key={sprint.id} variant="shadow">
+                                <AccordionItem
+                                    key={sprint.id}
+                                    aria-label={sprint.nombre}
+                                    title={sprint.nombre}
+                                    subtitle={`${dateFormat(
+                                        sprint.fechaInicio
+                                    )} - ${dateFormat(sprint.fechaFin)}`}
+                                    className="montserrat font-semibold p-1"
+                                >
+                                    <div className="px-10">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <p>
+                                                Descripción:{" "}
+                                                {sprint.descripcion}
+                                            </p>
+                                            <div className="flex flex-row gap-4">
+                                                <Button
+                                                    radius="sm"
+                                                    className="roboto text-md"
+                                                    variant="flat"
+                                                >
+                                                    Editar Sprint
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-4 my-4 items-center">
+                                            {sprint.tareas.length === 0 ? (
+                                                <>
+                                                    <Divider className="w-full" />
+                                                    <p className="text-default-500 font-medium">
+                                                        Actualmente no hay
+                                                        tareas asignadas a este
+                                                        sprint.
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                sprint.tareas.map((tarea) => (
+                                                    <div key={tarea.idTarea}>
+                                                        <CardTask
+                                                            tarea={tarea}
+                                                        />
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                </AccordionItem>
+                            </Accordion>
+                        </div>
                     ))}
+                {sprints.filter((sprint) => sprint.estado === 3).length ===
+                    0 && (
+                    <div className="flex items-center justify-center my-6">
+                        <p className="roboto text-default-400">
+                            No existen sprints completados en el proyecto.
+                        </p>
+                    </div>
+                )}
             </div>
             <Toaster richColors closeButton={true} />
             <ModalCrearSprint
@@ -392,39 +542,36 @@ export default function SprintBacklog(props) {
                 onOpenChange={onModalCreateChange}
                 handleCreate={handleCreate}
             />
+            <ModalIniciarSprint
+                isOpen={isModalInitOpen}
+                onOpenChange={onModalInitChange}
+                handleStart={handleStart}
+            />
+            <ModalFinalizarSprint
+                isOpen={isModalFinishOpen}
+                onOpenChange={onModalFinishChange}
+                handleFinish={handleFinish}
+            />
         </>
     );
 }
 
+// Funciones de modulación
 function CardTask(props) {
-    const { idSprint, sumilla, fechaInicio, fechaFin, estado, sprints } = props;
-
-    function getChipColorAndText(estado) {
-        switch (estado) {
-            case 0:
-                return { colorChip: "default", textoChip: "No Iniciado" };
-            case 1:
-                return { colorChip: "primary", textoChip: "Activo" };
-            case 2:
-                return { colorChip: "success", textoChip: "Finalizado" };
-            default:
-                return { colorChip: "default", textoChip: "No Iniciado" };
-        }
-    }
-    const { colorChip, textoChip } = getChipColorAndText(estado);
+    const { tarea, sprints } = props;
 
     return (
         <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
-            <p className="flex-1 grow-[6]">{sumilla}</p>
-            <p className="flex-1 grow-[4]">{`Desde: ${fechaInicio} - Hasta: ${fechaFin}`}</p>
+            <p className="flex-1 grow-[6]">{tarea.sumillaTarea}</p>
+            <p className="flex-1 grow-[4]">{`Inicio: ${dateFormat(tarea.fechaInicio)} - Fin: ${dateFormat(tarea.fechaFin)}`}</p>
             <div className="flex flex-1 grow-[2] justify-center items-center">
                 <Chip
                     className="capitalize roboto"
-                    color={colorChip}
+                    color={tarea.colorTareaEstado}
                     size="sm"
                     variant="flat"
                 >
-                    {textoChip}
+                    {tarea.nombreTareaEstado}
                 </Chip>
             </div>
 
@@ -437,53 +584,15 @@ function CardTask(props) {
                     />
                 </Button>
                 {sprints && (
-                    <DropdownTask idSprintActual={idSprint} sprints={sprints} />
+                    <DropdownTask idSprintActual={tarea.idSprint} sprints={sprints} />
                 )}
             </div>
         </div>
     );
 }
-function DropdownSprint(props) {
-    return (
-        <div className="relative flex justify-end items-center gap-2">
-            <Dropdown
-                placement="bottom-start"
-                className="bg-background border-1 border-default-200"
-            >
-                <DropdownTrigger>
-                    <Button
-                        isIconOnly
-                        radius="full"
-                        size="sm"
-                        variant="light"
-                        className="flex items-center justify-center"
-                    >
-                        <VerticalDotsIcon className="text-default-400" />
-                    </Button>
-                </DropdownTrigger>
-                <DropdownMenu disabledKeys={["start", "complete"]}>
-                    <DropdownSection title="Opciones" showDivider>
-                        <DropdownItem key={"edit"}>Editar Sprint</DropdownItem>
-                        <DropdownItem key={"delete"} color="danger">
-                            Eliminar Sprint
-                        </DropdownItem>
-                    </DropdownSection>
-                    <DropdownSection title="Sprints">
-                        <DropdownItem key={"start"} color="primary">
-                            Iniciar Sprint
-                        </DropdownItem>
-                        <DropdownItem key={"complete"} color="success">
-                            Completar Sprint
-                        </DropdownItem>
-                    </DropdownSection>
-                </DropdownMenu>
-            </Dropdown>
-        </div>
-    );
-}
 function DropdownTask(props) {
     const { idSprintActual, sprints } = props;
-    const unfinishedSprints = sprints.filter((sprint) => sprint.estado !== "Completado");
+    const unfinishedSprints = sprints.filter((sprint) => sprint.estado !== 3);
 
     return (
         <div className="relative flex justify-end items-center gap-2">
@@ -503,7 +612,7 @@ function DropdownTask(props) {
                 <DropdownMenu disabledKeys={[idSprintActual.toString()]}>
                     <DropdownSection title="Cambiar de sprint" showDivider>
                         {unfinishedSprints.map((sprint) => (
-                            <DropdownItem key={sprint.id}>
+                            <DropdownItem aria-label={sprint.nombre} key={sprint.idSprint}>
                                 {sprint.nombre}
                             </DropdownItem>
                         ))}
@@ -513,6 +622,8 @@ function DropdownTask(props) {
         </div>
     );
 }
+
+// Funciones de modales
 function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
     // Variables de formulario
     const [newSprint, setNewSprint] = useState({
@@ -530,7 +641,6 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
     }, [newSprint.nombre]);
 
     const descripcionInvalid = useMemo(() => {
-        console.log(newSprint.descripcion.length);
         return newSprint.descripcion.length > 200 ? true : false;
     }, [newSprint.descripcion]);
 
@@ -721,4 +831,117 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
             </ModalContent>
         </Modal>
     );
+}
+function ModalIniciarSprint({ isOpen, onOpenChange, handleStart }) {
+    // Variables generales
+    const [isSending, setIsSending] = useState(false);
+
+    // Componente de modal
+    return (
+        <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            isDismissable={false}
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const endSave = async () => {
+                        setIsSending(true);
+                        await handleStart();
+                        setIsSending(false);
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Guardar cambios
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>¿Seguro que desea iniciar este sprint en el proyecto?</p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="default"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="font-[Roboto] bg-[#172B4D] text-[#FFFFFF]"
+                                    onPress={endSave}
+                                    isLoading={isSending}
+                                    isDisabled={isSending}
+                                >
+                                    Iniciar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+    );
+}
+function ModalFinalizarSprint({ isOpen, onOpenChange, handleFinish }) {
+    // Variables generales
+    const [isSending, setIsSending] = useState(false);
+
+    // Componente de modal
+    return (
+        <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            isDismissable={false}
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const endSave = async () => {
+                        setIsSending(true);
+                        await handleFinish();
+                        setIsSending(false);
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Guardar cambios
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>¿Seguro que desea finalizar este sprint?</p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="default"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="font-[Roboto] bg-[#172B4D] text-[#FFFFFF]"
+                                    onPress={endSave}
+                                    isLoading={isSending}
+                                    isDisabled={isSending}
+                                >
+                                    Iniciar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+    );
+}
+
+// Funciones de utilidad
+function dateFormat(fechaOriginal) {
+    const fecha = new Date(fechaOriginal);
+    const dia = fecha.getDate().toString().padStart(2, '0'); 
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); 
+    const año = fecha.getFullYear();
+    const fechaFormateada = `${dia}-${mes}-${año}`;
+  
+    return fechaFormateada;
 }
