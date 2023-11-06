@@ -107,6 +107,10 @@ export default function MatrizDeResponsabilidades(props) {
         },
     ]);
 
+    useEffect(() => {
+        setIsLoadingSmall(false);
+    }, []);
+
     const rolesMap = new Map();
     const entregablesMap = new Map();
     const responsabilidadesMap = new Map();
@@ -245,10 +249,6 @@ export default function MatrizDeResponsabilidades(props) {
                     </>
                 );
         }
-    }, []);
-
-    useEffect(() => {
-        setIsLoadingSmall(false);
     }, []);
 
     return (
