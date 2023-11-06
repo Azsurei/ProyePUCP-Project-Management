@@ -83,6 +83,21 @@ async function listarLineasIngresoYEgresoXIdPresupuesto(req, res, next) {
     }
 }
 
+async function obtenerPresupuesto(req,res,next){
+    const {idPresupuesto} = req.params;
+    try {
+        const query = `CALL OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
+        const [results] = await connection.query(query,[idPresupuesto]);
+        const reporte = results[0];
+        res.status(200).json({
+            reporte,
+            message: "Presupuesto obtenido correctamente"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 
 
@@ -91,5 +106,6 @@ module.exports = {
     modificar,
     listarLineasTodas,
     listarXIdPresupuesto,
-    listarLineasIngresoYEgresoXIdPresupuesto
+    listarLineasIngresoYEgresoXIdPresupuesto,
+    obtenerPresupuesto
 };
