@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css";
 
 //import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
@@ -22,14 +22,14 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-  } from "@nextui-org/react";
+} from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "../../layout";
 
 export default function ProductBacklog(props) {
@@ -37,40 +37,43 @@ export default function ProductBacklog(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+
     console.log(projectId);
     console.log(projectName);
-    
+
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
 
-  
     const [data, setData] = useState([]);
     const [objectID, setObjectID] = useState(null);
     const [navegate, setNavegate] = useState(false);
-    function DataTable(){
+    function DataTable() {
         const fetchData = async () => {
-          try {
-            // Realiza la solicitud HTTP al endpoint del router
-            const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/backlog/" +
-            projectId +
-            "/listarHistorias";
-            const response = await axios.get(stringURL);
-    
-            // Actualiza el estado 'data' con los datos recibidos
-            setData(response.data.historias);
-            setIsLoadingSmall(false);
-            console.log(`Datos obtenidos exitosamente:`, response.data.historias);
-          } catch (error) {
-            console.error('Error al obtener datos:', error);
-          }
+            try {
+                // Realiza la solicitud HTTP al endpoint del router
+                const stringURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/backlog/listarHistorias/" +
+                    projectId;
+                console.log("URL: ", stringURL);
+                const response = await axios.get(stringURL);
+
+                // Actualiza el estado 'data' con los datos recibidos
+                setData(response.data.historias);
+                setIsLoadingSmall(false);
+                console.log(
+                    `Datos obtenidos exitosamente:`,
+                    response.data.historias
+                );
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
         };
-    
+
         fetchData();
-      };
-    
+    }
+
     useEffect(() => {
         DataTable();
     }, []);
@@ -89,58 +92,59 @@ export default function ProductBacklog(props) {
     const toggleModalAll = () => {
         setModal2(!modal2);
     };
-    
 
     useEffect(() => {
-        if(modal1 || modal2) {
-            document.body.style.overflow = 'hidden'
+        if (modal1 || modal2) {
+            document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = 'auto'
+            document.body.style.overflow = "auto";
         }
-    }, [modal1, modal2])
+    }, [modal1, modal2]);
 
-    
-    
     const columns = [
         {
-            name: 'Nombre',
-            uid: 'DescripcionHistoria',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Nombre",
+            uid: "DescripcionHistoria",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Epica',
-            uid: 'NombreEpica',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Epica",
+            uid: "NombreEpica",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Prioridad',
-            uid: 'NombrePrioridad',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Prioridad",
+            uid: "NombrePrioridad",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Color',
-            uid: 'color',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: false
+            name: "Color",
+            uid: "color",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: false,
         },
         {
-            name: 'Estado',
-            uid: 'NombreEstado',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Estado",
+            uid: "NombreEstado",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: ' ',
-            uid: 'actions',
-            className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: false
-        }
+            name: " ",
+            uid: "actions",
+            className:
+                "w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: false,
+        },
     ];
-
-    
 
     const toolsOptions = [
         { name: "Herramienta 1", uid: "active" },
@@ -168,7 +172,9 @@ export default function ProductBacklog(props) {
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                data.DescripcionHistoria.toLowerCase().includes(filterValue.toLowerCase())
+                data.DescripcionHistoria.toLowerCase().includes(
+                    filterValue.toLowerCase()
+                )
             );
         }
         if (
@@ -180,7 +186,6 @@ export default function ProductBacklog(props) {
             );
         }
 
-        
         return filteredTemplates;
     }, [data, filterValue, toolsFilter]);
 
@@ -234,9 +239,8 @@ export default function ProductBacklog(props) {
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
-        
+
         switch (columnKey) {
-                
             case "iconSrc":
                 return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
@@ -252,29 +256,44 @@ export default function ProductBacklog(props) {
                     //             <DropdownItem onClick={() => {
                     //                 setRoutering(data)
                     //             }}>
-                                
-                    //                     Editar 
+
+                    //                     Editar
                     //             </DropdownItem>
 
                     //             <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                     //         </DropdownMenu>
                     //     </Dropdown>
                     // </div>
-                <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <button className="" type="button" onClick={() => {
-                                    setRoutering(data)
-                                 }}>
-                        <img src="/icons/editar.svg"/>
-                    </button>
-                    <button className="" type="button" onClick={() => toggleModal(data)}>
-                        <img src="/icons/eliminar.svg"/>
-                    </button>
-                </div>
+                    <div
+                        className="flex"
+                        style={{ marginTop: "12px", marginLeft: "15px" }}
+                    >
+                        <button
+                            className=""
+                            type="button"
+                            onClick={() => {
+                                setRoutering(data);
+                            }}
+                        >
+                            <img src="/icons/editar.svg" />
+                        </button>
+                        <button
+                            className=""
+                            type="button"
+                            onClick={() => toggleModal(data)}
+                        >
+                            <img src="/icons/eliminar.svg" />
+                        </button>
+                    </div>
                 );
             case "NombrePrioridad":
                 return (
-                    <span className="p-1.5 text-sm uppercase tracking-wider rounded-lg bg-opacity-50"
-                        style={{ backgroundColor: data.ColorPrioridad || "transparent" }}
+                    <span
+                        className="p-1.5 text-sm uppercase tracking-wider rounded-lg bg-opacity-50"
+                        style={{
+                            backgroundColor:
+                                data.ColorPrioridad || "transparent",
+                        }}
                     >
                         {cellValue}
                     </span>
@@ -286,7 +305,7 @@ export default function ProductBacklog(props) {
                     </span>
                 );
             case "color":
-                    return null;
+                return null;
             default:
                 return cellValue;
         }
@@ -304,7 +323,7 @@ export default function ProductBacklog(props) {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
                         <Dropdown>
@@ -328,18 +347,25 @@ export default function ProductBacklog(props) {
                                 onSelectionChange={setToolsFilter}
                             >
                                 {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
+                                    <DropdownItem key={status.uid}>
                                         {status.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />} className="btnBacklogExport">
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            className="btnBacklogExport"
+                        >
                             Exportar
                         </Button>
-                        <Button color="danger" onClick = {() => toggleModalAll()} endContent={<PlusIcon />} className="btnBacklogEliminar">
+                        <Button
+                            color="danger"
+                            onClick={() => toggleModalAll()}
+                            endContent={<PlusIcon />}
+                            className="btnBacklogEliminar"
+                        >
                             Eliminar
                         </Button>
                     </div>
@@ -414,77 +440,100 @@ export default function ProductBacklog(props) {
         //Aqui va el codigo del contenido del dashboard
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Backlog / Product Backlog
+                Inicio / Proyectos / Nombre del proyecto / Backlog / Product
+                Backlog
             </div>
             <div className="backlog">
                 <div className="titleBacklog">BACKLOG</div>
                 <div className="navigationBacklog">
                     <div className="navigationBacklogIzquierda">
-                        <Link href="#tableroKanban" style={{border: '1px red solid', height:'auto'}}>
-                            <button className="btnBacklog sm:w-1 sm:h-1" type="button">Tablero Kanban</button>
+                        <Link
+                            href="#tableroKanban"
+                            style={{ border: "1px red solid", height: "auto" }}
+                        >
+                            <button
+                                className="btnBacklog sm:w-1 sm:h-1"
+                                type="button"
+                            >
+                                Tablero Kanban
+                            </button>
                         </Link>
                         <Link href="#sprintBacklog">
-                            <button className="btnBacklog sm:w-1 sm:h-1" type="button">Sprint Backlog</button>
+                            <button
+                                className="btnBacklog sm:w-1 sm:h-1"
+                                type="button"
+                            >
+                                Sprint Backlog
+                            </button>
                         </Link>
                         <Link href="#productBacklog">
-                            <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Product Backlog</button>
+                            <button
+                                className="btnBacklogPrimary sm:w-1 sm:h-1"
+                                type="button"
+                            >
+                                Product Backlog
+                            </button>
                         </Link>
                     </div>
                     <div className="navigationBacklogDerecha">
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/backlog/productBacklog/registerPB"}>
-                            <button className="btnBacklogPrimary sm:w-1 sm:h-1" type="button">Añadir elemento</button>
+                        <Link
+                            href={
+                                "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/backlog/productBacklog/registerPB"
+                            }
+                        >
+                            <button
+                                className="btnBacklogPrimary sm:w-1 sm:h-1"
+                                type="button"
+                            >
+                                Añadir elemento
+                            </button>
                         </Link>
                     </div>
                 </div>
                 <div>
-                       <MyDynamicTable 
-                            label ="Tabla Backlog" 
-                            bottomContent={bottomContent} 
-                            selectedKeys={selectedKeys}
-                            setSelectedKeys={setSelectedKeys}
-                            sortDescriptor = {sortDescriptor}
-                            setSortDescriptor={setSortDescriptor}
-                            topContent={topContent}
-                            columns={columns}
-                            sortedItems={sortedItems}
-                            renderCell={renderCell}
-                            idKey="idHistoriaDeUsuario"
-                        />
-                {/*<TableComponent data={data} /*urlApi = {stringURL} columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/>*/} {/* Pasa toggleModal como prop al componente TableComponent */}
+                    <MyDynamicTable
+                        label="Tabla Backlog"
+                        bottomContent={bottomContent}
+                        selectedKeys={selectedKeys}
+                        setSelectedKeys={setSelectedKeys}
+                        sortDescriptor={sortDescriptor}
+                        setSortDescriptor={setSortDescriptor}
+                        topContent={topContent}
+                        columns={columns}
+                        sortedItems={sortedItems}
+                        renderCell={renderCell}
+                        idKey="idHistoriaDeUsuario"
+                    />
+                    {/*<TableComponent data={data} /*urlApi = {stringURL} columns={columns} toggleModal={toggleModal} rowComponent={BacklogRow}/>*/}{" "}
+                    {/* Pasa toggleModal como prop al componente TableComponent */}
                 </div>
-                
             </div>
             {modal1 && selectedTask && (
                 <PopUpEliminateHU
-                    modal = {modal1} 
+                    modal={modal1}
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.DescripcionHistoria}
-                    idHistoriaDeUsuario = {selectedTask.idHistoriaDeUsuario}
-                    refresh ={DataTable}
+                    idHistoriaDeUsuario={selectedTask.idHistoriaDeUsuario}
+                    refresh={DataTable}
                 />
             )}
             {modal2 && (
-                <PopUpEliminateAll 
+                <PopUpEliminateAll
                     modal={modal2}
-                    toggle={() => toggleModalAll()} 
-                    
+                    toggle={() => toggleModalAll()}
                 />
             )}
             {navegate && objectID.idHistoriaDeUsuario && (
                 <RouteringBacklog
-                    proy_name = {projectName}
-                    proy_id = {projectId}
-                    idHu = {objectID.idHistoriaDeUsuario}
+                    proy_name={projectName}
+                    proy_id={projectId}
+                    idHu={objectID.idHistoriaDeUsuario}
                 />
-            )
-            }
-            
+            )}
         </div>
     );
 }
-
-
-
-
-
-
