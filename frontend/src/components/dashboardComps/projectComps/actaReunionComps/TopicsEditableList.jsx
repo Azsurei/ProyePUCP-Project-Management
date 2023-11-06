@@ -16,6 +16,7 @@ function EditableTopic(props) {
     const toggleAcuerdos = () => {
         setMostrarAcuerdos(!mostrarAcuerdos);
     };
+    console.log(props);
 
     const handleAddAcuerdo = ()=>{
         const nuevosAcuerdos =  [
@@ -58,9 +59,13 @@ function EditableTopic(props) {
 
     const handleDateChange = (e, index) => {
         const nuevosAcuerdos = [...props.acuerdos];
-        nuevosAcuerdos[index - 1].date = e.target.value;
+        // Assuming e.target.value is in the format "2023-10-12T05:00:00.000Z"
+        // we can split at 'T' and take the first part (the date).
+        const formattedDate = e.target.value.split('T')[0]; // gets "2023-10-12"
+        nuevosAcuerdos[index - 1].date = formattedDate;
         props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
     };
+
 
     return (
         <li className="EditableTopic">
@@ -71,7 +76,7 @@ function EditableTopic(props) {
                 <div className="inputAndDeleteContainer">
                     <Textarea
                         isInvalid={false}
-                        isDisabled={!props.beEditable}
+                        isDisabled={false}
                         //errorMessage="Este campo no puede estar vacio"
                         key={"bordered"}
                         variant={"bordered"}
@@ -84,7 +89,7 @@ function EditableTopic(props) {
                         }}
                         minRows={1}
                         size="sm"
-                        readOnly={!props.beEditable}
+                        readOnly={false}
                     />
                     {props.beEditable && (
                         <img
@@ -127,7 +132,7 @@ function EditableTopic(props) {
                     <CardBody className="mt-0 py-0 pl-8">
                         <div className="agreementsContainer w-full">
                             <AcuerdosListEditableInput
-                                beEditable={props.beEditable}
+                                beEditable={true}
                                 handleChanges={handleChangeAcuerdo}
                                 handleRemove={handleRemoveAcuerdo}
                                 ListInputs={props.acuerdos}
@@ -152,24 +157,29 @@ export function TopicEditableList(props) {
     if (props.ListInputs.length === 0) {
         return <div>No cuenta con tareas</div>;
     }
+
+    // Sort the list based on the item.data property
+    const sortedListInputs = [...props.ListInputs].sort((a, b) => {
+        // Assuming item.data is a string
+        return a.data.localeCompare(b.data);
+    });
+
     return (
         <ul className="ListEditableInput">
-            {props.ListInputs.map((item, index) => {
-                return (
-                    <EditableTopic
-                        key={index}
-                        typeName={props.typeName}
-                        number={item.index}
-                        data={item.data}
-                        handleChanges={props.handleChanges}
-                        handleRemove={props.handleRemove}
-                        beEditable={props.beEditable}
-                        acuerdos={item.acuerdos}
-                        updateAcuerdos={props.updateAcuerdos}
-                        participantes={props.participantes}
-                    ></EditableTopic>
-                );
-            })}
+            {sortedListInputs.map((item, index) => (
+                <EditableTopic
+                    key={item.index} // It's better to use a unique identifier rather than array index
+                    typeName={props.typeName}
+                    number={item.index}
+                    data={item.data}
+                    handleChanges={props.handleChanges}
+                    handleRemove={props.handleRemove}
+                    beEditable={props.beEditable}
+                    acuerdos={item.acuerdos}
+                    updateAcuerdos={props.updateAcuerdos}
+                    participantes={props.participantes}
+                />
+            ))}
         </ul>
     );
 }
