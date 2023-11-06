@@ -9,6 +9,7 @@ async function crear(req,res,next){
     const {idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios} = req.body;
     try {
         const idLineaActaReunion = await funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios);
+        console.log(`Linea acta reunion ${idLineaActaReunion} creada`)
         res.status(200).json({
             idLineaActaReunion,
             message: "Linea acta reunion creada"});
@@ -40,12 +41,21 @@ async function listarXIdActaReunion(req,res,next){
 async function eliminarXIdLineaActaReunion(req,res,next){
     const {idLineaActaReunion} = req.body;
     try {
-        const query = `CALL ELIMINAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(?);`;
-        const results = await connection.query(query,[idLineaActaReunion]);
+        await funcEliminarXIdLineaActaReunion(idLineaActaReunion);
         res.status(200).json({
             message: "Linea acta reunion eliminada"});
     } catch (error) {
         next(error);
+    }
+}
+
+async function funcEliminarXIdLineaActaReunion(idLineaActaReunion){
+    try {
+        const query = `CALL ELIMINAR_LINEA_ACTA_REUNION_X_ID_LINEA_ACTA_REUNION(?);`;
+        const results = await connection.query(query,[idLineaActaReunion]);
+        return 1;
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -93,7 +103,7 @@ async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,no
     try {
         const query = `CALL INSERTAR_LINEA_ACTA_REUNION(?,?,?,?,?,?);`;
         [results] = await connection.query(query,[idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo]);
-        idLineaActaReunion = results[0][0].idLineaActaReunion;
+        const idLineaActaReunion = results[0][0].idLineaActaReunion;
 
         console.log(idLineaActaReunion,results[0][0]);
         for(const tema of temas){
@@ -107,16 +117,18 @@ async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,no
         for(comentario of comentarios){
             comentarioReunionController.funcCrear(idLineaActaReunion,comentario.descripcion);
         }
+        return idLineaActaReunion;
     } catch (error) {
         console.log(error);
     }   
-    return idLineaActaReunion;
+    
 }
 
 async function funcModificar(idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios){
     try {
         const query = `CALL MODIFICAR_LINEA_ACTA_REUNION(?,?,?,?,?,?);`;
         [results] = await connection.query(query,[idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo]);
+
         for(const tema of temas){
             temaReunionController.funcModificar(idLineaActaReunion,tema.descripcion,tema.acuerdos);
         }
@@ -128,6 +140,7 @@ async function funcModificar(idLineaActaReunion,nombreReunion,fechaReunion,horaR
         for(const comentario of comentarios){
             comentarioReunionController.funcModificar(idLineaActaReunion,comentario.descripcion);
         }
+
     } catch (error) {
         console.log(error);
         return 0;
