@@ -166,7 +166,7 @@ CREATE PROCEDURE MODIFICAR_ESTADO_SPRINT(
     IN _idEstado INT
 )
 BEGIN
-	UPDATE Sprint SET idEstado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
+	UPDATE Sprint SET estado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
 END$
 
 DROP PROCEDURE IF EXISTS ELIMINAR_SPRINT;
@@ -1236,10 +1236,11 @@ CREATE PROCEDURE LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(
 BEGIN
 	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
-    WHERE  t.idCronograma = _idCronograma AND idSprint = 0
+    WHERE  t.idCronograma = _idCronograma AND t.idTareaEstado = te.idTareaEstado AND idSprint = 0
     AND t.activo=1;
 END$
-
+SELECT * FROM Tarea;
+CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(58);
 CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(56);
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
@@ -2162,8 +2163,43 @@ BEGIN
 	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
 
+DELIMITER $
+CREATE PROCEDURE OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
+BEGIN
+    -- Obtener el presupuesto inicial
+    DECLARE presupuestoInicial DOUBLE DEFAULT 0;
+    DECLARE totalIngresos DOUBLE DEFAULT 0;
+    DECLARE totalEstimaciones DOUBLE DEFAULT 0;
+    DECLARE totalEgresos DOUBLE DEFAULT 0;
+    
+    SELECT presupuestoInicial INTO presupuestoInicial
+    FROM Presupuesto
+    WHERE idPresupuesto = _idPresupuesto;
 
+    -- Calcular el monto total de ingresos
+    
+    SELECT SUM(monto * cantidad) INTO totalIngresos
+    FROM LineaIngreso
+    WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 
+    -- Calcular el subtotal de estimaciones de costos
+    
+    SELECT SUM(subtotal) INTO totalEstimaciones
+    FROM LineaEstimacionCosto
+    WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+
+    -- Calcular el costo real total de los egresos
+    
+    SELECT SUM(costoReal * cantidad) INTO totalEgresos
+    FROM LineaEgreso
+    WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+
+    -- Devolver los resultados
+    SELECT presupuestoInicial, totalIngresos, totalEstimaciones, totalEgresos;
+END $
+
+CALL OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(37);
+------
 DROP PROCEDURE INSERTAR_INGRESO
 DELIMITER $
 CREATE PROCEDURE INSERTAR_INGRESO(
