@@ -55,6 +55,16 @@ async function funcModificar(idComentarioReunion,descripcion){
     }
 }
 
+async function funcEliminarXIdLineaActaReunion(idLineaActaReunion){
+    try {
+        const query = `CALL ELIMINAR_COMENTARIO_REUNION_X_ID_LINEA_ACTA_REUNION(?);`;
+        const results = await connection.query(query,[idLineaActaReunion]);
+        return 1;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     crear,
     listarXIdLineaActaReunion,
