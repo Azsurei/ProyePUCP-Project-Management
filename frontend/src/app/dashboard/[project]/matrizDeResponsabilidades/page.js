@@ -123,6 +123,7 @@ export default function MatrizDeResponsabilidades(props) {
         const initialEntregables = [
             { id: 1, nombre: "Entregable 1" },
             { id: 2, nombre: "Entregable 2" },
+            { id: 3, nombre: "Entregable 3" },
         ];
 
         const initialResponsabilidades = [
@@ -131,12 +132,44 @@ export default function MatrizDeResponsabilidades(props) {
             { id: 3, nombre: "Participa", letra: "P", color: "bg-purple-600" },
             // Agrega más responsabilidades según tus necesidades
         ];
+
+        const completedData = [];
+
+        // Recorre todos los roles y entregables
+        initialRoles.forEach((rol) => {
+          initialEntregables.forEach((entregable) => {
+            // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
+            const existingData = initialDataFromApi.find(
+              (item) =>
+                item.idRol === rol.id && item.idEntregable === entregable.id
+            );
+      
+            if (existingData) {
+              // Si existe, simplemente agrega los datos existentes
+              completedData.push(existingData);
+            } else {
+              // Si no existe, crea una celda vacía o con valores predeterminados
+              completedData.push({
+                idRol: rol.id,
+                nombreRol: rol.nombre,
+                idEntregable: entregable.id,
+                nombreEntregable: entregable.nombre,
+                // Puedes definir valores predeterminados para otras propiedades
+                idResponsabilidad: 0,
+                nombreResponsabilidad: "",
+                letraResponsabilidad: "",
+                colorResponsabilidad: "",
+              });
+            }
+          });
+        });
+
         console.log("Data from API", initialDataFromApi);
         console.log("Roles", initialRoles);
         console.log("Entregables", initialEntregables);
         console.log("Responsabilidades", initialResponsabilidades);
         // Establecer los datos iniciales en los hooks
-        setDataFromApi(initialDataFromApi);
+        setDataFromApi(completedData);
         setRoles(initialRoles);
         setEntregables(initialEntregables);
         setResponsabilidades(initialResponsabilidades);
