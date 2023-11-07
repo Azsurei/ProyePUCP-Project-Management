@@ -10,9 +10,6 @@ routerCronograma.put("/actualizarCronograma",verifyToken, cronogramaController.a
 routerCronograma.post("/insertarTarea", tareaController.crear);
 
 routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);
-
-
-
 routerCronograma.post("/listarCronograma", cronogramaController.listar);
 
 //Sprint

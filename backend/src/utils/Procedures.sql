@@ -169,6 +169,23 @@ BEGIN
 	UPDATE Sprint SET estado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_SPRINT;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_SPRINT(
+	IN _idSprint INT,
+    in _descripcion VARCHAR(255),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _idEstado INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+	UPDATE Sprint SET descripcion = _descripcion, fechaInicio = _fechaInicio, fechaFin = _fechaFin, estado = _idEstado, nombre=_nombre
+    WHERE idSPrint = _idSprint AND activo = 1;
+END$
+
+
+
 DROP PROCEDURE IF EXISTS ELIMINAR_SPRINT;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_SPRINT(
@@ -1223,7 +1240,7 @@ CREATE PROCEDURE LISTAR_TAREAS_X_ID_SPRINT(
 BEGIN
 	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
-    WHERE  t.idSprint = _idSprint
+    WHERE  t.idSprint = _idSprint AND te.idTareaEstado = t.idTareaEstado
     AND t.activo=1;
 END$
 
