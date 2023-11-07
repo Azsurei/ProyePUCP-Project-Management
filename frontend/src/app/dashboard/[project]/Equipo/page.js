@@ -54,6 +54,8 @@ export default function Equipo(props) {
     const [reloadData, setReloadData] = useState(false);
     const [roles, setRoles] = useState([]);
     const [rolesOriginales, setRolesOriginales] = useState([]);
+    const [leaderRoleId, setLeaderRoleId] = useState(null);
+    const [memberRoleId, setMemberRoleId] = useState(null);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -76,7 +78,7 @@ export default function Equipo(props) {
         // Agrega idRol y nombreRol a cada miembro en newMiembrosList
         const membersWithRoles = newMiembrosList.map((member) => ({
             ...member,
-            idRolEquipo: 2, // Establece el valor adecuado para idRol
+            idRolEquipo: memberRoleId, // Establece el valor adecuado para idRol
             nombreRol: "Miembro", // Establece el valor adecuado para nombreRol
         }));
 
@@ -251,7 +253,21 @@ export default function Equipo(props) {
                 );
                 setRoles(response.data.roles);
                 setRolesOriginales(response.data.roles);
-                // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
+                // Busca el ID del líder y el miembro en la respuesta
+                const roles = response.data.roles;
+                const leaderRole = roles.find(
+                    (role) => role.nombreRol === "Líder"
+                );
+                const memberRole = roles.find(
+                    (role) => role.nombreRol === "Miembro"
+                );
+
+                if (leaderRole) {
+                    setLeaderRoleId(leaderRole.idRolEquipo);
+                }
+                if (memberRole) {
+                    setMemberRoleId(memberRole.idRolEquipo);
+                }
             })
             .catch(function (error) {
                 console.log("Error al cargar el rol del equipo: ", error);
@@ -887,7 +903,7 @@ export default function Equipo(props) {
                             toggle={() => toggleModal()} // Pasa la función como una función de flecha
                             handleAddRoles={handleAddRoles}
                             initialListRoles={roles}
-                            participantes={selectedTeam.participantes}
+                            ListComps={ListComps}
                         />
                     )}
                     {modal2 && (
