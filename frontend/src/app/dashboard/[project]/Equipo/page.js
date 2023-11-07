@@ -428,6 +428,7 @@ export default function Equipo(props) {
         } = separarPorRol(modifiedParticipants, addedRoles);
 
         const casoEliminarRol = {
+            idProyecto: projectId,
             idEquipo: selectedTeam.idEquipo,
             miembrosAgregados: addedParticipantesNoRol,
             miembrosModificados: modifiedParticipantesNoRol,
@@ -437,6 +438,7 @@ export default function Equipo(props) {
         console.log("Realizado correctamente");
         console.log(casoEliminarRol);
         const casoAgregarRol = {
+            idProyecto: projectId,
             idEquipo: selectedTeam.idEquipo,
             miembrosAgregados: addedParticipantesNewRol,
             miembrosModificados: modifiedParticipantesNewRol,
