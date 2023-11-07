@@ -1,4 +1,12 @@
 ##############################
+## PRESUPUESTO
+##############################
+
+###
+GET http://localhost:8080/api/proyecto/presupuesto/obtenerPresupuesto/37 HTTP/1.1
+
+
+##############################
 ## LINEAS DE INGRESO FUNCIONANDO
 ##############################
 

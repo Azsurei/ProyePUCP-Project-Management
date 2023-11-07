@@ -34,7 +34,7 @@ import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { set } from "date-fns";
 import { SessionContext } from "../../../layout";
 
-import ListPlantillas from "@/components/dashboardComps/projectComps/appConstComps/ListPlantillas";
+import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
 
 function DetailCard({
     detail,
@@ -216,6 +216,15 @@ export default function Info(props) {
 
 
     //Guardar Plantilla de AC
+
+    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // La función que recibiría la plantilla seleccionada
+    const handlePlantillaSelection = (plantilla) => {
+      setSelectedPlantilla(plantilla);
+    };
+    
     const [nombrePlantilla, setNombrePlantilla] = useState("");
     const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
     const [IdUsuario, setIdUsuario] = useState("");
@@ -227,10 +236,12 @@ export default function Info(props) {
     }, []);
 
     const savePlantilla = () => {
+
+        return new Promise((resolve, reject) => {
         //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
         setIsLoadingSmall(true);
         const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/ga";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/guardarPlantilla";
         axios
             .put(updateURL, {
                 //Se guardar los nombres en la Tabla: PlantillaACDato
@@ -243,13 +254,38 @@ export default function Info(props) {
                 console.log(response.data.message);
                 setDetails([...detailEdited]);
                 setEditActive(false);
+                resolve(response);
 
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
+                reject(error);
             });
+
+        });
     };
+
+    const guardarPlantillaNueva = async () => {
+        try {
+            toast.promise(savePlantilla, {
+                loading: "Guardando Plantilla Nueva...",
+                success: (data) => {
+                    DataTable();
+                    return "La plantilla se agregó con éxito!";
+                    
+                },
+                error: "Error al agregar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        } 
+    };
+
+
+    //Fin Plantilla AC
 
     const handleAddField = () => {
         setEditActive(false);
@@ -379,7 +415,7 @@ export default function Info(props) {
                             if(Isvalid === true){
                                 console.log("IdUsuario: "+ sessionData.idUsuario);
                                 try {
-                                    //await savePlantilla();
+                                    await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
                                     
@@ -459,80 +495,15 @@ export default function Info(props) {
             </Modal>
             }
 
-            {<Modal size="lg" isOpen={isModalPlantillas} onOpenChange={onModalPlantillasChange}>
-                    <ModalContent>
-                        {(onClose) => {
-                            const finalizarModal = async () => {
-                                
-                                    try {
-                                        //usarPlantilla();
-                                        
-                                    } catch (error) {
-                                        console.error('Error al usar plantilla:', error);
-                                    }
-                                    //Usar el Toast para el save Plantilla
-                                    //crear componente ListPlantillas
-    
-                                    onClose();
-                                
-                                
-                            };
-
-
-                            return (
-                            <>
-
-                            <ModalHeader className="flex flex-col gap-1">
-                                Plantillas
-                            </ModalHeader>
-                                    <ModalBody>
-                                    <p
-                                        style={{
-                                            color: "#494949",
-                                            fontSize: "16px",
-                                            fontStyle: "normal",
-                                            fontWeight: 400,
-                                        }}
-                                        >
-                                        Seleccione una plantilla para cargar los campos
-                                    </p>
-
-                                    <div>
-
-                                    
-                                    </div>
-
-                                </ModalBody>
-                                  
-
-                            <ModalFooter>
-                                <NextUIButton
-                                color="danger" variant="light" 
-   
-                                onClick={() => {
-                                    onClose(); // Cierra el modal
-
-
-                                }}
-                            
-                                >
-                                Cancelar
-                                
-                                </NextUIButton>
-                                <NextUIButton
-                                color="primary"
-                                
-                                onClick={finalizarModal}
-                                >
-                                Utilizar
-                                </NextUIButton>
-                            </ModalFooter>
-                            </>
-                        );
-                        }}
-                    </ModalContent>
-            </Modal>
-            }
+        <ModalPlantilla
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)} // Cierra el modal cuando sea necesario
+            onPlantillaSelect={(plantilla) => {
+            // Realiza acciones con la plantilla seleccionada
+            //usarPlantilla(plantilla);
+            console.log("Plantilla seleccionada:", plantilla);
+            }}
+        />
 
 
 
@@ -587,7 +558,7 @@ export default function Info(props) {
                         appearance="primary"
                         state="default"
                         spacing="compact"
-                        onClick={onModalPlantillas}
+                        onClick={() => setIsModalOpen(true)}
 
                     >
                         <div>
