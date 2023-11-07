@@ -139,10 +139,10 @@ async function insertarRol(req, res, next) {
 }
 
 async function listarRol(req, res, next) {
-    const { idEquipo } = req.params;
+    const { idProyecto } = req.params;
     const query = `CALL LISTAR_ROL_EQUIPO(?);`;
     try {
-        const [results] = await connection.query(query, [idEquipo]);
+        const [results] = await connection.query(query, [idProyecto]);
         const roles = results[0];
         console.log(`Se listaron los roles ${roles}!`);
         res.status(200).json({
