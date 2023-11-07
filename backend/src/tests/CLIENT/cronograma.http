@@ -150,3 +150,7 @@ Content-Type:  application/json
 
 //Se inserta un sprint al product backlog 78 
 // Se insertan tareas al cronograma 56
+
+###
+GET http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/188 HTTP/1.1
+Content-Type:  application/json

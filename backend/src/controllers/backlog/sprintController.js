@@ -15,6 +15,19 @@ async function crear(req,res,next){
     }
 }
 
+async function modificar(req,res,next){
+    const {idSprint,descripcion,fechaInicio,fechaFin,estado,nombre} = req.body;
+    try {
+        const query = `CALL MODIFICAR_SPRINT(?,?,?,?,?,?);`;
+        await connection.query(query,[idSprint,descripcion,fechaInicio,fechaFin,estado,nombre]);
+        console.log(`Sprint ${idSprint} modificado`);
+        res.status(200).json({message: "Sprint modificado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function listarSprintsXIdBacklogCronograma(req,res,next){
     const {idBacklog,idCronograma} = req.params;
     
@@ -78,5 +91,6 @@ module.exports = {
     crear,
     listarSprintsXIdBacklogCronograma,
     modificarEstado,
+    modificar,
     eliminarSprint
 }

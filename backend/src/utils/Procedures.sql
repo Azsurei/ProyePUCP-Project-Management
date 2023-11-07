@@ -7,17 +7,21 @@ DROP PROCEDURE IF EXISTS INSERTAR_CUENTA_USUARIO;
 DROP PROCEDURE IF EXISTS INSERTAR_PROYECTO;
 DROP PROCEDURE IF EXISTS LISTAR_PROYECTOS_X_ID_USUARIO;
 /*Registrar*/
+DROP PROCEDURE IF EXISTS INSERTAR_CUENTA_USUARIO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_CUENTA_USUARIO(
     IN _nombres VARCHAR(200),
     IN _apellidos VARCHAR(200),
     IN _correoElectronico VARCHAR(200),
-    IN _password VARCHAR(200)
+    IN _password VARCHAR(200),
+    IN _tieneCuentaGoogle TINYINT
 )
 BEGIN
-	INSERT INTO Usuario(nombres,apellidos,correoElectronico,password,activo,Privilegios_idPrivilegios) VALUES(_nombres, _apellidos, _correoElectronico, md5(_password), true, 1);
+	INSERT INTO Usuario(nombres,apellidos,correoElectronico,password,tieneCuentaGoogle,activo,Privilegios_idPrivilegios) 
+    VALUES(_nombres, _apellidos, _correoElectronico, md5(_password),_tieneCuentaGoogle, true, 1);
     SELECT @@last_insert_id AS idUsuario;
 END$
+
 SELECT * FROM Usuario;
 /*LOGIN*/
 DELIMITER $
@@ -37,8 +41,7 @@ BEGIN
     SELECT 0 AS 'idUsuario'; -- Usuario no autenticado
   END IF;
 END$
-DROP PROCEDURE INSERTAR_PROYECTO;
--- CAMBIAR PASSWORD
+
 DROP PROCEDURE IF EXISTS CAMBIAR_PASSWORD_CUENTA_USUARIO;
 
 DELIMITER $
@@ -51,6 +54,23 @@ BEGIN
     SET password = MD5(_password) 
     WHERE idUsuario = _idUsuario AND activo = 1;
 END$
+
+DROP PROCEDURE IF EXISTS VERIFICAR_SI_CORREO_ES_DE_GOOGLE;
+
+DELIMITER $
+CREATE PROCEDURE VERIFICAR_SI_CORREO_ES_DE_GOOGLE(IN _correoElectronico VARCHAR(255))
+BEGIN
+	SELECT tieneCuentaGoogle FROM Usuario WHERE correoElectronico = _correoElectronico AND activo = 1;
+END$
+
+CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE('pruebaCorreo@gmail.com');
+
+#########################################################
+## Proyecto
+#########################################################
+DROP PROCEDURE INSERTAR_PROYECTO;
+-- CAMBIAR PASSWORD
+
 ------------
 -- Proyecto
 ------------
@@ -168,6 +188,23 @@ CREATE PROCEDURE MODIFICAR_ESTADO_SPRINT(
 BEGIN
 	UPDATE Sprint SET estado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_SPRINT;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_SPRINT(
+	IN _idSprint INT,
+    in _descripcion VARCHAR(255),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE,
+    IN _idEstado INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+	UPDATE Sprint SET descripcion = _descripcion, fechaInicio = _fechaInicio, fechaFin = _fechaFin, estado = _idEstado, nombre=_nombre
+    WHERE idSPrint = _idSprint AND activo = 1;
+END$
+
+
 
 DROP PROCEDURE IF EXISTS ELIMINAR_SPRINT;
 DELIMITER $
@@ -1223,7 +1260,7 @@ CREATE PROCEDURE LISTAR_TAREAS_X_ID_SPRINT(
 BEGIN
 	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
-    WHERE  t.idSprint = _idSprint
+    WHERE  t.idSprint = _idSprint AND te.idTareaEstado = t.idTareaEstado
     AND t.activo=1;
 END$
 
