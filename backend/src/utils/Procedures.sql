@@ -3801,9 +3801,8 @@ BEGIN
 	DECLARE _idUsuarioXEquipoXRolEquipo INT;
     SET @_idProyecto = (SELECT idProyecto FROM Equipo WHERE idEquipo = _idEquipo);
     SET @_idRolEquipo = (
-        SELECT ere.idRolEquipo 
-        FROM UsuarioXEquipoXRolEquipo AS ere 
-        LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
+        SELECT re.idRolEquipo 
+        FROM RolEquipo AS re 
         WHERE re.idProyecto = @_idProyecto
         AND re.nombreRol = _nombreRol AND re.activo = 1);
     -- Verificamos si el registro ya existe
@@ -3813,8 +3812,8 @@ BEGIN
     IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
         -- El registro ya existe, actualizamos el estado a 1
         UPDATE UsuarioXEquipoXRolEquipo
-        SET activo = 1
-        WHERE idUsuario = _idUsuario AND idRolEquipo = @_idRolEquipo AND idEquipo = _idEquipo;
+        SET activo = 1, idRolEquipo = @_idRolEquipo
+        WHERE idUsuario = _idUsuario AND idEquipo = _idEquipo;
     ELSE
         INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
         VALUES(_idUsuario,_idEquipo,@_idRolEquipo,1);
