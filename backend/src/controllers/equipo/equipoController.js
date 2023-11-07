@@ -350,13 +350,13 @@ async function rolAgregado(req, res, next) {
         }
         const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
         for (const miembroAgregado of miembrosAgregados) {
-            const results1 = await connection.query(query1, [miembroAgregado.idUsuario, idProyecto, miembroAgregado.nombreRol]);
+            const results1 = await connection.query(query1, [miembroAgregado.idUsuario, idEquipo, miembroAgregado.nombreRol]);
             const idUsuarioXEquipoXRolEquipo = results1[0][0].idUsuarioXEquipoXRolEquipo;
             console.log(`Se inserto el miembro ${idUsuarioXEquipoXRolEquipo}!`);
         }
         const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
         for (const miembroModificado of miembrosModificados) {
-            const results2 = await connection.query(query2, [miembroModificado.idUsuario, idProyecto, miembroModificado.nombreRol]);
+            const results2 = await connection.query(query2, [miembroModificado.idUsuario, idEquipo, miembroModificado.nombreRol]);
             const idUsuario = results2[0][0].idUsuario;
             console.log(`Se modifico el miembro ${idUsuario}!`);
         }
