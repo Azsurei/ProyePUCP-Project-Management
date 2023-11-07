@@ -1252,5 +1252,31 @@ CREATE TABLE InteresadoEstrategia(
 ENGINE = InnoDB;
 
 -----------------------
--- Catalogo de Riesgos
+-- Matriz de responsabilidades
 -----------------------
+
+DROP TABLE IF EXISTS ResponsabilidadRol;
+CREATE TABLE ResponsabilidadRol(
+    idResponsabilidadRol INT AUTO_INCREMENT PRIMARY KEY,
+    idMatrizResponsabilidad INT,
+    letraRol VARCHAR(10),
+    nombreRol VARCHAR(100),
+    colorRol VARCHAR(10),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idMatrizResponsabilidad) REFERENCES MatrizResponsabilidad (idMatrizResponsabilidad)
+
+)
+ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS ResponsabilidadRol;
+CREATE TABLE ResponsabilidadRol(
+    idResponsabilidadRol INT AUTO_INCREMENT PRIMARY KEY,
+    letraRol VARCHAR(10),
+    nombreRol VARCHAR(100),
+    colorRol VARCHAR(10),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
