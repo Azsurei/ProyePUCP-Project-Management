@@ -3931,3 +3931,16 @@ BEGIN
     FROM ResponsabilidadRol
     WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ENTREGABLE_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ENTREGABLE_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT e.idEntregable, e.nombre, e.activo
+    FROM Entregable AS e
+    LEFT JOIN ComponenteEDT AS ce ON e.idComponente = ce.idComponente
+    LEFT JOIN EDT AS ed ON ce.idEDT = ed.idEDT
+    WHERE ed.idProyecto = _idProyecto AND e.activo=1;
+END$
