@@ -3809,7 +3809,7 @@ BEGIN
     -- Verificamos si el registro ya existe
     SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
     FROM UsuarioXEquipoXRolEquipo
-    WHERE idUsuario = _idUsuario AND idRolEquipo = @_idRolEquipo AND idEquipo = _idEquipo;
+    WHERE idUsuario = _idUsuario AND idEquipo = _idEquipo;
     IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
         -- El registro ya existe, actualizamos el estado a 1
         UPDATE UsuarioXEquipoXRolEquipo
