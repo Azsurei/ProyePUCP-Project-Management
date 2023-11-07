@@ -573,4 +573,6 @@ routerProyecto.get("/listarUsuariosXdProyecto/:idProyecto", async (req, res) => 
     }
 );
 
+
+
 module.exports.routerProyecto = routerProyecto;

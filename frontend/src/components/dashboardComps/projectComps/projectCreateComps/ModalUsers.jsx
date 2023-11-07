@@ -159,8 +159,8 @@ export default function ModalUser({
     return (
         <div className="popUp">
             <div className="overlay"></div>
-            <div className="modalUser">
-                <p className="buscarSup">Buscar nuevo miembro</p>
+            <div className="modalUser bg-mainModalColor">
+                <p className="buscarSup text-mainHeaders font-semibold">Buscar nuevo miembro</p>
                 <div
                     style={{
                         display: "flex",
@@ -183,7 +183,7 @@ export default function ModalUser({
                         />
                     </div>
                     <Button
-                        className="bg-indigo-950 text-slate-50"
+                        className="bg-indigo-950 dark:bg-primary-300 text-slate-50"
                         onClick={refreshList}
                     >
                         Buscar
@@ -206,7 +206,7 @@ export default function ModalUser({
                         Cerrar
                     </Button>
                     <Button
-                        className="bg-indigo-950 text-slate-50"
+                        className="bg-indigo-950 dark:bg-primary-300 text-slate-50"
                         onClick={() => {
                             handlerModalFinished(listUsersSelect);
                         }}
