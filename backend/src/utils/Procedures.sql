@@ -3843,6 +3843,18 @@ BEGIN
     SELECT _idUsuario AS idUsuario;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_EQUIPO_X_IDEQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+    UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE UsuarioXEquipoXRolEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    
+    SELECT _idEquipo AS idEquipo;
+END$
+
 
 -----------------------
 -- Matriz de responsabilidades
