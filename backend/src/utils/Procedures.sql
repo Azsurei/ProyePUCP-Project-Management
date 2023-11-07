@@ -3176,16 +3176,30 @@ BEGIN
     SELECT _idRolEquipo AS idRolEquipo;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_ROL_EQUIPO
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ROL_EQUIPO(
+    IN _idProyecto INT,
+    IN _nombreRol VARCHAR(200)
+)
+BEGIN
+	DECLARE _idRolEquipo INT;
+	INSERT INTO RolEquipo(nombreRol,activo,idProyecto) 
+    VALUES(_nombreRol,1,_idProyecto);
+    SET _idRolEquipo = @@last_insert_id;
+    SELECT _idRolEquipo AS idRolEquipo;
+END$
+
 DROP PROCEDURE IF EXISTS LISTAR_ROL_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_ROL_EQUIPO(
-    IN _idEquipo INT
+    IN _idProyecto INT
 )
 BEGIN
 	SELECT *
-    FROM RolesEquipo
-    WHERE idEquipo = _idEquipo
-    AND estado = 1;
+    FROM RolEquipo
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
 END$
 
 DROP PROCEDURE IF EXISTS ELIMINAR_ROL_EQUIPO;
@@ -3228,12 +3242,11 @@ CREATE PROCEDURE INSERTAR_MIEMBROS_EQUIPO(
     IN _idRol INT
 )
 BEGIN
-    DECLARE _idUsuarioXEquipo INT;
+	DECLARE _idUsuarioXEquipo INT;
     -- Verificar si ya existe un registro para este idEquipo e idUsuario
     SELECT idUsuarioXEquipo INTO _idUsuarioXEquipo
     FROM UsuarioXEquipo
     WHERE idEquipo = _idEquipo AND idUsuario = _idUsuario;
-
     IF _idUsuarioXEquipo IS NOT NULL THEN
         -- Si existe, actualiza el registro existente
         UPDATE UsuarioXEquipo
@@ -3245,7 +3258,6 @@ BEGIN
         VALUES(_idUsuario, _idEquipo, 1, _idRol);
         SET _idUsuarioXEquipo = @@last_insert_id;
     END IF;
-
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
 
@@ -3275,28 +3287,30 @@ END$
 DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
-    IN _idEquipo INT,
     IN _idUsuario INT,
-    IN _idRol INT
+    IN _idEquipo INT,
+    IN _idRolEquipo INT
 )
 BEGIN
-	UPDATE UsuarioXEquipo 
-    SET idRol = _idRol 
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET idRolEquipo = _idRolEquipo
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
 END$
 
 DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_MIEMBRO_EQUIPO(
-    IN _idEquipo INT,
-    IN _idUsuario INT
+    IN _idUsuario INT,
+    IN _idEquipo INT
 )
 BEGIN
-	UPDATE UsuarioXEquipo 
-    SET activo = 0 
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET activo = 0
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
 END$
 
 DROP PROCEDURE IF EXISTS OBTENER_idRol_X_idUsuario;
@@ -3700,14 +3714,9 @@ END$
 DROP PROCEDURE IF EXISTS ELIMINAR_ROLES_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_ROLES_EQUIPO(
-    IN _idEquipoXRolEquipo INT,
     IN _idRol INT
 )
 BEGIN
-    UPDATE EquipoXRolEquipo
-    SET activo = 0
-    WHERE idEquipoXRolEquipo = _idEquipoXRolEquipo 
-    AND idRolEquipo = _idRol;
     UPDATE RolEquipo
     SET activo = 0
     WHERE idRolEquipo = _idRol;
@@ -3722,9 +3731,20 @@ CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO(
 )
 BEGIN
 	DECLARE _idUsuarioXEquipoXRolEquipo INT;
-	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
-    VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
-    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    -- Verificamos si el registro ya existe
+    SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
+    FROM UsuarioXEquipoXRolEquipo
+    WHERE idUsuario = _idUsuario AND idRolEquipo = _idRolEquipo AND idEquipo = _idEquipo;
+    IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE UsuarioXEquipoXRolEquipo
+        SET activo = 1
+        WHERE idUsuario = _idUsuario AND idRolEquipo = _idRolEquipo AND idEquipo = _idEquipo;
+    ELSE
+        INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+        VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
+        SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    END IF;
     SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
 END$
 
@@ -3780,14 +3800,11 @@ CREATE PROCEDURE AGREGAR_ROLES_EQUIPO(
 BEGIN
     DECLARE _idRolEquipo INT;
 	DECLARE _idEquipoXRolEquipo INT;
+    SET @_idProyecto = (SELECT idProyecto FROM Equipo WHERE idEquipo = _idEquipo);
     -- Insertamos el rol primero en la tabla RolEquipo
-	INSERT INTO RolEquipo(nombreRol,activo) 
-    VALUES(_nombre,1);
+	INSERT INTO RolEquipo(nombreRol,activo,idProyecto) 
+    VALUES(_nombre,1,@_idProyecto);
     SET _idRolEquipo = @@last_insert_id;
-    -- Luego a la tabla EquipoXRolEquipo
-    INSERT INTO EquipoXRolEquipo(idEquipo,idRolEquipo,activo) 
-    VALUES(_idEquipo,_idRolEquipo,1);
-    SET _idEquipoXRolEquipo = @@last_insert_id;
 END$
 
 DROP PROCEDURE IF EXISTS INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL;
@@ -3799,15 +3816,26 @@ CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
 )
 BEGIN
 	DECLARE _idUsuarioXEquipoXRolEquipo INT;
+    SET @_idProyecto = (SELECT idProyecto FROM Equipo WHERE idEquipo = _idEquipo);
     SET @_idRolEquipo = (
-        SELECT ere.idRolEquipo 
-        FROM EquipoXRolEquipo AS ere 
-        LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
-        WHERE ere.idEquipo = _idEquipo
-        AND re.nombreRol = _nombreRol);
-	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
-    VALUES(_idUsuario,_idEquipo,@_idRolEquipo,1);
-    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+        SELECT re.idRolEquipo 
+        FROM RolEquipo AS re 
+        WHERE re.idProyecto = @_idProyecto
+        AND re.nombreRol = _nombreRol AND re.activo = 1);
+    -- Verificamos si el registro ya existe
+    SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
+    FROM UsuarioXEquipoXRolEquipo
+    WHERE idUsuario = _idUsuario AND idEquipo = _idEquipo;
+    IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE UsuarioXEquipoXRolEquipo
+        SET activo = 1, idRolEquipo = @_idRolEquipo
+        WHERE idUsuario = _idUsuario AND idEquipo = _idEquipo;
+    ELSE
+        INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+        VALUES(_idUsuario,_idEquipo,@_idRolEquipo,1);
+        SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    END IF;
     SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
 END$
 
@@ -3819,15 +3847,68 @@ CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
     IN _nombreRol VARCHAR(200)
 )
 BEGIN
+    SET @_idProyecto = (SELECT idProyecto FROM Equipo WHERE idEquipo = _idEquipo);
     SET @_idRolEquipo = (
         SELECT ere.idRolEquipo 
-        FROM EquipoXRolEquipo AS ere 
+        FROM UsuarioXEquipoXRolEquipo AS ere 
         LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
-        WHERE ere.idEquipo = _idEquipo
-        AND re.nombreRol = _nombreRol);
+        WHERE re.idProyecto = @_idProyecto
+        AND re.nombreRol = _nombreRol AND re.activo = 1);
     UPDATE UsuarioXEquipoXRolEquipo
     SET idRolEquipo = @_idRolEquipo
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
     SELECT _idUsuario AS idUsuario;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_EQUIPO_X_IDEQUIPO(
+    IN _idEquipo INT
+)
+BEGIN
+    UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE UsuarioXEquipoXRolEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE Tarea SET activo = 0 WHERE idEquipo = _idEquipo;
+    SELECT _idEquipo AS idEquipo;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_ROL_MIEMBRO_LIDER;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ROL_MIEMBRO_LIDER(
+    IN _idProyecto INT
+)
+BEGIN
+    INSERT INTO RolEquipo(nombreRol, activo, idProyecto) VALUES("Líder", 1, _idProyecto);
+    INSERT INTO RolEquipo(nombreRol, activo, idProyecto) VALUES("Miembro", 1, _idProyecto);
+END$
+
+
+-----------------------
+-- Matriz de responsabilidades
+-----------------------
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(
+    IN _idMatrizResponsabilidad INT
+)
+BEGIN
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "bg-blue-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "bg-red-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "bg-purple-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Se le informa", "bg-green-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "bg-yellow-600", 1);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_RESPONSABILIDADROL_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT *
+    FROM ResponsabilidadRol
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
 END$

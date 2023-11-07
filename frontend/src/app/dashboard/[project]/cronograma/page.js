@@ -509,6 +509,7 @@ export default function Cronograma(props) {
                 subTareas: null,
                 tareasPosteriores: listPosteriores,
                 idEntregable: parseInt(tareaEntregable[0], 10),
+                idColumnaKanban: 0
             };
             console.log(objTareaNueva, null, 2);
 

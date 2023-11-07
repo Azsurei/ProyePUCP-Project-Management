@@ -1018,3 +1018,12 @@ Content-Type: application/json
   "fechaRegistro": "2023-10-25",
   "cantidad": 4
 }
+
+
+////////////////////////////
+//Matriz de Responsabilidad//
+////////////////////////////
+//Listar responsabilidad rol x id proyecto
+### GET
+GET http://localhost:8080/api/proyecto/matrizResponsabilidad/listarResponsabilidad/183 HTTP/1.1
+Content-Type: application/json

@@ -11,28 +11,17 @@ async function insertarEquipoYParticipantes(req, res, next) {
 
         // Iteracion para insertar los roles y los usuarios asociados a ese rol
         roles.sort((a, b) => a.idRol - b.idRol); //ordenamos para buena vista en selects
-        const query2 = `CALL INSERTAR_ROL_EQUIPO(?);`;
+        const query2 = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
         for (const rol of roles) {
             //insertamos los roles en RolEquipo
             let idRolEquipo;
             if (rol.idRol !== 1 && rol.idRol !== 2) {
-                const [results1] = await connection.query(query2, [
-                    rol.nombreRol,
-                ]);
+                const [results1] = await connection.query(query2, [idProyecto,rol.nombreRol]);
                 idRolEquipo = results1[0][0].idRolEquipo;
                 console.log(`Se insertó el rol ${idRolEquipo}!`);
             } else {
                 idRolEquipo = rol.idRol;
             }
-
-            //insertamos los roles en EquipoXRolEquipo (Se conservan roles no asignados pero creados)
-            const query3 = `CALL INSERTAR_EQUIPO_X_ROLEQUIPO(?,?);`;
-            const [results2] = await connection.query(query3, [
-                idEquipo,
-                idRolEquipo,
-            ]);
-            const idEquipoXRolEquipo = results2[0].idEquipoXRolEquipo;
-
             //insertamos todos los usuarios asignados al idRolEquipo en UsuarioXEquipoXRol
             const query4 = `CALL INSERTAR_USUARIO_X_EQUIPO_X_ROL(?,?,?);`;
             console.log(`Filtrando usuarios para rol en db ${idRolEquipo}! / en front ${rol.idRol}`)
@@ -134,10 +123,10 @@ async function listarTareasDeXIdEquipo(req, res, next) {
 }
 
 async function insertarRol(req, res, next) {
-    const { idEquipo, nombreRol } = req.body;
+    const { idProyecto, nombreRol } = req.body;
     const query = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
     try {
-        const [results] = await connection.query(query, [idEquipo, nombreRol]);
+        const [results] = await connection.query(query, [idProyecto, nombreRol]);
         const idRolEquipo = results[0].idRolEquipo;
         console.log(`Se insertó el rol ${idRolEquipo}!`);
         res.status(200).json({
@@ -150,10 +139,10 @@ async function insertarRol(req, res, next) {
 }
 
 async function listarRol(req, res, next) {
-    const { idEquipo } = req.params;
+    const { idProyecto } = req.params;
     const query = `CALL LISTAR_ROL_EQUIPO(?);`;
     try {
-        const [results] = await connection.query(query, [idEquipo]);
+        const [results] = await connection.query(query, [idProyecto]);
         const roles = results[0];
         console.log(`Se listaron los roles ${roles}!`);
         res.status(200).json({
@@ -272,16 +261,16 @@ async function eliminarMiembroEquipo(req, res, next) {
 
 async function insertarMiembrosEquipo(req, res, next) {
     //Insertar query aca
-    const { idEquipo, roles, usuariosXRol } = req.body;
+    const { idProyecto, idEquipo, roles, usuariosXRol } = req.body;
     try {
         // Iteracion para insertar los roles y los usuarios asociados a ese rol
         roles.sort((a, b) => a.idRol - b.idRol); //ordenamos para buena vista en selects
-        const query2 = `CALL INSERTAR_ROL_EQUIPO(?);`;
+        const query2 = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
         for (const rol of roles) {
             //insertamos los roles en RolEquipo
             let idRolEquipo;
             if (rol.idRol !== 1 && rol.idRol !== 2) {
-                const [results1] = await connection.query(query2, [
+                const [results1] = await connection.query(query2, [idProyecto,
                     rol.nombreRol,
                 ]);
                 idRolEquipo = results1[0][0].idRolEquipo;
@@ -289,15 +278,6 @@ async function insertarMiembrosEquipo(req, res, next) {
             } else {
                 idRolEquipo = rol.idRol;
             }
-
-            //insertamos los roles en EquipoXRolEquipo (Se conservan roles no asignados pero creados)
-            const query3 = `CALL INSERTAR_EQUIPO_X_ROLEQUIPO(?,?);`;
-            const [results2] = await connection.query(query3, [
-                idEquipo,
-                idRolEquipo,
-            ]);
-            const idEquipoXRolEquipo = results2[0].idEquipoXRolEquipo;
-
             //insertamos todos los usuarios asignados al idRolEquipo en UsuarioXEquipoXRol
             const query4 = `CALL INSERTAR_USUARIO_X_EQUIPO_X_ROL(?,?,?);`;
             console.log(`Filtrando usuarios para rol en db ${idRolEquipo}! / en front ${rol.idRol}`)
@@ -328,10 +308,10 @@ async function insertarMiembrosEquipo(req, res, next) {
 
 async function rolEliminado(req, res, next) {
     const {idEquipo, rolesEliminados, miembrosAgregados, miembrosModificados, miembrosEliminados } = req.body;
-    const query = `CALL ELIMINAR_ROLES_EQUIPO(?,?);`;
+    const query = `CALL ELIMINAR_ROLES_EQUIPO(?);`;
     try {
         for (const rolEliminado of rolesEliminados) {
-            await connection.query(query, [rolEliminado.idEquipoXRolEquipo, rolEliminado.idRol]);
+            await connection.query(query, [rolEliminado.idRol]);
             console.log(`Se elimino el rol ${rolEliminado.idRol}!`);
         }
         const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO(?,?,?);`;
@@ -361,7 +341,7 @@ async function rolEliminado(req, res, next) {
 }
 
 async function rolAgregado(req, res, next) {
-    const {idEquipo, rolesAgregados, miembrosAgregados, miembrosModificados } = req.body;
+    const {idProyecto, idEquipo, rolesAgregados, miembrosAgregados, miembrosModificados } = req.body;
     const query = `CALL AGREGAR_ROLES_EQUIPO(?,?);`;
     try {
         for (const rolAgregados of rolesAgregados) {

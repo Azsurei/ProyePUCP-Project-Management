@@ -4,6 +4,7 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import { SmallLoadingScreen } from "../layout";
 import { useState, useEffect, useContext } from "react";
+import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import {
     Table,
     TableHeader,
@@ -28,6 +29,7 @@ export default function MatrizDeResponsabilidades(props) {
     const [roles, setRoles] = useState([]);
     const [entregables, setEntregables] = useState([]);
     const [responsabilidades, setResponsabilidades] = useState([]);
+    const [modifiedCells, setModifiedCells] = useState([]);
 
     useEffect(() => {
         // Datos iniciales
@@ -137,31 +139,33 @@ export default function MatrizDeResponsabilidades(props) {
 
         // Recorre todos los roles y entregables
         initialRoles.forEach((rol) => {
-          initialEntregables.forEach((entregable) => {
-            // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
-            const existingData = initialDataFromApi.find(
-              (item) =>
-                item.idRol === rol.id && item.idEntregable === entregable.id
-            );
-      
-            if (existingData) {
-              // Si existe, simplemente agrega los datos existentes
-              completedData.push(existingData);
-            } else {
-              // Si no existe, crea una celda vacía o con valores predeterminados
-              completedData.push({
-                idRol: rol.id,
-                nombreRol: rol.nombre,
-                idEntregable: entregable.id,
-                nombreEntregable: entregable.nombre,
-                // Puedes definir valores predeterminados para otras propiedades
-                idResponsabilidad: 0,
-                nombreResponsabilidad: "",
-                letraResponsabilidad: "",
-                colorResponsabilidad: "",
-              });
-            }
-          });
+            initialEntregables.forEach((entregable) => {
+                // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
+                const existingData = initialDataFromApi.find(
+                    (item) =>
+                        item.idRol === rol.id &&
+                        item.idEntregable === entregable.id
+                );
+
+                if (existingData) {
+                    // Si existe, simplemente agrega los datos existentes
+                    completedData.push(existingData);
+                } else {
+                    // Si no existe, crea una celda vacía o con valores predeterminados
+                    completedData.push({
+                        idRol: rol.id,
+                        nombreRol: rol.nombre,
+                        idEntregable: entregable.id,
+                        nombreEntregable: entregable.nombre,
+                        // Puedes definir valores predeterminados para otras propiedades
+                        idResponsabilidad: 0,
+                        nombreResponsabilidad: "",
+                        letraResponsabilidad: "",
+                        colorResponsabilidad: "",
+                        isNew: true, // Marcar como nueva celda
+                    });
+                }
+            });
         });
 
         console.log("Data from API", initialDataFromApi);
@@ -221,87 +225,109 @@ export default function MatrizDeResponsabilidades(props) {
             updatedData[rowIndex].colorResponsabilidad = item.color;
             updatedData[rowIndex].nombreResponsabilidad = item.nombre;
             updatedData[rowIndex].idResponsabilidad = item.id;
+            // Agrega la celda modificada a modifiedCells
+            setModifiedCells([...modifiedCells, updatedData[rowIndex]]);
         }
 
         // Actualiza el estado con el nuevo arreglo
         setDataFromApi(updatedData);
     };
 
-    const renderCell = React.useCallback((user, columnKey) => {
-        console.log("El key de la columna es:", columnKey);
-        const cellValue = user[columnKey];
-        const color = getColorForResponsabilidad(cellValue);
-        const entregableMatch = entregables.find(
-            (item) => item.nombre === user.entregable
-        );
-        
-        const idEntregable = entregableMatch ? entregableMatch.id : null;
-        console.log("El id del entregable es:", idEntregable);
-        let idRol;
-        if (columnKey !== "entregable") {
-            const roleMatch = roles.find((item) => item.nombre === columnKey);
-            idRol = roleMatch ? roleMatch.id : null;
-        } else {
-            idRol = -1;
-        }
+    const renderCell = React.useCallback(
+        (user, columnKey) => {
+            console.log("El key de la columna es:", columnKey);
+            const cellValue = user[columnKey];
+            const color = getColorForResponsabilidad(cellValue);
+            const entregableMatch = entregables.find(
+                (item) => item.nombre === user.entregable
+            );
 
-        switch (columnKey) {
-            case "entregable":
-                return cellValue;
-            default:
-                return (
-                    <>
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button
-                                    variant="bordered"
-                                    className={`transition-transform ${color} hover:shadow-md hover:scale-105`}
-                                >
-                                    {cellValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Dynamic Actions"
-                                items={responsabilidades}
-                                variant="flat"
-                                disabledKeys={cellValue}
-                            >
-                                {(item) => (
-                                    <DropdownItem
-                                        key={item.letra}
-                                        textValue={item.nombre}
-                                        onPress={() =>
-                                            changeCell(
-                                                idRol,
-                                                idEntregable,
-                                                item
-                                            )
-                                        }
-                                    >
-                                        <div className="flex">
-                                            <div className="inline w-1/4">
-                                                {item.letra}
-                                            </div>
-                                            <div className="inline w-3/4">
-                                                {item.nombre}
-                                            </div>
-                                        </div>
-                                    </DropdownItem>
-                                )}
-                            </DropdownMenu>
-                        </Dropdown>
-                    </>
+            const idEntregable = entregableMatch ? entregableMatch.id : null;
+            console.log("El id del entregable es:", idEntregable);
+            let idRol;
+            if (columnKey !== "entregable") {
+                const roleMatch = roles.find(
+                    (item) => item.nombre === columnKey
                 );
-        }
-    }, [dataFromApi, roles, entregables, responsabilidades]);
+                idRol = roleMatch ? roleMatch.id : null;
+            } else {
+                idRol = -1;
+            }
+
+            switch (columnKey) {
+                case "entregable":
+                    return cellValue;
+                default:
+                    return (
+                        <>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button
+                                        variant="bordered"
+                                        className={`transition-transform ${color} hover:shadow-md hover:scale-105`}
+                                    >
+                                        {cellValue}
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    aria-label="Dynamic Actions"
+                                    items={responsabilidades}
+                                    variant="flat"
+                                    disabledKeys={cellValue}
+                                >
+                                    {(item) => (
+                                        <DropdownItem
+                                            key={item.letra}
+                                            textValue={item.nombre}
+                                            onPress={() =>
+                                                changeCell(
+                                                    idRol,
+                                                    idEntregable,
+                                                    item
+                                                )
+                                            }
+                                        >
+                                            <div className="flex">
+                                                <div className="inline w-1/4">
+                                                    {item.letra}
+                                                </div>
+                                                <div className="inline w-3/4">
+                                                    {item.nombre}
+                                                </div>
+                                            </div>
+                                        </DropdownItem>
+                                    )}
+                                </DropdownMenu>
+                            </Dropdown>
+                        </>
+                    );
+            }
+        },
+        [dataFromApi, roles, entregables, responsabilidades]
+    );
+
+    const saveFunction = () => {
+        const newCells = modifiedCells.filter((cell) => cell.isNew);
+        const modifiedExistingCells = modifiedCells.filter((cell) => !cell.isNew);
+    
+        console.log("Celdas a insertar:", newCells);
+        console.log("Celdas a modificar:", modifiedExistingCells);
+    
+        // Ahora puedes realizar las peticiones POST y PUT según corresponda
+    }
 
     return (
         <>
             <div className="px-[1rem]">
                 Inicio/Proyectos/Proyecto/Matriz de responsabilidades
             </div>
-            <div className="text-[#172B4D] font-semibold text-[2rem] my-[0.5rem] px-[1rem]">
-                Matriz de responsabilidades
+            <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
+                <div className="text-[#172B4D] font-semibold text-[2rem] ">
+                    Matriz de responsabilidades
+                </div>
+                <Button color="primary" startContent={<SaveIcon />} onPress={saveFunction}>
+                    Guardar
+                </Button>
             </div>
             <Table
                 aria-label="Example table with custom cells"
