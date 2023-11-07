@@ -11,7 +11,7 @@ routerEquipo.get("/listarTareasDeXIdEquipo/:idEquipo",equipoController.listarTar
 
 //Roles
 routerEquipo.post("/insertarRol",equipoController.insertarRol);
-routerEquipo.get("/listarRol/:idEquipo",equipoController.listarRol);
+routerEquipo.get("/listarRol/:idProyecto",equipoController.listarRol);
 routerEquipo.delete("/eliminarRol",equipoController.eliminarRol);
 
 routerEquipo.post("/insertarEquipo",equipoController.insertarEquipo);

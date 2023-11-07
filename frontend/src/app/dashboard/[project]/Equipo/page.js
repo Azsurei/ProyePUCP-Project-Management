@@ -797,7 +797,7 @@ export default function Equipo(props) {
                                                             )
                                                         }
                                                         autoSelectedValue={{
-                                                            idRol: member.idRolEquipo,
+                                                            idRolEquipo: member.idRolEquipo,
                                                             nombreRol:
                                                                 member.nombreRol,
                                                         }}

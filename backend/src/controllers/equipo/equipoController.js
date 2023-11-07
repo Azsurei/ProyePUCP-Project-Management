@@ -2,7 +2,8 @@ const connection = require("../../config/db");
 
 async function insertarEquipoYParticipantes(req, res, next) {
     //Insertar query aca
-    const { idProyecto, nombre, roles, usuariosXRol } = req.body;
+    const { idProyecto, nombre, roles, usuariosXRol, rolesOriginales } =
+        req.body;
     const query = `CALL INSERTAR_EQUIPO(?,?);`;
     try {
         const [results] = await connection.query(query, [idProyecto, nombre]);
@@ -10,23 +11,35 @@ async function insertarEquipoYParticipantes(req, res, next) {
         console.log(`Se creo el equipo${idEquipo}!`);
 
         // Iteracion para insertar los roles y los usuarios asociados a ese rol
-        roles.sort((a, b) => a.idRol - b.idRol); //ordenamos para buena vista en selects
         const query2 = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
         for (const rol of roles) {
+            // Verifica si el rol ya existe en los roles originales
+            const rolExistente = rolesOriginales.find(
+                (originalRol) => originalRol.idRolEquipo === rol.idRolEquipo
+            );
             //insertamos los roles en RolEquipo
             let idRolEquipo;
-            if (rol.idRol !== 1 && rol.idRol !== 2) {
-                const [results1] = await connection.query(query2, [idProyecto,rol.nombreRol]);
-                idRolEquipo = results1[0][0].idRolEquipo;
-                console.log(`Se insertó el rol ${idRolEquipo}!`);
+
+            if (rolExistente) {
+                // El rol ya existe, toma el idRolEquipo existente
+                idRolEquipo = rolExistente.idRolEquipo;
             } else {
-                idRolEquipo = rol.idRol;
+                // El rol es nuevo, insertamos el rol en RolEquipo
+                const [results1] = await connection.query(query2, [
+                    idProyecto,
+                    rol.nombreRol,
+                ]);
+                idRolEquipo = results1[0][0].idRolEquipo; // el idRol de la base de datos
+                console.log(`Se insertó el rol ${idRolEquipo}!`);
             }
+
             //insertamos todos los usuarios asignados al idRolEquipo en UsuarioXEquipoXRol
             const query4 = `CALL INSERTAR_USUARIO_X_EQUIPO_X_ROL(?,?,?);`;
-            console.log(`Filtrando usuarios para rol en db ${idRolEquipo}! / en front ${rol.idRol}`)
+            console.log(
+                `Filtrando usuarios para rol en db ${idRolEquipo}! / en front ${rol.idRolEquipo}`
+            );
             const filteredUsuarios = usuariosXRol.filter(
-                (item) => item.idRolEquipo === rol.idRol
+                (item) => item.idRolEquipo === rol.idRolEquipo
             );
             for (const usuario of filteredUsuarios) {
                 const [results3] = await connection.query(query4, [
@@ -34,23 +47,24 @@ async function insertarEquipoYParticipantes(req, res, next) {
                     idEquipo,
                     idRolEquipo,
                 ]);
-                const idUsuarioXEquipoXRolEquipo = results3[0][0].idUsuarioXEquipoXRolEquipo;
-                console.log(`Se insertó el usuario ${usuario.idUsuario} con rol ${idRolEquipo}!`);
+                const idUsuarioXEquipoXRolEquipo =
+                    results3[0][0].idUsuarioXEquipoXRolEquipo;
+                console.log(
+                    `Se insertó el usuario ${usuario.idUsuario} con rol ${idRolEquipo}!`
+                );
             }
         }
         res.status(200).json({
             idEquipo,
-            message: "Equipo insertado exitosamente, junto con sus roles y usuarios asignados",
+            message:
+                "Equipo insertado exitosamente, junto con sus roles y usuarios asignados",
         });
-
     } catch (error) {
         console.error("Error en el registro:", error);
         res.status(500).send("Error en el registro: " + error.message);
         next(error);
     }
 }
-
-
 
 async function listarXIdProyecto(req, res, next) {
     const { idProyecto } = req.params;
@@ -68,8 +82,6 @@ async function listarXIdProyecto(req, res, next) {
     }
 }
 
-
-
 async function listarEquiposYParticipantes(req, res, next) {
     const { idProyecto } = req.params;
     const query = `CALL LISTAR_EQUIPO_X_IDPROYECTO(?);`;
@@ -85,7 +97,6 @@ async function listarEquiposYParticipantes(req, res, next) {
         }
 
         //falta fetchear tareas totales y tareas completadas para propositos de la pantalla
-
 
         res.status(200).json({
             equipos,
@@ -126,7 +137,10 @@ async function insertarRol(req, res, next) {
     const { idProyecto, nombreRol } = req.body;
     const query = `CALL INSERTAR_ROL_EQUIPO(?,?);`;
     try {
-        const [results] = await connection.query(query, [idProyecto, nombreRol]);
+        const [results] = await connection.query(query, [
+            idProyecto,
+            nombreRol,
+        ]);
         const idRolEquipo = results[0].idRolEquipo;
         console.log(`Se insertó el rol ${idRolEquipo}!`);
         res.status(200).json({
@@ -270,7 +284,8 @@ async function insertarMiembrosEquipo(req, res, next) {
             //insertamos los roles en RolEquipo
             let idRolEquipo;
             if (rol.idRol !== 1 && rol.idRol !== 2) {
-                const [results1] = await connection.query(query2, [idProyecto,
+                const [results1] = await connection.query(query2, [
+                    idProyecto,
                     rol.nombreRol,
                 ]);
                 idRolEquipo = results1[0][0].idRolEquipo;
@@ -280,7 +295,9 @@ async function insertarMiembrosEquipo(req, res, next) {
             }
             //insertamos todos los usuarios asignados al idRolEquipo en UsuarioXEquipoXRol
             const query4 = `CALL INSERTAR_USUARIO_X_EQUIPO_X_ROL(?,?,?);`;
-            console.log(`Filtrando usuarios para rol en db ${idRolEquipo}! / en front ${rol.idRol}`)
+            console.log(
+                `Filtrando usuarios para rol en db ${idRolEquipo}! / en front ${rol.idRol}`
+            );
             const filteredUsuarios = usuariosXRol.filter(
                 (item) => item.idRolEquipo === rol.idRol
             );
@@ -290,15 +307,18 @@ async function insertarMiembrosEquipo(req, res, next) {
                     idEquipo,
                     idRolEquipo,
                 ]);
-                const idUsuarioXEquipoXRolEquipo = results3[0][0].idUsuarioXEquipoXRolEquipo;
-                console.log(`Se insertó el usuario ${usuario.idUsuario} con rol ${idRolEquipo}!`);
+                const idUsuarioXEquipoXRolEquipo =
+                    results3[0][0].idUsuarioXEquipoXRolEquipo;
+                console.log(
+                    `Se insertó el usuario ${usuario.idUsuario} con rol ${idRolEquipo}!`
+                );
             }
         }
         res.status(200).json({
             idEquipo,
-            message: "Equipo insertado exitosamente, junto con sus roles y usuarios asignados",
+            message:
+                "Equipo insertado exitosamente, junto con sus roles y usuarios asignados",
         });
-
     } catch (error) {
         console.error("Error en el registro:", error);
         res.status(500).send("Error en el registro: " + error.message);
@@ -307,7 +327,13 @@ async function insertarMiembrosEquipo(req, res, next) {
 }
 
 async function rolEliminado(req, res, next) {
-    const {idEquipo, rolesEliminados, miembrosAgregados, miembrosModificados, miembrosEliminados } = req.body;
+    const {
+        idEquipo,
+        rolesEliminados,
+        miembrosAgregados,
+        miembrosModificados,
+        miembrosEliminados,
+    } = req.body;
     const query = `CALL ELIMINAR_ROLES_EQUIPO(?);`;
     try {
         for (const rolEliminado of rolesEliminados) {
@@ -316,24 +342,37 @@ async function rolEliminado(req, res, next) {
         }
         const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO(?,?,?);`;
         for (const miembroAgregado of miembrosAgregados) {
-            const results1 = await connection.query(query1, [miembroAgregado.idUsuario, idEquipo, miembroAgregado.idRolEquipo]);
-            const idUsuarioXEquipoXRolEquipo = results1[0][0].idUsuarioXEquipoXRolEquipo;
+            const results1 = await connection.query(query1, [
+                miembroAgregado.idUsuario,
+                idEquipo,
+                miembroAgregado.idRolEquipo,
+            ]);
+            const idUsuarioXEquipoXRolEquipo =
+                results1[0][0].idUsuarioXEquipoXRolEquipo;
             console.log(`Se inserto el miembro ${idUsuarioXEquipoXRolEquipo}!`);
         }
         const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO(?,?,?);`;
         for (const miembroModificado of miembrosModificados) {
-            const results2 = await connection.query(query2, [miembroModificado.idUsuario, idEquipo, miembroModificado.idRolEquipo]);
+            const results2 = await connection.query(query2, [
+                miembroModificado.idUsuario,
+                idEquipo,
+                miembroModificado.idRolEquipo,
+            ]);
             const idUsuario = results2[0][0].idUsuario;
             console.log(`Se modifico el miembro ${idUsuario}!`);
         }
         const query3 = `CALL ELIMINAR_MIEMBRO_EQUIPO(?,?);`;
         for (const miembrosEliminado of miembrosEliminados) {
-            const results3 = await connection.query(query3, [miembrosEliminado.idUsuario, idEquipo]);
+            const results3 = await connection.query(query3, [
+                miembrosEliminado.idUsuario,
+                idEquipo,
+            ]);
             const idUsuario = results3[0][0].idUsuario;
             console.log(`Se elimino el miembro ${idUsuario}!`);
         }
         res.status(200).json({
-            message: "Role eliminado y miembro agregado, modificado y eliminado exitosamente",
+            message:
+                "Role eliminado y miembro agregado, modificado y eliminado exitosamente",
         });
     } catch (error) {
         next(error);
@@ -341,7 +380,13 @@ async function rolEliminado(req, res, next) {
 }
 
 async function rolAgregado(req, res, next) {
-    const {idProyecto, idEquipo, rolesAgregados, miembrosAgregados, miembrosModificados } = req.body;
+    const {
+        idProyecto,
+        idEquipo,
+        rolesAgregados,
+        miembrosAgregados,
+        miembrosModificados,
+    } = req.body;
     const query = `CALL AGREGAR_ROLES_EQUIPO(?,?);`;
     try {
         for (const rolAgregados of rolesAgregados) {
@@ -350,18 +395,28 @@ async function rolAgregado(req, res, next) {
         }
         const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
         for (const miembroAgregado of miembrosAgregados) {
-            const results1 = await connection.query(query1, [miembroAgregado.idUsuario, idEquipo, miembroAgregado.nombreRol]);
-            const idUsuarioXEquipoXRolEquipo = results1[0][0].idUsuarioXEquipoXRolEquipo;
+            const results1 = await connection.query(query1, [
+                miembroAgregado.idUsuario,
+                idEquipo,
+                miembroAgregado.nombreRol,
+            ]);
+            const idUsuarioXEquipoXRolEquipo =
+                results1[0][0].idUsuarioXEquipoXRolEquipo;
             console.log(`Se inserto el miembro ${idUsuarioXEquipoXRolEquipo}!`);
         }
         const query2 = `CALL MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(?,?,?);`;
         for (const miembroModificado of miembrosModificados) {
-            const results2 = await connection.query(query2, [miembroModificado.idUsuario, idEquipo, miembroModificado.nombreRol]);
+            const results2 = await connection.query(query2, [
+                miembroModificado.idUsuario,
+                idEquipo,
+                miembroModificado.nombreRol,
+            ]);
             const idUsuario = results2[0][0].idUsuario;
             console.log(`Se modifico el miembro ${idUsuario}!`);
         }
         res.status(200).json({
-            message: "Roles agregados y miembro agregado y modificado exitosamente",
+            message:
+                "Roles agregados y miembro agregado y modificado exitosamente",
         });
     } catch (error) {
         next(error);
@@ -383,5 +438,5 @@ module.exports = {
     eliminarMiembroEquipo,
     insertarMiembrosEquipo,
     rolEliminado,
-    rolAgregado
+    rolAgregado,
 };
