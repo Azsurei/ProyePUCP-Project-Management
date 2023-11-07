@@ -307,8 +307,13 @@ export default function MatrizDeResponsabilidades(props) {
     );
 
     const saveFunction = () => {
-        console.log("Celdas modificadas:", modifiedCells);
-        // Aquí puedes hacer la petición POST al backend para guardar los datos
+        const newCells = modifiedCells.filter((cell) => cell.isNew);
+        const modifiedExistingCells = modifiedCells.filter((cell) => !cell.isNew);
+    
+        console.log("Celdas a insertar:", newCells);
+        console.log("Celdas a modificar:", modifiedExistingCells);
+    
+        // Ahora puedes realizar las peticiones POST y PUT según corresponda
     }
 
     return (

@@ -27,7 +27,7 @@ function CardUser({ usuarioObject }) {
 
     return (
         <li
-            className={isSelected ? "UserCard active" : "UserCard"}
+            className={(isSelected ? "UserCard bg-green-300 dark:bg-success-300 active hover:bg-green-300" : "UserCard dark:hover:bg-slate-700 hover:bg-slate-100 bg-mainBackground ") }
             onClick={isSelected ? handleSelectedOff : handleSelectedOn}
         >
 
@@ -54,7 +54,7 @@ function CardUser({ usuarioObject }) {
                             ? usuarioObject.apellidos
                             : "")}
                 </p>
-                <p className="titleUserEmail">
+                <p className="titleUserEmail text-mainHeaders dark:text-slate-300 dark:font-normal">
                     {usuarioObject.correoElectronico}
                 </p>
             </div>

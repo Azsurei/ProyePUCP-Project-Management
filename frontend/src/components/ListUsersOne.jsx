@@ -14,7 +14,7 @@ function CardUser({ usuarioObject, isSelected, onSelection }) {
 
     return (
         <li
-            className={isSelected ? "UserCard active" : "UserCard"}
+            className={(isSelected ? "UserCard bg-green-300 dark:bg-success-300 active hover:bg-green-300" : "UserCard dark:hover:bg-slate-700 hover:bg-slate-100 bg-mainBackground ") }
             onClick={onSelection}
         >
             {/* <img
@@ -25,10 +25,10 @@ function CardUser({ usuarioObject, isSelected, onSelection }) {
             <Avatar
                 //isBordered
                 //as="button"
-                className="transition-transform w-[48px] min-w-[48px] h-[48px] min-h-[48px]"
+                className="transition-transform w-[48px] min-w-[48px] h-[48px] min-h-[48px] bg-mainUserIcon"
                 src={usuarioObject.imgLink}
                 fallback={
-                    <p className="usrLeftIconNull">
+                    <p className="usrLeftIconNull  bg-mainUserIcon">
                         {usuarioObject.nombres[0] +
                             (usuarioObject.apellidos !== null
                                 ? usuarioObject.apellidos[0]
@@ -44,7 +44,7 @@ function CardUser({ usuarioObject, isSelected, onSelection }) {
                             ? usuarioObject.apellidos
                             : "")}
                 </p>
-                <p className="titleUserEmail">
+                <p className="titleUserEmail  text-mainHeaders dark:text-slate-300 dark:font-normal">
                     {usuarioObject.correoElectronico}
                 </p>
             </div>

@@ -18,7 +18,8 @@ async function crear(req, res, next) {
         horasPlaneadas,
         usuarios,
         tareasPosteriores,
-        idEntregable    //==================
+        idEntregable,
+        idColumnaKanban
     } = req.body;
 
     try {
@@ -37,7 +38,8 @@ async function crear(req, res, next) {
             cantPosteriores,
             horasPlaneadas,
             0,
-            idEntregable    //==================
+            idEntregable,
+            idColumnaKanban
         );
         await usuarioXTareaController.funcCrearUsuariosXTarea(
             usuarios,
@@ -155,7 +157,8 @@ async function funcAgregarTareasPosteriores(
                 tarea.cantPosteriores,
                 tarea.horasPlaneadas,
                 1,
-                idEntregable
+                idEntregable,
+                0
             );
 
             await usuarioXTareaController.funcCrearUsuariosXTarea(usuariosAgregados,idTareaPosterior);
@@ -204,10 +207,11 @@ async function insertarTarea(
     cantPosteriores,
     horasPlaneadas,
     esPosterior,
-    idEntregable
+    idEntregable,
+    idColumnaKanban
 ) {
     try {
-        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
         const [results] = await connection.query(query, [
             idCronograma,
             idTareaEstado,
@@ -223,7 +227,8 @@ async function insertarTarea(
             cantPosteriores,
             horasPlaneadas,
             esPosterior,
-            idEntregable
+            idEntregable,
+            idColumnaKanban
         ]);
         let idTarea = results[0][0].idTarea;
         console.log(`Tarea ${idTarea} creada`);
@@ -232,6 +237,9 @@ async function insertarTarea(
         console.log(error);
     }
 }
+
+
+
 
 async function insertarTareasPosteriores(
     tareas,
@@ -255,7 +263,8 @@ async function insertarTareasPosteriores(
                 0,
                 null,
                 1,
-                originalTareaData.idEntregable
+                originalTareaData.idEntregable,
+                originalTareaData.idColumnaKanban
             );
             await usuarioXTareaController.funcCrearUsuariosXTarea(
                 originalTareaData.usuarios,
