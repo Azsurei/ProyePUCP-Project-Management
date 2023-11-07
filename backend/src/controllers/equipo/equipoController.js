@@ -337,8 +337,8 @@ async function rolEliminado(req, res, next) {
     const query = `CALL ELIMINAR_ROLES_EQUIPO(?);`;
     try {
         for (const rolEliminado of rolesEliminados) {
-            await connection.query(query, [rolEliminado.idRol]);
-            console.log(`Se elimino el rol ${rolEliminado.idRol}!`);
+            await connection.query(query, [rolEliminado.idRolEquipo]);
+            console.log(`Se elimino el rol ${rolEliminado.idRolEquipo}!`);
         }
         const query1 = `CALL INSERTAR_MIEMBRO_EQUIPO(?,?,?);`;
         for (const miembroAgregado of miembrosAgregados) {
