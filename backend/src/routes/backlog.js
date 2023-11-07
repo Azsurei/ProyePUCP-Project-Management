@@ -18,7 +18,7 @@ routerBacklog.get("/listarEpicasXIdBacklog/:idBacklog",epicaController.listarEpi
 //Sprints
 routerBacklog.post("/insertarSprint",sprintController.crear);
 routerBacklog.get("/listarSprintsXIdBacklogcronograma/:idBacklog/:idCronograma",sprintController.listarSprintsXIdBacklogCronograma);
-
+routerBacklog.put("/modificarSprint",sprintController.modificar);
 routerBacklog.put("/actualizarEstadoSprint",sprintController.modificarEstado);
 routerBacklog.delete("/eliminarSprint",sprintController.eliminarSprint);
 
