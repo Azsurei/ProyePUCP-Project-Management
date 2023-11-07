@@ -162,6 +162,7 @@ export default function MatrizDeResponsabilidades(props) {
                         nombreResponsabilidad: "",
                         letraResponsabilidad: "",
                         colorResponsabilidad: "",
+                        isNew: true, // Marcar como nueva celda
                     });
                 }
             });

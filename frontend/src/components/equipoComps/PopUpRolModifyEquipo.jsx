@@ -34,7 +34,7 @@ export default function PopUpRolEquipo({
             toast.error("No se puede eliminar el rol porque está en uso.");
         } else {
             setListRoles((prevRoles) => {
-                return prevRoles.filter((role) => role.idRol !== rol.idRol);
+                return prevRoles.filter((role) => role.idRolEquipo !== rol.idRolEquipo);
             });
         }
     };
@@ -90,12 +90,12 @@ export default function PopUpRolEquipo({
                                                 (participante) => participante.idRolEquipo === newIdRol
                                             ) || 
                                             listRoles.some(
-                                                (rol) => rol.idRol === newIdRol
+                                                (rol) => rol.idRolEquipo === newIdRol
                                             )
                                         );
 
                                         const newRol = {
-                                            idRol: newIdRol,
+                                            idRolEquipo: newIdRol,
                                             nombreRol: newRolName,
                                         };
 
