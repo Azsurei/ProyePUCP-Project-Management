@@ -253,7 +253,11 @@ export default function editarActaReunion(props) {
 
     const updateAcuerdos = (indexTema, nuevosAcuerdos) => {
         const temasActualizados = [...listTemas];
+        console.log("listTemas");
+        console.log(listTemas);
+        console.log("Temas debug");
         console.log(temasActualizados[indexTema]);
+        console.log("Nuevos acuerdos");
         console.log(nuevosAcuerdos);
         temasActualizados[indexTema].acuerdos = nuevosAcuerdos;
         setListTemas(temasActualizados);

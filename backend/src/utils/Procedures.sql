@@ -166,7 +166,7 @@ CREATE PROCEDURE MODIFICAR_ESTADO_SPRINT(
     IN _idEstado INT
 )
 BEGIN
-	UPDATE Sprint SET idEstado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
+	UPDATE Sprint SET estado=_idEstado WHERE idSPrint = _idSprint AND activo = 1;
 END$
 
 DROP PROCEDURE IF EXISTS ELIMINAR_SPRINT;
@@ -1236,10 +1236,11 @@ CREATE PROCEDURE LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(
 BEGIN
 	SELECT t.idTarea, t.idEquipo,t.idPadre,t.idTareaAnterior,t.idSprint,t.sumillaTarea,t.descripcion,t.fechaInicio,t.fechaFin,t.cantSubTareas,t.cantPosteriores,t.horasPlaneadas ,t.fechaUltimaModificacionEstado,te.idTareaEstado,te.nombre as nombreTareaEstado, te.color as colorTareaEstado, t.esPosterior
     FROM Tarea t, TareaEstado te
-    WHERE  t.idCronograma = _idCronograma AND idSprint = 0
+    WHERE  t.idCronograma = _idCronograma AND t.idTareaEstado = te.idTareaEstado AND idSprint = 0
     AND t.activo=1;
 END$
-
+SELECT * FROM Tarea;
+CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(58);
 CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(56);
 CALL LISTAR_TAREAS_X_ID_PROYECTO(44)
 
@@ -2162,8 +2163,43 @@ BEGIN
 	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
 
+DELIMITER $
+CREATE PROCEDURE OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
+BEGIN
+    -- Obtener el presupuesto inicial
+    DECLARE presupuestoInicial DOUBLE DEFAULT 0;
+    DECLARE totalIngresos DOUBLE DEFAULT 0;
+    DECLARE totalEstimaciones DOUBLE DEFAULT 0;
+    DECLARE totalEgresos DOUBLE DEFAULT 0;
+    
+    SELECT presupuestoInicial INTO presupuestoInicial
+    FROM Presupuesto
+    WHERE idPresupuesto = _idPresupuesto;
 
+    -- Calcular el monto total de ingresos
+    
+    SELECT SUM(monto * cantidad) INTO totalIngresos
+    FROM LineaIngreso
+    WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 
+    -- Calcular el subtotal de estimaciones de costos
+    
+    SELECT SUM(subtotal) INTO totalEstimaciones
+    FROM LineaEstimacionCosto
+    WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+
+    -- Calcular el costo real total de los egresos
+    
+    SELECT SUM(costoReal * cantidad) INTO totalEgresos
+    FROM LineaEgreso
+    WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+
+    -- Devolver los resultados
+    SELECT presupuestoInicial, totalIngresos, totalEstimaciones, totalEgresos;
+END $
+
+CALL OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(37);
+------
 DROP PROCEDURE INSERTAR_INGRESO
 DELIMITER $
 CREATE PROCEDURE INSERTAR_INGRESO(
@@ -3175,12 +3211,11 @@ CREATE PROCEDURE INSERTAR_MIEMBROS_EQUIPO(
     IN _idRol INT
 )
 BEGIN
-    DECLARE _idUsuarioXEquipo INT;
+	DECLARE _idUsuarioXEquipo INT;
     -- Verificar si ya existe un registro para este idEquipo e idUsuario
     SELECT idUsuarioXEquipo INTO _idUsuarioXEquipo
     FROM UsuarioXEquipo
     WHERE idEquipo = _idEquipo AND idUsuario = _idUsuario;
-
     IF _idUsuarioXEquipo IS NOT NULL THEN
         -- Si existe, actualiza el registro existente
         UPDATE UsuarioXEquipo
@@ -3192,7 +3227,6 @@ BEGIN
         VALUES(_idUsuario, _idEquipo, 1, _idRol);
         SET _idUsuarioXEquipo = @@last_insert_id;
     END IF;
-
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
 
@@ -3222,28 +3256,30 @@ END$
 DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO(
-    IN _idEquipo INT,
     IN _idUsuario INT,
-    IN _idRol INT
+    IN _idEquipo INT,
+    IN _idRolEquipo INT
 )
 BEGIN
-	UPDATE UsuarioXEquipo 
-    SET idRol = _idRol 
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET idRolEquipo = _idRolEquipo
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
 END$
 
 DROP PROCEDURE IF EXISTS ELIMINAR_MIEMBRO_EQUIPO;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_MIEMBRO_EQUIPO(
-    IN _idEquipo INT,
-    IN _idUsuario INT
+    IN _idUsuario INT,
+    IN _idEquipo INT
 )
 BEGIN
-	UPDATE UsuarioXEquipo 
-    SET activo = 0 
+    UPDATE UsuarioXEquipoXRolEquipo
+    SET activo = 0
     WHERE idEquipo = _idEquipo 
     AND idUsuario = _idUsuario;
+    SELECT _idUsuario AS idUsuario;
 END$
 
 DROP PROCEDURE IF EXISTS OBTENER_idRol_X_idUsuario;
@@ -3669,9 +3705,20 @@ CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO(
 )
 BEGIN
 	DECLARE _idUsuarioXEquipoXRolEquipo INT;
-	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
-    VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
-    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    -- Verificamos si el registro ya existe
+    SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
+    FROM UsuarioXEquipoXRolEquipo
+    WHERE idUsuario = _idUsuario AND idRolEquipo = _idRolEquipo AND idEquipo = _idEquipo;
+    IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE UsuarioXEquipoXRolEquipo
+        SET activo = 1
+        WHERE idUsuario = _idUsuario AND idRolEquipo = _idRolEquipo AND idEquipo = _idEquipo;
+    ELSE
+        INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+        VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
+        SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    END IF;
     SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
 END$
 
@@ -3751,10 +3798,21 @@ BEGIN
         FROM EquipoXRolEquipo AS ere 
         LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
         WHERE ere.idEquipo = _idEquipo
-        AND re.nombreRol = _nombreRol);
-	INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
-    VALUES(_idUsuario,_idEquipo,@_idRolEquipo,1);
-    SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+        AND re.nombreRol = _nombreRol AND re.activo = 1);
+    -- Verificamos si el registro ya existe
+    SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
+    FROM UsuarioXEquipoXRolEquipo
+    WHERE idUsuario = _idUsuario AND idRolEquipo = @_idRolEquipo AND idEquipo = _idEquipo;
+    IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE UsuarioXEquipoXRolEquipo
+        SET activo = 1
+        WHERE idUsuario = _idUsuario AND idRolEquipo = @_idRolEquipo AND idEquipo = _idEquipo;
+    ELSE
+        INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
+        VALUES(_idUsuario,_idEquipo,@_idRolEquipo,1);
+        SET _idUsuarioXEquipoXRolEquipo = @@last_insert_id;
+    END IF;
     SELECT _idUsuarioXEquipoXRolEquipo AS idUsuarioXEquipoXRolEquipo;
 END$
 
@@ -3771,7 +3829,7 @@ BEGIN
         FROM EquipoXRolEquipo AS ere 
         LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
         WHERE ere.idEquipo = _idEquipo
-        AND re.nombreRol = _nombreRol);
+        AND re.nombreRol = _nombreRol AND re.activo = 1);
     UPDATE UsuarioXEquipoXRolEquipo
     SET idRolEquipo = @_idRolEquipo
     WHERE idEquipo = _idEquipo 

@@ -131,7 +131,7 @@ function EditableInput(props) {
                                 onClick={toggleModal}
                                 className="ml-3 bg-[#f0ae19] text-white w-7 h-7
                                     rounded-full">
-                                <img src="/icons/icon-searchBar.svg" class="mr-1"/>
+                                <img src="/icons/icon-searchBar.svg" className="mr-1"/>
                             </button>
                             )}
                             {modal && (
