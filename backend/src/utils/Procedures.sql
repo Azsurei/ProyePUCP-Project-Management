@@ -3884,3 +3884,14 @@ BEGIN
     INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "bg-yellow-600", 1);
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_RESPONSABILIDADROL_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT *
+    FROM ResponsabilidadRol
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+END$
