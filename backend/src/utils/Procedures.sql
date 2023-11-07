@@ -3869,9 +3869,8 @@ CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
 BEGIN
     SET @_idProyecto = (SELECT idProyecto FROM Equipo WHERE idEquipo = _idEquipo);
     SET @_idRolEquipo = (
-        SELECT ere.idRolEquipo 
-        FROM UsuarioXEquipoXRolEquipo AS ere 
-        LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
+        SELECT re.idRolEquipo 
+        FROM RolEquipo AS re 
         WHERE re.idProyecto = @_idProyecto
         AND re.nombreRol = _nombreRol AND re.activo = 1);
     UPDATE UsuarioXEquipoXRolEquipo
