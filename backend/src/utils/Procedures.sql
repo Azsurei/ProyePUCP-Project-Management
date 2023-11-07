@@ -3856,6 +3856,16 @@ BEGIN
     SELECT _idEquipo AS idEquipo;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_ROL_MIEMBRO_LIDER;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ROL_MIEMBRO_LIDER(
+    IN _idProyecto INT
+)
+BEGIN
+    INSERT INTO RolEquipo(nombreRol, activo, idProyecto) VALUES("Líder", 1, _idProyecto);
+    INSERT INTO RolEquipo(nombreRol, activo, idProyecto) VALUES("Miembro", 1, _idProyecto);
+END$
+
 
 -----------------------
 -- Matriz de responsabilidades

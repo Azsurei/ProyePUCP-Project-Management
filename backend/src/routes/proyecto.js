@@ -253,10 +253,11 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const query = `
                             CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?,?);
                         `;
-                        
+                        const query1 = `CALL INSERTAR_ROL_MIEMBRO_LIDER(?);`;
                             const [results] = await connection.query(query,[idProyecto, 12, null]);
                             const idEquipo = results[0][0].idEquipo;
                             console.log(`Se creo el equipo${idEquipo}!`);
+                            const [results1] = await connection.query(query1,[idProyecto]);
     
                     }
 
