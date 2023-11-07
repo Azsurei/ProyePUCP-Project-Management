@@ -447,7 +447,7 @@ export default function Equipo(props) {
         console.log("Agregado correctamente");
         console.log(casoAgregarRol);
 
-        axios
+        /* axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/equipo/rolEliminado",
@@ -479,7 +479,7 @@ export default function Equipo(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST2:", error);
-            });
+            }); */
     };
 
     return (
