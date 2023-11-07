@@ -1,19 +1,180 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import { useRouter } from "next/navigation";
+import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
+import ModalSubequipos from "@/components/dashboardComps/projectComps/cronogramaComps/ModalSubequipos";
+import ModalPosterior from "@/components/dashboardComps/projectComps/cronogramaComps/ModalPosterior";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 
 function TaskView(props) {
-
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const router = useRouter();
 
-    const taskId = props.params.taskView;
+    const taskId = decodeURIComponent(props.params.taskId);
+    //si taskId = nuevaTarea => estamos en vista de nueva tarea
+    //si taskId = nuevaTarea=32 => estamos agregando hijo a tarea de id 32
+    //si taskId = 12312 => estamos viendo el detalle de tarea con id 12312
+
+    const dropBoxItems = [
+        {
+            id: 1,
+            itemKey: "1",
+            texto: "No iniciado",
+            color: "default",
+        },
+        {
+            id: 2,
+            itemKey: "2",
+            texto: "En progreso",
+            color: "primary",
+        },
+        {
+            id: 3,
+            itemKey: "3",
+            texto: "Atrasado",
+            color: "danger",
+        },
+        {
+            id: 4,
+            itemKey: "4",
+            texto: "Finalizado",
+            color: "success",
+        },
+    ];
+
+    const [listEntregables, setListEntregables] = useState([]);
+    const [validEntregable, setValidEntregable] = useState(true);
+
+    const colorDropbox = ["default", "primary", "danger", "success"];
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const {
+        isOpen: isModalSubEOpen,
+        onOpen: onModalSubEOpen,
+        onOpenChange: onModalSubEOpenChange,
+    } = useDisclosure();
+
+    const {
+        isOpen: isModalPosteriorOpen,
+        onOpen: onModalPosteriorOpen,
+        onOpenChange: onModalPosteriorChange,
+    } = useDisclosure();
+
+    const [toggleNew, setToggleNew] = useState(false);
+
+    //States from firstTimeModal
+    const [firstFechaInicio, setFirstFechaInicio] = useState("");
+    const [firstFechaFin, setFirstFechaFin] = useState("");
+
+    //States from Cronograma
+    const [cronogramaId, setCronogramaId] = useState(null);
+
+    //States from Tareas table
+    const [listTareas, setListTareas] = useState([]);
+
+    const [tareaEliminar, setTareaEliminar] = useState(null);
+    const [tareaPadre, setTareaPadre] = useState(null);
+
+    const [tareaName, setTareaName] = useState("");
+    const [validName, setValidName] = useState(true);
+
+    const [tareaDescripcion, setTareaDescripcion] = useState("");
+    const [validDescripcion, setValidDescripcion] = useState(true);
+
+    const [tareaEstado, setTareaEstado] = useState(["1"]);
+    const [tareaEntregable, setTareaEntregable] = useState(new Set([]));
+
+    const [fechaInicio, setFechaInicio] = useState("");
+    const [fechaFin, setFechaFin] = useState("");
+    const [validFechas, setValidFechas] = useState(true);
+
+    const [listPosteriores, setListPosteriores] = useState([]); //mandamos a insertar
+    const [listPosterioresOriginal, setListPosterioresOriginal] = useState([]); //mandamos a eliminar
+
+    const [tabSelected, setTabSelected] = useState("users");
+    const [modal, setModal] = useState(false);
+
+    //para definir estado de segunda pantalla
+    const [stateSecond, setStateSecond] = useState(0);
+    //1 sera para nueva tarea
+    //2 para visualizar una tarea
+    //3 para editar una tarea
+    //4 si es que esta agregando una tarea hija
+    const [isEditable, setIsEditable] = useState(false);
+    const [idTareaToEdit, setIdTareaToEdit] = useState(null);
+
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedUsersOriginal, setSelectedUsersOriginal] = useState([]);
+    const [selectedSubteam, setSelectedSubteam] = useState(null);
+    const [validAsigned, setValidAsigned] = useState(true);
+
+    //const [selectedSubteamUsers, setSelectedSubteamUsers] = useState([]);
+    const [validSelectedSubteamUsers, setValidSelectedSubteamUsers] =
+        useState(true);
+
+    useEffect(()=>{
+        function containsOnlyNumbers(inputString){
+            return /^\d+$/.test(inputString);
+        }
+
+        if(taskId.startsWith("nuevaTarea=")){
+            //caso en que estamos agregando un hijo
+        }
+        if(taskId === "nuevaTarea"){
+            //caso en que agregamos nueva tarea
+        }
+        if(containsOnlyNumbers(taskId)){
+            //caso en ver detalle de tarea
+        }
+        else{
+            //error, este url no esxiste (como botamos el error?)
+        }
+    },[]);
+
 
     return (
         <div className={toggleNew ? "divRight open" : "divRight"}>
+            <ModalSubequipos
+                isOpen={isModalSubEOpen}
+                onOpenChange={onModalSubEOpenChange}
+                projectId={projectId}
+                getSelectedSubteam={(sele_Subteam) => {
+                    setSelectedUsers([]);
+                    setSelectedSubteam(sele_Subteam);
+                }}
+            ></ModalSubequipos>
+
+            <ModalPosterior
+                idCronograma={cronogramaId}
+                isOpen={isModalPosteriorOpen}
+                onOpenChange={onModalPosteriorChange}
+                addTareaPosterior={addTareaPosterior}
+                startDate={fechaFin}
+            ></ModalPosterior>
+
+            {modal && (
+                <ModalUser
+                    handlerModalClose={() => {
+                        setModal(false);
+                    }}
+                    handlerModalFinished={returnListOfUsers}
+                    excludedUsers={selectedUsers}
+                    idProyecto={projectId}
+                    listAllUsers={false}
+                ></ModalUser>
+            )}
+
+            <Toaster
+                richColors
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
+
             <div className="containerGeneralRight">
                 <div className="flex flex-row items-end">
                     <HeaderWithButtonsSamePage
@@ -674,14 +835,6 @@ function TaskView(props) {
                     </div>
                 )}
             </div>
-
-            <Toaster
-                richColors
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }
