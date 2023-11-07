@@ -3803,7 +3803,7 @@ BEGIN
         SELECT ere.idRolEquipo 
         FROM UsuarioXEquipoXRolEquipo AS ere 
         LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
-        WHERE re.idEquipo = _idProyecto
+        WHERE re.idProyecto = _idProyecto
         AND re.nombreRol = _nombreRol AND re.activo = 1);
     -- Verificamos si el registro ya existe
     SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
