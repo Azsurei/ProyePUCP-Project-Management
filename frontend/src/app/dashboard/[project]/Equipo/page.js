@@ -119,7 +119,7 @@ export default function Equipo(props) {
                 return participant;
             }),
         };
-
+        console.log("EL ID DEL ROL SELECCIONADO ES:",value);
         // Actualiza el estado con el nuevo selectedTeam
         setSelectedTeam(updatedSelectedTeam);
     };
@@ -241,7 +241,7 @@ export default function Equipo(props) {
         axios
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/equipo/listarRol/${team.idEquipo}`
+                    `/api/proyecto/equipo/listarRol/${projectId}`
             )
             .then((response) => {
                 // Aquí puedes manejar la respuesta de la petición
@@ -360,7 +360,7 @@ export default function Equipo(props) {
 
         arrParticipantes.forEach((participante) => {
             const tieneNuevoRol = arrAddedRoles.some(
-                (addedRol) => addedRol.idRol === participante.idRolEquipo
+                (addedRol) => addedRol.idRolEquipo === participante.idRolEquipo
             );
 
             if (tieneNuevoRol) {
@@ -382,7 +382,7 @@ export default function Equipo(props) {
             modifiedArray: modifiedRoles,
             deletedArray: deletedRoles,
             addedArray: addedRoles,
-        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRol");
+        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRolEquipo");
 
         console.log("Modified Roles:", modifiedRoles);
         console.log("Deleted Roles:", deletedRoles);
@@ -428,6 +428,7 @@ export default function Equipo(props) {
         } = separarPorRol(modifiedParticipants, addedRoles);
 
         const casoEliminarRol = {
+            idProyecto: parseInt(projectId),
             idEquipo: selectedTeam.idEquipo,
             miembrosAgregados: addedParticipantesNoRol,
             miembrosModificados: modifiedParticipantesNoRol,
@@ -437,6 +438,7 @@ export default function Equipo(props) {
         console.log("Realizado correctamente");
         console.log(casoEliminarRol);
         const casoAgregarRol = {
+            idProyecto: parseInt(projectId),
             idEquipo: selectedTeam.idEquipo,
             miembrosAgregados: addedParticipantesNewRol,
             miembrosModificados: modifiedParticipantesNewRol,
@@ -795,7 +797,7 @@ export default function Equipo(props) {
                                                             )
                                                         }
                                                         autoSelectedValue={{
-                                                            idRol: member.idRol,
+                                                            idRol: member.idRolEquipo,
                                                             nombreRol:
                                                                 member.nombreRol,
                                                         }}

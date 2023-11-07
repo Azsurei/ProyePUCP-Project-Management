@@ -23,7 +23,7 @@ export default function ComboBoxArrayEquipo({ people, onSelect, autoSelectedValu
                 onChange={(selectedItem) => {
                     setSelectedPerson(selectedItem);
                     if (typeof onSelect === "function") {
-                        onSelect(selectedItem.idRol, selectedItem.nombreRol);
+                        onSelect(selectedItem.idRolEquipo, selectedItem.nombreRol);
                     }
                 }}
             >
