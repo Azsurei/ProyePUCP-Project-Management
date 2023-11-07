@@ -3871,3 +3871,16 @@ END$
 -- Matriz de responsabilidades
 -----------------------
 
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(
+    IN _idMatrizResponsabilidad INT
+)
+BEGIN
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "bg-blue-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "bg-red-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "bg-purple-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Se le informa", "bg-green-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "bg-yellow-600", 1);
+END$
+

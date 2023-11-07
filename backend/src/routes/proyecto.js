@@ -190,12 +190,16 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         query = `
                                     CALL INSERTAR_MATRIZ_RESPONSABILIDAD(?);
                                 `;
+                        query1 = `CALL INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(?);`;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
 
                         const idMatrizResponsabilidad =
                             results[0][0].idMatrizResponsabilidad;
+
+                        const [results1] = await connection.query(query1, [idMatrizResponsabilidad]);
+                        
                     }
 
                     if (herramienta.idHerramienta === 8) {
