@@ -32,7 +32,7 @@ module.exports = {
                 'mainUserIcon': 'rgb(var(--color-mainUserIcon) / <alpha-value>)',
                 'mainContent': 'rgb(var(--color-mainContent) / <alpha-value>)',
                 'mainNavBar': 'rgb(var(--color-mainNavBar) / <alpha-value>)',
-
+                'mainModalColor' : 'rgb(var(--color-mainModalColor) / <alpha-value>)',
 
                 //about kanban
                 'columnBackgroundColor': 'rgb(var(--color-columnBackgroundColor) / <alpha-value>)',
