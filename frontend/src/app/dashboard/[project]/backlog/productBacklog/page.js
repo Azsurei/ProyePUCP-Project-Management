@@ -326,7 +326,7 @@ export default function ProductBacklog(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="hidden sm:flex .roboto">
                                 <Button
                                     endContent={
@@ -352,7 +352,23 @@ export default function ProductBacklog(props) {
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
+                        <Link
+                            href={
+                                "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/backlog/productBacklog/registerPB"
+                            }
+                        >
+                            <button
+                                className="btnBacklogPrimary sm:w-1 sm:h-1"
+                                type="button"
+                            >
+                                Añadir elemento
+                            </button>
+                        </Link>
                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
@@ -439,12 +455,12 @@ export default function ProductBacklog(props) {
     return (
         //Aqui va el codigo del contenido del dashboard
         <div className="container">
-            <div className="header">
+            {/* <div className="header">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product
                 Backlog
-            </div>
+            </div> */}
             <div className="backlog">
-                <div className="titleBacklog">BACKLOG</div>
+                {/* <div className="titleBacklog"></div>
                 <div className="navigationBacklog">
                     <div className="navigationBacklogIzquierda">
                         <Link
@@ -493,8 +509,8 @@ export default function ProductBacklog(props) {
                             </button>
                         </Link>
                     </div>
-                </div>
-                <div>
+                </div> */}
+                <div className="mt-16">
                     <MyDynamicTable
                         label="Tabla Backlog"
                         bottomContent={bottomContent}

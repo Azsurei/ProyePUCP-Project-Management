@@ -11,67 +11,71 @@ import {
 
 
 function EditableTopic(props) {
+
     const [mostrarAcuerdos, setMostrarAcuerdos] = useState(false);
 
     const toggleAcuerdos = () => {
         setMostrarAcuerdos(!mostrarAcuerdos);
     };
+    console.log("Props:")
     console.log(props);
 
-    const handleAddAcuerdo = ()=>{
-        const nuevosAcuerdos =  [
+    const handleAddAcuerdo = () => {
+        // Assuming that 'props.acuerdos' cannot be null or undefined.
+        const nextIndex = props.acuerdos.length + 1;
+        const nuevosAcuerdos = [
             ...props.acuerdos,
             {
-                index: props.acuerdos.length + 1,
+                index: nextIndex,
                 data: '',
                 date: '',
                 responsables: [],
             }
         ];
-        //props.setAcuerdos(newList_A);
-        props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
-    }
-
-    const handleChangeAcuerdo = (e, index) => {
-        const updatedEntregables = [...props.acuerdos];
-        updatedEntregables[index - 1].data = e.target.value;
-        console.log(updatedEntregables);
-        //props.setAcuerdos(updatedEntregables);
-        props.updateAcuerdos(props.number - 1, updatedEntregables);
+        props.updateAcuerdos(nuevosAcuerdos);
     };
 
-    const handleRemoveAcuerdo = (index) => {
-        const updatedEntregables = [...props.acuerdos];
-        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-        for (let i = index - 1; i < updatedEntregables.length; i++) {
-            updatedEntregables[i].index = updatedEntregables[i].index - 1;
-        }
-        console.log(updatedEntregables);
-        //props.setAcuerdos(updatedEntregables);
-        props.updateAcuerdos(props.number - 1, updatedEntregables);
-    }
+    const handleChangeAcuerdo = (e, index) => {
+        const updatedAcuerdos = props.acuerdos.map(acuerdo => {
+            if (acuerdo.index === index) {
+                return { ...acuerdo, data: e.target.value };
+            }
+            return acuerdo;
+        });
+        props.updateAcuerdos(updatedAcuerdos);
+    };
+
+    const handleRemoveAcuerdo = (indexToRemove) => {
+        const updatedAcuerdos = props.acuerdos.filter(acuerdo => acuerdo.index !== indexToRemove);
+        props.updateAcuerdos(updatedAcuerdos);
+    };
 
     const updateResponsables = (index, nuevosResponsables) => {
-        const nuevosAcuerdos = [...props.acuerdos];
-        nuevosAcuerdos[index].responsables = nuevosResponsables;
-        props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
+        const updatedAcuerdos = props.acuerdos.map(acuerdo => {
+            if (acuerdo.index === index) {
+                return { ...acuerdo, responsables: nuevosResponsables };
+            }
+            return acuerdo;
+        });
+        props.updateAcuerdos(updatedAcuerdos);
     };
 
     const handleDateChange = (e, index) => {
-        const nuevosAcuerdos = [...props.acuerdos];
-        // Assuming e.target.value is in the format "2023-10-12T05:00:00.000Z"
-        // we can split at 'T' and take the first part (the date).
-        const formattedDate = e.target.value.split('T')[0]; // gets "2023-10-12"
-        nuevosAcuerdos[index - 1].date = formattedDate;
-        props.updateAcuerdos(props.number - 1, nuevosAcuerdos);
+        const updatedAcuerdos = props.acuerdos.map(acuerdo => {
+            if (acuerdo.index === index) {
+                const formattedDate = e.target.value.split('T')[0];
+                return { ...acuerdo, date: formattedDate };
+            }
+            return acuerdo;
+        });
+        props.updateAcuerdos(updatedAcuerdos);
     };
-
 
     return (
         <li className="EditableTopic">
             <div className="topicContainer">
                 <p className="newInputEntrName">
-                    {props.number}. 
+                    Tema.
                 </p>
                 <div className="inputAndDeleteContainer">
                     <Textarea

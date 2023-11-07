@@ -15,6 +15,7 @@ import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/
 import { useContext } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
 import { Toaster, toast } from "sonner";
+import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -67,6 +68,7 @@ export default function ProductBacklogRegister(props) {
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
     const [reloadData, setReloadData] = useState(false);
+    const [reloading, setReloading] = useState(true);
 
     // Esta función se llama cuando deseas recargar los datos
     const handleReloadData = () => {
@@ -76,7 +78,11 @@ export default function ProductBacklogRegister(props) {
     const toggleModal = () => {
         handleReloadData();
         setModal(!modal);
+        
     };
+    const listarDenuevo = () => {
+        setReloading(!reloading);
+    }
 
     useEffect(() => {
         const stringURLUsuario =
@@ -105,6 +111,16 @@ export default function ProductBacklogRegister(props) {
         }
         setIsLoadingSmall(false);
     }, [modal]);
+    useEffect(() => {
+        if (reloading) {
+            document.body.style.overflow = "hidden";
+            setReloadData(true);
+        } else {
+            document.body.style.overflow = "auto";
+            setReloadData(false);
+        }
+        setIsLoadingSmall(false);
+    }, [reloading]);
 
     function addContainer() {
         setScenarioFields((prevFields) => [
@@ -262,10 +278,10 @@ export default function ProductBacklogRegister(props) {
 
     return (
         <form onSubmit={onSubmit} className="containerRegisterPB">
-            <div className="headerRegisterPB">
+            {/* <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product
                 Backlog / Registrar elemento
-            </div>
+            </div> */}
             <div className="backlogRegisterPB">
                 <div className="titleBacklogRegisterPB">
                     Registrar nuevo elemento en el Backlog
@@ -554,6 +570,7 @@ export default function ProductBacklogRegister(props) {
                             process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/hu/eliminarEpica`
                         }
+                        reloadData={()=>listarDenuevo()}
                     />
                 )}
             </div>

@@ -227,10 +227,18 @@ export default function ReporteRiesgos(props) {
               width: 1000
             },
             legend: {
-              position: 'bottom'
-            }
+              position: 'bottom',
+            },
+
           }
-        }]
+        }],
+        title: {
+            text: 'Grafico de Impacto'
+          },
+          colors: ['#8DFFA6', '#16C78E', '#FFFA8D', '#F0AE19', '#FF4D4D'],
+          legend: {
+            fontSize: '16px',
+          }
       };
 
       const seriesBar = [

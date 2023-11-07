@@ -35,7 +35,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 export const UserCardsContext = React.createContext();
 
-export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlEliminate}) {
+export default function PopUpEpica({ modal, toggle, url, backlogID, reloadData}) {
     const [filterValue, setFilterValue] = useState("");
     const [listEpics, setListEpics] = useState([]);
     const [noResults, setNoResults] = useState(false);
@@ -73,6 +73,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
           } else {
               setNoResults(false);
           }
+          reloadData();
         } catch (error) {
           console.error('Error al obtener datos:', error);
         }
@@ -101,7 +102,9 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                 console.log("Respuesta del servidor:", response.data);
                 console.log("Registro correcto de la epica")
                 // Realizar acciones adicionales si es necesario
+
                 fetchData();
+                reloadData();
                 })
                 .catch((error) => {
                  // Manejar errores si la solicitud POST falla
@@ -136,6 +139,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                 console.log("Eliminado correcto");
                 // Llamar a refresh() aquí después de la solicitud HTTP exitosa
                 fetchData();
+                reloadData();
             })
             .catch((error) => {
                 // Manejar errores si la solicitud DELETE falla
@@ -170,106 +174,6 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
       }, [filterValue]);
 
     return (
-        // (modal && <div className="popUp" style={{animation: "droptop .3s linear"}}>
-		// 	<div onClick={toggle} className="overlay"></div>
-        //     <div className="modalEpic">
-                
-        //         <div className="containerModal">
-                    
-        //             <p className="buscarEpic">Lista de Epicas</p>
-        //             <div className="subcontainer flex justify-end">
-        //                     <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={AddNewEpic}>
-        //                         Agregar Epica
-        //                     </Button>
-        //                     <Button color="danger"  onClick={() => {
-        //                                             isSelected ? handleEliminateError("Seguro desea eliminar la epica?") : setNoEpic("Falta seleccionar una epica");
-        //                                             }} endContent={<PlusIcon />} className="btnElimanteEpic" >
-        //                         Eliminar
-        //                     </Button>
-                            
-        //             </div>
-                    
-        //         </div>
-        //         <div className="divBuscador">
-        //                 <Input
-        //                     isClearable
-        //                     className="w-full sm:max-w-[100%]"
-        //                     placeholder="Ingresa una epica..."
-        //                     startContent={<SearchIcon />}
-        //                     value={filterValue}
-        //                     onValueChange={onSearchChange}
-        //                     variant="faded"
-        //                 />
-        //         </div>
-                
-        //         <div className="containerModal">
-        //             <div className="divEpics">
-        //                 <UserCardsContext.Provider
-        //                     value={{ selectEpic, deselectEpic }}
-        //                 >
-        //                     <ListEpic lista={listEpics}></ListEpic>
-        //                 </UserCardsContext.Provider>
-        //                 {noResults && (
-        //                     <p className="error-message">
-        //                         No se encontraron resultados.
-        //                     </p>
-        //                 )}
-        //             </div>
-                     
-        //         </div>
-        //         <div className="subcontainer">
-                        
-                        
-        //                 {addEpic ? (
-        //                     <input
-        //                     type="text" 
-        //                     autoFocus 
-        //                     className="inputEpica"
-        //                     placeholder="Escribe la nueva epica"
-        //                     value={newEpicName}
-        //                     onChange={(e) => {
-        //                         setNewEpicName(e.target.value);
-        //                         setAddErrorEpic("");
-        //                     }}
-        //                     ></input>
-        //                 ):null}
-        //                 {addErrorEpic && <p className="error-message">{addErrorEpic}</p>}
-        //                 {noEpic && <p className="error-message">{noEpic}</p>}
-        //                 {eliminateError ? (
-        //                     <div>
-        //                         <p className="error-message">{eliminateError}</p>
-        //                         <div className="endButtons">
-        //                             <button
-        //                                 className="buttonTwoUser"
-        //                                 onClick={() => setEliminateError("")}
-        //                             >
-        //                                 Cancelar
-        //                             </button>
-        //                             <button
-        //                                 className="buttonOneUser"
-        //                                 onClick={() => EliminateEpic(selectedEpic.nombre)}
-        //                             >
-        //                                 Confirmar
-        //                              </button>
-        //                         </div>
-        //                     </div>
-        //                 ) : null}
-        //         </div> 
-                
-        //         <div className="buttonSection">
-        //             <button className="close-modal" onClick={toggle}>
-        //                 Cancelar
-        //             </button>
-        //             <div className="right-buttons">
-        //                 <button className="btn-modal" onClick={handleInsertEpic}>
-        //                     Aceptar
-        //                 </button>
-        //             </div>
-        //         </div>
-                
-        //     </div>
-        // </div>
-        // )
         <>
         {startModal && (
                 <Modal 
@@ -374,7 +278,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, urlAdd, urlE
                         
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="danger" variant="light" onPress={onClose} className="">
+                        <Button color="danger" variant="light" onPress={()=>{reloadData(); onClose();}} className="">
                           Cancelar
                         </Button>
                         <Button color="primary" onPress={handleInsertEpic} className="bg-blue-950 text-white">
