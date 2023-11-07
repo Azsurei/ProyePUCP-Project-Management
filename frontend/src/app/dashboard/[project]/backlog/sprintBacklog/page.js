@@ -150,6 +150,33 @@ const updateSprint = async (sprint) => {
             });
     });
 };
+const changeSprint = async (idTarea, idSprint) => {
+    const data = [
+        {
+            idTarea: idTarea,
+            idSprint: idSprint,
+        }
+    ];
+        
+    return new Promise((resolve, reject) => {
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/cronograma/actualizarIdSprintXTarea`,
+                {
+                    tareasModificadas: data,
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve(true);
+            })
+            .catch((error) => {
+                console.error("Error al actualizar el sprint: ", error);
+                reject(error);
+            });
+    });
+};
 
 // Función principal
 export default function SprintBacklog(props) {
@@ -160,6 +187,7 @@ export default function SprintBacklog(props) {
     [idBacklog, idCronograma] = herramientasInfo
         .filter((item) => [1, 4].includes(item.idHerramienta))
         .map((item) => item.idHerramientaCreada);
+    console.log(idBacklog, idCronograma);
 
     // Decodificacion de URL
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -234,6 +262,16 @@ export default function SprintBacklog(props) {
             setIdSelectedSprint(null);
         }
     };
+    const handleChange = async (idTarea, idSprint) => {
+        try {
+            console.log(idTarea, idSprint);
+            await changeSprint(idTarea, idSprint);
+            toast.success("La tarea se ha cambiado de sprint exitosamente.");
+            await handleGet();
+        } catch (e) {
+            toast.error("Error al cambiar la tarea de sprint.");
+        }
+    };
 
     // Efectos de renderizado
     useEffect(() => {
@@ -246,6 +284,8 @@ export default function SprintBacklog(props) {
             setStatusInterface("inactive");
         }
     }, [sprints]);
+
+    console.log(sprints);
 
     // Componente
     return (
@@ -309,9 +349,9 @@ export default function SprintBacklog(props) {
                                             </div>
                                         </div>
                                         <div className="flex flex-col gap-4 my-4 items-center">
+                                            <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    <Divider className="w-full" />
                                                     <p className="text-default-500 font-medium">
                                                         Actualmente no hay
                                                         tareas asignadas a este
@@ -320,10 +360,11 @@ export default function SprintBacklog(props) {
                                                 </>
                                             ) : (
                                                 sprint.tareas.map((tarea) => (
-                                                    <div key={tarea.idTarea}>
+                                                    <div key={tarea.idTarea} className="w-full">
                                                         <CardTask
                                                             tarea={tarea}
                                                             sprints={sprints}
+                                                            changeSprint={handleChange}
                                                         />
                                                     </div>
                                                 ))
@@ -404,9 +445,10 @@ export default function SprintBacklog(props) {
                                             </div>
                                         </div>
                                         <div className="flex flex-col gap-4 my-4 items-center">
+                                            <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    <Divider className="w-full" />
+                                                    
                                                     <p className="text-default-500 font-medium">
                                                         Actualmente no hay
                                                         tareas asignadas a este
@@ -415,10 +457,11 @@ export default function SprintBacklog(props) {
                                                 </>
                                             ) : (
                                                 sprint.tareas.map((tarea) => (
-                                                    <div key={tarea.idTarea}>
+                                                    <div key={tarea.idTarea} className="w-full">
                                                         <CardTask
                                                             tarea={tarea}
                                                             sprints={sprints}
+                                                            changeSprint={handleChange}
                                                         />
                                                     </div>
                                                 ))
@@ -441,9 +484,10 @@ export default function SprintBacklog(props) {
                                     className="montserrat font-semibold p-1"
                                 >
                                     <div className="flex flex-col gap-4 px-10 mb-4">
+                                        <Divider className="w-full" />
                                         {sprint.tareas.length === 0 ? (
                                             <>
-                                                <Divider className="w-full" />
+                                                
                                                 <p className="text-default-500 font-medium">
                                                     Actualmente no hay tareas
                                                     asignadas a este sprint.
@@ -451,10 +495,11 @@ export default function SprintBacklog(props) {
                                             </>
                                         ) : (
                                             sprint.tareas.map((tarea) => (
-                                                <div key={tarea.idTarea}>
+                                                <div key={tarea.idTarea} className="w-full">
                                                     <CardTask
                                                         tarea={tarea}
                                                         sprints={sprints}
+                                                        changeSprint={handleChange}
                                                     />
                                                 </div>
                                             ))
@@ -503,9 +548,10 @@ export default function SprintBacklog(props) {
                                             </div>
                                         </div>
                                         <div className="flex flex-col gap-4 my-4 items-center">
+                                            <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    <Divider className="w-full" />
+                                                    
                                                     <p className="text-default-500 font-medium">
                                                         Actualmente no hay
                                                         tareas asignadas a este
@@ -514,7 +560,7 @@ export default function SprintBacklog(props) {
                                                 </>
                                             ) : (
                                                 sprint.tareas.map((tarea) => (
-                                                    <div key={tarea.idTarea}>
+                                                    <div key={tarea.idTarea} className="w-full">
                                                         <CardTask
                                                             tarea={tarea}
                                                         />
@@ -558,12 +604,14 @@ export default function SprintBacklog(props) {
 
 // Funciones de modulación
 function CardTask(props) {
-    const { tarea, sprints } = props;
+    const { tarea, sprints, changeSprint } = props;
 
     return (
         <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
             <p className="flex-1 grow-[6]">{tarea.sumillaTarea}</p>
-            <p className="flex-1 grow-[4]">{`Inicio: ${dateFormat(tarea.fechaInicio)} - Fin: ${dateFormat(tarea.fechaFin)}`}</p>
+            <p className="flex-1 grow-[4]">{`Inicio: ${dateFormat(
+                tarea.fechaInicio
+            )} - Fin: ${dateFormat(tarea.fechaFin)}`}</p>
             <div className="flex flex-1 grow-[2] justify-center items-center">
                 <Chip
                     className="capitalize roboto"
@@ -584,14 +632,19 @@ function CardTask(props) {
                     />
                 </Button>
                 {sprints && (
-                    <DropdownTask idSprintActual={tarea.idSprint} sprints={sprints} />
+                    <DropdownTask
+                        idTarea={tarea.idTarea}
+                        idSprintActual={tarea.idSprint}
+                        sprints={sprints}
+                        changeSprint={changeSprint}
+                    />
                 )}
             </div>
         </div>
     );
 }
 function DropdownTask(props) {
-    const { idSprintActual, sprints } = props;
+    const { idTarea, idSprintActual, sprints, changeSprint } = props;
     const unfinishedSprints = sprints.filter((sprint) => sprint.estado !== 3);
 
     return (
@@ -612,7 +665,13 @@ function DropdownTask(props) {
                 <DropdownMenu disabledKeys={[idSprintActual.toString()]}>
                     <DropdownSection title="Cambiar de sprint" showDivider>
                         {unfinishedSprints.map((sprint) => (
-                            <DropdownItem aria-label={sprint.nombre} key={sprint.idSprint}>
+                            <DropdownItem
+                                aria-label={sprint.nombre}
+                                key={sprint.idSprint}
+                                onPress={() =>
+                                    changeSprint(idTarea, sprint.idSprint)
+                                }
+                            >
                                 {sprint.nombre}
                             </DropdownItem>
                         ))}
