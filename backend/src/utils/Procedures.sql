@@ -3794,16 +3794,16 @@ DROP PROCEDURE IF EXISTS INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
     IN _idUsuario INT,
-    IN _idEquipo INT,
+    IN _idProyecto INT,
     IN _nombreRol VARCHAR(200)
 )
 BEGIN
 	DECLARE _idUsuarioXEquipoXRolEquipo INT;
     SET @_idRolEquipo = (
         SELECT ere.idRolEquipo 
-        FROM EquipoXRolEquipo AS ere 
+        FROM UsuarioXEquipoXRolEquipo AS ere 
         LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
-        WHERE ere.idEquipo = _idEquipo
+        WHERE re.idEquipo = _idProyecto
         AND re.nombreRol = _nombreRol AND re.activo = 1);
     -- Verificamos si el registro ya existe
     SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
@@ -3826,15 +3826,15 @@ DROP PROCEDURE IF EXISTS MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL;
 DELIMITER $
 CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
     IN _idUsuario INT,
-    IN _idEquipo INT,
+    IN _idProyecto INT,
     IN _nombreRol VARCHAR(200)
 )
 BEGIN
     SET @_idRolEquipo = (
         SELECT ere.idRolEquipo 
-        FROM EquipoXRolEquipo AS ere 
+        FROM UsuarioXEquipoXRolEquipo AS ere 
         LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
-        WHERE ere.idEquipo = _idEquipo
+        WHERE re.idProyecto = _idProyecto
         AND re.nombreRol = _nombreRol AND re.activo = 1);
     UPDATE UsuarioXEquipoXRolEquipo
     SET idRolEquipo = @_idRolEquipo
@@ -3851,7 +3851,7 @@ CREATE PROCEDURE ELIMINAR_EQUIPO_X_IDEQUIPO(
 BEGIN
     UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
     UPDATE UsuarioXEquipoXRolEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
-    
+    UPDATE Tarea SET activo = 0 WHERE idEquipo = _idEquipo;
     SELECT _idEquipo AS idEquipo;
 END$
 
