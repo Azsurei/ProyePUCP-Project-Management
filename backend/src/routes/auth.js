@@ -6,7 +6,7 @@ const cookie = require("cookie");
 //de jsonwebtokens
 const jwt = require("jsonwebtoken");
 const secret = "oaiscmawiocnaoiwncioawniodnawoinda"; //es un tipo de password que se necesita, en futuro se movera
-
+const usuarioController = require("../controllers/usuario/usuarioController");
 routerAuth.get("/", (req, res) => {
     console.log("Llegue a autenticacion");
     res.send(JSON.stringify("LLEGUE A LOGGIN"));
@@ -126,32 +126,8 @@ routerAuth.post("/loginImg", async (req, res) => {
 
 
 //ENDPOINT: Registro de usuario
-routerAuth.post("/register", async (req, res) => {
-    const { nombres, apellidos, correoElectronico, password } = req.body;
-    console.log("Realizando registro de usuario...");
-
-    let dummy;
-
-    const query = `CALL INSERTAR_CUENTA_USUARIO(?, ?, ?, ?)`;
-    try {
-        const [results] = await connection.query(query, [
-            nombres,
-            apellidos,
-            correoElectronico,
-            password,
-        ]);
-        const idUsuario = results[0][0].idUsuario;
-        res.status(200).json({
-            idUsuario,
-            message: "Usuario registrado exitosamente.",
-        });
-        console.log(`Usuario ${idUsuario} agregado a la base de datos`);
-    } catch (error) {
-        console.error("Error en el registro:", error);
-        res.status(500).send("Error en el registro: " + error.message);
-    }
-});
-
+routerAuth.post("/register", usuarioController.registrar);
+routerAuth.post("/verificarSiCorreoEsDeGoogle", usuarioController.verificarSiCorreoEsDeGoogle);
 
 //ENDPOINT: Registro de usuario
 routerAuth.get("/logout", async (req, res) => {
