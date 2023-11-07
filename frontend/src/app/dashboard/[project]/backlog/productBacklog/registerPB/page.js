@@ -278,10 +278,10 @@ export default function ProductBacklogRegister(props) {
 
     return (
         <form onSubmit={onSubmit} className="containerRegisterPB">
-            <div className="headerRegisterPB">
+            {/* <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product
                 Backlog / Registrar elemento
-            </div>
+            </div> */}
             <div className="backlogRegisterPB">
                 <div className="titleBacklogRegisterPB">
                     Registrar nuevo elemento en el Backlog

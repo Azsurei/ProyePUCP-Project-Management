@@ -416,10 +416,10 @@ export default function ProductBacklogUpdate(props) {
 
     return (
         <form className="containerRegisterPB">
-            <div className="headerRegisterPB">
+            {/* <div className="headerRegisterPB">
                 Inicio / Proyectos / Nombre del proyecto / Backlog / Product
                 Backlog / Registrar elemento
-            </div>
+            </div> */}
             <div className="backlogRegisterPB">
                 <div className="titleBacklogRegisterPB">
                     Editar elemento en el Backlog
