@@ -608,7 +608,6 @@ function ModalNewTask({
                     );
                 }}
             </ModalContent>
-            <Toaster richColors position="top-center"></Toaster>
         </Modal>
     );
 
