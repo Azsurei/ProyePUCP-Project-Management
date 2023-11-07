@@ -1,4 +1,17 @@
-function TaskView() {
+import { useContext } from "react";
+import { SmallLoadingScreen } from "../../layout";
+import { useRouter } from "next/navigation";
+
+function TaskView(props) {
+
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const router = useRouter();
+
+    const taskId = props.params.taskView;
+
     return (
         <div className={toggleNew ? "divRight open" : "divRight"}>
             <div className="containerGeneralRight">
@@ -661,17 +674,6 @@ function TaskView() {
                     </div>
                 )}
             </div>
-            {modal && (
-                <ModalUser
-                    handlerModalClose={() => {
-                        setModal(false);
-                    }}
-                    handlerModalFinished={returnListOfUsers}
-                    excludedUsers={selectedUsers}
-                    idProyecto={projectId}
-                    listAllUsers={false}
-                ></ModalUser>
-            )}
 
             <Toaster
                 richColors
