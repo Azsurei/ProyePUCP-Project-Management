@@ -117,7 +117,7 @@ export default function ActaReunion(props) {
                             <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
                         </div>
                         {participantes.length > 0 && (
-                            <>
+                            <div>
                                 <Divider orientation="vertical" />
                                 <div className="flex text-gray-700 montserrat">Convocados :   </div>
                                 <AvatarGroup isBordered max={3} >
@@ -144,7 +144,7 @@ export default function ActaReunion(props) {
                                         textColor="red"
                                     />
                                 </div>
-                            </>
+                            </div>
                         )}
                     </CardBody>
                 </Card>

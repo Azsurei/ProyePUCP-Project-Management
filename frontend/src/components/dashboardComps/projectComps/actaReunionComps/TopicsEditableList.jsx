@@ -42,12 +42,12 @@ function EditableTopic(props) {
             }
             return acuerdo;
         });
-        props.updateAcuerdos(updatedAcuerdos);
+        props.updateAcuerdos(index, updatedAcuerdos);
     };
 
     const handleRemoveAcuerdo = (indexToRemove) => {
         const updatedAcuerdos = props.acuerdos.filter(acuerdo => acuerdo.index !== indexToRemove);
-        props.updateAcuerdos(updatedAcuerdos);
+        props.updateAcuerdos(indexToRemove, updatedAcuerdos);
     };
 
     const updateResponsables = (index, nuevosResponsables) => {
@@ -57,7 +57,7 @@ function EditableTopic(props) {
             }
             return acuerdo;
         });
-        props.updateAcuerdos(updatedAcuerdos);
+        props.updateAcuerdos(index, updatedAcuerdos);
     };
 
     const handleDateChange = (e, index) => {
@@ -68,7 +68,7 @@ function EditableTopic(props) {
             }
             return acuerdo;
         });
-        props.updateAcuerdos(updatedAcuerdos);
+        props.updateAcuerdos(index, updatedAcuerdos);
     };
 
     return (
