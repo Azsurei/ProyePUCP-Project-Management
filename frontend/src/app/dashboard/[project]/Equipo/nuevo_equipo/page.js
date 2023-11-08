@@ -23,12 +23,15 @@ import ComboBoxArray from "@/components/equipoComps/ComboBoxArray";
 import PopUpRolEquipo from "@/components/equipoComps/PopUpRolEquipo";
 import { Button } from "@nextui-org/react";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
+import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 
 export default function crear_equipo(props) {
     const router = useRouter();
-
+    const [leaderRoleId, setLeaderRoleId] = useState(null);
+    const [leaderRole, setLeaderRole] = useState(null);
+    const [memberRoleId, setMemberRoleId] = useState(null);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -60,7 +63,8 @@ export default function crear_equipo(props) {
     const [reloadData, setReloadData] = useState(false);
 
     const [rol, setRol] = useState({}); //Define un estado para almacenar el rol seleccionado [idRolEquipo
-    const [roles, setRoles] = useState([{ idRol: 2, nombreRol: "Miembro" }]); //Define un estado para almacenar los roles disponibles
+    const [roles, setRoles] = useState([]); //Define un estado para almacenar los roles disponibles
+    const [rolesOriginales, setRolesOriginales] = useState([]); //Define un estado para almacenar los roles disponibles
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
 
@@ -126,11 +130,54 @@ export default function crear_equipo(props) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        axios
+            .get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/equipo/listarRol/${projectId}`
+            )
+            .then((response) => {
+                // Aquí puedes manejar la respuesta de la petición
+                console.log(
+                    "Respuesta de la petición de roles:",
+                    response.data
+                );
+                // Filtra los roles para excluir el rol "Líder"
+                const filteredRoles = response.data.roles.filter(
+                    (role) => role.nombreRol !== "Líder"
+                );
+
+                setRoles(filteredRoles);
+                setRolesOriginales(response.data.roles);
+                // Busca el ID del líder y el miembro en la respuesta
+                const rolesResponse = response.data.roles;
+                const leaderRole = rolesResponse.find(
+                    (role) => role.nombreRol === "Líder"
+                );
+                const memberRole = rolesResponse.find(
+                    (role) => role.nombreRol === "Miembro"
+                );
+
+                if (leaderRole) {
+                    setLeaderRole(leaderRole);
+                    setLeaderRoleId(leaderRole.idRolEquipo);
+                }
+                if (memberRole) {
+                    setMemberRoleId(memberRole.idRolEquipo);
+                }
+                // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
+            })
+            .catch(function (error) {
+                console.log("Error al cargar el rol del equipo: ", error);
+            });
         setIsLoading(false);
     }, []);
 
     function verifyFieldsEmpty() {
         return teamName === "";
+    }
+
+    function verifyFieldsExcessive() {
+        return teamName.length > 50;
     }
 
     useEffect(() => {
@@ -147,25 +194,26 @@ export default function crear_equipo(props) {
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
-        const todosRoles = [{ idRol: 1, nombreRol: "Líder" }, ...roles];
+        const updatedRoles = [...roles, leaderRole];
         let todosUserRoleData;
         if (selectedUniqueMemberList.length !== 0) {
             todosUserRoleData = [
                 {
                     idUsuario: selectedUniqueMemberList[0].idUsuario,
-                    idRolEquipo: 1,
+                    idRolEquipo: leaderRoleId,
                 },
                 ...userRoleData,
             ];
-        }else{
+        } else {
             todosUserRoleData = userRoleData;
         }
 
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
-            roles: todosRoles,
-            userRoleData: todosUserRoleData,
+            roles: updatedRoles,
+            usuariosXRol: todosUserRoleData,
+            rolesOriginales: rolesOriginales,
         });
 
         axios
@@ -175,8 +223,9 @@ export default function crear_equipo(props) {
                 {
                     idProyecto: parseInt(proyectoId),
                     nombre: nombreTeam,
-                    roles: todosRoles,
+                    roles: updatedRoles,
                     usuariosXRol: todosUserRoleData,
+                    rolesOriginales: rolesOriginales,
                 }
             )
             .then(function (response) {
@@ -230,6 +279,8 @@ export default function crear_equipo(props) {
         }
     };
 
+    const isTextTooLong1 = teamName.length > 50;
+
     return (
         <div className="crear_equipo">
             <div className="header">
@@ -257,14 +308,21 @@ export default function crear_equipo(props) {
                     placeholder="Ingrese el nombre del equipo"
                     onChange={handleChangeTeamName}
                     variant="bordered"
+                    isInvalid={isTextTooLong1}
+                    maxLength="55"
+                    errorMessage={
+                        isTextTooLong1
+                            ? "El texto debe ser como máximo de 50 caracteres."
+                            : ""
+                    }
                 />
             </div>
             <div style={{ marginBottom: "20px" }}></div>
             <div className="participantes">
                 <h3>Líder del Equipo</h3>
                 <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
+                    <Button
+                        color="primary"
                         style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal1}
                     >
@@ -275,7 +333,7 @@ export default function crear_equipo(props) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </div>
+                    </Button>
 
                     {selectedUniqueMemberList.map((component, index) => {
                         return (
@@ -311,8 +369,8 @@ export default function crear_equipo(props) {
             <div className="participantes">
                 <h3>Participantes</h3>
                 <div className="SelectedUsersContainer">
-                    <div
-                        className="containerToPopUpUsrSearch"
+                    <Button
+                        color="primary"
                         style={{ width: "100%", padding: "0.2rem 0" }}
                         onClick={toggleModal2}
                     >
@@ -323,7 +381,7 @@ export default function crear_equipo(props) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </div>
+                    </Button>
 
                     <ul
                         className="listUsersContainer"
@@ -359,12 +417,12 @@ export default function crear_equipo(props) {
                                             setActiveDropdown(index);
                                         }}
                                         autoSelectedValue={{
-                                            idRol: 2,
+                                            idRolEquipo: memberRoleId,
                                             nombreRol: "Miembro",
                                         }}
                                     >
                                         {handleAutoSelectedValueChangeRol(
-                                            2,
+                                            memberRoleId,
                                             component.idUsuario
                                         )}
                                     </ComboBoxArray>
@@ -376,13 +434,6 @@ export default function crear_equipo(props) {
             </div>
             <div style={{ marginBottom: "20px" }}></div>
             <div className="containerButtonsCE">
-                {fieldsEmpty && (
-                    <IconLabel
-                        icon="/icons/alert.svg"
-                        label="Faltan completar campos"
-                        className="iconLabel3"
-                    />
-                )}
                 <div className="twoButtonsCE">
                     <div className="buttonContainerCE">
                         <Modal
@@ -406,11 +457,29 @@ export default function crear_equipo(props) {
                             }}
                             textColor="blue"
                             verifyFunction={() => {
-                                if (verifyFieldsEmpty()) {
-                                    setFieldsEmpty(true);
+                                if (
+                                    verifyFieldsEmpty() &&
+                                    verifyFieldsExcessive()
+                                ) {
+                                    toast.error(
+                                        "Faltan completar campos y se excedió el límite de caractéres"
+                                    );
+                                    return false;
+                                } else if (
+                                    verifyFieldsEmpty() &&
+                                    !verifyFieldsExcessive()
+                                ) {
+                                    toast.error("Faltan completar campos");
+                                    return false;
+                                } else if (
+                                    verifyFieldsExcessive() &&
+                                    !verifyFieldsEmpty()
+                                ) {
+                                    toast.error(
+                                        "Se excedió el límite de caractéres"
+                                    );
                                     return false;
                                 } else {
-                                    setFieldsEmpty(false);
                                     return true;
                                 }
                             }}
@@ -425,6 +494,7 @@ export default function crear_equipo(props) {
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
                     handleAddRoles={handleAddRoles}
                     initialListRoles={roles}
+                    rolesOriginales={rolesOriginales}
                 />
             )}
             {modal1 && (
@@ -450,7 +520,15 @@ export default function crear_equipo(props) {
                 ></ModalUser>
             )}
 
-            {/* <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen> */}
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

@@ -16,6 +16,7 @@ const routerCatalogoInteresados = require('./catalogoInteresados').routerCatalog
 const routerRetrospectiva = require("./retrospectiva").routerRetrospectiva;
 const routerReportes = require("./reportes").routerReportes;
 const routerProyecto = express.Router();
+const routerMatrizResponsabilidad = require('./matrizResponsabilidad').routerMatrizResponsabilidad;
 
 const proyectoController = require("../controllers/proyectoController");
 
@@ -33,6 +34,7 @@ routerProyecto.use("/actaReunion", routerActaReunion);
 routerProyecto.use("/kanban",routerKanban);
 routerProyecto.use("/catalogoInteresados", routerCatalogoInteresados);
 routerProyecto.use("/retrospectiva", routerRetrospectiva);
+routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 //sobre Reportes
@@ -190,12 +192,16 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         query = `
                                     CALL INSERTAR_MATRIZ_RESPONSABILIDAD(?);
                                 `;
+                        query1 = `CALL INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(?);`;
                         const [results] = await connection.query(query, [
                             idProyecto,
                         ]);
 
                         const idMatrizResponsabilidad =
                             results[0][0].idMatrizResponsabilidad;
+
+                        const [results1] = await connection.query(query1, [idMatrizResponsabilidad]);
+                        
                     }
 
                     if (herramienta.idHerramienta === 8) {
@@ -253,10 +259,11 @@ routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
                         const query = `
                             CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?,?);
                         `;
-                        
+                        const query1 = `CALL INSERTAR_ROL_MIEMBRO_LIDER(?);`;
                             const [results] = await connection.query(query,[idProyecto, 12, null]);
                             const idEquipo = results[0][0].idEquipo;
                             console.log(`Se creo el equipo${idEquipo}!`);
+                            const [results1] = await connection.query(query1,[idProyecto]);
     
                     }
 
@@ -572,5 +579,7 @@ routerProyecto.get("/listarUsuariosXdProyecto/:idProyecto", async (req, res) => 
         }
     }
 );
+
+
 
 module.exports.routerProyecto = routerProyecto;

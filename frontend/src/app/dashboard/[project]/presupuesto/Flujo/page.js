@@ -253,6 +253,25 @@ function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
 
 const totalEgresosPorMes = calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual);
 
+const accumulatedTotals = Array.from({ length: mesesMostrados.length }, () => 0);
+
+for (let i = 0; i < mesesMostrados.length; i++) {
+  let monthlyTotalIncome = 0;
+  let monthlyTotalExpenses = 0;
+
+  // Calculate total income for the current month
+  Object.keys(descripcionTipo).forEach((idTipo) => {
+    if (ingresosPorTipo[idTipo] && ingresosPorTipo[idTipo][i + 1] !== undefined) {
+      monthlyTotalIncome += parseFloat(ingresosPorTipo[idTipo][i + 1]);
+    }
+  });
+
+  // Calculate total expenses for the current month
+  monthlyTotalExpenses = totalEgresosPorMes[i];
+
+  // Calculate the accumulated total for the current month
+  accumulatedTotals[i] = monthlyTotalIncome - monthlyTotalExpenses;
+}
 
 return (
         <div className="mainDivPresupuesto">
@@ -381,7 +400,7 @@ return (
 ))}
 
 <TableRow>
-  <TableCell className="conceptoCell" align="left">Total Egresos por Mes</TableCell>
+  <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
   {totalEgresosPorMes.map((total, index) => (
     <TableCell className="conceptoCell" key={index} align="left">
       {total}
@@ -389,6 +408,14 @@ return (
   ))}
 </TableRow>
 
+<TableRow>
+  <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
+  {accumulatedTotals.map((total, index) => (
+    <TableCell className="conceptoCell" key={index} align="left">
+      {total}
+    </TableCell>
+  ))}
+</TableRow>
 
 
 

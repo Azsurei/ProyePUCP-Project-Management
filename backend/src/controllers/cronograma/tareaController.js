@@ -8,6 +8,7 @@ async function crear(req, res, next) {
         idSubGrupo,
         idPadre,
         idTareaAnterior,
+        idSprint,
         sumillaTarea,
         descripcion,
         fechaInicio,
@@ -17,7 +18,8 @@ async function crear(req, res, next) {
         horasPlaneadas,
         usuarios,
         tareasPosteriores,
-        idEntregable    //==================
+        idEntregable,
+        idColumnaKanban
     } = req.body;
 
     try {
@@ -27,6 +29,7 @@ async function crear(req, res, next) {
             idSubGrupo,
             idPadre,
             idTareaAnterior,
+            idSprint,
             sumillaTarea,
             descripcion,
             fechaInicio,
@@ -35,7 +38,8 @@ async function crear(req, res, next) {
             cantPosteriores,
             horasPlaneadas,
             0,
-            idEntregable    //==================
+            idEntregable,
+            idColumnaKanban
         );
         await usuarioXTareaController.funcCrearUsuariosXTarea(
             usuarios,
@@ -65,7 +69,7 @@ async function modificar(req, res, next) {
         tareasPosterioresEliminadas,
         usuariosAgregados,
         usuariosEliminados,
-        idEntregable    //====================
+        idEntregable                        //====================
     } = req.body;
     try {
         await funcModificar(
@@ -153,13 +157,11 @@ async function funcAgregarTareasPosteriores(
                 tarea.cantPosteriores,
                 tarea.horasPlaneadas,
                 1,
-                idEntregable
+                idEntregable,
+                0
             );
 
-            await usuarioXTareaController.funcCrearUsuariosXTarea(
-                usuariosAgregados,
-                idTareaPosterior
-            );
+            await usuarioXTareaController.funcCrearUsuariosXTarea(usuariosAgregados,idTareaPosterior);
         }
     }
 }
@@ -196,6 +198,7 @@ async function insertarTarea(
     idSubGrupo,
     idPadre,
     idTareaAnterior,
+    idSprint,
     sumillaTarea,
     descripcion,
     fechaInicio,
@@ -204,27 +207,39 @@ async function insertarTarea(
     cantPosteriores,
     horasPlaneadas,
     esPosterior,
-    idEntregable
+    idEntregable,
+    idColumnaKanban
 ) {
-    const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
-    const [results] = await connection.query(query, [
-        idCronograma,
-        idTareaEstado,
-        idSubGrupo,
-        idPadre,
-        idTareaAnterior,
-        sumillaTarea,
-        descripcion,
-        fechaInicio,
-        fechaFin,
-        cantSubtareas,
-        cantPosteriores,
-        horasPlaneadas,
-        esPosterior,
-        idEntregable
-    ]);
-    return results[0][0].idTarea;
+    try {
+        const query = `CALL INSERTAR_TAREA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+        const [results] = await connection.query(query, [
+            idCronograma,
+            idTareaEstado,
+            idSubGrupo,
+            idPadre,
+            idTareaAnterior,
+            idSprint,
+            sumillaTarea,
+            descripcion,
+            fechaInicio,
+            fechaFin,
+            cantSubtareas,
+            cantPosteriores,
+            horasPlaneadas,
+            esPosterior,
+            idEntregable,
+            idColumnaKanban
+        ]);
+        let idTarea = results[0][0].idTarea;
+        console.log(`Tarea ${idTarea} creada`);
+        return idTarea;
+    } catch (error) {
+        console.log(error);
+    }
 }
+
+
+
 
 async function insertarTareasPosteriores(
     tareas,
@@ -239,6 +254,7 @@ async function insertarTareasPosteriores(
                 originalTareaData.idSubGrupo,
                 originalTareaData.idPadre, // (?)
                 idTareaPrevia,
+                tarea.idSprint,
                 tarea.sumillaTarea,
                 tarea.descripcion,
                 originalTareaData.fechaFin,
@@ -247,7 +263,8 @@ async function insertarTareasPosteriores(
                 0,
                 null,
                 1,
-                originalTareaData.idEntregable
+                originalTareaData.idEntregable,
+                originalTareaData.idColumnaKanban
             );
             await usuarioXTareaController.funcCrearUsuariosXTarea(
                 originalTareaData.usuarios,
@@ -358,6 +375,8 @@ async function funcDeletearTarea(idTarea){
     }
 }
 
+
+
 // Funcion para agregar las tareas posteriores como atributo a las tareas originales
 function repositionPosteriores(tareas) {
     const result = {};
@@ -427,16 +446,54 @@ async function funcListarTareasXIdSprint(idSprint) {
         const query = `CALL LISTAR_TAREAS_X_ID_SPRINT(?);`;
         const [results] = await connection.query(query, [idSprint]);
         const tareas = results[0];
+        return tareas;
     } catch (error) {
         console.log(error);
     }
-    return tareas;
+
 }
 
+async function modificarIdSprintDeTareas(req, res, next) {
+    const {tareasModificadas} = req.body;
+    try {
+        for(const tarea of tareasModificadas){
+            await funcModificarTareaIdSprint(tarea.idTarea,tarea.idSprint);
+        }
+        res.status(200).json({message: "Tareas modificadas"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcModificarTareaIdSprint(idTarea,idSprint){
+    try {
+        const query = `CALL MODIFICAR_TAREA_ID_SPRINT(?,?);`;
+        const [results]=await connection.query(query, [idTarea,idSprint]);
+        console.log(`Tarea ${idTarea} modificada, nuevo sprint: ${idSprint}`);
+        return 1;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function funcListarTareasSinSprint(idCronograma){
+    try {
+        const query = `CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(?);`;
+        const [results] = await connection.query(query, [idCronograma]);
+        const tareas = results[0];
+        return tareas;
+    } catch (error) {
+        console.log(error);
+    }
+}
 module.exports = {
     crear,
     listarXIdProyecto,
     eliminarTarea,
+    funcEliminarTarea,
     modificar,
     funcListarTareasXIdSprint,
+    funcListarTareasSinSprint,
+    modificarIdSprintDeTareas,
+    eliminarRecursivo
 };

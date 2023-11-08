@@ -257,7 +257,7 @@ CREATE TABLE Tarea(
     idCronograma INT,
     idTareaEstado INT,
     idEquipo INT,
-    idPadre INT,			## Si el id es null la tarea es padre sino, es hijo
+    idPadre INT,			# Si el id es null la tarea es padre sino, es hijo
     idTareaAnterior INT,
     idSprint INT,
 	sumillaTarea VARCHAR(255),
@@ -274,8 +274,6 @@ CREATE TABLE Tarea(
     FOREIGN KEY (idTareaEstado) REFERENCES TareaEstado(idTareaEstado)
 )
 ENGINE = InnoDB;
-
-
 
 DROP TABLE IF EXISTS TareaEstado;
 
@@ -1254,5 +1252,45 @@ CREATE TABLE InteresadoEstrategia(
 ENGINE = InnoDB;
 
 -----------------------
--- Catalogo de Riesgos
+-- Matriz de responsabilidades
 -----------------------
+
+DROP TABLE IF EXISTS ResponsabilidadRol;
+CREATE TABLE ResponsabilidadRol(
+    idResponsabilidadRol INT AUTO_INCREMENT PRIMARY KEY,
+    idMatrizResponsabilidad INT,
+    letraRol VARCHAR(10),
+    nombreRol VARCHAR(100),
+    colorRol VARCHAR(100),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idMatrizResponsabilidad) REFERENCES MatrizResponsabilidad (idMatrizResponsabilidad)
+
+)
+ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS ResponsabilidadRol;
+CREATE TABLE ResponsabilidadRol(
+    idResponsabilidadRol INT AUTO_INCREMENT PRIMARY KEY,
+    letraRol VARCHAR(10),
+    nombreRol VARCHAR(100),
+    colorRol VARCHAR(10),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idInteresado) REFERENCES Interesado (idInteresado)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS EntregableXResponsabilidadRol;
+CREATE TABLE EntregableXResponsabilidadRol(
+    idEntregableXResponsabilidadXRol INT AUTO_INCREMENT PRIMARY KEY,
+    idEntregable INT,
+    idResponsabilidadRol INT,
+    idRol INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idEntregable) REFERENCES Entregable (idEntregable),
+    FOREIGN KEY(idRol) REFERENCES RolEquipo (idRolEquipo),
+    FOREIGN KEY(idResponsabilidadRol) REFERENCES ResponsabilidadRol (idResponsabilidadRol)
+
+)
+ENGINE = InnoDB;

@@ -18,6 +18,7 @@
         "@emotion/styled": "^11.11.0",
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.0.18",
+        "@jest/globals": "^29.7.0",
         "@material-tailwind/react": "^2.1.2",
         "@mui/icons-material": "^5.14.11",
         "@mui/material": "^5.14.11",
@@ -53,6 +54,7 @@
         "react-dom": "^18.2.0",
         "react-google-login": "^5.2.2",
         "react-modal": "^3.16.1",
+        "sharp": "^0.32.6",
         "sonner": "^1.1.0",
         "tailwindcss": "^3.3.3"
     }

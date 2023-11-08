@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { Button } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/ModalParticipantes.css";
 
-function UserCard({ participant, onSelect, onDeselect }) {
+function UserCard({ participant, onSelect, onDeselect, isDisabled }) {
     const [isSelected, setIsSelected] = useState(false);
   
     const handleClick = () => {
+      if (isDisabled) {
+        // No hacemos nada si el participante está deshabilitado
+        return;
+      }
       if (isSelected) {
         onDeselect(participant.idUsuario);
       } else {
@@ -14,18 +18,18 @@ function UserCard({ participant, onSelect, onDeselect }) {
       setIsSelected(!isSelected);
     };
   
+    // Se añade la clase "disabled" si isDisabled es true
     return (
       <li
-        className={`userCard ${isSelected ? "selected" : ""}`}
+        className={`userCard ${isSelected ? "selected" : ""} ${isDisabled ? "disabled" : ""}`}
         onClick={handleClick}
       >
         {participant.nombres} {participant.apellidos}
       </li>
     );
-  }
+}
 
-
-function ListUsers({ participantes, onSelect, onDeselect }) {
+function ListUsers({ participantes, onSelect, onDeselect, disabledParticipants }) {
     return (
       <ul>
         {participantes.map(participant => (
@@ -34,22 +38,32 @@ function ListUsers({ participantes, onSelect, onDeselect }) {
             participant={participant}
             onSelect={onSelect}
             onDeselect={onDeselect}
+            isDisabled={disabledParticipants.includes(participant.idUsuario)}
           />
         ))}
       </ul>
     );
-  }
+}
 
-
-export default function ModalParticipantes({ participantes, handlerModalClose, handlerModalFinished }) {
+export default function ModalParticipantes({ participantes, handlerModalClose, handlerModalFinished, responsables }) {
   const [selectedParticipants, setSelectedParticipants] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const disabledParticipants = responsables.map(res => res.idUsuario);
 
   const handleSelectParticipant = (participant) => {
+    if (disabledParticipants.includes(participant.idUsuario)) {
+      setErrorMessage("Este participante ya está seleccionado como responsable.");
+      setTimeout(() => setErrorMessage(""), 5000); // Limpia el mensaje después de 5 segundos
+      return;
+    }
     setSelectedParticipants(prev => [...prev, participant]);
+    setErrorMessage("");
   };
 
   const handleDeselectParticipant = (participantId) => {
     setSelectedParticipants(prev => prev.filter(p => p.idUsuario !== participantId));
+    setErrorMessage("");
   };
 
   const handleFinish = () => {
@@ -60,15 +74,17 @@ export default function ModalParticipantes({ participantes, handlerModalClose, h
   return (
     <div className="modal">
       <div className="modalContent">
-        <h2>Seleccionar Participantes</h2>
+        <h2 className="selectParticipantesTitle"> Añadir Responsables</h2>
         <ListUsers
           participantes={participantes}
           onSelect={handleSelectParticipant}
           onDeselect={handleDeselectParticipant}
+          disabledParticipants={disabledParticipants}
         />
-        <div className="modalButtons">
+        {errorMessage && <div className="errorMessage">{errorMessage}</div>}
+        <div className="modalButtons pt-2">
           <Button onClick={handlerModalClose}>Cerrar</Button>
-          <Button onClick={handleFinish}>Finalizar</Button>
+          <Button onClick={handleFinish} className="bg-indigo-950 text-slate-50">Finalizar</Button>
         </div>
       </div>
     </div>

@@ -11,7 +11,8 @@ export default function BarGraphic(props) {
                         options={props.options}
                         series={props.series}
                         type="bar"
-                        height={700}
+                        height={props.height}
+                        width={props.width}
                     />
                 </div>
             )}

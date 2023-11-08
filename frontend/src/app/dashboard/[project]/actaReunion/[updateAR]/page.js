@@ -41,6 +41,7 @@ export default function editarActaReunion(props) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const idLineaActa = searchParams.get('edit');
+    const idActa = searchParams.get('acta');
 //const receivedData = router.edit.data;
 // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -52,10 +53,12 @@ export default function editarActaReunion(props) {
     setIsLoadingSmall(false);
 
 // Edit Mode: False for See Meeting, True for Edit Meeting
-    const [isEditMode, setIsEditMode] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(true);
     const toggleEditMode = () => {
         setIsEditMode(!isEditMode);
     };
+// Verificar si hay cambios. Para tener edit mode siempre activo.
+    const [hasChanges, setHasChanges] = useState(false);
 
 //Vital Data for Creating Meeting
     const [titleValue, setTitleValue] = useState("");
@@ -101,18 +104,22 @@ export default function editarActaReunion(props) {
 
     const handleChangeTitle = (e) => {
         setTitleValue(e.target.value);
+        setHasChanges(true);
     }
 
     const handleChangeDate = (event) => {
         setDateValue(event.target.value);
+        setHasChanges(true);
     };
 
     const handleChangeTime = (event) => {
         setTimeValue(event.target.value);
+        setHasChanges(true);
     };
 
     const handleChangeMotive= (e) => {
         setMotiveValue(e.target.value);
+        setHasChanges(true);
     }
 
 // *********************************************************************************************
@@ -184,39 +191,39 @@ export default function editarActaReunion(props) {
 
             if(actaReunion.lineaActaReunion.nombreReunion){
                 setTitleValue(actaReunion.lineaActaReunion.nombreReunion);
-                console.log("Titulo de Reunion ", titleValue);
+
             }
 
             if(actaReunion.lineaActaReunion.fechaReunion){
                 setDateValue(actaReunion.lineaActaReunion.fechaReunion.split("T")[0]);
-                console.log("Fecha de Reunion ", dateValue);
+
             }
 
             if(actaReunion.lineaActaReunion.horaReunion){
                 setTimeValue(actaReunion.lineaActaReunion.horaReunion.substring(0, 5));
-                console.log("Hora de Reunion ", timeValue);
+
             }
 
             if(actaReunion.lineaActaReunion.motivo){
                 setMotiveValue(actaReunion.lineaActaReunion.motivo);
-                console.log("Motivo de Reunion", motiveValue);
+
             }
-            if(actaReunion.lineaActaReunion.temasReunion){
-                console.log("Acuerdos del tema", actaReunion.lineaActaReunion.temasReunion.acuerdos);
-                const temasConData = 
-                    actaReunion.lineaActaReunion.temasReunion.map(({descripcion, acuerdos, ...tema}, index) => ({
+            if (actaReunion.lineaActaReunion.temasReunion) {
+                const temasConData =
+                    actaReunion.lineaActaReunion.temasReunion.map((tema, index) => ({
                         ...tema,
                         index: index + 1,
-                        data: descripcion,
-                        acuerdos: tema.acuerdos ? 
-                            tema.acuerdos.map(({descripcion, fechaObjetivo, ...acuerdo}) => ({
+                        data: tema.descripcion,
+                        acuerdos: tema.acuerdos ?
+                            tema.acuerdos.map((acuerdo) => ({
                                 ...acuerdo,
-                                data: descripcion,
-                                date: fechaObjetivo
+                                data: acuerdo.descripcion,
+                                date: acuerdo.fechaObjetivo.split('T')[0]
                             })) : [],
-                    }))
+                    }));
                 setListTemas(temasConData);
-                console.log("Temas de Reunion", listTemas);
+                console.log('Holaaaa');
+                console.log(listTemas);
             }
 
             if(actaReunion.lineaActaReunion.comentarios) {
@@ -226,7 +233,6 @@ export default function editarActaReunion(props) {
                         data: descripcion, 
                 }));
                 setListComentarios(comentariosConData);
-                console.log("Comentarios de Reunion", listComentarios);
             }     
         }
     }, [actaReunion]);
@@ -242,12 +248,20 @@ export default function editarActaReunion(props) {
             }
         ];
         setListTemas(newList_T);
+        setHasChanges(true);
     }
 
     const updateAcuerdos = (indexTema, nuevosAcuerdos) => {
         const temasActualizados = [...listTemas];
+        console.log("listTemas");
+        console.log(listTemas);
+        console.log("Temas debug");
+        console.log(temasActualizados[indexTema]);
+        console.log("Nuevos acuerdos");
+        console.log(nuevosAcuerdos);
         temasActualizados[indexTema].acuerdos = nuevosAcuerdos;
         setListTemas(temasActualizados);
+        setHasChanges(true);
     };
 
     const handleAddComentario = ()=>{
@@ -259,6 +273,7 @@ export default function editarActaReunion(props) {
             }
         ];
         setListComentarios(newList_C);
+        setHasChanges(true);
     }
 
     const handleChangeTema = (e, index) => {
@@ -266,6 +281,7 @@ export default function editarActaReunion(props) {
         updatedEntregables[index - 1].data = e.target.value;
         //console.log(updatedEntregables);
         setListTemas(updatedEntregables);
+        setHasChanges(true);
     };
 
     const handleChangeComentario = (e, index) => {
@@ -273,6 +289,7 @@ export default function editarActaReunion(props) {
         updatedEntregables[index - 1].data = e.target.value;
         console.log("Comentario cambiado", updatedEntregables);
         setListComentarios(updatedEntregables);
+        setHasChanges(true);
     };
 
     const handleRemoveTema = (index) => {
@@ -283,6 +300,7 @@ export default function editarActaReunion(props) {
         }
         console.log("Tema Removido", updatedEntregables);
         setListTemas(updatedEntregables);
+        setHasChanges(true);
     }
 
     const handleRemoveComentario = (index) => {
@@ -293,6 +311,7 @@ export default function editarActaReunion(props) {
         }
         console.log("Comentario Removido", updatedEntregables);
         setListComentarios(updatedEntregables);
+        setHasChanges(true);
     }
 
 // *********************************************************************************************
@@ -385,6 +404,7 @@ export default function editarActaReunion(props) {
         const newParticipantsList = [...participantsList];
         newParticipantsList[index].asistio = checked;
         setParticipantsList(newParticipantsList);
+        setHasChanges(true);
     };
 /*
     const handleAsistenciaChange = (participante) => {
@@ -405,6 +425,7 @@ export default function editarActaReunion(props) {
         setParticipantsList(nuevosParticipantes);
         console.log("Muestra Participantes");
         console.log(participantsList);
+        setHasChanges(true);
     };
 
     const returnListParticipantes = (newParticipantes) => {
@@ -417,7 +438,7 @@ export default function editarActaReunion(props) {
 //  Editar Acta de Reunión (Función Principal)
 // *********************************************************************************************
     const saveMeetingChanges = () => {
-        const idLineaActaReunion = idLineaActa;
+        const idLineaActaReunion = Number(idLineaActa);
         const nombreReunion = titleValue;
         const fechaReunion = dateValue;
         const horaReunion = timeValue;
@@ -426,18 +447,16 @@ export default function editarActaReunion(props) {
         const temas = listTemas.map((tema) => ({
             descripcion: tema.data,
             acuerdos: tema.acuerdos.map((acuerdo) => ({
-                idAcuerdo: acuerdo.idAcuerdo,
                 descripcion: acuerdo.data,
-                //idTemaReunion: tema.idTemaReunion,
                 fechaObjetivo: acuerdo.date,
                 responsables: acuerdo.responsables.map(responsable => ({
-                    idUsuarioXRolXProyecto: responsable.idUsuario
+                    idUsuarioXRolXProyecto: responsable.idUsuarioRolProyecto
                 }))
             }))
         }));
         const participantes = participantsList.map(participante => ({
-            idUsuarioXRolXProyecto: participante.idUsuarioXRolXProyecto,
-            asistio: participante.asistio ?? false,
+            idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
+            asistio: true,
         }));
         const comentarios = listComentarios.map((comentario) => ({ 
             //...comentario,
@@ -458,24 +477,23 @@ export default function editarActaReunion(props) {
 
         // Convert the meeting object to JSON format
         const meetingJSON = JSON.stringify(meetingLine, null, 2);
-
         // Now you can save meetingJSON to a file or send it in a request
         console.log(meetingJSON);
-        console.log("Seleccionados: ",participantsList);
-        console.log('id de Linea de acta reunion:', idLineaActaReunion);
-        console.log("Titulo de Reunion: ", nombreReunion);
-        console.log("Convocante de Reunion: ", nombreConvocante);
-        console.log("Fecha de Reunion: ", fechaReunion);
-        console.log("Hora de Reunion: ", horaReunion);
-        console.log("Motivo de Reunion: ", motivo);
-        console.log("Participantes: ", participantes);
-        console.log("Temas de Reunion: ", listTemas);
-        
+
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                idLineaActaReunion: idLineaActaReunion
+            }
+        });
+
         axios
-            .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/modificarLineaActaReunion",
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/actaReunion/crearLineaActaReunion",
                 {
-                    idLineaActaReunion: idLineaActaReunion,
+                    idActaReunion: idActa,
                     nombreReunion: nombreReunion,
                     fechaReunion: fechaReunion,
                     horaReunion: horaReunion,
@@ -485,19 +503,19 @@ export default function editarActaReunion(props) {
                     temas: temas,
                     participantes: participantes,
                     comentarios: comentarios,
+
                 }
             )
             .then(function (response) {
                 console.log(response);
-                console.log("Se actualizó el Acta de Reunión correctamente");
-                router.back();
+                console.log("Conexion correcta");
             })
             .catch(function (error) {
                 console.log(error);
             });
             
     };
-
+    const actualHref = '/dashboard/'+ projectName + '=' + projectId + '/actaReunion';
 // *********************************************************************************************
 // Página
 // *********************************************************************************************
@@ -603,7 +621,7 @@ export default function editarActaReunion(props) {
                                 {actaReunion && (
                                     <input 
                                         className="lineMeetingMotive"
-                                        //maxLength="100"    
+                                        maxLength="200"    
                                         value={motiveValue}
                                         placeholder="Ingrese el motivo de la reunión"
                                         onChange={handleChangeMotive}
@@ -665,6 +683,7 @@ export default function editarActaReunion(props) {
                             ))}
                             {modal2 && (
                                 <ModalUsers
+                                    listAllUsers={false}
                                     idProyecto={projectId}
                                     handlerModalClose={toggleModal2}
                                     handlerModalFinished={returnListParticipantes}
@@ -765,7 +784,7 @@ export default function editarActaReunion(props) {
                         />
                     )}
                 </div>
-                {isEditMode && (
+                {hasChanges && (
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal
@@ -788,7 +807,7 @@ export default function editarActaReunion(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     saveMeetingChanges();
-                                    //router.back();
+                                    router.push(actualHref);
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

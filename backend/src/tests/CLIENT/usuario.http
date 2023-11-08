@@ -1,0 +1,27 @@
+### 
+POST http://localhost:8080/api/auth/register
+Content-Type:  application/json
+
+{
+    "nombres": "Probando",
+    "apellidos": "Error",
+    "correoElectronico": "pruebaCorreo@gmail.com",
+    "password": "123456",
+    "tieneCuentaGoogle": false
+}
+###
+PUT http://localhost:8080/api/usuario/cambiarPassword
+Content-Type:  application/json
+
+{
+    "idUsuario": 78,
+    "password": "123456"
+}
+
+###
+POST http://localhost:8080/api/auth/verificarSiCorreoEsDeGoogle
+Content-Type:  application/json
+
+{
+    "correoElectronico": "pruebaCorreo@gmail.com"
+}

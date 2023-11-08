@@ -9,17 +9,10 @@ import {
     Accordion,
     AccordionItem,
     Avatar,
-    Button,
     Chip,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
     Popover,
     PopoverContent,
     PopoverTrigger,
-    useDisclosure,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
@@ -375,7 +368,7 @@ function ProjectSidebar(props) {
             position: 9,
             optIcon: "/icons/sideBarDropDown_icons/sbdd13.svg",
             optName: "Matriz de responsabilidades",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/matrizDeResponsabilidades`,
         },
         {
             id: 8,
@@ -446,117 +439,124 @@ function ProjectSidebar(props) {
                         }`}
                     ></div>
                 </div>
-                <p className="SidebarHeader text-mainHeaders">
-                    {props.projectName}
-                </p>
-                <p className="dates">13/09/2023 - 20/10/2023 (50 dias)</p>
-                <div className="teamContainer">
-                    <p className="teamHeader">Tu rol:</p>
+                {isOpen &&  (
+                    <div>
+                        <p className="SidebarHeader text-mainHeaders">
+                            {props.projectName}
+                        </p>
+                        <p className="dates">13/09/2023 - 20/10/2023 (50 dias)</p>
+                        <div className="teamContainer">
+                            <p className="teamHeader">Tu rol:</p>
 
-                    <Chip
-                        className="capitalize"
-                        color={roleColor[props.projectIdRole - 1].color}
-                        size="lg"
-                        variant="flat"
-                    >
-                        {props.projectNameRole}
-                    </Chip>
-                </div>
+                            <Chip
+                                className="capitalize"
+                                color={roleColor[props.projectIdRole - 1].color}
+                                size="lg"
+                                variant="flat"
+                            >
+                                {props.projectNameRole}
+                            </Chip>
+                        </div>
+                    </div>
+                )}
             </div>
+            {isOpen &&  (
+                <div>
+                    <ul className="members">
+                        {membersData.map((member) => {
+                            return (
+                                <MemberIcon
+                                    key={member.idUsuario}
+                                    name={member.nombres}
+                                    lastName={member.apellidos}
+                                    email={member.correoElectronico}
+                                    imgLink={member.imgLink}
+                                ></MemberIcon>
+                            );
+                        })}
+                        <div
+                            className="addNewMContainer"
+                            onClick={() => {
+                                setIsModalUserOpen(true);
+                            }}
+                        >
+                            +
+                        </div>
+                    </ul>
 
-            <ul className="members">
-                {membersData.map((member) => {
-                    return (
-                        <MemberIcon
-                            key={member.idUsuario}
-                            name={member.nombres}
-                            lastName={member.apellidos}
-                            email={member.correoElectronico}
-                            imgLink={member.imgLink}
-                        ></MemberIcon>
-                    );
-                })}
-                <div
-                    className="addNewMContainer"
-                    onClick={() => {
-                        setIsModalUserOpen(true);
-                    }}
-                >
-                    +
+                    <Link href={stringBase + "/settings"}>
+                        <div
+                            className="text-medium font-medium
+                    bg-slate-300 dark:bg-slate-600
+                    flex justify-center
+                    rounded-md py-[.3rem]
+                    cursor-pointer"
+                        >
+                            Configuracion de proyecto
+                        </div>
+                    </Link>
+
+                    {/* <DropDownMenu info={listTools1}></DropDownMenu>
+                    <DropDownMenu info={listTools2}></DropDownMenu> */}
+                    <Accordion selectionMode="multiple" variant="bordered">
+                        <AccordionItem
+                            key="1"
+                            aria-label="Accordion 1"
+                            title="Sobre proyecto"
+                        >
+                            {listTools1.dataItems.map((item) => {
+                                return (
+                                    <DropDownItem
+                                        key={item.id}
+                                        icon={item.optIcon}
+                                        name={item.optName}
+                                        goTo={item.goTo}
+                                    ></DropDownItem>
+                                );
+                            })}
+                        </AccordionItem>
+                        <AccordionItem
+                            key="2"
+                            aria-label="Accordion 2"
+                            title="Herramientas"
+                        >
+                            {listTools2.dataItems.map((item) => {
+                                return (
+                                    <DropDownItem
+                                        key={item.id}
+                                        icon={item.optIcon}
+                                        name={item.optName}
+                                        goTo={item.goTo}
+                                    ></DropDownItem>
+                                );
+                            })}
+                        </AccordionItem>
+                    </Accordion>
+
+                    <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+
+                    {/* ESTO ESTA PENDIENTEEEE ================================================= */}
+                    {isModalUserOpen && (
+                        <ModalUsersOne
+                            listAllUsers={true}
+                            handlerModalClose={() => {
+                                setIsModalUserOpen(false);
+                            }}
+                            handlerModalFinished={(newMiembrosList) => {
+                                //agregamos usuario a proyecto
+                                setIsModalUserOpen(false);
+                                //addUserToProject(newMiembrosList);
+                            }}
+                            excludedUsers={memberData.map((item) => ({
+                                id: item.idUsuario,
+                                name: item.nombres,
+                                lastName: item.apellidos,
+                                email: item.correoElectronico,
+                            }))}
+                            idProyecto={props.projectId}
+                        ></ModalUsersOne>
+                    )}
                 </div>
-            </ul>
-
-            <Link href={stringBase + "/settings"}>
-                <div
-                    className="text-medium font-medium 
-            bg-slate-300 dark:bg-slate-600
-            flex justify-center 
-            rounded-md py-[.3rem] 
-            cursor-pointer"
-                >
-                    Configuracion de proyecto
-                </div>
-            </Link>
-
-            {/* <DropDownMenu info={listTools1}></DropDownMenu>
-            <DropDownMenu info={listTools2}></DropDownMenu> */}
-            <Accordion selectionMode="multiple" variant="bordered">
-                <AccordionItem
-                    key="1"
-                    aria-label="Accordion 1"
-                    title="Sobre proyecto"
-                >
-                    {listTools1.dataItems.map((item) => {
-                        return (
-                            <DropDownItem
-                                key={item.id}
-                                icon={item.optIcon}
-                                name={item.optName}
-                                goTo={item.goTo}
-                            ></DropDownItem>
-                        );
-                    })}
-                </AccordionItem>
-                <AccordionItem
-                    key="2"
-                    aria-label="Accordion 2"
-                    title="Herramientas"
-                >
-                    {listTools2.dataItems.map((item) => {
-                        return (
-                            <DropDownItem
-                                key={item.id}
-                                icon={item.optIcon}
-                                name={item.optName}
-                                goTo={item.goTo}
-                            ></DropDownItem>
-                        );
-                    })}
-                </AccordionItem>
-            </Accordion>
-
-            <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
-
-            {/* ESTO ESTA PENDIENTEEEE ================================================= */}
-            {isModalUserOpen && (
-                <ModalUsersOne
-                    listAllUsers={true}
-                    handlerModalClose={() => {
-                        setIsModalUserOpen(false);
-                    }}
-                    handlerModalFinished={(newMiembrosList) => {
-                        //agregamos usuario a proyecto
-                        setIsModalUserOpen(false);
-                        //addUserToProject(newMiembrosList);
-                    }}
-                    excludedUsers={memberData.map((item) => ({
-                        id: item.idUsuario,
-                        name: item.nombres,
-                        lastName: item.apellidos,
-                        email: item.correoElectronico,
-                    }))}
-                    idProyecto={props.projectId}
-                ></ModalUsersOne>
             )}
         </nav>
     );

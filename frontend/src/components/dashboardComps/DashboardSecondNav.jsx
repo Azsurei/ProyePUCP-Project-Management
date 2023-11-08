@@ -3,7 +3,7 @@ import "@/styles/dashboardStyles/DashboardSecondNav.css";
 import Link from "next/link";
 
 function DashboardSecondNav() {
-    return (
+    return (    //el profe dijo lo de cambiar 
         <ul className="DashboardSecondNav bg-mainNavBar">
             <li>
                 <img src="/icons/sidebarIcon1.svg" className='sideIcon'></img>

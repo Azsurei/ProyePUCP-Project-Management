@@ -5,6 +5,9 @@ import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/
 import { useRouter } from "next/navigation";
 import NavigationTab from "@/components/NavigationTab";
 import KanbanBoard from "@/components/dashboardComps/projectComps/kanbanComps/KanbanBoard";
+import {
+    Button,
+} from "@nextui-org/react";
 
 export default function Kanban(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -17,5 +20,12 @@ export default function Kanban(props) {
         setIsLoadingSmall(false);
     }, []);
 
-    return <KanbanBoard projectId={projectId}></KanbanBoard>;
+    return (
+    
+    
+    <KanbanBoard projectId={projectId}></KanbanBoard>
+    
+    
+    
+    );
 }

@@ -18,9 +18,12 @@ import axios from "axios";
 import ModalTaskView from "./ModalTaskView";
 import { useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
+import ModalNewTask from "./ModalNewTask";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 
 export default function KanbanBoard({ projectId }) {
+    const router = useRouter();
     const [stateWhatsHappening, setStateWhatsHappening] = useState("");
 
     const {
@@ -28,6 +31,14 @@ export default function KanbanBoard({ projectId }) {
         onOpenChange: onOpenChangeViewTask,
         onOpen: onOpenViewTask,
     } = useDisclosure();
+
+    const {
+        isOpen: isOpenNewTask,
+        onOpenChange: onOpenChangeNewTask,
+        onOpen: onOpenNewTask,
+    } = useDisclosure();
+    const [flagOpeningModal, setFlagOpeningModal] = useState(0);
+    const [columnToAddTask, setColumnToAddTask] = useState(null);
 
     const [columns, setColumns] = useState([]);
     //inicializamos columnas con aquellas cuyas tareas sean null
@@ -46,6 +57,8 @@ export default function KanbanBoard({ projectId }) {
     const [activeTask, setActiveTask] = useState(null);
     const [oldColumn, setOldColumn] = useState(null);
 
+    const [currentTaskViewing, setCurrentTaskViewing] = useState(null);
+
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -62,6 +75,8 @@ export default function KanbanBoard({ projectId }) {
         axios
             .get(stringURL)
             .then(function (response) {
+                console.log(response.data.data);
+
                 //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
                 const columnTareas = {
                     idColumnaKanban: 0,
@@ -75,10 +90,29 @@ export default function KanbanBoard({ projectId }) {
                 //setColumns([columnTareas, ...response.data.data.columnas]);
                 setColumns([columnTareas, ...response.data.data.columnas]);
 
-                console.log(response.data.data);
-                setTasks(response.data.data.tareas);
-                //console.log(response.data.message);
-                //console.log("Conexion correcta");
+                function compareKanbanElements(a, b) {
+                    if (a.idColumnaKanban < b.idColumnaKanban) {
+                        return -1;
+                    }
+                    if (a.idColumnaKanban > b.idColumnaKanban) {
+                        return 1;
+                    }
+                    // If idColumnaKanban is equal, compare by posicionKanban
+                    if (a.posicionKanban < b.posicionKanban) {
+                        return -1;
+                    }
+                    if (a.posicionKanban > b.posicionKanban) {
+                        return 1;
+                    }
+                    return 0;
+                }
+
+                // Sort the array using the custom comparison function
+                const sortedArray = response.data.data.tareas.sort(
+                    compareKanbanElements
+                );
+
+                setTasks(sortedArray);
             })
             .catch(function (error) {
                 console.log(error);
@@ -87,6 +121,7 @@ export default function KanbanBoard({ projectId }) {
     }, []);
 
     return (
+        
         <div
             className="
             generalKanbanCompCont
@@ -154,7 +189,7 @@ export default function KanbanBoard({ projectId }) {
                                     deleteTask={deleteTask}
                                     updateTask={updateTask}
                                     updateColumnNameDB={updateColumnNameDB}
-                                    openViewTask={onOpenViewTask}
+                                    openViewTask={openModalViewTask}
                                     tasks={tasks.filter(
                                         (task) =>
                                             task.idColumnaKanban ===
@@ -219,21 +254,152 @@ export default function KanbanBoard({ projectId }) {
             <ModalTaskView
                 isOpen={isOpenViewTask}
                 onOpenChange={onOpenChangeViewTask}
+                currentTask={currentTaskViewing}
+                goToTaskDetail={(idTarea) => {
+                    console.log("redireccionando a tarea");
+                    router.push("/dashboard");
+                }}
+            />
+
+            <ModalNewTask
+                isOpen={isOpenNewTask}
+                onOpenChange={onOpenChangeNewTask}
+                currentColumn={columnToAddTask}
+                currentSprint={0}
+                flagOpeningModal={flagOpeningModal}
+                resetFlagOpeningModal={() => {
+                    setFlagOpeningModal(0);
+                }}
+                idProyecto={projectId}
+                insertTask={(task) => {
+                    insertTask(task);
+                }}
             />
             <Toaster richColors position="top-center"></Toaster>
         </div>
     );
 
-    function createTask(columnId) {
-        const newTask = {
-            idTarea: generateId(),
-            idColumnaKanban: columnId,
-            content: `Tarea ${tasks.length + 1}`,
-        };
+    function openModalViewTask(taskId) {
+        setCurrentTaskViewing(null);
+        onOpenViewTask();
+        console.log("mostrando tarea " + taskId);
 
-        console.log(newTask);
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/kanban/verInfoTarea/" +
+            taskId;
+        axios
+            .get(stringURL)
+            .then(function (response) {
+                setCurrentTaskViewing(response.data.tareaData);
+                console.log(response.data.tareaData);
+            })
+            .catch(function (error) {
+                console.log(error);
+                toast.error(
+                    "Error en carga de tarea " + taskId + ". Recarge la pagina"
+                );
+            });
+    }
 
-        setTasks([...tasks, newTask]);
+    function createTask(idColumnaKanban) {
+        // const newTask = {
+        //     idTarea: generateId(),
+        //     idColumnaKanban: columnId,
+        //     content: `Tarea ${tasks.length + 1}`,
+        // };
+
+        // console.log(newTask);
+
+        // setTasks([...tasks, newTask]);
+        console.log(idColumnaKanban);
+        onOpenNewTask();
+        setFlagOpeningModal(1);
+        setColumnToAddTask(idColumnaKanban);
+    }
+
+    function insertTask(task) {
+        setColumnToAddTask(null);
+        toast.promise(promiseRegistrarTarea(task), {
+            loading: "Registrando tu nueva tarea...",
+            success: (data) => {
+                return "La tarea se creó con exito!";
+            },
+            error: "Error al registrar la tarea",
+            position: "bottom-right",
+        });
+    }
+
+    function promiseRegistrarTarea(task) {
+        return new Promise((resolve, reject) => {
+            const newURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/cronograma/insertarTarea";
+            axios
+                .post(newURL, task)
+                .then(function (response) {
+                    console.log(response.data.message);
+                    //actualizamos lista de tareas
+
+                    const stringURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/kanban/listarColumnasYTareas/" +
+                        projectId;
+                    axios
+                        .get(stringURL)
+                        .then(function (response) {
+                            //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
+                            const columnTareas = {
+                                idColumnaKanban: 0,
+                                idProyecto: parseInt(projectId),
+                                nombre: `Tareas`,
+                                posicion: 0,
+                                activo: 1,
+                            };
+
+                            setColumns([
+                                columnTareas,
+                                ...response.data.data.columnas,
+                            ]);
+
+                            function compareKanbanElements(a, b) {
+                                if (a.idColumnaKanban < b.idColumnaKanban) {
+                                    return -1;
+                                }
+                                if (a.idColumnaKanban > b.idColumnaKanban) {
+                                    return 1;
+                                }
+                                // If idColumnaKanban is equal, compare by posicionKanban
+                                if (a.posicionKanban < b.posicionKanban) {
+                                    return -1;
+                                }
+                                if (a.posicionKanban > b.posicionKanban) {
+                                    return 1;
+                                }
+                                return 0;
+                            }
+
+                            // Sort the array using the custom comparison function
+                            const sortedArray = response.data.data.tareas.sort(
+                                compareKanbanElements
+                            );
+
+                            setTasks(sortedArray);
+
+                            resolve("exito!");
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            toast.error("Error en carga. Recarge la pagina");
+                            reject(error);
+                        });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toast.error("Error en registro de tarea");
+                    reject(error);
+                });
+        });
     }
 
     function deleteTask(taskId) {
@@ -291,7 +457,8 @@ export default function KanbanBoard({ projectId }) {
 
         //sacamos el max posicionKanban de columna 0.
         const tareasCol0 = tasks.filter((task) => task.idColumnaKanban === 0);
-        let lastPosicionKanban = tareasCol0[tareasCol0.length - 1].posicionKanban;  //+1 para empezar en el siguiente
+        let lastPosicionKanban =
+            tareasCol0[tareasCol0.length - 1].posicionKanban; //+1 para empezar en el siguiente
         console.log("Empezaremos en " + lastPosicionKanban);
 
         const updatedTasks = tasks.map((task) => {
@@ -303,17 +470,21 @@ export default function KanbanBoard({ projectId }) {
                     0,
                     task.sumillaTarea
                 );
-                return { ...task, posicionKanban: lastPosicionKanban, idColumnaKanban: 0 };
+                return {
+                    ...task,
+                    posicionKanban: lastPosicionKanban,
+                    idColumnaKanban: 0,
+                };
             }
             return task;
         });
 
         updatedTasks.sort((a, b) => {
             if (a.idColumnaKanban === b.idColumnaKanban) {
-              return a.posicionKanban - b.posicionKanban;
+                return a.posicionKanban - b.posicionKanban;
             }
             return a.idColumnaKanban - b.idColumnaKanban;
-          });
+        });
 
         setTasks(updatedTasks);
     }
@@ -576,13 +747,13 @@ export default function KanbanBoard({ projectId }) {
             });
     }
 
-    function deleteColumnDB(idColumnaKanban, name){
+    function deleteColumnDB(idColumnaKanban, name) {
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/kanban/eliminarColumna";
         axios
             .post(stringURL, {
-                idColumnaKanban: idColumnaKanban
+                idColumnaKanban: idColumnaKanban,
             })
             .then(function (response) {
                 const str = "Columna " + name + " eliminada";

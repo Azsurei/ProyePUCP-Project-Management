@@ -54,6 +54,8 @@ export default function Equipo(props) {
     const [reloadData, setReloadData] = useState(false);
     const [roles, setRoles] = useState([]);
     const [rolesOriginales, setRolesOriginales] = useState([]);
+    const [leaderRoleId, setLeaderRoleId] = useState(null);
+    const [memberRoleId, setMemberRoleId] = useState(null);
 
     const handleReloadData = () => {
         setReloadData(true);
@@ -76,7 +78,7 @@ export default function Equipo(props) {
         // Agrega idRol y nombreRol a cada miembro en newMiembrosList
         const membersWithRoles = newMiembrosList.map((member) => ({
             ...member,
-            idRolEquipo: 2, // Establece el valor adecuado para idRol
+            idRolEquipo: memberRoleId, // Establece el valor adecuado para idRol
             nombreRol: "Miembro", // Establece el valor adecuado para nombreRol
         }));
 
@@ -103,6 +105,11 @@ export default function Equipo(props) {
         }
     }, [modal]);
 
+    const removeTeam = (team) => {  
+        const nuevoListComps = ListComps.filter((equipo) => equipo !== team);
+        setListComps(nuevoListComps);
+    };
+
     const handleSelectedValueChangeRol = (value, name, userId) => {
         // Crea una copia profunda de selectedTeam para evitar mutar el estado directamente
         const updatedSelectedTeam = {
@@ -119,7 +126,7 @@ export default function Equipo(props) {
                 return participant;
             }),
         };
-
+        console.log("EL ID DEL ROL SELECCIONADO ES:",value);
         // Actualiza el estado con el nuevo selectedTeam
         setSelectedTeam(updatedSelectedTeam);
     };
@@ -241,7 +248,7 @@ export default function Equipo(props) {
         axios
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/equipo/listarRol/${team.idEquipo}`
+                    `/api/proyecto/equipo/listarRol/${projectId}`
             )
             .then((response) => {
                 // Aquí puedes manejar la respuesta de la petición
@@ -251,7 +258,21 @@ export default function Equipo(props) {
                 );
                 setRoles(response.data.roles);
                 setRolesOriginales(response.data.roles);
-                // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
+                // Busca el ID del líder y el miembro en la respuesta
+                const roles = response.data.roles;
+                const leaderRole = roles.find(
+                    (role) => role.nombreRol === "Líder"
+                );
+                const memberRole = roles.find(
+                    (role) => role.nombreRol === "Miembro"
+                );
+
+                if (leaderRole) {
+                    setLeaderRoleId(leaderRole.idRolEquipo);
+                }
+                if (memberRole) {
+                    setMemberRoleId(memberRole.idRolEquipo);
+                }
             })
             .catch(function (error) {
                 console.log("Error al cargar el rol del equipo: ", error);
@@ -340,7 +361,13 @@ export default function Equipo(props) {
 
         // Encuentra elementos añadidos
         newArray.forEach((newItem) => {
-            if (!newItem.idEquipoXRolEquipo) {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
                 addedArray.push(newItem);
             }
         });
@@ -354,7 +381,7 @@ export default function Equipo(props) {
 
         arrParticipantes.forEach((participante) => {
             const tieneNuevoRol = arrAddedRoles.some(
-                (addedRol) => addedRol.idRol === participante.idRolEquipo
+                (addedRol) => addedRol.idRolEquipo === participante.idRolEquipo
             );
 
             if (tieneNuevoRol) {
@@ -376,7 +403,7 @@ export default function Equipo(props) {
             modifiedArray: modifiedRoles,
             deletedArray: deletedRoles,
             addedArray: addedRoles,
-        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRol");
+        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRolEquipo");
 
         console.log("Modified Roles:", modifiedRoles);
         console.log("Deleted Roles:", deletedRoles);
@@ -422,6 +449,7 @@ export default function Equipo(props) {
         } = separarPorRol(modifiedParticipants, addedRoles);
 
         const casoEliminarRol = {
+            idProyecto: parseInt(projectId),
             idEquipo: selectedTeam.idEquipo,
             miembrosAgregados: addedParticipantesNoRol,
             miembrosModificados: modifiedParticipantesNoRol,
@@ -431,6 +459,7 @@ export default function Equipo(props) {
         console.log("Realizado correctamente");
         console.log(casoEliminarRol);
         const casoAgregarRol = {
+            idProyecto: parseInt(projectId),
             idEquipo: selectedTeam.idEquipo,
             miembrosAgregados: addedParticipantesNewRol,
             miembrosModificados: modifiedParticipantesNewRol,
@@ -439,28 +468,11 @@ export default function Equipo(props) {
         console.log("Agregado correctamente");
         console.log(casoAgregarRol);
 
-        // Resto del código
-        /*         axios
-            .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/modificarMiembroEquipo",
-                putData
-            )
-            .then((response) => {
-                // Manejar la respuesta de la solicitud PUT
-                console.log("Respuesta del servidor:", response.data);
-                console.log("Actualización correcta");
-                // Realizar acciones adicionales si es necesario
-            })
-            .catch((error) => {
-                // Manejar errores si la solicitud PUT falla
-                console.error("Error al realizar la solicitud PUT:", error);
-            });
         axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/insertarMiembrosEquipo",
-                postData
+                    "/api/proyecto/equipo/rolEliminado",
+                casoEliminarRol
             )
             .then((response) => {
                 // Manejar la respuesta de la solicitud POST
@@ -472,24 +484,23 @@ export default function Equipo(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
+
         axios
-            .delete(
+            .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/equipo/eliminarMiembroEquipo",
-                {
-                    data: deleteData,
-                }
+                    "/api/proyecto/equipo/rolAgregado",
+                casoAgregarRol
             )
             .then((response) => {
-                // Manejar la respuesta de la solicitud DELETE
-                console.log("Respuesta del servidor (DELETE):", response.data);
-                console.log("Eliminación correcta (DELETE)");
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST2):", response.data);
+                console.log("Registro correcto (POST2)");
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {
-                // Manejar errores si la solicitud DELETE falla
-                console.error("Error al realizar la solicitud DELETE:", error);
-            }); */
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST2:", error);
+            });
     };
 
     return (
@@ -544,6 +555,7 @@ export default function Equipo(props) {
                                     key={team.idEquipo}
                                     team={team}
                                     handleSeeTeam={handleSeeTeam}
+                                    removeTeam={removeTeam}
                                 />
                             ))}
                         </div>
@@ -807,7 +819,7 @@ export default function Equipo(props) {
                                                             )
                                                         }
                                                         autoSelectedValue={{
-                                                            idRol: member.idRol,
+                                                            idRolEquipo: member.idRolEquipo,
                                                             nombreRol:
                                                                 member.nombreRol,
                                                         }}
@@ -897,7 +909,7 @@ export default function Equipo(props) {
                             toggle={() => toggleModal()} // Pasa la función como una función de flecha
                             handleAddRoles={handleAddRoles}
                             initialListRoles={roles}
-                            participantes={selectedTeam.participantes}
+                            ListComps={ListComps}
                         />
                     )}
                     {modal2 && (

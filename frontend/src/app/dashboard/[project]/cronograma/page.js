@@ -11,6 +11,7 @@ import {
     Avatar,
     Checkbox,
     CheckboxGroup,
+    Input,
     Select,
     SelectItem,
     Tab,
@@ -124,6 +125,9 @@ export default function Cronograma(props) {
     const [tareaName, setTareaName] = useState("");
     const [validName, setValidName] = useState(true);
 
+    const [tareaHorasAsignadas, setTareaHorasAsignadas] = useState(0);
+    const [validHorasAsignadas, setValidHorasAsignadas] = useState(true);
+
     const [tareaDescripcion, setTareaDescripcion] = useState("");
     const [validDescripcion, setValidDescripcion] = useState(true);
 
@@ -157,6 +161,8 @@ export default function Cronograma(props) {
     //const [selectedSubteamUsers, setSelectedSubteamUsers] = useState([]);
     const [validSelectedSubteamUsers, setValidSelectedSubteamUsers] =
         useState(true);
+
+    const twStyle1 = "font-medium text-lg text-mainHeaders";
 
     const handlerGoToNew = () => {
         //limpiamos data por si acaso
@@ -492,22 +498,24 @@ export default function Cronograma(props) {
             setToggleNew(false);
             const objTareaNueva = {
                 idCronograma: cronogramaId,
-                idTareaEstado: parseInt(tareaEstado[0], 10), //No iniciado
+                idTareaEstado: 1, //No iniciado
                 idSubGrupo:
                     selectedSubteam === null ? null : selectedSubteam.idEquipo,
                 idPadre: tareaPadre !== null ? tareaPadre.idTarea : null,
                 idTareaAnterior: null,
+                idSprint: 0,
                 sumillaTarea: tareaName,
                 descripcion: tareaDescripcion,
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
                 cantSubtareas: 0,
                 cantPosteriores: 0,
-                horasPlaneadas: null,
+                horasPlaneadas: tareaHorasAsignadas,
                 usuarios: selectedUsers, //veriifcar posible error
                 subTareas: null,
                 tareasPosteriores: listPosteriores,
                 idEntregable: parseInt(tareaEntregable[0], 10),
+                idColumnaKanban: 0,
             };
             console.log(objTareaNueva, null, 2);
 
@@ -892,9 +900,14 @@ export default function Cronograma(props) {
 
                     {listTareas.length === 0 && (
                         <div className="w-[100%] h-[70vh] flex justify-center items-center flex-col gap-3">
-                            <p className="m-0 font-medium">Tu calendario no cuenta con tareas por el momento</p>
-                            <img src="/images/empty-calendar.png" className="h-[20%]  m-0"/>
-                            
+                            <p className="m-0 font-medium">
+                                Tu calendario no cuenta con tareas por el
+                                momento
+                            </p>
+                            <img
+                                src="/images/empty-calendar.png"
+                                className="h-[20%]  m-0"
+                            />
                         </div>
                     )}
                     {listTareas.length !== 0 && (
@@ -961,7 +974,7 @@ export default function Cronograma(props) {
 
                     <div className="contFirstRow">
                         <div className="contNombre">
-                            <p>Nombre de tarea</p>
+                            <p className={twStyle1}>Nombre de tarea</p>
 
                             <Textarea
                                 variant={
@@ -985,7 +998,7 @@ export default function Cronograma(props) {
                             />
                         </div>
                         <div className="contEstado">
-                            <p>Estado</p>
+                            {/* <p>Estado</p>
                             <Select
                                 //variant="bordered"
                                 isDisabled={stateSecond === 2 ? true : false}
@@ -1017,12 +1030,28 @@ export default function Cronograma(props) {
                                         {items.texto}
                                     </SelectItem>
                                 ))}
-                            </Select>
+                            </Select> */}
+                            <p className={twStyle1}>Horas asignadas</p>
+                            <Input
+                                variant={
+                                    stateSecond === 2 ? "flat" : "bordered"
+                                }
+                                readOnly={stateSecond === 2 ? true : false}
+                                type="number"
+                                label=""
+                                placeholder="0 horas"
+                                labelPlacement="outside"
+                                classNames={{
+                                    label: "pb-0",
+                                }}
+                                value={tareaHorasAsignadas}
+                                onValueChange={setTareaHorasAsignadas}
+                            />
                         </div>
                     </div>
 
                     <div className="contDescripcion">
-                        <p>Descripcion</p>
+                        <p className={twStyle1}>Descripción</p>
 
                         <Textarea
                             variant={stateSecond === 2 ? "flat" : "bordered"}
@@ -1048,7 +1077,7 @@ export default function Cronograma(props) {
                     <div className="containerFechas">
                         <div className="horizontalFechas">
                             <div className="contFechaInicio">
-                                <p className="headerFInicio">Fecha de inicio</p>
+                                <p className={twStyle1}>Fecha de inicio</p>
                                 <DateInput
                                     value={fechaInicio}
                                     isEditable={
@@ -1066,7 +1095,7 @@ export default function Cronograma(props) {
                             </div>
 
                             <div className="contFechaFin">
-                                <p className="headerFFin">Fecha de fin</p>
+                                <p className={twStyle1}>Fecha de fin</p>
                                 <DateInput
                                     value={fechaFin}
                                     isEditable={
@@ -1117,7 +1146,7 @@ export default function Cronograma(props) {
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <p>Entregable Asociado</p>
+                        <p className={twStyle1}>Entregable Asociado</p>
                         <Select
                             items={listEntregables}
                             variant="bordered"
@@ -1166,7 +1195,7 @@ export default function Cronograma(props) {
 
                     <div className="containerPosteriores mt-3">
                         <div className="posterioresHeader">
-                            <p>Tareas posteriores</p>
+                            <p className={twStyle1}>Tareas posteriores</p>
                             {stateSecond !== 2 && (
                                 <div
                                     className="btnToPopUp bg-mainSidebar"
@@ -1274,7 +1303,7 @@ export default function Cronograma(props) {
                         </div>
                     </div>
 
-                    <p style={{ paddingTop: ".7rem" }}>
+                    <p className={twStyle1} style={{ paddingTop: ".7rem" }}>
                         Asigna miembros a tu tarea
                     </p>
                     <div className="containerTab">

@@ -12,7 +12,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex flex-col max-h-screen mx-auto w-full h-full">
+        <div className="flex flex-col max-h-screen mx-auto w-full h-full overflow-y-auto">
             <nav className="flex flex-col justify-between items-center px-8 py-8 w-full bg-white shadow-md sm:py-4 sm:flex-row sm:items-center sm:justify-between">
                 <Image
                     src="/images/LogoProyePUCPstandard.png"
@@ -46,22 +46,24 @@ export default function Home() {
                     height={150}
                 />
             </nav>
-            <main className="flex flex-col sm:flex-row justify-evenly items-center p-8 flex-1 w-full">
-                <div className="flex flex-col justify-center items-center sm:items-start space-y-3 p-8 flex-1 w-full sm:w-auto gap-8 max-w-lg">
-                    <h1 className="text-blue-700 text-3xl ">
+            <main className="flex flex-col md:flex-row justify-evenly items-center p-8 flex-1 w-full ">
+                <div className="flex flex-col justify-center items-center md:items-start  p-8 w-full md:w-[35%] gap-3">
+                    <h1 className="text-blue-700 text-5xl font-[Montserrat] font-semibold md:text-6xl  ">
                         La manera más fácil de gestionar tus proyectos
                     </h1>
-                    <p className="text-gray-700 text-lg ">
+                    <p className="text-gray-700 text-lg mb-5">
                         ProyePUCP es la mejor plataforma educativa que te
                         proveerá de todas las herramientas que necesites para
                         gestionar tus proyectos.
                     </p>
-                    <Button
-                        appearance="default"
-                        text="¡Inicia ya!"
-                        onClick={() => handleLogin()}
-                        className={"w-52"}
-                    />
+                    <div className="flex justify-center md:justify-start w-full">
+                        <Button
+                            appearance="default"
+                            text="¡Inicia ya!"
+                            onClick={() => handleLogin()}
+                            className={"w-52 bg-blue-700 text-white hover:bg-blue-800"}
+                        />
+                    </div>
                 </div>
                 <Image
                     src="/images/LogoStart.png"
