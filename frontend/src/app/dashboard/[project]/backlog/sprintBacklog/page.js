@@ -35,6 +35,8 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 
+import ModalNewTask from "@/components/dashboardComps/projectComps/kanbanComps/ModalNewTask";
+
 axios.defaults.withCredentials = true;
 
 let idBacklog = 0;
@@ -62,7 +64,7 @@ const getSprints = async () => {
             });
     });
 };
-const createSprint = async (newSprint) => {
+const createSprint = async (sprint) => {
     return new Promise((resolve, reject) => {
         axios
             .post(
@@ -70,10 +72,10 @@ const createSprint = async (newSprint) => {
                     `/api/proyecto/backlog/insertarSprint`,
                 {
                     idProductBacklog: idBacklog,
-                    nombre: newSprint.nombre,
-                    descripcion: newSprint.descripcion,
-                    fechaInicio: newSprint.fechaInicio,
-                    fechaFin: newSprint.fechaFin,
+                    nombre: sprint.nombre,
+                    descripcion: sprint.descripcion,
+                    fechaInicio: sprint.fechaInicio,
+                    fechaFin: sprint.fechaFin,
                     estado: 1,
                 }
             )
@@ -87,13 +89,43 @@ const createSprint = async (newSprint) => {
             });
     });
 };
-const deleteSprint = async (idSprint) => {
+const updateSprint = async (sprint) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .put(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/modificarSprint`,
+                {
+                    idSprint: sprint.idSprint,
+                    nombre: sprint.nombre,
+                    descripcion: sprint.descripcion,
+                    fechaInicio: sprint.fechaInicio,
+                    fechaFin: sprint.fechaFin,
+                    estado: sprint.estado,
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve(true);
+            })
+            .catch((error) => {
+                console.error("Error al actualizar el sprint: ", error);
+                reject(error);
+            });
+    });
+};
+const deleteSprint = async (sprint) => {
     return new Promise((resolve, reject) => {
         axios
             .delete(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/backlog/eliminarSprint/` +
-                    idSprint
+                    `/api/proyecto/backlog/eliminarSprint`,
+                {
+                    data: {
+                        idSprint: sprint.idSprint,
+                        tareas: sprint.tareas,
+                    },
+                }
             )
             .then((response) => {
                 console.log(response);
@@ -129,27 +161,6 @@ const updateStatusSprint = async (idSprint, estado) => {
             });
     });
 };
-const updateSprint = async (sprint) => {
-    return new Promise((resolve, reject) => {
-        axios
-            .put(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/backlog/actualizarSprint/` +
-                    sprint.id,
-                {
-                    sprint: sprint,
-                }
-            )
-            .then((response) => {
-                console.log(response);
-                resolve(true);
-            })
-            .catch((error) => {
-                console.error("Error al actualizar el sprint: ", error);
-                reject(error);
-            });
-    });
-};
 const changeSprint = async (idTarea, idSprint) => {
     const data = [
         {
@@ -177,6 +188,33 @@ const changeSprint = async (idTarea, idSprint) => {
             });
     });
 };
+const insertTask = async (newTask) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/cronograma/insertarTarea`,
+                {
+                    idProyecto: newTask.idProyecto,
+                    idSprint: newTask.idSprint,
+                    idTareaEstado: newTask.idTareaEstado,
+                    sumillaTarea: newTask.sumillaTarea,
+                    descripcionTarea: newTask.descripcionTarea,
+                    fechaInicio: newTask.fechaInicio,
+                    fechaFin: newTask.fechaFin,
+                    color: newTask.color,
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve();
+            })
+            .catch((error) => {
+                console.error("Error al crear la tarea: ", error);
+                reject(error);
+            });
+    });
+};
 
 // Función principal
 export default function SprintBacklog(props) {
@@ -187,7 +225,6 @@ export default function SprintBacklog(props) {
     [idBacklog, idCronograma] = herramientasInfo
         .filter((item) => [1, 4].includes(item.idHerramienta))
         .map((item) => item.idHerramientaCreada);
-    console.log(idBacklog, idCronograma);
 
     // Decodificacion de URL
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -200,30 +237,39 @@ export default function SprintBacklog(props) {
         onOpen: onModalCreateOpen,
         onOpenChange: onModalCreateChange,
     } = useDisclosure();
-    const {	
+    const {
+        isOpen: isModalEditOpen,
+        onOpen: onModalEditOpen,
+        onOpenChange: onModalEditChange,
+    } = useDisclosure();
+    const {
         isOpen: isModalInitOpen,
         onOpen: onModalInitOpen,
         onOpenChange: onModalInitChange,
     } = useDisclosure();
-    const {	
+    const {
         isOpen: isModalFinishOpen,
         onOpen: onModalFinishOpen,
         onOpenChange: onModalFinishChange,
     } = useDisclosure();
-
+    const {
+        isOpen: isModalTaskCreateOpen,
+        onOpen: onModalTaskCreateOpen,
+        onOpenChange: onModalTaskCreateChange,
+    } = useDisclosure();
 
     // Variables principales
     const [sprints, setSprints] = useState([]);
     const [statusInterface, setStatusInterface] = useState("inactive"); // ["active", "inactive"]
     const [idSelectedSprint, setIdSelectedSprint] = useState(null);
+    const [selectedSprint, setSelectedSprint] = useState(null);
+    const [flagOpeningModal, setFlagOpeningModal] = useState(0); // [0, 1]
 
     // Funciones principales
     const handleGet = async () => {
-        setIsLoadingSmall(true);
         try {
             const sprints = await getSprints();
             setSprints(sprints);
-            setIsLoadingSmall(false);
         } catch (e) {
             toast.error("Error al obtener los datos de los sprints.");
             console.log(e);
@@ -232,19 +278,41 @@ export default function SprintBacklog(props) {
     const handleCreate = async (newSprint) => {
         try {
             await createSprint(newSprint);
-            toast.success("El sprint se ha creado exitosamente.");
             await handleGet();
+            toast.success("El sprint se ha creado exitosamente.");
             return true;
         } catch (e) {
             toast.error("Error al crear el sprint.");
             return false;
         }
     };
+    const handleUpdate = async (sprint) => {
+        try {
+            await updateSprint(sprint);
+            await handleGet();
+            toast.success("El sprint se ha actualizado exitosamente.");
+            return true;
+        } catch (e) {
+            toast.error("Error al actualizar el sprint.");
+            return false;
+        }
+    };
+    const handleDelete = async (sprint) => {
+        try {
+            await deleteSprint(sprint);
+            await handleGet();
+            toast.success("El sprint se ha eliminado exitosamente.");
+            return true;
+        } catch (e) {
+            toast.error("Error al eliminar el sprint.");
+            return false;
+        }
+    };
     const handleStart = async () => {
         try {
             await updateStatusSprint(idSelectedSprint, 2);
-            toast.success("El sprint se ha iniciado exitosamente.");
             await handleGet();
+            toast.success("El sprint se ha iniciado exitosamente.");
         } catch (e) {
             toast.error("Error al iniciar el sprint.");
         } finally {
@@ -254,8 +322,8 @@ export default function SprintBacklog(props) {
     const handleFinish = async () => {
         try {
             await updateStatusSprint(idSelectedSprint, 3);
-            toast.success("El sprint se ha finalizado exitosamente.");
             await handleGet();
+            toast.success("El sprint se ha finalizado exitosamente.");
         } catch (e) {
             toast.error("Error al finalizar el sprint.");
         } finally {
@@ -263,19 +331,38 @@ export default function SprintBacklog(props) {
         }
     };
     const handleChange = async (idTarea, idSprint) => {
+        const toastId = toast("Sonner");
         try {
-            console.log(idTarea, idSprint);
+            toast.loading("Cambiando la tarea de sprint...", {
+                id: toastId,
+            });
             await changeSprint(idTarea, idSprint);
-            toast.success("La tarea se ha cambiado de sprint exitosamente.");
             await handleGet();
+            toast.success("La tarea se ha cambiado de sprint exitosamente.", {
+                id: toastId,
+            });
         } catch (e) {
-            toast.error("Error al cambiar la tarea de sprint.");
+            toast.success("Error al cambiar la tarea de sprint.", {
+                id: toastId,
+            });
+        }
+    };
+    const handleInsert = async (newTask) => {
+        try {
+            await insertTask(newTask);
+            await handleGet();
+            toast.success("La tarea se ha creado exitosamente.");
+            return true;
+        } catch (e) {
+            toast.error("Error al crear la tarea.");
+            return false;
         }
     };
 
     // Efectos de renderizado
     useEffect(() => {
         handleGet();
+        setIsLoadingSmall(false);
     }, []);
     useEffect(() => {
         if (sprints.filter((sprint) => sprint.estado === 2).length === 1) {
@@ -284,8 +371,6 @@ export default function SprintBacklog(props) {
             setStatusInterface("inactive");
         }
     }, [sprints]);
-
-    console.log(sprints);
 
     // Componente
     return (
@@ -322,7 +407,7 @@ export default function SprintBacklog(props) {
                     .filter((sprint) => sprint.estado === 2)
                     .map((sprint) => (
                         <div key={sprint.idSprint}>
-                            <Accordion key={sprint.id} variant="shadow">
+                            <Accordion key={sprint.idSprint} variant="shadow">
                                 <AccordionItem
                                     key={sprint.idSprint}
                                     aria-label={sprint.nombre}
@@ -343,6 +428,19 @@ export default function SprintBacklog(props) {
                                                     radius="sm"
                                                     className="roboto text-md"
                                                     variant="flat"
+                                                    onPress={() => {
+                                                        const selectedSprint = sprints.find(
+                                                            (searchSprint) =>
+                                                                searchSprint.idSprint ===
+                                                                sprint.idSprint
+                                                        );
+                                                        if(selectedSprint) {
+                                                            setIdSelectedSprint(
+                                                                selectedSprint.idSprint
+                                                            );
+                                                            onModalEditOpen();
+                                                        }
+                                                    }}
                                                 >
                                                     Editar Sprint
                                                 </Button>
@@ -360,11 +458,16 @@ export default function SprintBacklog(props) {
                                                 </>
                                             ) : (
                                                 sprint.tareas.map((tarea) => (
-                                                    <div key={tarea.idTarea} className="w-full">
+                                                    <div
+                                                        key={tarea.idTarea}
+                                                        className="w-full"
+                                                    >
                                                         <CardTask
                                                             tarea={tarea}
                                                             sprints={sprints}
-                                                            changeSprint={handleChange}
+                                                            changeSprint={
+                                                                handleChange
+                                                            }
                                                         />
                                                     </div>
                                                 ))
@@ -388,13 +491,23 @@ export default function SprintBacklog(props) {
                     <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
                         Sprints del proyecto
                     </h3>
-                    <Button
-                        radius="sm"
-                        className="bg-[#172B4D] text-white text-md"
-                        onPress={onModalCreateOpen}
-                    >
-                        Crear Sprint
-                    </Button>
+                    <div className="flex flex-row gap-4">
+                        <Button 
+                            radius="sm" 
+                            className="text-md" 
+                            variant="flat"
+                            onPress={onModalTaskCreateOpen}
+                        >
+                            Crear Tarea
+                        </Button>
+                        <Button
+                            radius="sm"
+                            className="bg-[#172B4D] text-white text-md"
+                            onPress={onModalCreateOpen}
+                        >
+                            Crear Sprint
+                        </Button>
+                    </div>
                 </div>
                 <Divider className="mb-2" />
 
@@ -423,6 +536,17 @@ export default function SprintBacklog(props) {
                                                     radius="sm"
                                                     className="roboto text-md"
                                                     variant="flat"
+                                                    onPress={() => {
+                                                        const actualSprint = sprints.find(
+                                                            (searchSprint) =>
+                                                                searchSprint.idSprint ===
+                                                                sprint.idSprint
+                                                        );
+                                                        if(actualSprint) {
+                                                            setSelectedSprint(actualSprint);
+                                                        }
+                                                        onModalEditOpen();
+                                                    }}
                                                 >
                                                     Editar Sprint
                                                 </Button>
@@ -448,7 +572,6 @@ export default function SprintBacklog(props) {
                                             <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    
                                                     <p className="text-default-500 font-medium">
                                                         Actualmente no hay
                                                         tareas asignadas a este
@@ -457,11 +580,16 @@ export default function SprintBacklog(props) {
                                                 </>
                                             ) : (
                                                 sprint.tareas.map((tarea) => (
-                                                    <div key={tarea.idTarea} className="w-full">
+                                                    <div
+                                                        key={tarea.idTarea}
+                                                        className="w-full"
+                                                    >
                                                         <CardTask
                                                             tarea={tarea}
                                                             sprints={sprints}
-                                                            changeSprint={handleChange}
+                                                            changeSprint={
+                                                                handleChange
+                                                            }
                                                         />
                                                     </div>
                                                 ))
@@ -487,7 +615,6 @@ export default function SprintBacklog(props) {
                                         <Divider className="w-full" />
                                         {sprint.tareas.length === 0 ? (
                                             <>
-                                                
                                                 <p className="text-default-500 font-medium">
                                                     Actualmente no hay tareas
                                                     asignadas a este sprint.
@@ -495,11 +622,16 @@ export default function SprintBacklog(props) {
                                             </>
                                         ) : (
                                             sprint.tareas.map((tarea) => (
-                                                <div key={tarea.idTarea} className="w-full">
+                                                <div
+                                                    key={tarea.idTarea}
+                                                    className="w-full"
+                                                >
                                                     <CardTask
                                                         tarea={tarea}
                                                         sprints={sprints}
-                                                        changeSprint={handleChange}
+                                                        changeSprint={
+                                                            handleChange
+                                                        }
                                                     />
                                                 </div>
                                             ))
@@ -551,7 +683,6 @@ export default function SprintBacklog(props) {
                                             <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    
                                                     <p className="text-default-500 font-medium">
                                                         Actualmente no hay
                                                         tareas asignadas a este
@@ -560,7 +691,10 @@ export default function SprintBacklog(props) {
                                                 </>
                                             ) : (
                                                 sprint.tareas.map((tarea) => (
-                                                    <div key={tarea.idTarea} className="w-full">
+                                                    <div
+                                                        key={tarea.idTarea}
+                                                        className="w-full"
+                                                    >
                                                         <CardTask
                                                             tarea={tarea}
                                                         />
@@ -588,6 +722,13 @@ export default function SprintBacklog(props) {
                 onOpenChange={onModalCreateChange}
                 handleCreate={handleCreate}
             />
+            <ModalEditarSprint
+                isOpen={isModalEditOpen}
+                onOpenChange={onModalEditChange}
+                selectedSprint={selectedSprint}
+                handleUpdate={handleUpdate}
+                handleDelete={handleDelete}
+            />
             <ModalIniciarSprint
                 isOpen={isModalInitOpen}
                 onOpenChange={onModalInitChange}
@@ -597,6 +738,18 @@ export default function SprintBacklog(props) {
                 isOpen={isModalFinishOpen}
                 onOpenChange={onModalFinishChange}
                 handleFinish={handleFinish}
+            />
+            <ModalNewTask 
+                isOpen={isModalTaskCreateOpen}
+                onOpenChange={onModalTaskCreateChange}
+                currentColumn={0}
+                currentSprint={0}
+                flagOpeningModal={flagOpeningModal}
+                resetFlagOpeningModal={() => {
+                    setFlagOpeningModal(0);
+                }}
+                idProyecto={projectId}
+                insertTask={handleInsert}
             />
         </>
     );
@@ -696,19 +849,19 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
 
     // Control de flujo de variables de formulario
     const nombreInvalid = useMemo(() => {
-        return newSprint.nombre === "" ? true : false;
+        return newSprint.nombre === "";
     }, [newSprint.nombre]);
 
     const descripcionInvalid = useMemo(() => {
-        return newSprint.descripcion.length > 200 ? true : false;
+        return newSprint.descripcion.length > 200;
     }, [newSprint.descripcion]);
 
     const fechaInicioInvalid = useMemo(() => {
-        return newSprint.fechaInicio === "" ? true : false;
+        return newSprint.fechaInicio === "";
     }, [newSprint.fechaInicio]);
 
     const fechaFinInvalid = useMemo(() => {
-        return newSprint.fechaFin === "" ? true : false;
+        return newSprint.fechaFin === "";
     }, [newSprint.fechaFin]);
 
     const errorFechas = useMemo(() => {
@@ -891,6 +1044,261 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
         </Modal>
     );
 }
+function ModalEditarSprint({
+    isOpen,
+    onOpenChange,
+    selectedSprint,
+    handleUpdate,
+    handleDelete,
+}) {
+    // Variables de formulario
+    const [sprint, setSprint] = useState({
+        idSprint: 0,
+        nombre: "",
+        descripcion: "",
+        fechaInicio: "",
+        fechaFin: "",
+        estado: 1,
+        tareas: [],
+    });
+    const [statusForm, setStatusForm] = useState("init");
+    const [errorForm, setErrorForm] = useState(null);
+
+    // Control de flujo de variables de formulario
+    const nombreInvalid = useMemo(() => {
+        return sprint.nombre === "";
+    }, [sprint.nombre]);
+
+    const descripcionInvalid = useMemo(() => {
+        return sprint.descripcion.length > 200;
+    }, [sprint.descripcion]);
+
+    const fechaInicioInvalid = useMemo(() => {
+        return sprint.fechaInicio === "";
+    }, [sprint.fechaInicio]);
+
+    const fechaFinInvalid = useMemo(() => {
+        return sprint.fechaFin === "";
+    }, [sprint.fechaFin]);
+
+    const errorFechas = useMemo(() => {
+        if (sprint.fechaInicio !== "" && sprint.fechaFin !== "") {
+            const fechaInicio = new Date(sprint.fechaInicio);
+            const fechaFin = new Date(sprint.fechaFin);
+            if (fechaInicio >= fechaFin) {
+                setErrorForm(
+                    "La fecha de inicio debe ser menor a la fecha de fin."
+                );
+                return true;
+            } else {
+                setErrorForm(null);
+                return false;
+            }
+        }
+    }, [sprint.fechaInicio, sprint.fechaFin]);
+
+    const disabledButtons = useMemo(() => {
+        if (
+            statusForm === "valid" &&
+            errorForm === null &&
+            sprint.nombre !== "" &&
+            sprint.fechaInicio !== "" &&
+            sprint.fechaFin !== ""
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+    }, [statusForm, errorForm, sprint]);
+
+    useEffect(() => {
+        if (selectedSprint) {
+            setSprint({
+                idSprint: selectedSprint.idSprint,
+                nombre: selectedSprint.nombre,
+                descripcion: selectedSprint.descripcion,
+                fechaInicio: dateInput(selectedSprint.fechaInicio),
+                fechaFin: dateInput(selectedSprint.fechaFin),
+                estado: selectedSprint.estado,
+                tareas: selectedSprint.tareas,
+            });
+        }
+    }, [selectedSprint]);
+    useEffect(() => {
+        if (
+            nombreInvalid ||
+            descripcionInvalid ||
+            fechaInicioInvalid ||
+            fechaFinInvalid ||
+            sprint.nombre === "" ||
+            sprint.fechaInicio === "" ||
+            sprint.fechaFin === "" ||
+            errorFechas
+        ) {
+            setStatusForm("init");
+        } else {
+            setStatusForm("valid");
+        }
+    }, [sprint]);
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            isDismissable={false}
+            isKeyboardDismissDisabled={true}
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const endEdit = async () => {
+                        setStatusForm("loading");
+                        try {
+                            const response = await handleUpdate(sprint);
+                            if (response) {
+                                setStatusForm("init");
+                                onClose();
+                            } else {
+                                setStatusForm("valid");
+                            }
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    };
+                    const endDelete = async () => {
+                        setStatusForm("loading");
+                        try {
+                            const response = await handleDelete(sprint);
+                            if (response) {
+                                setStatusForm("init");
+                                onClose();
+                            } else {
+                                setStatusForm("valid");
+                            }
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    };
+
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Editar Sprint
+                            </ModalHeader>
+                            <ModalBody>
+                                <Input
+                                    autoFocus
+                                    label="Nombre del Sprint"
+                                    labelPlacement="outside"
+                                    placeholder="Ej. Sprint 1"
+                                    variant="bordered"
+                                    radius="sm"
+                                    value={sprint.nombre}
+                                    onChange={(e) =>
+                                        setSprint({
+                                            ...sprint,
+                                            nombre: e.target.value,
+                                        })
+                                    }
+                                    isRequired={true}
+                                />
+                                <Textarea
+                                    label="Descripción del Sprint"
+                                    labelPlacement="outside"
+                                    placeholder="Agregar una descripción del Sprint"
+                                    variant="bordered"
+                                    radius="sm"
+                                    value={sprint.descripcion}
+                                    errorMessage={
+                                        descripcionInvalid &&
+                                        "La descripción debe ser como máximo 200 caracteres."
+                                    }
+                                    onChange={(e) =>
+                                        setSprint({
+                                            ...sprint,
+                                            descripcion: e.target.value,
+                                        })
+                                    }
+                                />
+                                <div className="flex flex-col items-start gap-1.5">
+                                    <label className="text-sm font-medium after:content-['*'] after:text-danger after:ml-0.5">
+                                        Fecha Inicio
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="fechaInicio"
+                                        className="font-BlinkMacSystemFont text-sm font-normal text-foreground-500 shadow-sm px-3 py-2 gap-3 border-medium rounded-lg border-default-200 hover:border-default-400 focus:border-defaut-700 active:border-defaut-700"
+                                        name="fechaInicio"
+                                        value={sprint.fechaInicio}
+                                        onChange={(e) =>
+                                            setSprint({
+                                                ...sprint,
+                                                fechaInicio: e.target.value,
+                                            })
+                                        }
+                                        required
+                                    ></input>
+                                </div>
+
+                                <div className="flex flex-col items-start gap-2">
+                                    <label className="text-sm font-medium after:content-['*'] after:text-danger after:ml-0.5">
+                                        Fecha Fin
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="fechaFin"
+                                        className="font-BlinkMacSystemFont text-sm font-normal text-foreground-500 shadow-sm px-3 py-2 gap-3 border-medium rounded-lg border-default-200 hover:border-default-400 focus:border-defaut-700 active:border-defaut-700"
+                                        name="fechaFin"
+                                        value={sprint.fechaFin}
+                                        onChange={(e) =>
+                                            setSprint({
+                                                ...sprint,
+                                                fechaFin: e.target.value,
+                                            })
+                                        }
+                                        required
+                                    ></input>
+                                </div>
+
+                                {errorForm && (
+                                    <p className="text-tiny text-danger">
+                                        {errorForm}
+                                    </p>
+                                )}
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    variant="light"
+                                    onPress={onClose}
+                                    isDisabled={statusForm === "loading"}
+                                >
+                                    Cerrar
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    onPress={endEdit}
+                                    className="bg-[#172B4D] text-white text-md"
+                                    isDisabled={disabledButtons}
+                                    isLoading={statusForm === "loading"}
+                                >
+                                    Editar
+                                </Button>
+                                <Button
+                                    color="danger"
+                                    onPress={endDelete}
+                                    className="bg-[#FF0000] text-white text-md"
+                                    isDisabled={disabledButtons}
+                                    isLoading={statusForm === "loading"}
+                                >
+                                    Eliminar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+    );
+}
 function ModalIniciarSprint({ isOpen, onOpenChange, handleStart }) {
     // Variables generales
     const [isSending, setIsSending] = useState(false);
@@ -916,7 +1324,10 @@ function ModalIniciarSprint({ isOpen, onOpenChange, handleStart }) {
                                 Guardar cambios
                             </ModalHeader>
                             <ModalBody>
-                                <p>¿Seguro que desea iniciar este sprint en el proyecto?</p>
+                                <p>
+                                    ¿Seguro que desea iniciar este sprint en el
+                                    proyecto?
+                                </p>
                             </ModalBody>
                             <ModalFooter>
                                 <Button
@@ -997,10 +1408,19 @@ function ModalFinalizarSprint({ isOpen, onOpenChange, handleFinish }) {
 // Funciones de utilidad
 function dateFormat(fechaOriginal) {
     const fecha = new Date(fechaOriginal);
-    const dia = fecha.getDate().toString().padStart(2, '0'); 
-    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); 
+    const dia = fecha.getDate().toString().padStart(2, "0");
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
     const año = fecha.getFullYear();
     const fechaFormateada = `${dia}-${mes}-${año}`;
-  
+
     return fechaFormateada;
+}
+function dateInput(fechaOriginal) {   
+    const fecha = new Date(fechaOriginal);
+    const dia = fecha.getDate().toString().padStart(2, "0");
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+    const año = fecha.getFullYear();
+    const fechaInput = `${año}-${mes}-${dia}`;
+
+    return fechaInput;
 }

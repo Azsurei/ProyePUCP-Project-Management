@@ -495,5 +495,6 @@ module.exports = {
     funcListarTareasXIdSprint,
     funcListarTareasSinSprint,
     modificarIdSprintDeTareas,
-    eliminarRecursivo
+    eliminarRecursivo,
+    funcModificarTareaIdSprint,
 };
