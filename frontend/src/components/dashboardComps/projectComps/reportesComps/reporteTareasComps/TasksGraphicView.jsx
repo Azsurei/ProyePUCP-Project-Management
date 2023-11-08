@@ -7,7 +7,7 @@ function TasksGraphicView({chartGeneralData}) {
     
 
     return (
-        <div className="flex-1 border overflow-auto">
+        <div className="flex-1 border overflow-auto ">
             <div className="flex flex-row gap-3 items-center">
                 <p className="font-semibold text-2xl text-mainHeaders flex-none">
                     Grafico de culminacion por sprints
@@ -18,7 +18,7 @@ function TasksGraphicView({chartGeneralData}) {
                 </Tabs>
             </div>
 
-            <div className="border border-red-500 flex-1 mx-2 w-1/2">
+            <div className="flex-1 w-full flex justify-center items-center">
                 <Bar data={chartGeneralData} height={"100%"}/>
             </div>
         </div>

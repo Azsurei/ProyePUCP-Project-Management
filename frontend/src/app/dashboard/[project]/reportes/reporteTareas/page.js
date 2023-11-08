@@ -57,7 +57,7 @@ function reporteTareas(props) {
     const twStyle1 = "font-semibold text-2xl text-mainHeaders";
 
     return (
-        <div className="flex min-h-full flex-col p-[2.5rem] font-[Montserrat] gap-y-6 flex-1 ">
+        <div className="flex min-h-[1300px] flex-col p-[2.5rem] font-[Montserrat] gap-y-6 flex-1 ">
             <div className="flex flex-row justify-between items-center">
                 <p className="text-4xl text-mainHeaders font-semibold">
                     Reporte de tareas
