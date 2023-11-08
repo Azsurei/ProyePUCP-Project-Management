@@ -76,10 +76,27 @@ async function listarEntregablesXProyecto(req, res, next) {
     }
 }
 
+async function actualizarEntregablesXProyecto(req, res, next) {
+    const { celdasAModificar } = req.body;
+    const query = `CALL ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?);`;
+    try {
+        for(let celdaAModificar  of celdasAModificar){
+            const [results] = await connection.query(query, [celdaAModificar.idEntregableXResponsabilidadXRol, celdaAModificar.idEntregable,
+                celdaAModificar.idResponsabilidadRol, celdaAModificar.idRol]);
+        }
+        res.status(200).json({
+            message: "Se modificó exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     listarResponsabilidad,
     listarRol,
     listarEntregables,
     insertarEntregableXResponsabilidadXRol,
-    listarEntregablesXProyecto
+    listarEntregablesXProyecto,
+    actualizarEntregablesXProyecto
 };
