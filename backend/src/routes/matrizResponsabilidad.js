@@ -7,7 +7,7 @@ routerMatrizResponsabilidad.get("/listarResponsabilidad/:idProyecto",matrizRespo
 routerMatrizResponsabilidad.get("/listarRol/:idProyecto",matrizResponsabilidadController.listarRol);
 routerMatrizResponsabilidad.get("/listarEntregables/:idProyecto",matrizResponsabilidadController.listarEntregables);
 
-routerMatrizResponsabilidad.put("/actualizarEntregablesXProyecto",matrizResponsabilidadController.actualizarEntregablesXProyecto);
+routerMatrizResponsabilidad.put("/actualizarEntregables",matrizResponsabilidadController.actualizarEntregables);
 routerMatrizResponsabilidad.post("/insertarEntregableXResponsabilidadXRol",matrizResponsabilidadController.insertarEntregableXResponsabilidadXRol);
 routerMatrizResponsabilidad.get("/listarEntregablesXProyecto/:idProyecto",matrizResponsabilidadController.listarEntregablesXProyecto);
 
