@@ -45,6 +45,22 @@ async function listarEntregables(req, res, next) {
     }
 }
 
+async function insertarEntregableXResponsabilidadXRol(req, res, next) {
+    const { idProyecto } = req.body;
+    const query = `CALL LISTAR_ENTREGABLE_X_IDPROYECTO(?);`;
+    try {
+        const [results] = await connection.query(query, [idProyecto]);
+        const entregables = results[0];
+        console.log(`Se listaron los entregables del proyecto ${idProyecto}!`);
+        res.status(200).json({
+            entregables,
+            message: "Entregables listados exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     listarResponsabilidad,
     listarRol,

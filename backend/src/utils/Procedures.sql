@@ -3916,31 +3916,46 @@ BEGIN
     INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "bg-blue-600", 1);
     INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "bg-red-600", 1);
     INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "bg-purple-600", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Se le informa", "bg-green-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "bg-green-600", 1);
     INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "bg-yellow-600", 1);
 END$
 
-DROP PROCEDURE IF EXISTS LISTAR_RESPONSABILIDADROL_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(
     IN _idProyecto INT
 )
 BEGIN
     SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
-    SELECT *
+    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color
     FROM ResponsabilidadRol
-    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
-END$
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+END
+$
 
-DROP PROCEDURE IF EXISTS LISTAR_ENTREGABLE_X_IDPROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_ENTREGABLE_X_IDPROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-    SELECT e.idEntregable, e.nombre, e.activo
+    SELECT e.idEntregable as id, e.nombre as nombre
     FROM Entregable AS e
     LEFT JOIN ComponenteEDT AS ce ON e.idComponente = ce.idComponente
     LEFT JOIN EDT AS ed ON ce.idEDT = ed.idEDT
     WHERE ed.idProyecto = _idProyecto AND e.activo=1;
+END
+$
+
+DROP PROCEDURE IF EXISTS INSERTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(
+    IN _idEntregable INT,
+    IN _idResponsabilidadRol INT,
+    IN _idRol INT
+)
+BEGIN
+    DECLARE _idEntregableXResponsabilidadXRol INT;
+    INSERT INTO EntregableXResponsabilidadRol(idEntregable, idResponsabilidadRol, idRol, activo) 
+    VALUES(_idEntregable, _idResponsabilidadRol, _idRol, 1);
+    SET _idEntregableXResponsabilidadXRol = @@last_insert_id;
+    SELECT _idEntregableXResponsabilidadXRol AS idEntregableXResponsabilidadXRol;
 END$
