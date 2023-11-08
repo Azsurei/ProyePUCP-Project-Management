@@ -461,7 +461,7 @@ function ProjectSidebar(props) {
                 )}
             </div>
             {isOpen &&  (
-                <div>
+                <>
                     <ul className="members">
                         {membersData.map((member) => {
                             return (
@@ -556,7 +556,7 @@ function ProjectSidebar(props) {
                             idProyecto={props.projectId}
                         ></ModalUsersOne>
                     )}
-                </div>
+                </>
             )}
         </nav>
     );

@@ -19,7 +19,7 @@ async function crear(req, res, next) {
         usuarios,
         tareasPosteriores,
         idEntregable,
-        idColumnaKanban
+        idColumnaKanban,
     } = req.body;
 
     try {
@@ -45,7 +45,7 @@ async function crear(req, res, next) {
             usuarios,
             idTarea
         );
-        
+
         await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
         console.log(`Tarea ${idTarea} creada`);
         res.status(200).json({ message: `Tarea ${idTarea} creada` });
@@ -69,7 +69,7 @@ async function modificar(req, res, next) {
         tareasPosterioresEliminadas,
         usuariosAgregados,
         usuariosEliminados,
-        idEntregable                        //====================
+        idEntregable, //====================
     } = req.body;
     try {
         await funcModificar(
@@ -80,12 +80,18 @@ async function modificar(req, res, next) {
             fechaInicio,
             fechaFin,
             idEquipo,
-            idEntregable  //====================
+            idEntregable //====================
         );
 
         await funcEliminarTareasPosteriores(tareasPosterioresEliminadas);
-        await funcAgregarTareasPosteriores(tareasPosterioresAgregadas, usuariosAgregados, idTarea, idCronograma, fechaFin, idEntregable);
-        
+        await funcAgregarTareasPosteriores(
+            tareasPosterioresAgregadas,
+            usuariosAgregados,
+            idTarea,
+            idCronograma,
+            fechaFin,
+            idEntregable
+        );
 
         await usuarioXTareaController.funcEliminarUsuariosXTarea(
             //barre todos los usuarios de la tarea
@@ -123,7 +129,7 @@ async function funcModificar(
             fechaInicio,
             fechaFin,
             idEquipo,
-            idEntregable
+            idEntregable,
         ]);
     } catch (error) {
         console.log(error);
@@ -140,7 +146,10 @@ async function funcAgregarTareasPosteriores(
     fechaFinNueva,
     idEntregable
 ) {
-    console.log("================== ID DE TAREA ANTERIOR ES ============", idTareaAnterior);
+    console.log(
+        "================== ID DE TAREA ANTERIOR ES ============",
+        idTareaAnterior
+    );
     if (tareasPosterioresAgregadas) {
         for (const tarea of tareasPosterioresAgregadas) {
             const idTareaPosterior = await insertarTarea(
@@ -161,7 +170,10 @@ async function funcAgregarTareasPosteriores(
                 0
             );
 
-            await usuarioXTareaController.funcCrearUsuariosXTarea(usuariosAgregados,idTareaPosterior);
+            await usuarioXTareaController.funcCrearUsuariosXTarea(
+                usuariosAgregados,
+                idTareaPosterior
+            );
         }
     }
 }
@@ -169,7 +181,7 @@ async function funcAgregarTareasPosteriores(
 async function funcEliminarTareasPosteriores(tareasPosterioresEliminadas) {
     if (tareasPosterioresEliminadas) {
         for (const tarea of tareasPosterioresEliminadas) {
-            //usamos un delete solo en este caso ya que las tareas posteriores son prescindibles, 
+            //usamos un delete solo en este caso ya que las tareas posteriores son prescindibles,
             //no contienen data importante mas que una fecha
             await funcDeletearTarea(tarea.idTarea);
         }
@@ -228,7 +240,7 @@ async function insertarTarea(
             horasPlaneadas,
             esPosterior,
             idEntregable,
-            idColumnaKanban
+            idColumnaKanban,
         ]);
         let idTarea = results[0][0].idTarea;
         console.log(`Tarea ${idTarea} creada`);
@@ -237,9 +249,6 @@ async function insertarTarea(
         console.log(error);
     }
 }
-
-
-
 
 async function insertarTareasPosteriores(
     tareas,
@@ -366,7 +375,7 @@ async function funcEliminarTarea(idTarea) {
     }
 }
 
-async function funcDeletearTarea(idTarea){
+async function funcDeletearTarea(idTarea) {
     try {
         const query = `CALL DELETEAR_TAREA(?);`;
         await connection.query(query, [idTarea]);
@@ -374,8 +383,6 @@ async function funcDeletearTarea(idTarea){
         console.log(error);
     }
 }
-
-
 
 // Funcion para agregar las tareas posteriores como atributo a las tareas originales
 function repositionPosteriores(tareas) {
@@ -446,29 +453,57 @@ async function funcListarTareasXIdSprint(idSprint) {
         const query = `CALL LISTAR_TAREAS_X_ID_SPRINT(?);`;
         const [results] = await connection.query(query, [idSprint]);
         const tareas = results[0];
+
+        for (const tarea of tareas) {
+            if (tarea.idEquipo !== null) {
+                //usuarios completo menos password
+                //nombre e id de subequipo
+                const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
+                const [equipo] = await connection.query(query2, [
+                    tarea.idEquipo,
+                ]);
+                tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
+                //listamos los participantes de dicho equipo
+                const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+                const [participantes] = await connection.query(query4, [
+                    tarea.idEquipo,
+                ]);
+                tarea.equipo.participantes = participantes[0];
+                tarea.usuarios = [];
+            } else {
+                const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
+                const [usuarios] = await connection.query(query3, [
+                    tarea.idTarea,
+                ]);
+                if (usuarios != null) {
+                    tarea.usuarios = usuarios[0];
+                }
+                tarea.equipo = null;
+            }
+        }
+
         return tareas;
     } catch (error) {
         console.log(error);
     }
-
 }
 
 async function modificarIdSprintDeTareas(req, res, next) {
-    const {tareasModificadas} = req.body;
+    const { tareasModificadas } = req.body;
     try {
-        for(const tarea of tareasModificadas){
-            await funcModificarTareaIdSprint(tarea.idTarea,tarea.idSprint);
+        for (const tarea of tareasModificadas) {
+            await funcModificarTareaIdSprint(tarea.idTarea, tarea.idSprint);
         }
-        res.status(200).json({message: "Tareas modificadas"});
+        res.status(200).json({ message: "Tareas modificadas" });
     } catch (error) {
         next(error);
     }
 }
 
-async function funcModificarTareaIdSprint(idTarea,idSprint){
+async function funcModificarTareaIdSprint(idTarea, idSprint) {
     try {
         const query = `CALL MODIFICAR_TAREA_ID_SPRINT(?,?);`;
-        const [results]=await connection.query(query, [idTarea,idSprint]);
+        const [results] = await connection.query(query, [idTarea, idSprint]);
         console.log(`Tarea ${idTarea} modificada, nuevo sprint: ${idSprint}`);
         return 1;
     } catch (error) {
@@ -476,11 +511,40 @@ async function funcModificarTareaIdSprint(idTarea,idSprint){
     }
 }
 
-async function funcListarTareasSinSprint(idCronograma){
+async function funcListarTareasSinSprint(idCronograma) {
     try {
         const query = `CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(?);`;
         const [results] = await connection.query(query, [idCronograma]);
         const tareas = results[0];
+
+        for (const tarea of tareas) {
+            if (tarea.idEquipo !== null) {
+                //usuarios completo menos password
+                //nombre e id de subequipo
+                const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
+                const [equipo] = await connection.query(query2, [
+                    tarea.idEquipo,
+                ]);
+                tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
+                //listamos los participantes de dicho equipo
+                const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+                const [participantes] = await connection.query(query4, [
+                    tarea.idEquipo,
+                ]);
+                tarea.equipo.participantes = participantes[0];
+                tarea.usuarios = [];
+            } else {
+                const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
+                const [usuarios] = await connection.query(query3, [
+                    tarea.idTarea,
+                ]);
+                if (usuarios != null) {
+                    tarea.usuarios = usuarios[0];
+                }
+                tarea.equipo = null;
+            }
+        }
+
         return tareas;
     } catch (error) {
         console.log(error);
