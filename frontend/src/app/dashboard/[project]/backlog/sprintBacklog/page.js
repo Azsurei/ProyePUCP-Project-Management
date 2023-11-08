@@ -36,6 +36,7 @@ import {
 } from "@nextui-org/react";
 
 import ModalNewTask from "@/components/dashboardComps/projectComps/kanbanComps/ModalNewTask";
+import ModalTaskView from "@/components/dashboardComps/projectComps/kanbanComps/ModalTaskView";
 
 axios.defaults.withCredentials = true;
 
@@ -189,21 +190,13 @@ const changeSprint = async (idTarea, idSprint) => {
     });
 };
 const insertTask = async (newTask) => {
+    console.log(newTask);
     return new Promise((resolve, reject) => {
         axios
             .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/proyecto/cronograma/insertarTarea`,
-                {
-                    idProyecto: newTask.idProyecto,
-                    idSprint: newTask.idSprint,
-                    idTareaEstado: newTask.idTareaEstado,
-                    sumillaTarea: newTask.sumillaTarea,
-                    descripcionTarea: newTask.descripcionTarea,
-                    fechaInicio: newTask.fechaInicio,
-                    fechaFin: newTask.fechaFin,
-                    color: newTask.color,
-                }
+                newTask
             )
             .then((response) => {
                 console.log(response);
@@ -257,22 +250,31 @@ export default function SprintBacklog(props) {
         onOpen: onModalTaskCreateOpen,
         onOpenChange: onModalTaskCreateChange,
     } = useDisclosure();
+    const {
+        isOpen: isModalTaskViewOpen,
+        onOpen: onModalTaskViewOpen,
+        onOpenChange: onModalTaskViewChange,
+    } = useDisclosure();
 
     // Variables principales
     const [sprints, setSprints] = useState([]);
     const [statusInterface, setStatusInterface] = useState("inactive"); // ["active", "inactive"]
     const [idSelectedSprint, setIdSelectedSprint] = useState(null);
     const [selectedSprint, setSelectedSprint] = useState(null);
+    const [selectedTask, setSelectedTask] = useState(null);
     const [flagOpeningModal, setFlagOpeningModal] = useState(0); // [0, 1]
 
     // Funciones principales
     const handleGet = async () => {
+        setIsLoadingSmall(true);
         try {
             const sprints = await getSprints();
             setSprints(sprints);
         } catch (e) {
             toast.error("Error al obtener los datos de los sprints.");
             console.log(e);
+        } finally {
+            setIsLoadingSmall(false);
         }
     };
     const handleCreate = async (newSprint) => {
@@ -348,21 +350,29 @@ export default function SprintBacklog(props) {
         }
     };
     const handleInsert = async (newTask) => {
+        const toastId = toast("Sonner");
         try {
+            toast.loading("Registrando nueva tarea...", {
+                id: toastId,
+            });
             await insertTask(newTask);
             await handleGet();
-            toast.success("La tarea se ha creado exitosamente.");
+            toast.success("La tarea se ha registrado exitosamente.", {
+                id: toastId,
+            });
             return true;
         } catch (e) {
-            toast.error("Error al crear la tarea.");
+            toast.error("Error al registrar la tarea.", {
+                id: toastId,
+            });
             return false;
         }
     };
 
     // Efectos de renderizado
     useEffect(() => {
+        setIsLoadingSmall(true);
         handleGet();
-        setIsLoadingSmall(false);
     }, []);
     useEffect(() => {
         if (sprints.filter((sprint) => sprint.estado === 2).length === 1) {
@@ -371,6 +381,8 @@ export default function SprintBacklog(props) {
             setStatusInterface("inactive");
         }
     }, [sprints]);
+
+    console.log(sprints);
 
     // Componente
     return (
@@ -429,12 +441,15 @@ export default function SprintBacklog(props) {
                                                     className="roboto text-md"
                                                     variant="flat"
                                                     onPress={() => {
-                                                        const selectedSprint = sprints.find(
-                                                            (searchSprint) =>
-                                                                searchSprint.idSprint ===
-                                                                sprint.idSprint
-                                                        );
-                                                        if(selectedSprint) {
+                                                        const selectedSprint =
+                                                            sprints.find(
+                                                                (
+                                                                    searchSprint
+                                                                ) =>
+                                                                    searchSprint.idSprint ===
+                                                                    sprint.idSprint
+                                                            );
+                                                        if (selectedSprint) {
                                                             setIdSelectedSprint(
                                                                 selectedSprint.idSprint
                                                             );
@@ -450,7 +465,7 @@ export default function SprintBacklog(props) {
                                             <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    <p className="text-default-500 font-medium">
+                                                    <p className="roboto text-default-500 font-normal">
                                                         Actualmente no hay
                                                         tareas asignadas a este
                                                         sprint.
@@ -464,6 +479,8 @@ export default function SprintBacklog(props) {
                                                     >
                                                         <CardTask
                                                             tarea={tarea}
+                                                            setSelectedTask={setSelectedTask}
+                                                            onModalTaskViewOpen={onModalTaskViewOpen}
                                                             sprints={sprints}
                                                             changeSprint={
                                                                 handleChange
@@ -492,11 +509,14 @@ export default function SprintBacklog(props) {
                         Sprints del proyecto
                     </h3>
                     <div className="flex flex-row gap-4">
-                        <Button 
-                            radius="sm" 
-                            className="text-md" 
+                        <Button
+                            radius="sm"
+                            className="text-md"
                             variant="flat"
-                            onPress={onModalTaskCreateOpen}
+                            onPress={() => {
+                                setFlagOpeningModal(1);
+                                onModalTaskCreateOpen();
+                            }}
                         >
                             Crear Tarea
                         </Button>
@@ -537,13 +557,18 @@ export default function SprintBacklog(props) {
                                                     className="roboto text-md"
                                                     variant="flat"
                                                     onPress={() => {
-                                                        const actualSprint = sprints.find(
-                                                            (searchSprint) =>
-                                                                searchSprint.idSprint ===
-                                                                sprint.idSprint
-                                                        );
-                                                        if(actualSprint) {
-                                                            setSelectedSprint(actualSprint);
+                                                        const actualSprint =
+                                                            sprints.find(
+                                                                (
+                                                                    searchSprint
+                                                                ) =>
+                                                                    searchSprint.idSprint ===
+                                                                    sprint.idSprint
+                                                            );
+                                                        if (actualSprint) {
+                                                            setSelectedSprint(
+                                                                actualSprint
+                                                            );
                                                         }
                                                         onModalEditOpen();
                                                     }}
@@ -572,7 +597,7 @@ export default function SprintBacklog(props) {
                                             <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    <p className="text-default-500 font-medium">
+                                                    <p className="roboto text-default-500 font-normal">
                                                         Actualmente no hay
                                                         tareas asignadas a este
                                                         sprint.
@@ -586,6 +611,8 @@ export default function SprintBacklog(props) {
                                                     >
                                                         <CardTask
                                                             tarea={tarea}
+                                                            setSelectedTask={setSelectedTask}
+                                                            onModalTaskViewOpen={onModalTaskViewOpen}
                                                             sprints={sprints}
                                                             changeSprint={
                                                                 handleChange
@@ -611,11 +638,11 @@ export default function SprintBacklog(props) {
                                     title={sprint.nombre}
                                     className="montserrat font-semibold p-1"
                                 >
-                                    <div className="flex flex-col gap-4 px-10 mb-4">
+                                    <div className="flex flex-col gap-4 px-10 mb-4 items-center">
                                         <Divider className="w-full" />
                                         {sprint.tareas.length === 0 ? (
                                             <>
-                                                <p className="text-default-500 font-medium">
+                                                <p className="roboto text-default-500 font-normal">
                                                     Actualmente no hay tareas
                                                     asignadas a este sprint.
                                                 </p>
@@ -628,6 +655,8 @@ export default function SprintBacklog(props) {
                                                 >
                                                     <CardTask
                                                         tarea={tarea}
+                                                        setSelectedTask={setSelectedTask}
+                                                        onModalTaskViewOpen={onModalTaskViewOpen}
                                                         sprints={sprints}
                                                         changeSprint={
                                                             handleChange
@@ -674,6 +703,22 @@ export default function SprintBacklog(props) {
                                                     radius="sm"
                                                     className="roboto text-md"
                                                     variant="flat"
+                                                    onPress={() => {
+                                                        const actualSprint =
+                                                            sprints.find(
+                                                                (
+                                                                    searchSprint
+                                                                ) =>
+                                                                    searchSprint.idSprint ===
+                                                                    sprint.idSprint
+                                                            );
+                                                        if (actualSprint) {
+                                                            setSelectedSprint(
+                                                                actualSprint
+                                                            );
+                                                        }
+                                                        onModalEditOpen();
+                                                    }}
                                                 >
                                                     Editar Sprint
                                                 </Button>
@@ -683,7 +728,7 @@ export default function SprintBacklog(props) {
                                             <Divider className="w-full" />
                                             {sprint.tareas.length === 0 ? (
                                                 <>
-                                                    <p className="text-default-500 font-medium">
+                                                    <p className="roboto text-default-500 font-normal">
                                                         Actualmente no hay
                                                         tareas asignadas a este
                                                         sprint.
@@ -697,6 +742,8 @@ export default function SprintBacklog(props) {
                                                     >
                                                         <CardTask
                                                             tarea={tarea}
+                                                            setSelectedTask={setSelectedTask}
+                                                            onModalTaskViewOpen={onModalTaskViewOpen}
                                                         />
                                                     </div>
                                                 ))
@@ -739,7 +786,7 @@ export default function SprintBacklog(props) {
                 onOpenChange={onModalFinishChange}
                 handleFinish={handleFinish}
             />
-            <ModalNewTask 
+            <ModalNewTask
                 isOpen={isModalTaskCreateOpen}
                 onOpenChange={onModalTaskCreateChange}
                 currentColumn={0}
@@ -751,13 +798,22 @@ export default function SprintBacklog(props) {
                 idProyecto={projectId}
                 insertTask={handleInsert}
             />
+            <ModalTaskView
+                isOpen={isModalTaskViewOpen}
+                onOpenChange={onModalTaskViewChange}
+                currentTask={selectedTask}
+                goToTaskDetail={(idTarea) => {
+                    console.log("Redireccionando a tarea...");
+                    router.push("/dashboard");
+                }}
+            />
         </>
     );
 }
 
 // Funciones de modulación
 function CardTask(props) {
-    const { tarea, sprints, changeSprint } = props;
+    const { tarea, setSelectedTask, sprints, changeSprint, onModalTaskViewOpen } = props;
 
     return (
         <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
@@ -777,7 +833,12 @@ function CardTask(props) {
             </div>
 
             <div className="flex flex-row">
-                <Button isIconOnly variant="light">
+                <Button isIconOnly variant="light" 
+                    onPress={() => {
+                        setSelectedTask(tarea);
+                        onModalTaskViewOpen();
+                    }}
+                >
                     <img
                         src="/icons/eye.svg"
                         alt="Ver tarea"
@@ -1151,7 +1212,7 @@ function ModalEditarSprint({
             <ModalContent>
                 {(onClose) => {
                     const endEdit = async () => {
-                        setStatusForm("loading");
+                        setStatusForm("loadingEdit");
                         try {
                             const response = await handleUpdate(sprint);
                             if (response) {
@@ -1165,7 +1226,7 @@ function ModalEditarSprint({
                         }
                     };
                     const endDelete = async () => {
-                        setStatusForm("loading");
+                        setStatusForm("loadingDelete");
                         try {
                             const response = await handleDelete(sprint);
                             if (response) {
@@ -1266,31 +1327,38 @@ function ModalEditarSprint({
                                 )}
                             </ModalBody>
                             <ModalFooter>
-                                <Button
-                                    variant="light"
-                                    onPress={onClose}
-                                    isDisabled={statusForm === "loading"}
-                                >
-                                    Cerrar
-                                </Button>
-                                <Button
-                                    color="primary"
-                                    onPress={endEdit}
-                                    className="bg-[#172B4D] text-white text-md"
-                                    isDisabled={disabledButtons}
-                                    isLoading={statusForm === "loading"}
-                                >
-                                    Editar
-                                </Button>
-                                <Button
-                                    color="danger"
-                                    onPress={endDelete}
-                                    className="bg-[#FF0000] text-white text-md"
-                                    isDisabled={disabledButtons}
-                                    isLoading={statusForm === "loading"}
-                                >
-                                    Eliminar
-                                </Button>
+                                <div className="flex flex-row justify-between w-full">
+                                    <Button
+                                        color="danger"
+                                        onPress={endDelete}
+                                        className="bg-[#FF0000] text-white text-md"
+                                        isDisabled={disabledButtons}
+                                        isLoading={statusForm === "loadingDelete"}
+                                    >
+                                        Eliminar
+                                    </Button>
+
+                                    <div className="flex flex-row gap-4">
+                                        <Button
+                                            variant="light"
+                                            onPress={onClose}
+                                            isDisabled={
+                                                statusForm === "loading"
+                                            }
+                                        >
+                                            Cerrar
+                                        </Button>
+                                        <Button
+                                            color="primary"
+                                            onPress={endEdit}
+                                            className="bg-[#172B4D] text-white text-md"
+                                            isDisabled={disabledButtons}
+                                            isLoading={statusForm === "loadingEdit"}
+                                        >
+                                            Editar
+                                        </Button>
+                                    </div>
+                                </div>
                             </ModalFooter>
                         </>
                     );

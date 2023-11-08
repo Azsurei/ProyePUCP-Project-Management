@@ -80,6 +80,7 @@ async function listarEntregablesXProyecto(req, res, next) {
 async function actualizarEntregables(req, res, next) {
     const { modifiedExistingCells } = req.body;
     const query = `CALL ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?,?,?,?);`;
+    console.log("Las celdas modificados son:",modifiedExistingCells);
     try {
         for(let celdaAModificar of modifiedExistingCells){
             const [results] = await connection.query(query, [celdaAModificar.idEntregableXResponsabilidadXRol, celdaAModificar.idEntregable,
