@@ -46,15 +46,30 @@ async function listarEntregables(req, res, next) {
 }
 
 async function insertarEntregableXResponsabilidadXRol(req, res, next) {
-    const { idProyecto } = req.body;
-    const query = `CALL LISTAR_ENTREGABLE_X_IDPROYECTO(?);`;
+    const { celdasInsertar } = req.body;
+    const query = `CALL INSERTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?,?,?);`;
+    try {
+        for(let celdaInsertar of celdasInsertar){
+            const [results] = await connection.query(query, [celdaInsertar.idEntregable, celdaInsertar.idResponsabilidadRol, celdaInsertar.idRol]);
+            const idEntregableXResponsabilidadXRol = results[0][0].idEntregableXResponsabilidadXRol;
+        }
+        res.status(200).json({
+            message: "Se insertó exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarEntregablesXProyecto(req, res, next) {
+    const { idProyecto } = req.params;
+    const query = `CALL LISTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
         const entregables = results[0];
-        console.log(`Se listaron los entregables del proyecto ${idProyecto}!`);
         res.status(200).json({
             entregables,
-            message: "Entregables listados exitosamente",
+            message: "Se insertó exitosamente",
         });
     } catch (error) {
         next(error);
@@ -64,5 +79,7 @@ async function insertarEntregableXResponsabilidadXRol(req, res, next) {
 module.exports = {
     listarResponsabilidad,
     listarRol,
-    listarEntregables
+    listarEntregables,
+    insertarEntregableXResponsabilidadXRol,
+    listarEntregablesXProyecto
 };

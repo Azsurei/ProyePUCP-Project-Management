@@ -3959,3 +3959,34 @@ BEGIN
     SET _idEntregableXResponsabilidadXRol = @@last_insert_id;
     SELECT _idEntregableXResponsabilidadXRol AS idEntregableXResponsabilidadXRol;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ROL_EQUIPO_MATRIZRESPONSABILIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ROL_EQUIPO_MATRIZRESPONSABILIDAD(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT idRolEquipo as id, nombreRol as nombre
+    FROM RolEquipo
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END
+$
+
+DROP PROCEDURE IF EXISTS LISTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT err.idRol, re.nombreRol, err.idEntregable, e.nombre as "nombreEntregable", err.idResponsabilidadRol as "idResponsabilidad",
+        rr.nombreRol as "nombreResponsabilidad", rr.letraRol as "letraResponsabilidad", rr.colorRol as "colorResponsabilidad"
+    FROM EntregableXResponsabilidadRol AS err
+    LEFT JOIN Entregable AS e ON err.idEntregable = e.idEntregable
+    LEFT JOIN ComponenteEDT AS ce ON e.idComponente = ce.idComponente
+    LEFT JOIN EDT AS edt ON ce.idEDT = edt.idEDT
+    LEFT JOIN ResponsabilidadRol AS rr ON err.idResponsabilidadRol = rr.idResponsabilidadRol
+    LEFT JOIN RolEquipo AS re ON err.idRol = re.idRolEquipo
+    WHERE edt.idProyecto = _idProyecto
+    AND err.activo = 1;
+END
