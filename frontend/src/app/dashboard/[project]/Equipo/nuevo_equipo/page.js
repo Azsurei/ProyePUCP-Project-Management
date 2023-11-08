@@ -30,6 +30,7 @@ axios.defaults.withCredentials = true;
 export default function crear_equipo(props) {
     const router = useRouter();
     const [leaderRoleId, setLeaderRoleId] = useState(null);
+    const [leaderRole, setLeaderRole] = useState(null);
     const [memberRoleId, setMemberRoleId] = useState(null);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -140,18 +141,24 @@ export default function crear_equipo(props) {
                     "Respuesta de la petición de roles:",
                     response.data
                 );
-                setRoles(response.data.roles);
+                // Filtra los roles para excluir el rol "Líder"
+                const filteredRoles = response.data.roles.filter(
+                    (role) => role.nombreRol !== "Líder"
+                );
+
+                setRoles(filteredRoles);
                 setRolesOriginales(response.data.roles);
                 // Busca el ID del líder y el miembro en la respuesta
-                const roles = response.data.roles;
-                const leaderRole = roles.find(
+                const rolesResponse = response.data.roles;
+                const leaderRole = rolesResponse.find(
                     (role) => role.nombreRol === "Líder"
                 );
-                const memberRole = roles.find(
+                const memberRole = rolesResponse.find(
                     (role) => role.nombreRol === "Miembro"
                 );
 
                 if (leaderRole) {
+                    setLeaderRole(leaderRole);
                     setLeaderRoleId(leaderRole.idRolEquipo);
                 }
                 if (memberRole) {
@@ -184,47 +191,10 @@ export default function crear_equipo(props) {
         setIsLoadingSmall(false);
     }, [modal]);
 
-    const findModifiedDeletedAddedForRoles = (
-        originalArray,
-        newArray,
-        comparisonField
-    ) => {
-        const modifiedArray = [];
-        const deletedArray = [];
-        const addedArray = [];
-
-        originalArray.forEach((originalItem) => {
-            const newItem = newArray.find(
-                (newItem) =>
-                    newItem[comparisonField] === originalItem[comparisonField]
-            );
-
-            if (newItem) {
-                modifiedArray.push(newItem);
-            } else {
-                deletedArray.push(originalItem);
-            }
-        });
-
-        // Encuentra elementos añadidos
-        newArray.forEach((newItem) => {
-            if (
-                !originalArray.some(
-                    (originalItem) =>
-                        originalItem[comparisonField] ===
-                        newItem[comparisonField]
-                )
-            ) {
-                addedArray.push(newItem);
-            }
-        });
-
-        return { modifiedArray, deletedArray, addedArray };
-    };
-
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
+        const updatedRoles = [...roles, leaderRole];
         let todosUserRoleData;
         if (selectedUniqueMemberList.length !== 0) {
             todosUserRoleData = [
@@ -241,7 +211,7 @@ export default function crear_equipo(props) {
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
-            roles: roles,
+            roles: updatedRoles,
             usuariosXRol: todosUserRoleData,
             rolesOriginales: rolesOriginales,
         });
@@ -253,7 +223,7 @@ export default function crear_equipo(props) {
                 {
                     idProyecto: parseInt(proyectoId),
                     nombre: nombreTeam,
-                    roles: roles,
+                    roles: updatedRoles,
                     usuariosXRol: todosUserRoleData,
                     rolesOriginales: rolesOriginales,
                 }
@@ -264,7 +234,7 @@ export default function crear_equipo(props) {
             })
             .catch(function (error) {
                 console.log(error);
-            }); 
+            });
     };
 
     const handleSelectedValueChangeRol = (value, userId) => {
@@ -483,7 +453,7 @@ export default function crear_equipo(props) {
                             oneButton={false}
                             secondAction={() => {
                                 checkData();
-                                //router.back();
+                                router.back();
                             }}
                             textColor="blue"
                             verifyFunction={() => {

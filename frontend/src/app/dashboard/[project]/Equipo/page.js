@@ -105,6 +105,11 @@ export default function Equipo(props) {
         }
     }, [modal]);
 
+    const removeTeam = (team) => {  
+        const nuevoListComps = ListComps.filter((equipo) => equipo !== team);
+        setListComps(nuevoListComps);
+    };
+
     const handleSelectedValueChangeRol = (value, name, userId) => {
         // Crea una copia profunda de selectedTeam para evitar mutar el estado directamente
         const updatedSelectedTeam = {
@@ -550,6 +555,7 @@ export default function Equipo(props) {
                                     key={team.idEquipo}
                                     team={team}
                                     handleSeeTeam={handleSeeTeam}
+                                    removeTeam={removeTeam}
                                 />
                             ))}
                         </div>

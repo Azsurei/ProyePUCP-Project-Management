@@ -53,7 +53,7 @@ export default function PopUpRolEquipo({
                         <div className="buscarEpic">
                             Listado de Roles por Equipo
                         </div>
-                        <div className="flex w-full gap-2 mt-2">
+                        <div className="flex w-full gap-2 mt-2 items-center">
                             {/*No modifiques este boton, ya esta bien*/}
                             <Input
                                 variant="bordered"
