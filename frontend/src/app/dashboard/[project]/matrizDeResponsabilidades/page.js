@@ -5,6 +5,7 @@ axios.defaults.withCredentials = true;
 import { SmallLoadingScreen } from "../layout";
 import { useState, useEffect, useContext } from "react";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
+import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import {
     Table,
     TableHeader,
@@ -35,6 +36,7 @@ export default function MatrizDeResponsabilidades(props) {
         decodedUrl.lastIndexOf("=") + 1
     );
     const projectId = parseInt(projectIdString);
+    const [reList, setReList] = useState(false);
 
     useEffect(() => {
         // Datos iniciales
@@ -157,7 +159,7 @@ export default function MatrizDeResponsabilidades(props) {
             .catch(function (error) {
                 console.log(error);
             });
-    }, []);
+    }, [reList]);
 
     const columns = [
         { name: "Entregables", uid: "entregable" },
@@ -191,7 +193,7 @@ export default function MatrizDeResponsabilidades(props) {
 
     const changeCell = (idRol, idEntregable, item) => {
         // Crea una copia del arreglo dataFromApi
-        const updatedData = [...dataFromApi];
+        const updatedData = JSON.parse(JSON.stringify(dataFromApi));
 
         // Encuentra el índice del objeto que deseas actualizar
         const rowIndex = updatedData.findIndex(
@@ -204,8 +206,27 @@ export default function MatrizDeResponsabilidades(props) {
             updatedData[rowIndex].colorResponsabilidad = item.color;
             updatedData[rowIndex].nombreResponsabilidad = item.nombre;
             updatedData[rowIndex].idResponsabilidad = item.id;
-            // Agrega la celda modificada a modifiedCells
-            setModifiedCells([...modifiedCells, updatedData[rowIndex]]);
+            //console.log("La celda modificado tiene:", updatedData[rowIndex]);
+            //console.log("ModifiedCells tiene:", modifiedCells);
+
+            //ESTA LÓGICA ES PARA CUANDO SOLO NECESITAMOS USAR UNA CELDA, NO MÚLTIPLES
+
+            // Verifica si ya existe un objeto en modifiedCells con el mismo idRol e idEntregable
+            const existingModifiedCellIndex = modifiedCells.findIndex(
+                (cell) =>
+                    cell.idRol === idRol && cell.idEntregable === idEntregable
+            );
+
+            if (existingModifiedCellIndex !== -1) {
+                // Si ya existe, reemplaza el objeto existente con el objeto actualizado
+                const modifiedCellsCopy = [...modifiedCells];
+                modifiedCellsCopy[existingModifiedCellIndex] =
+                    updatedData[rowIndex];
+                setModifiedCells(modifiedCellsCopy);
+            } else {
+                // Si no existe, agrega la celda modificada a modifiedCells
+                setModifiedCells([...modifiedCells, updatedData[rowIndex]]);
+            }
         }
 
         // Actualiza el estado con el nuevo arreglo
@@ -214,17 +235,17 @@ export default function MatrizDeResponsabilidades(props) {
 
     const renderCell = React.useCallback(
         (user, columnKey) => {
-            console.log("El key de la columna es:", columnKey);
+            //console.log("El key de la columna es:", columnKey);
             const cellValue = user[columnKey];
-            console.log("El valor de la celda es:", cellValue);
+            //console.log("El valor de la celda es:", cellValue);
             const color = getColorForResponsabilidad(cellValue);
-            console.log("El color que pondre es", color);
+            //console.log("El color que pondre es", color);
             const entregableMatch = entregables.find(
                 (item) => item.nombre === user.entregable
             );
 
             const idEntregable = entregableMatch ? entregableMatch.id : null;
-            console.log("El id del entregable es:", idEntregable);
+            //console.log("El id del entregable es:", idEntregable);
             let idRol;
             if (columnKey !== "entregable") {
                 const roleMatch = roles.find(
@@ -234,7 +255,7 @@ export default function MatrizDeResponsabilidades(props) {
             } else {
                 idRol = -1;
             }
-            console.log("El id del rol es:", idRol);
+            //console.log("El id del rol es:", idRol);
             switch (columnKey) {
                 case "entregable":
                     return cellValue;
@@ -246,7 +267,7 @@ export default function MatrizDeResponsabilidades(props) {
                                     <Button
                                         variant="bordered"
                                         style={{ backgroundColor: color }}
-                                        className={`transition-transform hover:shadow-md hover:scale-105`}
+                                        className={`transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
                                     >
                                         {cellValue}
                                     </Button>
@@ -293,42 +314,67 @@ export default function MatrizDeResponsabilidades(props) {
         const modifiedExistingCells = modifiedCells.filter(
             (cell) => !cell.isNew
         );
-
         console.log("Celdas a insertar:", newCells);
         console.log("Celdas a modificar:", modifiedExistingCells);
-
         const stringURLPostData =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/matrizResponsabilidad/insertarEntregableXResponsabilidadXRol";
         const stringURLPutData =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/matrizResponsabilidad/actualizarEntregablesXProyecto";
+            "/api/proyecto/matrizResponsabilidad/actualizarEntregables";
+        // Crear un arreglo de promesas para las solicitudes POST y PUT
+        const postPromise =
+            newCells.length > 0
+                ? axios.post(stringURLPostData, { celdasInsertar: newCells })
+                : null;
+        const putPromise =
+            modifiedExistingCells.length > 0
+                ? axios.put(stringURLPutData, {
+                      modifiedExistingCells: modifiedExistingCells,
+                  })
+                : null;
 
-        // Ahora puedes realizar las peticiones POST y PUT según corresponda
-/*         axios
-            .post(stringURLPostData, { celdasInsertar: newCells })
-            .then((response) => {
-                // Manejar la respuesta de la solicitud POST
-                console.log("Respuesta del servidor (POST):", response.data);
-                console.log("Registro correcto (POST)");
-                // Realizar acciones adicionales si es necesario
+        // Usar Promise.all para esperar a que ambas promesas se resuelvan
+        Promise.all([postPromise, putPromise])
+            .then((responses) => {
+                // Ambas solicitudes se han completado
+                if (postPromise) {
+                    console.log(
+                        "Respuesta del servidor (POST):",
+                        responses[0].data
+                    );
+                    console.log("Registro correcto (POST)");
+                }
+                if (putPromise) {
+                    console.log(
+                        "Respuesta del servidor (PUT):",
+                        responses[1].data
+                    );
+                    console.log("Registro correcto (PUT)");
+                }
+
+                setModifiedCells([]);
+                if(postPromise || putPromise){
+                    setIsLoadingSmall(true);
+                    setReList(!reList);
+                }
+
             })
-            .catch((error) => {
-                // Manejar errores si la solicitud POST falla
-                console.error("Error al realizar la solicitud POST:", error);
+            .catch((errors) => {
+                // Manejar errores si alguna de las solicitudes falla
+                if (postPromise) {
+                    console.error(
+                        "Error al realizar la solicitud POST:",
+                        errors[0]
+                    );
+                }
+                if (putPromise) {
+                    console.error(
+                        "Error al realizar la solicitud PUT:",
+                        errors[1]
+                    );
+                }
             });
-        axios
-            .post(stringURLPutData, { celdasAModificar: modifiedExistingCells })
-            .then((response) => {
-                // Manejar la respuesta de la solicitud PUT
-                console.log("Respuesta del servidor (PUT):", response.data);
-                console.log("Registro correcto (PUT)");
-                // Realizar acciones adicionales si es necesario
-            })
-            .catch((error) => {
-                // Manejar errores si la solicitud POST falla
-                console.error("Error al realizar la solicitud PUT:", error);
-            }); */
     };
 
     return (
@@ -340,13 +386,21 @@ export default function MatrizDeResponsabilidades(props) {
                 <div className="text-[#172B4D] font-semibold text-[2rem] ">
                     Matriz de responsabilidades
                 </div>
-                <Button
-                    color="primary"
-                    startContent={<SaveIcon />}
-                    onPress={saveFunction}
-                >
-                    Guardar
-                </Button>
+                <div className="flex gap-4">
+                    <Button
+                        color="primary"
+                        startContent={<SaveIcon />}
+                        onPress={saveFunction}
+                    >
+                        Guardar
+                    </Button>
+                    <Button
+                        color="danger"
+                        startContent={<CrossWhite />}
+                    >
+                        Eliminar todo
+                    </Button>
+                </div>
             </div>
             <Table
                 aria-label="Example table with custom cells"
