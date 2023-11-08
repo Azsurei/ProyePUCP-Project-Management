@@ -132,6 +132,8 @@ export default function MatrizDeResponsabilidades(props) {
             { id: 1, nombre: "Aprueba", letra: "A", color: "bg-blue-600" },
             { id: 2, nombre: "Se le informa", letra: "I", color: "bg-red-600" },
             { id: 3, nombre: "Participa", letra: "P", color: "bg-purple-600" },
+            { id: 4, nombre: "Responsable", letra: "R", color: "bg-green-600" },
+            { id: 5, nombre: "Se le consulta", letra: "C", color: "bg-yellow-600" },
             // Agrega más responsabilidades según tus necesidades
         ];
 
