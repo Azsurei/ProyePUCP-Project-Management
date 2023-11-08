@@ -6,7 +6,8 @@ export default function PieChart(props) {
     return (
         <>
            {props.client && ( // Renderiza el gráfico solo en el lado del cliente
-                <div className="GraficoReportePresupuesto">
+                <div className="GraficoReportePresupuesto flex gap-4">
+                    <div className="titleBalanceData">Grafico Impacto</div>
                     <ReactApexChart
                         options={props.options}
                         series={props.series}

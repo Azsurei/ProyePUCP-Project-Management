@@ -3,9 +3,23 @@
 import NavigationTab from "@/components/NavigationTab";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import {
+    Modal, 
+    ModalContent, 
+    ModalHeader, 
+    ModalBody, 
+    ModalFooter,
+    useDisclosure,
+    Input,
     Button,
-} from "@nextui-org/react";
+  } from "@nextui-org/react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import { usePathname } from "next/navigation";
+import SaveIcon from '@mui/icons-material/Save';
+import { Toaster, toast } from "sonner";
+import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
+import { SessionContext } from "../../layout";
+
+
 
 
 export default function RootLayout({ children, params }) {
@@ -14,10 +28,138 @@ export default function RootLayout({ children, params }) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const isKanbanPage = usePathname() === `/dashboard/${projectName}=${projectId}/backlog/kanban`;
-    console.log(isKanbanPage);
-    console.log(projectName);
+
+
+
+    //Plantillas
+
+    const {
+        isOpen: isModalSavePlantilla,
+        onOpen: onModalSavePLantilla,
+        onOpenChange: onModalSavePlantillaChange,
+    } = useDisclosure();
+
+    const {
+        isOpen: isModalverPlantillas,
+        onOpen: onModalverPlantillas,
+        onOpenChange: onModalverPlantillasChange,
+    } = useDisclosure();
+    const [nombrePlantilla, setNombrePlantilla] = useState("");
+    const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
+    const [IdUsuario, setIdUsuario] = useState("");
+
+    //obtener idUsuario
+    const {sessionData} = useContext(SessionContext);
+    useEffect(() => {
+        setIdUsuario(sessionData.idUsuario);
+    }, []);
+
+
+
+    //Fin Plantillas
+
     return (
+
+        
         <div className="p-[2.5rem] flex flex-col space-y-2 min-w-[100%] min-h-[100%]">
+
+            {isKanbanPage &&   
+                <Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModalSavePlantillaChange}>
+                    <ModalContent>
+                        {(onClose) => {
+                        const finalizarModal = async () => {
+                            let Isvalid = true;
+
+                            if(nombrePlantilla===""){
+                                setValidNombrePlantilla(false);
+                                Isvalid = false;
+                            }
+
+                            if(Isvalid === true){
+                                console.log("IdUsuario: "+ sessionData.idUsuario);
+                                try {
+                                    //await guardarPlantillaNueva();
+                                    setNombrePlantilla("");
+                                    setValidNombrePlantilla(true);
+                                    
+                                } catch (error) {
+                                    console.error('Error al Guardar Plantilla:', error);
+                                }
+
+                                onClose();
+                            
+                            }
+                        };
+                        return (
+                            <>
+
+                            <ModalHeader className="flex flex-col gap-1">
+                                        Guardado de Plantilla
+                                    </ModalHeader>
+                                    <ModalBody>
+                                    <p
+                                        style={{
+                                            color: "#494949",
+                                            fontSize: "16px",
+                                            fontStyle: "normal",
+                                            fontWeight: 400,
+                                        }}
+                                        >
+                                    Se guardarán los campos en una plantilla para poder usarlos en otros proyectos.
+                                    </p>
+
+                                    <Input type="email" variant={"underlined"} label="Nombre Plantilla" 
+                                        value={nombrePlantilla}
+                                        onValueChange={setNombrePlantilla}
+                                        isInvalid={!validNombrePlantilla}
+                                        onChange={()=>{setValidNombrePlantilla(true)}}    
+                                        errorMessage={
+                                                    !validNombrePlantilla
+                                                        ? "Ingrese un nombre"
+                                                        : ""
+                                            }
+                                    
+                                    />
+
+                                    <div>
+
+
+                                    </div>
+                                </ModalBody>
+                                    
+
+                            <ModalFooter>
+                                <Button
+                                color="danger" variant="light" 
+    
+                                onClick={() => {
+                                    onClose(); // Cierra el modal
+                                    setNombrePlantilla("");
+                                    setValidNombrePlantilla(true);
+    
+                                }}
+                            
+                                >
+                                Cancelar
+                                
+                                </Button>
+                                <Button
+                                color="primary"
+                                
+                                onClick={finalizarModal}
+                                >
+                                Guardar Plantilla
+                                </Button>
+                            </ModalFooter>
+                            </>
+                        );
+                        }}
+                    </ModalContent>
+            </Modal>
+            }
+
+        
+
             <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={false}
@@ -40,15 +182,24 @@ export default function RootLayout({ children, params }) {
                     `/dashboard/${projectName}=${projectId}/backlog/productBacklog`,
                 ]}
             ></NavigationTab>
+            
 
-            <div style={{ marginLeft: 'auto' }}>
+            {isKanbanPage &&
+            <div style={{ display: 'flex', marginLeft: 'auto' ,gap:'20px'}}>
+            
+                    <Button color="primary" startContent={<ContentPasteGoIcon />}>
 
-                {isKanbanPage && (
-                    <Button >
-                        Plantillas Kanban
+                        Plantillas
                     </Button>
-                )}
+
+                    
+                    <Button onPress={onModalSavePLantilla} color="primary" startContent={<SaveIcon />}>
+                        Guardar Plantilla
+                    </Button>
+
+                
             </div>
+            }
 
             </div>    
             

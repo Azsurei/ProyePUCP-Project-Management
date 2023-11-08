@@ -40,7 +40,10 @@ export default function MatrizDeResponsabilidades(props) {
         // Datos iniciales
         console.log("El id del proyecto es", projectId);
         console.log("El tipo de dato de projectID es", typeof projectId);
-        const initialDataFromApi = [];
+        const stringURLInitialDataFromApi =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/listarEntregablesXProyecto/" +
+            projectId;
         const stringURLRoles =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/matrizResponsabilidad/listarRol/" +
@@ -55,70 +58,93 @@ export default function MatrizDeResponsabilidades(props) {
             projectId;
 
         axios
-            .get(stringURLRoles)
+            .get(stringURLInitialDataFromApi)
             .then(function (response) {
-                const initialRoles = response.data.roles;
+                const initialDataFromApi = response.data.entregables;
                 axios
-                    .get(stringURLResponsabilidades)
+                    .get(stringURLRoles)
                     .then(function (response) {
-                        const initialResponsabilidades =
-                            response.data.responsabilidadRol;
+                        const initialRoles = response.data.roles;
                         axios
-                            .get(stringURLEntregables)
+                            .get(stringURLResponsabilidades)
                             .then(function (response) {
-                                const initialEntregables =
-                                    response.data.entregables;
-                                const completedData = [];
+                                const initialResponsabilidades =
+                                    response.data.responsabilidadRol;
+                                axios
+                                    .get(stringURLEntregables)
+                                    .then(function (response) {
+                                        const initialEntregables =
+                                            response.data.entregables;
+                                        const completedData = [];
 
-                                // Recorre todos los roles y entregables
-                                initialRoles.forEach((rol) => {
-                                    initialEntregables.forEach((entregable) => {
-                                        // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
-                                        const existingData =
-                                            initialDataFromApi.find(
-                                                (item) =>
-                                                    item.idRol === rol.id &&
-                                                    item.idEntregable ===
-                                                        entregable.id
+                                        // Recorre todos los roles y entregables
+                                        initialRoles.forEach((rol) => {
+                                            initialEntregables.forEach(
+                                                (entregable) => {
+                                                    // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
+                                                    const existingData =
+                                                        initialDataFromApi.find(
+                                                            (item) =>
+                                                                item.idRol ===
+                                                                    rol.id &&
+                                                                item.idEntregable ===
+                                                                    entregable.id
+                                                        );
+
+                                                    if (existingData) {
+                                                        // Si existe, simplemente agrega los datos existentes
+                                                        completedData.push(
+                                                            existingData
+                                                        );
+                                                    } else {
+                                                        // Si no existe, crea una celda vacía o con valores predeterminados
+                                                        completedData.push({
+                                                            idRol: rol.id,
+                                                            nombreRol:
+                                                                rol.nombre,
+                                                            idEntregable:
+                                                                entregable.id,
+                                                            nombreEntregable:
+                                                                entregable.nombre,
+                                                            // Puedes definir valores predeterminados para otras propiedades
+                                                            idResponsabilidad: 0,
+                                                            nombreResponsabilidad:
+                                                                "",
+                                                            letraResponsabilidad:
+                                                                "",
+                                                            colorResponsabilidad:
+                                                                "",
+                                                            isNew: true, // Marcar como nueva celda
+                                                        });
+                                                    }
+                                                }
                                             );
-
-                                        if (existingData) {
-                                            // Si existe, simplemente agrega los datos existentes
-                                            completedData.push(existingData);
-                                        } else {
-                                            // Si no existe, crea una celda vacía o con valores predeterminados
-                                            completedData.push({
-                                                idRol: rol.id,
-                                                nombreRol: rol.nombre,
-                                                idEntregable: entregable.id,
-                                                nombreEntregable:
-                                                    entregable.nombre,
-                                                // Puedes definir valores predeterminados para otras propiedades
-                                                idResponsabilidad: 0,
-                                                nombreResponsabilidad: "",
-                                                letraResponsabilidad: "",
-                                                colorResponsabilidad: "",
-                                                isNew: true, // Marcar como nueva celda
-                                            });
-                                        }
+                                        });
+                                        console.log(
+                                            "Data from API",
+                                            initialDataFromApi
+                                        );
+                                        console.log("Roles", initialRoles);
+                                        console.log(
+                                            "Entregables",
+                                            initialEntregables
+                                        );
+                                        console.log(
+                                            "Responsabilidades",
+                                            initialResponsabilidades
+                                        );
+                                        // Establecer los datos iniciales en los hooks
+                                        setDataFromApi(completedData);
+                                        setRoles(initialRoles);
+                                        setEntregables(initialEntregables);
+                                        setResponsabilidades(
+                                            initialResponsabilidades
+                                        );
+                                        setIsLoadingSmall(false);
+                                    })
+                                    .catch(function (error) {
+                                        console.log(error);
                                     });
-                                });
-                                console.log(
-                                    "Data from API",
-                                    initialDataFromApi
-                                );
-                                console.log("Roles", initialRoles);
-                                console.log("Entregables", initialEntregables);
-                                console.log(
-                                    "Responsabilidades",
-                                    initialResponsabilidades
-                                );
-                                // Establecer los datos iniciales en los hooks
-                                setDataFromApi(completedData);
-                                setRoles(initialRoles);
-                                setEntregables(initialEntregables);
-                                setResponsabilidades(initialResponsabilidades);
-                                setIsLoadingSmall(false);
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -190,7 +216,9 @@ export default function MatrizDeResponsabilidades(props) {
         (user, columnKey) => {
             console.log("El key de la columna es:", columnKey);
             const cellValue = user[columnKey];
+            console.log("El valor de la celda es:", cellValue);
             const color = getColorForResponsabilidad(cellValue);
+            console.log("El color que pondre es", color);
             const entregableMatch = entregables.find(
                 (item) => item.nombre === user.entregable
             );
@@ -206,7 +234,7 @@ export default function MatrizDeResponsabilidades(props) {
             } else {
                 idRol = -1;
             }
-
+            console.log("El id del rol es:", idRol);                
             switch (columnKey) {
                 case "entregable":
                     return cellValue;
@@ -217,7 +245,8 @@ export default function MatrizDeResponsabilidades(props) {
                                 <DropdownTrigger>
                                     <Button
                                         variant="bordered"
-                                        className={`transition-transform ${color} hover:shadow-md hover:scale-105`}
+                                        style={{ backgroundColor: color }}
+                                        className={`transition-transform hover:shadow-md hover:scale-105`}
                                     >
                                         {cellValue}
                                     </Button>
@@ -256,7 +285,7 @@ export default function MatrizDeResponsabilidades(props) {
                     );
             }
         },
-        [dataFromApi, roles, entregables, responsabilidades]
+        [dataFromApi]
     );
 
     const saveFunction = () => {
