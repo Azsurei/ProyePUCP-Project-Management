@@ -19,18 +19,14 @@ import { Toaster, toast } from "sonner";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { SessionContext } from "../../layout";
 
-
-
-
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const [error, setError] = useState(null);
 
     const isKanbanPage = usePathname() === `/dashboard/${projectName}=${projectId}/backlog/kanban`;
-
-
-
+    
     //Plantillas
 
     const {
@@ -54,6 +50,53 @@ export default function RootLayout({ children, params }) {
         setIdUsuario(sessionData.idUsuario);
     }, []);
 
+    const [IdKanban,setIdKanban]=useState("");
+
+
+    const savePlantilla = () => {
+
+        return new Promise((resolve, reject) => {
+        //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
+        setIsLoadingSmall(true);
+        const updateURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/Kanban/guardarPlantilla";
+        axios
+            .put(updateURL, {
+                nombrePlantilla: nombrePlantilla,
+                idUsuario: IdUsuario,
+                idKanban: IdKanban,
+            })
+            .then((response) => {
+                console.log(response.data.message);
+                setEditActive(false);
+                resolve(response);
+
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+                reject(error);
+            });
+
+        });
+    };
+
+    const guardarPlantillaNueva = async () => {
+        try {
+            toast.promise(savePlantilla, {
+                loading: "Guardando Plantilla Nueva...",
+                success: (data) => {
+                    return "La plantilla se agregó con éxito!";
+                    
+                },
+                error: "Error al agregar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        } 
+    };
 
 
     //Fin Plantillas
@@ -78,7 +121,7 @@ export default function RootLayout({ children, params }) {
                             if(Isvalid === true){
                                 console.log("IdUsuario: "+ sessionData.idUsuario);
                                 try {
-                                    //await guardarPlantillaNueva();
+                                    await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
                                     
@@ -105,7 +148,7 @@ export default function RootLayout({ children, params }) {
                                             fontWeight: 400,
                                         }}
                                         >
-                                    Se guardarán los campos en una plantilla para poder usarlos en otros proyectos.
+                                    Se guardarán los campos en una plantilla para poder usarlos en otros proyectos
                                     </p>
 
                                     <Input type="email" variant={"underlined"} label="Nombre Plantilla" 
@@ -155,7 +198,65 @@ export default function RootLayout({ children, params }) {
                         );
                         }}
                     </ModalContent>
-            </Modal>
+                </Modal>
+            }
+
+            {isKanbanPage &&   
+                     <Modal size="lg" isOpen={isModalverPlantillas} onOpenChange={onModalverPlantillasChange}>
+                     <ModalContent>
+                     {(onClose) => (
+                             <>
+               
+                         <ModalHeader className="flex flex-col gap-1">
+                             Plantillas
+                         </ModalHeader>
+                         <ModalBody>
+                         <div className="modal-body">
+                           <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                           {/* <ul>
+                             {plantillas.map((plantilla) => (
+                               <li key={plantilla.id}>
+                                 <button onClick={() => selectPlantilla(plantilla)}>
+                                   {plantilla.nombre}
+                                 </button>
+                               </li>
+                             ))}
+                           </ul> */}
+                         </div>
+               
+                         </ModalBody>
+               
+                       <ModalFooter>
+                       <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+                       {error && <p style={{ color: "red", fontSize: "12px" }}>{error}</p>}
+               
+                       </div>
+               
+                           <Button
+                           color="danger" variant="light" 
+               
+                           onClick={() => {
+                               onClose(); // Cierra el modal
+                               setError(null); // Establece error en null para desactivar el mensaje de error
+               
+                           }}
+                           
+                           >
+                           Cancelar
+                           
+                           </Button>
+                           <Button
+                           color="primary"
+                           >
+                           Continuar
+                           </Button>
+                       </ModalFooter>
+                     </>
+                     )}
+               
+                     </ModalContent>
+               
+                   </Modal>
             }
 
         
@@ -187,7 +288,7 @@ export default function RootLayout({ children, params }) {
             {isKanbanPage &&
             <div style={{ display: 'flex', marginLeft: 'auto' ,gap:'20px'}}>
             
-                    <Button color="primary" startContent={<ContentPasteGoIcon />}>
+                    <Button onPress={onModalverPlantillas} color="primary" startContent={<ContentPasteGoIcon />}>
 
                         Plantillas
                     </Button>
