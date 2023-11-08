@@ -121,6 +121,7 @@ export default function KanbanBoard({ projectId }) {
     }, []);
 
     return (
+        
         <div
             className="
             generalKanbanCompCont

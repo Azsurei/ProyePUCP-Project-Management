@@ -14,44 +14,57 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
 
 export default function ActaReunion(props) {
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [reuniones, setReuniones] = useState({ pendientes: [], finalizadas: [] });
-    const router = useRouter();
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const [idActa, setIdActa] = useState(null); // Use camelCase for consistency
+    const [idActa, setidActa] = useState(null);
 
-    // Searching Meeting Record ID
+// *********************************************************************************************
+// Searching Meeting Record ID
+// *********************************************************************************************
+
     useEffect(() => {
         setIsLoadingSmall(true);
-        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
+        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+'/api/proyecto/actaReunion/listarActaReunionXIdProyecto/'+projectId;
         axios
             .get(stringURL)
             .then(({ data: { data: { idActaReunion } } }) => {
                 console.log("Listando ActasReunion. Respuesta del servidor:", idActaReunion);
-                setIdActa(idActaReunion);
+                setidActa(idActaReunion);
             })
             .catch((error) => {
                 console.error("Error fetching meeting record ID:", error);
-            })
-            .finally(() => {
-                setIsLoadingSmall(false);
             });
     }, [setIsLoadingSmall, projectId]);
 
     useEffect(() => {
         if (idActa) {
-            const fetchData = async () => {
-                setIsLoadingSmall(true);
+            (async () => {
                 try {
-                    const resultado = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/${idActa}`);
+                    setIsLoadingSmall(true);
+                    const resultado = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/${idActa}`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
                     const lineasActaReunion = resultado.data.lineasActaReunion;
                     console.log(lineasActaReunion);
 
-                    const pendientes = lineasActaReunion.filter(reunion => new Date(reunion.fechaReunion) >= new Date());
-                    const finalizadas = lineasActaReunion.filter(reunion => new Date(reunion.fechaReunion) < new Date());
+                    const pendientes = [];
+                    const finalizadas = [];
+                    const fechaActual = new Date();
+
+                    lineasActaReunion.forEach(reunion => {
+                        const fechaReunion = new Date(reunion.fechaReunion);
+                        if (fechaReunion >= fechaActual) {
+                            pendientes.push(reunion);
+                        } else {
+                            finalizadas.push(reunion);
+                        }
+                    });
                     setReuniones({ pendientes, finalizadas });
 
                 } catch (error) {
@@ -59,17 +72,16 @@ export default function ActaReunion(props) {
                 } finally {
                     setIsLoadingSmall(false);
                 }
-            };
-
-            fetchData();
+            })();
         }
     }, [idActa, setIsLoadingSmall]);
 
+    const router = useRouter();
     const handleEdit = (reunion) => {
 
         const idAR = reunion.idLineaActaReunion;
 
-        router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion/e?edit='+ idAR + '&' + 'acta=' + idActa);
+        router.push('/dashboard/' + projectName + '=' + projectId + '/actaReunion/e?edit='+ idAR);
     };
 
     const handleDelete = async (id) => {
@@ -100,14 +112,15 @@ export default function ActaReunion(props) {
             ? reunion.participantesXReunion
             : reunion.participantesXReunion ? [reunion.participantesXReunion] : [];
         return (
+
             <div
                 key={reunion.idLineaActaReunion}
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
+                className="flex flex-wrap items-start my-4 space-x-4 justify-center">
                 <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
                     <CardHeader className="p-4">
                         <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
                     </CardHeader>
-                    <Divider orientation={"horizontal"}/>
+                    <Divider />
                     <CardBody className="flex-row justify-between items-center h-36">
                         <div className="mr-4">
                             <p className="text-blue-900 montserrat">Reunión convocada por:</p>
@@ -116,7 +129,7 @@ export default function ActaReunion(props) {
                             <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
                         </div>
                         {participantes.length > 0 && (
-                            <div>
+                            <>
                                 <Divider orientation="vertical" />
                                 <div className="flex text-gray-700 montserrat">Convocados :   </div>
                                 <AvatarGroup isBordered max={3} >
@@ -128,34 +141,32 @@ export default function ActaReunion(props) {
                                         } />
                                     ))}
                                 </AvatarGroup>
-                                <Divider orientation="vertical" />
-                                <div className="flex flex-col space-y-2 mt-0.5">
-                                    <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
-                                    <Modal
-                                        nameButton="Eliminar"
-                                        textHeader="Eliminar reunion"
-                                        textBody="¿Seguro que quiere eliminar esta reunion?"
-                                        colorButton="w-36 bg-red-600 text-white font-semibold"
-                                        oneButton={false}
-                                        secondAction={() => {
-                                            handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
-                                        }}
-                                        textColor="red"
-                                    />
-                                </div>
-                            </div>
+                            </>
                         )}
                     </CardBody>
                 </Card>
-
+                <div className="flex flex-col space-y-10 mt-10">
+                    <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
+                    <Modal
+                        nameButton="Eliminar"
+                        textHeader="Eliminar reunion"
+                        textBody="¿Seguro que quiere eliminar esta reunion?"
+                        colorButton="w-36 bg-red-600 text-white font-semibold"
+                        oneButton={false}
+                        secondAction={() => {
+                            handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
+                        }}
+                        textColor="red"
+                    />
+                </div>
             </div>
 
 
         );
     };
 
-    const newHref = '/dashboard/'+projectName+'='+projectId+'/actaReunion/registerAR';
-    const actualHref = '/dashboard/'+ projectName + '=' + projectId + '/actaReunion';
+    const newHref = '/dashboard/'+projectName+'='+projectId+'/retrospectivas/newRetro';
+    const actualHref = '/dashboard/'+ projectName + '=' + projectId + '/retrospectivas';
     return (
         <div style={{ padding: '20px', width: '100%', height: '80%' }}>
             <HeaderWithButtons
@@ -166,36 +177,13 @@ export default function ActaReunion(props) {
                     pathname:newHref,
                     query: {previousUrl: actualHref},
                 }}
-                breadcrump={`Inicio / Proyectos / ${projectName} / Acta de Reunión`}
+                breadcrump={`Inicio / Proyectos / ${projectName} / Restrospectivas`}
                 btnText={'+ Agregar reunión'}
             >
-                Acta de Reunión
+                Restrospectivas
             </HeaderWithButtons>
 
-            <Tabs aria-label="Options" radius="full" color="warning">
-                <Tab key="pending" title="Pendientes" className="montserrat text-blue-900">
-                    {reuniones.pendientes && reuniones.pendientes.length > 0 ? (
-                        reuniones.pendientes.map(renderCard)
-                    ) : (
-                        <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={1} />
-                            <MissingEDTComponents />
-                            <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
-                        </div>
-                    )}
-                </Tab>
-                <Tab key="finished" title="Finalizados" className="montserrat text-blue-900">
-                    {reuniones.finalizadas && reuniones.finalizadas.length > 0 ? (
-                        reuniones.finalizadas.map(renderCard)
-                    ) : (
-                        <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={1} />
-                            <MissingEDTComponents />
-                            <p>No hay reuniones finalizadas</p>
-                        </div>
-                    )}
-                </Tab>
-            </Tabs>
+
 
         </div>
     );

@@ -9,5 +9,6 @@ routerMatrizResponsabilidad.get("/listarEntregables/:idProyecto",matrizResponsab
 
 routerMatrizResponsabilidad.post("/insertarEntregableXResponsabilidadXRol",matrizResponsabilidadController.insertarEntregableXResponsabilidadXRol);
 routerMatrizResponsabilidad.get("/listarEntregablesXProyecto/:idProyecto",matrizResponsabilidadController.listarEntregablesXProyecto);
+routerMatrizResponsabilidad.put("/actualizarEntregablesXProyecto",matrizResponsabilidadController.actualizarEntregablesXProyecto);
 
 module.exports.routerMatrizResponsabilidad = routerMatrizResponsabilidad;

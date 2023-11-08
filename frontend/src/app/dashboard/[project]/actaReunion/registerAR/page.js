@@ -28,7 +28,7 @@ import ButtonAddNew from "@/components/dashboardComps/projectComps/EDTComps/Butt
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 
 axios.defaults.withCredentials = true;
 
