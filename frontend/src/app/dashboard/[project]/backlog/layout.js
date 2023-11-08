@@ -18,7 +18,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Toaster, toast } from "sonner";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { SessionContext } from "../../layout";
-import { HerramientasInfo } from "../../layout";
+import { HerramientasInfo } from "../layout";
 
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
