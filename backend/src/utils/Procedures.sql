@@ -3988,5 +3988,21 @@ BEGIN
     LEFT JOIN ResponsabilidadRol AS rr ON err.idResponsabilidadRol = rr.idResponsabilidadRol
     LEFT JOIN RolEquipo AS re ON err.idRol = re.idRolEquipo
     WHERE edt.idProyecto = _idProyecto
-    AND err.activo = 1;
+    AND err.activo=1;
 END
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(
+    IN _idEntregableXResponsabilidadXRol INT,
+    IN _idEntregable INT,
+    IN _idResponsabilidadRol INT,
+    IN _idRol INT
+)
+BEGIN
+    UPDATE EntregableXResponsabilidadRol 
+    SET idEntregable = _idEntregable,
+        idResponsabilidadRol = _idResponsabilidadRol,
+        idRol = _idRol
+    WHERE idEntregableXResponsabilidadXRol = _idEntregableXResponsabilidadXRol;
+END$
