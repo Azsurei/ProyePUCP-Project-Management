@@ -100,15 +100,14 @@ export default function ActaReunion(props) {
             ? reunion.participantesXReunion
             : reunion.participantesXReunion ? [reunion.participantesXReunion] : [];
         return (
-
             <div
                 key={reunion.idLineaActaReunion}
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center">
+                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
                 <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
                     <CardHeader className="p-4">
                         <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
                     </CardHeader>
-                    <Divider />
+                    <Divider orientation={"horizontal"}/>
                     <CardBody className="flex-row justify-between items-center h-36">
                         <div className="mr-4">
                             <p className="text-blue-900 montserrat">Reunión convocada por:</p>
@@ -179,7 +178,7 @@ export default function ActaReunion(props) {
                         reuniones.pendientes.map(renderCard)
                     ) : (
                         <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={55} />
+                            <Spacer  y={1} />
                             <MissingEDTComponents />
                             <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
                         </div>
@@ -190,7 +189,7 @@ export default function ActaReunion(props) {
                         reuniones.finalizadas.map(renderCard)
                     ) : (
                         <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={55} />
+                            <Spacer  y={1} />
                             <MissingEDTComponents />
                             <p>No hay reuniones finalizadas</p>
                         </div>
