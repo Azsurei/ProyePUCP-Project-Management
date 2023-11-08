@@ -234,7 +234,7 @@ export default function MatrizDeResponsabilidades(props) {
             } else {
                 idRol = -1;
             }
-            console.log("El id del rol es:", idRol);                
+            console.log("El id del rol es:", idRol);
             switch (columnKey) {
                 case "entregable":
                     return cellValue;
@@ -297,7 +297,38 @@ export default function MatrizDeResponsabilidades(props) {
         console.log("Celdas a insertar:", newCells);
         console.log("Celdas a modificar:", modifiedExistingCells);
 
+        const stringURLPostData =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/insertarEntregableXResponsabilidadXRol";
+        const stringURLPutData =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/actualizarEntregablesXProyecto";
+
         // Ahora puedes realizar las peticiones POST y PUT según corresponda
+/*         axios
+            .post(stringURLPostData, { celdasInsertar: newCells })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            });
+        axios
+            .post(stringURLPutData, { celdasAModificar: modifiedExistingCells })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud PUT
+                console.log("Respuesta del servidor (PUT):", response.data);
+                console.log("Registro correcto (PUT)");
+                // Realizar acciones adicionales si es necesario
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud PUT:", error);
+            }); */
     };
 
     return (

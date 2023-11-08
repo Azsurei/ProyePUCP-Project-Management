@@ -50,7 +50,7 @@ async function insertarEntregableXResponsabilidadXRol(req, res, next) {
     const query = `CALL INSERTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?,?,?);`;
     try {
         for(let celdaInsertar of celdasInsertar){
-            const [results] = await connection.query(query, [celdaInsertar.idEntregable, celdaInsertar.idResponsabilidadRol, celdaInsertar.idRol]);
+            const [results] = await connection.query(query, [celdaInsertar.idEntregable, celdaInsertar.idResponsabilidad, celdaInsertar.idRol]);
             const idEntregableXResponsabilidadXRol = results[0][0].idEntregableXResponsabilidadXRol;
         }
         res.status(200).json({
@@ -76,13 +76,14 @@ async function listarEntregablesXProyecto(req, res, next) {
     }
 }
 
+
 async function actualizarEntregablesXProyecto(req, res, next) {
     const { celdasAModificar } = req.body;
-    const query = `CALL ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?);`;
+    const query = `CALL ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?,?,?,?);`;
     try {
-        for(let celdaAModificar  of celdasAModificar){
+        for(let celdaAModificar of celdasAModificar){
             const [results] = await connection.query(query, [celdaAModificar.idEntregableXResponsabilidadXRol, celdaAModificar.idEntregable,
-                celdaAModificar.idResponsabilidadRol, celdaAModificar.idRol]);
+                celdaAModificar.idResponsabilidad, celdaAModificar.idRol]);
         }
         res.status(200).json({
             message: "Se modificó exitosamente",
@@ -92,11 +93,12 @@ async function actualizarEntregablesXProyecto(req, res, next) {
     }
 }
 
+
 module.exports = {
     listarResponsabilidad,
     listarRol,
     listarEntregables,
     insertarEntregableXResponsabilidadXRol,
-    listarEntregablesXProyecto,
-    actualizarEntregablesXProyecto
+    actualizarEntregablesXProyecto,
+    listarEntregablesXProyecto
 };
