@@ -38,10 +38,41 @@ export default function ReporteRiesgos(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const [isClient, setIsClient] = useState(false);
     const {herramientasInfo} = useContext(HerramientasInfo);
+     const [data, setData] = useState([]);
     useEffect(() => {
         setIsLoadingSmall(false);
         setIsClient(true);
     } , []);
+    function DataTable(){
+        const fetchData = async () => {
+          try {
+            // Realiza la solicitud HTTP al endpoint del router
+            const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarRiesgos/" +
+            projectId;
+            const response = await axios.get(stringURL);
+    
+            // Actualiza el estado 'data' con los datos recibidos
+            // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+            setData(response.data.riesgos);
+            setIsLoadingSmall(false);
+            console.log(`Esta es la data:`, data);
+            console.log(`Datos obtenidos exitosamente:`, response.data.riesgos);
+          } catch (error) {
+            console.error('Error al obtener datos:', error);
+          }
+        };
+    
+        fetchData();
+      };
+    // useEffect(() => {
+    //     DataTable();
+    // }, [projectId]);
+    useEffect(() => {
+        setIsLoadingSmall(true);
+        DataTable();
+        setIsClient(true);
+    }, [projectId]);
     const onSearchChange = React.useCallback((value) => {
         if (value) {
             setFilterValue(value);
@@ -87,131 +118,133 @@ export default function ReporteRiesgos(props) {
             sortable: true
         },
     ];
-    const data = [
-        {
-            idRiesgo: 1,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Insignificante',
-            probabilidad: 'Muy Baja'
-        },
-        {
-            idRiesgo: 2,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Menor',
-            probabilidad: 'Baja'
-        },
-        {
-            idRiesgo: 3,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Moderado',
-            probabilidad: 'Muy Baja'
-        },
-        {
-            idRiesgo: 4,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Mayor',
-            probabilidad: 'Media'
-        },
-        {
-            idRiesgo: 5,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Catastrofico',
-            probabilidad: 'Alta'
-        },
-        {
-            idRiesgo: 6,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Insignificante',
-            probabilidad: 'Muy Alta'
-        },
-        {
-            idRiesgo: 7,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Menor',
-            probabilidad: 'Muy Baja'
-        },
-        {
-            idRiesgo: 8,
-            nombreRiesgo: 'Riesgos de recursos',
-            fechaIdentificacion: '07/09/2023',
-            responsables: listUsers.map((user) => ({
-                idUsuario: user.idUsuario,
-                nombres: user.nombres,
-                apellidos: user.apellidos,
-                correoElectronico: user.correoElectronico,
-                imgLink: user.imgLink,
-            })),
-            impacto: 'Moderado',
-            probabilidad: 'Muy Baja'
-        },
-    ];
+    // const data = [
+    //     {
+    //         idRiesgo: 1,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Insignificante',
+    //         nombreProbabilidad: 'Muy Baja'
+    //     },
+    //     {
+    //         idRiesgo: 2,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Menor',
+    //         nombreProbabilidad: 'Baja'
+    //     },
+    //     {
+    //         idRiesgo: 3,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Moderado',
+    //         nombreProbabilidad: 'Muy Baja'
+    //     },
+    //     {
+    //         idRiesgo: 4,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Mayor',
+    //         nombreProbabilidad: 'Media'
+    //     },
+    //     {
+    //         idRiesgo: 5,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Catastrofico',
+    //         nombreProbabilidad: 'Alta'
+    //     },
+    //     {
+    //         idRiesgo: 6,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Insignificante',
+    //         nombreProbabilidad: 'Muy Alta'
+    //     },
+    //     {
+    //         idRiesgo: 7,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Menor',
+    //         nombreProbabilidad: 'Muy Baja'
+    //     },
+    //     {
+    //         idRiesgo: 8,
+    //         nombreRiesgo: 'Riesgos de recursos',
+    //         fechaIdentificacion: '07/09/2023',
+    //         responsables: listUsers.map((user) => ({
+    //             idUsuario: user.idUsuario,
+    //             nombres: user.nombres,
+    //             apellidos: user.apellidos,
+    //             correoElectronico: user.correoElectronico,
+    //             imgLink: user.imgLink,
+    //         })),
+    //         impactoRiesgo: 'Moderado',
+    //         nombreProbabilidad: 'Muy Baja'
+    //     },
+    // ];
     
     const impactoCounts = {
         "Insignificante": 0,
         "Menor": 0,
         "Moderado": 0,
         "Mayor": 0,
-        "Catastrofico": 0,
+        "Catastrófico": 0,
       };
       
       data.forEach(linea => {
-        impactoCounts[linea.impacto]++;
+        console.log(linea.nombreImpacto);
+        impactoCounts[linea.nombreImpacto]++;
+        console.log(impactoCounts);
       });
       
       const series = Object.values(impactoCounts);
@@ -232,42 +265,76 @@ export default function ReporteRiesgos(props) {
 
           }
         }],
-        title: {
-            text: 'Grafico de Impacto'
-          },
+        // title: {
+        //     text: 'Grafico de Impacto'
+        //   },
           colors: ['#8DFFA6', '#16C78E', '#FFFA8D', '#F0AE19', '#FF4D4D'],
           legend: {
-            fontSize: '16px',
+            position: 'right',
+            offsetY: 0, // Adjust the offset as needed
+            fontSize: '20px',
+            horizontalAlign: 'center',
+            formatter: function(val, opts) {
+                return val + " - " + opts.w.globals.series[opts.seriesIndex]
+              },
+              containerClass: 'horizontal-legend-container',
           }
       };
-
+      const uniqueDates = [...new Set(data.map(item => item.fechaIdentificacion))];
+      const probabilities = ["Muy Baja", "Baja", "Media", "Alta", "Muy Alta"];
+      const categorizedData = {};
+      
+      // Initialize categorizedData with a two-dimensional array
+      for (const prob of probabilities) {
+        categorizedData[prob] = new Array(uniqueDates.length).fill(0);
+      }
+      
+      // Iterate over the data and fill the arrays based on dates and probabilities
+      data.forEach(item => {
+        const dateIndex = uniqueDates.indexOf(item.fechaIdentificacion);
+        if (dateIndex !== -1) {
+          const probCategory = item.nombreProbabilidad;
+          categorizedData[probCategory][dateIndex]++;
+        }
+      });
+      
+      // Now you have categorizedData object containing arrays for each probability category
+      // with their respective counts on each date.
+      
+      // For example, categorizedData["Alta"] will contain the data for "Alta" probability.
+      
+      console.log("Categoria", categorizedData["Alta"]);
+      
       const seriesBar = [
         {
           name: "Muy Baja",
-          data: [data.filter((data) => data.probabilidad === "Muy Baja").length],
+          data: Array.from(categorizedData["Muy Baja"], count => count),
           color: '#8DFFA6'
         },
         {
           name: "Baja",
-          data: [data.filter((data) => data.probabilidad === "Baja").length],
+          data: Array.from(categorizedData["Baja"], count => count),
           color: '#16C78E'
         },
         {
           name: "Media",
-          data: [data.filter((data) => data.probabilidad === "Media").length],
+          data: Array.from(categorizedData["Media"], count => count),
           color: '#FFFA8D'
         },
         {
           name: "Alta",
-          data: [data.filter((data) => data.probabilidad === "Alta").length],
+          data: Array.from(categorizedData["Alta"], count => count),
           color: '#F0AE19'
         },
         {
           name: "Muy Alta",
-          data: [data.filter((data) => data.probabilidad === "Muy Alta").length],
+          data: Array.from(categorizedData["Muy Alta"], count => count),
           color: '#FF4D4D'
         },
       ];
+      
+      // Now the `seriesBar` array contains the categorized data for each probability category.
+      
       
 
       const fechasSet = new Set();
@@ -275,6 +342,8 @@ export default function ReporteRiesgos(props) {
       data.forEach(data => {
         const fecha = new Date(data.fechaIdentificacion);
         fechasSet.add(fecha.toISOString().split('T')[0]);
+        console.log("Fechas: ", fechasSet);
+        console.log("Series: ", seriesBar)
       });
       
       const fechasRiesgos = Array.from(fechasSet);
@@ -309,7 +378,7 @@ export default function ReporteRiesgos(props) {
             text: 'Grafico de Probabilidades'
           },
           xaxis: {
-            categories: [fechasRiesgos],
+            categories: fechasRiesgos,
             labels: {
               formatter: function (val) {
                 return val;
@@ -424,69 +493,71 @@ export default function ReporteRiesgos(props) {
                     return `${day}/${month}/${year}`;
                 }
             case "responsables":
-                return (
-                    <AvatarGroup
-                        isBordered
-                        isGrid
-                        max={3}
-                        renderCount={(count) => (
-                            <Avatar
-                                isBordered={false}
-                                color={"primary"}
-                                className="w-[35px] h-[35px] text-tiny"
-                                fallback={<p id="MoreUsrsIcn">+{count}</p>}
-                            />
-                        )}
-                    >
-                        {cellValue.map((user) => {
-                            return (
-                                <div
-                                    className="flex gap-4 items-center border-sm"
-                                    key={user.idUsuario}
-                                >
-                                <Tooltip
-                                    content={
-                                        <div className="px-1 py-2">
-                                            <div className="text-small font-bold">
-                                                {user.nombres + " " + user.apellidos}
-                                            </div>
-                                            <div className="text-small">
-                                                {user.correoElectronico}
-                                            </div>
-                                        </div>
-                                    }
-                                    classNames={{
-                                        base: "border border-slate-700 dark:border-slate-400 bg-mainSidebar",
-                                        arrow: "border border-slate-700 dark:border-slate-400 bg-mainSidebar"}}
-                                    showArrow
-                                    >
-                                    <Avatar
-                                        isBordered
-                                        color="default"
-                                        src={user.imgLink}
-                                        className="w-[40px] h-[40px] text-tiny"
-                                        fallback={
-                                            <p id="UsrNoIcon">
-                                                {user.nombres[0] + user.apellidos[0]}
-                                            </p>
-                                        }
-                                    />
-                                </Tooltip>
-                                </div>
-                            );
-                        })}
+                // const [responsables, setResponsables] = useState([]);
+                // setResponsables(cellValue.responsables);
+                // return (
+                //     <AvatarGroup
+                //         isBordered
+                //         isGrid
+                //         max={3}
+                //         renderCount={(count) => (
+                //             <Avatar
+                //                 isBordered={false}
+                //                 color={"primary"}
+                //                 className="w-[35px] h-[35px] text-tiny"
+                //                 fallback={<p id="MoreUsrsIcn">+{count}</p>}
+                //             />
+                //         )}
+                //     >
+                //         {responsables.map((user) => {
+                //             return (
+                //                 <div
+                //                     className="flex gap-4 items-center border-sm"
+                //                     key={user.idUsuario}
+                //                 >
+                //                 <Tooltip
+                //                     content={
+                //                         <div className="px-1 py-2">
+                //                             <div className="text-small font-bold">
+                //                                 {user.nombres + " " + user.apellidos}
+                //                             </div>
+                //                             <div className="text-small">
+                //                                 {user.correoElectronico}
+                //                             </div>
+                //                         </div>
+                //                     }
+                //                     classNames={{
+                //                         base: "border border-slate-700 dark:border-slate-400 bg-mainSidebar",
+                //                         arrow: "border border-slate-700 dark:border-slate-400 bg-mainSidebar"}}
+                //                     showArrow
+                //                     >
+                //                     <Avatar
+                //                         isBordered
+                //                         color="default"
+                //                         src={user.imgLink}
+                //                         className="w-[40px] h-[40px] text-tiny"
+                //                         fallback={
+                //                             <p id="UsrNoIcon">
+                //                                 {user.nombres[0] + user.apellidos[0]}
+                //                             </p>
+                //                         }
+                //                     />
+                //                 </Tooltip>
+                //                 </div>
+                //             );
+                //         })}
+                //     </AvatarGroup>
+                // );
+                    return (
+                    <AvatarGroup isBordered>
+                        <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
+                        <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
+                        <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
+                        <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
+                        <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
+                        <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
                     </AvatarGroup>
-                );
-                    // return (
-                    // <AvatarGroup isBordered>
-                    //     <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                    //     <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
-                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
-                    // </AvatarGroup>
-                    // );
+                    );
                     
             default:
                 return cellValue;
@@ -610,7 +681,7 @@ export default function ReporteRiesgos(props) {
                         />
                     </div>
                     <div className="GraficosRiesgos">
-                        <div className="GraficoCircular w-full">
+                        <div className="GraficoCircular w-full flex">
                             <PieChart options={options} series={series} client={isClient}/>
                         </div>
                         <div className="GraficoBarras">
