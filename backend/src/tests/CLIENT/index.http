@@ -1031,6 +1031,28 @@ Content-Type: application/json
 GET http://localhost:8080/api/proyecto/matrizResponsabilidad/listarRol/156 HTTP/1.1
 Content-Type: application/json
 
-### GET
+### GETa
 GET http://localhost:8080/api/proyecto/matrizResponsabilidad/listarEntregables/178 HTTP/1.1
 Content-Type: application/json
+
+### GET
+PUT http://localhost:8080/api/proyecto/matrizResponsabilidad/actualizarEntregablesXProyecto HTTP/1.1
+Content-Type: application/json
+{
+  "celdasAModificar": []
+}
+
+//Insertar interesados Catalogo de interesados
+### POSTa
+PUT http://localhost:8080/api/proyecto/matrizResponsabilidad/actualizarEntregablesXProyecto HTTP/1.1
+Content-Type: application/json
+{
+  "celdasAModificar": [
+    {
+      "idEntregableXResponsabilidadXRol": 4,
+      "idEntregable": 4,
+      "idResponsabilidadRol": 4,
+      "idRol": 4
+    }
+  ]
+}
