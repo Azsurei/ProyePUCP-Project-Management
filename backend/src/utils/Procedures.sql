@@ -3754,12 +3754,12 @@ BEGIN
     -- Verificamos si el registro ya existe
     SELECT idUsuarioXEquipoXRolEquipo INTO _idUsuarioXEquipoXRolEquipo
     FROM UsuarioXEquipoXRolEquipo
-    WHERE idUsuario = _idUsuario AND idRolEquipo = _idRolEquipo AND idEquipo = _idEquipo;
+    WHERE idUsuario = _idUsuario AND idEquipo = _idEquipo;
     IF _idUsuarioXEquipoXRolEquipo IS NOT NULL THEN
         -- El registro ya existe, actualizamos el estado a 1
         UPDATE UsuarioXEquipoXRolEquipo
-        SET activo = 1
-        WHERE idUsuario = _idUsuario AND idRolEquipo = _idRolEquipo AND idEquipo = _idEquipo;
+        SET activo = 1, idRolEquipo = _idRolEquipo
+        WHERE idUsuario = _idUsuario AND idEquipo = _idEquipo;
     ELSE
         INSERT INTO UsuarioXEquipoXRolEquipo(idUsuario,idEquipo,idRolEquipo,activo) 
         VALUES(_idUsuario,_idEquipo,_idRolEquipo,1);
@@ -3869,9 +3869,8 @@ CREATE PROCEDURE MODIFICAR_MIEMBRO_EQUIPO_NOMBRE_ROL(
 BEGIN
     SET @_idProyecto = (SELECT idProyecto FROM Equipo WHERE idEquipo = _idEquipo);
     SET @_idRolEquipo = (
-        SELECT ere.idRolEquipo 
-        FROM UsuarioXEquipoXRolEquipo AS ere 
-        LEFT JOIN RolEquipo AS re ON ere.idRolEquipo = re.idRolEquipo
+        SELECT re.idRolEquipo 
+        FROM RolEquipo AS re 
         WHERE re.idProyecto = @_idProyecto
         AND re.nombreRol = _nombreRol AND re.activo = 1);
     UPDATE UsuarioXEquipoXRolEquipo
@@ -3931,4 +3930,17 @@ BEGIN
     SELECT *
     FROM ResponsabilidadRol
     WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ENTREGABLE_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ENTREGABLE_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT e.idEntregable, e.nombre, e.activo
+    FROM Entregable AS e
+    LEFT JOIN ComponenteEDT AS ce ON e.idComponente = ce.idComponente
+    LEFT JOIN EDT AS ed ON ce.idEDT = ed.idEDT
+    WHERE ed.idProyecto = _idProyecto AND e.activo=1;
 END$

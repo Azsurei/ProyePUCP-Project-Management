@@ -5,5 +5,6 @@ const matrizResponsabilidadController = require("../controllers/matrizResponsabi
 
 routerMatrizResponsabilidad.get("/listarResponsabilidad/:idProyecto",matrizResponsabilidadController.listarResponsabilidad);
 routerMatrizResponsabilidad.get("/listarRol/:idProyecto",matrizResponsabilidadController.listarRol);
+routerMatrizResponsabilidad.get("/listarEntregables/:idProyecto",matrizResponsabilidadController.listarEntregables);
 
 module.exports.routerMatrizResponsabilidad = routerMatrizResponsabilidad;

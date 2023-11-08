@@ -23,7 +23,7 @@
         "@mui/icons-material": "^5.14.11",
         "@mui/material": "^5.14.11",
         "@mui/x-charts": "^6.0.0-alpha.17",
-        "@nextui-org/react": "^2.1.13",
+        "@nextui-org/react": "^2.2.6",
         "@react-buddy/ide-toolbox-next": "^2.4.1",
         "@react-buddy/palette-mui": "^5.0.1",
         "@svgr/webpack": "^8.1.0",
