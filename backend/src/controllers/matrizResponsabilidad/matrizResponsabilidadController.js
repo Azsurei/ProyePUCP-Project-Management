@@ -99,6 +99,6 @@ module.exports = {
     listarRol,
     listarEntregables,
     insertarEntregableXResponsabilidadXRol,
-    listarEntregablesXProyecto,
-    actualizarEntregablesXProyecto
+    actualizarEntregablesXProyecto,
+    listarEntregablesXProyecto
 };

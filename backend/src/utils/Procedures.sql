@@ -3913,11 +3913,11 @@ CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(
     IN _idMatrizResponsabilidad INT
 )
 BEGIN
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "bg-blue-600", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "bg-red-600", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "bg-purple-600", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "bg-green-600", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "bg-yellow-600", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1);
 END$
 
 DELIMITER $
