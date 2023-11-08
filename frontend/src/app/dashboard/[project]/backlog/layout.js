@@ -18,19 +18,15 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Toaster, toast } from "sonner";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { SessionContext } from "../../layout";
-import { HerramientasInfo } from "../../layout";
 
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const [error, setError] = useState(null);
 
-    const {herrarmientasInfo}=useContext(HerramientasInfo);
     const isKanbanPage = usePathname() === `/dashboard/${projectName}=${projectId}/backlog/kanban`;
     
-
-
-    console.log(herrarmientasInfo);
     //Plantillas
 
     const {
@@ -203,6 +199,64 @@ export default function RootLayout({ children, params }) {
                         }}
                     </ModalContent>
                 </Modal>
+            }
+
+            {isKanbanPage &&   
+                     <Modal size="lg" isOpen={isModalverPlantillas} onOpenChange={onModalverPlantillasChange}>
+                     <ModalContent>
+                     {(onClose) => (
+                             <>
+               
+                         <ModalHeader className="flex flex-col gap-1">
+                             Plantillas
+                         </ModalHeader>
+                         <ModalBody>
+                         <div className="modal-body">
+                           <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                           {/* <ul>
+                             {plantillas.map((plantilla) => (
+                               <li key={plantilla.id}>
+                                 <button onClick={() => selectPlantilla(plantilla)}>
+                                   {plantilla.nombre}
+                                 </button>
+                               </li>
+                             ))}
+                           </ul> */}
+                         </div>
+               
+                         </ModalBody>
+               
+                       <ModalFooter>
+                       <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+                       {error && <p style={{ color: "red", fontSize: "12px" }}>{error}</p>}
+               
+                       </div>
+               
+                           <Button
+                           color="danger" variant="light" 
+               
+                           onClick={() => {
+                               onClose(); // Cierra el modal
+                               setError(null); // Establece error en null para desactivar el mensaje de error
+               
+                           }}
+                           
+                           >
+                           Cancelar
+                           
+                           </Button>
+                           <Button
+                           color="primary"
+                           >
+                           Continuar
+                           </Button>
+                       </ModalFooter>
+                     </>
+                     )}
+               
+                     </ModalContent>
+               
+                   </Modal>
             }
 
         
