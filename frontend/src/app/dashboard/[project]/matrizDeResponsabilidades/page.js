@@ -30,156 +30,107 @@ export default function MatrizDeResponsabilidades(props) {
     const [entregables, setEntregables] = useState([]);
     const [responsabilidades, setResponsabilidades] = useState([]);
     const [modifiedCells, setModifiedCells] = useState([]);
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectIdString = decodedUrl.substring(
+        decodedUrl.lastIndexOf("=") + 1
+    );
+    const projectId = parseInt(projectIdString);
 
     useEffect(() => {
         // Datos iniciales
-        const initialDataFromApi = [
-            {
-                idRol: 1,
-                nombreRol: "ROL1",
-                idEntregable: 1,
-                nombreEntregable: "Entregable 1",
-                idResponsabilidad: 1,
-                nombreResponsabilidad: "Aprueba",
-                letraResponsabilidad: "A",
-                colorResponsabilidad: "bg-blue-600",
-            },
-            {
-                idRol: 2,
-                nombreRol: "ROL2",
-                idEntregable: 1,
-                nombreEntregable: "Entregable 1",
-                idResponsabilidad: 3,
-                nombreResponsabilidad: "Participa",
-                letraResponsabilidad: "P",
-                colorResponsabilidad: "bg-purple-600",
-            },
-            {
-                idRol: 3,
-                nombreRol: "ROL3",
-                idEntregable: 1,
-                nombreEntregable: "Entregable 1",
-                idResponsabilidad: 1,
-                nombreResponsabilidad: "Aprueba",
-                letraResponsabilidad: "A",
-                colorResponsabilidad: "bg-blue-600",
-            },
-            {
-                idRol: 4,
-                nombreRol: "ROL4",
-                idEntregable: 1,
-                nombreEntregable: "Entregable 1",
-                idResponsabilidad: 2,
-                nombreResponsabilidad: "Se le informa",
-                letraResponsabilidad: "I",
-                colorResponsabilidad: "bg-red-600",
-            },
-            {
-                idRol: 1,
-                nombreRol: "ROL1",
-                idEntregable: 2,
-                nombreEntregable: "Entregable 2",
-                idResponsabilidad: 2,
-                nombreResponsabilidad: "Se le informa",
-                letraResponsabilidad: "I",
-                colorResponsabilidad: "bg-red-600",
-            },
-            {
-                idRol: 2,
-                nombreRol: "ROL2",
-                idEntregable: 2,
-                nombreEntregable: "Entregable 2",
-                idResponsabilidad: 1,
-                nombreResponsabilidad: "Aprueba",
-                letraResponsabilidad: "A",
-                colorResponsabilidad: "bg-blue-600",
-            },
-            {
-                idRol: 3,
-                nombreRol: "ROL3",
-                idEntregable: 2,
-                nombreEntregable: "Entregable 2",
-                idResponsabilidad: 1,
-                nombreResponsabilidad: "Aprueba",
-                letraResponsabilidad: "A",
-                colorResponsabilidad: "bg-blue-600",
-            },
-            {
-                idRol: 4,
-                nombreRol: "ROL4",
-                idEntregable: 2,
-                nombreEntregable: "Entregable 2",
-                idResponsabilidad: 1,
-                nombreResponsabilidad: "Aprueba",
-                letraResponsabilidad: "A",
-                colorResponsabilidad: "bg-blue-600",
-            },
-        ];
-        const initialRoles = [
-            { id: 1, nombre: "ROL1" },
-            { id: 2, nombre: "ROL2" },
-            { id: 3, nombre: "ROL3" },
-            { id: 4, nombre: "ROL4" },
-        ];
+        console.log("El id del proyecto es", projectId);
+        console.log("El tipo de dato de projectID es", typeof projectId);
+        const initialDataFromApi = [];
+        const stringURLRoles =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/listarRol/" +
+            projectId;
+        const stringURLEntregables =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/listarEntregables/" +
+            projectId;
+        const stringURLResponsabilidades =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/listarResponsabilidad/" +
+            projectId;
 
-        const initialEntregables = [
-            { id: 1, nombre: "Entregable 1" },
-            { id: 2, nombre: "Entregable 2" },
-            { id: 3, nombre: "Entregable 3" },
-        ];
+        axios
+            .get(stringURLRoles)
+            .then(function (response) {
+                const initialRoles = response.data.roles;
+                axios
+                    .get(stringURLResponsabilidades)
+                    .then(function (response) {
+                        const initialResponsabilidades =
+                            response.data.responsabilidadRol;
+                        axios
+                            .get(stringURLEntregables)
+                            .then(function (response) {
+                                const initialEntregables =
+                                    response.data.entregables;
+                                const completedData = [];
 
-        const initialResponsabilidades = [
-            { id: 1, nombre: "Aprueba", letra: "A", color: "bg-blue-600" },
-            { id: 2, nombre: "Se le informa", letra: "I", color: "bg-red-600" },
-            { id: 3, nombre: "Participa", letra: "P", color: "bg-purple-600" },
-            { id: 4, nombre: "Responsable", letra: "R", color: "bg-green-600" },
-            { id: 5, nombre: "Se le consulta", letra: "C", color: "bg-yellow-600" },
-            // Agrega más responsabilidades según tus necesidades
-        ];
+                                // Recorre todos los roles y entregables
+                                initialRoles.forEach((rol) => {
+                                    initialEntregables.forEach((entregable) => {
+                                        // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
+                                        const existingData =
+                                            initialDataFromApi.find(
+                                                (item) =>
+                                                    item.idRol === rol.id &&
+                                                    item.idEntregable ===
+                                                        entregable.id
+                                            );
 
-        const completedData = [];
-
-        // Recorre todos los roles y entregables
-        initialRoles.forEach((rol) => {
-            initialEntregables.forEach((entregable) => {
-                // Verifica si la combinación de idRol e idEntregable ya existe en dataFromApi
-                const existingData = initialDataFromApi.find(
-                    (item) =>
-                        item.idRol === rol.id &&
-                        item.idEntregable === entregable.id
-                );
-
-                if (existingData) {
-                    // Si existe, simplemente agrega los datos existentes
-                    completedData.push(existingData);
-                } else {
-                    // Si no existe, crea una celda vacía o con valores predeterminados
-                    completedData.push({
-                        idRol: rol.id,
-                        nombreRol: rol.nombre,
-                        idEntregable: entregable.id,
-                        nombreEntregable: entregable.nombre,
-                        // Puedes definir valores predeterminados para otras propiedades
-                        idResponsabilidad: 0,
-                        nombreResponsabilidad: "",
-                        letraResponsabilidad: "",
-                        colorResponsabilidad: "",
-                        isNew: true, // Marcar como nueva celda
+                                        if (existingData) {
+                                            // Si existe, simplemente agrega los datos existentes
+                                            completedData.push(existingData);
+                                        } else {
+                                            // Si no existe, crea una celda vacía o con valores predeterminados
+                                            completedData.push({
+                                                idRol: rol.id,
+                                                nombreRol: rol.nombre,
+                                                idEntregable: entregable.id,
+                                                nombreEntregable:
+                                                    entregable.nombre,
+                                                // Puedes definir valores predeterminados para otras propiedades
+                                                idResponsabilidad: 0,
+                                                nombreResponsabilidad: "",
+                                                letraResponsabilidad: "",
+                                                colorResponsabilidad: "",
+                                                isNew: true, // Marcar como nueva celda
+                                            });
+                                        }
+                                    });
+                                });
+                                console.log(
+                                    "Data from API",
+                                    initialDataFromApi
+                                );
+                                console.log("Roles", initialRoles);
+                                console.log("Entregables", initialEntregables);
+                                console.log(
+                                    "Responsabilidades",
+                                    initialResponsabilidades
+                                );
+                                // Establecer los datos iniciales en los hooks
+                                setDataFromApi(completedData);
+                                setRoles(initialRoles);
+                                setEntregables(initialEntregables);
+                                setResponsabilidades(initialResponsabilidades);
+                                setIsLoadingSmall(false);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    })
+                    .catch(function (error) {
+                        console.log(error);
                     });
-                }
+            })
+            .catch(function (error) {
+                console.log(error);
             });
-        });
-
-        console.log("Data from API", initialDataFromApi);
-        console.log("Roles", initialRoles);
-        console.log("Entregables", initialEntregables);
-        console.log("Responsabilidades", initialResponsabilidades);
-        // Establecer los datos iniciales en los hooks
-        setDataFromApi(completedData);
-        setRoles(initialRoles);
-        setEntregables(initialEntregables);
-        setResponsabilidades(initialResponsabilidades);
-        setIsLoadingSmall(false);
     }, []);
 
     const columns = [
@@ -310,13 +261,15 @@ export default function MatrizDeResponsabilidades(props) {
 
     const saveFunction = () => {
         const newCells = modifiedCells.filter((cell) => cell.isNew);
-        const modifiedExistingCells = modifiedCells.filter((cell) => !cell.isNew);
-    
+        const modifiedExistingCells = modifiedCells.filter(
+            (cell) => !cell.isNew
+        );
+
         console.log("Celdas a insertar:", newCells);
         console.log("Celdas a modificar:", modifiedExistingCells);
-    
+
         // Ahora puedes realizar las peticiones POST y PUT según corresponda
-    }
+    };
 
     return (
         <>
@@ -327,7 +280,11 @@ export default function MatrizDeResponsabilidades(props) {
                 <div className="text-[#172B4D] font-semibold text-[2rem] ">
                     Matriz de responsabilidades
                 </div>
-                <Button color="primary" startContent={<SaveIcon />} onPress={saveFunction}>
+                <Button
+                    color="primary"
+                    startContent={<SaveIcon />}
+                    onPress={saveFunction}
+                >
                     Guardar
                 </Button>
             </div>

@@ -15,7 +15,7 @@ async function listarResponsabilidad(req,res,next){
 
 async function listarRol(req, res, next) {
     const { idProyecto } = req.params;
-    const query = `CALL LISTAR_ROL_EQUIPO(?);`;
+    const query = `CALL LISTAR_ROL_EQUIPO_MATRIZRESPONSABILIDAD(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
         const roles = results[0];
