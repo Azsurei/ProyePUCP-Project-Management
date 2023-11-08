@@ -216,7 +216,9 @@ export default function MatrizDeResponsabilidades(props) {
         (user, columnKey) => {
             console.log("El key de la columna es:", columnKey);
             const cellValue = user[columnKey];
+            console.log("El valor de la celda es:", cellValue);
             const color = getColorForResponsabilidad(cellValue);
+            console.log("El color que pondre es", color);
             const entregableMatch = entregables.find(
                 (item) => item.nombre === user.entregable
             );
@@ -232,7 +234,7 @@ export default function MatrizDeResponsabilidades(props) {
             } else {
                 idRol = -1;
             }
-
+            console.log("El id del rol es:", idRol);                
             switch (columnKey) {
                 case "entregable":
                     return cellValue;
@@ -243,7 +245,8 @@ export default function MatrizDeResponsabilidades(props) {
                                 <DropdownTrigger>
                                     <Button
                                         variant="bordered"
-                                        className={`${color} transition-transform hover:shadow-md hover:scale-105`}
+                                        style={{ backgroundColor: color }}
+                                        className={`transition-transform hover:shadow-md hover:scale-105`}
                                     >
                                         {cellValue}
                                     </Button>
@@ -282,7 +285,7 @@ export default function MatrizDeResponsabilidades(props) {
                     );
             }
         },
-        [dataFromApi, roles, entregables, responsabilidades]
+        [dataFromApi]
     );
 
     const saveFunction = () => {
