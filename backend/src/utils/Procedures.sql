@@ -4150,6 +4150,16 @@ BEGIN
     END IF;
 END$
 
+DROP PROCEDURE IF EXISTS LIMPIAR_DETALLEAC_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LIMPIAR_DETALLEAC_PLANTILLA_ACTACONSTITUCION(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    UPDATE DetalleAC SET activo = 0 WHERE idActaConstitucion = _idActaConstitucion;
+    UPDATE DetalleAC SET detalle = null WHERE idActaConstitucion = _idActaConstitucion;
+END$
+
 DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_KANBAN;
 DELIMITER $
 CREATE PROCEDURE GUARDAR_PLANTILLA_KANBAN(
@@ -4210,4 +4220,49 @@ CREATE PROCEDURE ELIMINAR_PLANTILLA_KANBAN(
 BEGIN
     UPDATE PlantillaKanban SET activo = 0 WHERE idPlantillaKanban = _idPlantillaKanban;
     UPDATE PlantillaKanbanColumnas SET activo = 0 WHERE idPlantillaKanban = _idPlantillaKanban;
+END$
+
+DROP PROCEDURE IF EXISTS LIMPIAR_KANBAN_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LIMPIAR_KANBAN_PLANTILLA_KANBAN(
+    IN _idProyecto INT
+)
+BEGIN
+    UPDATE ColumnaKanban SET activo = 0 WHERE idProyecto = _idProyecto;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA(
+    IN _idPlantillaKanban INT
+)
+BEGIN
+    SELECT nombre, posicion
+    FROM PlantillaKanbanColumnas
+    WHERE idPlantillaKanban = _idPlantillaKanban
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_KANBAN(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(500),
+    IN _posicion INT
+)
+BEGIN
+    DECLARE _idColumnaKanban INT;
+    -- Verificamos si el registro ya existe
+    SELECT idColumnaKanban INTO _idColumnaKanban
+    FROM ColumnaKanban
+    WHERE idProyecto = _idProyecto AND nombre = _nombre AND posicion = _posicion;
+    IF _idColumnaKanban IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE ColumnaKanban
+        SET activo = 1
+        WHERE idColumnaKanban = _idColumnaKanban;
+    ELSE
+        INSERT INTO ColumnaKanban(idProyecto,nombre,posicion,activo) 
+        VALUES(_idProyecto,_nombre,_posicion,1);
+    END IF;
 END$

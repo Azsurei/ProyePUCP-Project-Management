@@ -55,8 +55,32 @@ async function eliminarPlantillaKanban(req, res, next) {
     }
 }
 
+async function seleccionarPlantillaKanban(req, res, next) {
+    const {idProyecto,idPlantillaKanban} = req.body;
+    const query = `CALL LIMPIAR_KANBAN_PLANTILLA_KANBAN(?);`;
+    const query1 = `CALL LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA(?);`;
+    const query2 = `CALL INSERTAR_CAMPOS_PLANTILLA_KANBAN(?,?,?);`;
+    try {
+        //Primero eliminamos todos los campos de la actual plantilla de Kanban
+        await connection.query(query, [idProyecto]);
+        //Listamos los nuevos campos
+        const [results1] = await connection.query(query1, [idPlantillaKanban]);
+        let camposKanban = results1[0];
+        //Insertamos los nuevos campos al Kanban
+        for(let campoKanban of camposKanban){
+            await connection.query(query2, [idProyecto, campoKanban.nombre, campoKanban.posicion]);
+        }
+        res.status(200).json({
+            message: `Se activó la plantilla ${idPlantillaKanban} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     guardarPlantillaKanban,
     listarPlantillasKanban,
-    eliminarPlantillaKanban
+    eliminarPlantillaKanban,
+    seleccionarPlantillaKanban
 };
