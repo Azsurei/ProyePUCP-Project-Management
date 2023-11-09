@@ -1294,3 +1294,20 @@ CREATE TABLE EntregableXResponsabilidadRol(
 
 )
 ENGINE = InnoDB;
+
+#####################################
+### REPORTE
+#####################################
+
+DROP TABLE IF EXISTS ReporteXProyecto;
+CREATE TABLE ReporteXProyecto(
+    idReporteXProyecto INT AUTO_INCREMENT PRIMARY KEY,
+    idProyecto INT,
+    idHerramienta INT,
+    nombre VARCHAR(255),
+    fechaCreacion DATE,
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idProyecto) REFERENCES Proyecto(idProyecto),
+    FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
+)
+ENGINE = InnoDB;
