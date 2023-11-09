@@ -4071,3 +4071,38 @@ BEGIN
     UPDATE PlantillaActaConstitucion SET activo = 0 WHERE idPlantillaAC = _idPlantillaAC;
     UPDATE PlantillaACTipoDato SET activo = 0 WHERE idPlantillaAC = _idPlantillaAC;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(
+    IN _idPlantillaAC INT
+)
+BEGIN
+    SELECT nombre
+    FROM PlantillaACTipoDato
+    WHERE idPlantillaAC = _idPlantillaAC
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(
+    IN _idActaConstitucion INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+    DECLARE _idDetalle INT;
+    -- Verificamos si el registro ya existe
+    SELECT idDetalle INTO _idDetalle
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion AND nombre = _nombre;
+    IF _idDetalle IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE DetalleAC
+        SET activo = 1
+        WHERE idDetalle = _idDetalle;
+    ELSE
+        INSERT INTO DetalleAC(idActaConstitucion,nombre,activo) 
+        VALUES(_idActaConstitucion,_nombre,1);
+    END IF;
+END$

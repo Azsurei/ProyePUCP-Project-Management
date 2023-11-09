@@ -55,8 +55,31 @@ async function eliminarPlantillaAC(req, res, next) {
     }
 }
 
+async function seleccionarPlantillaAC(req, res, next) {
+    const {idActaConstitucion,idPlantillaAC} = req.body;
+    const query = `CALL LIMPIAR_DETALLEAC_PLANTILLA_ACTACONSTITUCION(?);`;
+    const query1 = `CALL LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(?);`;
+    const query2 = `CALL INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(?,?);`;
+    try {
+        //Primero eliminamos todos los campos de la actual plantilla de Acta de Constitucion
+        await connection.query(query, [idActaConstitucion]);
+        //Listamos los nuevos campos
+        const [results1] = await connection.query(query1, [idPlantillaAC]);
+        let camposAC = results1[0];
+        //Insertamos los nuevos campos a la acta
+        for(let campoAC of camposAC){
+            await connection.query(query2, [idActaConstitucion, campoAC.nombre]);
+        }
+        res.status(200).json({
+            message: `Se activó la plantilla ${idPlantillaAC} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
     guardarPlantillaAC,
     listarPlantillasAC,
-    eliminarPlantillaAC
+    eliminarPlantillaAC,
+    seleccionarPlantillaAC
 };
