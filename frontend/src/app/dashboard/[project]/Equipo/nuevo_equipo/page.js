@@ -29,7 +29,9 @@ axios.defaults.withCredentials = true;
 
 export default function crear_equipo(props) {
     const router = useRouter();
-
+    const [leaderRoleId, setLeaderRoleId] = useState(null);
+    const [leaderRole, setLeaderRole] = useState(null);
+    const [memberRoleId, setMemberRoleId] = useState(null);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -61,7 +63,8 @@ export default function crear_equipo(props) {
     const [reloadData, setReloadData] = useState(false);
 
     const [rol, setRol] = useState({}); //Define un estado para almacenar el rol seleccionado [idRolEquipo
-    const [roles, setRoles] = useState([{ idRol: 2, nombreRol: "Miembro" }]); //Define un estado para almacenar los roles disponibles
+    const [roles, setRoles] = useState([]); //Define un estado para almacenar los roles disponibles
+    const [rolesOriginales, setRolesOriginales] = useState([]); //Define un estado para almacenar los roles disponibles
 
     const [idEquipoInsertado, setIdEquipoInsertado] = useState("");
 
@@ -127,6 +130,45 @@ export default function crear_equipo(props) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        axios
+            .get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/equipo/listarRol/${projectId}`
+            )
+            .then((response) => {
+                // Aquí puedes manejar la respuesta de la petición
+                console.log(
+                    "Respuesta de la petición de roles:",
+                    response.data
+                );
+                // Filtra los roles para excluir el rol "Líder"
+                const filteredRoles = response.data.roles.filter(
+                    (role) => role.nombreRol !== "Líder"
+                );
+
+                setRoles(filteredRoles);
+                setRolesOriginales(response.data.roles);
+                // Busca el ID del líder y el miembro en la respuesta
+                const rolesResponse = response.data.roles;
+                const leaderRole = rolesResponse.find(
+                    (role) => role.nombreRol === "Líder"
+                );
+                const memberRole = rolesResponse.find(
+                    (role) => role.nombreRol === "Miembro"
+                );
+
+                if (leaderRole) {
+                    setLeaderRole(leaderRole);
+                    setLeaderRoleId(leaderRole.idRolEquipo);
+                }
+                if (memberRole) {
+                    setMemberRoleId(memberRole.idRolEquipo);
+                }
+                // Puedes hacer lo que necesites con la respuesta, como asignarla a un estado o variable.
+            })
+            .catch(function (error) {
+                console.log("Error al cargar el rol del equipo: ", error);
+            });
         setIsLoading(false);
     }, []);
 
@@ -152,13 +194,13 @@ export default function crear_equipo(props) {
     const checkData = () => {
         const nombreTeam = teamName;
         const proyectoId = projectId;
-        const todosRoles = [{ idRol: 1, nombreRol: "Líder" }, ...roles];
+        const updatedRoles = [...roles, leaderRole];
         let todosUserRoleData;
         if (selectedUniqueMemberList.length !== 0) {
             todosUserRoleData = [
                 {
                     idUsuario: selectedUniqueMemberList[0].idUsuario,
-                    idRolEquipo: 1,
+                    idRolEquipo: leaderRoleId,
                 },
                 ...userRoleData,
             ];
@@ -169,8 +211,9 @@ export default function crear_equipo(props) {
         console.log("Post data: ", {
             idProyecto: parseInt(proyectoId),
             nombre: nombreTeam,
-            roles: todosRoles,
-            userRoleData: todosUserRoleData,
+            roles: updatedRoles,
+            usuariosXRol: todosUserRoleData,
+            rolesOriginales: rolesOriginales,
         });
 
         axios
@@ -180,8 +223,9 @@ export default function crear_equipo(props) {
                 {
                     idProyecto: parseInt(proyectoId),
                     nombre: nombreTeam,
-                    roles: todosRoles,
+                    roles: updatedRoles,
                     usuariosXRol: todosUserRoleData,
+                    rolesOriginales: rolesOriginales,
                 }
             )
             .then(function (response) {
@@ -373,12 +417,12 @@ export default function crear_equipo(props) {
                                             setActiveDropdown(index);
                                         }}
                                         autoSelectedValue={{
-                                            idRol: 2,
+                                            idRolEquipo: memberRoleId,
                                             nombreRol: "Miembro",
                                         }}
                                     >
                                         {handleAutoSelectedValueChangeRol(
-                                            2,
+                                            memberRoleId,
                                             component.idUsuario
                                         )}
                                     </ComboBoxArray>
@@ -450,6 +494,7 @@ export default function crear_equipo(props) {
                     toggle={() => toggleModal()} // Pasa la función como una función de flecha
                     handleAddRoles={handleAddRoles}
                     initialListRoles={roles}
+                    rolesOriginales={rolesOriginales}
                 />
             )}
             {modal1 && (

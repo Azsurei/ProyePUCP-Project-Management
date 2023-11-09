@@ -13,7 +13,7 @@ export default function PopUpRolEquipo({
     toggle,
     handleAddRoles,
     initialListRoles,
-    participantes,
+    ListComps,
 }) {
     const [listRoles, setListRoles] = useState(initialListRoles);
     const [newRolName, setNewRolName] = useState("");
@@ -27,9 +27,9 @@ export default function PopUpRolEquipo({
     };
 
     const EliminateRoles = (rol) => {
-        const isRolInUse = participantes.some(
-            (participante) => participante.nombreRol === rol.nombreRol
-        );
+        const isRolInUse = ListComps.some((equipo) => {
+            return equipo.participantes.some((participante) => participante.nombreRol === rol.nombreRol);
+        });
         if (isRolInUse) {
             toast.error("No se puede eliminar el rol porque está en uso.");
         } else {
@@ -53,7 +53,7 @@ export default function PopUpRolEquipo({
                         <div className="buscarEpic">
                             Listado de Roles por Equipo
                         </div>
-                        <div className="flex w-full gap-2 mt-2">
+                        <div className="flex w-full gap-2 mt-2 items-center">
                             {/*No modifiques este boton, ya esta bien*/}
                             <Input
                                 variant="bordered"
@@ -86,9 +86,6 @@ export default function PopUpRolEquipo({
                                         do {
                                             newIdRol = generateId();
                                         } while (
-                                            participantes.some(
-                                                (participante) => participante.idRolEquipo === newIdRol
-                                            ) || 
                                             listRoles.some(
                                                 (rol) => rol.idRolEquipo === newIdRol
                                             )

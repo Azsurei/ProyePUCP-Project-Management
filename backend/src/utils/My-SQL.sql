@@ -1280,3 +1280,17 @@ CREATE TABLE ResponsabilidadRol(
 
 )
 ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS EntregableXResponsabilidadRol;
+CREATE TABLE EntregableXResponsabilidadRol(
+    idEntregableXResponsabilidadXRol INT AUTO_INCREMENT PRIMARY KEY,
+    idEntregable INT,
+    idResponsabilidadRol INT,
+    idRol INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idEntregable) REFERENCES Entregable (idEntregable),
+    FOREIGN KEY(idRol) REFERENCES RolEquipo (idRolEquipo),
+    FOREIGN KEY(idResponsabilidadRol) REFERENCES ResponsabilidadRol (idResponsabilidadRol)
+
+)
+ENGINE = InnoDB;

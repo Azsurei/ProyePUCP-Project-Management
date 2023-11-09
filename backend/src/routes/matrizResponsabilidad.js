@@ -5,5 +5,10 @@ const matrizResponsabilidadController = require("../controllers/matrizResponsabi
 
 routerMatrizResponsabilidad.get("/listarResponsabilidad/:idProyecto",matrizResponsabilidadController.listarResponsabilidad);
 routerMatrizResponsabilidad.get("/listarRol/:idProyecto",matrizResponsabilidadController.listarRol);
+routerMatrizResponsabilidad.get("/listarEntregables/:idProyecto",matrizResponsabilidadController.listarEntregables);
+
+routerMatrizResponsabilidad.put("/actualizarEntregables",matrizResponsabilidadController.actualizarEntregables);
+routerMatrizResponsabilidad.post("/insertarEntregableXResponsabilidadXRol",matrizResponsabilidadController.insertarEntregableXResponsabilidadXRol);
+routerMatrizResponsabilidad.get("/listarEntregablesXProyecto/:idProyecto",matrizResponsabilidadController.listarEntregablesXProyecto);
 
 module.exports.routerMatrizResponsabilidad = routerMatrizResponsabilidad;

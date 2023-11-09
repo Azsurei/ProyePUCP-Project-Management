@@ -33,6 +33,8 @@ import { flushSync } from "react-dom";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { set } from "date-fns";
 import { SessionContext } from "../../../layout";
+import { HerramientasInfo } from "../../layout";
+
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
 
@@ -126,6 +128,7 @@ export default function Info(props) {
 
 
 
+
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     // Manejando la carga de la lista de detalles de acta de constitucion
@@ -172,6 +175,7 @@ export default function Info(props) {
             .get(listURL)
             .then((response) => {
                 console.log(response.data.detalleAC);
+                setIdActa(response.data.detalleAC.general[0].idActaConstitucion);
                 setDetails(response.data.detalleAC.actaData);
                 setDetailsEdited(response.data.detalleAC.actaData);
                 setIsLoadingSmall(false);
@@ -229,6 +233,12 @@ export default function Info(props) {
     const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
     const [IdUsuario, setIdUsuario] = useState("");
 
+    //Obtener idHerramienta AC
+    const {herramientasInfo} = useContext(HerramientasInfo);
+    const [IdActa,setIdActa]= useState("");
+
+
+
     //obtener idUsuario
     const {sessionData} = useContext(SessionContext);
     useEffect(() => {
@@ -244,15 +254,12 @@ export default function Info(props) {
             process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/guardarPlantilla";
         axios
             .put(updateURL, {
-                //Se guardar los nombres en la Tabla: PlantillaACDato
-                //Tambien se deberia guardar el Nombre de la Plantilla
-                actaData: detailEdited,
                 nombrePlantilla: nombrePlantilla,
                 idUsuario: IdUsuario,
+                idActaConstitucion: IdActa,
             })
             .then((response) => {
                 console.log(response.data.message);
-                setDetails([...detailEdited]);
                 setEditActive(false);
                 resolve(response);
 
@@ -271,7 +278,6 @@ export default function Info(props) {
             toast.promise(savePlantilla, {
                 loading: "Guardando Plantilla Nueva...",
                 success: (data) => {
-                    DataTable();
                     return "La plantilla se agregó con éxito!";
                     
                 },
@@ -388,7 +394,6 @@ export default function Info(props) {
                 console.log(error);
             });
     };
-
 
 
     return (

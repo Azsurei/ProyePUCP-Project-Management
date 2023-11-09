@@ -1,7 +1,9 @@
 "use client";
+import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/Equipo.css";
 import "@/styles/dashboardStyles/projectStyles/EquipoStyles/CrearEquipo.css";
 import React, { useEffect, useState } from "react";
+axios.defaults.withCredentials = true;
 import {
     Avatar,
     Progress,
@@ -15,7 +17,7 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 
-const CardEquipo = ({ team, handleSeeTeam }) => {
+const CardEquipo = ({ team, handleSeeTeam, removeTeam }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const totalTareas =
@@ -48,6 +50,27 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
 
     const eliminarEquipo = () => {
         console.log("Eliminar equipo con id", team.idEquipo);
+        const equipoId = team.idEquipo;
+        axios
+            .delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/equipo/eliminarEquipo",
+                {
+                    data: { idEquipo: equipoId },
+                }
+            )
+            .then(function (response) {
+                console.log(response.data.message);
+                console.log(
+                    `Equipo con ID ${equipoId} eliminado correctamente.`
+                );
+                removeTeam(team);
+                // Puedes realizar otras acciones después de eliminar el equipo si es necesario.
+            })
+            .catch(function (error) {
+                console.log(error);
+                console.log(`Error al eliminar el equipo con ID ${equipoId}`);
+            });
     };
 
     return (
@@ -65,7 +88,7 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                         src="/icons/icon-trash.svg"
                         alt="delete"
                         className="mb-4 cursor-pointer opacity-0 group-hover:opacity-50 hover:group-hover:opacity-100"
-                        onClick={(e)=>{
+                        onClick={(e) => {
                             e.stopPropagation();
                             onOpen();
                         }}
@@ -132,7 +155,11 @@ const CardEquipo = ({ team, handleSeeTeam }) => {
                             : 0) + "%"}
                     </p>
                 </div>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+                <Modal
+                    isOpen={isOpen}
+                    onOpenChange={onOpenChange}
+                    isDismissable={false}
+                >
                     <ModalContent>
                         {(onClose) => (
                             <>

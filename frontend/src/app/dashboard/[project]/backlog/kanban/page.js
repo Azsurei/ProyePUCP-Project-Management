@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import NavigationTab from "@/components/NavigationTab";
 import KanbanBoard from "@/components/dashboardComps/projectComps/kanbanComps/KanbanBoard";
 
+
 export default function Kanban(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -17,5 +18,12 @@ export default function Kanban(props) {
         setIsLoadingSmall(false);
     }, []);
 
-    return <KanbanBoard projectId={projectId}></KanbanBoard>;
+    return (
+    
+    
+    <KanbanBoard projectId={projectId}></KanbanBoard>
+    
+    
+    
+    );
 }

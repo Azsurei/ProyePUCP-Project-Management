@@ -25,7 +25,7 @@ import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps
 import { TopicEditableList } from "@/components/dashboardComps/projectComps/actaReunionComps/TopicsEditableList";
 
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
+import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import { is } from "date-fns/locale";
 
 axios.defaults.withCredentials = true;

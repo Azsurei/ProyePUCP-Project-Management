@@ -34,7 +34,7 @@ export default function ComboBoxArray({
                 onChange={(selectedItem) => {
                     setSelectedPerson(selectedItem);
                     if (typeof onSelect === "function") {
-                        onSelect(selectedItem.idRol);
+                        onSelect(selectedItem.idRolEquipo);
                     }
                 }}
             >

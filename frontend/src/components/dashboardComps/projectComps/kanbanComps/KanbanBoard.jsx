@@ -19,9 +19,11 @@ import ModalTaskView from "./ModalTaskView";
 import { useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
 import ModalNewTask from "./ModalNewTask";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 
 export default function KanbanBoard({ projectId }) {
+    const router = useRouter();
     const [stateWhatsHappening, setStateWhatsHappening] = useState("");
 
     const {
@@ -119,6 +121,7 @@ export default function KanbanBoard({ projectId }) {
     }, []);
 
     return (
+        
         <div
             className="
             generalKanbanCompCont
@@ -252,6 +255,10 @@ export default function KanbanBoard({ projectId }) {
                 isOpen={isOpenViewTask}
                 onOpenChange={onOpenChangeViewTask}
                 currentTask={currentTaskViewing}
+                goToTaskDetail={(idTarea) => {
+                    console.log("redireccionando a tarea");
+                    router.push("/dashboard");
+                }}
             />
 
             <ModalNewTask
@@ -355,7 +362,6 @@ export default function KanbanBoard({ projectId }) {
                                 ...response.data.data.columnas,
                             ]);
 
-                            
                             function compareKanbanElements(a, b) {
                                 if (a.idColumnaKanban < b.idColumnaKanban) {
                                     return -1;

@@ -15,7 +15,7 @@ async function listarResponsabilidad(req,res,next){
 
 async function listarRol(req, res, next) {
     const { idProyecto } = req.params;
-    const query = `CALL LISTAR_ROL_EQUIPO(?);`;
+    const query = `CALL LISTAR_ROL_EQUIPO_MATRIZRESPONSABILIDAD(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
         const roles = results[0];
@@ -29,7 +29,77 @@ async function listarRol(req, res, next) {
     }
 }
 
+async function listarEntregables(req, res, next) {
+    const { idProyecto } = req.params;
+    const query = `CALL LISTAR_ENTREGABLE_X_IDPROYECTO(?);`;
+    try {
+        const [results] = await connection.query(query, [idProyecto]);
+        const entregables = results[0];
+        console.log(`Se listaron los entregables del proyecto ${idProyecto}!`);
+        res.status(200).json({
+            entregables,
+            message: "Entregables listados exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function insertarEntregableXResponsabilidadXRol(req, res, next) {
+    const { celdasInsertar } = req.body;
+    const query = `CALL INSERTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?,?,?);`;
+    try {
+        for(let celdaInsertar of celdasInsertar){
+            const [results] = await connection.query(query, [celdaInsertar.idEntregable, celdaInsertar.idResponsabilidad, celdaInsertar.idRol]);
+            const idEntregableXResponsabilidadXRol = results[0][0].idEntregableXResponsabilidadXRol;
+        }
+        res.status(200).json({
+            message: "Se insertó exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarEntregablesXProyecto(req, res, next) {
+    const { idProyecto } = req.params;
+    const query = `CALL LISTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?);`;
+    try {
+        const [results] = await connection.query(query, [idProyecto]);
+        const entregables = results[0];
+        res.status(200).json({
+            entregables,
+            message: "Se insertó exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function actualizarEntregables(req, res, next) {
+    const { modifiedExistingCells } = req.body;
+    const query = `CALL ACTUALIZAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(?,?,?,?);`;
+    console.log("Las celdas modificados son:",modifiedExistingCells);
+    try {
+        for(let celdaAModificar of modifiedExistingCells){
+            const [results] = await connection.query(query, [celdaAModificar.idEntregableXResponsabilidadXRol, celdaAModificar.idEntregable,
+                celdaAModificar.idResponsabilidad, celdaAModificar.idRol]);
+        }
+        res.status(200).json({
+            message: "Se modificó exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 module.exports = {
     listarResponsabilidad,
-    listarRol
+    listarRol,
+    listarEntregables,
+    insertarEntregableXResponsabilidadXRol,
+    actualizarEntregables,
+    listarEntregablesXProyecto
 };
