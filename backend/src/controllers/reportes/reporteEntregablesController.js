@@ -59,6 +59,12 @@ async function generarReporteEntregables(req, res, next) {
     }
 }
 
+async function guardarReporteEntregable(req, res, next) {
+    const { idEntregable } = req.body;
+    console.log(req.body);
+
+}
+
 module.exports = {
-    generarReporteEntregables,
+    
 };

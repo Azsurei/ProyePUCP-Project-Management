@@ -14,7 +14,7 @@ const routerActaReunion = require('./actaReunion').routerActaReunion;
 const routerKanban = require("./kanban").routerKanban;
 const routerCatalogoInteresados = require('./catalogoInteresados').routerCatalogoInteresados;
 const routerRetrospectiva = require("./retrospectiva").routerRetrospectiva;
-const routerReportes = require("./reportes").routerReportes;
+
 const routerProyecto = express.Router();
 const routerMatrizResponsabilidad = require('./matrizResponsabilidad').routerMatrizResponsabilidad;
 
@@ -38,7 +38,7 @@ routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 //sobre Reportes
-routerProyecto.use("/reportes", routerReportes);
+//routerProyecto.use("/reportes", routerReportes);
 
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {

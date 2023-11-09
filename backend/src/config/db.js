@@ -1,10 +1,11 @@
 const mysql = require('mysql');
 
+
 const pool = mysql.createPool({
-  host: "dbdibujitos.cvqtg3vqsovm.us-east-1.rds.amazonaws.com",
+  host: process.env.DB_HOST,
   port: "3306",
   user: "admin",
-  password: "pywxuk-baWqoh-bibvu4",
+  password: process.env.DB_PASSWORD,
   database: "dbdibujitos",
   connectTimeout: 3600000 * 8
 });

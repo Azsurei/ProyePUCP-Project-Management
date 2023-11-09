@@ -3932,3 +3932,15 @@ BEGIN
     FROM ResponsabilidadRol
     WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
 END$
+
+--------------------------------------------------
+-- Moneda
+--------------------------------------------------
+DROP PROCEDURE IF EXISTS ACTUALIZAR_TIPO_CAMBIO;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_TIPO_CAMBIO(
+    IN _cambioUSD2PEN DECIMAL(10,2)
+)
+BEGIN
+    UPDATE Moneda SET TipoCambio = _cambioUSD2PEN WHERE idMoneda = 1 AND activo =1;
+END$
