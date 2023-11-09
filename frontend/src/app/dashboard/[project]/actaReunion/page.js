@@ -165,31 +165,42 @@ export default function ActaReunion(props) {
                 Acta de Reunión
             </HeaderWithButtons>
 
-            <Tabs aria-label="Options" radius="full" color="warning">
-                <Tab key="pending" title="Pendientes" className="montserrat text-blue-900">
-                    {reuniones.pendientes && reuniones.pendientes.length > 0 ? (
-                        reuniones.pendientes.map(renderCard)
-                    ) : (
-                        <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={1} />
-                            <MissingEDTComponents />
-                            <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
-                        </div>
-                    )}
-                </Tab>
-                <Tab key="finished" title="Finalizados" className="montserrat text-blue-900">
-                    {reuniones.finalizadas && reuniones.finalizadas.length > 0 ? (
-                        reuniones.finalizadas.map(renderCard)
-                    ) : (
-                        <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={1} />
-                            <MissingEDTComponents />
-                            <p>No hay reuniones finalizadas</p>
-                        </div>
-                    )}
-                </Tab>
-            </Tabs>
-
+            {
+                reuniones && reuniones.pendientes && reuniones.finalizadas ? (
+                    <div>
+                        <Tabs aria-label="Options" radius="full" color="warning">
+                            <Tab key="pending" title="Pendientes" className="montserrat text-blue-900">
+                                {reuniones.pendientes.length > 0 ? (
+                                    reuniones.pendientes.map(renderCard)
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center">
+                                        <Spacer y={1} />
+                                        <MissingEDTComponents />
+                                        <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
+                                    </div>
+                                )}
+                            </Tab>
+                            <Tab key="finished" title="Finalizados" className="montserrat text-blue-900">
+                                {reuniones.finalizadas.length > 0 ? (
+                                    reuniones.finalizadas.map(renderCard)
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center">
+                                        <Spacer y={1} />
+                                        <MissingEDTComponents />
+                                        <p>No hay reuniones finalizadas</p>
+                                    </div>
+                                )}
+                            </Tab>
+                        </Tabs>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center">
+                        <Spacer y={1} />
+                        <MissingEDTComponents />
+                        <p>No hay reuniones programadas</p>
+                    </div>
+                )
+            }
         </div>
     );
 }

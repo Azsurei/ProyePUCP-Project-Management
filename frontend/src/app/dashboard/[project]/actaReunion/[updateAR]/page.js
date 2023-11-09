@@ -813,7 +813,8 @@ export default function editarActaReunion(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     saveMeetingChanges();
-                                    router.push(actualHref);
+                                    router.refresh();
+                                    router.push('/dashboard/' + projectName+'='+projectId + '/actaReunion');
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
