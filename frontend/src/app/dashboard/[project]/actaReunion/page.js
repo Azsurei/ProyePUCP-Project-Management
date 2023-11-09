@@ -115,10 +115,8 @@ export default function ActaReunion(props) {
                             <p className="text-gray-700 montserrat">Fecha: {new Date(reunion.fechaReunion).toLocaleDateString()}</p>
                             <p className="text-gray-700 montserrat">Hora: {reunion.horaReunion.slice(0, 5)}</p>
                         </div>
+                        <div className="flex text-gray-700 montserrat">Convocados :</div>
                         {participantes.length > 0 && (
-                            <div>
-                                <Divider orientation="vertical" />
-                                <div className="flex text-gray-700 montserrat">Convocados :   </div>
                                 <AvatarGroup isBordered max={3} >
                                     {participantes.map((participante, index) => (
                                         <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
@@ -128,23 +126,21 @@ export default function ActaReunion(props) {
                                         } />
                                     ))}
                                 </AvatarGroup>
-                                <Divider orientation="vertical" />
-                                <div className="flex flex-col space-y-2 mt-0.5">
-                                    <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
-                                    <Modal
-                                        nameButton="Eliminar"
-                                        textHeader="Eliminar reunion"
-                                        textBody="¿Seguro que quiere eliminar esta reunion?"
-                                        colorButton="w-36 bg-red-600 text-white font-semibold"
-                                        oneButton={false}
-                                        secondAction={() => {
-                                            handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
-                                        }}
-                                        textColor="red"
-                                    />
-                                </div>
-                            </div>
                         )}
+                        <div className="flex flex-col space-y-2 mt-0.5">
+                            <Button className="w-36 bg-blue-900 text-white font-semibold" onClick={() => handleEdit(reunion)}>Editar</Button>
+                            <Modal
+                                nameButton="Eliminar"
+                                textHeader="Eliminar reunion"
+                                textBody="¿Seguro que quiere eliminar esta reunion?"
+                                colorButton="w-36 bg-red-600 text-white font-semibold"
+                                oneButton={false}
+                                secondAction={() => {
+                                    handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
+                                }}
+                                textColor="red"
+                            />
+                        </div>
                     </CardBody>
                 </Card>
 
@@ -162,10 +158,7 @@ export default function ActaReunion(props) {
                 haveReturn={true}
                 haveAddNew={true}
                 hrefToReturn={actualHref}
-                hrefForButton={{
-                    pathname:newHref,
-                    query: {previousUrl: actualHref},
-                }}
+                hrefForButton={newHref}
                 breadcrump={`Inicio / Proyectos / ${projectName} / Acta de Reunión`}
                 btnText={'+ Agregar reunión'}
             >

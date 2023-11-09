@@ -8,11 +8,13 @@ import {
   ModalHeader,
   Button,
 } from "@nextui-org/react";
+import { id } from "date-fns/locale";
 
 export default function ModalPlantilla({
   isOpen,
   onClose,
   onPlantillaSelect, // La función de devolución de llamada para la selección de plantilla
+  idUsuario,
 }) {
   const [plantillas, setPlantillas] = useState([]);
   const [selectedPlantilla, setSelectedPlantilla] = useState(null);
@@ -21,10 +23,11 @@ export default function ModalPlantilla({
 
   const fetchPlantillas = async () => {
     try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND_URL +
-          "/api/proyecto/ActaConstitucion/listarPlantillas"
-      );
+      const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/'+idUsuario;
+      const response = await axios.get(url);
+
+      console.log("El id es:"+ idUsuario);
+
       setPlantillas(response.data);
     } catch (error) {
       console.error("Error al obtener las plantillas:", error);
@@ -62,13 +65,13 @@ export default function ModalPlantilla({
           <div className="modal-body">
             <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
             <ul>
-              {plantillas.map((plantilla) => (
+              {/* {plantillas.map((plantilla) => (
                 <li key={plantilla.id}>
                   <button onClick={() => selectPlantilla(plantilla)}>
                     {plantilla.nombre}
                   </button>
                 </li>
-              ))}
+              ))} */}
             </ul>
           </div>
 

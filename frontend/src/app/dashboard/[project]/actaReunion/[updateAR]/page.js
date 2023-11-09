@@ -50,7 +50,6 @@ export default function editarActaReunion(props) {
 
 // Loading Window
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    setIsLoadingSmall(false);
 
 // Edit Mode: False for See Meeting, True for Edit Meeting
     const [isEditMode, setIsEditMode] = useState(true);
@@ -228,9 +227,10 @@ export default function editarActaReunion(props) {
 
             if(actaReunion.lineaActaReunion.comentarios) {
                 const comentariosConData = 
-                    actaReunion.lineaActaReunion.comentarios.map(({ descripcion, ...comentario }) => ({
-                        ...comentario, 
-                        data: descripcion, 
+                    actaReunion.lineaActaReunion.comentarios.map((comentario, index) => ({
+                        ...comentario,
+                        index: index + 1,
+                        data: comentario.descripcion,
                 }));
                 setListComentarios(comentariosConData);
             }     
@@ -255,11 +255,13 @@ export default function editarActaReunion(props) {
         const temasActualizados = [...listTemas];
         console.log("listTemas");
         console.log(listTemas);
+        console.log("index");
+        console.log(indexTema);
         console.log("Temas debug");
-        console.log(temasActualizados[indexTema]);
+        console.log(temasActualizados[indexTema - 1]);
         console.log("Nuevos acuerdos");
         console.log(nuevosAcuerdos);
-        temasActualizados[indexTema].acuerdos = nuevosAcuerdos;
+        temasActualizados[indexTema - 1].acuerdos = nuevosAcuerdos;
         setListTemas(temasActualizados);
         setHasChanges(true);
     };
@@ -286,6 +288,10 @@ export default function editarActaReunion(props) {
 
     const handleChangeComentario = (e, index) => {
         const updatedEntregables = [...listComentarios];
+        console.log('Lista de comentarios a cambiar');
+        console.log(listComentarios);
+        console.log('Indice', index - 1);
+
         updatedEntregables[index - 1].data = e.target.value;
         console.log("Comentario cambiado", updatedEntregables);
         setListComentarios(updatedEntregables);

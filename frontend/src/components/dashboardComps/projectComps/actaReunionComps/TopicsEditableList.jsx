@@ -32,7 +32,7 @@ function EditableTopic(props) {
                 responsables: [],
             }
         ];
-        props.updateAcuerdos(nuevosAcuerdos);
+        props.updateAcuerdos(props.number, nuevosAcuerdos);
     };
 
     const handleChangeAcuerdo = (e, index) => {
@@ -42,7 +42,7 @@ function EditableTopic(props) {
             }
             return acuerdo;
         });
-        props.updateAcuerdos(index, updatedAcuerdos);
+        props.updateAcuerdos(props.number, updatedAcuerdos);
     };
 
     const handleRemoveAcuerdo = (indexToRemove) => {
@@ -57,7 +57,7 @@ function EditableTopic(props) {
             }
             return acuerdo;
         });
-        props.updateAcuerdos(index, updatedAcuerdos);
+        props.updateAcuerdos(props.number, updatedAcuerdos);
     };
 
     const handleDateChange = (e, index) => {
@@ -68,7 +68,7 @@ function EditableTopic(props) {
             }
             return acuerdo;
         });
-        props.updateAcuerdos(index, updatedAcuerdos);
+        props.updateAcuerdos(props.number, updatedAcuerdos);
     };
 
     return (
@@ -165,8 +165,11 @@ export function TopicEditableList(props) {
     // Sort the list based on the item.data property
     const sortedListInputs = [...props.ListInputs].sort((a, b) => {
         // Assuming item.data is a string
-        return a.data.localeCompare(b.data);
+        return a.idTemaReunion > b.idTemaReunion;
     });
+
+    console.log('TopicEditableList');
+    console.log(props);
 
     return (
         <ul className="ListEditableInput">

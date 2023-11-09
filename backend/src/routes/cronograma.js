@@ -26,4 +26,14 @@ routerCronograma.get("/listarEntregablesXidProyecto/:idProyecto", cronogramaCont
 
 routerCronograma.delete("/eliminarTarea", tareaController.eliminarTarea);
 
+
+//Registro Progreso Tarea
+routerCronograma.post("/registrarProgresoTarea", tareaController.registrarProgreso);
+
+
+//Listado con progresos asociados
+routerCronograma.get("/listarTareasXidProyectoConProgresosDetallados/:idProyecto", tareaController.listarXIdProyectoConProgresos);
+
+
+
 module.exports.routerCronograma = routerCronograma;

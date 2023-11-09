@@ -34,6 +34,8 @@ import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { set } from "date-fns";
 import { SessionContext } from "../../../layout";
 import { HerramientasInfo } from "../../layout";
+import { useRouter } from "next/navigation";
+
 
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
@@ -124,7 +126,11 @@ export default function Info(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const router = useRouter();
 
+    const handleRecargarPagina = () => {
+      router.reload();
+    };
 
 
 
@@ -166,15 +172,14 @@ export default function Info(props) {
     } = useDisclosure();
 
 
-    useEffect(() => {
+    const actualizarListado = () => {
         setIsLoadingSmall(true);
         const listURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/listarActaConstitucion/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/ActaConstitucion/listarActaConstitucion/" +
             projectId;
         axios
             .get(listURL)
             .then((response) => {
-                console.log(response.data.detalleAC);
                 setIdActa(response.data.detalleAC.general[0].idActaConstitucion);
                 setDetails(response.data.detalleAC.actaData);
                 setDetailsEdited(response.data.detalleAC.actaData);
@@ -183,7 +188,16 @@ export default function Info(props) {
             .catch(function (error) {
                 console.log(error);
             });
+    };
+    
+    useEffect(() => {
+        actualizarListado();
     }, []);
+    
+
+    const updateListado = () => {
+        actualizarListado();
+    };
 
     const handleCancelEdit = () => {
         //reestablecemos el arreglo con lo que estaba originalmente en el arreglo del fetch
@@ -221,13 +235,10 @@ export default function Info(props) {
 
     //Guardar Plantilla de AC
 
-    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // La función que recibiría la plantilla seleccionada
-    const handlePlantillaSelection = (plantilla) => {
-      setSelectedPlantilla(plantilla);
-    };
+
     
     const [nombrePlantilla, setNombrePlantilla] = useState("");
     const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
@@ -243,7 +254,7 @@ export default function Info(props) {
     const {sessionData} = useContext(SessionContext);
     useEffect(() => {
         setIdUsuario(sessionData.idUsuario);
-    }, []);
+      }, [sessionData.idUsuario]);
 
     const savePlantilla = () => {
 
@@ -251,15 +262,14 @@ export default function Info(props) {
         //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
         setIsLoadingSmall(true);
         const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/guardarPlantilla";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/plantillas/guardarPlantillaAC";
         axios
-            .put(updateURL, {
+            .post(updateURL, {
                 nombrePlantilla: nombrePlantilla,
                 idUsuario: IdUsuario,
                 idActaConstitucion: IdActa,
             })
             .then((response) => {
-                console.log(response.data.message);
                 setEditActive(false);
                 resolve(response);
 
@@ -290,6 +300,50 @@ export default function Info(props) {
         } 
     };
 
+    const usarPlantilla = async () => {
+        try {
+            toast.promise(usePlantillaAC, {
+                loading: "Cargando Plantilla...",
+                success: (data) => {
+                    return "La plantilla se cargó con éxito!";
+                    
+                },
+                error: "Error al usar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        } 
+    };
+
+    const usePlantillaAC = () => {
+        return new Promise((resolve, reject) => {
+            setIsLoadingSmall(true);
+    
+            const updateData = {
+                idActaConstitucion: IdActa,
+                idPlantillaAC: selectedPlantilla.idPlantillaAC,
+                
+            };
+    
+            const updateURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/plantillas/seleccionarPlantillaAC";
+    
+            axios
+                .put(updateURL, updateData)
+                .then((response) => {
+                    setEditActive(false);
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                })
+                .finally(() => {
+                    setIsLoadingSmall(false);
+                });
+        });
+    };
 
     //Fin Plantilla AC
 
@@ -396,6 +450,47 @@ export default function Info(props) {
     };
 
 
+    const [plantillas, setPlantillas] = useState([]);
+    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
+    const [plantillaElegida, setPlantillaElegida] = useState(false);
+
+    const handlePlantillaClick = (plantilla) => {
+        setSelectedPlantilla(plantilla);
+        setPlantillaElegida(true);
+        setError(null);
+        console.log("Plantilla seleccionada:", plantilla.nombrePlantilla);
+
+      };
+
+
+    const fetchPlantillas = async () => {
+        try {
+          const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
+          const response = await axios.get(url);
+    
+          response.data.plantillasAC.forEach((plantilla) => {
+            console.log("Nombre de la plantilla:", plantilla.nombrePlantilla); // Accede a la propiedad 'nombre' (ajusta según la estructura de tus objetos)
+            // Agrega más líneas para acceder a otras propiedades si es necesario
+        });
+          setPlantillas(response.data.plantillasAC);
+        } catch (error) {
+          console.error("Error al obtener las plantillas:", error);
+        }
+      };
+    
+      useEffect(() => {
+        if (IdUsuario !== null) {
+          fetchPlantillas();
+        }
+      }, [IdUsuario]);
+
+      const [error, setError] = useState(null);
+
+
+
+
+
+
     return (
         <div className="ACInfoContainer">
             <Toaster 
@@ -500,15 +595,100 @@ export default function Info(props) {
             </Modal>
             }
 
-        <ModalPlantilla
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)} // Cierra el modal cuando sea necesario
-            onPlantillaSelect={(plantilla) => {
-            // Realiza acciones con la plantilla seleccionada
-            //usarPlantilla(plantilla);
-            console.log("Plantilla seleccionada:", plantilla);
+            
+            {<Modal size="lg" isOpen={isModalPlantillas} onOpenChange={onModalPlantillasChange}>
+            <ModalContent>
+            {(onClose) => {
+                const finalizarModalP = async () => {
+                    let Isvalid = true;
+
+                    if (selectedPlantilla === null) {
+                        setPlantillaElegida(false);
+                        Isvalid = false;
+                    }
+
+                    if(Isvalid === true){
+                        try {
+                            await usarPlantilla();
+                            //updateListado();
+                            setPlantillaElegida(false);
+                            console.log("Funcionaxd");
+                        } catch (error) {
+                            console.error('Error al Utilizar Plantilla:', error);
+                        }
+
+                        onClose();
+                    
+                    }
+                    else{
+                        setError("Seleccione una plantilla");
+                    }
+                };
+
+                return ( 
+                    <>
+        
+                <ModalHeader className="flex flex-col gap-1">
+                    Plantillas Acta de Constitución
+                </ModalHeader>
+                <ModalBody>
+                <div className="modal-body">
+                    
+                    <div style={{ marginBottom: '25px' }}>
+
+                    <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                    </div>
+                    <ul>
+                        {plantillas.map((plantilla) => (
+                            <li key={plantilla.id}>
+                            <div className={`cardPlantillaAC ${selectedPlantilla === plantilla ? 'selected' : ''}`}
+
+                                onClick={() => handlePlantillaClick(plantilla)}>
+                                {plantilla.nombrePlantilla}
+                                
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+        
+                </ModalBody>
+        
+                <ModalFooter>
+                <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+                {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
+        
+                </div>
+        
+                    <NextUIButton
+                        color="danger" variant="light" 
+            
+                        onClick={() => {
+                            onClose(); // Cierra el modal
+                            setSelectedPlantilla(null);
+                            setError(null); // Establece error en null para desactivar el mensaje de error
+            
+                        }}
+                        
+                        >
+                        Cancelar
+                    
+                    </NextUIButton>
+                    <NextUIButton
+                    color="primary"
+                    onClick={finalizarModalP}
+                    >
+                    Continuar
+                    </NextUIButton>
+                </ModalFooter>
+                </>
+            );
             }}
-        />
+        
+            </ModalContent>
+        
+            </Modal>
+            }
 
 
 
@@ -563,7 +743,7 @@ export default function Info(props) {
                         appearance="primary"
                         state="default"
                         spacing="compact"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={onModalPlantillas}
 
                     >
                         <div>
