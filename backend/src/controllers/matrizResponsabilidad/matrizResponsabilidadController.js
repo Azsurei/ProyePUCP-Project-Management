@@ -6,7 +6,7 @@ async function insertarResponsabilidad(req,res,next){
     try {
         const [results] = await connection.query(query,[idProyecto, letraRol, nombreRol, colorRol, descrpcionRol]);
         const idResponsabilidadRol = results[0][0].idResponsabilidadRol;
-        res.status(200).json({idResponsabilidadRol, message: "ResponsabilidadesRol insertado"});
+        res.status(200).json({idResponsabilidadRol, message: "ResponsabilidadRol insertado"});
     } catch (error) {
         console.log(error);
         next(error);
@@ -20,6 +20,18 @@ async function listarResponsabilidad(req,res,next){
         const [results] = await connection.query(query,[idProyecto]);
         const responsabilidadRol = results[0];
         res.status(200).json({responsabilidadRol, message: "ResponsabilidadesRol listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function eliminarResponsabilidad(req,res,next){
+    const{idResponsabilidadRol} = req.body;
+    const query = `CALL ELIMINAR_RESPONSABILIDADROL_X_ID(?);`;
+    try {
+        await connection.query(query,[idResponsabilidadRol]);
+        res.status(200).json({message: "ResponsabilidadeRol eliminado"});
     } catch (error) {
         console.log(error);
         next(error);
@@ -110,6 +122,7 @@ async function actualizarEntregables(req, res, next) {
 
 module.exports = {
     insertarResponsabilidad,
+    eliminarResponsabilidad,
     listarResponsabilidad,
     listarRol,
     listarEntregables,

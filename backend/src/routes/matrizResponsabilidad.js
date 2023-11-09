@@ -5,6 +5,7 @@ const matrizResponsabilidadController = require("../controllers/matrizResponsabi
 
 routerMatrizResponsabilidad.post("/insertarResponsabilidad",matrizResponsabilidadController.insertarResponsabilidad);
 routerMatrizResponsabilidad.get("/listarResponsabilidad/:idProyecto",matrizResponsabilidadController.listarResponsabilidad);
+routerMatrizResponsabilidad.delete("/eliminarResponsabilidad",matrizResponsabilidadController.eliminarResponsabilidad);
 routerMatrizResponsabilidad.get("/listarRol/:idProyecto",matrizResponsabilidadController.listarRol);
 routerMatrizResponsabilidad.get("/listarEntregables/:idProyecto",matrizResponsabilidadController.listarEntregables);
 

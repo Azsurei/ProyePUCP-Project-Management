@@ -4025,6 +4025,17 @@ BEGIN
     SELECT _idResponsabilidadRol AS idResponsabilidadRol;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_RESPONSABILIDADROL_X_ID(
+    IN _idResponsabilidadRol INT
+)
+BEGIN
+    UPDATE ResponsabilidadRol
+    SET activo = 0
+    WHERE idResponsabilidadRol = _idResponsabilidadRol;
+END$
+
 -----------------------
 -- Plantillas
 -----------------------
