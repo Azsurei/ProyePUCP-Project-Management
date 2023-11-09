@@ -7,3 +7,7 @@ Content-Type: application/json
   "idUsuario": 84,
   "nombrePlantilla": "test"
 }
+
+###
+GET http://localhost:8080/api/proyecto/plantillas/listarPlantillasAC/84 HTTP/1.1
+Content-Type: application/json

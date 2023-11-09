@@ -4021,7 +4021,7 @@ BEGIN
     DECLARE _idPlantillaAC INT;
     -- Primero creamos los datos iniciales de la plantilla
 	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla) 
-    VALUES(_idUsuario,1,_nombrePlantilla);
+    VALUES(_idUsuario,0,_nombrePlantilla);
     SET _idPlantillaAC = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaAC AS idPlantillaAC;
@@ -4047,5 +4047,16 @@ CREATE PROCEDURE INSERTAR_PLANTILLA_AC_TIPODATO(
 )
 BEGIN
     INSERT INTO PlantillaACTipoDato(idPlantillaAC, nombre, activo)
-    VALUES(_idPlantillaAC,_nombre, 1);
+    VALUES(_idPlantillaAC,_nombre, 0);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_ACTACONSTITUCION(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaActaConstitucion
+    WHERE idUsuario = _idUsuario;
 END$
