@@ -6,6 +6,7 @@ import { SmallLoadingScreen } from "../layout";
 import { useState, useEffect, useContext } from "react";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { CrossWhite } from "@/components/equipoComps/CrossWhite";
+import { AddIcon } from "@/components/equipoComps/AddIcon";
 import {
     Table,
     TableHeader,
@@ -458,6 +459,16 @@ export default function MatrizDeResponsabilidades(props) {
                                 </div>
                             </React.Fragment>
                         ))}
+                    </div>
+                    <div className="flex items-center justify-center">
+                        <Button
+                            color="warning"
+                            auto
+                            className="flex items-center justify-center gap-2 text-white text-[1.1rem]"
+                            startContent={<AddIcon />}
+                        >
+                            Agregar responsabilidad
+                        </Button>
                     </div>
                 </div>
             </div>
