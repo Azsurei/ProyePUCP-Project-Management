@@ -2931,7 +2931,7 @@ DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_X_IDRIESGO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RESPONSABLE_X_IDRIESGO(IN _idRiesgo INT)
 BEGIN
-    SELECT u.correoElectronico, u.idUsuario, u.apellidos, u.nombres
+    SELECT u.correoElectronico, u.idUsuario, u.apellidos, u.nombres, u.imgLink
 	FROM RiesgoXResponsable AS rr
     LEFT JOIN Usuario AS u ON rr.idResponsable = u.idUsuario
 	WHERE rr.idRiesgo = _idRiesgo AND rr.activo=1;
@@ -3913,11 +3913,11 @@ CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(
     IN _idMatrizResponsabilidad INT
 )
 BEGIN
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1, "Se encarga de aprobar y revisar tareas");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1, "Debe ser informado luego de una decisión o acción");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1, "Toma parte de las acciones y tareas hechas");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1, "Responsable de completar tareas o entregables");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1, "Asesor o experto a quien se le consulta antes de una acción");
 END$
 
 DELIMITER $
@@ -3926,8 +3926,9 @@ CREATE PROCEDURE LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(
 )
 BEGIN
     SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
-    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color
+    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color, descripcionRol as descripcion
     FROM ResponsabilidadRol
+<<<<<<< HEAD
 <<<<<<< HEAD
     WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
 END$
@@ -3944,6 +3945,9 @@ BEGIN
     UPDATE Moneda SET TipoCambio = _cambioUSD2PEN WHERE idMoneda = 1 AND activo =1;
 =======
     WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+=======
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+>>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
 END
 $
 
@@ -3994,7 +3998,7 @@ CREATE PROCEDURE LISTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT err.idRol, re.nombreRol, err.idEntregable, e.nombre as "nombreEntregable", err.idResponsabilidadRol as "idResponsabilidad",
+	SELECT err.idEntregableXResponsabilidadXRol, err.idRol, re.nombreRol, err.idEntregable, e.nombre as "nombreEntregable", err.idResponsabilidadRol as "idResponsabilidad",
         rr.nombreRol as "nombreResponsabilidad", rr.letraRol as "letraResponsabilidad", rr.colorRol as "colorResponsabilidad"
     FROM EntregableXResponsabilidadRol AS err
     LEFT JOIN Entregable AS e ON err.idEntregable = e.idEntregable
@@ -4020,5 +4024,268 @@ BEGIN
         idResponsabilidadRol = _idResponsabilidadRol,
         idRol = _idRol
     WHERE idEntregableXResponsabilidadXRol = _idEntregableXResponsabilidadXRol;
+<<<<<<< HEAD
 >>>>>>> f7a07c44e49712a1304fb61170a98d9e38ef9614
+=======
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO(
+    IN _idProyecto INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descrpcionRol VARCHAR(255)
+)
+BEGIN
+    DECLARE _idResponsabilidadRol INT;
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) 
+    VALUES(@_idMatrizResponsabilidad, _letraRol, _nombreRol, _colorRol, 1, _descrpcionRol);
+    SET _idResponsabilidadRol = @@last_insert_id;
+    SELECT _idResponsabilidadRol AS idResponsabilidadRol;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_RESPONSABILIDADROL_X_ID(
+    IN _idResponsabilidadRol INT
+)
+BEGIN
+    UPDATE ResponsabilidadRol
+    SET activo = 0
+    WHERE idResponsabilidadRol = _idResponsabilidadRol;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(
+    IN _idProyecto INT
+)
+BEGIN
+    UPDATE EntregableXResponsabilidadRol AS err
+    LEFT JOIN RolEquipo AS re ON err.idRol = re.idRolEquipo
+    SET err.activo = 0
+    WHERE re.idProyecto = _idProyecto;
+END$
+
+DELIMITER ;
+
+-----------------------
+-- Plantillas
+-----------------------
+
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_ACTACONSTITUCION(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaAC INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla) 
+    VALUES(_idUsuario,1,_nombrePlantilla);
+    SET _idPlantillaAC = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaAC AS idPlantillaAC;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_NOMBRES_CAMPOS_AC;
+DELIMITER $
+CREATE PROCEDURE LISTAR_NOMBRES_CAMPOS_AC(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT nombre
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANTILLA_AC_TIPODATO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANTILLA_AC_TIPODATO(
+    IN _idPlantillaAC INT,
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+    INSERT INTO PlantillaACTipoDato(idPlantillaAC, nombre, activo)
+    VALUES(_idPlantillaAC,_nombre, 1);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_ACTACONSTITUCION(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaActaConstitucion
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_ACTACONSTITUCION(
+    IN _idPlantillaAC INT
+)
+BEGIN
+    UPDATE PlantillaActaConstitucion SET activo = 0 WHERE idPlantillaAC = _idPlantillaAC;
+    UPDATE PlantillaACTipoDato SET activo = 0 WHERE idPlantillaAC = _idPlantillaAC;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(
+    IN _idPlantillaAC INT
+)
+BEGIN
+    SELECT nombre
+    FROM PlantillaACTipoDato
+    WHERE idPlantillaAC = _idPlantillaAC
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(
+    IN _idActaConstitucion INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+    DECLARE _idDetalle INT;
+    -- Verificamos si el registro ya existe
+    SELECT idDetalle INTO _idDetalle
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion AND nombre = _nombre;
+    IF _idDetalle IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE DetalleAC
+        SET activo = 1
+        WHERE idDetalle = _idDetalle;
+    ELSE
+        INSERT INTO DetalleAC(idActaConstitucion,nombre,activo) 
+        VALUES(_idActaConstitucion,_nombre,1);
+    END IF;
+END$
+
+DROP PROCEDURE IF EXISTS LIMPIAR_DETALLEAC_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LIMPIAR_DETALLEAC_PLANTILLA_ACTACONSTITUCION(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    UPDATE DetalleAC SET activo = 0 WHERE idActaConstitucion = _idActaConstitucion;
+    UPDATE DetalleAC SET detalle = null WHERE idActaConstitucion = _idActaConstitucion;
+END$
+
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_KANBAN(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaKanban INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaKanban(idUsuario,nombrePlantilla,activo) 
+    VALUES(_idUsuario,_nombrePlantilla,1);
+    SET _idPlantillaKanban = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaKanban AS idPlantillaKanban;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_KANBAN(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT nombre, posicion
+    FROM ColumnaKanban
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANTILLA_KANBAN_CAMPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANTILLA_KANBAN_CAMPO(
+    IN _idPlantillaKanban INT,
+    IN _nombre VARCHAR(255),
+    IN _posicion INT
+)
+BEGIN
+    INSERT INTO PlantillaKanbanColumnas(idPlantillaKanban, nombre, posicion, activo)
+    VALUES(_idPlantillaKanban,_nombre,_posicion, 1);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_KANBAN(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaKanban
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_KANBAN(
+    IN _idPlantillaKanban INT
+)
+BEGIN
+    UPDATE PlantillaKanban SET activo = 0 WHERE idPlantillaKanban = _idPlantillaKanban;
+    UPDATE PlantillaKanbanColumnas SET activo = 0 WHERE idPlantillaKanban = _idPlantillaKanban;
+END$
+
+DROP PROCEDURE IF EXISTS LIMPIAR_KANBAN_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LIMPIAR_KANBAN_PLANTILLA_KANBAN(
+    IN _idProyecto INT
+)
+BEGIN
+    UPDATE ColumnaKanban SET activo = 0 WHERE idProyecto = _idProyecto;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA(
+    IN _idPlantillaKanban INT
+)
+BEGIN
+    SELECT nombre, posicion
+    FROM PlantillaKanbanColumnas
+    WHERE idPlantillaKanban = _idPlantillaKanban
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_KANBAN(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(500),
+    IN _posicion INT
+)
+BEGIN
+    DECLARE _idColumnaKanban INT;
+    -- Verificamos si el registro ya existe
+    SELECT idColumnaKanban INTO _idColumnaKanban
+    FROM ColumnaKanban
+    WHERE idProyecto = _idProyecto AND nombre = _nombre AND posicion = _posicion;
+    IF _idColumnaKanban IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE ColumnaKanban
+        SET activo = 1
+        WHERE idColumnaKanban = _idColumnaKanban;
+    ELSE
+        INSERT INTO ColumnaKanban(idProyecto,nombre,posicion,activo) 
+        VALUES(_idProyecto,_nombre,_posicion,1);
+    END IF;
+>>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
 END$

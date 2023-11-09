@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { SmallLoadingScreen } from "../../layout";
 import {
     Button,
@@ -15,19 +15,23 @@ import TaskProgressReport from "@/components/dashboardComps/projectComps/reporte
 import TasksGraphicView from "@/components/dashboardComps/projectComps/reportesComps/reporteTareasComps/TasksGraphicView";
 axios.defaults.withCredentials = true;
 
+export const TaskSelector = createContext();
+
 function reporteTareas(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    const [listTareas, setListTareas] = useState([]);
+    const [listTareas, setListTareas] = useState(null);
+
+    const [selectedTask, setSelectedTask] = useState(null);
 
     useEffect(() => {
         setIsLoadingSmall(true);
         const tareasURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+            "/api/proyecto/cronograma/listarTareasXidProyectoConProgresosDetallados/" +
             projectId;
         axios
             .get(tareasURL)
@@ -49,7 +53,12 @@ function reporteTareas(props) {
             {
                 label: "Cantidad",
                 data: [5, 2, 4, 1],
-                backgroundColor: ["rgb(63, 63, 70)", "rgb(0, 112, 240)", "rgb(245, 165, 36)", "rgb(24, 201, 100)"],
+                backgroundColor: [
+                    "rgb(63, 63, 70)",
+                    "rgb(0, 112, 240)",
+                    "rgb(245, 165, 36)",
+                    "rgb(24, 201, 100)",
+                ],
             },
         ],
     });
@@ -73,30 +82,35 @@ function reporteTareas(props) {
                 <div className="flex flex-row absolute top-0 bottom-1/2 left-0 right-0 mb-4">
                     <div className="  flex flex-col overflow-hidden flex-1">
                         <p className={twStyle1}>Listado de tareas</p>
-
+                        <p className=" text-slate-400">
+                            Selecciona una tarea para ver su detalle
+                        </p>
                         <div className="flex-1  overflow-auto ">
-                            <ListTareasReporte
-                                listTareas={listTareas}
-                                leftMargin={"0px"}
-                                handleVerDetalle={() => {
-                                    console.log("xd");
-                                }}
-                                handleAddNewSon={() => {
-                                    console.log("xd");
-                                }}
-                                handleEdit={() => {
-                                    console.log("xd");
-                                }}
-                                handleDelete={() => {
-                                    console.log("xd");
-                                }}
-                            ></ListTareasReporte>
+                            <TaskSelector.Provider
+                                value={{ selectedTask, handleSetSelectedTask }}
+                            >
+                                {listTareas !== null && (
+                                    <ListTareasReporte
+                                        listTareas={listTareas}
+                                        leftMargin={"0px"}
+                                        idSelected={selectedTask}
+                                        setSelectedTask={(idTarea) => {
+                                            setSelectedTask(idTarea);
+                                        }}
+                                    ></ListTareasReporte>
+                                )}
+                            </TaskSelector.Provider>
                         </div>
                     </div>
 
                     <Divider orientation="vertical" className="mx-4"></Divider>
 
-                    <TaskProgressReport />
+                    {selectedTask === null && (
+                        <div className="flex flex-col flex-1 overflow-y-hidden items-center justify-center">
+                            Selecciona una tarea para ver su detalle
+                        </div>
+                    )}
+                    {selectedTask !== null && <TaskProgressReport progressEntries={selectedTask.progresos}/>}
                 </div>
 
                 <Divider></Divider>
@@ -107,5 +121,10 @@ function reporteTareas(props) {
             </div>
         </div>
     );
+
+    function handleSetSelectedTask(task) {
+        console.log(" SELECCIONAD LA TAREA " + JSON.stringify(task,null,2));
+        setSelectedTask(task);
+    }
 }
 export default reporteTareas;

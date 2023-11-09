@@ -87,7 +87,6 @@ function ReporteEntregables(props) {
         axios
             .get(tareasURL)
             .then(function (response) {
-                console.log(JSON.stringify(response.data.entregables, null, 2));
                 setListEntregables(response.data.entregables);
                 setSelectedEntregable(
                     response.data.entregables[0].idEntregable
@@ -107,6 +106,8 @@ function ReporteEntregables(props) {
                 );
                 setEntregableFechaFin(response.data.entregables[0].fechaFin);
 
+                
+
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -125,7 +126,7 @@ function ReporteEntregables(props) {
                 <p className="text-4xl text-mainHeaders font-semibold">
                     Reporte de entregables
                 </p>
-                <Button color="warning" className="text-white">
+                <Button color="warning" className="text-white" onPress={()=>{handleSaveReport(listEntregables)}}>
                     Guardar reporte
                 </Button>
             </div>
@@ -186,7 +187,9 @@ function ReporteEntregables(props) {
                                     className=" min-h-[40px] text-lg"
                                 >
                                     {entregableProgress < 1 && "No iniciado"}
-                                    {entregableProgress > 1 && entregableProgress < 100 && "En progreso"}
+                                    {entregableProgress > 1 &&
+                                        entregableProgress < 100 &&
+                                        "En progreso"}
                                     {entregableProgress === 100 && "Finalizado"}
                                 </Chip>
                             </div>
@@ -303,6 +306,20 @@ function ReporteEntregables(props) {
             </div>
         </div>
     );
+
+    function handleSaveReport(listEntregables){
+        for(const entregable of listEntregables){
+            const {entCharData, entBarProgress, entColorState, entContribuyentes} = forSaveReportStatistics(entregable);
+
+            //entregable.chartData = entCharData,
+            entregable.barProgress = entBarProgress,
+            entregable.colorState = entColorState,
+            entregable.contribuyentes = entContribuyentes
+        }
+
+        console.log("==================== DATA A MANDAR =========================");
+        console.log(listEntregables);
+    }
 
     function getEntregableStatistics(entregable) {
         const contribuyentes = [];
@@ -479,13 +496,207 @@ function ReporteEntregables(props) {
         setEntregableProgress(formattedProgress);
 
         //assign colors
-        if(formattedProgress <= 10) setEntregableChipColor("danger");
-        if(formattedProgress > 10 && formattedProgress <= 50) setEntregableChipColor("warning");
-        if(formattedProgress > 50 && formattedProgress < 100) setEntregableChipColor("primary");
-        if(formattedProgress === 100) setEntregableChipColor("success");
+        if (formattedProgress <= 10) setEntregableChipColor("danger");
+        if (formattedProgress > 10 && formattedProgress <= 50)
+            setEntregableChipColor("warning");
+        if (formattedProgress > 50 && formattedProgress < 100)
+            setEntregableChipColor("primary");
+        if (formattedProgress === 100) setEntregableChipColor("success");
 
         setListContribuyentes(listaContribuyentes);
     }
+
+
+    function forSaveReportStatistics(entregable) {
+        const contribuyentes = [];
+
+        //agregamos sin repetir a los equipos y usuarios al arreglo de contribuyentes
+        const participanteEstructura = {
+            idContribuyente: 1,
+            usuario: 1,
+            equipo: 1,
+            tareasAsignadas: 1,
+            porcentajeTotal: 1,
+        };
+
+        entregable.tareasEntregable.forEach((tarea) => {
+            //iteramos tareas de un entregable
+            if (tarea.idEquipo !== null) {
+                let flagHasBeenAddedE = 0;
+                for (const contribuyente of contribuyentes) {
+                    if (contribuyente.equipo !== null) {
+                        if (contribuyente.equipo.idEquipo === tarea.idEquipo) {
+                            flagHasBeenAddedE = 1;
+                            break;
+                        }
+                    }
+                }
+
+                if (flagHasBeenAddedE === 0) {
+                    // console.log(
+                    //     "agregando nuevo equipo " + tarea.equipo.nombre
+                    // );
+                    contribuyentes.push({
+                        idContribuyente: contribuyentes.length + 1,
+                        usuario: null,
+                        equipo: tarea.equipo,
+                        tareasAsignadas: 1,
+                        porcentajeTotal: 0,
+                    });
+                } else {
+                    //buscamos al equipo en contribuyentes y aumentamos su asigned +1
+                    // console.log(
+                    //     "agregando +1 tarea a el equipo " + tarea.equipo.nombre
+                    // );
+                    const indexYaAsignado = contribuyentes.findIndex(
+                        (elemento) =>
+                            elemento.equipo?.idEquipo === tarea.equipo.idEquipo
+                    );
+                    contribuyentes[indexYaAsignado].tareasAsignadas =
+                        contribuyentes[indexYaAsignado].tareasAsignadas + 1;
+                }
+            } else {
+                tarea.usuarios.forEach((usuario) => {
+                    //itereamos usuarios de la tarea
+
+                    let flagHasBeenAdded = 0;
+                    for (const contribuyente of contribuyentes) {
+                        if (
+                            contribuyente.usuario?.idUsuario ===
+                            usuario.idUsuario
+                        ) {
+                            flagHasBeenAdded = 1;
+                            break;
+                        }
+                    }
+
+                    if (flagHasBeenAdded === 0) {
+                        // console.log(
+                        //     "agregando nuevo usuario " + usuario.nombres
+                        // );
+                        contribuyentes.push({
+                            idContribuyente: contribuyentes.length + 1,
+                            usuario: usuario,
+                            equipo: null,
+                            tareasAsignadas: 1,
+                            porcentajeTotal: 0,
+                        });
+                    } else {
+                        //buscamos al usuario en contribuyentes y aumentamos su asigned +1
+                        // console.log(
+                        //     "agregando +1 tarea a el usuario " + usuario.nombres
+                        // );
+
+                        const indexYaAsignado = contribuyentes.findIndex(
+                            (elemento) =>
+                                elemento.usuario?.idUsuario ===
+                                usuario.idUsuario
+                        );
+                        contribuyentes[indexYaAsignado].tareasAsignadas =
+                            contribuyentes[indexYaAsignado].tareasAsignadas + 1;
+                    }
+                });
+            }
+        });
+
+        const listaContribuyentes = [...contribuyentes];
+
+        for (const contribuyente of listaContribuyentes) {
+            let contribPorTarea = 0;
+            for (const tarea of entregable.tareasEntregable) {
+                if (tarea.idEquipo !== null) {
+                    if (tarea.idEquipo === contribuyente.equipo?.idEquipo) {
+                        contribPorTarea +=
+                            1 / entregable.tareasEntregable.length;
+                    }
+                } else {
+                    const usuarioEncontrado = tarea.usuarios.find(
+                        (user) =>
+                            user.idUsuario === contribuyente.usuario?.idUsuario
+                    );
+
+                    if (usuarioEncontrado) {
+                        contribPorTarea +=
+                            (1 / tarea.usuarios.length) *
+                            (1 / entregable.tareasEntregable.length);
+                    }
+                }
+            }
+            contribuyente.porcentajeTotal = contribPorTarea * 100;
+        }
+
+        // console.log(JSON.stringify(listaContribuyentes, null, 2));
+
+        // console.log("LISTA LABELS");
+        // console.log(
+        //     listaContribuyentes.map((contrib) => {
+        //         if (contrib.usuario === null) {
+        //             return contrib.equipo.nombre;
+        //         } else {
+        //             return contrib.usuario.nombres;
+        //         }
+        //     })
+        // );
+        // console.log("LISTA DATA");
+        // console.log(
+        //     listaContribuyentes.map((contrib) => {
+        //         return contrib.porcentajeTotal;
+        //     })
+        // );
+
+        const entCharData = {
+            labels: listaContribuyentes.map((contrib) => {
+                if (contrib.usuario === null) {
+                    return contrib.equipo.nombre;
+                } else {
+                    return contrib.usuario.nombres;
+                }
+            }),
+            datasets: [
+                {
+                    label: "% Contribucion",
+                    data: listaContribuyentes.map((contrib) => {
+                        return contrib.porcentajeTotal;
+                    }),
+                    backgroundColor: listaContribuyentes.map((contrib) => {
+                        return randomHex();
+                    }),
+                },
+            ],
+        };
+
+        //get finished tasks / total tasks
+        let finishedTasks = 0;
+        let totalTasks = 0;
+        entregable.tareasEntregable.forEach((tarea) => {
+            if (tarea.idTareaEstado === 4) {
+                finishedTasks++;
+            }
+            totalTasks++;
+        });
+        const finalProgress = (finishedTasks / totalTasks) * 100;
+        const formattedProgress =
+            typeof finalProgress === "number"
+                ? finalProgress.toFixed(2)
+                : finalProgress;
+        
+        const entBarProgress = formattedProgress;
+
+        //assign colors
+        let entColorState;
+        if (formattedProgress <= 10) entColorState = "danger";
+        if (formattedProgress > 10 && formattedProgress <= 50)
+            entColorState = "warning";
+        if (formattedProgress > 50 && formattedProgress < 100)
+            entColorState = "primary";
+        if (formattedProgress === 100) entColorState = "success";
+
+        const entContribuyentes = listaContribuyentes;
+
+        return {entCharData, entBarProgress, entColorState, entContribuyentes};
+    }
+
+
 
     function randomHex() {
         return "#" + Math.floor(Math.random() * 16777215).toString(16);

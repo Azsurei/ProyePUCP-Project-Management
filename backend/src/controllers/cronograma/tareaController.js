@@ -448,7 +448,8 @@ function structureData(data) {
     return result[null];
 }
 
-async function funcListarTareasXIdSprint(idSprint) {    //
+async function funcListarTareasXIdSprint(idSprint) {
+    //
     try {
         const query = `CALL LISTAR_TAREAS_X_ID_SPRINT(?);`;
         const [results] = await connection.query(query, [idSprint]);
@@ -511,7 +512,8 @@ async function funcModificarTareaIdSprint(idTarea, idSprint) {
     }
 }
 
-async function funcListarTareasSinSprint(idCronograma) {    //
+async function funcListarTareasSinSprint(idCronograma) {
+    //
     try {
         const query = `CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(?);`;
         const [results] = await connection.query(query, [idCronograma]);
@@ -550,6 +552,84 @@ async function funcListarTareasSinSprint(idCronograma) {    //
         console.log(error);
     }
 }
+
+async function registrarProgreso(req, res, next) {
+    const {
+        idTarea,
+        idUsuario,
+        descripcion,
+        porcentajeRegistrado,
+        porcentajeDeTarea,
+    } = req.body;
+    try {
+        const query = `CALL INSERTAR_REGISTRO_PROGRESO_TAREA(?,?,?,?,?);`;
+        const [results] = await connection.query(query, [
+            idTarea,
+            idUsuario,
+            descripcion,
+            porcentajeRegistrado,
+            porcentajeDeTarea,
+        ]);
+        const idRegistroProgreso = results[0][0].idRegistroProgreso;
+        res.status(200).json({
+            idRegistroProgreso,
+            message: "Registro exitoso de el progreso en la tarea",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarXIdProyectoConProgresos(req, res, next) {
+    const { idProyecto } = req.params;
+    try {
+        const query = `CALL LISTAR_TAREAS_X_ID_PROYECTO(?);`;
+        const [resultsTareas] = await connection.query(query, [idProyecto]);
+        tareas = resultsTareas[0];
+
+        for (const tarea of tareas) {
+            if (tarea.idEquipo !== null) {
+                //usuarios completo menos password
+                //nombre e id de subequipo
+                const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
+                const [equipo] = await connection.query(query2, [
+                    tarea.idEquipo,
+                ]);
+                tarea.equipo = equipo[0][0]; //solo consideramos que una tarea es asignada a un subequipo
+                //listamos los participantes de dicho equipo
+                const query4 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+                const [participantes] = await connection.query(query4, [
+                    tarea.idEquipo,
+                ]);
+                tarea.equipo.participantes = participantes[0];
+                tarea.usuarios = [];
+            } else {
+                const query3 = `CALL LISTAR_USUARIOS_X_ID_TAREA(?);`;
+                const [usuarios] = await connection.query(query3, [
+                    tarea.idTarea,
+                ]);
+                if (usuarios != null) {
+                    tarea.usuarios = usuarios[0];
+                }
+                tarea.equipo = null;
+            }
+
+            const query4 = "CALL LISTAR_PROGRESOS_X_ID_TAREA(?);";
+            const [progresos] = await connection.query(query4, [tarea.idTarea]);
+            tarea.progresos = progresos[0];
+        }
+
+        tareasConPosteriores = await repositionPosteriores(tareas);
+        tareasOrdenadas = await structureData(tareasConPosteriores);
+        res.status(200).json({
+            tareasOrdenadas,
+            message: "Tareas listadas correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     crear,
     listarXIdProyecto,
@@ -561,4 +641,6 @@ module.exports = {
     modificarIdSprintDeTareas,
     eliminarRecursivo,
     funcModificarTareaIdSprint,
+    registrarProgreso,
+    listarXIdProyectoConProgresos,
 };

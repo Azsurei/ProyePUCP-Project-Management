@@ -72,3 +72,29 @@
     
     cursor: pointer;
 }
+
+.cardPlantillaAC{
+
+    background-color: #f0f0f0;
+    padding: 10px;
+    transition: background-color 0.3s; /* Agrega una transición suave */
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cardPlantillaAC:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+
+}
+
+.selected {
+    background-color: #3498db; /* Cambia el color de fondo cuando está seleccionado */
+    color: #ffffff; /* Cambia el color del texto cuando está seleccionado */
+  }
+
+  .selected:hover {
+    background-color: #3498db; /* Cambia el color de fondo cuando está seleccionado */
+    color: #ffffff; /* Cambia el color del texto cuando está seleccionado */
+  }

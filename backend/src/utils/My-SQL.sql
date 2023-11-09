@@ -872,6 +872,7 @@ CREATE TABLE PlantillaActaConstitucion(
 	idPlantillaAC INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT,
     activo TINYINT,
+    nombrePlantilla VARCHAR(200),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 )
 ENGINE = InnoDB;
@@ -1263,6 +1264,7 @@ CREATE TABLE ResponsabilidadRol(
     nombreRol VARCHAR(100),
     colorRol VARCHAR(100),
     activo tinyint NOT NULL,
+    descripcionRol VARCHAR(255),
     FOREIGN KEY(idMatrizResponsabilidad) REFERENCES MatrizResponsabilidad (idMatrizResponsabilidad)
 
 )
@@ -1295,6 +1297,7 @@ CREATE TABLE EntregableXResponsabilidadRol(
 )
 ENGINE = InnoDB;
 
+<<<<<<< HEAD
 #####################################
 ### REPORTE
 #####################################
@@ -1311,3 +1314,32 @@ CREATE TABLE ReporteXProyecto(
     FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
 )
 ENGINE = InnoDB;
+=======
+
+-----------------------
+-- Plantillas
+-----------------------
+
+DROP TABLE IF EXISTS PlantillaKanban;
+CREATE TABLE PlantillaKanban(
+    idPlantillaKanban INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    nombrePlantilla VARCHAR(100),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario (idUsuario)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS PlantillaKanbanColumnas;
+CREATE TABLE PlantillaKanbanColumnas(
+    idPlantillaKanbanColumnas INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaKanban INT,
+    nombre VARCHAR(100),
+    posicion INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idPlantillaKanban) REFERENCES Usuario (idUsuario)
+
+)
+ENGINE = InnoDB;
+>>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed

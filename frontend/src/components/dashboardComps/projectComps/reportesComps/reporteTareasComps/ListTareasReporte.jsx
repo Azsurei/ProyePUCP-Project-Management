@@ -10,17 +10,17 @@ import {
 } from "@nextui-org/react";
 import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import { Collapse } from "react-collapse";
-import { useState } from "react";
-import GroupUserIcons from "../../cronogramaComps/GroupUserIcons";
+import { useContext, useState } from "react";
+import GroupUserIconsReporte from "./GroupUserIconsReporte";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import { TaskSelector } from "@/app/dashboard/[project]/reportes/reporteTareas/page";
 
 function CardTarea({
     tarea,
-    leftMargin,
-    handleVerDetalle,
-    handleEdit,
-    handleAddNewSon,
-    handleDelete,
+    leftMargin
 }) {
+    const { selectedTask, handleSetSelectedTask } = useContext(TaskSelector);
+
     const tieneHijos = true;
 
     const formattedStartDate = new Date(tarea.fechaInicio);
@@ -38,7 +38,7 @@ function CardTarea({
 
     return (
         <div className="containerCardYHijo">
-            <div className="tareaCard">
+            <div className={"tareaCard " + (selectedTask?.idTarea === tarea.idTarea ? " bg-slate-200 dark:bg-slate-700" : "bg-white dark:bg-mainBackground")} onClick={()=>{handleSetSelectedTask(tarea)}}>
                 <div className="containerGeneralData">
                     <div className="containerNombreTarea">
                         {tarea.tareasHijas.length !== 0 && (
@@ -69,15 +69,14 @@ function CardTarea({
                                 <p>{tarea.equipo.nombre}</p>
                             </div>
                         ) : (
-                            <GroupUserIcons
+                            <GroupUserIconsReporte
                                 idTarea={tarea.idTarea}
                                 listUsers={tarea.usuarios}
-                                beImg={tarea.idTarea === 51}
-                            ></GroupUserIcons>
+                            ></GroupUserIconsReporte>
                         )}
                     </div>
 
-                    <div className="containerTareaState">
+                    <div className="containerTareaState gap-2">
                         {/* <p className="bg-primary-200" id="labelTareaState">
                         {tarea.nombreTareaEstado}
                     </p> */}
@@ -90,79 +89,24 @@ function CardTarea({
                         >
                             {tarea.nombreTareaEstado}
                         </Chip>
+
+                        <p>{tarea.porcentajeProgreso}%</p>
                     </div>
-                    <div className="containerTareaDuracion">
-                        <p>{duracion}</p>
+                    <div className="containerTareaDuracion ">
+                        <p>{dbDateToDisplayDate(tarea.fechaInicio)}</p>
+                        <p>{dbDateToDisplayDate(tarea.fechaFin)}</p>
                     </div>
                 </div>
 
-                <div className="contaienrMas Opciones relative flex justify-end items-center gap-2">
-                    <Dropdown aria-label="droMenTareasMain">
-                        <DropdownTrigger aria-label="droMenTareasTrigger">
-                            
-                                <Button
-                                
-                                    size="md"
-                                    radius="sm"
-                                    variant="flat"
-                                    color="default"
-                                    className="ButtonMore"
-                                >
-                                    <p className="lblVerOpciones">Ver opciones</p>
-                                    <VerticalDotsIcon className="icnVerOpciones text-black-300" />
-                                </Button>
-                            
-                        </DropdownTrigger>
-                        <DropdownMenu aria-label="droMenTareas">
-                            <DropdownItem
-                                aria-label="addSon"
-                                onClick={() => {
-                                    handleAddNewSon(tarea);
-                                }}
-                            >
-                                Agregar hijo
-                            </DropdownItem>
-                            <DropdownItem
-                                aria-label="seeDetail"
-                                onClick={() => {
-                                    handleVerDetalle(tarea);
-                                }}
-                            >
-                                Ver detalle
-                            </DropdownItem>
-                            <DropdownItem
-                                aria-label="edit"
-                                onClick={() => {
-                                    handleEdit(tarea);
-                                }}
-                            >
-                                Editar
-                            </DropdownItem>
-                            <DropdownItem
-                                aria-label="delete"
-                                className="text-danger"
-                                color="danger"
-                                onClick={() => {
-                                    handleDelete(tarea);
-                                }}
-                            >
-                                Eliminar
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
+                
             </div>
 
             <Collapse isOpened={hijosIsOpen}>
                 {tarea.tareasHijas.length !== 0 && (
-                    <ListTareas
+                    <ListTareasReporte
                         listTareas={tarea.tareasHijas}
                         leftMargin={"40px"}
-                        handleVerDetalle={handleVerDetalle}
-                        handleEdit={handleEdit}
-                        handleAddNewSon={handleAddNewSon}
-                        handleDelete={handleDelete}
-                    ></ListTareas>
+                    ></ListTareasReporte>
                 )}
             </Collapse>
         </div>
@@ -172,10 +116,6 @@ function CardTarea({
 export default function ListTareasReporte({
     listTareas,
     leftMargin,
-    handleVerDetalle,
-    handleEdit,
-    handleAddNewSon,
-    handleDelete,
 }) {
     return (
         <div className="tareasListContainer" style={{ marginLeft: leftMargin }}>
@@ -185,10 +125,6 @@ export default function ListTareasReporte({
                         key={tarea.idTarea}
                         tarea={tarea}
                         leftMargin={leftMargin}
-                        handleVerDetalle={handleVerDetalle}
-                        handleEdit={handleEdit}
-                        handleAddNewSon={handleAddNewSon}
-                        handleDelete={handleDelete}
                     ></CardTarea>
                 );
             })}

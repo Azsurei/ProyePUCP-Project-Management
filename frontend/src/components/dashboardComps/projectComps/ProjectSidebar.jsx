@@ -281,7 +281,7 @@ function ProjectSidebar(props) {
             position: 2,
             optIcon: "/icons/sideBarDropDown_icons/sbdd2.svg",
             optName: "Retrospectivas",
-            goTo: `${stringBase}/toBeDefined`,
+            goTo: `${stringBase}/retrospectivas`,
         },
         {
             id: 11,

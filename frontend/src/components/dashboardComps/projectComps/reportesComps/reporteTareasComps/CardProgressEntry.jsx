@@ -1,3 +1,4 @@
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import { Avatar } from "@nextui-org/react";
 
 function CardProgressEntry({ progressEntry }) {
@@ -7,12 +8,12 @@ function CardProgressEntry({ progressEntry }) {
                 //isBordered
                 //as="button"
                 className="transition-transform w-[45px] min-w-[45px] h-[45px] min-h-[45px] max-w-[45px] max-h-[45px]"
-                src={progressEntry.user.imgLink}
+                src={progressEntry.imgLink}
                 fallback={
                     <p className="h-[45px] w-[45px] max-w-[45px] max-h-[45px] text-[1.1rem] bg-mainUserIcon flex justify-center items-center">
-                        {progressEntry.user.nombres[0] +
-                            (progressEntry.user.apellidos !== null
-                                ? progressEntry.user.apellidos[0]
+                        {progressEntry.nombres[0] +
+                            (progressEntry.apellidos !== null
+                                ? progressEntry.apellidos[0]
                                 : "")}
                     </p>
                 }
@@ -20,13 +21,13 @@ function CardProgressEntry({ progressEntry }) {
             <div className="flex flex-col flex-1  gap-0 absolute right-1 left-[54px]">
                 <div className="flex flex-row w-full justify-between">
                     <p>
-                        <span className="font-semibold">Renzo</span> agregó {progressEntry.progressValue}%
+                        <span className="font-semibold">Renzo</span> agregó {progressEntry.porcentajeRegistrado}%
                     </p>
-                    <p>{progressEntry.dateEntry}</p>
+                    <p>{dbDateToDisplayDate(progressEntry.fechaRegistro)}</p>
                 </div>
 
 
-                <p className="italic font-bold text-slate-500 truncate">&quot;{progressEntry.description}&quot;</p>
+                <p className="italic font-bold text-slate-500 truncate">&quot;{progressEntry.descripcion}&quot;</p>
             </div>
         </div>
     );

@@ -1,278 +1,145 @@
-.newMeetingArticle{
-    /* Aplica un padding de 20px a los lados */
-    box-sizing: border-box; /* Incluye el padding en el cálculo del tamaño total */
-  
-    font-family: Montserrat, serif;
-    display: flex;
-    flex-direction: column;
-    width: auto;
-    height: auto;
-    padding: 0 2rem;
-    align-self: center;
-  }
+root {
+  --font-montserrat: Montserrat, serif;
+  --color-primary: #172B4D;
+  --color-secondary: #f0ae19;
+  --color-light-gray: #f7f7f7;
+  --color-hover-gray: #e0e0e0;
+  --color-text-gray: #949494;
+  --color-white: #fff;
+}
 
-  
+.newMeetingArticle {
+  box-sizing: border-box;
+  font-family: var(--font-montserrat);
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  height: auto;
+  padding: 0 2rem;
+  align-self: center;
+}
 
-  .btnEditar {
-    background-color: #f0ae19;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-  }
+.btnEditar {
+  background-color: var(--color-secondary);
+  color: var(--color-white);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  transition: background-color 0.4s, box-shadow 0.4s;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
 
-  .btnEditar:hover{
-    background-color: #ca9415;
-    transition: background-color 0.15s ease-in;
-  }
+.btnEditar:hover {
+  background-color: #ca9415;
+}
 
-  
-  .header{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding-top: 1rem;
-    font-family: Montserrat;
-  }
-  
-  .title{
-    display: flex;
-    font-size: 1.5rem;
-    align-items: center;
-    color: #172B4D;
-    font-weight: 700;
-    font-family: Montserrat;
-  }
-  
-  #datetimePicker {
-    width: 300px; /* Personaliza el ancho según tus necesidades */
-    height: 50px; /* Personaliza la altura según tus necesidades */
-     /* Agrega un borde de 1 píxel sólido con color gris (#ccc) */
-    border-radius: 15px; /* Agrega esquinas redondeadas */
-    background-color: #f7f7f7;
-    color: #333;
-    margin: 5px 0;
-    padding: 0.8rem;
-    transition: background-color 0.1s;
-  }
-  
-  #datetimePicker:hover {
-    background-color: #e0e0e0; /* Cambia el color de fondo en hover */
-  }
-  
-  #datePicker {
-    width: 200px; /* Personaliza el ancho según tus necesidades */
-    height: 50px; /* Personaliza la altura según tus necesidades */
-     /* Agrega un borde de 1 píxel sólido con color gris (#ccc) */
-    border-radius: 15px; /* Agrega esquinas redondeadas */
-    background-color: #f7f7f7;
-    color: #333;
-    margin: 5px 0;
-    margin-right: 1.5rem;
-    padding: 0.8rem;
-    transition: background-color 0.1s;
-  }
-  
-  #datePicker:hover {
-    background-color: #e0e0e0; /* Cambia el color de fondo en hover */
-  }
-  
-  #timePicker {
-    width: auto; /* Personaliza el ancho según tus necesidades */
-    height: 50px; /* Personaliza la altura según tus necesidades */
-     /* Agrega un borde de 1 píxel sólido con color gris (#ccc) */
-    border-radius: 15px; /* Agrega esquinas redondeadas */
-    background-color: #f7f7f7;
-    color: #333;
-    margin: 5px 0;
-    padding: 0.8rem;
-    transition: background-color 0.1s;
-  }
-  
-  #timePicker:hover {
-    background-color: #e0e0e0; /* Cambia el color de fondo en hover */
-  }
-  
-  .ButtonsContainer {
-    display: flex; /* Utilizar flexbox para alinear elementos */
-    justify-content: flex-end; /* Alinear elementos al extremo derecho */
-    gap: 10px; /* Espacio entre los botones (ajusta el valor según lo necesites) */
-  }
-  
-  .error-text {
-    color: red;
-    margin: 0; /* Para eliminar cualquier margen predeterminado */
-    padding: 0; /* Para eliminar cualquier relleno predeterminado */
-    font-size: 14px; /* Tamaño de fuente */
-    margin-right: 10px; /* Espacio entre el mensaje y los botones */
-  }
-  
-  .mandatoryAdvise {
-    display: flex; 
-    align-items: center;
-  }
-  
-  .mandatoryAdvise img {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
-    filter: grayscale(100%) brightness(130%);
-    
-  }
-  
-  .mandatoryAdvise p {
-    color: #949494;
-    font-size: 14px;
-  }
-  
-  .twoButtons1{
-    display: flex;
-    justify-content: flex-end;
-    flex: 1;
-  }
-  
-  .buttonContainer{
-    display: flex;
-    gap: 10px;
-    padding: 1rem;
-  }
-  
-  .userSelection img {
-    filter: brightness(0) invert(1); /* Aplica un filtro blanco (escala de grises) */
-    margin-left: 5px; /* Ajusta el margen izquierdo para posicionar a la derecha */
-  }
+.header, .title, .mandatoryAdvise, .dateShowing, .timeShowing, .meetingMotive h2, .lineMeetingMotive {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-montserrat);
+  color: var(--color-primary);
+}
 
-  .personasConvocadas img {
-    filter: brightness(0) invert(1); /* Aplica un filtro blanco (escala de grises) */
-    margin-left: 5px; 
-  }
-  
-  .changeConvocanteText {
-    color: #f0ae19;
-    cursor: pointer;
-    font-size: 13px;
-    text-decoration: none;
-    margin-left: 8px;
-    padding-top: 2px;
-  
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
 
-  .lineMeetingTitle {
-    position: relative;
-    display: flex;
-    font-size: 1.6rem;
-    align-items: center;
-    color: #172B4D;
-    font-weight: 600;
-    font-family: Montserrat;
-  }
+#datetimePicker, #datePicker, #timePicker {
+  width: 300px;
+  height: 50px;
+  border-radius: 15px;
+  background-color: var(--color-light-gray);
+  color: #333;
+  margin: 5px 0;
+  padding: 0.8rem;
+  transition: background-color 0.1s;
+}
 
-  .lineMeetingTitle:focus {
-    outline: none;
-    border: none;
-  }
+#datetimePicker:hover, #datePicker:hover, #timePicker:hover {
+  background-color: var(--color-hover-gray);
+}
 
-  .lineMeetingTitle::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    height: 1em;
-    width: 2px;
-    background-color: #000;
-    animation: blink 1s step-start infinite;
+.ButtonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.error-text {
+  color: red;
+  margin: 0 10px 0 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.mandatoryAdvise img, .userSelection img, .personasConvocadas img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  filter: grayscale(100%) brightness(130%);
+}
+
+.twoButtons1, .buttonContainer {
+  display: flex;
+  gap: 10px;
+  padding: 1rem;
+  justify-content: flex-end;
+}
+
+.changeConvocanteText {
+  color: var(--color-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: none;
+  margin-left: 8px;
+  padding-top: 2px;
+}
+
+.changeConvocanteText:hover {
+  text-decoration: underline;
+}
+
+.lineMeetingTitle, .lineMeetingMotive {
+  position: relative;
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  outline: none;
+  border: none;
+  width: 100%;
+}
+
+.lineMeetingTitle::after, .lineMeetingMotive::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  height: 1em;
+  width: 2px;
+  background-color: #000;
+  animation: blink 1s step-start infinite;
 }
 
 @keyframes blink {
   50% {
-      opacity: 0;
+    opacity: 0;
   }
 }
 
-  .convenourTitle {
-    font-size: 1.2rem;
-    color: #172B4D;
-  }
+/* Additional Styles */
+.dateShowTitle, .timeShowTitle, .convenourTitle {
+  font-size: 1.2rem;
+}
 
-  .dateShowTitle {
-    font-size: 1.2rem;
-    color: #172B4D;
-  }
-
-  .timeShowTitle {
-    font-size: 1.2rem;
-    color: #172B4D;
-  }
-
-  .dateShowing {
-    display: flex;
-    font-size: 1rem;
-    align-items: flex-start;
-    padding: 1px;
-    color: #949494;
-    font-weight: 500;
-    font-family: Montserrat;
-  }
-
-  .timeShowing {
-    display: flex;
-    font-size: 1rem;
-    align-items: flex-start;
-    padding: 1px;
-    color: #949494;
-    font-weight: 500;
-    font-family: Montserrat;
-  }
-
-  .meetingMotive {
-    padding: 15px;
-    padding-left: 0px;
-    padding-bottom: 0px;
-  }
-
-  .meetingMotive h2 {
-    font-size: 1.2rem;
-    color: #172B4D;
-  }
-
-  .lineMeetingMotive {
-    display: flex;
-    font-size: 1.1rem;
-    align-items: flex-start;
-    padding: 5px;
-    color: #949494;
-    font-weight: 500;
-    font-family: Montserrat;
-    width: 100%;
-    min-width: 600px;
-  }
-
-  .lineMeetingMotive:focus {
-    outline: none;
-    border: none;
-  }
-
-  .lineMeetingMotive::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    height: 1em;
-    width: 2px;
-    background-color: #000;
-    animation: blink 1s step-start infinite;
+.meetingMotive {
+  padding: 15px 0 0;
 }

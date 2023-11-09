@@ -1,5 +1,30 @@
 const connection = require("../../config/db");
 
+async function eliminarEntregableXResponsabilidadRol(req,res,next){
+    const{idProyecto} = req.body;
+    const query = `CALL ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(?);`;
+    try {
+        await connection.query(query,[idProyecto]);
+        res.status(200).json({message: "EntregableXResponsabilidadRol eliminado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function insertarResponsabilidad(req,res,next){
+    const{idProyecto, letraRol, nombreRol, colorRol, descrpcionRol} = req.body;
+    const query = `CALL INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO(?,?,?,?,?);`;
+    try {
+        const [results] = await connection.query(query,[idProyecto, letraRol, nombreRol, colorRol, descrpcionRol]);
+        const idResponsabilidadRol = results[0][0].idResponsabilidadRol;
+        res.status(200).json({idResponsabilidadRol, message: "ResponsabilidadRol insertado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function listarResponsabilidad(req,res,next){
     const{idProyecto} = req.params;
     const query = `CALL LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(?);`;
@@ -7,6 +32,18 @@ async function listarResponsabilidad(req,res,next){
         const [results] = await connection.query(query,[idProyecto]);
         const responsabilidadRol = results[0];
         res.status(200).json({responsabilidadRol, message: "ResponsabilidadesRol listado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function eliminarResponsabilidad(req,res,next){
+    const{idResponsabilidadRol} = req.body;
+    const query = `CALL ELIMINAR_RESPONSABILIDADROL_X_ID(?);`;
+    try {
+        await connection.query(query,[idResponsabilidadRol]);
+        res.status(200).json({message: "ResponsabilidadeRol eliminado"});
     } catch (error) {
         console.log(error);
         next(error);
@@ -96,6 +133,9 @@ async function actualizarEntregables(req, res, next) {
 
 
 module.exports = {
+    eliminarEntregableXResponsabilidadRol,
+    insertarResponsabilidad,
+    eliminarResponsabilidad,
     listarResponsabilidad,
     listarRol,
     listarEntregables,
