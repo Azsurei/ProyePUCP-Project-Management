@@ -47,6 +47,7 @@ import {
     inputDateToDisplayDate,
 } from "@/common/dateFunctions";
 import CrossIcon from "@/components/dashboardComps/projectComps/cronogramaComps/CrossIcon";
+import ModalRegisterProgress from "@/components/dashboardComps/projectComps/cronogramaComps/ModalRegisterProgress";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -105,6 +106,12 @@ export default function Cronograma(props) {
         isOpen: isModalPosteriorOpen,
         onOpen: onModalPosteriorOpen,
         onOpenChange: onModalPosteriorChange,
+    } = useDisclosure();
+
+    const {
+        isOpen: isModalRegisterProgressOpen,
+        onOpen: onModalRegisterProgressOpen,
+        onOpenChange: onModalRegisterProgressChange,
     } = useDisclosure();
 
     const [toggleNew, setToggleNew] = useState(false);
@@ -283,6 +290,16 @@ export default function Cronograma(props) {
         setStateSecond(4);
         setToggleNew(true);
     };
+
+    const [currentTaskToProgress, setCurrentTaskToProgress] = useState(null);
+
+    const handleRegisterProgress = (tarea) => {
+        //verificar si el usuario que esta registrando la tarea pertenece a dicha tarea (en los usuarios de la misma)
+        console.log("abriendo modal");
+        setCurrentTaskToProgress(tarea);
+        onModalRegisterProgressOpen();
+    }
+
 
     const handleEdit = (tarea) => {
         console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
@@ -883,6 +900,12 @@ export default function Cronograma(props) {
                 startDate={fechaFin}
             ></ModalPosterior>
 
+            <ModalRegisterProgress
+                isOpen={isModalRegisterProgressOpen}
+                onOpenChange={onModalRegisterProgressChange}
+                tarea={currentTaskToProgress}
+            ></ModalRegisterProgress>
+
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
                 <div className="containerGeneralLeft">
                     <HeaderWithButtonsSamePage
@@ -917,6 +940,7 @@ export default function Cronograma(props) {
                                 leftMargin={"0px"}
                                 handleVerDetalle={handleVerDetalle}
                                 handleAddNewSon={handleAddNewSon}
+                                handleRegisterProgress={handleRegisterProgress}
                                 handleEdit={handleEdit}
                                 handleDelete={handleDelete}
                             ></ListTareas>

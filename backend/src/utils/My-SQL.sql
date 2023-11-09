@@ -1264,6 +1264,7 @@ CREATE TABLE ResponsabilidadRol(
     nombreRol VARCHAR(100),
     colorRol VARCHAR(100),
     activo tinyint NOT NULL,
+    descripcionRol VARCHAR(255),
     FOREIGN KEY(idMatrizResponsabilidad) REFERENCES MatrizResponsabilidad (idMatrizResponsabilidad)
 
 )

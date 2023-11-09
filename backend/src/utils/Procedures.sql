@@ -3913,11 +3913,11 @@ CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(
     IN _idMatrizResponsabilidad INT
 )
 BEGIN
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1, "Se encarga de aprobar y revisar tareas");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1, "Debe ser informado luego de una decisión o acción");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1, "Toma parte de las acciones y tareas hechas");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1, "Responsable de completar tareas o entregables");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1, "Asesor o experto a quien se le consulta antes de una acción");
 END$
 
 DELIMITER $
@@ -3926,9 +3926,9 @@ CREATE PROCEDURE LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(
 )
 BEGIN
     SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
-    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color
+    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color, descripcionRol as descripcion
     FROM ResponsabilidadRol
-    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
 END
 $
 
@@ -4007,6 +4007,49 @@ BEGIN
     WHERE idEntregableXResponsabilidadXRol = _idEntregableXResponsabilidadXRol;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO(
+    IN _idProyecto INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descrpcionRol VARCHAR(255)
+)
+BEGIN
+    DECLARE _idResponsabilidadRol INT;
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) 
+    VALUES(@_idMatrizResponsabilidad, _letraRol, _nombreRol, _colorRol, 1, _descrpcionRol);
+    SET _idResponsabilidadRol = @@last_insert_id;
+    SELECT _idResponsabilidadRol AS idResponsabilidadRol;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_RESPONSABILIDADROL_X_ID(
+    IN _idResponsabilidadRol INT
+)
+BEGIN
+    UPDATE ResponsabilidadRol
+    SET activo = 0
+    WHERE idResponsabilidadRol = _idResponsabilidadRol;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(
+    IN _idProyecto INT
+)
+BEGIN
+    UPDATE EntregableXResponsabilidadRol AS err
+    LEFT JOIN RolEquipo AS re ON err.idRol = re.idRolEquipo
+    SET err.activo = 0
+    WHERE re.idProyecto = _idProyecto;
+END$
+
+DELIMITER ;
+
 -----------------------
 -- Plantillas
 -----------------------
@@ -4021,7 +4064,7 @@ BEGIN
     DECLARE _idPlantillaAC INT;
     -- Primero creamos los datos iniciales de la plantilla
 	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla) 
-    VALUES(_idUsuario,0,_nombrePlantilla);
+    VALUES(_idUsuario,1,_nombrePlantilla);
     SET _idPlantillaAC = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaAC AS idPlantillaAC;
@@ -4047,7 +4090,7 @@ CREATE PROCEDURE INSERTAR_PLANTILLA_AC_TIPODATO(
 )
 BEGIN
     INSERT INTO PlantillaACTipoDato(idPlantillaAC, nombre, activo)
-    VALUES(_idPlantillaAC,_nombre, 0);
+    VALUES(_idPlantillaAC,_nombre, 1);
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_ACTACONSTITUCION;
@@ -4058,5 +4101,51 @@ CREATE PROCEDURE LISTAR_PLANTILLA_ACTACONSTITUCION(
 BEGIN
     SELECT *
     FROM PlantillaActaConstitucion
-    WHERE idUsuario = _idUsuario;
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_ACTACONSTITUCION(
+    IN _idPlantillaAC INT
+)
+BEGIN
+    UPDATE PlantillaActaConstitucion SET activo = 0 WHERE idPlantillaAC = _idPlantillaAC;
+    UPDATE PlantillaACTipoDato SET activo = 0 WHERE idPlantillaAC = _idPlantillaAC;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(
+    IN _idPlantillaAC INT
+)
+BEGIN
+    SELECT nombre
+    FROM PlantillaACTipoDato
+    WHERE idPlantillaAC = _idPlantillaAC
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_ACTACONSTITUCION(
+    IN _idActaConstitucion INT,
+    IN _nombre VARCHAR(500)
+)
+BEGIN
+    DECLARE _idDetalle INT;
+    -- Verificamos si el registro ya existe
+    SELECT idDetalle INTO _idDetalle
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion AND nombre = _nombre;
+    IF _idDetalle IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE DetalleAC
+        SET activo = 1
+        WHERE idDetalle = _idDetalle;
+    ELSE
+        INSERT INTO DetalleAC(idActaConstitucion,nombre,activo) 
+        VALUES(_idActaConstitucion,_nombre,1);
+    END IF;
 END$
