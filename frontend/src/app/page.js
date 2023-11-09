@@ -2,6 +2,7 @@
 
 import Button from "@/components/Button";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -57,12 +58,14 @@ export default function Home() {
                         gestionar tus proyectos.
                     </p>
                     <div className="flex justify-center md:justify-start w-full">
-                        <Button
-                            appearance="default"
-                            text="¡Inicia ya!"
-                            onClick={() => handleLogin()}
-                            className={"w-52 bg-blue-700 text-white hover:bg-blue-800"}
-                        />
+                        <Link href={"/login"}>
+                            <Button
+                                appearance="default"
+                                text="¡Inicia ya!"
+                                onClick={() => console.log("Llendo a login")}
+                                className={"w-52 bg-blue-700 text-white hover:bg-blue-800"}
+                            />
+                        </Link>
                     </div>
                 </div>
                 <Image

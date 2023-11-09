@@ -448,7 +448,7 @@ function structureData(data) {
     return result[null];
 }
 
-async function funcListarTareasXIdSprint(idSprint) {
+async function funcListarTareasXIdSprint(idSprint) {    //
     try {
         const query = `CALL LISTAR_TAREAS_X_ID_SPRINT(?);`;
         const [results] = await connection.query(query, [idSprint]);
@@ -511,7 +511,7 @@ async function funcModificarTareaIdSprint(idTarea, idSprint) {
     }
 }
 
-async function funcListarTareasSinSprint(idCronograma) {
+async function funcListarTareasSinSprint(idCronograma) {    //
     try {
         const query = `CALL LISTAR_TAREAS_SIN_SPRINT_X_ID_CRONOGRAMA(?);`;
         const [results] = await connection.query(query, [idCronograma]);
