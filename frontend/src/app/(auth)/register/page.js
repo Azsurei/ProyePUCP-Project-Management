@@ -147,8 +147,8 @@ function Register() {
                         <p className="font-['Montserrat'] font-medium text-4xl">
                             Regístrate
                         </p>
-                        <p className="font-['Roboto'] font-normal text-xl">
-                            ¡Crea tu cuenta!
+                        <p className="font-['Roboto'] text-default-500 font-normal text-xl">
+                            ¡Crea una cuenta!
                         </p>
                     </div>
 

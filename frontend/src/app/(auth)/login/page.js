@@ -270,12 +270,11 @@ function Login() {
             />
 
             <div className="flex flex-wrap justify-between items-center gap-2 w-full content-center">
-                <span className="font-['Roboto'] font-normal text-md">¿No tienes una cuenta?</span>
-                {/* <Link href="/recoverPassword">
-                    <span className="font-['Roboto'] text-md font-bold leading-12 text-[#A9D562] hover:text-[#88B847] active:text-[#507A31] no-underline">
+                <Link href="/recoverPassword">
+                    <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
                         ¿Olvidó la contraseña?
                     </span>
-                </Link> */}
+                </Link> 
                 <Link href="/register">
                     <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
                         Regístrate
