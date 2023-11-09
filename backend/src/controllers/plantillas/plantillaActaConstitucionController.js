@@ -25,6 +25,23 @@ async function guardarPlantillaAC(req, res, next) {
     }
 }
 
+async function listarPlantillasAC(req, res, next) {
+    const {idUsuario} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_ACTACONSTITUCION(?);`;
+    try {
+        //Traemos todas las plantillas de Acta de Constitucion del usuario
+        const [results] = await connection.query(query, [idUsuario]);
+        const plantillasAC = results[0];
+        res.status(200).json({
+            plantillasAC,
+            message: `Se listó las plantilas de Acta de constitucion del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    guardarPlantillaAC
+    guardarPlantillaAC,
+    listarPlantillasAC
 };
