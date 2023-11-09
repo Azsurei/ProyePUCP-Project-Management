@@ -1299,5 +1299,28 @@ ENGINE = InnoDB;
 
 
 -----------------------
--- Matriz de responsabilidades
+-- Plantillas
 -----------------------
+
+DROP TABLE IF EXISTS PlantillaKanban;
+CREATE TABLE PlantillaKanban(
+    idPlantillaKanban INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    nombrePlantilla VARCHAR(100),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario (idUsuario)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS PlantillaKanbanColumnas;
+CREATE TABLE PlantillaKanbanColumnas(
+    idPlantillaKanbanColumnas INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaKanban INT,
+    nombre VARCHAR(100),
+    posicion INT,
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idPlantillaKanban) REFERENCES Usuario (idUsuario)
+
+)
+ENGINE = InnoDB;

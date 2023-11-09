@@ -4149,3 +4149,43 @@ BEGIN
         VALUES(_idActaConstitucion,_nombre,1);
     END IF;
 END$
+
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_KANBAN(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaKanban INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaKanban(idUsuario,nombrePlantilla,activo) 
+    VALUES(_idUsuario,_nombrePlantilla,1);
+    SET _idPlantillaKanban = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaKanban AS idPlantillaKanban;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_KANBAN(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT nombre, posicion
+    FROM ColumnaKanban
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANTILLA_KANBAN_CAMPO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANTILLA_KANBAN_CAMPO(
+    IN _idPlantillaKanban INT,
+    IN _nombre VARCHAR(255),
+    IN _posicion INT
+)
+BEGIN
+    INSERT INTO PlantillaKanbanColumnas(idPlantillaKanban, nombre, posicion, activo)
+    VALUES(_idPlantillaKanba,_nombre,_posicion, 1);
+END$
