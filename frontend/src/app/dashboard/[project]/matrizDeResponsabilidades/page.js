@@ -383,7 +383,7 @@ export default function MatrizDeResponsabilidades(props) {
                 Inicio/Proyectos/Proyecto/Matriz de responsabilidades
             </div>
             <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
-                <div className="text-[#172B4D] font-semibold text-[2rem]">
+                <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white">
                     Matriz de responsabilidades
                 </div>
                 <div className="flex gap-4">
@@ -427,7 +427,7 @@ export default function MatrizDeResponsabilidades(props) {
             </Table>
             <div className="mx-[1rem] ">
                 <div className="my-[2rem] p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto rounded-large shadow-small w-full">
-                    <div className="text-[#172B4D] font-semibold text-[1.4rem]">
+                    <div className="text-[#172B4D] font-semibold text-[1.4rem] dark:text-white">
                         Leyenda
                     </div>
                     <div className="grid grid-cols-12 gap-4 items-center">
@@ -437,7 +437,7 @@ export default function MatrizDeResponsabilidades(props) {
                                     style={{
                                         backgroundColor: responsabilidad.color,
                                     }}
-                                    className="col-span-1 border-medium rounded-medium flex justify-center text-white"
+                                    className="col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px]"
                                 >
                                     {responsabilidad.letra}
                                 </div>
