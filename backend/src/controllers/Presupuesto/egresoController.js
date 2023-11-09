@@ -34,7 +34,6 @@ async function funcListarLineasXIdPresupuesto(idPresupuesto) {
         lineasEgreso = results[0];
     } catch (error) {
         console.log(error);
-        next(error);
     }
     return lineasEgreso;
 }

@@ -46,13 +46,13 @@ DROP PROCEDURE IF EXISTS CAMBIAR_PASSWORD_CUENTA_USUARIO;
 
 DELIMITER $
 CREATE PROCEDURE CAMBIAR_PASSWORD_CUENTA_USUARIO(
-    IN _idUsuario INT,
+    IN _correo INT,
     IN _password VARCHAR(200)
 )
 BEGIN
 	UPDATE Usuario 
     SET password = MD5(_password) 
-    WHERE idUsuario = _idUsuario AND activo = 1;
+    WHERE correoElectronico = _correo AND activo = 1;
 END$
 
 DROP PROCEDURE IF EXISTS VERIFICAR_SI_CORREO_ES_DE_GOOGLE;
@@ -927,13 +927,13 @@ CREATE PROCEDURE LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(
     IN _idLineaActaReunion INT
 )
 BEGIN
-    SELECT pr.idParticipanteXReunion,urp.idUsuarioRolProyecto, u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.usuario
+    SELECT pr.idParticipanteXReunion,urp.idUsuarioRolProyecto, u.idUsuario, u.nombres, u.apellidos, u.correoElectronico, u.usuario, u.imgLink,pr.asistio
     FROM ParticipanteXReunion pr INNER JOIN UsuarioXRolXProyecto urp ON pr.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto
     INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario 
     WHERE pr.idLineaActaReunion = _idLineaActaReunion AND pr.activo=1;
 END$
 
-CALL LISTAR_PARTICIPANTE_X_REUNION_X_ID_LINEA_ACTA_REUNION(52)
+
 SELECT * FROM LineaActaReunion;
 DROP PROCEDURE IF EXISTS MODIFICAR_PARTICIPANTE_X_REUNION;
 DELIMITER $
@@ -1016,7 +1016,7 @@ CREATE PROCEDURE LISTAR_LINEA_RETROSPECTIVA_X_ID_RETROSPECTIVA(
     IN _idRetrospectiva INT
 )
 BEGIN
-    SELECT lr.idLineaRetrospectiva,lr.titulo,lr.cantBien, lr.cantMal,lr.cantQueHacer
+    SELECT lr.idLineaRetrospectiva,lr.idSprint,lr.titulo,lr.cantBien, lr.cantMal,lr.cantQueHacer
     FROM LineaRetrospectiva lr 
     WHERE lr.idRetrospectiva = _idRetrospectiva 
     AND lr.activo=1;
@@ -2313,7 +2313,7 @@ DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
-    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion, t.idTransaccionTipo, t.descripcion AS descripcionTransaccionTipo,
+    SELECT l.idLineaIngreso, l.descripcion, l.monto, l.cantidad, l.fechaTransaccion, t.idTransaccionTipo, t.descripcion AS descripcionTransaccionTipo,
     i.idIngresoTipo, i.descripcion AS descripcionIngresoTipo, m.idMoneda, m.nombre AS nombreMoneda
 	FROM LineaIngreso AS l LEFT JOIN TransaccionTipo AS t ON l.idTransaccionTipo = t.idTransaccionTipo
 							LEFT JOIN IngresoTipo AS i ON l.idIngresoTipo = i.idIngresoTipo
@@ -3928,7 +3928,26 @@ BEGIN
     SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
     SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color, descripcionRol as descripcion
     FROM ResponsabilidadRol
+<<<<<<< HEAD
+<<<<<<< HEAD
     WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+END$
+
+--------------------------------------------------
+-- Moneda
+--------------------------------------------------
+DROP PROCEDURE IF EXISTS ACTUALIZAR_TIPO_CAMBIO;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_TIPO_CAMBIO(
+    IN _cambioUSD2PEN DECIMAL(10,2)
+)
+BEGIN
+    UPDATE Moneda SET TipoCambio = _cambioUSD2PEN WHERE idMoneda = 1 AND activo =1;
+=======
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+=======
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+>>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
 END
 $
 
@@ -4005,6 +4024,9 @@ BEGIN
         idResponsabilidadRol = _idResponsabilidadRol,
         idRol = _idRol
     WHERE idEntregableXResponsabilidadXRol = _idEntregableXResponsabilidadXRol;
+<<<<<<< HEAD
+>>>>>>> f7a07c44e49712a1304fb61170a98d9e38ef9614
+=======
 END$
 
 DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO;
@@ -4265,4 +4287,5 @@ BEGIN
         INSERT INTO ColumnaKanban(idProyecto,nombre,posicion,activo) 
         VALUES(_idProyecto,_nombre,_posicion,1);
     END IF;
+>>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
 END$

@@ -43,9 +43,47 @@ Content-Type: application/json
   ]
 }
 ###
-GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/96 HTTP/1.1
+GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/158 HTTP/1.1
 Content-Type: application/json
 
+{
+  "idActaReunion": 29,
+  "nombreReunion": "Reunión de Planificación",
+  "fechaReunion": "2023-11-01",
+  "horaReunion": "10:00 AM",
+  "nombreConvocante": "Juan Pérez",
+  "motivo": "Discutir los detalles del proyecto",
+  "temas": [
+    {
+      "descripcion": "Tema 1: Planificación del proyecto 2",
+      "acuerdos": [
+        {
+          "descripcion": "Acuerdo 1: Definir los plazos del proyecto",
+          "fechaObjetivo": "2023-11-10",
+          "responsables": [
+            {
+              "idUsuarioXRolXProyecto": 2
+            },
+            {
+              "idUsuarioXRolXProyecto": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "participantes": [
+    {
+      "idUsuarioXRolXProyecto": 2,
+      "asistio": true
+    }
+  ],
+  "comentarios": [
+    {
+      "descripcion": "Comentario 1: La reunión fue productiva"
+    }
+  ]
+}
 ###
 GET http://localhost:8080/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/5 HTTP/1.1
 Content-Type: application/json

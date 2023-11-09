@@ -119,7 +119,7 @@ export default function ActaReunion(props) {
                         {participantes.length > 0 && (
                                 <AvatarGroup isBordered max={3} >
                                     {participantes.map((participante, index) => (
-                                        <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
+                                        <Avatar key={participante.idParticipanteXReunion}  src={participante.imgLink} fallback={
                                             <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
                                                 {participante.nombres[0] + participante.apellidos[0]}
                                             </p>
@@ -165,31 +165,42 @@ export default function ActaReunion(props) {
                 Acta de Reunión
             </HeaderWithButtons>
 
-            <Tabs aria-label="Options" radius="full" color="warning">
-                <Tab key="pending" title="Pendientes" className="montserrat text-blue-900">
-                    {reuniones.pendientes && reuniones.pendientes.length > 0 ? (
-                        reuniones.pendientes.map(renderCard)
-                    ) : (
-                        <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={1} />
-                            <MissingEDTComponents />
-                            <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
-                        </div>
-                    )}
-                </Tab>
-                <Tab key="finished" title="Finalizados" className="montserrat text-blue-900">
-                    {reuniones.finalizadas && reuniones.finalizadas.length > 0 ? (
-                        reuniones.finalizadas.map(renderCard)
-                    ) : (
-                        <div className="flex flex-col items-center justify-center">
-                            <Spacer  y={1} />
-                            <MissingEDTComponents />
-                            <p>No hay reuniones finalizadas</p>
-                        </div>
-                    )}
-                </Tab>
-            </Tabs>
-
+            {
+                reuniones && reuniones.pendientes && reuniones.finalizadas ? (
+                    <div>
+                        <Tabs aria-label="Options" radius="full" color="warning">
+                            <Tab key="pending" title="Pendientes" className="montserrat text-blue-900">
+                                {reuniones.pendientes.length > 0 ? (
+                                    reuniones.pendientes.map(renderCard)
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center">
+                                        <Spacer y={1} />
+                                        <MissingEDTComponents />
+                                        <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
+                                    </div>
+                                )}
+                            </Tab>
+                            <Tab key="finished" title="Finalizados" className="montserrat text-blue-900">
+                                {reuniones.finalizadas.length > 0 ? (
+                                    reuniones.finalizadas.map(renderCard)
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center">
+                                        <Spacer y={1} />
+                                        <MissingEDTComponents />
+                                        <p>No hay reuniones finalizadas</p>
+                                    </div>
+                                )}
+                            </Tab>
+                        </Tabs>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center">
+                        <Spacer y={1} />
+                        <MissingEDTComponents />
+                        <p>No hay reuniones programadas</p>
+                    </div>
+                )
+            }
         </div>
     );
 }
