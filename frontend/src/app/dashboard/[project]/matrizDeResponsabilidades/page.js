@@ -460,7 +460,7 @@ export default function MatrizDeResponsabilidades(props) {
                             </React.Fragment>
                         ))}
                     </div>
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center my-2">
                         <Button
                             color="warning"
                             auto
