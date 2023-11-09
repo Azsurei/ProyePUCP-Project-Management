@@ -1,5 +1,18 @@
 const connection = require("../../config/db");
 
+async function insertarResponsabilidad(req,res,next){
+    const{idProyecto, letraRol, nombreRol, colorRol, descrpcionRol} = req.body;
+    const query = `CALL INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO(?,?,?,?,?);`;
+    try {
+        const [results] = await connection.query(query,[idProyecto, letraRol, nombreRol, colorRol, descrpcionRol]);
+        const idResponsabilidadRol = results[0][0].idResponsabilidadRol;
+        res.status(200).json({idResponsabilidadRol, message: "ResponsabilidadesRol insertado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function listarResponsabilidad(req,res,next){
     const{idProyecto} = req.params;
     const query = `CALL LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(?);`;
@@ -96,6 +109,7 @@ async function actualizarEntregables(req, res, next) {
 
 
 module.exports = {
+    insertarResponsabilidad,
     listarResponsabilidad,
     listarRol,
     listarEntregables,

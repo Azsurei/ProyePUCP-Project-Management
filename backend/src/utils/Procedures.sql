@@ -3913,11 +3913,11 @@ CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(
     IN _idMatrizResponsabilidad INT
 )
 BEGIN
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1);
-    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "A", "Aprueba", "rgb(0,111,238)", 1, "Se encarga de aprobar y revisar tareas");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "I", "Se le informa", "rgb(243,18,96)", 1, "Debe ser informado luego de una decisión o acción");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "P", "Participa", "rgb(147,83,211)", 1, "Toma parte de las acciones y tareas hechas");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "R", "Responsable", "rgb(23,201,100)", 1, "Responsable de completar tareas o entregables");
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) VALUES(_idMatrizResponsabilidad, "C", "Se le consulta", "rgb(245,165,36)", 1, "Asesor o experto a quien se le consulta antes de una acción");
 END$
 
 DELIMITER $
@@ -3926,9 +3926,9 @@ CREATE PROCEDURE LISTAR_RESPONSABILIDADROL_X_IDPROYECTO(
 )
 BEGIN
     SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
-    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color
+    SELECT idResponsabilidadRol as id, nombreRol as nombre, letraRol as letra, colorRol as color, descripcionRol as descripcion
     FROM ResponsabilidadRol
-    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND activo=1;
 END
 $
 
@@ -4005,6 +4005,24 @@ BEGIN
         idResponsabilidadRol = _idResponsabilidadRol,
         idRol = _idRol
     WHERE idEntregableXResponsabilidadXRol = _idEntregableXResponsabilidadXRol;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO(
+    IN _idProyecto INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descrpcionRol VARCHAR(255)
+)
+BEGIN
+    DECLARE _idResponsabilidadRol INT;
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad, letraRol, nombreRol, colorRol, activo, descripcionRol) 
+    VALUES(@_idMatrizResponsabilidad, _letraRol, _nombreRol, _colorRol, 1, _descrpcionRol);
+    SET _idResponsabilidadRol = @@last_insert_id;
+    SELECT _idResponsabilidadRol AS idResponsabilidadRol;
 END$
 
 -----------------------
