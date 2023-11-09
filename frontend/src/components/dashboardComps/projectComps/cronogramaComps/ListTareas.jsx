@@ -19,6 +19,7 @@ function CardTarea({
     handleVerDetalle,
     handleEdit,
     handleAddNewSon,
+    handleRegisterProgress,
     handleDelete,
 }) {
     const tieneHijos = true;
@@ -120,7 +121,15 @@ function CardTarea({
                                     handleAddNewSon(tarea);
                                 }}
                             >
-                                Agregar hijo
+                                Agregar subtarea
+                            </DropdownItem>
+                            <DropdownItem
+                                aria-label="regProg"
+                                onClick={() => {
+                                    handleRegisterProgress(tarea);
+                                }}
+                            >
+                                Registrar progreso
                             </DropdownItem>
                             <DropdownItem
                                 aria-label="seeDetail"
@@ -161,6 +170,7 @@ function CardTarea({
                         handleVerDetalle={handleVerDetalle}
                         handleEdit={handleEdit}
                         handleAddNewSon={handleAddNewSon}
+                        handleRegisterProgress={handleRegisterProgress}
                         handleDelete={handleDelete}
                     ></ListTareas>
                 )}
@@ -175,6 +185,7 @@ export default function ListTareas({
     handleVerDetalle,
     handleEdit,
     handleAddNewSon,
+    handleRegisterProgress,
     handleDelete,
 }) {
     return (
@@ -188,6 +199,7 @@ export default function ListTareas({
                         handleVerDetalle={handleVerDetalle}
                         handleEdit={handleEdit}
                         handleAddNewSon={handleAddNewSon}
+                        handleRegisterProgress={handleRegisterProgress}
                         handleDelete={handleDelete}
                     ></CardTarea>
                 );
