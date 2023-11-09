@@ -20,7 +20,7 @@ const verifyEmail = async (email) => {
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/auth/verificarSiCorreoEsDeGoogle`,
                 {
-                    correoElectronico: email
+                    correoElectronico: email,
                 }
             )
             .then((response) => {
@@ -32,7 +32,7 @@ const verifyEmail = async (email) => {
                     "Error al verificar si el correo es de Google: ",
                     error
                 );
-                reject(error.message);
+                reject(error);
             });
     });
 };
@@ -43,7 +43,7 @@ const resetPassword = async (email, password) => {
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/usuario/cambiarPassword`,
                 {
-                    correoElectronico: email,
+                    correo: email,
                     password: password,
                 }
             )
@@ -82,7 +82,7 @@ export default function recoverPassword() {
         setStatusFormRecover("submitting");
         try {
             const response = await verifyEmail(email);
-            if (response) {
+            if (!response) {
                 setTypeForm("reset");
             } else {
                 setErrorForm(
@@ -90,7 +90,11 @@ export default function recoverPassword() {
                 );
             }
         } catch (error) {
-            setErrorForm(error);
+            if (error.response.status === 500)
+                setErrorForm(
+                    "El correo ingresado no está registrado en el sistema"
+                );
+            else setErrorForm(error.message);
         } finally {
             setStatusFormRecover("valid");
         }
@@ -301,9 +305,9 @@ export default function recoverPassword() {
                             }
                             className={"w-48"}
                         />
-                        <div className="flex flex-wrap justify-between items-center gap-2 mt-4 w-full content-center">
+                        <div className="flex flex-wrap justify-center items-center gap-2 mt-4 w-full content-center">
                             <span
-                                className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline"
+                                className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline hover:cursor-pointer"
                                 onClick={returnForm}
                             >
                                 Volver a verificación de correo
@@ -315,10 +319,10 @@ export default function recoverPassword() {
             {typeForm === "success" && (
                 <>
                     <div className="flex flex-col gap-4 items-center justify-center">
-                        <p className="font-['Montserrat'] font-medium text-4xl">
+                        <p className="font-['Montserrat'] font-medium text-4xl text-center">
                             Contraseña cambiada
                         </p>
-                        <p className="font-['Roboto'] font-normal text-xl">
+                        <p className="font-['Roboto'] font-normal text-xl text-center">
                             Se ha realizado la recuperación de contraseña para
                             el correo asociado
                         </p>
