@@ -354,11 +354,10 @@ export default function MatrizDeResponsabilidades(props) {
                 }
 
                 setModifiedCells([]);
-                if(postPromise || putPromise){
+                if (postPromise || putPromise) {
                     setIsLoadingSmall(true);
                     setReList(!reList);
                 }
-
             })
             .catch((errors) => {
                 // Manejar errores si alguna de las solicitudes falla
@@ -383,7 +382,7 @@ export default function MatrizDeResponsabilidades(props) {
                 Inicio/Proyectos/Proyecto/Matriz de responsabilidades
             </div>
             <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
-                <div className="text-[#172B4D] font-semibold text-[2rem] ">
+                <div className="text-[#172B4D] font-semibold text-[2rem]">
                     Matriz de responsabilidades
                 </div>
                 <div className="flex gap-4">
@@ -394,11 +393,8 @@ export default function MatrizDeResponsabilidades(props) {
                     >
                         Guardar
                     </Button>
-                    <Button
-                        color="danger"
-                        startContent={<CrossWhite />}
-                    >
-                        Eliminar todo
+                    <Button color="danger" startContent={<CrossWhite />}>
+                        Limpiar
                     </Button>
                 </div>
             </div>
@@ -428,6 +424,43 @@ export default function MatrizDeResponsabilidades(props) {
                     )}
                 </TableBody>
             </Table>
+            <div className="mx-[1rem] ">
+                <div className="my-[2rem] p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto rounded-large shadow-small w-full">
+                    <div className="text-[#172B4D] font-semibold text-[1.4rem]">
+                        Leyenda
+                    </div>
+                    <div className="grid grid-cols-12 gap-4 items-center">
+                        {responsabilidades.map((responsabilidad) => (
+                            <React.Fragment key={responsabilidad.id}>
+                                <div
+                                    style={{
+                                        backgroundColor: responsabilidad.color,
+                                    }}
+                                    className="col-span-1 border-medium rounded-medium flex justify-center text-white"
+                                >
+                                    {responsabilidad.letra}
+                                </div>
+                                <div
+                                    style={{ color: responsabilidad.color }}
+                                    className="col-span-2 break-words font-medium"
+                                >
+                                    {responsabilidad.nombre}
+                                </div>
+                                <div className="col-span-8 break-words">
+                                    {responsabilidad.descripcion}
+                                </div>
+                                <div className="col-span-1">
+                                    <img
+                                        src="/icons/icon-trash.svg"
+                                        alt="delete"
+                                        className="mb-4 cursor-pointer"
+                                    />
+                                </div>
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
