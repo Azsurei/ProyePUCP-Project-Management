@@ -1,5 +1,17 @@
 const connection = require("../../config/db");
 
+async function eliminarEntregableXResponsabilidadRol(req,res,next){
+    const{idProyecto} = req.body;
+    const query = `CALL ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(?);`;
+    try {
+        await connection.query(query,[idProyecto]);
+        res.status(200).json({message: "EntregableXResponsabilidadRol eliminado"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function insertarResponsabilidad(req,res,next){
     const{idProyecto, letraRol, nombreRol, colorRol, descrpcionRol} = req.body;
     const query = `CALL INSERTAR_RESPONSABILIDADROL_X_IDPROYECTO(?,?,?,?,?);`;
@@ -121,6 +133,7 @@ async function actualizarEntregables(req, res, next) {
 
 
 module.exports = {
+    eliminarEntregableXResponsabilidadRol,
     insertarResponsabilidad,
     eliminarResponsabilidad,
     listarResponsabilidad,

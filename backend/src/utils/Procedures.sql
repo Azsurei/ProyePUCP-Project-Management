@@ -4036,6 +4036,20 @@ BEGIN
     WHERE idResponsabilidadRol = _idResponsabilidadRol;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(
+    IN _idProyecto INT
+)
+BEGIN
+    UPDATE EntregableXResponsabilidadRol AS err
+    LEFT JOIN RolEquipo AS re ON err.idRol = re.idRolEquipo
+    SET err.activo = 0
+    WHERE re.idProyecto = _idProyecto;
+END$
+
+DELIMITER ;
+
 -----------------------
 -- Plantillas
 -----------------------
