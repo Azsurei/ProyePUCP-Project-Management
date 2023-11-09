@@ -48,9 +48,11 @@ import {
 } from "@/common/dateFunctions";
 import CrossIcon from "@/components/dashboardComps/projectComps/cronogramaComps/CrossIcon";
 import ModalRegisterProgress from "@/components/dashboardComps/projectComps/cronogramaComps/ModalRegisterProgress";
+import { SessionContext } from "../../layout";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
+    const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -294,12 +296,72 @@ export default function Cronograma(props) {
     const [currentTaskToProgress, setCurrentTaskToProgress] = useState(null);
 
     const handleRegisterProgress = (tarea) => {
-        //verificar si el usuario que esta registrando la tarea pertenece a dicha tarea (en los usuarios de la misma)
-        console.log("abriendo modal");
-        setCurrentTaskToProgress(tarea);
-        onModalRegisterProgressOpen();
-    }
+        //verificacion en caso sea tarea padre
 
+        //verificar si el usuario que esta registrando la tarea pertenece a dicha tarea (en los usuarios de la misma)
+        //if(sessionData.idUsuario)
+        console.log("DATOS DE TAREA " + JSON.stringify(tarea, null, 2));
+
+        if (tarea.porcentajeProgreso === 100) {
+            toast.info("Esta tarea ya fue completada", {
+                position: "top-center",
+            });
+            return;
+        }
+
+        if (tarea.equipo !== null) {
+            let flagUserBelongsToTeam = 0;
+            for (const usuarios of tarea.equipo.participantes) {
+                if (usuarios.idUsuario === sessionData.idUsuario) {
+                    flagUserBelongsToTask = 1;
+                }
+            }
+            if (flagUserBelongsToTeam === 1) {
+                console.log("abriendo modal");
+                setCurrentTaskToProgress(tarea);
+                onModalRegisterProgressOpen();
+            } else {
+                toast.error("Usted no pertenece al equipo asignado", {
+                    position: "top-center",
+                });
+            }
+        } else {
+            let flagUserBelongsToTask = 0;
+            for (const usuarios of tarea.usuarios) {
+                if (usuarios.idUsuario === sessionData.idUsuario) {
+                    flagUserBelongsToTask = 1;
+                }
+            }
+
+            if (flagUserBelongsToTask === 1) {
+                console.log("abriendo modal");
+                setCurrentTaskToProgress(tarea);
+                onModalRegisterProgressOpen();
+            } else {
+                toast.error("Usted no esta asignado a esta tarea", {
+                    position: "top-center",
+                });
+            }
+        }
+    };
+
+    async function refreshListTareas() {
+        console.log("ENTRO AL REFRESH");
+        const tareasURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+            projectId;
+        await axios
+            .get(tareasURL)
+            .then(function (response) {
+                console.log(response);
+                setListTareas(response.data.tareasOrdenadas);
+                console.log(response.data.tareasOrdenadas);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     const handleEdit = (tarea) => {
         console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
@@ -904,6 +966,7 @@ export default function Cronograma(props) {
                 isOpen={isModalRegisterProgressOpen}
                 onOpenChange={onModalRegisterProgressChange}
                 tarea={currentTaskToProgress}
+                refreshListTareas={refreshListTareas}
             ></ModalRegisterProgress>
 
             <div className={toggleNew ? "divLeft closed" : "divLeft"}>
@@ -1663,9 +1726,9 @@ export default function Cronograma(props) {
             <Toaster
                 richColors
                 closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
+                //toastOptions={{
+                //    style: { fontSize: "1rem" },
+                //}}
             />
         </div>
     );

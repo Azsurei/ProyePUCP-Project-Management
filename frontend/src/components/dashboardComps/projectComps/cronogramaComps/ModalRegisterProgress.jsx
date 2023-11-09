@@ -1,5 +1,7 @@
 import DateInput from "@/components/DateInput";
 import { Slider as SliderMaterial } from "@mui/material";
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 import {
     Button,
@@ -10,13 +12,25 @@ import {
     ModalHeader,
     Textarea,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { SessionContext } from "@/app/dashboard/layout";
+import { toast } from "sonner";
 
-function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
+function ModalRegisterProgress({
+    isOpen,
+    onOpenChange,
+    tarea,
+    refreshListTareas,
+}) {
+    const { sessionData } = useContext(SessionContext);
+
+    const [isLoading, setIsLoading] = useState(false);
+
     const [progDescription, setProgDescription] = useState("");
 
-    const baseOriginal = 32;
-    const [baseProgressVal, setBaseProgressVal] = useState(32);
+    //const baseOriginal = tarea?.porcentajeProgreso === null ? 0 : tarea.porcentajeProgreso;
+    const [baseOriginal, setBaseOriginal] = useState(0);
+    const [baseProgressVal, setBaseProgressVal] = useState(baseOriginal);
     const [newProgressVal, setNewProgressVal] = useState(0);
 
     const currentDate = new Date();
@@ -27,10 +41,13 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
 
     useEffect(() => {
         console.log(isOpen);
+        console.log(sessionData);
         if (isOpen === true) {
             setProgDescription("");
-            setBaseProgressVal(baseOriginal);
+            setBaseOriginal(tarea.porcentajeProgreso);
+            setBaseProgressVal(tarea.porcentajeProgreso);
             setNewProgressVal(0);
+            setIsLoading(false);
         }
     }, [isOpen]);
 
@@ -46,18 +63,26 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
         >
             <ModalContent>
                 {(onClose) => {
-                    const finalizarModal = () => {
-                        console.log("BASE " + baseProgressVal);
-                        console.log("NEW " + newProgressVal);
-                        console.log(currentDate);
-                        console.log(formattedDate);
-                        console.log("la tarea => " + tarea.idTarea)
-                        //onClose();
+                    const finalizarModal = async () => {
+                        const result = await handleRegisterProgress();
+                        if (result === 1) {
+                            console.log(
+                                "desde modal estoy mandando al refresh"
+                            );
+                            await refreshListTareas();
+                            toast.success("Progreso registrado con exito");
+                            onClose();
+                        } else {
+                            toast.error("Error al registrar progreso");
+                        }
                     };
                     return (
                         <>
                             <ModalHeader className="flex flex-col pb-1">
-                                <p className="truncate">Registra progreso en la tarea &quot;{tarea.sumillaTarea}&quot;</p>
+                                <p className="truncate">
+                                    Registra progreso en la tarea &quot;
+                                    {tarea.sumillaTarea}&quot;
+                                </p>
                             </ModalHeader>
                             <ModalBody>
                                 <div className="flex flex-col gap-4 font-[Montserrat]">
@@ -78,12 +103,6 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
                                             <Textarea
                                                 variant={"bordered"}
                                                 aria-label="desc-lbl"
-                                                //isInvalid={!validDescripcion}
-                                                //errorMessage={
-                                                //    !validDescripcion
-                                                //        ? msgEmptyField
-                                                //        : ""
-                                                //}
                                                 labelPlacement="outside"
                                                 placeholder="Escriba aquí"
                                                 classNames={{ label: "pb-0" }}
@@ -93,9 +112,6 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
                                                 }
                                                 minRows={1}
                                                 size="sm"
-                                                //onChange={() => {
-                                                //    setValidDescripcion(true);
-                                                //}}
                                             />
                                         </div>
                                     </div>
@@ -118,7 +134,6 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
                                                             e.target.value
                                                         );
                                                     }
-                                                    console.log(e.target.value);
                                                 }}
                                                 max={100}
                                                 min={0}
@@ -137,6 +152,17 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
                                                 {"+" + newProgressVal + "%"}
                                             </p>
                                         </div>
+
+                                        {baseProgressVal === 100 && (
+                                            <div className="flex flex-row gap-1 justify-center">
+                                                <p className="font-semibold">
+                                                    La tarea se marcara como
+                                                </p>
+                                                <p className="font-bold underline text-success-600">
+                                                    Finalizada
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </ModalBody>
@@ -152,6 +178,7 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
                                     color="primary"
                                     onPress={finalizarModal}
                                     isDisabled={newProgressVal === 0}
+                                    isLoading={isLoading}
                                 >
                                     Aceptar
                                 </Button>
@@ -162,5 +189,31 @@ function ModalRegisterProgress({ isOpen, onOpenChange, tarea }) {
             </ModalContent>
         </Modal>
     );
+
+    async function handleRegisterProgress() {
+        setIsLoading(true);
+
+        const objNewReg = {
+            idTarea: tarea.idTarea,
+            idUsuario: sessionData.idUsuario,
+            descripcion: progDescription === "" ? "---" : progDescription,
+            porcentajeRegistrado: newProgressVal,
+            porcentajeDeTarea: baseProgressVal,
+        };
+
+        const newURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/cronograma/registrarProgresoTarea";
+
+        try {
+            const response = await axios.post(newURL, objNewReg);
+            console.log("enviando resultado 1");
+            return 1;
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al registrar progreso");
+            return 0;
+        }
+    }
 }
 export default ModalRegisterProgress;

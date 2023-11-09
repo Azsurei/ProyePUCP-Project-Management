@@ -78,7 +78,7 @@ function CardTarea({
                         )}
                     </div>
 
-                    <div className="containerTareaState">
+                    <div className="containerTareaState gap-3">
                         {/* <p className="bg-primary-200" id="labelTareaState">
                         {tarea.nombreTareaEstado}
                     </p> */}
@@ -91,6 +91,7 @@ function CardTarea({
                         >
                             {tarea.nombreTareaEstado}
                         </Chip>
+                        <p>{tarea.porcentajeProgreso}%</p>
                     </div>
                     <div className="containerTareaDuracion">
                         <p>{duracion}</p>
@@ -100,19 +101,16 @@ function CardTarea({
                 <div className="contaienrMas Opciones relative flex justify-end items-center gap-2">
                     <Dropdown aria-label="droMenTareasMain">
                         <DropdownTrigger aria-label="droMenTareasTrigger">
-                            
-                                <Button
-                                
-                                    size="md"
-                                    radius="sm"
-                                    variant="flat"
-                                    color="default"
-                                    className="ButtonMore"
-                                >
-                                    <p className="lblVerOpciones">Ver opciones</p>
-                                    <VerticalDotsIcon className="icnVerOpciones text-black-300" />
-                                </Button>
-                            
+                            <Button
+                                size="md"
+                                radius="sm"
+                                variant="flat"
+                                color="default"
+                                className="ButtonMore"
+                            >
+                                <p className="lblVerOpciones">Ver opciones</p>
+                                <VerticalDotsIcon className="icnVerOpciones text-black-300" />
+                            </Button>
                         </DropdownTrigger>
                         <DropdownMenu aria-label="droMenTareas">
                             <DropdownItem
@@ -123,14 +121,16 @@ function CardTarea({
                             >
                                 Agregar subtarea
                             </DropdownItem>
-                            <DropdownItem
-                                aria-label="regProg"
-                                onClick={() => {
-                                    handleRegisterProgress(tarea);
-                                }}
-                            >
-                                Registrar progreso
-                            </DropdownItem>
+                            {tarea.tareasHijas.length === 0 && (    //si tiene hijas no se puede registrar progreso en padre, solo en hija
+                                <DropdownItem
+                                    aria-label="regProg"
+                                    onClick={() => {
+                                        handleRegisterProgress(tarea);
+                                    }}
+                                >
+                                    Registrar progreso
+                                </DropdownItem>
+                            )}
                             <DropdownItem
                                 aria-label="seeDetail"
                                 onClick={() => {
