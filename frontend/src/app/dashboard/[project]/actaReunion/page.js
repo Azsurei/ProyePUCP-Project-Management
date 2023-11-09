@@ -158,10 +158,7 @@ export default function ActaReunion(props) {
                 haveReturn={true}
                 haveAddNew={true}
                 hrefToReturn={actualHref}
-                hrefForButton={{
-                    pathname:newHref,
-                    query: {previousUrl: actualHref},
-                }}
+                hrefForButton={newHref}
                 breadcrump={`Inicio / Proyectos / ${projectName} / Acta de Reunión`}
                 btnText={'+ Agregar reunión'}
             >

@@ -96,11 +96,12 @@ export default function crearActaReunion(props) {
 // Router. Helps you to move between pages
 
     const router = useRouter();
-    const previousUrl = props.searchParams.previousUrl;
+
 // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const previousUrl = '/dashboard/'+ projectName + '=' + projectId + '/actaReunion';
 
 // Loading Window
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -240,6 +241,7 @@ export default function crearActaReunion(props) {
     const handleChangeComentario = (e, index) => {
         const updatedEntregables = [...listComentarios];
         updatedEntregables[index - 1].data = e.target.value;
+        console.log('Changed comentario:');
         console.log(updatedEntregables);
         setListComentarios(updatedEntregables);
     };
