@@ -872,6 +872,7 @@ CREATE TABLE PlantillaActaConstitucion(
 	idPlantillaAC INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT,
     activo TINYINT,
+    nombrePlantilla VARCHAR(200),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 )
 ENGINE = InnoDB;
@@ -1294,3 +1295,8 @@ CREATE TABLE EntregableXResponsabilidadRol(
 
 )
 ENGINE = InnoDB;
+
+
+-----------------------
+-- Matriz de responsabilidades
+-----------------------

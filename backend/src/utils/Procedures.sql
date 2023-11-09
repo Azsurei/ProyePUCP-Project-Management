@@ -2931,7 +2931,7 @@ DROP PROCEDURE IF EXISTS LISTAR_RESPONSABLE_X_IDRIESGO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RESPONSABLE_X_IDRIESGO(IN _idRiesgo INT)
 BEGIN
-    SELECT u.correoElectronico, u.idUsuario, u.apellidos, u.nombres
+    SELECT u.correoElectronico, u.idUsuario, u.apellidos, u.nombres, u.imgLink
 	FROM RiesgoXResponsable AS rr
     LEFT JOIN Usuario AS u ON rr.idResponsable = u.idUsuario
 	WHERE rr.idRiesgo = _idRiesgo AND rr.activo=1;
@@ -3979,7 +3979,7 @@ CREATE PROCEDURE LISTAR_ENTREGABLE_X_RESPONSABILIDAD_x_ROL(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT err.idRol, re.nombreRol, err.idEntregable, e.nombre as "nombreEntregable", err.idResponsabilidadRol as "idResponsabilidad",
+	SELECT err.idEntregableXResponsabilidadXRol, err.idRol, re.nombreRol, err.idEntregable, e.nombre as "nombreEntregable", err.idResponsabilidadRol as "idResponsabilidad",
         rr.nombreRol as "nombreResponsabilidad", rr.letraRol as "letraResponsabilidad", rr.colorRol as "colorResponsabilidad"
     FROM EntregableXResponsabilidadRol AS err
     LEFT JOIN Entregable AS e ON err.idEntregable = e.idEntregable
@@ -4005,4 +4005,47 @@ BEGIN
         idResponsabilidadRol = _idResponsabilidadRol,
         idRol = _idRol
     WHERE idEntregableXResponsabilidadXRol = _idEntregableXResponsabilidadXRol;
+END$
+
+-----------------------
+-- Plantillas
+-----------------------
+
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_ACTACONSTITUCION;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_ACTACONSTITUCION(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaAC INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla) 
+    VALUES(_idUsuario,1,_nombrePlantilla);
+    SET _idPlantillaAC = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaAC AS idPlantillaAC;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_NOMBRES_CAMPOS_AC;
+DELIMITER $
+CREATE PROCEDURE LISTAR_NOMBRES_CAMPOS_AC(
+    IN _idActaConstitucion INT
+)
+BEGIN
+    SELECT nombre
+    FROM DetalleAC
+    WHERE idActaConstitucion = _idActaConstitucion
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANTILLA_AC_TIPODATO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANTILLA_AC_TIPODATO(
+    IN _idPlantillaAC INT,
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+    INSERT INTO PlantillaACTipoDato(idPlantillaAC, nombre, activo)
+    VALUES(_idPlantillaAC,_nombre, 1);
 END$

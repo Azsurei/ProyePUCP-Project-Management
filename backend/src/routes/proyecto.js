@@ -17,6 +17,7 @@ const routerRetrospectiva = require("./retrospectiva").routerRetrospectiva;
 const routerReportes = require("./reportes").routerReportes;
 const routerProyecto = express.Router();
 const routerMatrizResponsabilidad = require('./matrizResponsabilidad').routerMatrizResponsabilidad;
+const routerPlantillas = require('./plantillas').routerPlantillas;
 
 const proyectoController = require("../controllers/proyectoController");
 
@@ -35,6 +36,7 @@ routerProyecto.use("/kanban",routerKanban);
 routerProyecto.use("/catalogoInteresados", routerCatalogoInteresados);
 routerProyecto.use("/retrospectiva", routerRetrospectiva);
 routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
+routerPlantillas.use("/plantillas", routerPlantillas);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 //sobre Reportes
