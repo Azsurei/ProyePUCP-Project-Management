@@ -122,6 +122,7 @@ function Login() {
                                 apellidos: userObject.family_name,
                                 correoElectronico: userObject.email,
                                 password: userObject.sub,
+                                tieneCuentaGoogle: true,
                             }
                         )
                         .then((response) => {

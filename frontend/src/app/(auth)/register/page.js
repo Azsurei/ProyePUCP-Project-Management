@@ -109,6 +109,7 @@ function Register() {
                     apellidos: apellido,
                     correoElectronico: email,
                     password: password,
+                    tieneCuentaGoogle: false,
                 }
             );
             setStatusForm("success");
