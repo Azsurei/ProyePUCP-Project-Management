@@ -23,6 +23,13 @@ import {
     DropdownMenu,
     DropdownItem,
     Button,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+    Input,
 } from "@nextui-org/react";
 
 export default function MatrizDeResponsabilidades(props) {
@@ -38,6 +45,19 @@ export default function MatrizDeResponsabilidades(props) {
     );
     const projectId = parseInt(projectIdString);
     const [reList, setReList] = useState(false);
+    const {
+        isOpen: isOpenDelete,
+        onOpen: onOpenDelete,
+        onOpenChange: onOpenChangeDelete,
+    } = useDisclosure();
+    const {
+        isOpen: isOpenAdd,
+        onOpen: onOpenAdd,
+        onOpenChange: onOpenChangeAdd,
+    } = useDisclosure();
+    const [letraRes, setLetraRes] = useState("");
+    const [nombreRes, setNombreRes] = useState("");
+    const [descripcionRes, setDescripcionRes] = useState("");
 
     useEffect(() => {
         // Datos iniciales
@@ -377,6 +397,66 @@ export default function MatrizDeResponsabilidades(props) {
             });
     };
 
+    const limpiarTabla = () => {
+        const urlEliminarTabla =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/eliminarEntregableXResponsabilidadRol";
+
+        const deleteData = {
+            idProyecto: projectId,
+        };
+
+        console.log("El deleteData es:", deleteData);
+
+        axios
+            .delete(urlEliminarTabla, {
+                data: deleteData,
+            })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+                setIsLoadingSmall(true);
+                setReList(!reList);
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
+    };
+
+    const agregarResponsabilidad = () => {
+        const urlAgregarResponsabilidad =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/insertarResponsabilidad";
+
+        const newResponsabilidad = {
+            letraRol: letraRes,
+            nombreRol: nombreRes,
+            descrpcionRol: descripcionRes,
+            colorRol: "#F87171",
+            idProyecto: projectId,
+        };
+
+        console.log("El newResponsabilidad es:", newResponsabilidad);
+
+        /*         axios
+            .post(urlAgregarResponsabilidad, newResponsabilidad)
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+                setIsLoadingSmall(true);
+                setReList(!reList);
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            }); */
+    };
+
     return (
         <>
             <div className="px-[1rem]">
@@ -394,7 +474,11 @@ export default function MatrizDeResponsabilidades(props) {
                     >
                         Guardar
                     </Button>
-                    <Button color="danger" startContent={<CrossWhite />}>
+                    <Button
+                        color="danger"
+                        startContent={<CrossWhite />}
+                        onPress={onOpenDelete}
+                    >
                         Limpiar
                     </Button>
                 </div>
@@ -466,12 +550,120 @@ export default function MatrizDeResponsabilidades(props) {
                             auto
                             className="flex items-center justify-center gap-2 text-white text-[1.1rem]"
                             startContent={<AddIcon />}
+                            onPress={onOpenAdd}
                         >
                             Agregar responsabilidad
                         </Button>
                     </div>
                 </div>
             </div>
+            <Modal
+                isOpen={isOpenDelete}
+                onOpenChange={onOpenChangeDelete}
+                isDismissable={false}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-red-500"}
+                            >
+                                Limpiar matriz de responsabilidades
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    ¿Seguro que quiere limpiar la matriz de
+                                    responsabilidades?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        limpiarTabla();
+                                        onClose();
+                                    }}
+                                >
+                                    Continuar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            {/*El otro modal*/}
+            <Modal
+                isOpen={isOpenAdd}
+                onOpenChange={onOpenChangeAdd}
+                isDismissable={false}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Nueva responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Letra"
+                                        placeholder="A"
+                                        variant="bordered"
+                                        className="w-2/12 mr-4"
+                                        onValueChange={setLetraRes}
+                                    />
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Nombre"
+                                        placeholder="Aprueba"
+                                        variant="bordered"
+                                        className="w-10/12"
+                                        onValueChange={setNombreRes}
+                                    />
+                                </div>
+                                <Input
+                                    isClearable
+                                    autoFocus
+                                    label="Descripción"
+                                    placeholder="Se encarga de aprobar y revisar tareas"
+                                    variant="bordered"
+                                    onValueChange={setDescripcionRes}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        agregarResponsabilidad();
+                                        onClose();
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </>
     );
 }

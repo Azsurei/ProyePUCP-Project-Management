@@ -411,8 +411,12 @@ export default function editarActaReunion(props) {
         newParticipantsList[index].asistio = checked;
         setParticipantsList(newParticipantsList);
         setHasChanges(true);
+
+        console.log('Asistencia');
+        console.log(newParticipantsList);
+        console.log(participantsList);
     };
-/*
+
     const handleAsistenciaChange = (participante) => {
         const nuevosParticipantes = participantsList.map(
             (item) => {
@@ -423,7 +427,7 @@ export default function editarActaReunion(props) {
         });
         setParticipantsList(nuevosParticipantes);
     };
-*/
+
     const handleBorrarParticipante = (participante) => {
         const nuevosParticipantes = participantsList.filter(
             (item) => item.idUsuario !== participante.idUsuario
@@ -460,6 +464,7 @@ export default function editarActaReunion(props) {
                 }))
             }))
         }));
+
         const participantes = participantsList.map(participante => ({
             idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
             asistio: true,
@@ -813,7 +818,8 @@ export default function editarActaReunion(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     saveMeetingChanges();
-                                    router.push(actualHref);
+                                    router.refresh();
+                                    router.push('/dashboard/' + projectName+'='+projectId + '/actaReunion');
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {

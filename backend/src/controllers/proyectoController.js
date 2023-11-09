@@ -17,44 +17,44 @@ async function funcEliminar(idProyecto,herramientas){
 
         for(const herramienta of herramientas){
             if(herramienta.idHerramienta==1){
-                await productBacklogController.eliminar(herramienta.idHerramienta);
+                await productBacklogController.eliminar(herramienta.idHerramientaCreada);
             }
 
             if(herramienta.idHerramienta==2){
-                await EDTController.eliminar(herramienta.idHerramienta);
+                await EDTController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==3){
-                await actaConstitucionController.eliminar(herramienta.idHerramienta);
+                await actaConstitucionController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==4){
-                await cronogramaController.eliminar(herramienta.idHerramienta);
+                await cronogramaController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==5){
-                await catalogoRiesgosController.eliminar(herramienta.idHerramienta);
+                await catalogoRiesgosController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==6){
-                await catalogoInteresadosController.eliminar(herramienta.idHerramienta);
+                await catalogoInteresadosController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==7){
-                await matrizResponsabilidad.eliminar(herramienta.idHerramienta);
+                await matrizResponsabilidad.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==8){
-                await matrizComunicacionesController.eliminar(herramienta.idHerramienta);
+                await matrizComunicacionesController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==9){
-                await autoEvaluacionController.eliminar(herramienta.idHerramienta);
+                await autoEvaluacionController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==10){
-                await retrospectivaController.eliminar(herramienta.idHerramienta);
+                await retrospectivaController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==11){
-                await actaReunionController.eliminar(herramienta.idHerramienta);
+                await actaReunionController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==12){
-                await equipoController.js(herramienta.idHerramienta);
+                await equipoController.js(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==13){
-                await prespuestoController.eliminar(herramienta.idHerramienta);
+                await presupuestoController.eliminar(herramienta.idHerramientaCreada);
             }
         }
     } catch (error) {

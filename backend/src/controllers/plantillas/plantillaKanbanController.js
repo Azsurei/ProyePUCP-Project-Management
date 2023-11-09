@@ -1,5 +1,12 @@
 const connection = require("../../config/db");
 
+<<<<<<< HEAD
+
+
+module.exports = {
+
+}
+=======
 async function guardarPlantillaKanban(req, res, next) {
     const {idProyecto, idUsuario, nombrePlantilla} = req.body;
     const query = `CALL GUARDAR_PLANTILLA_KANBAN(?,?);`;
@@ -84,3 +91,4 @@ module.exports = {
     eliminarPlantillaKanban,
     seleccionarPlantillaKanban
 };
+>>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
