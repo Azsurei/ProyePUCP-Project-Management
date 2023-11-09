@@ -36,7 +36,7 @@ routerProyecto.use("/kanban",routerKanban);
 routerProyecto.use("/catalogoInteresados", routerCatalogoInteresados);
 routerProyecto.use("/retrospectiva", routerRetrospectiva);
 routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
-routerPlantillas.use("/plantillas", routerPlantillas);
+routerProyecto.use("/plantillas", routerPlantillas);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 //sobre Reportes

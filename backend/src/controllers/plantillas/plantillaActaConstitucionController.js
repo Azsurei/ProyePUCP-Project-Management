@@ -12,7 +12,7 @@ async function guardarPlantillaAC(req, res, next) {
         console.log(`Se creo la plantilla AC ${idPlantillaAC}!`);
         //Obtenemos los campos que se guardaran en la plantilla
         const [results1] = await connection.query(query1, [idActaConstitucion]);
-        let camposAC = results1[0][0];
+        let camposAC = results1[0];
         //Ahora los campos obtenidos lo insertamos a la tabla PlantillaACTipoDato
         for(let campoAC of camposAC){
             await connection.query(query2, [idPlantillaAC, campoAC.nombre]);

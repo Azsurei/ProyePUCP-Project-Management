@@ -1,0 +1,9 @@
+###
+POST http://localhost:8080/api/proyecto/plantillas/guardarPlantillaAC HTTP/1.1
+Content-Type: application/json
+
+{
+  "idActaConstitucion": 11, 
+  "idUsuario": 84,
+  "nombrePlantilla": "test"
+}
