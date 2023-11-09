@@ -19,3 +19,13 @@ Content-Type: application/json
 {
   "idPlantillaAC": 3
 }
+
+###
+PUT http://localhost:8080/api/proyecto/plantillas/seleccionarPlantillaAC HTTP/1.1
+Content-Type: application/json
+
+{
+  "idActaConstitucion": ,
+  "idPlantillaAC": 
+}
+
