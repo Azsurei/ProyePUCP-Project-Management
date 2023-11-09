@@ -25,6 +25,23 @@ async function guardarPlantillaKanban(req, res, next) {
     }
 }
 
+async function listarPlantillasKanban(req, res, next) {
+    const {idUsuario} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_KANBAN(?);`;
+    try {
+        //Traemos todas las plantillas de Kanban del usuario
+        const [results] = await connection.query(query, [idUsuario]);
+        const plantillasKanban = results[0];
+        res.status(200).json({
+            plantillasKanban,
+            message: `Se listó las plantilas de Kanban del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    guardarPlantillaKanban
+    guardarPlantillaKanban,
+    listarPlantillasKanban
 };

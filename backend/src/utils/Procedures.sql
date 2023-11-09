@@ -4187,5 +4187,17 @@ CREATE PROCEDURE INSERTAR_PLANTILLA_KANBAN_CAMPO(
 )
 BEGIN
     INSERT INTO PlantillaKanbanColumnas(idPlantillaKanban, nombre, posicion, activo)
-    VALUES(_idPlantillaKanba,_nombre,_posicion, 1);
+    VALUES(_idPlantillaKanban,_nombre,_posicion, 1);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_KANBAN(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaKanban
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
 END$

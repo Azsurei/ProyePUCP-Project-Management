@@ -13,5 +13,6 @@ routerPlantillas.put("/seleccionarPlantillaAC",plantillaActaConstitucionControll
 
 //Kanban
 routerPlantillas.post("/guardarPlantillaKanban",plantillaKanbanController.guardarPlantillaKanban);
+routerPlantillas.get("/listarPlantillasKanban/:idUsuario",plantillaKanbanController.listarPlantillasKanban);
 
 module.exports.routerPlantillas = routerPlantillas;
