@@ -17,8 +17,6 @@ function EditableTopic(props) {
     const toggleAcuerdos = () => {
         setMostrarAcuerdos(!mostrarAcuerdos);
     };
-    console.log("Props:")
-    console.log(props);
 
     const handleAddAcuerdo = () => {
         // Assuming that 'props.acuerdos' cannot be null or undefined.
@@ -167,9 +165,6 @@ export function TopicEditableList(props) {
         // Assuming item.data is a string
         return a.idTemaReunion > b.idTemaReunion;
     });
-
-    console.log('TopicEditableList');
-    console.log(props);
 
     return (
         <ul className="ListEditableInput">
