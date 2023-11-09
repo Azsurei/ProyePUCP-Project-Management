@@ -4201,3 +4201,13 @@ BEGIN
     WHERE idUsuario = _idUsuario
     AND activo = 1;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_KANBAN(
+    IN _idPlantillaKanban INT
+)
+BEGIN
+    UPDATE PlantillaKanban SET activo = 0 WHERE idPlantillaKanban = _idPlantillaKanban;
+    UPDATE PlantillaKanbanColumnas SET activo = 0 WHERE idPlantillaKanban = _idPlantillaKanban;
+END$

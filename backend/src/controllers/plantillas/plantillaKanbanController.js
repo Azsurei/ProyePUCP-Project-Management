@@ -41,7 +41,22 @@ async function listarPlantillasKanban(req, res, next) {
     }
 }
 
+async function eliminarPlantillaKanban(req, res, next) {
+    const {idPlantillaKanban} = req.body;
+    const query = `CALL ELIMINAR_PLANTILLA_KANBAN(?);`;
+    try {
+        //Eliminamos la plantilla poniendo activo a 0
+        await connection.query(query, [idPlantillaKanban]);
+        res.status(200).json({
+            message: `Se eliminó la plantilla ${idPlantillaKanban} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     guardarPlantillaKanban,
-    listarPlantillasKanban
+    listarPlantillasKanban,
+    eliminarPlantillaKanban
 };
