@@ -41,7 +41,22 @@ async function listarPlantillasAC(req, res, next) {
     }
 }
 
+async function eliminarPlantillaAC(req, res, next) {
+    const {idPlantillaAC} = req.body;
+    const query = `CALL ELIMINAR_PLANTILLA_ACTACONSTITUCION(?);`;
+    try {
+        //Eliminamos la plantilla poniendo activo a 0
+        await connection.query(query, [idPlantillaAC]);
+        res.status(200).json({
+            message: `Se eliminó la plantilla ${idPlantillaAC} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     guardarPlantillaAC,
-    listarPlantillasAC
+    listarPlantillasAC,
+    eliminarPlantillaAC
 };

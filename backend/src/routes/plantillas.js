@@ -7,5 +7,6 @@ const plantillaActaConstitucionController = require("../controllers/plantillas/p
 //Acta Constitucion
 routerPlantillas.post("/guardarPlantillaAC",plantillaActaConstitucionController.guardarPlantillaAC);
 routerPlantillas.get("/listarPlantillasAC/:idUsuario",plantillaActaConstitucionController.listarPlantillasAC);
+routerPlantillas.delete("/eliminarPlantillaAC",plantillaActaConstitucionController.eliminarPlantillaAC);
 
 module.exports.routerPlantillas = routerPlantillas;
