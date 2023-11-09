@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 
+
 const pool = mysql.createPool({
   host: "dbdibujitos.cvqtg3vqsovm.us-east-1.rds.amazonaws.com",
   port: "3306",
