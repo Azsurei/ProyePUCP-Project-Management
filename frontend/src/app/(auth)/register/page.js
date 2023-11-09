@@ -109,6 +109,7 @@ function Register() {
                     apellidos: apellido,
                     correoElectronico: email,
                     password: password,
+                    tieneCuentaGoogle: false,
                 }
             );
             setStatusForm("success");
@@ -126,10 +127,10 @@ function Register() {
             {statusForm === "success" && (
                 <>
                     <div className="flex flex-col gap-4 items-center justify-center">
-                        <p className="font-['Montserrat'] font-medium text-4xl">
+                        <p className="font-['Montserrat'] font-medium text-4xl text-center">
                             Cuenta registrada
                         </p>
-                        <p className="font-['Roboto'] font-normal text-xl">
+                        <p className="font-['Roboto'] font-normal text-xl text-center">
                             Se ha creado la cuenta exitosamente
                         </p>
                     </div>
@@ -147,8 +148,8 @@ function Register() {
                         <p className="font-['Montserrat'] font-medium text-4xl">
                             Regístrate
                         </p>
-                        <p className="font-['Roboto'] font-normal text-xl">
-                            ¡Crea tu cuenta!
+                        <p className="font-['Roboto'] text-default-500 font-normal text-xl">
+                            ¡Crea una cuenta!
                         </p>
                     </div>
 

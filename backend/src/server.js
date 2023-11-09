@@ -30,6 +30,10 @@ app.use('/api/proyecto',routerProyecto);
 app.use('/api/usuario',routerUsuario);
 app.use('/api/admin',routerAdmin);
 
+const startCronJob = require('./config/cronJobs');
+
+startCronJob();
+
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.PORT || port;
 app.listen(PORT, () => {

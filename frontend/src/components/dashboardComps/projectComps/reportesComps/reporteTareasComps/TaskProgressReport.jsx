@@ -2,7 +2,7 @@ import { Slider, Progress, Divider } from "@nextui-org/react";
 import CardProgressEntry from "./CardProgressEntry";
 import CardUserWithProgress from "./CardUserWithProgress";
 
-function TaskProgressReport() {
+function TaskProgressReport({progressEntries}) {
     const progressEntry = {
         user: {
             idUsuario: 3,
@@ -54,12 +54,11 @@ function TaskProgressReport() {
                         </p>
 
                         <div className=" flex-1 space-y-1 overflow-y-auto">
-                            <CardProgressEntry progressEntry={progressEntry} />
-                            <CardProgressEntry progressEntry={progressEntry} />
-                            <CardProgressEntry progressEntry={progressEntry} />
-                            <CardProgressEntry progressEntry={progressEntry} />
-                            <CardProgressEntry progressEntry={progressEntry} />
-                            <CardProgressEntry progressEntry={progressEntry} />
+                            {progressEntries.map((entry)=>{
+                                return(
+                                    <CardProgressEntry key={entry.idRegistroProgreso} progressEntry={entry} />
+                                );
+                            })}
                         </div>
                     </div>
 

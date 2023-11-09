@@ -44,7 +44,7 @@ function ModalDetalleResponsables({isOpen, onOpenChange, responsables, removeRes
                                         src="/icons/icon-cross.svg"
                                         alt="Eliminar"
                                         className="iconDeleteInput cursor-pointer"
-                                        onClick={() => {props.removeResponsable(responsable);}}
+                                        onClick={() => {removeResponsable(responsable);}}
                                     />
                                     </div>
 
@@ -61,23 +61,30 @@ function ModalDetalleResponsables({isOpen, onOpenChange, responsables, removeRes
 }
 
 function EditableInput(props) {
-    //const [responsables, setResponsables] = useState(props.responsables || []);
+    const [responsables, setResponsables] = useState(props.responsables || []);
     const [modal, setModal] = useState(false);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     const toggleModal = () => {
         setModal(!modal);
     };
+    console.log('Props');
+    console.log(props);
 
     const handleResponsablesChange = (newResponsables) => {
         setResponsables(newResponsables);
-        props.updateResponsables(props.number - 1, newResponsables);
+        props.updateResponsables(props.number, newResponsables);
     };
 
     const returnResponsables = (newMiembrosList) => {
         const newMembrsList = [...props.responsables, ...newMiembrosList];
-        props.updateResponsables(props.number - 1, newMembrsList);
-        //setResponsables(newMembrsList);
+        props.updateResponsables(props.number, newMembrsList);
+
+        console.log('props.number - 1');
+        console.log(props.number - 1);
+        console.log('new members list');
+        console.log(newMembrsList);
+        setResponsables(newMembrsList);
         setModal(!modal);
     };
 
@@ -85,7 +92,7 @@ function EditableInput(props) {
         const newMembrsList = props.responsables.filter(
             (item) => item.idUsuario !== miembro.idUsuario
         );
-        props.updateResponsables(props.number - 1, newMembrsList);
+        props.updateResponsables(props.number, newMembrsList);
         //setResponsables(newMembrsList);
         console.log(newMembrsList);
     };
@@ -144,10 +151,10 @@ function EditableInput(props) {
                             )}
                         </div>
                         <div className="responsablesContainer">
-                            {(props.responsables || []).length > 0 ? (
+                            {responsables && responsables.length > 0 ? (
                                 <AvatarGroup isBordered max={4}>
-                                    {props.responsables.map((responsable, index) => (
-                                        <Avatar key={responsable.idUsuario} src="" fallback={
+                                    {responsables.map((responsable, index) => (
+                                        <Avatar key={responsable.idUsuario} src={responsable.imgLink} fallback={
                                             <Tooltip 
                                                 content={
                                                     <div className="text-small font-bold">

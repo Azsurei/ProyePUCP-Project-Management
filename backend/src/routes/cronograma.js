@@ -19,11 +19,19 @@ routerCronograma.post("/insertarTarea", tareaController.crear);
 routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);
 routerCronograma.put("/actualizarIdSprintXTarea",tareaController.modificarIdSprintDeTareas);
 
-
-
 routerCronograma.get("/listarTareasXidProyecto/:idProyecto", tareaController.listarXIdProyecto);
 routerCronograma.get("/listarEntregablesXidProyecto/:idProyecto", cronogramaController.listarEntregablesXidProyecto);
 
 routerCronograma.delete("/eliminarTarea", tareaController.eliminarTarea);
+
+
+//Registro Progreso Tarea
+routerCronograma.post("/registrarProgresoTarea", tareaController.registrarProgreso);
+
+
+//Listado con progresos asociados
+routerCronograma.get("/listarTareasXidProyectoConProgresosDetallados/:idProyecto", tareaController.listarXIdProyectoConProgresos);
+
+
 
 module.exports.routerCronograma = routerCronograma;

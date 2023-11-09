@@ -14,9 +14,10 @@ const routerActaReunion = require('./actaReunion').routerActaReunion;
 const routerKanban = require("./kanban").routerKanban;
 const routerCatalogoInteresados = require('./catalogoInteresados').routerCatalogoInteresados;
 const routerRetrospectiva = require("./retrospectiva").routerRetrospectiva;
-const routerReportes = require("./reportes").routerReportes;
+const routerReporte = require("./reporte").routerReporte;
 const routerProyecto = express.Router();
 const routerMatrizResponsabilidad = require('./matrizResponsabilidad').routerMatrizResponsabilidad;
+const routerPlantillas = require('./plantillas').routerPlantillas;
 
 const proyectoController = require("../controllers/proyectoController");
 
@@ -35,10 +36,11 @@ routerProyecto.use("/kanban",routerKanban);
 routerProyecto.use("/catalogoInteresados", routerCatalogoInteresados);
 routerProyecto.use("/retrospectiva", routerRetrospectiva);
 routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
+routerProyecto.use("/plantillas", routerPlantillas);
 //routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 //sobre Reportes
-routerProyecto.use("/reportes", routerReportes);
+routerProyecto.use("/reporte", routerReporte);
 
 
 routerProyecto.post("/insertarProyecto", verifyToken, async (req, res) => {
