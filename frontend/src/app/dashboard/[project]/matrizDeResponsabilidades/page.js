@@ -512,6 +512,10 @@ export default function MatrizDeResponsabilidades(props) {
                 console.log("Respuesta del servidor (POST):", response.data);
                 console.log("Registro correcto (POST)");
                 // Realizar acciones adicionales si es necesario
+                setLetraRes("");
+                setNombreRes("");
+                setDescripcionRes("");
+                setColorRes("#000000");
                 setReList(!reList);
             })
             .catch((error) => {
