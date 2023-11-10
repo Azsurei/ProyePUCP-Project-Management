@@ -4480,9 +4480,8 @@ BEGIN
     UPDATE Tarea AS tr
     LEFT JOIN Cronograma AS cr ON tr.idCronograma = cr.idCronograma
     SET tr.posicionKanban = (@contador := @contador + 1),
-        tr.idColumnaKanban = 0, 
+        tr.idColumnaKanban = 0
     WHERE cr.idProyecto = _idProyecto;
-
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA;
