@@ -1307,6 +1307,7 @@ CREATE TABLE ReporteXProyecto(
     idReporteXProyecto INT AUTO_INCREMENT PRIMARY KEY,
     idProyecto INT,
     idHerramienta INT,
+    fileId VARCHAR(30),
     nombre VARCHAR(255),
     fechaCreacion DATE,
     activo tinyint NOT NULL,
@@ -1314,7 +1315,8 @@ CREATE TABLE ReporteXProyecto(
     FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
 )
 ENGINE = InnoDB;
-=======
+
+
 
 -----------------------
 -- Plantillas
@@ -1342,4 +1344,4 @@ CREATE TABLE PlantillaKanbanColumnas(
 
 )
 ENGINE = InnoDB;
->>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
+
