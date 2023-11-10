@@ -255,7 +255,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                 Registrar riesgo
             </div>
             <div className="riskRegisterCR">
-                <div className="titleRiskRegisterCR">Crear nuevo riesgo</div>
+                <div className="titleRiskRegisterCR dark:text-white">Crear nuevo riesgo</div>
                 <div>
                     <Textarea
                         isClearable

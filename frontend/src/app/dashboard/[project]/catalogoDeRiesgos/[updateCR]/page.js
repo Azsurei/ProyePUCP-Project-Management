@@ -479,7 +479,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 Registrar riesgo
             </div>
             <div className="riskRegisterCR">
-                <div className="titleRiskRegisterCR">Crear nuevo riesgo</div>
+                <div className="titleRiskRegisterCR dark:text-white">Actualizar nuevo riesgo</div>
                 <div>
                     <Textarea
                         isClearable

@@ -283,7 +283,7 @@ export default function ProductBacklogRegister(props) {
                 Backlog / Registrar elemento
             </div> */}
             <div className="backlogRegisterPB">
-                <div className="titleBacklogRegisterPB">
+                <div className="titleBacklogRegisterPB dark:text-white">
                     Registrar nuevo elemento en el Backlog
                 </div>
                 <div>
@@ -364,7 +364,7 @@ export default function ProductBacklogRegister(props) {
                             <div className="flex gap-4">
                                 <Spinner size="lg" />
                             </div>
-                        ) : (
+                        ) : (   
                             <div className="iconLabel2">
                                 <p className="profilePic">
                                     {datosUsuario?.nombres[0] +
