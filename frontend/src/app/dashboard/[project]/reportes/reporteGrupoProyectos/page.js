@@ -10,6 +10,8 @@ import {
     Tab,
     Card,
     CardBody,
+    Input,
+    Pagination,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import React, { useEffect, useState, useContext, useRef } from "react";
@@ -18,7 +20,10 @@ import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import CardContribuyente from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/CardContribuyente";
 import PieChart from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/PieChart";
+import { SearchIcon } from "@/../public/icons/SearchIcon";
+import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import  ReportePresupuesto  from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReportePresupuesto";
 axios.defaults.withCredentials = true;
 
 export default function ReporteGrupoProyectos(props) {
@@ -26,13 +31,20 @@ export default function ReporteGrupoProyectos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const [filterValue, setFilterValue] = React.useState("");
+    
     const [isClient, setIsClient] = useState(false);
     const [proyecto1, setProyecto1] = useState([]);
     useEffect(() => {
         setIsLoadingSmall(false);
         setIsClient(true);
-    }, []);
+    }, [projectId]);
+
+    
+
+   
+    // useEffect(() => {
+    //     setIsClient(true);
+    // }, []);
     return (
         <div className="divHistorialReportes"> 
             <div className="flex-1">
@@ -65,26 +77,7 @@ export default function ReporteGrupoProyectos(props) {
                             </Card>  
                         </Tab>
                         <Tab key="presupuesto" title="Presupuesto">
-                            <div className="ReporteGrupoPresupuesto">
-                                <div className="flex">
-                                    <div className="GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in bg-white m-4">
-
-                                    </div>
-                                    <div className="TablaComparacion flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in bg-white m-4">
-
-                                    </div>
-                                </div>
-
-                                <div className="flex">
-                                    <div className="GraficoBarras flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in bg-white m-4">
-
-                                    </div>
-                                    <div className="Grafico Circular flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in bg-white m-4">
-                                    
-                                    </div>
-                                </div>
-
-                            </div>
+                            <ReportePresupuesto isClient={isClient}/>
                         </Tab>
                     </Tabs>
                 </div>

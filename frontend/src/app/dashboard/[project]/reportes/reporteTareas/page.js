@@ -110,7 +110,13 @@ function reporteTareas(props) {
                             Selecciona una tarea para ver su detalle
                         </div>
                     )}
-                    {selectedTask !== null && <TaskProgressReport progressEntries={selectedTask.progresos}/>}
+                    {selectedTask !== null && (
+                        <TaskProgressReport
+                            generalProgress={selectedTask.porcentajeProgreso}
+                            progressEntries={selectedTask.progresos}
+                            asignedUsers={selectedTask.usuarios}
+                        />
+                    )}
                 </div>
 
                 <Divider></Divider>
@@ -123,7 +129,7 @@ function reporteTareas(props) {
     );
 
     function handleSetSelectedTask(task) {
-        console.log(" SELECCIONAD LA TAREA " + JSON.stringify(task,null,2));
+        console.log(" SELECCIONAD LA TAREA " + JSON.stringify(task, null, 2));
         setSelectedTask(task);
     }
 }

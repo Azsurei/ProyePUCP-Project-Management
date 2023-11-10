@@ -104,7 +104,7 @@ export default function RootLayout({ children, params }) {
                             flex: "1",
                             position: "relative",
                         }}
-                        className="h-[100%] overflow-auto bg-mainBackground"
+                        className="h-[100%] bg-mainBackground"
                     >
                         {isLoadingSmall && (
                             <div
@@ -138,10 +138,12 @@ export default function RootLayout({ children, params }) {
                                 </Box>
                             </div>
                         )}
-                        {herramientasInfo !== null &&
-                            rolHasBeenAsigned &&
-                            isSidebarDone &&
-                            children}
+                        <div className="h-[100%] overflow-auto bg-mainBackground">
+                            {herramientasInfo !== null &&
+                                rolHasBeenAsigned &&
+                                isSidebarDone &&
+                                children}
+                        </div>
                     </div>
                 </HerramientasInfo.Provider>
             </SmallLoadingScreen.Provider>
