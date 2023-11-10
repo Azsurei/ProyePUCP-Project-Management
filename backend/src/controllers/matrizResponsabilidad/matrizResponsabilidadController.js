@@ -51,11 +51,10 @@ async function insertarResponsabilidad(req,res,next){
 }
 
 async function modificarResponsabilidad(req,res,next){
-    const{idResponsabilidadRol, letraRol, nombreRol, colorRol, descrpcionRol} = req.body;
+    const {idResponsabilidadRol, letraRol, nombreRol, colorRol, descrpcionRol} = req.body;
     const query = `CALL MODIFICAR_RESPONSABILIDADROL_X_ID(?,?,?,?,?);`;
     try {
         const [results] = await connection.query(query,[idResponsabilidadRol, letraRol, nombreRol, colorRol, descrpcionRol]);
-        const idResponsabilidadRol = results[0][0].idResponsabilidadRol;
         res.status(200).json({message: `Se modificó la responsabilidad ${idResponsabilidadRol} exitosamente`});
     } catch (error) {
         console.log(error);

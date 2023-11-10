@@ -4,5 +4,6 @@ const { verifyToken } = require("../middleware/middlewares");
 const grupoProyectosController = require("../controllers/grupoProyectos/grupoProyectosController");
 
 routerGrupoProyectos.post("/insertarGrupoProyectos", grupoProyectosController.insertarGrupoProyectos);
+routerGrupoProyectos.get("/listarGruposProyecto", grupoProyectosController.listarGruposProyecto);
 
 module.exports.routerGrupoProyectos = routerGrupoProyectos;

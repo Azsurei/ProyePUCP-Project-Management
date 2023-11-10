@@ -4278,7 +4278,7 @@ BEGIN
     SET letraRol = _letraRol,
         nombreRol = _nombreRol,
         colorRol = _colorRol,
-        descrpcionRol = _descrpcionRol
+        descripcionRol = _descrpcionRol
     WHERE idResponsabilidadRol = _idResponsabilidadRol;
     SELECT _idResponsabilidadRol AS idResponsabilidadRol;
 END$
@@ -4475,7 +4475,14 @@ CREATE PROCEDURE LIMPIAR_KANBAN_PLANTILLA_KANBAN(
     IN _idProyecto INT
 )
 BEGIN
+    SET @contador = 0;
     UPDATE ColumnaKanban SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE Tarea AS tr
+    LEFT JOIN Cronograma AS cr ON tr.idCronograma = cr.idCronograma
+    SET tr.posicionKanban = (@contador := @contador + 1),
+        tr.idColumnaKanban = 0, 
+    WHERE cr.idProyecto = _idProyecto;
+
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA;

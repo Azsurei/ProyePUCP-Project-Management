@@ -17,7 +17,19 @@ async function insertarGrupoProyectos(req, res, next) {
         next(error);
     }
 }
-
+async function listarGruposProyecto(req,res,next){
+    try {
+        const query = `CALL LISTAR_GRUPO_PROYECTOS;`;
+        const [results] = await connection.query(query);
+        const grupos = results[0];
+        res.status(200).json({grupos, message: "Grupos listados"});
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 module.exports = {
-    insertarGrupoProyectos
+    insertarGrupoProyectos,
+    listarGruposProyecto
+    
 };
