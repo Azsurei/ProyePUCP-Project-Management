@@ -2,6 +2,7 @@ const connection = require("../../config/db");
 
 async function guardarPlantillaKanban(req, res, next) {
     const {idProyecto, idUsuario, nombrePlantilla} = req.body;
+    console.log(idProyecto, idUsuario, nombrePlantilla);
     const query = `CALL GUARDAR_PLANTILLA_KANBAN(?,?);`;
     const query1 = `CALL LISTAR_CAMPOS_PLANTILLA_KANBAN(?);`;
     const query2 = `CALL INSERTAR_PLANTILLA_KANBAN_CAMPO(?,?,?);`;

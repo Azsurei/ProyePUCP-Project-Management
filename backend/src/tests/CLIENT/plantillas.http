@@ -48,5 +48,14 @@ DELETE http://localhost:8080/api/proyecto/plantillas/eliminarPlantillaKanban HTT
 Content-Type: application/json
 
 {
-  "idPlantillaKanban": 1
+  "idPlantillaKanban": 2
+}
+
+###
+PUT http://localhost:8080/api/proyecto/plantillas/seleccionarPlantillaKanban HTTP/1.1
+Content-Type: application/json
+
+{
+  "idProyecto": ,
+  "idPlantillaKanban": 
 }
