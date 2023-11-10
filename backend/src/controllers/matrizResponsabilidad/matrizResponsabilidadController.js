@@ -1,5 +1,30 @@
 const connection = require("../../config/db");
 
+async function eliminar(req,res,next){
+    const { idMatrizResponsabilidad } = req.params;
+    console.log(`Procediendo: Eliminar/MatrizResponsabilidades ${idMatrizResponsabilidad}...`);
+    try {
+        const result = await funcEliminar(idMatrizResponsabilidad);
+        res.status(200).json({
+            idMatrizResponsabilidad,
+            message: "MatrizResponsabilidades eliminado"});
+        console.log(`MatrizResponsabilidades ${idMatrizResponsabilidad} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idMatrizResponsabilidad) {
+    try {
+        const query = `CALL ELIMINAR_MATRIZ_RESPONSABILIDADES_X_ID_MATRIZ_R(?);`;
+        [results] = await connection.query(query,[idMatrizResponsabilidad]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/MatrizResponsabilidades", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function eliminarEntregableXResponsabilidadRol(req,res,next){
     const{idProyecto} = req.body;
     const query = `CALL ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(?);`;
@@ -133,6 +158,7 @@ async function actualizarEntregables(req, res, next) {
 
 
 module.exports = {
+    eliminar,
     eliminarEntregableXResponsabilidadRol,
     insertarResponsabilidad,
     eliminarResponsabilidad,

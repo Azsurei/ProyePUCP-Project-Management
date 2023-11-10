@@ -23,7 +23,33 @@ async function funcCrear(idProyecto){
     }
 }
 
+async function eliminar(req,res,next){
+    const { idRetrospectiva } = req.params;
+    console.log(`Procediendo: Eliminar/Retrospectiva ${idRetrospectiva}...`);
+    try {
+        const result = await funcEliminar(idRetrospectiva);
+        res.status(200).json({
+            idRetrospectiva,
+            message: "Retrospectiva eliminado"});
+        console.log(`Retrospectiva ${idRetrospectiva} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idRetrospectiva) {
+    try {
+        const query = `CALL ELIMINAR_RETROSPECTIVA_X_ID_RETROSPECTIVA(?);`;
+        [results] = await connection.query(query,[idRetrospectiva]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/Retrospectiva", error);
+        return 0;
+    }
+    return 1;
+}
+
 
 module.exports={
-    crear
+    crear,
+    eliminar
 }

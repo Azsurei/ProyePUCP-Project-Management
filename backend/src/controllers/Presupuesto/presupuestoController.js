@@ -98,6 +98,29 @@ async function obtenerPresupuesto(req,res,next){
     }
 }
 
+async function eliminar(req,res,next){
+    const { idPresupuesto } = req.params;
+    console.log(`Procediendo: Eliminar/Presupuesto ${idPresupuesto}...`);
+    try {
+        const result = await funcEliminar(idPresupuesto);
+        res.status(200).json({
+            message: "Presupuesto eliminado"});
+        console.log(`Presupuesto ${idPresupuesto} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idPresupuesto) {
+    try {
+        const query = `CALL ELIMINAR_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
+        [results] = await connection.query(query,[idPresupuesto]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/Presupuesto", error);
+        return 0;
+    }
+    return 1;
+}
 
 
 
@@ -107,5 +130,6 @@ module.exports = {
     listarLineasTodas,
     listarXIdPresupuesto,
     listarLineasIngresoYEgresoXIdPresupuesto,
-    obtenerPresupuesto
+    obtenerPresupuesto,
+    eliminar
 };

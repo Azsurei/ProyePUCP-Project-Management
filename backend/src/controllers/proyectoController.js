@@ -1,5 +1,20 @@
 const connection = require("../config/db");
 
+const backlogController = require('../controllers/backlog/backlogController');
+const EDTController = require('../controllers/EDT/EDTController');
+const actaConstitucionController = require("../controllers/actaConstitucion/actaConstitucionController");
+const cronogramaController = require("../controllers/cronograma/cronogramaController");
+const catalogoRiesgosController = require("../controllers/catalogoRiesgos/catalogoRiesgosController");
+const catalogoInteresadosController = require("../controllers/catalogoInteresados/catalogoInteresadosController");
+const matrizResponsabilidadController = require("../controllers/matrizResponsabilidad/matrizResponsabilidadController");
+const matrizComunicacionesController = require("../controllers/matrizComunicaciones/matrizComunicacionesController");
+const autoEvaluacionController = require("../controllers/autoEvaluacion/autoEvaluacionController");
+const retrospectivaController = require("../controllers/retrospectiva/retrospectivaController");
+const actaReunionController = require("../controllers/actaReunion/actaReunionController");
+const equipoController = require('../controllers/equipo/equipoController');
+const presupuestoController = require("../controllers/presupuesto/presupuestoController");
+
+
 async function eliminar(req,res,next){
     const {idProyecto,herramientas} = req.params;
     try {
@@ -15,11 +30,12 @@ async function funcEliminar(idProyecto,herramientas){
         const query = `CALL ELIMINAR_PROYECTO(?);`;
         await connection.query(query,[idProyecto]);
 
+        // idHerramientaCreada es la herramienta relacionada al proyecto. 
+        // idHerramienta es la herramienta en sí. NO SE ELIMINA
         for(const herramienta of herramientas){
             if(herramienta.idHerramienta==1){
                 await productBacklogController.eliminar(herramienta.idHerramientaCreada);
             }
-
             if(herramienta.idHerramienta==2){
                 await EDTController.eliminar(herramienta.idHerramientaCreada);
             }

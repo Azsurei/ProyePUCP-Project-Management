@@ -1,5 +1,30 @@
 const connection = require("../../config/db");
 
+async function eliminar(req,res,next){
+    const { idCatalogo } = req.params;
+    console.log(`Procediendo: Eliminar/CatalogoRiesgos ${idCatalogo}...`);
+    try {
+        const result = await funcEliminar(idCatalogo);
+        res.status(200).json({
+            idCatalogo,
+            message: "CatalogoRiesgos eliminado"});
+        console.log(`CatalogoRiesgos ${idCatalogo} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idCatalogo) {
+    try {
+        const query = `CALL ELIMINAR_CATALOGO_RIESGOS_X_ID_CATALOGO_RIESGOS(?);`;
+        [results] = await connection.query(query,[idCatalogo]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/CatalogoRiesgos", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function insertarRiesgo(req,res,next){
     const{idProyecto, idProbabilidad, idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo, detalleRiesgo, causaRiesgo, 
         impactoRiesgo, estado, responsables, planesRespuesta, planesContigencia} = req.body;
@@ -347,6 +372,7 @@ async function modificarRiesgoRRC(req,res,next){
 }
 
 module.exports = {
+    eliminar,
     insertarRiesgo,
     listarRiesgos,
     listarunRiesgo,

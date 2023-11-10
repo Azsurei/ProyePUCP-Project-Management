@@ -19,6 +19,31 @@ async function listarXIdProyecto(req,res,next){
     }
 }
 
+async function eliminar(req,res,next){
+    const { idProductBacklog } = req.params;
+    console.log(`Procediendo: Eliminar/ProductBacklog ${idProductBacklog}...`);
+    try {
+        const result = await funcEliminar(idProductBacklog);
+        res.status(200).json({
+            message: "Product Backlog eliminado"});
+        console.log(`ProductBacklog ${idProductBacklog} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idProductBacklog) {
+    try {
+        const query = `CALL ELIMINAR_PRODUCT_BACKLOG_X_ID_PRODUCT_BACKLOG(?);`;
+        [results] = await connection.query(query,[idProductBacklog]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/ProductBacklog", error);
+        return 0;
+    }
+    return 1;
+}
+
 module.exports = {
-    listarXIdProyecto
+    listarXIdProyecto,
+    eliminar
 }
