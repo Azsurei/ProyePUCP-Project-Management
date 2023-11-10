@@ -20,7 +20,8 @@ import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { SessionContext } from "../../layout";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/plantillaKB.css";
-
+import { set } from "date-fns";
+export const FlagRefreshContext = createContext();
 
 
 export default function RootLayout({ children, params }) {
@@ -131,6 +132,7 @@ export default function RootLayout({ children, params }) {
 
       };
 
+    const [flagRefresh,setFlagRefresh] = useState(false);
 
     const usePlantillaKanban = () => {
         return new Promise((resolve, reject) => {
@@ -147,6 +149,7 @@ export default function RootLayout({ children, params }) {
             axios
                 .put(updateURL, updateData)
                 .then((response) => {
+                    setFlagRefresh(true);
                     resolve(response);
                 })
                 .catch(function (error) {
@@ -423,8 +426,10 @@ export default function RootLayout({ children, params }) {
             }
 
             </div>    
-            
-            {children}
+        
+            <FlagRefreshContext.Provider value={{flagRefresh,setFlagRefresh}}>
+                {children}
+            </FlagRefreshContext.Provider>
         </div>
     );
 }
