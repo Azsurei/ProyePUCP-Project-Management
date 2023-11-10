@@ -1,3 +1,14 @@
+#####
+## REPORTE
+##########
+
+### 
+GET http://localhost:8080/api/proyecto/reporte/listarReportesXIdProyecto/178 HTTP/1.1
+Content-Type:  application/json
+
+
+
+
 ###
 POST http://localhost:8080/api/proyecto/reporte/generarReportePresupuesto HTTP/1.1
 Content-Type:  application/json
@@ -72,15 +83,28 @@ Content-Type:  application/json
   }
 }
 
+###
+POST http://localhost:8080/api/proyecto/reporte/exportarReportePresupuestoXFileId HTTP/1.1
+Content-Type: application/json
+
+{
+  "fileId": "1o2Q3V6K_AkSMt6unL9wj2Am1tJ72Ts_f"
+}
+#####################################
+### REPORTE ENTREGABLE
+#####################################
 
 ###
 GET http://localhost:8080/api/proyecto/reporte/obtenerReporteEntregableXFileId/1nOpP03eSsiSEkidUm6_fP-nhsSjweNbx HTTP/1.1
 Content-Type: application/json
 
 ###
-GET http://localhost:8080/api/proyecto/reporte/obtenerReporteEntregableXFileId/1o2Q3V6K_AkSMt6unL9wj2Am1tJ72Ts_f HTTP/1.1
+POST http://localhost:8080/api/proyecto/reporte/exportarReporteEntregableXFileId HTTP/1.1
 Content-Type: application/json
 
+{
+  "fileId": "1FhEBL9xcfDq8j19ghSAKIQS18-AUTNSS"
+}
 ###
 POST http://localhost:8080/api/proyecto/reporte/generarReporteEntregable HTTP/1.1
 Content-Type: application/json

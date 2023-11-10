@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import PlusIcon from "./PlusIcon";
 import ColumnContainer from "./ColumnContainer";
 import {
@@ -20,9 +20,14 @@ import { useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
 import ModalNewTask from "./ModalNewTask";
 import { useRouter } from "next/navigation";
+import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
+import { FlagRefreshContext } from "@/app/dashboard/[project]/backlog/layout";
 axios.defaults.withCredentials = true;
 
 export default function KanbanBoard({ projectId }) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { flagRefresh, setFlagRefresh } = useContext(FlagRefreshContext);
+
     const router = useRouter();
     const [stateWhatsHappening, setStateWhatsHappening] = useState("");
 
@@ -68,6 +73,65 @@ export default function KanbanBoard({ projectId }) {
     );
 
     useEffect(() => {
+        if (flagRefresh === true) {
+            setIsLoadingSmall(true);
+            const stringURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/kanban/listarColumnasYTareas/" +
+                projectId;
+            axios
+                .get(stringURL)
+                .then(function (response) {
+                    console.log(response.data.data);
+
+                    //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
+                    const columnTareas = {
+                        idColumnaKanban: 0,
+                        idProyecto: parseInt(projectId),
+                        nombre: `Tareas`,
+                        posicion: 0,
+                        activo: 1,
+                    };
+
+                    //siempre va a recibir columnas y tareas por orden de posicion
+                    //setColumns([columnTareas, ...response.data.data.columnas]);
+                    setColumns([columnTareas, ...response.data.data.columnas]);
+
+                    function compareKanbanElements(a, b) {
+                        if (a.idColumnaKanban < b.idColumnaKanban) {
+                            return -1;
+                        }
+                        if (a.idColumnaKanban > b.idColumnaKanban) {
+                            return 1;
+                        }
+                        // If idColumnaKanban is equal, compare by posicionKanban
+                        if (a.posicionKanban < b.posicionKanban) {
+                            return -1;
+                        }
+                        if (a.posicionKanban > b.posicionKanban) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+
+                    // Sort the array using the custom comparison function
+                    const sortedArray = response.data.data.tareas.sort(
+                        compareKanbanElements
+                    );
+
+                    setTasks(sortedArray);
+                    setIsLoadingSmall(false);
+                    setFlagRefresh(false);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toast.error("Error en carga. Recarge la pagina");
+                });
+        }
+    }, [flagRefresh]);
+
+    useEffect(() => {
+        setIsLoadingSmall(true);
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/kanban/listarColumnasYTareas/" +
@@ -113,6 +177,7 @@ export default function KanbanBoard({ projectId }) {
                 );
 
                 setTasks(sortedArray);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -121,7 +186,6 @@ export default function KanbanBoard({ projectId }) {
     }, []);
 
     return (
-        
         <div
             className="
             generalKanbanCompCont

@@ -1,13 +1,38 @@
 const connection = require("../../config/db");
 const XLSX = require('xlsx');
-const fs = require('fs');
-
+const fs = require('fs').promises;
+const path = require('path');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
 //const upload = multer({ storage: storage });
+async function exportarReporteExcel(req,res,next){
+    const {fileId} = req.body;
+    const destinationFolder = path.join(__dirname, '../../tmp');
+
+    try{
+        const authClient = await authGoogle.authorize();
+        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        console.log(tmpFilePath);
+
+        res.download(tmpFilePath, 'ReportePresupuesto.xlsx', async(err) => {
+            try {
+                // Eliminar el archivo temporal de forma asíncrona
+                await fs.unlink(tmpFilePath);
+            } catch (e) {
+                console.error("Error al eliminar el archivo temporal:", e.message);
+            }
+            if (err) {
+                next(err);
+            }
+        });
+    }catch(error){
+        console.error("Error al exportar el reporte Excel:", error.message);
+        next(error);
+    } 
+}
 
 async function generarReporte(req, res, next) {
     const {idProyecto,nombre,presupuesto} = req.body;
@@ -133,5 +158,6 @@ function jsonToSheet(data) {
 
 module.exports = {
     generarReporte,
-    obtenerReporte
+    obtenerReporte,
+    exportarReporteExcel
 }

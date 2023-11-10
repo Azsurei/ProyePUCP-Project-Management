@@ -684,7 +684,7 @@ export default function ReporteRiesgos(props) {
                     </div>
                     <div className="GraficosRiesgos">
                         <div className="GraficoCircular w-full flex">
-                            <PieChart options={options} series={series} client={isClient}/>
+                            <PieChart options={options} series={series} client={isClient} title={"Grafico Impacto"} height={700} width = {400}/>
                         </div>
                         <div className="GraficoBarras">
                             <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={650}/>
