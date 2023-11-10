@@ -8,7 +8,7 @@ export default function RootLayout({ children }) {
     return (
         <html lang="es">
             <head>
-                <link rel="icon" href={"/favicon.ico"} />
+                <link rel="icon" href="/icons/favicon.ico" />
                 <script
                     src="https://accounts.google.com/gsi/client"
                     async
