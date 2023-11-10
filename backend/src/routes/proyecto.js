@@ -37,7 +37,8 @@ routerProyecto.use("/catalogoInteresados", routerCatalogoInteresados);
 routerProyecto.use("/retrospectiva", routerRetrospectiva);
 routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
 routerProyecto.use("/plantillas", routerPlantillas);
-//routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
+
+routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar); 
 
 //sobre Reportes
 routerProyecto.use("/reporte", routerReporte);
