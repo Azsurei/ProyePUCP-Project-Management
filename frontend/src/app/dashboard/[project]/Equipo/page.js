@@ -524,9 +524,9 @@ export default function Equipo(props) {
                             />
                         </Breadcrumbs>
                     </div>
-                    <div className="title">Equipos</div>
+                    <div className="text-[1.8rem] font-bold py-[1rem] dark:text-white">Equipos</div>
                     <div className="titleAndOptions">
-                        <div className="subtitle">
+                        <div className="subtitle dark:text-white">
                             Divide tu trabajo en los equipos que consideres
                             necesarios
                         </div>

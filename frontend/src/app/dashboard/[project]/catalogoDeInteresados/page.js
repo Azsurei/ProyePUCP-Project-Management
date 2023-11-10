@@ -347,10 +347,10 @@ export default function CatalogoDeInteresados(props) {
 
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Catalogo de Interesados
+                Inicio / Proyectos / Nombre del proyecto / Catálogo de Interesados
             </div>
             <div className="catalogoRiesgos">
-                <div className="titleRiesgos">Catalogo de Interesados</div>
+                <div className="titleRiesgos dark:text-white">Catálogo de Interesados</div>
                 <div>
                        <MyDynamicTable 
                             label ="Tabla Interesados" 

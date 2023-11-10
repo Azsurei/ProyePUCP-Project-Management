@@ -34,9 +34,11 @@ import {
     useDisclosure,
     Input,
 } from "@nextui-org/react";
+import { SessionContext } from "../../layout";
 
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
+import { id } from "date-fns/locale";
 
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -73,20 +75,6 @@ export default function MatrizDeResponsabilidades(props) {
         isOpen: isOpenUpdate,
         onOpen: onOpenUpdate,
         onOpenChange: onOpenChangeUpdate,
-    } = useDisclosure();
-
-    const { 
-        isOpen: isModalSavePlantilla, 
-        onOpen: onSaveModalPlantilla, 
-        onOpenChange: onModaSavePlantillaChange 
-    
-    } = useDisclosure();
-
-    const { 
-        isOpen: isModalPlantillas, 
-        onOpen: onModalPlantillas, 
-        onOpenChange: onModalPlantillasChange 
-    
     } = useDisclosure();
 
 
@@ -687,6 +675,161 @@ export default function MatrizDeResponsabilidades(props) {
         }
         onClose();
     };
+
+
+    //obtener idUsuario
+    const {sessionData} = useContext(SessionContext);
+    useEffect(() => {
+        
+        setIdUsuario(sessionData.idUsuario);
+        console.log("avr"+IdUsuario);
+        }, [sessionData.idUsuario]);
+
+    //Plantilla MR
+    const { 
+        isOpen: isModalSavePlantilla, 
+        onOpen: onSaveModalPlantilla, 
+        onOpenChange: onModaSavePlantillaChange 
+    
+    } = useDisclosure();
+
+    const { 
+        isOpen: isModalPlantillas, 
+        onOpen: onModalPlantillas, 
+        onOpenChange: onModalPlantillasChange 
+    
+    } = useDisclosure();
+
+    const [nombrePlantilla, setNombrePlantilla] = useState("");
+    const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
+    const [IdUsuario, setIdUsuario] = useState("");
+    const [IdMatrizRespon,setIdMatrizRespon]= useState("");
+
+
+    //averigar como obtener el idMatrizResponsabilidad
+
+    const [plantillas, setPlantillas] = useState([]);
+    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
+
+
+    const savePlantilla = () => {
+        return new Promise((resolve, reject) => {
+        setIsLoadingSmall(true);
+        const updateURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/plantillas/guardarPlantillaMR";
+            //Cambiar con nuevo procedure
+        axios
+            .post(updateURL, {
+                nombrePlantilla: nombrePlantilla,
+                idUsuario: IdUsuario,
+                idMatrizR: IdMatrizRespon,
+            })
+            .then((response) => {
+                setEditActive(false);
+                resolve(response);
+
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+                reject(error);
+            });
+
+        });
+    };
+
+    const guardarPlantillaNueva = async () => {
+        try {
+                toast.promise(savePlantilla, {
+                loading: "Guardando Plantilla Nueva...",
+                success: (data) => {
+                    DataTable();
+                    return "La plantilla se agregó con éxito!";
+                    
+                },
+                error: "Error al agregar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        } 
+    };
+    
+    const usarPlantilla = async () => {
+        try {
+            toast.promise(usePlantillaMR, {
+                loading: "Cargando Plantilla...",
+                success: (data) => {
+                    return "La plantilla se cargó con éxito!";
+                    
+                },
+                error: "Error al usar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        }
+
+    };
+
+    const usePlantillaMR = () => {
+        return new Promise((resolve, reject) => {
+            setIsLoadingSmall(true);
+    
+            const updateData = {
+                idMatrizR: IdMatrizRespon,
+                idPlantillaMR: selectedPlantilla.idPlantillaMR,
+                
+            };
+    
+            const updateURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/plantillas/seleccionarPlantillaMR";
+            //Cambiar con nuevo procedure
+    
+            axios
+                .put(updateURL, updateData)
+                .then((response) => {
+                    setEditActive(false);
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                })
+                .finally(() => {
+                    setIsLoadingSmall(false);
+                });
+        });
+    };
+
+
+    const DataTable = async () => {
+        const fetchPlantillas = async () => {
+            if (IdUsuario !== "") {
+                try {
+                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasMR/' + IdUsuario;
+                    const response = await axios.get(url);
+    
+                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+    
+                    setPlantillas(plantillasInvertidas);
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
+            }
+        };
+    
+        fetchPlantillas();
+    };
+
+    // useEffect(() => {
+    //     if (IdUsuario !== "") {
+    //         DataTable();
+    //     }
+    //   }, [IdUsuario]);
+
+      const [error, setError] = useState(null);
 
     return (
         <>

@@ -368,10 +368,10 @@ export default function catalogoDeRiesgos(props){
 
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Catalogo de Riesgos
+                Inicio / Proyectos / Nombre del proyecto / Catálogo de Riesgos
             </div>
             <div className="catalogoRiesgos">
-                <div className="titleRiesgos">Catalogo de Riesgos</div>
+                <div className="titleRiesgos dark:text-white">Catálogo de Riesgos</div>
                 <div>
                        <MyDynamicTable 
                             label ="Tabla Riesgos" 

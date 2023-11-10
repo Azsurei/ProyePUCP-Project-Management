@@ -75,7 +75,7 @@ export default function RootLayout({ children, params }) {
                         ></BreadcrumbsItem>
                     </Breadcrumbs>
                 </div>
-                <h1 className="montserrat text-[#172B4D] font-bold text-3xl">
+                <h1 className="montserrat text-[#172B4D] dark:text-white font-bold text-3xl">
                     Acta de Constitución
                 </h1>
                 <ButtonPanel margin="10px 0 10px" align="left">
@@ -94,7 +94,7 @@ export default function RootLayout({ children, params }) {
                                     projectId +
                                     "/actaConstitucion/info"
                                 }
-                            >
+                            >   
                                 <p style={{color: 'white'}}>Informacion</p>
                             </Link>
                         </div>

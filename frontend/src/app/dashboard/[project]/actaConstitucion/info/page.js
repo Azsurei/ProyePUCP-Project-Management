@@ -58,7 +58,7 @@ function DetailCard({
         >
             <div className="project-card">
                 {!isEditable && (
-                    <div className="project-card__title">{detail.nombre}</div>
+                    <div className="project-card__title dark:text-white">{detail.nombre}</div>
                 )}
                 {isEditable && (
                     <Textarea
@@ -495,7 +495,6 @@ export default function Info(props) {
     
     
       useEffect(() => {
-        console.log("udptateListado");
         if (IdUsuario !== "") {
             DataTable();
         }
@@ -818,7 +817,7 @@ export default function Info(props) {
                 ))}
 
                 {isNewFieldOpen && (
-                    <div className="newFieldContainer" id="new-field-created">
+                    <div className="newFieldContainer dark:bg-black" id="new-field-created">
                         <div className="newFieldHeader">
                             <Textarea
                                 isInvalid={!validNewTitle}
