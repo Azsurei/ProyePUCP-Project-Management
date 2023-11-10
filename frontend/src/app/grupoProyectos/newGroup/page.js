@@ -260,13 +260,7 @@ export default function newProject() {
         setPage(1);
     }, []);
 
-    const agregarGrupo = () => {
-        if (nombreGrupo === "") {
-            setValidValue(false);
-        }
-        console.log("Tamano: ", selectedKeys.size);
 
-    };
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
 
@@ -295,6 +289,14 @@ export default function newProject() {
     }, []);
 
     const topContent = React.useMemo(() => {
+        const agregarGrupo = () => {
+            if (nombreGrupo === "") {
+                setValidValue(false);
+            }
+            console.log("Tamano: ", selectedKeys.size);
+            console.log("Select: ", selectedKeys);
+    
+        };
         return (
             <div className="flex flex-col gap-10">
                 <div className="flex justify-between gap-3 items-end">
@@ -309,7 +311,7 @@ export default function newProject() {
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Button color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onClick={() => agregarGrupo()}>
+                        <Button isDisabled={selectedKeys.size === 0} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onClick={() => agregarGrupo()}>
                             Agregar
                         </Button>
                     </div>
@@ -339,9 +341,11 @@ export default function newProject() {
         ListComps.length,
         onSearchChange,
         hasSearchFilter,
+        selectedKeys,
     ]);
 
     const bottomContent = React.useMemo(() => {
+        
         return (
             <div className="py-2 px-2 flex justify-between items-center">
                 <span className="w-[30%] text-small text-default-400">
