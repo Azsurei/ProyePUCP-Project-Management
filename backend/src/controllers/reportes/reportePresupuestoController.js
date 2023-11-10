@@ -1,6 +1,7 @@
 const connection = require("../../config/db");
 const XLSX = require('xlsx');
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsp = require('fs').promises;
 const path = require('path');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
@@ -15,12 +16,20 @@ async function exportarReporteExcel(req,res,next){
     try{
         const authClient = await authGoogle.authorize();
         const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        console.log(tmpFilePath);
+        
+        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        const jsonData = JSON.parse(fileContent);
+        console.log(jsonData);
+        const wb = XLSX.utils.book_new();
+        probandoExcelPresupuesto(jsonData,wb);
 
-        res.download(tmpFilePath, 'ReportePresupuesto.xlsx', async(err) => {
+        const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
+
+        res.download(excelFilePath , `${fileId}.json`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
-                await fs.unlink(tmpFilePath);
+                await fsp.unlink(tmpFilePath);
+                await fsp.unlink(excelFilePath);
             } catch (e) {
                 console.error("Error al eliminar el archivo temporal:", e.message);
             }
@@ -42,18 +51,18 @@ async function generarReporte(req, res, next) {
         const [results] = await connection.query(query, [idProyecto,13,nombre]);
         const idReporte = results[0][0].idReporte;
 
-        let workbook = await probandoExcelPresupuesto(presupuesto);
+        //let workbook = await probandoExcelPresupuesto(presupuesto);
         
-        var tmpFilePath = generarPathPresupuesto(workbook,idReporte)
+        var tmpFilePath = generarPathPresupuesto(presupuesto,idReporte)
         const authClient = await authGoogle.authorize();
 
         const fileMetadata = {
-            name: `Reporte-Presupuesto-${idReporte}.xlsx`,
+            name: `Reporte-Presupuesto-${idReporte}.json`,
             parents:['1yjLLozOQpvB0NFPq0OBQgKj2TSN4fEmJ']
         }
 
         const media = {
-            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            mimeType: 'application/json',
             body: fs.createReadStream(tmpFilePath)
         };
     
@@ -77,10 +86,15 @@ async function obtenerReporte(req,res,next){
     console.log(destinationFolder);
     try{
         const authClient = await authGoogle.authorize();
-        const fileDetails = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        const reporteJSON = await convertirExcel2JSON(fileDetails);
+        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        console.log(tmpFilePath);
+
+        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        const jsonData = JSON.parse(fileContent);
+        console.log(jsonData);
+
         res.status(200).json({
-            reporteJSON,
+            jsonData,
             message: "Detalles del reporte recuperados con éxito"
         });
     }catch(error){
@@ -96,28 +110,29 @@ async function convertirExcel2JSON(filePath){
         const json = XLSX.utils.sheet_to_json(woorksheet);
         result[sheetName] = json;
     });
-
     return result;
 }
 
-function generarPathPresupuesto(workbook,idReporte){
+
+
+function generarPathPresupuesto(presupuesto,idReporte){
     var tmpFilePath;
     try {
-        tmpFilePath = `./tmp/presupuesto-${idReporte}.xlsx`;
+        tmpFilePath = `./tmp/presupuesto-${idReporte}.json`;
         console.log("Path nuevo "+tmpFilePath);
-        XLSX.writeFile(workbook, tmpFilePath, { compression: true });
+        fs.writeFileSync(tmpFilePath, JSON.stringify(presupuesto));
     } catch (error) {
         console.log(error);
     }
     return tmpFilePath;
 }
 
-async function probandoExcelPresupuesto(presupuesto) {
+async function probandoExcelPresupuesto(presupuesto,wb) {
     
     try {
         const {general,lineasPresupuesto} = presupuesto;
         
-        const wb = XLSX.utils.book_new();
+        //const wb = XLSX.utils.book_new();
         
         // Encabezados personalizados
         const headerGeneral = [["Nombre del proyecto","Reporte de Herramienta","Presupuesto inicial","Fecha de creacion","MonedaPrincipal","Meses del proyecto"]];
@@ -142,12 +157,12 @@ async function probandoExcelPresupuesto(presupuesto) {
         xlsxController.agregarDatosAHoja(wb, headerEstimacionCosto, lineasEstimacionCostoReducidas, 'Estimaciones');
         
         // Guardar el archivo Excel
-        XLSX.writeFile(wb, 'presupuesto.xlsx', { compression: true });
+        //XLSX.writeFile(wb, 'presupuesto.xlsx', { compression: true });
 
         console.log(`Archivo Excel 'presupuesto.xlsx' guardado con éxito.`);
         return wb;
     } catch (error) {
-        console.log(error); 
+        console.log(`Error en la funcion probandoExcelPresupuesto`+error); 
     }
 }
 
