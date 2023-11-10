@@ -818,7 +818,7 @@ export default function Info(props) {
                 ))}
 
                 {isNewFieldOpen && (
-                    <div className="newFieldContainer" id="new-field-created">
+                    <div className="newFieldContainer dark:bg-black" id="new-field-created">
                         <div className="newFieldHeader">
                             <Textarea
                                 isInvalid={!validNewTitle}
