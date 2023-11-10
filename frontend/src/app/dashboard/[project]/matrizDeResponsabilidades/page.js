@@ -66,18 +66,36 @@ export default function MatrizDeResponsabilidades(props) {
         onOpenChange: onOpenChangeDeleteRes,
     } = useDisclosure();
 
+    const {
+        isOpen: isOpenUpdate,
+        onOpen: onOpenUpdate,
+        onOpenChange: onOpenChangeUpdate,
+    } = useDisclosure();
+
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
     const [descripcionRes, setDescripcionRes] = useState("");
     const [colorRes, setColorRes] = useState("#000000");
+    const [letraUpdate, setLetraUpdate] = useState("");
+    const [nombreUpdate, setNombreUpdate] = useState("");
+    const [descripcionUpdate, setDescripcionUpdate] = useState("");
+    const [colorUpdate, setColorUpdate] = useState("#000000");
+    const [idUpdate, setIdUpdate] = useState(null);
     const isTextTooLong1 = letraRes.length > 2;
     const isTextTooLong2 = nombreRes.length > 50;
     const isTextTooLong3 = descripcionRes.length > 100;
+    const isTextTooLong4 = letraUpdate.length > 2;
+    const isTextTooLong5 = nombreUpdate.length > 50;
+    const isTextTooLong6 = descripcionUpdate.length > 100;
     const [responsabilidadEliminar, setResponsabilidadEliminar] = useState({});
 
     const onChangeColor = (color) => {
         setColorRes(color);
     };
+
+    const onChangeColorUpdate = (color) => {
+        setColorUpdate(color);
+    }
 
     useEffect(() => {
         // Datos iniciales
@@ -457,11 +475,27 @@ export default function MatrizDeResponsabilidades(props) {
         );
     }
 
+    function verifyFieldsEmptyUpdate() {
+        return (
+            letraUpdate.trim() === "" ||
+            nombreUpdate.trim() === "" ||
+            descripcionUpdate.trim() === ""
+        );
+    }
+
     function verifyFieldsExcessive() {
         return (
             letraRes.length > 2 ||
             nombreRes.length > 50 ||
             descripcionRes.length > 100
+        );
+    }
+
+    function verifyFieldsExcessiveUpdate() {
+        return (
+            letraUpdate.length > 2 ||
+            nombreUpdate.length > 50 ||
+            descripcionUpdate.length > 100
         );
     }
 
@@ -478,6 +512,22 @@ export default function MatrizDeResponsabilidades(props) {
         return (
             letrasExistente.includes(letraRes.toLowerCase()) ||
             nombresExistente.includes(nombreRes.toLowerCase())
+        );
+    };
+
+    const isResponsabilidadExistenteUpdate = () => {
+        // Convierte todas las letras y nombres existentes a minúsculas para asegurar la comparación insensible a mayúsculas
+        const letrasExistente = responsabilidades.map((res) =>
+            res.letra.toLowerCase()
+        );
+        const nombresExistente = responsabilidades.map((res) =>
+            res.nombre.toLowerCase()
+        );
+
+        // Verifica si la letra o el nombre ya existen en el arreglo de roles
+        return (
+            letrasExistente.includes(letraUpdate.toLowerCase()) ||
+            nombresExistente.includes(nombreUpdate.toLowerCase())
         );
     };
 
@@ -523,6 +573,53 @@ export default function MatrizDeResponsabilidades(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
+            });
+        onClose();
+    };
+
+    const actualizarResponsabilidad = (onClose) => {
+        if (verifyFieldsEmptyUpdate()) {
+            toast.error("Faltan completar campos");
+            return;
+        } else if (verifyFieldsExcessiveUpdate()) {
+            toast.error("Se excedió el límite de caractéres");
+            return;
+        } else if (isResponsabilidadExistenteUpdate()) {
+            toast.error("La letra o el nombre ya existen");
+            return;
+        }
+        setIsLoadingSmall(true);
+        const urlActualizarResponsabilidad =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/modificarResponsabilidad";
+
+        const updateResponsabilidad = {
+            letraRol: letraUpdate.toUpperCase(),
+            nombreRol: nombreUpdate,
+            descrpcionRol: descripcionUpdate,
+            colorRol: colorUpdate,
+            idResponsabilidadRol: idUpdate,
+        };
+
+        console.log("El updateResponsabilidad es:", updateResponsabilidad);
+
+        axios
+            .put(urlActualizarResponsabilidad, updateResponsabilidad)
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (PUT):", response.data);
+                console.log("Registro correcto (PUT)");
+                // Realizar acciones adicionales si es necesario
+                setLetraUpdate("");
+                setNombreUpdate("");
+                setDescripcionUpdate("");
+                setColorUpdate("#000000");
+                setIdUpdate(null);
+                setReList(!reList);
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud PUT:", error);
             });
         onClose();
     };
@@ -680,6 +777,14 @@ export default function MatrizDeResponsabilidades(props) {
                                         src="/icons/updateIconYellow.svg"
                                         alt="update"
                                         className="mb-4 cursor-pointer"
+                                        onClick={()=>{
+                                            setLetraUpdate(responsabilidad.letra);
+                                            setNombreUpdate(responsabilidad.nombre);
+                                            setDescripcionUpdate(responsabilidad.descripcion);
+                                            setColorUpdate(responsabilidad.color);
+                                            setIdUpdate(responsabilidad.id);
+                                            onOpenUpdate();
+                                        }}
                                     />
                                     <img
                                         src="/icons/icon-trash.svg"
@@ -828,7 +933,13 @@ export default function MatrizDeResponsabilidades(props) {
                                 <Button
                                     color="danger"
                                     variant="light"
-                                    onPress={onClose}
+                                    onPress={() => {
+                                        setLetraRes("");
+                                        setNombreRes("");
+                                        setDescripcionRes("");
+                                        setColorRes("#000000");
+                                        onClose();
+                                    }}
                                 >
                                     Cancelar
                                 </Button>
@@ -879,6 +990,107 @@ export default function MatrizDeResponsabilidades(props) {
                                     }}
                                 >
                                     Continuar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Modal
+                isOpen={isOpenUpdate}
+                onOpenChange={onOpenChangeUpdate}
+                isDismissable={false}
+                size="xl"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Actualizar responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Letra"
+                                        placeholder="A"
+                                        variant="bordered"
+                                        className="w-2/12 mr-4"
+                                        value={letraUpdate}
+                                        onValueChange={setLetraUpdate}
+                                        isInvalid={isTextTooLong4}
+                                        errorMessage={
+                                            isTextTooLong4
+                                                ? "Máximo 2 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={3}
+                                        style={{ textTransform: "uppercase" }}
+                                    />
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Nombre"
+                                        placeholder="Aprueba"
+                                        variant="bordered"
+                                        className="w-10/12"
+                                        isInvalid={isTextTooLong5}
+                                        errorMessage={
+                                            isTextTooLong5
+                                                ? "Máximo 2 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={51}
+                                        value={nombreUpdate}
+                                        onValueChange={setNombreUpdate}
+                                    />
+                                </div>
+                                <Input
+                                    isClearable
+                                    autoFocus
+                                    label="Descripción"
+                                    placeholder="Se encarga de aprobar y revisar tareas"
+                                    variant="bordered"
+                                    isInvalid={isTextTooLong6}
+                                    errorMessage={
+                                        isTextTooLong6
+                                            ? "Máximo 2 caracteres."
+                                            : ""
+                                    }
+                                    maxLength={101}
+                                    value={descripcionUpdate}
+                                    onValueChange={setDescripcionUpdate}
+                                />
+                                <ColorPicker
+                                    value={colorUpdate}
+                                    onChangeColor={onChangeColorUpdate}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setLetraUpdate("");
+                                        setNombreUpdate("");
+                                        setDescripcionUpdate("");
+                                        setColorUpdate("#000000");
+                                        setIdUpdate(null);
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        actualizarResponsabilidad(onClose);
+                                    }}
+                                >
+                                    Guardar
                                 </Button>
                             </ModalFooter>
                         </>
