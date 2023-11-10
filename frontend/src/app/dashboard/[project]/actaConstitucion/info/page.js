@@ -523,6 +523,7 @@ export default function Info(props) {
                                     await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
+                                    console.log("xd");
                                     
                                 } catch (error) {
                                     console.error('Error al Guardar Plantilla:', error);

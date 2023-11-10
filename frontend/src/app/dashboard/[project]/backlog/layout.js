@@ -25,8 +25,10 @@ export default function RootLayout({ children, params }) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [error, setError] = useState(null);
 
-    const isKanbanPage = usePathname() === `/dashboard/${projectName}=${projectId}/backlog/kanban`;
-    
+
+    const decodedProjectName = decodeURIComponent(projectName);
+    const constructedUrl = new URL(`/dashboard/${decodedProjectName}=${projectId}/backlog/kanban`, window.location.origin);
+    const isKanbanPage = usePathname() === constructedUrl.pathname;
     //Plantillas
 
     const {
@@ -59,12 +61,12 @@ export default function RootLayout({ children, params }) {
         //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
         setIsLoadingSmall(true);
         const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/Kanban/guardarPlantilla";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/plantillas/guardarPlantillaKanban";
         axios
-            .put(updateURL, {
+            .post(updateURL, {
                 nombrePlantilla: nombrePlantilla,
                 idUsuario: IdUsuario,
-                idKanban: IdKanban,
+                idProyecto: projectId,
             })
             .then((response) => {
                 console.log(response.data.message);
@@ -119,7 +121,9 @@ export default function RootLayout({ children, params }) {
                             }
 
                             if(Isvalid === true){
-                                console.log("IdUsuario: "+ sessionData.idUsuario);
+                                console.log("IdUsuario: "+ IdUsuario);
+                                console.log("idProyecto:"+ projectId);
+                                console.log("nombrePlantilla:"+ nombrePlantilla);
                                 try {
                                     await guardarPlantillaNueva();
                                     setNombrePlantilla("");
