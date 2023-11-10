@@ -298,7 +298,7 @@ export default function MatrizDeResponsabilidades(props) {
             //console.log("El id del rol es:", idRol);
             switch (columnKey) {
                 case "entregable":
-                    return cellValue;
+                    return (<div className="font-bold">{cellValue}</div>);
                 default:
                     return (
                         <>
@@ -603,7 +603,7 @@ export default function MatrizDeResponsabilidades(props) {
                     {(column) => (
                         <TableColumn
                             key={column.uid}
-                            className="bg-blue-600 text-white text-center"
+                            className="bg-blue-600 text-white text-center text-[0.9rem]"
                         >
                             {column.name}
                         </TableColumn>
