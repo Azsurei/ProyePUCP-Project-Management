@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import {Input} from "@nextui-org/react";
 
 function PlusIcon() {
     return (
@@ -20,7 +21,7 @@ function PlusIcon() {
     );
 }
 
-function ColumnRetro({ columnState }) {
+function ColumnRetro({ columnState, state }) {
     let twStyle1;
     let title;
     if (columnState === 1) {
@@ -43,14 +44,20 @@ function ColumnRetro({ columnState }) {
             <p className="text-white py-7 flex justify-center font-semibold text-3xl">
                 {title}
             </p>
-            <div className="bg-white flex flex-row py-3 px-2  gap-2">
+            <div className="bg-white flex flex-row py-3 px-2  gap-2 items-center">
                 <PlusIcon />
-                <p className="text-slate-500">Escribe tu idea aqui y presiona enter</p>
+                {state === false ? (
+                    <p className="text-slate-500">
+                        Escribe tu idea aqui y presiona enter
+                    </p>
+                ) : (
+                    <Input className="text-slate-500" variant="underlined" placeholder="Escribe tu idea aqui y presiona enter"/>
+                )}
             </div>
             <div className="bg-gray-300 flex-1 flex items-center justify-center">
                 <p className="text-center">
-                    Prueba escribiendo una retrospectiva en la barra superior para
-                    que figure aquí
+                    Prueba escribiendo una retrospectiva en la barra superior
+                    para que figure aquí
                 </p>
             </div>
         </div>

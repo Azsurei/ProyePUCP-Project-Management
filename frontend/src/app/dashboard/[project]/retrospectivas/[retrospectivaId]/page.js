@@ -77,7 +77,7 @@ function RetrospectivaView(props) {
 
                     {editMode === false && (
                         <Button
-                            //onPress={handleEdit}
+                            onPress={handleEdit}
                             color="primary"
                             className="font-[Montserrat] w-[100px]"
                         >
@@ -86,7 +86,7 @@ function RetrospectivaView(props) {
                     )}
                     {editMode === true && (
                         <Button
-                            //onPress={handleEdit}
+                            onPress={handleSave}
                             color="primary"
                             className="font-[Montserrat] w-[100px]"
                         >
@@ -101,9 +101,9 @@ function RetrospectivaView(props) {
             </div>
 
             <div className="flex-1 flex flex-row gap-5">
-                <ColumnRetro columnState={1}/>
-                <ColumnRetro columnState={2}/>
-                <ColumnRetro columnState={3}/>
+                <ColumnRetro columnState={1} state={editMode}/>
+                <ColumnRetro columnState={2} state={editMode}/>
+                <ColumnRetro columnState={3} state={editMode}/>
             </div>
         </div>
     );
@@ -128,6 +128,10 @@ function RetrospectivaView(props) {
                 idLineaRetrospectiva +
                 "=edit"
         );
+    }
+
+    function handleSave() {
+        router.back();
     }
 }
 export default RetrospectivaView;
