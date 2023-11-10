@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import {Input} from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
 
 function PlusIcon() {
     return (
@@ -38,27 +38,54 @@ function ColumnRetro({ columnState, state }) {
     }
 
     const [itemsList, setItemsList] = useState([]);
+    const [itemValue, setItemValue] = useState("");
+
+    const addItem = () => {
+        setItemsList([...itemsList, itemValue]);
+        setItemValue("");
+    };
 
     return (
         <div className={"flex-1 flex flex-col " + twStyle1}>
             <p className="text-white py-7 flex justify-center font-semibold text-3xl">
                 {title}
             </p>
-            <div className="bg-white flex flex-row py-3 px-2  gap-2 items-center">
-                <PlusIcon />
+            <div className="bg-white flex flex-row py-3 pr-2  gap-2 items-center">
+                <Button
+                    isIconOnly
+                    aria-label="Add"
+                    className="bg-white"
+                    onPress={addItem}
+                >
+                    <PlusIcon />
+                </Button>
                 {state === false ? (
                     <p className="text-slate-500">
                         Escribe tu idea aqui y presiona enter
                     </p>
                 ) : (
-                    <Input className="text-slate-500" variant="underlined" placeholder="Escribe tu idea aqui y presiona enter"/>
+                    <Input
+                        className="text-slate-500"
+                        variant="underlined"
+                        placeholder="Escribe tu idea aqui y presiona enter"
+                        value={itemValue}
+                        onValueChange={setItemValue}
+                    />
                 )}
             </div>
             <div className="bg-gray-300 flex-1 flex items-center justify-center">
-                <p className="text-center">
-                    Prueba escribiendo una retrospectiva en la barra superior
-                    para que figure aquí
-                </p>
+                {itemsList.length === 0 ? (
+                    <p className="text-center">
+                        Prueba escribiendo una retrospectiva en la barra
+                        superior para que figure aquí
+                    </p>
+                ) : (
+                    <ul className="list-disc">
+                        {itemsList.map((item) => (
+                            <li className="text-center">{item}</li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );
