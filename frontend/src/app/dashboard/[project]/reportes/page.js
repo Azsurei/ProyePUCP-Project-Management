@@ -98,6 +98,15 @@ export default function Reportes(props) {
             imgLink: "/images/report_4.webp",
             hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteRiesgos"
         },
+        {
+            id: "rep5",
+            title: "Reporte de Grupo de Proyectos",
+            description:
+                "Un reporte de grupo de proyectos es un resumen estructurado que detalla información relevante sobre varios proyectos agrupados en función de ciertos criterios comunes" +
+                "Proporciona una visión global de múltiples iniciativas en un solo documento, permitiendo una evaluación eficiente de la situación y el progreso colectivo de proyectos relacionados.",
+            imgLink: "/images/report_4.webp",
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteGrupoProyectos"
+        },
     ];
 
     useEffect(() => {
