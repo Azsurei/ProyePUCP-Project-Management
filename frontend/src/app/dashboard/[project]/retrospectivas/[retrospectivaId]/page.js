@@ -77,7 +77,7 @@ function RetrospectivaView(props) {
 
                     {editMode === false && (
                         <Button
-                            onPress={handleEdit}
+                            //onPress={handleEdit}
                             color="primary"
                             className="font-[Montserrat] w-[100px]"
                         >
@@ -86,7 +86,7 @@ function RetrospectivaView(props) {
                     )}
                     {editMode === true && (
                         <Button
-                            onPress={handleEdit}
+                            //onPress={handleEdit}
                             color="primary"
                             className="font-[Montserrat] w-[100px]"
                         >
