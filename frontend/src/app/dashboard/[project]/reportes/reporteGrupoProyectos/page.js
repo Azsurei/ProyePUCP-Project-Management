@@ -24,6 +24,8 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import  ReportePresupuesto  from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReportePresupuesto";
+import ReporteAlcance from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReporteAlcance";
+import ReporteCronograma from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReporteCronograma";
 axios.defaults.withCredentials = true;
 
 export default function ReporteGrupoProyectos(props) {
@@ -63,18 +65,10 @@ export default function ReporteGrupoProyectos(props) {
                     </div>
                     <Tabs aria-label="Options" color="warning">
                         <Tab key="photos" title="Alcance">
-                            <Card>
-                                <CardBody>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                </CardBody>
-                            </Card>  
+                            <ReporteAlcance isClient={isClient}/>
                         </Tab>
                         <Tab key="music" title="Cronograma">
-                            <Card>
-                                <CardBody>
-                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                </CardBody>
-                            </Card>  
+                            <ReporteCronograma isClient={isClient}/>
                         </Tab>
                         <Tab key="presupuesto" title="Presupuesto">
                             <ReportePresupuesto isClient={isClient}/>

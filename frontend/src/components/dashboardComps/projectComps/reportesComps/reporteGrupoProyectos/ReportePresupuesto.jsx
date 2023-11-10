@@ -21,6 +21,7 @@ import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import CardContribuyente from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/CardContribuyente";
 import PieChart from "@/components/PieChart";
 import BarGraphic from "@/components/BarGraphic";
+import AreaChart from "@/components/AreaChart";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
@@ -77,6 +78,8 @@ export default function ReportePresupuesto(props) {
           id: 156,
           idPresupuesto: 36,  
           nombre: 'Grupo A',
+          lineasIngreso: [],
+          lineasEgreso: [],
           totalIngresos: 5000,
           totalEgresos: 3000,
           montoDisponible: 2000,
@@ -85,6 +88,8 @@ export default function ReportePresupuesto(props) {
           id: 157,
           idPresupuesto: 37,
           nombre: 'Grupo B',
+          lineasIngreso: [],
+          lineasEgreso: [],
           totalIngresos: 8000,
           totalEgresos: 4000,
           montoDisponible: 4000,
@@ -93,6 +98,8 @@ export default function ReportePresupuesto(props) {
           id: 158,  
           idPresupuesto: 38,
           nombre: 'Grupo C',
+          lineasIngreso: [],
+          lineasEgreso: [],
           totalIngresos: 6000,
           totalEgresos: 7000,
           montoDisponible: 4000,
@@ -231,10 +238,10 @@ export default function ReportePresupuesto(props) {
       };
       const [lineasIngreso, setLineasIngreso] = useState([]);
     const [lineasEgreso, setLineasEgreso] = useState([]);
-      const DataTable = async () => {
+      const DataTable = async (idPresupuesto) => {
         const fetchData = async () => {
             try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdPresupuesto/${idPresupuestoPrimerDato}`);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoYEgresoXIdPresupuesto/${idPresupuesto}`);
               const data = response.data.lineas;
               setLineasIngreso(response.data.lineas.lineasIngreso);
               setLineasEgreso(response.data.lineas.lineasEgreso);
@@ -398,7 +405,8 @@ export default function ReportePresupuesto(props) {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
     useEffect(() => {
-        DataTable();
+
+        DataTable(idPresupuestoPrimerDato);
         setIsClient(true);
       }, [idPresupuestoPrimerDato]);
 
@@ -410,7 +418,7 @@ export default function ReportePresupuesto(props) {
         },
         {
           name: 'Egresos',
-          data: lineasEgreso.map(item => item.monto),
+          data: lineasEgreso.map(item => item.costoReal),
           color: '#FF4D4D'
         }
       ];
@@ -452,12 +460,23 @@ console.log('Fechas únicas:', uniqueDatesArray);
             },
           },
       };
+      const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (index) => {
+    setActiveTab(index);
+    console.log(`Tab activa:`, index);
+  };
     return (
         <>
             {isClient && (  <div className="ReporteGrupoPresupuesto">
                                 <div className="flex">
                                     <div className="GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
-
+                                        <Tabs key="proyectos" color="success" aria-label="Tabs colors" radius="full" value={activeTab} onChange={handleTabChange}>    
+                                            {data.map((proyecto) => (
+                                                    <Tab key={proyecto.id} title={proyecto.nombre}/>  
+                                            ))}
+                                        </Tabs>
+                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={300} width={680}/>
                                     </div>
                                     <div className="TablaComparacion flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
                                         <MyDynamicTable 
