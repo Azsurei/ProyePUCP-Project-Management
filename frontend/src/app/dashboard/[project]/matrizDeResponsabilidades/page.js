@@ -675,7 +675,12 @@ export default function MatrizDeResponsabilidades(props) {
                                 <div className="col-span-8 break-words">
                                     {responsabilidad.descripcion}
                                 </div>
-                                <div className="col-span-1">
+                                <div className="col-span-1 flex gap-4">
+                                    <img
+                                        src="/icons/updateIconYellow.svg"
+                                        alt="update"
+                                        className="mb-4 cursor-pointer"
+                                    />
                                     <img
                                         src="/icons/icon-trash.svg"
                                         alt="delete"
