@@ -46,7 +46,7 @@ DROP PROCEDURE IF EXISTS CAMBIAR_PASSWORD_CUENTA_USUARIO;
 
 DELIMITER $
 CREATE PROCEDURE CAMBIAR_PASSWORD_CUENTA_USUARIO(
-    IN _correo INT,
+    IN _correo VARCHAR(255),
     IN _password VARCHAR(200)
 )
 BEGIN
@@ -55,6 +55,8 @@ BEGIN
     WHERE correoElectronico = _correo AND activo = 1;
 END$
 
+CALL CAMBIAR_PASSWORD_CUENTA_USUARIO('gabriel@gmail.com','HOLA AMIGOS de youtube');
+SELECT * FROM Usuario;
 DROP PROCEDURE IF EXISTS VERIFICAR_SI_CORREO_ES_DE_GOOGLE;
 
 DELIMITER $
@@ -825,7 +827,7 @@ CREATE PROCEDURE LISTAR_RESPONSABLE_ACUERDO_X_ID_ACUERDO(
     IN _idAcuerdo INT
 )
 BEGIN
-    SELECT ra.idResponsableAcuerdo,urp.idUsuarioRolProyecto,u.idUsuario, u.nombres, u.apellidos, u.correoElectronico
+    SELECT ra.idResponsableAcuerdo,urp.idUsuarioRolProyecto,u.idUsuario, u.nombres, u.apellidos, u.correoElectronico,u.imgLink
     FROM ResponsableAcuerdo ra INNER JOIN UsuarioXRolXProyecto urp ON ra.idUsuarioXRolXProyecto  = urp.idUsuarioRolProyecto 
     INNER JOIN Usuario u ON u.idUsuario = urp.idUsuario
     WHERE ra.idAcuerdo = _idAcuerdo 
@@ -4287,5 +4289,38 @@ BEGIN
         INSERT INTO ColumnaKanban(idProyecto,nombre,posicion,activo) 
         VALUES(_idProyecto,_nombre,_posicion,1);
     END IF;
->>>>>>> c992637d0c787667ce014b735cb886bf6c5de2ed
 END$
+
+########################################
+## REPORTES
+########################################
+SELECT * FROM Herramienta;
+
+DROP PROCEDURE IF EXISTS INSERTAR_REPORTE_X_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_REPORTE_X_PROYECTO(
+    IN _idProyecto INT,
+    IN _idHerramienta INT,
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+    DECLARE _idReporte INT;
+	INSERT INTO ReporteXProyecto(idProyecto,idHerramienta,nombre,fechaCreacion,activo)
+    VALUES (_idProyecto,_idHerramienta,_nombre,CURDATE(),1);
+    SET _idReporte = @@last_insert_id;
+    SELECT _idReporte as idReporte;
+END$
+
+DROP PROCEDURE IF EXISTS ACTUALIZAR_FILE_ID;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_FILE_ID(
+    IN _idReporteXProyecto INT,
+    IN _fileId VARCHAR(50)
+)
+BEGIN
+	UPDATE ReporteXProyecto
+    SET fileId = _fileId
+    WHERE idReporteXProyecto = _idReporteXProyecto AND activo=1;
+END$
+
+SELECT * FROM ReporteXProyecto;

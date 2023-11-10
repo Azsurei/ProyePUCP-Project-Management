@@ -43,10 +43,39 @@ function agregarDatosAHoja(wb, header, datosReducidos, nombreHoja) {
     });
     return nuevoObjeto;
   }
+// ver si se elimina xq no se utiliza
+  function ajustarRangoDeHoja(ws) {
+    // Obtén el rango actual de la hoja
+    let rango = XLSX.utils.decode_range(ws['!ref']);
+    
+    // Encuentra la primera columna con datos
+    let primeraColumnaConDatos = rango.s.c; // Comienza con la columna inicial del rango
+    for (let C = rango.s.c; C <= rango.e.c; ++C) {
+        let columnaTieneDatos = false;
+        for (let R = rango.s.r; R <= rango.e.r; ++R) {
+            if (ws[XLSX.utils.encode_cell({c: C, r: R})]) {
+                columnaTieneDatos = true;
+                break;
+            }
+        }
+        if (columnaTieneDatos) {
+            primeraColumnaConDatos = C;
+            break; // Rompe el bucle en la primera columna con datos
+        }
+    }
+
+    // Ajusta el rango de la hoja si se encontraron columnas vacías al inicio
+    if (primeraColumnaConDatos !== rango.s.c) {
+        // Ajusta el inicio del rango a la primera columna con datos
+        rango.s.c = primeraColumnaConDatos;
+        ws['!ref'] = XLSX.utils.encode_range(rango);
+    }
+}
 
 
 module.exports = {
     ajustarAnchoDeColumna,
     agregarDatosAHoja,
-    extraerCampos
+    extraerCampos,
+    ajustarRangoDeHoja
 }

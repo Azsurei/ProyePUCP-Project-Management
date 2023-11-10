@@ -3,6 +3,8 @@ POST http://localhost:8080/api/proyecto/reporte/generarReportePresupuesto HTTP/1
 Content-Type:  application/json
 
 {
+  "idProyecto": 178,
+  "nombre": "pipipi",
   "presupuesto":{
     "general":{
           "idPresupuesto": 37,
@@ -72,10 +74,20 @@ Content-Type:  application/json
 
 
 ###
+GET http://localhost:8080/api/proyecto/reporte/obtenerReporteEntregableXFileId/1nOpP03eSsiSEkidUm6_fP-nhsSjweNbx HTTP/1.1
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/proyecto/reporte/obtenerReporteEntregableXFileId/1o2Q3V6K_AkSMt6unL9wj2Am1tJ72Ts_f HTTP/1.1
+Content-Type: application/json
+
+###
 POST http://localhost:8080/api/proyecto/reporte/generarReporteEntregable HTTP/1.1
 Content-Type: application/json
 
 {
+  "idProyecto": 178,
+  "nombre": "probando reporte entregables",
   "entregables":[
       {
         "idEntregable": 22,
