@@ -112,9 +112,9 @@ export default function newProject() {
     const [isLoading, setIsLoading] = useState(true);
     const [nombreGrupo, setNombreGrupo] = React.useState("");
 
-
     const onValueGrupuChange = (value) => {
         setNombreGrupo(value);
+        setValidValue(true);
     }
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -290,11 +290,34 @@ export default function newProject() {
 
     const topContent = React.useMemo(() => {
         const agregarGrupo = () => {
-            if (nombreGrupo === "") {
-                setValidValue(false);
-            }
             console.log("Tamano: ", selectedKeys.size);
             console.log("Select: ", selectedKeys);
+            if (nombreGrupo === "") {
+                setValidValue(false);
+            } else {
+                const postData = {
+                    nombreGrupo: nombreGrupo,
+                    proyectos: [...selectedKeys],
+                };
+                console.log("El postData es :", postData);
+                axios
+                    .post(
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                            "/api/proyecto/grupoProyectos/insertarGrupoProyectos",
+                        postData
+                    )
+                    .then((response) => {
+                        // Manejar la respuesta de la solicitud POST
+                        console.log("Respuesta del servidor:", response.data);
+                        console.log("Registro correcto");
+                        // Realizar acciones adicionales si es necesario
+                    })
+                    .catch((error) => {
+                        // Manejar errores si la solicitud POST falla
+                        console.error("Error al realizar la solicitud POST:", error);
+                    });
+            }
+
     
         };
         return (
@@ -311,7 +334,7 @@ export default function newProject() {
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Button isDisabled={selectedKeys.size === 0} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onClick={() => agregarGrupo()}>
+                        <Button isDisabled={selectedKeys.size === 0} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onPress={() => {agregarGrupo(); router.back();}}>
                             Agregar
                         </Button>
                     </div>
@@ -342,6 +365,7 @@ export default function newProject() {
         onSearchChange,
         hasSearchFilter,
         selectedKeys,
+        nombreGrupo,
     ]);
 
     const bottomContent = React.useMemo(() => {

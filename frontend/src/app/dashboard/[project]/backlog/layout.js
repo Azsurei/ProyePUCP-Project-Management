@@ -12,12 +12,18 @@ import {
     Input,
     Button,
   } from "@nextui-org/react";
-import React, { useState, useEffect, useReducer, useContext } from "react";
+import React, { useState, useEffect, useReducer, useContext, createContext } from "react";
 import { usePathname } from "next/navigation";
 import SaveIcon from '@mui/icons-material/Save';
 import { Toaster, toast } from "sonner";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { SessionContext } from "../../layout";
+import axios from "axios";
+import "@/styles/dashboardStyles/projectStyles/productBacklog/plantillaKB.css";
+import { set } from "date-fns";
+export const FlagRefreshContext = createContext();
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+
 
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
@@ -25,8 +31,10 @@ export default function RootLayout({ children, params }) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [error, setError] = useState(null);
 
-    const isKanbanPage = usePathname() === `/dashboard/${projectName}=${projectId}/backlog/kanban`;
-    
+
+    const decodedProjectName = decodeURIComponent(projectName);
+    const constructedUrl = new URL(`/dashboard/${decodedProjectName}=${projectId}/backlog/kanban`, window.location.origin);
+    const isKanbanPage = usePathname() === constructedUrl.pathname;
     //Plantillas
 
     const {
@@ -50,25 +58,20 @@ export default function RootLayout({ children, params }) {
         setIdUsuario(sessionData.idUsuario);
     }, []);
 
-    const [IdKanban,setIdKanban]=useState("");
 
-
-    const savePlantilla = () => {
-
+    const savePlantillaKB = () => {
         return new Promise((resolve, reject) => {
-        //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
-        setIsLoadingSmall(true);
         const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/Kanban/guardarPlantilla";
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/plantillas/guardarPlantillaKanban";
+
         axios
-            .put(updateURL, {
+            .post(updateURL, {
                 nombrePlantilla: nombrePlantilla,
                 idUsuario: IdUsuario,
-                idKanban: IdKanban,
+                idProyecto: projectId,
             })
             .then((response) => {
                 console.log(response.data.message);
-                setEditActive(false);
                 resolve(response);
 
                 setIsLoadingSmall(false);
@@ -83,9 +86,10 @@ export default function RootLayout({ children, params }) {
 
     const guardarPlantillaNueva = async () => {
         try {
-            toast.promise(savePlantilla, {
-                loading: "Guardando Plantilla Nueva...",
+            await toast.promise(savePlantillaKB, {
+                loading: "Guardando PsavePlantillalantilla Nueva...",
                 success: (data) => {
+                    DataTable();
                     return "La plantilla se agregó con éxito!";
                     
                 },
@@ -98,6 +102,84 @@ export default function RootLayout({ children, params }) {
         } 
     };
 
+    const [plantillas, setPlantillas] = useState([]);
+    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
+
+
+    const DataTable = async () => {
+    const fetchPlantillas = async () => {
+        try {
+          const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanban/' + IdUsuario;
+          const response = await axios.get(url);
+          const plantillasInvertidas = response.data.plantillasKanban.reverse();
+          setPlantillas(plantillasInvertidas);
+        } catch (error) {
+          console.error("Error al obtener las plantillas:", error);
+        }
+      };
+      fetchPlantillas();
+    };
+    
+      useEffect(() => {
+        if (IdUsuario !== "") {
+            DataTable();
+        }
+      }, [IdUsuario]);
+
+      const handlePlantillaClick = (plantilla) => {
+        setSelectedPlantilla(plantilla);
+        setError(null);
+        console.log("Plantilla seleccionada:", plantilla.nombrePlantilla);
+
+      };
+
+    const [flagRefresh,setFlagRefresh] = useState(false);
+
+    const usePlantillaKanban = () => {
+        return new Promise((resolve, reject) => {
+            console.log("idProyecto:"+ projectId);
+            console.log("idPlantillaKanban:"+ selectedPlantilla.idPlantillaKanban);
+            const updateData = {
+                idProyecto: projectId,
+                idPlantillaKanban: selectedPlantilla.idPlantillaKanban,
+                
+            };
+    
+            const updateURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/plantillas/seleccionarPlantillaKanban";
+    
+            axios
+                .put(updateURL, updateData)
+                .then((response) => {
+                    setFlagRefresh(true);
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                })
+
+        });
+    };
+
+    const usarPlantilla = async () => {
+        try {
+            toast.promise(usePlantillaKanban, {
+                loading: "Cargando Plantilla...",
+                success: (data) => {
+                    return "La plantilla se cargó con éxito!";
+                    
+                },
+                error: "Error al usar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        }
+
+    };
+    const [plantillaElegida, setPlantillaElegida] = useState(false);
+
 
     //Fin Plantillas
 
@@ -105,6 +187,7 @@ export default function RootLayout({ children, params }) {
 
         
         <div className="p-[2.5rem] flex flex-col space-y-2 min-w-[100%] min-h-[100%]">
+
 
             {isKanbanPage &&   
                 <Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModalSavePlantillaChange}>
@@ -119,7 +202,7 @@ export default function RootLayout({ children, params }) {
                             }
 
                             if(Isvalid === true){
-                                console.log("IdUsuario: "+ sessionData.idUsuario);
+                               
                                 try {
                                     await guardarPlantillaNueva();
                                     setNombrePlantilla("");
@@ -130,6 +213,7 @@ export default function RootLayout({ children, params }) {
                                 }
 
                                 onClose();
+        
                             
                             }
                         };
@@ -204,24 +288,62 @@ export default function RootLayout({ children, params }) {
             {isKanbanPage &&   
                      <Modal size="lg" isOpen={isModalverPlantillas} onOpenChange={onModalverPlantillasChange}>
                      <ModalContent>
-                     {(onClose) => (
+                     {(onClose) => { 
+
+                            const finalizarModalP = async () => {
+                                let Isvalid = true;
+                                if (selectedPlantilla === null) {
+                                    setPlantillaElegida(false);
+                                    Isvalid = false;
+                                }
+
+                                if(Isvalid === true){
+                                    try {
+                                        await usarPlantilla();
+                                        setPlantillaElegida(false);
+                                        
+                                    } catch (error) {
+                                        console.error('Error al Utilizar Plantilla:', error);
+                                    }
+                                    onClose();
+                                    DataTable();
+
+ 
+                                }
+                                else{
+                                    setError("Seleccione una plantilla");
+                                    console.log("algo pasa xd")
+                                }
+                            };
+
+                        
+
+
+                        return ( 
                              <>
                
                          <ModalHeader className="flex flex-col gap-1">
-                             Plantillas
+                             Plantillas Kanban
                          </ModalHeader>
                          <ModalBody>
                          <div className="modal-body">
-                           <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
-                           {/* <ul>
-                             {plantillas.map((plantilla) => (
-                               <li key={plantilla.id}>
-                                 <button onClick={() => selectPlantilla(plantilla)}>
-                                   {plantilla.nombre}
-                                 </button>
-                               </li>
-                             ))}
-                           </ul> */}
+
+                            <div style={{ marginBottom: '25px' }}>
+                                <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                            </div>
+
+                           <ul>
+                                {plantillas.map((plantilla) => (
+                                    <li key={plantilla.idPlantillaKanban}>
+                                    <div className={`cardPlantillaKB ${selectedPlantilla === plantilla ? 'selected' : ''}`}
+
+                                        onClick={() => handlePlantillaClick(plantilla)}>
+                                        {plantilla.nombrePlantilla}
+                                        
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                          </div>
                
                          </ModalBody>
@@ -247,12 +369,14 @@ export default function RootLayout({ children, params }) {
                            </Button>
                            <Button
                            color="primary"
+                           onPress={finalizarModalP}
                            >
                            Continuar
                            </Button>
                        </ModalFooter>
                      </>
-                     )}
+                    );
+                    }}
                
                      </ModalContent>
                
@@ -294,7 +418,7 @@ export default function RootLayout({ children, params }) {
                     </Button>
 
                     
-                    <Button onPress={onModalSavePLantilla} color="primary" startContent={<SaveIcon />}>
+                    <Button onPress={onModalSavePLantilla} color="primary" startContent={<SaveAsIcon />}>
                         Guardar Plantilla
                     </Button>
 
@@ -303,8 +427,10 @@ export default function RootLayout({ children, params }) {
             }
 
             </div>    
-            
-            {children}
+        
+            <FlagRefreshContext.Provider value={{flagRefresh,setFlagRefresh}}>
+                {children}
+            </FlagRefreshContext.Provider>
         </div>
     );
 }

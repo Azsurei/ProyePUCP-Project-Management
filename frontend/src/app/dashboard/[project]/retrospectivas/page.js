@@ -6,149 +6,236 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { SmallLoadingScreen, HerramientasInfo } from "../layout";
 axios.defaults.withCredentials = true;
-import {Button, Avatar, AvatarGroup, Card, CardBody, CardHeader, Divider, Spacer} from '@nextui-org/react';
-import {Tabs, Tab} from '@nextui-org/react';
-import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
+import {
+    Button,
+    Avatar,
+    AvatarGroup,
+    Card,
+    CardBody,
+    CardHeader,
+    Divider,
+    Spacer,
+    useDisclosure,
+} from "@nextui-org/react";
+import { Tabs, Tab } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
+import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import ModalNewRetro from "@/components/dashboardComps/projectComps/retrospectivasComps/ModalNewRetro";
+import { Toaster, toast } from "sonner";
 
-export default function ActaReunion(props) {
-    // Getting project parameters
+export default function Retrospectiva(props) {
+    const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    // Loading logo state
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    // Tools id state
     const { herramientasInfo } = useContext(HerramientasInfo);
-    // array of lineasRetrospectivas to be loaded
+
     const [lretrospectivas, setLRetrospectivas] = useState([]);
-    // id of retrospectivas tool
-    const [idRetrospectiva, setIdRestrospectiva] = useState(-1);
+    const [listSprints, setListSprints] = useState([]);
 
-    console.log("Props");
-    console.log(props);
+    const {
+        isOpen: isModalNewOpen,
+        onOpen: onModalNewOpen,
+        onOpenChange: onModalNewOpenChange,
+    } = useDisclosure();
 
-    // Pending: axios listar id restrospectivas
-    // set state of idRetrospectiva from the respose
-    // Pending: axios listar lineas retrospectivas x id retrospectivas
-    // set state of lretrospectivas from the response
-    // if finished correctly then setIsLoadingSmall(false);
+    const refreshList = async () => {
+        try {
+            // Get data for lineasRetrospectiva
+            const lineasRetrospectivaResponse = await axios.get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/retrospectiva/listarLineasRetrospectivaXIdRetrospectiva/" +
+                    herramientasInfo[9].idHerramientaCreada
+            );
+
+            setLRetrospectivas(
+                lineasRetrospectivaResponse.data.lineasRetrospectiva
+            );
+
+            // Get data for sprints
+            const sprintsResponse = await axios.get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
+                    herramientasInfo[0].idHerramientaCreada + //id backlog
+                    `/` +
+                    herramientasInfo[3].idHerramientaCreada //id cronograma
+            );
+
+            setListSprints(
+                sprintsResponse.data.sprints.map((sprint) => ({
+                    idSprint: sprint.idSprint,
+                    nombre: sprint.nombre,
+                    idSprintString: sprint.idSprint.toString(),
+                }))
+            );
+
+            console.log("Se completo el refresh con exito");
+        } catch (error) {
+            console.error("Error al obtener los datos: ", error);
+            toast.error("Hubo un error al cargar los datos");
+        }
+    };
 
     useEffect(() => {
+        setIsLoadingSmall(true);
+        axios
+            .get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/retrospectiva/listarLineasRetrospectivaXIdRetrospectiva/" +
+                    herramientasInfo[9].idHerramientaCreada
+            )
+            .then((response) => {
+                setLRetrospectivas(response.data.lineasRetrospectiva);
+                console.log("Listado de lineas retrospectiva");
 
+                axios
+                    .get(
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                            `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
+                            herramientasInfo[0].idHerramientaCreada + //id backlog
+                            `/` +
+                            herramientasInfo[3].idHerramientaCreada //id cronograma
+                    )
+                    .then((response) => {
+                        console.log(response);
+                        setListSprints(
+                            response.data.sprints.map((sprint) => {
+                                return {
+                                    idSprint: sprint.idSprint,
+                                    nombre: sprint.nombre,
+                                    idSprintString: sprint.idSprint.toString(),
+                                };
+                            })
+                        );
+                        console.log("listado de sprints");
 
-        setIsLoadingSmall(false);
-    });
+                        setIsLoadingSmall(false);
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Error al obtener los datos de sprints: ",
+                            error
+                        );
+                        toast.error("Error al cargar reporte con sprints");
+                    });
+            })
+            .catch((error) => {
+                console.error("Error al obtener retrospectivas: ", error);
+                toast.error("Error al cargar retrospectivas");
+            });
+    }, []);
 
-    const newHref = '/dashboard/'+projectName+'='+projectId+'/retrospectivas/registerRetro';
-    const actualHref = '/dashboard/'+ projectName + '=' + projectId + '/retrospectivas';
+    // Function to get today's date in dd/mm/yyyy format
+    const getTodaysDate = () => {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, "0");
+        const month = String(today.getMonth() + 1).padStart(2, "0"); // January is 0!
+        const year = today.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    };
+
+    // Function to handle deletion of a lineaRetrospectiva
+    const handleDelete = async (idLineaRetrospectiva) => {
+        try {
+            const response = await axios.delete(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/retrospectiva/eliminarLineaRetrospectiva",
+                {
+                    data: { idLineaRetrospectiva },
+                }
+            );
+            // Remove the deleted item from the state
+            if (response.status === 200) {
+                setLRetrospectivas(
+                    lretrospectivas.filter(
+                        (item) =>
+                            item.idLineaRetrospectiva !== idLineaRetrospectiva
+                    )
+                );
+                //fetchData();
+            }
+        } catch (error) {
+            console.error("Error deleting data:", error);
+        }
+    };
+
     return (
-        <div style={{ padding: '20px', width: '100%', height: '80%' }}>
-            <HeaderWithButtons
-                haveReturn={true}
+        <div className="flex-1 min-h-full p-[2.5rem]">
+            <ModalNewRetro
+                isOpen={isModalNewOpen}
+                onOpenChange={onModalNewOpenChange}
+                listSprints={listSprints}
+                refreshList={refreshList}
+            />
+
+            <HeaderWithButtonsSamePage
+                haveReturn={false}
                 haveAddNew={true}
-                hrefToReturn={actualHref}
-                hrefForButton={{
-                    pathname:newHref,
-                    query: {previousUrl: actualHref},
+                handlerAddNew={() => {
+                    onModalNewOpen();
                 }}
-                breadcrump={`Inicio / Proyectos / ${projectName} / Restrospectivas`}
-                btnText={'+ Agregar retrospectiva'}
+                breadcrump={"Inicio / Proyectos / " + projectName}
+                btnText={"Nueva retrospectiva"}
             >
                 Restrospectivas
-            </HeaderWithButtons>
+            </HeaderWithButtonsSamePage>
+            <Spacer y={4} />
+            {lretrospectivas.map((retro, index) => (
+                <div key={retro.idLineaRetrospectiva}>
+                    <Card  className="flex-grow w-full mx-auto">
+                        <CardHeader className="p-4">
+                            <h3 className="text-xl font-bold text-blue-900 montserrat">
+                                {"Retrospectiva '" + retro.titulo + "' del sprint " + (retro.sprintNombre === null ? "'Sin sprint'" : "'" + retro.sprintNombre + "'")}
+                            </h3>
+                        </CardHeader>
+                        <Divider orientation={"horizontal"} />
+                        <CardBody className="flex-row justify-between items-center h-36">
+                            <div className="mr-4">
+                                <p className="text-blue-900 montserrat">
+                                    Fecha: {getTodaysDate()}
+                                </p>
+                                <p className="text-blue-900 montserrat">
+                                    Que hicimos bien? {retro.cantBien}{" "}
+                                    comentarios
+                                </p>
+                                <p className="text-gray-700 montserrat">
+                                    Que hicimos mal? {retro.cantMal} comentarios
+                                </p>
+                                <p className="text-gray-700 montserrat">
+                                    Que podemos hacer? {retro.cantQueHacer}{" "}
+                                    comentarios
+                                </p>
+                            </div>
+                            <div className="flex flex-col space-y-2 mt-0.5">
+                                <Button className="w-36 bg-blue-900 text-white font-semibold" onPress={()=>{handleViewDetail(retro.idLineaRetrospectiva)}}>
+                                    Ver detalle
+                                </Button>
+                                <Modal
+                                    nameButton="Eliminar"
+                                    textHeader="Eliminar retrospectiva"
+                                    textBody="¿Seguro que quiere eliminar esta retrospectiva?"
+                                    colorButton="w-36 bg-red-600 text-white font-semibold"
+                                    oneButton={false}
+                                    secondAction={() =>
+                                        handleDelete(retro.idLineaRetrospectiva)
+                                    }
+                                />
+                            </div>
+                        </CardBody>
+                    </Card>
+                    <Spacer y={4} />
+                </div>
+            ))}
 
-            <div
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
-                <Card className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
-                    <CardHeader className="p-4">
-                        <h3 className="text-xl font-bold text-blue-900 montserrat">Retrospectivas del Sprint 1</h3>
-                    </CardHeader>
-                    <Divider orientation={"horizontal"}/>
-                    <CardBody className="flex-row justify-between items-center h-36">
-                        <div className="mr-4">
-                            <p className="text-blue-900 montserrat">Fecha: 08/11/2023</p>
-                            <p className="text-blue-900 montserrat">Que hicimos bien? 5 comentarios</p>
-                            <p className="text-gray-700 montserrat">Que hicimos mal? 3 comentarios</p>
-                            <p className="text-gray-700 montserrat">Que podemos hacer? 2 comentarios</p>
-                        </div>
-                        <div className="flex flex-col space-y-2 mt-0.5">
-                            <Button className="w-36 bg-blue-900 text-white font-semibold">Editar</Button>
-                            <Modal
-                                nameButton="Eliminar"
-                                textHeader="Eliminar retrospectiva"
-                                textBody="¿Seguro que quiere eliminar esta restrospectiva?"
-                                colorButton="w-36 bg-red-600 text-white font-semibold"
-                                oneButton={false}
-                                secondAction={undefined}
-                                textColor="red"
-                            />
-                        </div>
-                    </CardBody>
-                </Card>
-            </div>
-
-            <div
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
-                <Card className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
-                    <CardHeader className="p-4">
-                        <h3 className="text-xl font-bold text-blue-900 montserrat">Retrospectivas del Sprint 2</h3>
-                    </CardHeader>
-                    <Divider orientation={"horizontal"}/>
-                    <CardBody className="flex-row justify-between items-center h-36">
-                        <div className="mr-4">
-                            <p className="text-blue-900 montserrat">Fecha: 09/11/2023</p>
-                            <p className="text-blue-900 montserrat">Que hicimos bien? 2 comentarios</p>
-                            <p className="text-gray-700 montserrat">Que hicimos mal? 7 comentarios</p>
-                            <p className="text-gray-700 montserrat">Que podemos hacer? 5 comentarios</p>
-                        </div>
-                        <div className="flex flex-col space-y-2 mt-0.5">
-                            <Button className="w-36 bg-blue-900 text-white font-semibold" >Editar</Button>
-                            <Modal
-                                nameButton="Eliminar"
-                                textHeader="Eliminar retrospectiva"
-                                textBody="¿Seguro que quiere eliminar esta restrospectiva?"
-                                colorButton="w-36 bg-red-600 text-white font-semibold"
-                                oneButton={false}
-                                secondAction={undefined}
-                                textColor="red"
-                            />
-                        </div>
-                    </CardBody>
-                </Card>
-            </div>
-
-            <div
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
-                <Card className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
-                    <CardHeader className="p-4">
-                        <h3 className="text-xl font-bold text-blue-900 montserrat">Retrospectivas del Sprint 3</h3>
-                    </CardHeader>
-                    <Divider orientation={"horizontal"}/>
-                    <CardBody className="flex-row justify-between items-center h-36">
-                        <div className="mr-4">
-                            <p className="text-blue-900 montserrat">Fecha: 22/11/2023</p>
-                            <p className="text-blue-900 montserrat">Que hicimos bien? 5 comentarios</p>
-                            <p className="text-gray-700 montserrat">Que hicimos mal? 3 comentarios</p>
-                            <p className="text-gray-700 montserrat">Que podemos hacer? 1 comentarios</p>
-                        </div>
-                        <div className="flex flex-col space-y-2 mt-0.5">
-                            <Button className="w-36 bg-blue-900 text-white font-semibold" >Editar</Button>
-                            <Modal
-                                nameButton="Eliminar"
-                                textHeader="Eliminar retrospectiva"
-                                textBody="¿Seguro que quiere eliminar esta restrospectiva?"
-                                colorButton="w-36 bg-red-600 text-white font-semibold"
-                                oneButton={false}
-                                secondAction={undefined}
-                                textColor="red"
-                            />
-                        </div>
-                    </CardBody>
-                </Card>
-            </div>
+            <Toaster richColors />
         </div>
     );
+
+    function handleViewDetail(idLineaRetrospectiva){
+        router.push('/dashboard/' + projectName+'='+projectId + '/retrospectivas/' + idLineaRetrospectiva);
+    }
 }

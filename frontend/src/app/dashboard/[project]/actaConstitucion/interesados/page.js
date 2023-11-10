@@ -505,7 +505,7 @@ export default function Interesados(props) {
     return (
         <>
             <div className="flex flex-row space-x-4 mb-4 mt-4">
-                <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
+                <h2 className="montserrat text-[#172B4D] font-bold text-2xl dark:text-white">
                     Lista de Interesados (StakeHolders)
                 </h2>
                 <img src="/icons/info-circle.svg" alt="Informacion"></img>

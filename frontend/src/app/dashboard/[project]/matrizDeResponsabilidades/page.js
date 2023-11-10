@@ -9,6 +9,7 @@ import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
 import ColorPicker from "@/components/dashboardComps/projectComps/matrizDeResponsabilidades/ColorPicker";
 import { Toaster, toast } from "sonner";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import {
     Table,
     TableHeader,
@@ -33,6 +34,11 @@ import {
     useDisclosure,
     Input,
 } from "@nextui-org/react";
+import { SessionContext } from "../../layout";
+
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
+import { id } from "date-fns/locale";
 
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -47,6 +53,7 @@ export default function MatrizDeResponsabilidades(props) {
         decodedUrl.lastIndexOf("=") + 1
     );
     const projectId = parseInt(projectIdString);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [reList, setReList] = useState(false);
     const {
         isOpen: isOpenDelete,
@@ -64,18 +71,38 @@ export default function MatrizDeResponsabilidades(props) {
         onOpenChange: onOpenChangeDeleteRes,
     } = useDisclosure();
 
+    const {
+        isOpen: isOpenUpdate,
+        onOpen: onOpenUpdate,
+        onOpenChange: onOpenChangeUpdate,
+    } = useDisclosure();
+
+
+
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
     const [descripcionRes, setDescripcionRes] = useState("");
     const [colorRes, setColorRes] = useState("#000000");
+    const [letraUpdate, setLetraUpdate] = useState("");
+    const [nombreUpdate, setNombreUpdate] = useState("");
+    const [descripcionUpdate, setDescripcionUpdate] = useState("");
+    const [colorUpdate, setColorUpdate] = useState("#000000");
+    const [idUpdate, setIdUpdate] = useState(null);
     const isTextTooLong1 = letraRes.length > 2;
     const isTextTooLong2 = nombreRes.length > 50;
     const isTextTooLong3 = descripcionRes.length > 100;
+    const isTextTooLong4 = letraUpdate.length > 2;
+    const isTextTooLong5 = nombreUpdate.length > 50;
+    const isTextTooLong6 = descripcionUpdate.length > 100;
     const [responsabilidadEliminar, setResponsabilidadEliminar] = useState({});
 
     const onChangeColor = (color) => {
         setColorRes(color);
     };
+
+    const onChangeColorUpdate = (color) => {
+        setColorUpdate(color);
+    }
 
     useEffect(() => {
         // Datos iniciales
@@ -298,7 +325,7 @@ export default function MatrizDeResponsabilidades(props) {
             //console.log("El id del rol es:", idRol);
             switch (columnKey) {
                 case "entregable":
-                    return (<div className="font-bold">{cellValue}</div>);
+                    return <div className="font-bold">{cellValue}</div>;
                 default:
                     return (
                         <>
@@ -455,11 +482,27 @@ export default function MatrizDeResponsabilidades(props) {
         );
     }
 
+    function verifyFieldsEmptyUpdate() {
+        return (
+            letraUpdate.trim() === "" ||
+            nombreUpdate.trim() === "" ||
+            descripcionUpdate.trim() === ""
+        );
+    }
+
     function verifyFieldsExcessive() {
         return (
             letraRes.length > 2 ||
             nombreRes.length > 50 ||
             descripcionRes.length > 100
+        );
+    }
+
+    function verifyFieldsExcessiveUpdate() {
+        return (
+            letraUpdate.length > 2 ||
+            nombreUpdate.length > 50 ||
+            descripcionUpdate.length > 100
         );
     }
 
@@ -476,6 +519,22 @@ export default function MatrizDeResponsabilidades(props) {
         return (
             letrasExistente.includes(letraRes.toLowerCase()) ||
             nombresExistente.includes(nombreRes.toLowerCase())
+        );
+    };
+
+    const isResponsabilidadExistenteUpdate = () => {
+        // Convierte todas las letras y nombres existentes a minúsculas para asegurar la comparación insensible a mayúsculas
+        const letrasExistente = responsabilidades.map((res) =>
+            res.letra.toLowerCase()
+        );
+        const nombresExistente = responsabilidades.map((res) =>
+            res.nombre.toLowerCase()
+        );
+
+        // Verifica si la letra o el nombre ya existen en el arreglo de roles
+        return (
+            letrasExistente.includes(letraUpdate.toLowerCase()) ||
+            nombresExistente.includes(nombreUpdate.toLowerCase())
         );
     };
 
@@ -521,6 +580,50 @@ export default function MatrizDeResponsabilidades(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
+            });
+        onClose();
+    };
+
+    const actualizarResponsabilidad = (onClose) => {
+        if (verifyFieldsEmptyUpdate()) {
+            toast.error("Faltan completar campos");
+            return;
+        } else if (verifyFieldsExcessiveUpdate()) {
+            toast.error("Se excedió el límite de caractéres");
+            return;
+        } 
+        setIsLoadingSmall(true);
+        const urlActualizarResponsabilidad =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/modificarResponsabilidad";
+
+        const updateResponsabilidad = {
+            letraRol: letraUpdate.toUpperCase(),
+            nombreRol: nombreUpdate,
+            descrpcionRol: descripcionUpdate,
+            colorRol: colorUpdate,
+            idResponsabilidadRol: idUpdate,
+        };
+
+        console.log("El updateResponsabilidad es:", updateResponsabilidad);
+
+        axios
+            .put(urlActualizarResponsabilidad, updateResponsabilidad)
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor (PUT):", response.data);
+                console.log("Registro correcto (PUT)");
+                // Realizar acciones adicionales si es necesario
+                setLetraUpdate("");
+                setNombreUpdate("");
+                setDescripcionUpdate("");
+                setColorUpdate("#000000");
+                setIdUpdate(null);
+                setReList(!reList);
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud PUT:", error);
             });
         onClose();
     };
@@ -573,16 +676,211 @@ export default function MatrizDeResponsabilidades(props) {
         onClose();
     };
 
+
+    //obtener idUsuario
+    const {sessionData} = useContext(SessionContext);
+    useEffect(() => {
+        
+        setIdUsuario(sessionData.idUsuario);
+        console.log("avr"+IdUsuario);
+        }, [sessionData.idUsuario]);
+
+    //Plantilla MR
+    const { 
+        isOpen: isModalSavePlantilla, 
+        onOpen: onSaveModalPlantilla, 
+        onOpenChange: onModaSavePlantillaChange 
+    
+    } = useDisclosure();
+
+    const { 
+        isOpen: isModalPlantillas, 
+        onOpen: onModalPlantillas, 
+        onOpenChange: onModalPlantillasChange 
+    
+    } = useDisclosure();
+
+    const [nombrePlantilla, setNombrePlantilla] = useState("");
+    const [validNombrePlantilla, setValidNombrePlantilla] = useState(true);
+    const [IdUsuario, setIdUsuario] = useState("");
+    const [IdMatrizRespon,setIdMatrizRespon]= useState("");
+
+
+    //averigar como obtener el idMatrizResponsabilidad
+
+    const [plantillas, setPlantillas] = useState([]);
+    const [selectedPlantilla, setSelectedPlantilla] = useState(null);
+
+
+    const savePlantilla = () => {
+        return new Promise((resolve, reject) => {
+        setIsLoadingSmall(true);
+        const updateURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/plantillas/guardarPlantillaMR";
+            //Cambiar con nuevo procedure
+        axios
+            .post(updateURL, {
+                nombrePlantilla: nombrePlantilla,
+                idUsuario: IdUsuario,
+                idMatrizR: IdMatrizRespon,
+            })
+            .then((response) => {
+                setEditActive(false);
+                resolve(response);
+
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+                reject(error);
+            });
+
+        });
+    };
+
+    const guardarPlantillaNueva = async () => {
+        try {
+                toast.promise(savePlantilla, {
+                loading: "Guardando Plantilla Nueva...",
+                success: (data) => {
+                    DataTable();
+                    return "La plantilla se agregó con éxito!";
+                    
+                },
+                error: "Error al agregar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        } 
+    };
+    
+    const usarPlantilla = async () => {
+        try {
+            toast.promise(usePlantillaMR, {
+                loading: "Cargando Plantilla...",
+                success: (data) => {
+                    return "La plantilla se cargó con éxito!";
+                    
+                },
+                error: "Error al usar plantilla",
+                position: "bottom-right",
+            });
+            
+        } catch (error) {
+            throw error; 
+        }
+
+    };
+
+    const usePlantillaMR = () => {
+        return new Promise((resolve, reject) => {
+            setIsLoadingSmall(true);
+    
+            const updateData = {
+                idMatrizR: IdMatrizRespon,
+                idPlantillaMR: selectedPlantilla.idPlantillaMR,
+                
+            };
+    
+            const updateURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/plantillas/seleccionarPlantillaMR";
+            //Cambiar con nuevo procedure
+    
+            axios
+                .put(updateURL, updateData)
+                .then((response) => {
+                    setEditActive(false);
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                })
+                .finally(() => {
+                    setIsLoadingSmall(false);
+                });
+        });
+    };
+
+
+    const DataTable = async () => {
+        const fetchPlantillas = async () => {
+            if (IdUsuario !== "") {
+                try {
+                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasMR/' + IdUsuario;
+                    const response = await axios.get(url);
+    
+                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+    
+                    setPlantillas(plantillasInvertidas);
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
+            }
+        };
+    
+        fetchPlantillas();
+    };
+
+    // useEffect(() => {
+    //     if (IdUsuario !== "") {
+    //         DataTable();
+    //     }
+    //   }, [IdUsuario]);
+
+      const [error, setError] = useState(null);
+
     return (
         <>
-            <div className="px-[1rem]">
-                Inicio/Proyectos/Proyecto/Matriz de responsabilidades
+            <div className="px-[1rem] mt-[1rem]">
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/matrizDeResponsabilidades"
+                        }
+                        text={"Matriz de Responsabilidades"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
                 <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white">
                     Matriz de responsabilidades
                 </div>
                 <div className="flex gap-4">
+
+                    <Button
+                        color="secondary"
+                        startContent={<ContentPasteGoIcon />}
+                        onPress={onModalPlantillas}
+                    >
+                        Plantillas
+                    </Button>
+
+                    <Button
+                        color="secondary"
+                        startContent={<SaveAsIcon />}
+                        onPress={onSaveModalPlantilla}
+                    >
+                        Guardar Plantilla
+                    </Button>
+
                     <Button
                         color="primary"
                         startContent={<SaveIcon />}
@@ -597,6 +895,8 @@ export default function MatrizDeResponsabilidades(props) {
                     >
                         Limpiar
                     </Button>
+
+
                 </div>
             </div>
             <Table
@@ -650,7 +950,20 @@ export default function MatrizDeResponsabilidades(props) {
                                 <div className="col-span-8 break-words">
                                     {responsabilidad.descripcion}
                                 </div>
-                                <div className="col-span-1">
+                                <div className="col-span-1 flex gap-2">
+                                    <img
+                                        src="/icons/updateIconYellow.svg"
+                                        alt="update"
+                                        className="mb-4 cursor-pointer"
+                                        onClick={()=>{
+                                            setLetraUpdate(responsabilidad.letra);
+                                            setNombreUpdate(responsabilidad.nombre);
+                                            setDescripcionUpdate(responsabilidad.descripcion);
+                                            setColorUpdate(responsabilidad.color);
+                                            setIdUpdate(responsabilidad.id);
+                                            onOpenUpdate();
+                                        }}
+                                    />
                                     <img
                                         src="/icons/icon-trash.svg"
                                         alt="delete"
@@ -765,7 +1078,7 @@ export default function MatrizDeResponsabilidades(props) {
                                         isInvalid={isTextTooLong2}
                                         errorMessage={
                                             isTextTooLong2
-                                                ? "Máximo 2 caracteres."
+                                                ? "Máximo 50 caracteres."
                                                 : ""
                                         }
                                         maxLength={51}
@@ -782,7 +1095,7 @@ export default function MatrizDeResponsabilidades(props) {
                                     isInvalid={isTextTooLong3}
                                     errorMessage={
                                         isTextTooLong3
-                                            ? "Máximo 2 caracteres."
+                                            ? "Máximo 100 caracteres."
                                             : ""
                                     }
                                     maxLength={101}
@@ -798,7 +1111,13 @@ export default function MatrizDeResponsabilidades(props) {
                                 <Button
                                     color="danger"
                                     variant="light"
-                                    onPress={onClose}
+                                    onPress={() => {
+                                        setLetraRes("");
+                                        setNombreRes("");
+                                        setDescripcionRes("");
+                                        setColorRes("#000000");
+                                        onClose();
+                                    }}
                                 >
                                     Cancelar
                                 </Button>
@@ -849,6 +1168,107 @@ export default function MatrizDeResponsabilidades(props) {
                                     }}
                                 >
                                     Continuar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Modal
+                isOpen={isOpenUpdate}
+                onOpenChange={onOpenChangeUpdate}
+                isDismissable={false}
+                size="xl"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Actualizar responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Letra"
+                                        placeholder="A"
+                                        variant="bordered"
+                                        className="w-2/12 mr-4"
+                                        value={letraUpdate}
+                                        onValueChange={setLetraUpdate}
+                                        isInvalid={isTextTooLong4}
+                                        errorMessage={
+                                            isTextTooLong4
+                                                ? "Máximo 2 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={3}
+                                        style={{ textTransform: "uppercase" }}
+                                    />
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Nombre"
+                                        placeholder="Aprueba"
+                                        variant="bordered"
+                                        className="w-10/12"
+                                        isInvalid={isTextTooLong5}
+                                        errorMessage={
+                                            isTextTooLong5
+                                                ? "Máximo 50 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={51}
+                                        value={nombreUpdate}
+                                        onValueChange={setNombreUpdate}
+                                    />
+                                </div>
+                                <Input
+                                    isClearable
+                                    autoFocus
+                                    label="Descripción"
+                                    placeholder="Se encarga de aprobar y revisar tareas"
+                                    variant="bordered"
+                                    isInvalid={isTextTooLong6}
+                                    errorMessage={
+                                        isTextTooLong6
+                                            ? "Máximo 100 caracteres."
+                                            : ""
+                                    }
+                                    maxLength={101}
+                                    value={descripcionUpdate}
+                                    onValueChange={setDescripcionUpdate}
+                                />
+                                <ColorPicker
+                                    value={colorUpdate}
+                                    onChangeColor={onChangeColorUpdate}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setLetraUpdate("");
+                                        setNombreUpdate("");
+                                        setDescripcionUpdate("");
+                                        setColorUpdate("#000000");
+                                        setIdUpdate(null);
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        actualizarResponsabilidad(onClose);
+                                    }}
+                                >
+                                    Guardar
                                 </Button>
                             </ModalFooter>
                         </>

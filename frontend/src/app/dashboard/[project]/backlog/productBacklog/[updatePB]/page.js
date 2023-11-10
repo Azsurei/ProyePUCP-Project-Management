@@ -421,7 +421,7 @@ export default function ProductBacklogUpdate(props) {
                 Backlog / Registrar elemento
             </div> */}
             <div className="backlogRegisterPB">
-                <div className="titleBacklogRegisterPB">
+                <div className="titleBacklogRegisterPB dark:text-white">
                     Editar elemento en el Backlog
                 </div>
                 {historiaUsuario ? (

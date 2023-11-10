@@ -37,6 +37,7 @@ import { HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
 
 
+import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
 
@@ -57,7 +58,7 @@ function DetailCard({
         >
             <div className="project-card">
                 {!isEditable && (
-                    <div className="project-card__title">{detail.nombre}</div>
+                    <div className="project-card__title dark:text-white">{detail.nombre}</div>
                 )}
                 {isEditable && (
                     <Textarea
@@ -129,7 +130,9 @@ export default function Info(props) {
     const router = useRouter();
 
     const handleRecargarPagina = () => {
-      router.reload();
+        console.log("xd");
+        router.refresh();
+  
     };
 
 
@@ -184,10 +187,13 @@ export default function Info(props) {
                 setDetails(response.data.detalleAC.actaData);
                 setDetailsEdited(response.data.detalleAC.actaData);
                 setIsLoadingSmall(false);
+                DataTable();
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+
     };
     
     useEffect(() => {
@@ -253,6 +259,7 @@ export default function Info(props) {
     //obtener idUsuario
     const {sessionData} = useContext(SessionContext);
     useEffect(() => {
+        console.log("avr");
         setIdUsuario(sessionData.idUsuario);
       }, [sessionData.idUsuario]);
 
@@ -285,9 +292,10 @@ export default function Info(props) {
 
     const guardarPlantillaNueva = async () => {
         try {
-            toast.promise(savePlantilla, {
+                toast.promise(savePlantilla, {
                 loading: "Guardando Plantilla Nueva...",
                 success: (data) => {
+                    DataTable();
                     return "La plantilla se agregó con éxito!";
                     
                 },
@@ -314,7 +322,8 @@ export default function Info(props) {
             
         } catch (error) {
             throw error; 
-        } 
+        }
+
     };
 
     const usePlantillaAC = () => {
@@ -462,32 +471,36 @@ export default function Info(props) {
 
       };
 
-
-    const fetchPlantillas = async () => {
-        try {
-          const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
-          const response = await axios.get(url);
+      const DataTable = async () => {
+        const fetchPlantillas = async () => {
+            if (IdUsuario !== "") {
+                try {
+                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
+                    if(IdUsuario !== ""){
+                        console.log("IdUsuario: "+IdUsuario);
+                    }
+                    const response = await axios.get(url);
     
-          response.data.plantillasAC.forEach((plantilla) => {
-            console.log("Nombre de la plantilla:", plantilla.nombrePlantilla); // Accede a la propiedad 'nombre' (ajusta según la estructura de tus objetos)
-            // Agrega más líneas para acceder a otras propiedades si es necesario
-        });
-          setPlantillas(response.data.plantillasAC);
-        } catch (error) {
-          console.error("Error al obtener las plantillas:", error);
-        }
-      };
+                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+    
+                    setPlantillas(plantillasInvertidas);
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
+            }
+        };
+    
+        fetchPlantillas();
+    };
+    
     
       useEffect(() => {
-        if (IdUsuario !== null) {
-          fetchPlantillas();
+        if (IdUsuario !== "") {
+            DataTable();
         }
       }, [IdUsuario]);
 
       const [error, setError] = useState(null);
-
-
-
 
 
 
@@ -518,6 +531,7 @@ export default function Info(props) {
                                     await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
+                                    console.log("xd");
                                     
                                 } catch (error) {
                                     console.error('Error al Guardar Plantilla:', error);
@@ -610,15 +624,20 @@ export default function Info(props) {
                     if(Isvalid === true){
                         try {
                             await usarPlantilla();
-                            //updateListado();
                             setPlantillaElegida(false);
-                            console.log("Funcionaxd");
+                            
                         } catch (error) {
                             console.error('Error al Utilizar Plantilla:', error);
                         }
-
                         onClose();
-                    
+                        updateListado();
+                        DataTable(); // Llamada a fetchPlantillas después de usar la plantilla
+
+
+                        setTimeout(() => {
+                            updateListado();
+                        }, 2000);
+                        
                     }
                     else{
                         setError("Seleccione una plantilla");
@@ -638,17 +657,17 @@ export default function Info(props) {
 
                     <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
                     </div>
-                    <ul>
-                        {plantillas.map((plantilla) => (
-                            <li key={plantilla.id}>
-                            <div className={`cardPlantillaAC ${selectedPlantilla === plantilla ? 'selected' : ''}`}
-
-                                onClick={() => handlePlantillaClick(plantilla)}>
+                    <ul className="cardPlantillaKBList">
+                    {plantillas.map((plantilla) => (
+                        <li key={plantilla.idPlantillaAC}>
+                            <div
+                                className={`cardPlantillaAC ${selectedPlantilla && selectedPlantilla === plantilla ? 'selected' : ''}`}
+                                onClick={() => handlePlantillaClick(plantilla)}
+                            >
                                 {plantilla.nombrePlantilla}
-                                
-                                </div>
-                            </li>
-                        ))}
+                            </div>
+                        </li>
+                    ))}
                     </ul>
                 </div>
         
@@ -695,6 +714,32 @@ export default function Info(props) {
 
             {!isEditActive ? (
                 <ButtonPanel margin="10px 0 15px" align="right">
+
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={onSaveModalPlantilla}
+                    >
+                        <div>
+                            <SaveAsIcon />
+                            <div>Guardar Plantilla</div>
+                        </div>
+                    </Button>
+                    
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={onModalPlantillas}
+
+                    >
+                        <div>
+                            <ContentPasteGoIcon />
+                            <div>Plantillas</div>
+                        </div>
+                    </Button>
+
                     <Button
                         appearance="primary"
                         state="default"
@@ -727,30 +772,7 @@ export default function Info(props) {
                         </div>
                     </Button>
 
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={onSaveModalPlantilla}
-                    >
-                        <div>
-                            <SaveIcon />
-                            <div>Guardar Plantilla</div>
-                        </div>
-                    </Button>
-                    
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={onModalPlantillas}
 
-                    >
-                        <div>
-                            <ContentPasteGoIcon />
-                            <div>Plantillas</div>
-                        </div>
-                    </Button>
                     
                 </ButtonPanel>
             ) : (
@@ -795,7 +817,7 @@ export default function Info(props) {
                 ))}
 
                 {isNewFieldOpen && (
-                    <div className="newFieldContainer" id="new-field-created">
+                    <div className="newFieldContainer dark:bg-black" id="new-field-created">
                         <div className="newFieldHeader">
                             <Textarea
                                 isInvalid={!validNewTitle}

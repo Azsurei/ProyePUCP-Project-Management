@@ -185,8 +185,8 @@ export default function MatrizComunicacionesUpdate(props) {
                 Comunicaciones/ Actualizar elemento
             </div>
             <div className="backlogRegisterMC">
-                <div className="titleBacklogRegisterMC">
-                    Crear nueva información requerida
+                <div className="titleBacklogRegisterMC dark:text-white">
+                    Actualizar información requerida
                 </div>
                 <div>
                     {matrizComunicaciones ? (

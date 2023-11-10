@@ -162,7 +162,7 @@ END$
 DROP PROCEDURE IF EXISTS ELIMINAR_PRODUCT_BACKLOG_X_ID_PRODUCT_BACKLOG;
 DELIMITER //
 /* ProductBacklog 85*/
-CREATE PROCEDURE ELIMINAR_PRODUCT_BACKLOG_X_ID_PRODUCT_BACKLOG(
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_PRODUCT_BACKLOG_X_ID_PRODUCT_BACKLOG`(
 	IN _idProductBacklog INT
 )
 BEGIN
@@ -170,11 +170,12 @@ BEGIN
     UPDATE Epica SET activo = 0 WHERE idProductBacklog = _idProductBacklog;
     UPDATE Sprint SET activo = 0 WHERE idProductBacklog = _idProductBacklog;
     UPDATE HistoriaDeUsuario SET activo = 0
-    WHERE idHistoriaDeUsuario IN (
-		SELECT idHistoriaDeUsuario FROM Epica WHERE idProductBacklog = _idProductBacklog
-	);
+        WHERE idEpica IN (
+            SELECT idEpica FROM Epica WHERE idProductBacklog = _idProductBacklog
+        );
 END; //
 DELIMITER ;
+
 
 ----------------------------------------------
 -- Sprints
@@ -387,12 +388,12 @@ BEGIN
 	UPDATE EDT SET activo = 0 WHERE idEDT = _idEDT;
     UPDATE ComponenteEDT SET activo = 0 WHERE idEDT = _idEDT;
     UPDATE Entregable SET activo = 0
-		WHERE idEntregable IN (
-			SELECT idEntregable FROM ComponenteEDT WHERE idEDT = _idEDT
+		WHERE idComponente IN (
+			SELECT idComponente FROM ComponenteEDT WHERE idEDT = _idEDT
 		);
     UPDATE ComponenteCriterioDeAceptacion SET activo = 0
-		WHERE idComponenteCriterioDeAceptacion IN (
-			SELECT idComponenteCriterioDeAceptacion FROM ComponenteEDT WHERE idEDT = _idEDT
+		WHERE idComponenteEDT IN (
+			SELECT idComponente FROM ComponenteEDT WHERE idEDT = _idEDT
 		);
 END; //
 DELIMITER ;
@@ -633,21 +634,19 @@ CREATE PROCEDURE ELIMINAR_ACTA_REUNION_X_ID_ACTA_REUNION(_idActaReunion INT)
 BEGIN
     -- Desactivar Acta de Reunión
     UPDATE ActaReunion SET activo = 0 WHERE idActaReunion = _idActaReunion;
-
-    -- Desactivar Líneas de Acta relacionadas
     UPDATE LineaActaReunion SET activo = 0 WHERE idActaReunion = _idActaReunion;
-
-    -- Desactivar Comentarios de Reunión relacionados
     UPDATE ComentarioReunion SET activo = 0 
-    WHERE idComentarioReunion IN (SELECT idComentarioReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion);
-
-    -- Desactivar Temas de Reunión relacionados
+		WHERE idLineaActaReunion IN (
+			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion
+		);
     UPDATE TemaReunion SET activo = 0 
-    WHERE idTemaReunion IN (SELECT idTemaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion);
+		WHERE idLineaActaReunion IN (
+			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion
+		);
 
     UPDATE ParticipanteXReunion SET activo = 0
-		WHERE idParticipanteXReunion IN (
-			SELECT idParticipanteXReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion
+		WHERE idLineaActaReunion IN (
+			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion
 		);
 	UPDATE Acuerdo SET activo = 0
 		WHERE idTemaReunion IN (
@@ -1058,8 +1057,8 @@ BEGIN
 	UPDATE Retrospectiva SET activo = 0 WHERE idRetrospectiva = _idRetrospectiva;
 	UPDATE LineaRetrospectiva SET activo = 0 WHERE idRetrospectiva = _idRetrospectiva;
     UPDATE ItemLineaRetrospectiva SET activo = 0
-		WHERE idItemLineaRetrospectiva IN (
-			SELECT idItemLineaRetrospectiva FROM LineaRetrospectiva WHERE idRetrospectiva = _idRetrospectiva
+		WHERE idLineaRetrospectiva IN (
+			SELECT idLineaRetrospectiva FROM LineaRetrospectiva WHERE idRetrospectiva = _idRetrospectiva
         );
 END; //
 DELIMITER ;
@@ -1300,8 +1299,8 @@ BEGIN
 	UPDATE Cronograma SET activo = 0 WHERE idCronograma = _idCronograma;
     UPDATE Tarea SET activo = 0 WHERE idCronograma = _idCronograma;
 	UPDATE UsuarioXTarea SET activo = 0
-		WHERE idUsuarioXTarea IN (
-			SELECT idUsuarioXTarea FROM Tarea WHERE idCronograma = _idCronograma
+		WHERE idTarea IN (
+			SELECT idTarea FROM Tarea WHERE idCronograma = _idCronograma
         );
 END; //
 DELIMITER ;
@@ -1556,16 +1555,16 @@ BEGIN
 	UPDATE CatalogoRiesgo SET activo = 0 WHERE idCatalogo = _idCatalogo;
     UPDATE Riesgo SET activo = 0 WHERE idCatalogo = _idCatalogo;
 	UPDATE PlanContingencia SET activo = 0
-		WHERE idPlanContingencia IN (
-			SELECT idPlanContingencia FROM Riesgo WHERE idCatalogo = _idCatalogo
+		WHERE idRiesgo IN (
+			SELECT idRiesgo FROM Riesgo WHERE idCatalogo = _idCatalogo
         );
 	UPDATE PlanRespuesta SET activo = 0
-		WHERE idPlanRespuesta IN (
-			SELECT idPlanRespuesta FROM Riesgo WHERE idCatalogo = _idCatalogo
+		WHERE idRiesgo IN (
+			SELECT idRiesgo FROM Riesgo WHERE idCatalogo = _idCatalogo
 		);
 	UPDATE RiesgoXResponsable SET activo = 0
-		WHERE idRiesgoXResponsable IN (
-			SELECT idRiesgoXResponsable FROM Riesgo WHERE idCatalogo = _idCatalogo
+		WHERE idRiesgo IN (
+			SELECT idRiesgo FROM Riesgo WHERE idCatalogo = _idCatalogo
 		);
 END; //
 DELIMITER ;
@@ -1593,12 +1592,12 @@ BEGIN
 	UPDATE CatalogoInteresado SET activo = 0 WHERE idCatalogoInteresado = _idCatalogoInteresado;
     UPDATE Interesado SET activo = 0 WHERE idCatalogoInteresado = _idCatalogoInteresado;
 	UPDATE InteresadoEstrategia SET activo = 0
-		WHERE idEstrategia IN (
-			SELECT idEstrategia FROM Interesado WHERE idCatalogoInteresado = _idCatalogoInteresado
+		WHERE idInteresado IN (
+			SELECT idInteresado FROM Interesado WHERE idCatalogoInteresado = _idCatalogoInteresado
         );
 	UPDATE InteresadoRequerimiento SET activo = 0
-		WHERE idRequerimiento IN (
-			SELECT idRequerimiento FROM Interesado WHERE idCatalogoInteresado = _idCatalogoInteresado
+		WHERE idInteresado IN (
+			SELECT idInteresado FROM Interesado WHERE idCatalogoInteresado = _idCatalogoInteresado
 		);
 END; //
 DELIMITER ;
@@ -1626,8 +1625,8 @@ BEGIN
 	UPDATE MatrizResponsabilidad SET activo = 0 WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad;
 	UPDATE ResponsabilidadRol SET activo = 0 WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad;
 	UPDATE EntregableXResponsabilidadRol SET activo = 0
-		WHERE idEntregableXResponsabilidadXRol IN (
-			SELECT idEntregableXResponsabilidadXRol FROM ResponsabilidadRol WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad
+		WHERE idResponsabilidadRol IN (
+			SELECT idResponsabilidadRol FROM ResponsabilidadRol WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad
         );
 END; //
 DELIMITER ;
@@ -4265,6 +4264,25 @@ BEGIN
     WHERE idResponsabilidadRol = _idResponsabilidadRol;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_RESPONSABILIDADROL_X_ID(
+    IN _idResponsabilidadRol INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descrpcionRol VARCHAR(255)
+)
+BEGIN
+    UPDATE ResponsabilidadRol
+    SET letraRol = _letraRol,
+        nombreRol = _nombreRol,
+        colorRol = _colorRol,
+        descripcionRol = _descrpcionRol
+    WHERE idResponsabilidadRol = _idResponsabilidadRol;
+    SELECT _idResponsabilidadRol AS idResponsabilidadRol;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(
@@ -4457,7 +4475,13 @@ CREATE PROCEDURE LIMPIAR_KANBAN_PLANTILLA_KANBAN(
     IN _idProyecto INT
 )
 BEGIN
+    SET @contador = 0;
     UPDATE ColumnaKanban SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE Tarea AS tr
+    LEFT JOIN Cronograma AS cr ON tr.idCronograma = cr.idCronograma
+    SET tr.posicionKanban = (@contador := @contador + 1),
+        tr.idColumnaKanban = 0
+    WHERE cr.idProyecto = _idProyecto;
 END$
 
 DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_KANBAN_X_IDPLANTILLA;
@@ -4540,3 +4564,21 @@ BEGIN
 END$
 
 SELECT * FROM ReporteXProyecto;
+
+DROP PROCEDURE IF EXISTS INSERTAR_GRUPO_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_GRUPO_PROYECTO(
+    IN _nombre VARCHAR(200)
+)
+BEGIN
+    DECLARE activo_val TINYINT;
+    DECLARE _idGrupoDeProyecto INT;
+    /* Generating the 'activo' value, for instance, setting it to 1 */
+    SET activo_val = 1;
+    /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
+    INSERT INTO GrupoDeProyecto (nombre, codigo, activo) 
+    VALUES (_nombre, 1, 1);
+    SET _idGrupoDeProyecto = @@last_insert_id;
+    SELECT _idGrupoDeProyecto AS idGrupoDeProyecto;
+END$
+DELIMITER ;

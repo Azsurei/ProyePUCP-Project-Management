@@ -136,7 +136,7 @@ export default function MatrizComunicacionesRegister(props) {
                 Comunicaciones/ Registrar elemento
             </div>
             <div className="backlogRegisterMC">
-                <div className="titleBacklogRegisterMC">
+                <div className="titleBacklogRegisterMC dark:text-white">
                     Crear nueva información requerida
                 </div>
                 <div>
