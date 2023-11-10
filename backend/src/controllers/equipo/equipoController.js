@@ -66,6 +66,31 @@ async function insertarEquipoYParticipantes(req, res, next) {
     }
 }
 
+async function eliminar(req,res,next){
+    const { idEquipo } = req.params;
+    console.log(`Procediendo: Eliminar/Equipos ${idEquipo}...`);
+    try {
+        const result = await funcEliminar(idEquipo);
+        res.status(200).json({
+            idEquipo,
+            message: "Equipos eliminado"});
+        console.log(`Equipos ${idEquipo} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idEquipo) {
+    try {
+        const query = `CALL ELIMINAR_EQUIPOS_X_ID_EQUIPO(?);`;
+        [results] = await connection.query(query,[idEquipo]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/Equipos", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarXIdProyecto(req, res, next) {
     const { idProyecto } = req.params;
     try {
@@ -225,7 +250,7 @@ async function insertarMiembros(req, res, next) {
 
 async function eliminarEquipo(req, res, next) {
     const { idEquipo } = req.body;
-    const query = `CALL ELIMINAR_EQUIPO_X_IDEQUIPO(?);`;
+    const query = `CALL ELIMINAR_EQUIPO_X_ID_EQUIPO(?);`;
     try {
         await connection.query(query, [idEquipo]);
         console.log(`Se elimino el equipo ${idEquipo}!`);
@@ -432,6 +457,7 @@ module.exports = {
     listarRol,
     eliminarRol,
     insertarEquipo,
+    eliminar,
     insertarMiembros,
     eliminarEquipo,
     modificarMiembroEquipo,

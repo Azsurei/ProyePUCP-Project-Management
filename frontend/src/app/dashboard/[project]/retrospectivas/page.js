@@ -4,7 +4,7 @@
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
 import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { SmallLoadingScreen } from "../layout";
+import { SmallLoadingScreen, HerramientasInfo } from "../layout";
 axios.defaults.withCredentials = true;
 import {Button, Avatar, AvatarGroup, Card, CardBody, CardHeader, Divider, Spacer} from '@nextui-org/react';
 import {Tabs, Tab} from '@nextui-org/react';
@@ -14,19 +14,31 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
 
 export default function ActaReunion(props) {
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const [reuniones, setReuniones] = useState({ pendientes: [], finalizadas: [] });
-
+    // Getting project parameters
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const [idActa, setidActa] = useState(null);
+    // Loading logo state
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    // Tools id state
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    // array of lineasRetrospectivas to be loaded
+    const [lretrospectivas, setLRetrospectivas] = useState([]);
+    // id of retrospectivas tool
+    const [idRetrospectiva, setIdRestrospectiva] = useState(-1);
 
-// *********************************************************************************************
-// Searching Meeting Record ID
-// *********************************************************************************************
+    console.log("Props");
+    console.log(props);
+
+    // Pending: axios listar id restrospectivas
+    // set state of idRetrospectiva from the respose
+    // Pending: axios listar lineas retrospectivas x id retrospectivas
+    // set state of lretrospectivas from the response
+    // if finished correctly then setIsLoadingSmall(false);
 
     useEffect(() => {
+
+
         setIsLoadingSmall(false);
     });
 

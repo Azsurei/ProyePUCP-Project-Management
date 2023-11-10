@@ -45,10 +45,35 @@ async function listarEntregablesXidProyecto(req,res,next){
     }
 }
 
+async function eliminar(req,res,next){
+    const { idCronograma } = req.params;
+    console.log(`Procediendo: Eliminar/Cronograma ${idCronograma}...`);
+    try {
+        const result = await funcEliminar(idCronograma);
+        res.status(200).json({
+            idCronograma,
+            message: "Cronograma eliminado"});
+        console.log(`Cronograma ${idCronograma} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idCronograma) {
+    try {
+        const query = `CALL ELIMINAR_CRONOGRAMA_X_ID_CRONOGRAMA(?);`;
+        [results] = await connection.query(query,[idCronograma]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/Cronograma", error);
+        return 0;
+    }
+    return 1;
+}
 
 module.exports = {
     crear,
     actualizar,
+    eliminar,
     listar,
     listarEntregablesXidProyecto
 };

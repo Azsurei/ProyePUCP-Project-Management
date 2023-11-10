@@ -11,6 +11,7 @@ const responsableAcuerdoController = require("../controllers/actaReunion/respons
 
 routerActaReunion.post("/crearActaReunion", actaReunionController.crear);
 routerActaReunion.get("/listarActaReunionXIdProyecto/:idProyecto", actaReunionController.listarXIdProyecto);
+routerActaReunion.delete("/eliminarActaReunion", actaReunionController.eliminar);
 
 // Linea Acta Reunion
 routerActaReunion.post("/crearLineaActaReunion", lineaActaReunionController.crear);

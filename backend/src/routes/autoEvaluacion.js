@@ -7,6 +7,7 @@ routerAutoEvaluacion.post("/crearAutoEvaluacion", autoEvaluacionController.crear
 routerAutoEvaluacion.get("/listarTodasAutoEvaluacion/:idProyecto", autoEvaluacionController.listarTodasAutoEvaluacion);
 routerAutoEvaluacion.put("/activarAutoEvaluacion", autoEvaluacionController.activarAutoEvaluacion);
 routerAutoEvaluacion.put("/finalizarAutoEvaluacion", autoEvaluacionController.finalizarAutoEvaluacion);
+routerAutoEvaluacion.delete("/eliminarAutoEvaluacion", autoEvaluacionController.eliminar);
 
 routerAutoEvaluacion.get("/listarAutoEvaluacion/:idProyecto/:idUsuario", autoEvaluacionController.listarAutoEvaluacion);
 routerAutoEvaluacion.put("/actualizarAutoEvaluacion", autoEvaluacionController.actualizarAutoEvaluacion);

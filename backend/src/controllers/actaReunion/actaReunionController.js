@@ -42,6 +42,30 @@ async function funcCrear(idProyecto){
     return idActaReunion;
 }
 
+async function eliminar(req,res,next){
+    const { idActaReunion } = req.params;
+    console.log(`Procediendo: Eliminar/ActaReunion ${idActaReunion}...`);
+    try {
+        const result = await funcEliminar(idActaReunion);
+        res.status(200).json({
+            idActaReunion,
+            message: "ActaReunion eliminado"});
+        console.log(`ActaReunion ${idActaReunion} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idActaReunion) {
+    try {
+        const query = `CALL ELIMINAR_ACTA_REUNION_X_ID_ACTA_REUNION(?);`;
+        [results] = await connection.query(query,[idActaReunion]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/ActaReunion", error);
+        return 0;
+    }
+    return 1;
+}
 
 
 // const query = `CALL LISTAR_ACTA_REUNION_X_ID_PROYECTO(?);`;
@@ -86,5 +110,6 @@ async function funcCrear(idProyecto){
 //     linea.comentarios = resultsComentarios[0];
 module.exports = {
     crear,
-    listarXIdProyecto
+    listarXIdProyecto,
+    eliminar
 }

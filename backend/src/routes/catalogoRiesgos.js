@@ -3,6 +3,8 @@ const routerCatalagoRiesgos = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
 const catalogoRiesgosController = require("../controllers/catalogoRiesgos/catalogoRiesgosController");
 
+routerCatalagoRiesgos.delete("/eliminarCatalogoRiesgos", catalogoRiesgosController.eliminar);
+
 routerCatalagoRiesgos.post("/insertarRiesgo", catalogoRiesgosController.insertarRiesgo);
 routerCatalagoRiesgos.get("/listarRiesgos/:idProyecto", catalogoRiesgosController.listarRiesgos);
 routerCatalagoRiesgos.get("/listarunRiesgo/:idRiesgo", catalogoRiesgosController.listarunRiesgo);

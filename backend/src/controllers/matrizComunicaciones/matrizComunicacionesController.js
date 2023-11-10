@@ -1,5 +1,30 @@
 const connection = require("../../config/db");
 
+async function eliminar(req,res,next){
+    const { idMatrizComunicacion } = req.params;
+    console.log(`Procediendo: Eliminar/MatrizComunicacion ${idMatrizComunicacion}...`);
+    try {
+        const result = await funcEliminar(idMatrizComunicacion);
+        res.status(200).json({
+            idMatrizComunicacion,
+            message: "MatrizComunicacion eliminado"});
+        console.log(`MatrizComunicacion ${idMatrizComunicacion} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idProductBacklog) {
+    try {
+        const query = `CALL ELIMINAR_MATRIZ_COMUNICACIONES_X_ID_MATRIZ_C(?);`;
+        [results] = await connection.query(query,[idProductBacklog]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/MatrizComunicacion", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarCanales(req,res,next){
     try {
         const query = `CALL LISTAR_COMUNICACION_CANAL;`;
@@ -116,6 +141,7 @@ async function eliminarComunicacion(req,res,next){
 }  
 
 module.exports = {
+    eliminar,
     listarCanales,
     listarFrecuencia,
     listarFormato,

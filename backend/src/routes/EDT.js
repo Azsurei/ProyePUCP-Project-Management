@@ -2,8 +2,9 @@ const express = require("express");
 const connection = require("../config/db");
 const routerEDT = express.Router();
 const {verifyToken} = require('../middleware/middlewares');
+const EDTController = require('../controllers/EDT/EDTController');
 
-
+routerEDT.delete("/eliminarEDT",EDTController.eliminar);
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Funcion que reestructura arreglo para poder usarlo en frontend
 function restructureArray(array, parentId) {
