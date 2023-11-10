@@ -584,10 +584,7 @@ export default function MatrizDeResponsabilidades(props) {
         } else if (verifyFieldsExcessiveUpdate()) {
             toast.error("Se excedió el límite de caractéres");
             return;
-        } else if (isResponsabilidadExistenteUpdate()) {
-            toast.error("La letra o el nombre ya existen");
-            return;
-        }
+        } 
         setIsLoadingSmall(true);
         const urlActualizarResponsabilidad =
             process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -674,7 +671,7 @@ export default function MatrizDeResponsabilidades(props) {
 
     return (
         <>
-            <div className="px-[1rem]">
+            <div className="px-[1rem] mt-[1rem]">
                 <Breadcrumbs>
                     <BreadcrumbsItem
                         href="/dashboard"
@@ -900,7 +897,7 @@ export default function MatrizDeResponsabilidades(props) {
                                         isInvalid={isTextTooLong2}
                                         errorMessage={
                                             isTextTooLong2
-                                                ? "Máximo 2 caracteres."
+                                                ? "Máximo 50 caracteres."
                                                 : ""
                                         }
                                         maxLength={51}
@@ -917,7 +914,7 @@ export default function MatrizDeResponsabilidades(props) {
                                     isInvalid={isTextTooLong3}
                                     errorMessage={
                                         isTextTooLong3
-                                            ? "Máximo 2 caracteres."
+                                            ? "Máximo 100 caracteres."
                                             : ""
                                     }
                                     maxLength={101}
@@ -1040,7 +1037,7 @@ export default function MatrizDeResponsabilidades(props) {
                                         isInvalid={isTextTooLong5}
                                         errorMessage={
                                             isTextTooLong5
-                                                ? "Máximo 2 caracteres."
+                                                ? "Máximo 50 caracteres."
                                                 : ""
                                         }
                                         maxLength={51}
@@ -1057,7 +1054,7 @@ export default function MatrizDeResponsabilidades(props) {
                                     isInvalid={isTextTooLong6}
                                     errorMessage={
                                         isTextTooLong6
-                                            ? "Máximo 2 caracteres."
+                                            ? "Máximo 100 caracteres."
                                             : ""
                                     }
                                     maxLength={101}
