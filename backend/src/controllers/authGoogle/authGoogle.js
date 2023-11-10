@@ -3,6 +3,7 @@ const {google} = require('googleapis');
 const apikeys = require("../../config/apikeys.json");
 const SCOPE = ['https://www.googleapis.com/auth/drive'];
 const fs = require('fs');
+const path = require('path');
 
 async function authorize(){
     const jwtClient = new google.auth.JWT(
@@ -30,12 +31,59 @@ async function uploadFile(authClient,fileMetadata,media){
             if(err){
                 return reject(err);
             }
+            console.log("File Id: ", file.data.id);
             resolve(file);
+        });
+    });
+}
+
+async function downloadAndSaveFile(authClient, fileId, destinationFolder) {
+    const drive = google.drive({ version: 'v3', auth: authClient });
+
+    return new Promise((resolve, reject) => {
+        drive.files.get({ fileId: fileId, alt: 'media' }, { responseType: 'stream' }, (err, res) => {
+            if (err) {
+                reject('Error al descargar el archivo: ' + err.message);
+                return;
+            }
+
+            const filePath = path.join(destinationFolder, fileId + '.xlsx');
+            const dest = fs.createWriteStream(filePath);
+
+            res.data
+                .pipe(dest)
+                .on('finish', () => {
+                    console.log('Descarga de archivo completada y escrita en el archivo.');
+                    resolve(filePath);
+                })
+                .on('error', err => {
+                    reject('Error al escribir el archivo: ' + err.message);
+                    
+                });
+        });
+    });
+}
+
+async function getFileDetails(authClient, fileId) {
+    const drive = google.drive({ version: 'v3', auth: authClient });
+
+    return new Promise((resolve, reject) => {
+        drive.files.get({
+            fileId: fileId,
+            fields: 'id, name, mimeType, parents, modifiedTime, createdTime, size'
+        }, (err, file) => {
+            if (err) {
+                console.error("Error fetching file:", err);
+                return reject(err);
+            }
+            resolve(file.data);
         });
     });
 }
 
 module.exports = {
     authorize,
-    uploadFile
+    uploadFile,
+    getFileDetails,
+    downloadAndSaveFile
 }

@@ -170,6 +170,31 @@ async function finalizarAutoEvaluacion(req,res,next){
     }
 }
 
+async function eliminar(req,res,next){
+    const { idAutoevaluacion } = req.params;
+    console.log(`Procediendo: Eliminar/Autoevaluacion ${idAutoevaluacion}...`);
+    try {
+        const result = await funcEliminar(idAutoevaluacion);
+        res.status(200).json({
+            idAutoevaluacion,
+            message: "Autoevaluacion eliminado"});
+        console.log(`Autoevaluacion ${idAutoevaluacion} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idAutoevaluacion) {
+    try {
+        const query = `CALL ELIMINAR_AUTOEVALUACION_X_ID_AUTOEVALUACION(?);`;
+        [results] = await connection.query(query,[idAutoevaluacion]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/Autoevaluacion", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarAutoEvaluacionNotas(req,res,next){
     const {idAutoEvaluacionXProyecto} = req.params;
     //Primero obtenemos los miembros que tienen autoevaluacion
@@ -211,5 +236,6 @@ module.exports = {
     listarTodasAutoEvaluacion,
     activarAutoEvaluacion,
     finalizarAutoEvaluacion,
+    eliminar,
     listarAutoEvaluacionNotas
 };

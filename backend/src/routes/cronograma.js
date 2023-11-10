@@ -7,6 +7,7 @@ const sprintController = require("../controllers/backlog/sprintController");
 //Cronograma
 routerCronograma.post("/insertarCronograma",verifyToken, cronogramaController.crear);
 routerCronograma.put("/actualizarCronograma",verifyToken, cronogramaController.actualizar);
+routerCronograma.delete("/eliminarCronograma", cronogramaController.eliminar);
 routerCronograma.post("/insertarTarea", tareaController.crear);
 
 routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);

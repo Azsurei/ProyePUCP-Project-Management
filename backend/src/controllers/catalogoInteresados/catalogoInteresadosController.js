@@ -1,5 +1,30 @@
 const connection = require("../../config/db");
 
+async function eliminar(req,res,next){
+    const { idCatalogoInteresado } = req.params;
+    console.log(`Procediendo: Eliminar/CatalogoInteresados ${idCatalogoInteresado}...`);
+    try {
+        const result = await funcEliminar(idCatalogoInteresado);
+        res.status(200).json({
+            idCatalogoInteresado,
+            message: "CatalogoInteresados eliminado"});
+        console.log(`CatalogoInteresados ${idCatalogoInteresado} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idCatalogoInteresado) {
+    try {
+        const query = `CALL ELIMINAR_CATALOGO_INTERESADOS_X_ID_CATALOGO_INTERESADOS(?);`;
+        [results] = await connection.query(query,[idCatalogoInteresado]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/CatalogoInteresados", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarAutoridad(req,res,next){
     try {
         const query = `CALL LISTAR_INTERESADO_AUTORIDAD;`;
@@ -196,6 +221,7 @@ async function modificarInteresados(req,res,next){
 }
 
 module.exports = {
+    eliminar,
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,

@@ -288,7 +288,7 @@ async function listarXIdProyecto(req, res, next) {
     try {
         const query = `CALL LISTAR_TAREAS_X_ID_PROYECTO(?);`;
         const [resultsTareas] = await connection.query(query, [idProyecto]);
-        tareas = resultsTareas[0];
+        const tareas = resultsTareas[0];
 
         for (const tarea of tareas) {
             if (tarea.idEquipo !== null) {
@@ -311,15 +311,14 @@ async function listarXIdProyecto(req, res, next) {
                 const [usuarios] = await connection.query(query3, [
                     tarea.idTarea,
                 ]);
-                if (usuarios != null) {
-                    tarea.usuarios = usuarios[0];
-                }
+                
+                tarea.usuarios = usuarios[0];
                 tarea.equipo = null;
             }
         }
 
-        tareasConPosteriores = repositionPosteriores(tareas);
-        tareasOrdenadas = structureData(tareasConPosteriores);
+        const tareasConPosteriores = await repositionPosteriores(tareas);
+        const tareasOrdenadas = await structureData(tareasConPosteriores);
         res.status(200).json({
             tareasOrdenadas,
             message: "Tareas listadas correctamente",
@@ -585,7 +584,7 @@ async function listarXIdProyectoConProgresos(req, res, next) {
     try {
         const query = `CALL LISTAR_TAREAS_X_ID_PROYECTO(?);`;
         const [resultsTareas] = await connection.query(query, [idProyecto]);
-        tareas = resultsTareas[0];
+        const tareas = resultsTareas[0];
 
         for (const tarea of tareas) {
             if (tarea.idEquipo !== null) {
@@ -608,19 +607,18 @@ async function listarXIdProyectoConProgresos(req, res, next) {
                 const [usuarios] = await connection.query(query3, [
                     tarea.idTarea,
                 ]);
-                if (usuarios != null) {
-                    tarea.usuarios = usuarios[0];
-                }
+                
+                tarea.usuarios = usuarios[0];
                 tarea.equipo = null;
             }
 
-            const query4 = "CALL LISTAR_PROGRESOS_X_ID_TAREA(?);";
+            const query4 = "CALL GetChildTasksProgresses(?);";
             const [progresos] = await connection.query(query4, [tarea.idTarea]);
             tarea.progresos = progresos[0];
         }
 
-        tareasConPosteriores = await repositionPosteriores(tareas);
-        tareasOrdenadas = await structureData(tareasConPosteriores);
+        const tareasConPosteriores = await repositionPosteriores(tareas);
+        const tareasOrdenadas = await structureData(tareasConPosteriores);
         res.status(200).json({
             tareasOrdenadas,
             message: "Tareas listadas correctamente",

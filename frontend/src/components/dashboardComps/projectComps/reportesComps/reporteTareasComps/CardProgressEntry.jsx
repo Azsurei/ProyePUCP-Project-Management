@@ -21,7 +21,7 @@ function CardProgressEntry({ progressEntry }) {
             <div className="flex flex-col flex-1  gap-0 absolute right-1 left-[54px]">
                 <div className="flex flex-row w-full justify-between">
                     <p>
-                        <span className="font-semibold">Renzo</span> agregó {progressEntry.porcentajeRegistrado}%
+                        <span className="font-semibold">{progressEntry.nombres}</span> agregó {progressEntry.porcentajeRegistrado}%
                     </p>
                     <p>{dbDateToDisplayDate(progressEntry.fechaRegistro)}</p>
                 </div>

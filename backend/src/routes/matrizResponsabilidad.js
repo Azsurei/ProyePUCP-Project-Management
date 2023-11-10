@@ -3,6 +3,8 @@ const routerMatrizResponsabilidad = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
 const matrizResponsabilidadController = require("../controllers/matrizResponsabilidad/matrizResponsabilidadController");
 
+routerMatrizResponsabilidad.delete("/eliminarMatrizResponsabilidades", matrizResponsabilidadController.eliminar);
+
 routerMatrizResponsabilidad.delete("/eliminarEntregableXResponsabilidadRol",matrizResponsabilidadController.eliminarEntregableXResponsabilidadRol);
 
 routerMatrizResponsabilidad.post("/insertarResponsabilidad",matrizResponsabilidadController.insertarResponsabilidad);

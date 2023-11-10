@@ -16,6 +16,7 @@ routerPresupuesto.get("/listarPresupuesto/:idPresupuesto",presupuestoController.
 routerPresupuesto.get("/listarLineasTodasXIdPresupuesto/:idPresupuesto",presupuestoController.listarLineasTodas);
 routerPresupuesto.put("/modificarPresupuesto",presupuestoController.modificar);
 routerPresupuesto.get("/obtenerPresupuesto/:idPresupuesto",presupuestoController.obtenerPresupuesto);
+routerPresupuesto.delete("/eliminarPresupuesto", presupuestoController.eliminar);
 //Listado monedas y tipos de transaccion e ingresos
 routerPresupuesto.get("/listarMonedasTodas",verifyToken, monedaController.listarTodas);
 routerPresupuesto.get("/listarTipoIngresosTodos",verifyToken, tipoIngresoController.listarTodos);    

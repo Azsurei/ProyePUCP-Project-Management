@@ -3,6 +3,8 @@ const routerRetrospectiva = express.Router();
 const retrospectivaController = require("../controllers/retrospectiva/retrospectivaController");
 const lineaRetrospectivaController = require("../controllers/retrospectiva/lineaRetrospectivaController");
 const itemLineaRetrospectivaController = require("../controllers/retrospectiva/itemLineaRetrospectivaController");
+
+routerRetrospectiva.delete("/eliminarRetrospectiva",retrospectivaController.eliminar);
 //Lineas retrospectiva
 routerRetrospectiva.post("/insertarLineaRetrospectiva", lineaRetrospectivaController.crear);
 routerRetrospectiva.get("/listarLineasRetrospectivaXIdRetrospectiva/:idRetrospectiva", lineaRetrospectivaController.listarXIdRetrospectiva);

@@ -1,4 +1,4 @@
-const connection = require("../config/db");
+const connection = require("../../config/db");
 
 //Todo va a ser idProyecto
 async function listar(req,res,next){
@@ -63,6 +63,32 @@ async function eliminarCampo(req,res,next){
         next(error);
     }
 }
+
+async function eliminar(req,res,next){
+    const { idActaConstitucion } = req.params;
+    console.log(`Procediendo: Eliminar/ActaConstitucion ${idActaConstitucion}...`);
+    try {
+        const result = await funcEliminar(idActaConstitucion);
+        res.status(200).json({
+            idActaConstitucion,
+            message: "ActaConstitucion eliminado"});
+        console.log(`ActaConstitucion ${idActaConstitucion} eliminado.`);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcEliminar(idActaConstitucion) {
+    try {
+        const query = `CALL ELIMINAR_ACTA_CONSTITUCION_X_ID_ACTA_CONSTITUCION(?);`;
+        [results] = await connection.query(query,[idActaConstitucion]);
+    } catch (error) {
+        console.log("ERROR en Eliminar/ActaConstitucion", error);
+        return 0;
+    }
+    return 1;
+}
+
 ////////
 //HITO//
 ////////
@@ -200,6 +226,7 @@ module.exports = {
     modificarCampos,
     crearCampos,
     eliminarCampo,
+    eliminar,
     listarInteresados,
     insertarInteresado,
     listarHito,

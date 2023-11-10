@@ -1,5 +1,5 @@
 #UsrNoIcon{
-    background-color: rgb(212, 212, 216);
+    /* background-color: rgb(212, 212, 216); */
     /* border: 1px lightgray solid; */
     cursor: pointer;
     border-radius: 100%;
@@ -10,7 +10,7 @@
 
     width: 40px;
     height: 40px;
-    color: black
+    /* color: black */
 }
 
 #MoreUsrsIcn{

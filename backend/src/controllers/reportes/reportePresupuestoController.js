@@ -1,35 +1,66 @@
 const connection = require("../../config/db");
 const XLSX = require('xlsx');
-
-
+const fs = require('fs').promises;
+const path = require('path');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
 //const upload = multer({ storage: storage });
+async function exportarReporteExcel(req,res,next){
+    const {fileId} = req.body;
+    const destinationFolder = path.join(__dirname, '../../tmp');
+
+    try{
+        const authClient = await authGoogle.authorize();
+        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        console.log(tmpFilePath);
+
+        res.download(tmpFilePath, 'ReportePresupuesto.xlsx', async(err) => {
+            try {
+                // Eliminar el archivo temporal de forma asíncrona
+                await fs.unlink(tmpFilePath);
+            } catch (e) {
+                console.error("Error al eliminar el archivo temporal:", e.message);
+            }
+            if (err) {
+                next(err);
+            }
+        });
+    }catch(error){
+        console.error("Error al exportar el reporte Excel:", error.message);
+        next(error);
+    } 
+}
 
 async function generarReporte(req, res, next) {
-    const {presupuesto} = req.body;
+    const {idProyecto,nombre,presupuesto} = req.body;
     res.status(200);
     try {
-        let excelReport = await probandoExcelPresupuesto(presupuesto);
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,13,nombre]);
+        const idReporte = results[0][0].idReporte;
+
+        let workbook = await probandoExcelPresupuesto(presupuesto);
+        
+        var tmpFilePath = generarPathPresupuesto(workbook,idReporte)
         const authClient = await authGoogle.authorize();
 
         const fileMetadata = {
-            name:"prueba.xlsx",
-            parents:['1xPZCsesZHk5kQy08fKt1-MnPbo9mnUmd']
+            name: `Reporte-Presupuesto-${idReporte}.xlsx`,
+            parents:['1yjLLozOQpvB0NFPq0OBQgKj2TSN4fEmJ']
         }
 
         const media = {
-            body: fs.createReadStream("prueba.xlsx"),
-            mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        }
+            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            body: fs.createReadStream(tmpFilePath)
+        };
     
-        const file = await authGoogle.uploadFile(authClient,fileMetadata,media);
-
-        fs.unlinkSync("prueba.xlsx");
-        
+        const driverResponse = await authGoogle.uploadFile(authClient,fileMetadata,media);
+        const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
+        const [results2] = await connection.query(query2, [idReporte,driverResponse.data.id]);
+        fs.unlinkSync(tmpFilePath);
         res.status(200).json({
             presupuesto,
             message: "Se genero el reporte con exito",
@@ -38,6 +69,47 @@ async function generarReporte(req, res, next) {
         console.log(error);
         next(error);
     }
+}
+
+async function obtenerReporte(req,res,next){
+    const {fileId} = req.params;
+    const destinationFolder = path.join(__dirname, '../../tmp');
+    console.log(destinationFolder);
+    try{
+        const authClient = await authGoogle.authorize();
+        const fileDetails = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        const reporteJSON = await convertirExcel2JSON(fileDetails);
+        res.status(200).json({
+            reporteJSON,
+            message: "Detalles del reporte recuperados con éxito"
+        });
+    }catch(error){
+        next(error);
+    } 
+}
+
+async function convertirExcel2JSON(filePath){
+    const workbook = XLSX.readFile(filePath);
+    let result = {};
+    workbook.SheetNames.forEach(sheetName =>{
+        const woorksheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(woorksheet);
+        result[sheetName] = json;
+    });
+
+    return result;
+}
+
+function generarPathPresupuesto(workbook,idReporte){
+    var tmpFilePath;
+    try {
+        tmpFilePath = `./tmp/presupuesto-${idReporte}.xlsx`;
+        console.log("Path nuevo "+tmpFilePath);
+        XLSX.writeFile(workbook, tmpFilePath, { compression: true });
+    } catch (error) {
+        console.log(error);
+    }
+    return tmpFilePath;
 }
 
 async function probandoExcelPresupuesto(presupuesto) {
@@ -72,8 +144,8 @@ async function probandoExcelPresupuesto(presupuesto) {
         // Guardar el archivo Excel
         XLSX.writeFile(wb, 'presupuesto.xlsx', { compression: true });
 
-        authorize().then(uploadFile).catch("error", console.error());
         console.log(`Archivo Excel 'presupuesto.xlsx' guardado con éxito.`);
+        return wb;
     } catch (error) {
         console.log(error); 
     }
@@ -85,5 +157,7 @@ function jsonToSheet(data) {
 }
 
 module.exports = {
-    generarReporte
+    generarReporte,
+    obtenerReporte,
+    exportarReporteExcel
 }

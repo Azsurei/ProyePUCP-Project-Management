@@ -3,6 +3,8 @@ const routerCatalogoInteresados = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
 const catalogoInteresadosController = require("../controllers/catalogoInteresados/catalogoInteresadosController");
 
+routerCatalogoInteresados.delete("/eliminarCatalogoInteresados", catalogoInteresadosController.eliminar);
+
 routerCatalogoInteresados.get("/listarAutoridad", catalogoInteresadosController.listarAutoridad);
 routerCatalogoInteresados.get("/listarAdhesion", catalogoInteresadosController.listarAdhesion);
 

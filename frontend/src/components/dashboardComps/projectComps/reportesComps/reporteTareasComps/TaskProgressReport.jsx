@@ -2,7 +2,11 @@ import { Slider, Progress, Divider } from "@nextui-org/react";
 import CardProgressEntry from "./CardProgressEntry";
 import CardUserWithProgress from "./CardUserWithProgress";
 
-function TaskProgressReport({progressEntries}) {
+function TaskProgressReport({
+    generalProgress,
+    progressEntries,
+    asignedUsers,
+}) {
     const progressEntry = {
         user: {
             idUsuario: 3,
@@ -10,9 +14,9 @@ function TaskProgressReport({progressEntries}) {
             apellidos: "pinto",
             imgLink:
                 "https://lh3.googleusercontent.com/a/ACg8ocJfDJJnt4CClfOWItoYOykKhkSPpobVB82pkxKw7MAIOQ=s96-c",
-            correoElectronico: "a20201491@pucp.edu.pe"
+            correoElectronico: "a20201491@pucp.edu.pe",
         },
-        equipo:{
+        equipo: {
             idEquipo: 0,
         },
         description: "Se cambio backlogsdfsdfsdfsfac as",
@@ -33,8 +37,8 @@ function TaskProgressReport({progressEntries}) {
                         <Progress
                             size="md"
                             aria-label="Loading..."
-                            value={70}
-                            color={"primary"}
+                            value={generalProgress}
+                            color={getColorForProgBar(generalProgress)}
                         />
                         <div className="flex flex-row w-full justify-evenly">
                             <p className="text-md font-normal ">20%</p>
@@ -43,7 +47,7 @@ function TaskProgressReport({progressEntries}) {
                         </div>
                     </div>
                     <p className="h-full translate-y-[-25%] font-semibold text-lg">
-                        85%
+                        {generalProgress}%
                     </p>
                 </div>
 
@@ -54,9 +58,17 @@ function TaskProgressReport({progressEntries}) {
                         </p>
 
                         <div className=" flex-1 space-y-1 overflow-y-auto">
-                            {progressEntries.map((entry)=>{
-                                return(
-                                    <CardProgressEntry key={entry.idRegistroProgreso} progressEntry={entry} />
+                            {progressEntries.length === 0 && (
+                                <div className="w-full h-full flex justify-center items-center text-slate-500">
+                                    No hay registros de progreso
+                                </div>
+                            )}
+                            {progressEntries.map((entry) => {
+                                return (
+                                    <CardProgressEntry
+                                        key={entry.idRegistroProgreso}
+                                        progressEntry={entry}
+                                    />
                                 );
                             })}
                         </div>
@@ -67,24 +79,51 @@ function TaskProgressReport({progressEntries}) {
                     </div>
 
                     <div className="flex-1 flex flex-col overflow-y-hidden">
-                        <p className="font-medium text-lg">
-                            Porcentaje total
-                        </p>
+                        <p className="font-medium text-lg">Porcentaje total</p>
 
                         <div className=" flex-1 space-y-1 overflow-y-auto pb-1">
-                            <CardUserWithProgress isEditable={false} usuarioObject={progressEntry.user} percentage={progressEntry.progressValue}/>
-                            <CardUserWithProgress isEditable={false} usuarioObject={progressEntry.user} percentage={progressEntry.progressValue}/>
-                            <CardUserWithProgress isEditable={false} usuarioObject={progressEntry.user} percentage={progressEntry.progressValue}/>
-                            <CardUserWithProgress isEditable={false} usuarioObject={progressEntry.user} percentage={progressEntry.progressValue}/>
-                            <CardUserWithProgress isEditable={false} usuarioObject={progressEntry.user} percentage={progressEntry.progressValue}/>
-                            <CardUserWithProgress isEditable={false} usuarioObject={progressEntry.user} percentage={progressEntry.progressValue}/>
+                            {asignedUsers.map((user) => {
+                                return (
+                                    <CardUserWithProgress
+                                        key={user.idUsuario}
+                                        isEditable={false}
+                                        usuarioObject={user}
+                                        //percentage={progressEntry.progressValue}
+                                        percentage={sumPorcentajeRegistradoById(
+                                            user.idUsuario
+                                        )}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     );
+
+    function sumPorcentajeRegistradoById(idUsuario) {
+        return progressEntries.reduce((sum, element) => {
+            if (element.idUsuario === idUsuario) {
+                return sum + element.porcentajeRegistrado;
+            }
+            return sum;
+        }, 0);
+    }
+
+    function getColorForProgBar(progressVal) {
+        if(progressVal <= 20){
+            return "danger";
+        }
+        if(progressVal > 20 && progressVal <=50){
+            return "warning";
+        }
+        if(progressVal > 50 && progressVal <=80){
+            return "primary";
+        }
+        if(progressVal > 80 && progressVal <=100){
+            return "success";
+        }
+    }
 }
 export default TaskProgressReport;
