@@ -334,7 +334,7 @@ export default function RootLayout({ children, params }) {
 
                            <ul>
                                 {plantillas.map((plantilla) => (
-                                    <li key={plantilla.id}>
+                                    <li key={plantilla.idPlantillaKanban}>
                                     <div className={`cardPlantillaKB ${selectedPlantilla === plantilla ? 'selected' : ''}`}
 
                                         onClick={() => handlePlantillaClick(plantilla)}>
