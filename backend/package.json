@@ -13,6 +13,6 @@
     "mysql2": "^3.6.1",
     "node-cron": "^3.0.2",
     "path": "^0.12.7",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   }
 }
