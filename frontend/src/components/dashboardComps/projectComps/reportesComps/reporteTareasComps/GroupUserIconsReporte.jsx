@@ -36,7 +36,7 @@ export default function GroupUserIconsReporte({ idTarea, listUsers, beImg }) {
                             src={user.imgLink}
                             className="w-[40px] h-[40px] text-tiny"
                             fallback={
-                                <p id="UsrNoIcon">
+                                <p id="UsrNoIcon" className="bg-mainUserIcon">
                                     {user.nombres[0] + user.apellidos[0]}
                                 </p>
                             }

@@ -267,6 +267,14 @@ export default function Cronograma(props) {
     };
 
     const handleAddNewSon = (tareaPadre) => {
+
+        if (tareaPadre.porcentajeProgreso === 100) {
+            toast.info("Esta tarea ya fue completada", {
+                position: "top-center",
+            });
+            return;
+        }
+
         setTareaPadre(tareaPadre);
         setTareaName("");
         setTareaDescripcion("");
@@ -1668,7 +1676,7 @@ export default function Cronograma(props) {
                                         setValidDescripcion(false);
                                         allValid = false;
                                     }
-                                    if (fechaFin < fechaInicio) {
+                                    if (fechaFin <= fechaInicio) {
                                         setValidFechas("isFalse");
                                         allValid = false;
                                     }
