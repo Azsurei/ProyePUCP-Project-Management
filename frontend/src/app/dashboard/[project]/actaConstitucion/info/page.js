@@ -37,6 +37,7 @@ import { HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
 
 
+import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
 
@@ -258,6 +259,7 @@ export default function Info(props) {
     //obtener idUsuario
     const {sessionData} = useContext(SessionContext);
     useEffect(() => {
+        console.log("avr");
         setIdUsuario(sessionData.idUsuario);
       }, [sessionData.idUsuario]);
 
@@ -469,25 +471,32 @@ export default function Info(props) {
 
       };
 
-    const DataTable = async () => {
+      const DataTable = async () => {
         const fetchPlantillas = async () => {
-            try {
-            const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
-            const response = await axios.get(url);
-
-            const plantillasInvertidas = response.data.plantillasAC.reverse();
-
-            setPlantillas(plantillasInvertidas);
-            } catch (error) {
-            console.error("Error al obtener las plantillas:", error);
+            if (IdUsuario !== "") {
+                try {
+                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
+                    if(IdUsuario !== ""){
+                        console.log("IdUsuario: "+IdUsuario);
+                    }
+                    const response = await axios.get(url);
+    
+                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+    
+                    setPlantillas(plantillasInvertidas);
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
             }
-            };
-            fetchPlantillas();
+        };
+    
+        fetchPlantillas();
     };
+    
     
       useEffect(() => {
         console.log("udptateListado");
-        if (IdUsuario !== null) {
+        if (IdUsuario !== "") {
             DataTable();
         }
       }, [IdUsuario]);
@@ -650,16 +659,16 @@ export default function Info(props) {
                     <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
                     </div>
                     <ul className="cardPlantillaKBList">
-                        {plantillas.map((plantilla) => (
-                            <li key={plantilla.id}>
-                            <div className={`cardPlantillaAC ${selectedPlantilla === plantilla ? 'selected' : ''}`}
-
-                                onClick={() => handlePlantillaClick(plantilla)}>
+                    {plantillas.map((plantilla) => (
+                        <li key={plantilla.idPlantillaAC}>
+                            <div
+                                className={`cardPlantillaAC ${selectedPlantilla && selectedPlantilla === plantilla ? 'selected' : ''}`}
+                                onClick={() => handlePlantillaClick(plantilla)}
+                            >
                                 {plantilla.nombrePlantilla}
-                                
-                                </div>
-                            </li>
-                        ))}
+                            </div>
+                        </li>
+                    ))}
                     </ul>
                 </div>
         
@@ -706,6 +715,32 @@ export default function Info(props) {
 
             {!isEditActive ? (
                 <ButtonPanel margin="10px 0 15px" align="right">
+
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={onSaveModalPlantilla}
+                    >
+                        <div>
+                            <SaveAsIcon />
+                            <div>Guardar Plantilla</div>
+                        </div>
+                    </Button>
+                    
+                    <Button
+                        appearance="primary"
+                        state="default"
+                        spacing="compact"
+                        onClick={onModalPlantillas}
+
+                    >
+                        <div>
+                            <ContentPasteGoIcon />
+                            <div>Plantillas</div>
+                        </div>
+                    </Button>
+
                     <Button
                         appearance="primary"
                         state="default"
@@ -738,30 +773,7 @@ export default function Info(props) {
                         </div>
                     </Button>
 
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={onSaveModalPlantilla}
-                    >
-                        <div>
-                            <SaveIcon />
-                            <div>Guardar Plantilla</div>
-                        </div>
-                    </Button>
-                    
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={onModalPlantillas}
 
-                    >
-                        <div>
-                            <ContentPasteGoIcon />
-                            <div>Plantillas</div>
-                        </div>
-                    </Button>
                     
                 </ButtonPanel>
             ) : (

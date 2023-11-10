@@ -22,6 +22,7 @@ import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/productBacklog/plantillaKB.css";
 import { set } from "date-fns";
 export const FlagRefreshContext = createContext();
+import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 
 export default function RootLayout({ children, params }) {
@@ -120,7 +121,7 @@ export default function RootLayout({ children, params }) {
     };
     
       useEffect(() => {
-        if (IdUsuario !== null) {
+        if (IdUsuario !== "") {
             DataTable();
         }
       }, [IdUsuario]);
@@ -417,7 +418,7 @@ export default function RootLayout({ children, params }) {
                     </Button>
 
                     
-                    <Button onPress={onModalSavePLantilla} color="primary" startContent={<SaveIcon />}>
+                    <Button onPress={onModalSavePLantilla} color="primary" startContent={<SaveAsIcon />}>
                         Guardar Plantilla
                     </Button>
 
