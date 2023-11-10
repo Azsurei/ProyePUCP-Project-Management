@@ -88,7 +88,7 @@
     border-color: #dfdfdf;
     border-width: 1px;
     box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
-    max-height: 750px;
+    /* max-height: 750px; */
     transform: scale(1);
     transition: background-color 0.15s ease-in, transform  0.1s ease-in;
     margin: 1.2rem;
