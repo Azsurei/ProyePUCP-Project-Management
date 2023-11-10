@@ -186,6 +186,7 @@ export default function Info(props) {
                 setDetails(response.data.detalleAC.actaData);
                 setDetailsEdited(response.data.detalleAC.actaData);
                 setIsLoadingSmall(false);
+                DataTable();
             })
             .catch(function (error) {
                 console.log(error);
@@ -289,9 +290,10 @@ export default function Info(props) {
 
     const guardarPlantillaNueva = async () => {
         try {
-            toast.promise(savePlantilla, {
+                toast.promise(savePlantilla, {
                 loading: "Guardando Plantilla Nueva...",
                 success: (data) => {
+                    DataTable();
                     return "La plantilla se agregó con éxito!";
                     
                 },
@@ -467,32 +469,30 @@ export default function Info(props) {
 
       };
 
+    const DataTable = async () => {
+        const fetchPlantillas = async () => {
+            try {
+            const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
+            const response = await axios.get(url);
 
-    const fetchPlantillas = async () => {
-        try {
-          const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
-          const response = await axios.get(url);
-    
-          response.data.plantillasAC.forEach((plantilla) => {
-            console.log("Nombre de la plantilla:", plantilla.nombrePlantilla); // Accede a la propiedad 'nombre' (ajusta según la estructura de tus objetos)
-            // Agrega más líneas para acceder a otras propiedades si es necesario
-        });
-          setPlantillas(response.data.plantillasAC);
-        } catch (error) {
-          console.error("Error al obtener las plantillas:", error);
-        }
-      };
+            const plantillasInvertidas = response.data.plantillasAC.reverse();
+
+            setPlantillas(plantillasInvertidas);
+            } catch (error) {
+            console.error("Error al obtener las plantillas:", error);
+            }
+            };
+            fetchPlantillas();
+    };
     
       useEffect(() => {
+        console.log("udptateListado");
         if (IdUsuario !== null) {
-          fetchPlantillas();
+            DataTable();
         }
       }, [IdUsuario]);
 
       const [error, setError] = useState(null);
-
-
-
 
 
 
@@ -623,11 +623,13 @@ export default function Info(props) {
                         }
                         onClose();
                         updateListado();
+                        DataTable(); // Llamada a fetchPlantillas después de usar la plantilla
+
 
                         setTimeout(() => {
                             updateListado();
                         }, 2000);
-                    
+                        
                     }
                     else{
                         setError("Seleccione una plantilla");
@@ -647,7 +649,7 @@ export default function Info(props) {
 
                     <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
                     </div>
-                    <ul>
+                    <ul className="cardPlantillaKBList">
                         {plantillas.map((plantilla) => (
                             <li key={plantilla.id}>
                             <div className={`cardPlantillaAC ${selectedPlantilla === plantilla ? 'selected' : ''}`}
