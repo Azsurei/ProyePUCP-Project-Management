@@ -22,7 +22,7 @@ import {
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import React, { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
-import TablaEntregables from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/tablaEntregables";
+import TablaEntregables from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/TablaEntregables";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import CardContribuyente from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/CardContribuyente";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
