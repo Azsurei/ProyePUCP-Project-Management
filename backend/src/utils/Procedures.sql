@@ -4515,6 +4515,17 @@ BEGIN
     SET _idReporte = @@last_insert_id;
     SELECT _idReporte as idReporte;
 END$
+DROP PROCEDURE IF EXISTS LISTAR_REPORTES_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_REPORTES_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	SELECT rp.idReporteXProyecto,rp.fileId,rp.nombre ,rp.fechaCreacion, rp.fechaCreacion,h.idHerramienta, h.nombre as nombreHerramienta
+    FROM ReporteXProyecto rp LEFT JOIN Herramienta h ON h.idHerramienta = rp.idHerramienta WHERE rp.idProyecto = _idProyecto and rp.activo=1;
+END$
+
+CALL LISTAR_REPORTES_X_ID_PROYECTO(178);
 
 DROP PROCEDURE IF EXISTS ACTUALIZAR_FILE_ID;
 DELIMITER $
