@@ -4264,6 +4264,25 @@ BEGIN
     WHERE idResponsabilidadRol = _idResponsabilidadRol;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_RESPONSABILIDADROL_X_ID(
+    IN _idResponsabilidadRol INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descrpcionRol VARCHAR(255)
+)
+BEGIN
+    UPDATE ResponsabilidadRol
+    SET letraRol = _letraRol,
+        nombreRol = _nombreRol,
+        colorRol = _colorRol,
+        descrpcionRol = _descrpcionRol
+    WHERE idResponsabilidadRol = _idResponsabilidadRol;
+    SELECT _idResponsabilidadRol AS idResponsabilidadRol;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(

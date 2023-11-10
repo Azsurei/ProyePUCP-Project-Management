@@ -8,6 +8,7 @@ routerMatrizResponsabilidad.delete("/eliminarMatrizResponsabilidades", matrizRes
 routerMatrizResponsabilidad.delete("/eliminarEntregableXResponsabilidadRol",matrizResponsabilidadController.eliminarEntregableXResponsabilidadRol);
 
 routerMatrizResponsabilidad.post("/insertarResponsabilidad",matrizResponsabilidadController.insertarResponsabilidad);
+routerMatrizResponsabilidad.put("/modificarResponsabilidad",matrizResponsabilidadController.modificarResponsabilidad);
 routerMatrizResponsabilidad.get("/listarResponsabilidad/:idProyecto",matrizResponsabilidadController.listarResponsabilidad);
 routerMatrizResponsabilidad.delete("/eliminarResponsabilidad",matrizResponsabilidadController.eliminarResponsabilidad);
 routerMatrizResponsabilidad.get("/listarRol/:idProyecto",matrizResponsabilidadController.listarRol);
