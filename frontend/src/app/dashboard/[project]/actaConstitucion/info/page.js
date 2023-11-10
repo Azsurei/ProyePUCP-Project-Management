@@ -58,7 +58,7 @@ function DetailCard({
         >
             <div className="project-card">
                 {!isEditable && (
-                    <div className="project-card__title">{detail.nombre}</div>
+                    <div className="project-card__title dark:text-white">{detail.nombre}</div>
                 )}
                 {isEditable && (
                     <Textarea
