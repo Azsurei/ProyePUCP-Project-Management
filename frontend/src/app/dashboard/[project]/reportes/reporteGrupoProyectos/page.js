@@ -13,6 +13,7 @@ import {
     Input,
     Pagination,
 } from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import React, { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
@@ -26,6 +27,9 @@ import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import  ReportePresupuesto  from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReportePresupuesto";
 import ReporteAlcance from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReporteAlcance";
 import ReporteCronograma from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/ReporteCronograma";
+import MyCombobox from "@/components/ComboBox";
+import { useRouter } from "next/navigation";
+import { setId } from "@material-tailwind/react/components/Tabs/TabsContext";
 axios.defaults.withCredentials = true;
 
 export default function ReporteGrupoProyectos(props) {
@@ -33,11 +37,22 @@ export default function ReporteGrupoProyectos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    
+    const router = useRouter();
     const [isClient, setIsClient] = useState(false);
     const [proyecto1, setProyecto1] = useState([]);
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [selectedGrupoProyecto, setSelectedGrupoProyecto,] = useState("");
+    const [selectedGrupoProyectoId, setSelectedGrupoProyectoId,] = useState("");
+    const pruebaURl = "http://localhost:8080/api/proyecto/grupoProyectos/listarGruposProyecto"
+    const [isId, setIsId] = useState(false);
+    const handleSelectedValueChange= (value) => {
+        setSelectedGrupoProyecto(value);
+    };
     useEffect(() => {
+        setIsLoadingSmall(true);
+        onOpen();
         setIsLoadingSmall(false);
+        
         setIsClient(true);
     }, [projectId]);
 
@@ -48,6 +63,7 @@ export default function ReporteGrupoProyectos(props) {
     //     setIsClient(true);
     // }, []);
     return (
+        <>
         <div className="divHistorialReportes"> 
             <div className="flex-1">
                     <Breadcrumbs>
@@ -59,7 +75,7 @@ export default function ReporteGrupoProyectos(props) {
                         />
                         <BreadcrumbsItem href="" text="Historial de Reportes" />
                     </Breadcrumbs>
-                <div className="reporteGrupoProyectos">
+                {isId && (<div className="reporteGrupoProyectos">
                     <div className="titleHistorialReporte text-mainHeaders">
                         Nombre Proyecto
                     </div>
@@ -75,8 +91,44 @@ export default function ReporteGrupoProyectos(props) {
                         </Tab>
                     </Tabs>
                 </div>
+                )}
             </div>
-
+            
+            <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalContent>
+                        {(onClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">Seleccionar Grupo Proyecto</ModalHeader>
+                                <ModalBody>
+                                    <MyCombobox
+                                        urlApi={
+                                            process.env.NEXT_PUBLIC_BACKEND_URL +
+                                            "/api/proyecto/grupoProyectos/listarGruposProyecto"
+                                        }
+                                        property="grupos"
+                                        nameDisplay="nombre"
+                                        hasColor={false}
+                                        onSelect={handleSelectedValueChange}
+                                        onSelectValor={handleSelectedValueChange}
+                                        idParam="idGrupoDeProyecto"
+                                        valorParam="codigo"
+                                        label="Seleccionar Grupo Proyecto"
+                                    />
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="danger" variant="light" onPress={() => router.back()}>
+                                        Cerrar
+                                    </Button>
+                                    <Button color="primary" onPress={() => { setIsId(true); onClose(); }}>
+                                        Action
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+            </Modal>
         </div>
+        
+        </>
     );
 }
