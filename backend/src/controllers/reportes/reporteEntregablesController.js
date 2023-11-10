@@ -2,7 +2,7 @@ const connection = require("../../config/db");
 const XLSX = require('xlsx');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
 async function generarReporteEntregables(req, res, next) {
@@ -64,6 +64,33 @@ async function generarReporteEntregables(req, res, next) {
     }
 }
 
+
+async function exportarReporteExcel(req, res, next) {
+    const {fileId} = req.body;
+    const destinationFolder = path.join(__dirname, '../../tmp');
+
+    try{
+        
+        const authClient = await authGoogle.authorize();
+        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        console.log(tmpFilePath);
+
+        res.download(tmpFilePath, 'ReporteEntregables.xlsx', async(err) => {
+            try {
+                // Eliminar el archivo temporal de forma asíncrona
+                await fs.unlink(tmpFilePath);
+            } catch (e) {
+                console.error("Error al eliminar el archivo temporal:", e.message);
+            }
+            if (err) {
+                next(err);
+            }
+        });
+    }catch(error){
+        console.error("Error al exportar el reporte Excel:", error.message);
+        next(error);
+    } 
+}
 async function generarReporte(req, res, next) {
     const { entregables,idProyecto,nombre} = req.body;
     //console.log(req.body);
@@ -330,5 +357,6 @@ function prueba(entregables) {
 
 module.exports = {
     generarReporte,
-    obtenerReporte
+    obtenerReporte,
+    exportarReporteExcel
 };
