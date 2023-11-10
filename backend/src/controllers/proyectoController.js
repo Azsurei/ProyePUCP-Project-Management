@@ -34,7 +34,7 @@ async function funcEliminar(idProyecto,herramientas){
         // idHerramienta es la herramienta en sí. NO SE ELIMINA
         for(const herramienta of herramientas){
             if(herramienta.idHerramienta==1){
-                await productBacklogController.eliminar(herramienta.idHerramientaCreada);
+                await backlogController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==2){
                 await EDTController.eliminar(herramienta.idHerramientaCreada);
@@ -52,7 +52,7 @@ async function funcEliminar(idProyecto,herramientas){
                 await catalogoInteresadosController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==7){
-                await matrizResponsabilidad.eliminar(herramienta.idHerramientaCreada);
+                await matrizResponsabilidadController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==8){
                 await matrizComunicacionesController.eliminar(herramienta.idHerramientaCreada);
@@ -67,7 +67,7 @@ async function funcEliminar(idProyecto,herramientas){
                 await actaReunionController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==12){
-                await equipoController.js(herramienta.idHerramientaCreada);
+                await equipoController.eliminar(herramienta.idHerramientaCreada);
             }
             if(herramienta.idHerramienta==13){
                 await presupuestoController.eliminar(herramienta.idHerramientaCreada);
