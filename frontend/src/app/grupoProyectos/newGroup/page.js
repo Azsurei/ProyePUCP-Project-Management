@@ -112,7 +112,6 @@ export default function newProject() {
     const [isLoading, setIsLoading] = useState(true);
     const [nombreGrupo, setNombreGrupo] = React.useState("");
 
-
     const onValueGrupuChange = (value) => {
         setNombreGrupo(value);
     }
@@ -292,6 +291,8 @@ export default function newProject() {
         const agregarGrupo = () => {
             if (nombreGrupo === "") {
                 setValidValue(false);
+            } else {
+                setValidValue(true);
             }
             console.log("Tamano: ", selectedKeys.size);
             console.log("Select: ", selectedKeys);
@@ -342,6 +343,7 @@ export default function newProject() {
         onSearchChange,
         hasSearchFilter,
         selectedKeys,
+        nombreGrupo,
     ]);
 
     const bottomContent = React.useMemo(() => {
