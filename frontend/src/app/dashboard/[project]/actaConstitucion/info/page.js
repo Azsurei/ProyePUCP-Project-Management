@@ -129,7 +129,9 @@ export default function Info(props) {
     const router = useRouter();
 
     const handleRecargarPagina = () => {
-      router.reload();
+        console.log("xd");
+        router.refresh();
+  
     };
 
 
@@ -188,6 +190,8 @@ export default function Info(props) {
             .catch(function (error) {
                 console.log(error);
             });
+
+
     };
     
     useEffect(() => {
@@ -314,7 +318,8 @@ export default function Info(props) {
             
         } catch (error) {
             throw error; 
-        } 
+        }
+
     };
 
     const usePlantillaAC = () => {
@@ -518,6 +523,7 @@ export default function Info(props) {
                                     await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
+                                    console.log("xd");
                                     
                                 } catch (error) {
                                     console.error('Error al Guardar Plantilla:', error);
@@ -610,14 +616,17 @@ export default function Info(props) {
                     if(Isvalid === true){
                         try {
                             await usarPlantilla();
-                            //updateListado();
                             setPlantillaElegida(false);
-                            console.log("Funcionaxd");
+                            
                         } catch (error) {
                             console.error('Error al Utilizar Plantilla:', error);
                         }
-
                         onClose();
+                        updateListado();
+
+                        setTimeout(() => {
+                            updateListado();
+                        }, 2000);
                     
                     }
                     else{
