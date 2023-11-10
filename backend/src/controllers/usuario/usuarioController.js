@@ -48,7 +48,8 @@ async function verificarSiCorreoEsDeGoogle(req,res,next){
         const query = `CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE(?);`;
         const [results] = await connection.query(query,[correoElectronico]);
         console.log(results[0][0]);
-        let tieneCuentaGoogle = results[0][0].tieneCuentaGoogleBoolean;
+        let tieneCuentaGoogle = results[0][0].tieneCuentaGoogle;
+        console.log(tieneCuentaGoogle);
         if(tieneCuentaGoogle === 1){
             tieneCuentaGoogle=true;
         }else{
