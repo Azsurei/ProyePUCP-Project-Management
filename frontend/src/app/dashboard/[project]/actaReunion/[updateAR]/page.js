@@ -467,7 +467,7 @@ export default function editarActaReunion(props) {
 
         const participantes = participantsList.map(participante => ({
             idUsuarioXRolXProyecto: participante.idUsuarioRolProyecto,
-            asistio: true,
+            asistio: participante.asistio,
         }));
         const comentarios = listComentarios.map((comentario) => ({ 
             //...comentario,

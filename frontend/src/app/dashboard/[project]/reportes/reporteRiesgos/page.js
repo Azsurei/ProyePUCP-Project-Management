@@ -38,6 +38,8 @@ export default function ReporteRiesgos(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const [isClient, setIsClient] = useState(false);
     const {herramientasInfo} = useContext(HerramientasInfo);
+    const [responsables, setResponsables] = useState([]);
+    const urlRiesgos = "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/156"
      const [data, setData] = useState([]);
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -493,71 +495,71 @@ export default function ReporteRiesgos(props) {
                     return `${day}/${month}/${year}`;
                 }
             case "responsables":
-                // const [responsables, setResponsables] = useState([]);
-                // setResponsables(cellValue.responsables);
-                // return (
-                //     <AvatarGroup
-                //         isBordered
-                //         isGrid
-                //         max={3}
-                //         renderCount={(count) => (
-                //             <Avatar
-                //                 isBordered={false}
-                //                 color={"primary"}
-                //                 className="w-[35px] h-[35px] text-tiny"
-                //                 fallback={<p id="MoreUsrsIcn">+{count}</p>}
-                //             />
-                //         )}
-                //     >
-                //         {responsables.map((user) => {
-                //             return (
-                //                 <div
-                //                     className="flex gap-4 items-center border-sm"
-                //                     key={user.idUsuario}
-                //                 >
-                //                 <Tooltip
-                //                     content={
-                //                         <div className="px-1 py-2">
-                //                             <div className="text-small font-bold">
-                //                                 {user.nombres + " " + user.apellidos}
-                //                             </div>
-                //                             <div className="text-small">
-                //                                 {user.correoElectronico}
-                //                             </div>
-                //                         </div>
-                //                     }
-                //                     classNames={{
-                //                         base: "border border-slate-700 dark:border-slate-400 bg-mainSidebar",
-                //                         arrow: "border border-slate-700 dark:border-slate-400 bg-mainSidebar"}}
-                //                     showArrow
-                //                     >
-                //                     <Avatar
-                //                         isBordered
-                //                         color="default"
-                //                         src={user.imgLink}
-                //                         className="w-[40px] h-[40px] text-tiny"
-                //                         fallback={
-                //                             <p id="UsrNoIcon">
-                //                                 {user.nombres[0] + user.apellidos[0]}
-                //                             </p>
-                //                         }
-                //                     />
-                //                 </Tooltip>
-                //                 </div>
-                //             );
-                //         })}
-                //     </AvatarGroup>
-                // );
-                    return (
-                    <AvatarGroup isBordered>
-                        <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                        <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                        <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                        <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                        <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
-                        <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+              console.log("Responsables: ", cellValue.responsables);
+                return (
+                    <AvatarGroup
+                        isBordered
+                        isGrid
+                        max={3}
+                        renderCount={(count) => (
+                            <Avatar
+                                isBordered={false}
+                                color={"primary"}
+                                className="w-[35px] h-[35px] text-tiny"
+                                fallback={<p id="MoreUsrsIcn">+{count}</p>}
+                            />
+                        )}
+                    >
+                      
+                        {data.responsables.map((user) => {
+                            return (
+                                <div
+                                    className="flex gap-4 items-center border-sm"
+                                    key={user.idUsuario}
+                                >
+                                <Tooltip
+                                    content={
+                                        <div className="px-1 py-2">
+                                            <div className="text-small font-bold">
+                                                {user.nombres + " " + user.apellidos}
+                                            </div>
+                                            <div className="text-small">
+                                                {user.correoElectronico}
+                                            </div>
+                                        </div>
+                                    }
+                                    classNames={{
+                                        base: "border border-slate-700 dark:border-slate-400 bg-mainSidebar",
+                                        arrow: "border border-slate-700 dark:border-slate-400 bg-mainSidebar"}}
+                                    showArrow
+                                    >
+                                    <Avatar
+                                        isBordered
+                                        color="default"
+                                        src={user.imgLink}
+                                        className="w-[40px] h-[40px] text-tiny"
+                                        fallback={
+                                            <p id="UsrNoIcon">
+                                                {user.nombres[0] + user.apellidos[0]}
+                                            </p>
+                                        }
+                                    />
+                                </Tooltip>
+                                </div>
+                            );
+                        })}
                     </AvatarGroup>
-                    );
+                );
+                    // return (
+                    // <AvatarGroup isBordered>
+                    //     <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
+                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
+                    //     <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
+                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
+                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
+                    //     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+                    // </AvatarGroup>
+                    // );
                     
             default:
                 return cellValue;

@@ -7,6 +7,8 @@ import { useState, useEffect, useContext } from "react";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
+import ColorPicker from "@/components/dashboardComps/projectComps/matrizDeResponsabilidades/ColorPicker";
+import { Toaster, toast } from "sonner";
 import {
     Table,
     TableHeader,
@@ -58,6 +60,14 @@ export default function MatrizDeResponsabilidades(props) {
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
     const [descripcionRes, setDescripcionRes] = useState("");
+    const [colorRes, setColorRes] = useState("#000000");
+    const isTextTooLong1 = letraRes.length > 2;
+    const isTextTooLong2 = nombreRes.length > 50;
+    const isTextTooLong3 = descripcionRes.length > 100;
+
+    const onChangeColor= (color) => {
+        setColorRes(color);
+    }
 
     useEffect(() => {
         // Datos iniciales
@@ -355,6 +365,9 @@ export default function MatrizDeResponsabilidades(props) {
                   })
                 : null;
 
+        if (postPromise || putPromise) {
+            setIsLoadingSmall(true);
+        }
         // Usar Promise.all para esperar a que ambas promesas se resuelvan
         Promise.all([postPromise, putPromise])
             .then((responses) => {
@@ -376,7 +389,6 @@ export default function MatrizDeResponsabilidades(props) {
 
                 setModifiedCells([]);
                 if (postPromise || putPromise) {
-                    setIsLoadingSmall(true);
                     setReList(!reList);
                 }
             })
@@ -426,22 +438,58 @@ export default function MatrizDeResponsabilidades(props) {
             });
     };
 
-    const agregarResponsabilidad = () => {
+    function verifyFieldsEmpty() {
+        return (
+            letraRes.trim() === "" ||
+            nombreRes.trim() === "" ||
+            descripcionRes.trim() === ""
+        );
+    }
+
+    function verifyFieldsExcessive() {
+        return (
+            letraRes.length > 2 ||
+            nombreRes.length > 50 ||
+            descripcionRes.length > 100
+        );
+    }
+
+    const isResponsabilidadExistente = () => {
+        // Convierte todas las letras y nombres existentes a minúsculas para asegurar la comparación insensible a mayúsculas
+        const letrasExistente = responsabilidades.map((res) => res.letra.toLowerCase());
+        const nombresExistente = responsabilidades.map((res) => res.nombre.toLowerCase());
+      
+        // Verifica si la letra o el nombre ya existen en el arreglo de roles
+        return letrasExistente.includes(letraRes.toLowerCase()) || nombresExistente.includes(nombreRes.toLowerCase());
+      };
+      
+
+    const agregarResponsabilidad = (onClose) => {
+        if (verifyFieldsEmpty()) {
+            toast.error("Faltan completar campos");
+            return;
+        } else if (verifyFieldsExcessive()) {
+            toast.error("Se excedió el límite de caractéres");
+            return;
+        } else if (isResponsabilidadExistente()){
+            toast.error("La letra o el nombre ya existen");
+            return;
+        }
         const urlAgregarResponsabilidad =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/matrizResponsabilidad/insertarResponsabilidad";
 
         const newResponsabilidad = {
-            letraRol: letraRes,
+            letraRol: letraRes.toUpperCase(),
             nombreRol: nombreRes,
             descrpcionRol: descripcionRes,
-            colorRol: "#F87171",
+            colorRol: colorRes,
             idProyecto: projectId,
         };
 
         console.log("El newResponsabilidad es:", newResponsabilidad);
 
-        /*         axios
+        axios
             .post(urlAgregarResponsabilidad, newResponsabilidad)
             .then((response) => {
                 // Manejar la respuesta de la solicitud POST
@@ -454,7 +502,8 @@ export default function MatrizDeResponsabilidades(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); */
+            });
+        onClose();
     };
 
     return (
@@ -521,7 +570,7 @@ export default function MatrizDeResponsabilidades(props) {
                                     style={{
                                         backgroundColor: responsabilidad.color,
                                     }}
-                                    className="col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px]"
+                                    className="col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px] py-1"
                                 >
                                     {responsabilidad.letra}
                                 </div>
@@ -603,6 +652,7 @@ export default function MatrizDeResponsabilidades(props) {
                 isOpen={isOpenAdd}
                 onOpenChange={onOpenChangeAdd}
                 isDismissable={false}
+                size="xl"
             >
                 <ModalContent>
                     {(onClose) => (
@@ -621,7 +671,16 @@ export default function MatrizDeResponsabilidades(props) {
                                         placeholder="A"
                                         variant="bordered"
                                         className="w-2/12 mr-4"
+                                        value={letraRes}
                                         onValueChange={setLetraRes}
+                                        isInvalid={isTextTooLong1}
+                                        errorMessage={
+                                            isTextTooLong1
+                                                ? "Máximo 2 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={3}
+                                        style={{ textTransform: "uppercase" }}
                                     />
                                     <Input
                                         isClearable
@@ -630,6 +689,14 @@ export default function MatrizDeResponsabilidades(props) {
                                         placeholder="Aprueba"
                                         variant="bordered"
                                         className="w-10/12"
+                                        isInvalid={isTextTooLong2}
+                                        errorMessage={
+                                            isTextTooLong2
+                                                ? "Máximo 2 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={51}
+                                        value={nombreRes}
                                         onValueChange={setNombreRes}
                                     />
                                 </div>
@@ -639,8 +706,17 @@ export default function MatrizDeResponsabilidades(props) {
                                     label="Descripción"
                                     placeholder="Se encarga de aprobar y revisar tareas"
                                     variant="bordered"
+                                    isInvalid={isTextTooLong3}
+                                    errorMessage={
+                                        isTextTooLong3
+                                            ? "Máximo 2 caracteres."
+                                            : ""
+                                    }
+                                    maxLength={101}
+                                    value={descripcionRes}
                                     onValueChange={setDescripcionRes}
                                 />
+                                <ColorPicker value={colorRes} onChangeColor={onChangeColor}/>
                             </ModalBody>
                             <ModalFooter>
                                 <Button
@@ -653,8 +729,7 @@ export default function MatrizDeResponsabilidades(props) {
                                 <Button
                                     className="bg-indigo-950 text-slate-50"
                                     onPress={() => {
-                                        agregarResponsabilidad();
-                                        onClose();
+                                        agregarResponsabilidad(onClose);
                                     }}
                                 >
                                     Guardar
@@ -664,6 +739,15 @@ export default function MatrizDeResponsabilidades(props) {
                     )}
                 </ModalContent>
             </Modal>
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </>
     );
 }

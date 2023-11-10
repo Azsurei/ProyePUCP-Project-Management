@@ -68,6 +68,8 @@ function EditableInput(props) {
     const toggleModal = () => {
         setModal(!modal);
     };
+    console.log('Props');
+    console.log(props);
 
     const handleResponsablesChange = (newResponsables) => {
         setResponsables(newResponsables);
@@ -152,7 +154,7 @@ function EditableInput(props) {
                             {responsables && responsables.length > 0 ? (
                                 <AvatarGroup isBordered max={4}>
                                     {responsables.map((responsable, index) => (
-                                        <Avatar key={responsable.idUsuario} src="" fallback={
+                                        <Avatar key={responsable.idUsuario} src={responsable.imgLink} fallback={
                                             <Tooltip 
                                                 content={
                                                     <div className="text-small font-bold">

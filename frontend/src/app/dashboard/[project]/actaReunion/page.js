@@ -119,7 +119,7 @@ export default function ActaReunion(props) {
                         {participantes.length > 0 && (
                                 <AvatarGroup isBordered max={3} >
                                     {participantes.map((participante, index) => (
-                                        <Avatar key={participante.idParticipanteXReunion}  src="" fallback={
+                                        <Avatar key={participante.idParticipanteXReunion}  src={participante.imgLink} fallback={
                                             <p className="bg-gray-300 cursor-pointer rounded-full flex justify-center items-center text-base w-12 h-12 text-black">
                                                 {participante.nombres[0] + participante.apellidos[0]}
                                             </p>
