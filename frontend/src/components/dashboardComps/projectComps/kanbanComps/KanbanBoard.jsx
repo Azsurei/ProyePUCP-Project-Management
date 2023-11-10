@@ -521,9 +521,15 @@ export default function KanbanBoard({ projectId }) {
 
         //sacamos el max posicionKanban de columna 0.
         const tareasCol0 = tasks.filter((task) => task.idColumnaKanban === 0);
-        let lastPosicionKanban =
-            tareasCol0[tareasCol0.length - 1].posicionKanban; //+1 para empezar en el siguiente
-        console.log("Empezaremos en " + lastPosicionKanban);
+        let lastPosicionKanban;
+        if (tareasCol0.length !== 0) {
+            lastPosicionKanban =
+                tareasCol0[tareasCol0.length - 1].posicionKanban; //+1 para empezar en el siguiente
+            console.log("Empezaremos en " + lastPosicionKanban);
+        }
+        else{
+            lastPosicionKanban = -1;
+        }
 
         const updatedTasks = tasks.map((task) => {
             if (task.idColumnaKanban === id) {
