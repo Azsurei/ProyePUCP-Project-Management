@@ -31,6 +31,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import { SessionContext } from "./layout";
+import ListGroupProject from "@/components/dashboardComps/projectComps/projectCreateComps/ListGroupProject";
 
 export default function Dashboard() {
     const [filterValue, setFilterValue] = useState("");
@@ -307,7 +308,7 @@ export default function Dashboard() {
                 )} 
 
             </div>
-
+            <ListGroupProject filterValue={filterValue} onSearchChange={onSearchChange}/>
         </div>
     );
 }
