@@ -20,6 +20,8 @@ import { useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
 import ModalNewTask from "./ModalNewTask";
 import { useRouter } from "next/navigation";
+import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
+import { FlagRefreshContext } from "@/app/dashboard/[project]/backlog/layout";
 axios.defaults.withCredentials = true;
 
 export default function KanbanBoard({ projectId }) {
