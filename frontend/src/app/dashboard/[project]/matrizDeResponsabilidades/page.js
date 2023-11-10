@@ -35,6 +35,7 @@ import {
     Input,
 } from "@nextui-org/react";
 
+import SaveAsIcon from '@mui/icons-material/SaveAs';
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [dataFromApi, setDataFromApi] = useState([]);
@@ -71,6 +72,22 @@ export default function MatrizDeResponsabilidades(props) {
         onOpen: onOpenUpdate,
         onOpenChange: onOpenChangeUpdate,
     } = useDisclosure();
+
+    const { 
+        isOpen: isModalSavePlantilla, 
+        onOpen: onSaveModalPlantilla, 
+        onOpenChange: onModaSavePlantillaChange 
+    
+    } = useDisclosure();
+
+    const { 
+        isOpen: isModalPlantillas, 
+        onOpen: onModalPlantillas, 
+        onOpenChange: onModalPlantillasChange 
+    
+    } = useDisclosure();
+
+
 
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
@@ -702,6 +719,23 @@ export default function MatrizDeResponsabilidades(props) {
                     Matriz de responsabilidades
                 </div>
                 <div className="flex gap-4">
+
+                    <Button
+                        color="secondary"
+                        startContent={<SaveAsIcon />}
+                        onPress={onModalPlantillas}
+                    >
+                        Plantillas
+                    </Button>
+
+                    <Button
+                        color="secondary"
+                        startContent={<SaveAsIcon />}
+                        onPress={onSaveModalPlantilla}
+                    >
+                        Guardar Plantilla
+                    </Button>
+
                     <Button
                         color="primary"
                         startContent={<SaveIcon />}
@@ -716,6 +750,8 @@ export default function MatrizDeResponsabilidades(props) {
                     >
                         Limpiar
                     </Button>
+
+
                 </div>
             </div>
             <Table
