@@ -37,6 +37,7 @@ import {
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [dataFromApi, setDataFromApi] = useState([]);
+    const [dataFromApiOriginales, setDataFromApiOriginales] = useState([]);
     const [roles, setRoles] = useState([]);
     const [entregables, setEntregables] = useState([]);
     const [responsabilidades, setResponsabilidades] = useState([]);
@@ -57,6 +58,12 @@ export default function MatrizDeResponsabilidades(props) {
         onOpen: onOpenAdd,
         onOpenChange: onOpenChangeAdd,
     } = useDisclosure();
+    const {
+        isOpen: isOpenDeleteRes,
+        onOpen: onOpenDeleteRes,
+        onOpenChange: onOpenChangeDeleteRes,
+    } = useDisclosure();
+
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
     const [descripcionRes, setDescripcionRes] = useState("");
@@ -64,10 +71,11 @@ export default function MatrizDeResponsabilidades(props) {
     const isTextTooLong1 = letraRes.length > 2;
     const isTextTooLong2 = nombreRes.length > 50;
     const isTextTooLong3 = descripcionRes.length > 100;
+    const [responsabilidadEliminar, setResponsabilidadEliminar] = useState({});
 
-    const onChangeColor= (color) => {
+    const onChangeColor = (color) => {
         setColorRes(color);
-    }
+    };
 
     useEffect(() => {
         // Datos iniciales
@@ -168,6 +176,7 @@ export default function MatrizDeResponsabilidades(props) {
                                         );
                                         // Establecer los datos iniciales en los hooks
                                         setDataFromApi(completedData);
+                                        setDataFromApiOriginales(completedData);
                                         setRoles(initialRoles);
                                         setEntregables(initialEntregables);
                                         setResponsabilidades(
@@ -456,13 +465,19 @@ export default function MatrizDeResponsabilidades(props) {
 
     const isResponsabilidadExistente = () => {
         // Convierte todas las letras y nombres existentes a minúsculas para asegurar la comparación insensible a mayúsculas
-        const letrasExistente = responsabilidades.map((res) => res.letra.toLowerCase());
-        const nombresExistente = responsabilidades.map((res) => res.nombre.toLowerCase());
-      
+        const letrasExistente = responsabilidades.map((res) =>
+            res.letra.toLowerCase()
+        );
+        const nombresExistente = responsabilidades.map((res) =>
+            res.nombre.toLowerCase()
+        );
+
         // Verifica si la letra o el nombre ya existen en el arreglo de roles
-        return letrasExistente.includes(letraRes.toLowerCase()) || nombresExistente.includes(nombreRes.toLowerCase());
-      };
-      
+        return (
+            letrasExistente.includes(letraRes.toLowerCase()) ||
+            nombresExistente.includes(nombreRes.toLowerCase())
+        );
+    };
 
     const agregarResponsabilidad = (onClose) => {
         if (verifyFieldsEmpty()) {
@@ -471,10 +486,11 @@ export default function MatrizDeResponsabilidades(props) {
         } else if (verifyFieldsExcessive()) {
             toast.error("Se excedió el límite de caractéres");
             return;
-        } else if (isResponsabilidadExistente()){
+        } else if (isResponsabilidadExistente()) {
             toast.error("La letra o el nombre ya existen");
             return;
         }
+        setIsLoadingSmall(true);
         const urlAgregarResponsabilidad =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/matrizResponsabilidad/insertarResponsabilidad";
@@ -496,13 +512,60 @@ export default function MatrizDeResponsabilidades(props) {
                 console.log("Respuesta del servidor (POST):", response.data);
                 console.log("Registro correcto (POST)");
                 // Realizar acciones adicionales si es necesario
-                setIsLoadingSmall(true);
                 setReList(!reList);
             })
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
+        onClose();
+    };
+
+    const eliminarResponsabilidad = (onClose) => {
+        // Verifica si alguna celda está utilizando la responsabilidad que estás a punto de eliminar
+        const isResponsabilidadUsed = dataFromApiOriginales.some(
+            (cell) => cell.idResponsabilidad === responsabilidadEliminar.id
+        );
+
+        if (isResponsabilidadUsed) {
+            // Si alguna celda está utilizando la responsabilidad, muestra un mensaje de error
+            toast.error(
+                "No puedes eliminar esta responsabilidad, ya que está siendo utilizada. Guarda tus cambios y vuelve a intentarlo."
+            );
+        } else {
+            setIsLoadingSmall(true);
+            const urlEliminarResponsabilidad =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/matrizResponsabilidad/eliminarResponsabilidad";
+
+            const deleteData = {
+                idResponsabilidadRol: responsabilidadEliminar.id,
+            };
+
+            console.log("El deleteData es:", deleteData);
+
+            axios
+                .delete(urlEliminarResponsabilidad, {
+                    data: deleteData,
+                })
+                .then((response) => {
+                    // Manejar la respuesta de la solicitud DELETE
+                    console.log(
+                        "Respuesta del servidor (DELETE):",
+                        response.data
+                    );
+                    console.log("Eliminación correcta (DELETE)");
+                    // Realizar acciones adicionales si es necesario
+                    setReList(!reList);
+                })
+                .catch((error) => {
+                    // Manejar errores si la solicitud DELETE falla
+                    console.error(
+                        "Error al realizar la solicitud DELETE:",
+                        error
+                    );
+                });
+        }
         onClose();
     };
 
@@ -588,6 +651,12 @@ export default function MatrizDeResponsabilidades(props) {
                                         src="/icons/icon-trash.svg"
                                         alt="delete"
                                         className="mb-4 cursor-pointer"
+                                        onClick={() => {
+                                            setResponsabilidadEliminar(
+                                                responsabilidad
+                                            );
+                                            onOpenDeleteRes();
+                                        }}
                                     />
                                 </div>
                             </React.Fragment>
@@ -716,7 +785,10 @@ export default function MatrizDeResponsabilidades(props) {
                                     value={descripcionRes}
                                     onValueChange={setDescripcionRes}
                                 />
-                                <ColorPicker value={colorRes} onChangeColor={onChangeColor}/>
+                                <ColorPicker
+                                    value={colorRes}
+                                    onChangeColor={onChangeColor}
+                                />
                             </ModalBody>
                             <ModalFooter>
                                 <Button
@@ -733,6 +805,46 @@ export default function MatrizDeResponsabilidades(props) {
                                     }}
                                 >
                                     Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Modal
+                isOpen={isOpenDeleteRes}
+                onOpenChange={onOpenChangeDeleteRes}
+                isDismissable={false}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-red-500"}
+                            >
+                                Eliminar responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    ¿Seguro que quiere eliminar la
+                                    responsabilidad?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        eliminarResponsabilidad(onClose);
+                                    }}
+                                >
+                                    Continuar
                                 </Button>
                             </ModalFooter>
                         </>
