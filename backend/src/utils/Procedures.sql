@@ -4558,3 +4558,21 @@ BEGIN
 END$
 
 SELECT * FROM ReporteXProyecto;
+
+DROP PROCEDURE IF EXISTS INSERTAR_GRUPO_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_GRUPO_PROYECTO(
+    IN _nombre VARCHAR(200)
+)
+BEGIN
+    DECLARE activo_val TINYINT;
+    DECLARE _idGrupoDeProyecto INT;
+    /* Generating the 'activo' value, for instance, setting it to 1 */
+    SET activo_val = 1;
+    /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
+    INSERT INTO GrupoDeProyecto (nombre, codigo, activo) 
+    VALUES (_nombre, 1, 1);
+    SET _idGrupoDeProyecto = @@last_insert_id;
+    SELECT _idGrupoDeProyecto AS idGrupoDeProyecto;
+END$
+DELIMITER ;
