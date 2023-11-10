@@ -495,7 +495,6 @@ export default function Info(props) {
     
     
       useEffect(() => {
-        console.log("udptateListado");
         if (IdUsuario !== "") {
             DataTable();
         }
