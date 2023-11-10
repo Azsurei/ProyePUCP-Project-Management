@@ -9,6 +9,7 @@ import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
 import ColorPicker from "@/components/dashboardComps/projectComps/matrizDeResponsabilidades/ColorPicker";
 import { Toaster, toast } from "sonner";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import {
     Table,
     TableHeader,
@@ -47,6 +48,7 @@ export default function MatrizDeResponsabilidades(props) {
         decodedUrl.lastIndexOf("=") + 1
     );
     const projectId = parseInt(projectIdString);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [reList, setReList] = useState(false);
     const {
         isOpen: isOpenDelete,
@@ -298,7 +300,7 @@ export default function MatrizDeResponsabilidades(props) {
             //console.log("El id del rol es:", idRol);
             switch (columnKey) {
                 case "entregable":
-                    return (<div className="font-bold">{cellValue}</div>);
+                    return <div className="font-bold">{cellValue}</div>;
                 default:
                     return (
                         <>
@@ -576,7 +578,30 @@ export default function MatrizDeResponsabilidades(props) {
     return (
         <>
             <div className="px-[1rem]">
-                Inicio/Proyectos/Proyecto/Matriz de responsabilidades
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/matrizDeResponsabilidades"
+                        }
+                        text={"Matriz de Responsabilidades"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
                 <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white">
