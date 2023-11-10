@@ -54,7 +54,8 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
                         console.log(
                             "SPRINT => " + parseInt(retroSprint.currentKey)
                         );
-
+                            
+                        setIsLoading(true);
                         const result = await registerRetrospectiva();
                         if(result === 1){
                             await refreshList();
