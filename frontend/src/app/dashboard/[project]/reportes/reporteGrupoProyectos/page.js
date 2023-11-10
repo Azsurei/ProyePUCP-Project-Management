@@ -87,7 +87,7 @@ export default function ReporteGrupoProyectos(props) {
                             <ReporteCronograma isClient={isClient}/>
                         </Tab>
                         <Tab key="presupuesto" title="Presupuesto">
-                            <ReportePresupuesto isClient={isClient}/>
+                            <ReportePresupuesto isClient={isClient} groupProject={selectedGrupoProyecto}/>
                         </Tab>
                     </Tabs>
                 </div>
@@ -111,7 +111,7 @@ export default function ReporteGrupoProyectos(props) {
                                         onSelect={handleSelectedValueChange}
                                         onSelectValor={handleSelectedValueChange}
                                         idParam="idGrupoDeProyecto"
-                                        valorParam="codigo"
+                                        valorParam="idGrupoDeProyecto"
                                         label="Seleccionar Grupo Proyecto"
                                     />
                                 </ModalBody>

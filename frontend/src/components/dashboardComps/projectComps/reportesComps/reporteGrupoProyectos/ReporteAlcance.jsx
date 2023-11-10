@@ -195,6 +195,8 @@ export default function ReporteAlcance(props) {
                     const year = dateFin.getFullYear();
                     return `${day}/${month}/${year}`;
                 }
+            case "cumplido":
+                return (cellValue*100).toFixed(2)+"%";
             case "actions":
                 return (
                     <div className="flex justify-center items-center gap-2">
