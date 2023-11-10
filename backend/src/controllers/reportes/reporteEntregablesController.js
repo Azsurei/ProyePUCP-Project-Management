@@ -2,7 +2,8 @@ const connection = require("../../config/db");
 const XLSX = require('xlsx');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsp = require('fs').promises
 const path = require('path');
 
 async function generarReporteEntregables(req, res, next) {
@@ -75,10 +76,19 @@ async function exportarReporteExcel(req, res, next) {
         const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
         console.log(tmpFilePath);
 
-        res.download(tmpFilePath, 'ReporteEntregables.xlsx', async(err) => {
+        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        const jsonData = JSON.parse(fileContent);
+        console.log(jsonData);
+        workbook = generarExcelEntregables(jsonData);
+
+        const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
+        XLSX.writeFile(workbook, excelFilePath);
+
+
+        res.download(excelFilePath, `${fileId}.json`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
-                await fs.unlink(tmpFilePath);
+                await fsp.unlink(tmpFilePath);
             } catch (e) {
                 console.error("Error al eliminar el archivo temporal:", e.message);
             }
@@ -100,18 +110,18 @@ async function generarReporte(req, res, next) {
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?);`;
         const [results] = await connection.query(query, [idProyecto,2,nombre]);
         const idReporte = results[0][0].idReporte;
-        workbook = generarExcelEntregables(entregables);
+        //workbook = generarExcelEntregables(entregables);
         
-        var tmpFilePath = generarPathEntregables(workbook,idReporte);
+        var tmpFilePath = generarPathEntregables(entregables,idReporte);
 
         const authClient = await authGoogle.authorize();
         const fileMetadata = {
-            name: `Reporte-Entregables-${idReporte}.xlsx`,
+            name: `Reporte-Entregables-${idReporte}.json`,
             parents:['1sMwcqO-22Kga2KH0rduVbG4WN5If9X4C']
         }
 
         const media = {
-            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            mimeType: 'application/json',
             body: fs.createReadStream(tmpFilePath)
         };
 
@@ -138,10 +148,14 @@ async function obtenerReporte(req, res, next) {
     console.log(destinationFolder);
     try{
         const authClient = await authGoogle.authorize();
-        const fileDetails = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        const reporteJSON = await convertirExcel2JSON(fileDetails);
+        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        console.log(tmpFilePath);
+
+        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        const jsonData = JSON.parse(fileContent);
+        console.log(jsonData);
         res.status(200).json({
-            reporteJSON,
+            jsonData,
             message: "Detalles del reporte recuperados con éxito"
         });
     }catch(error){
@@ -162,12 +176,12 @@ async function convertirExcel2JSON(filePath){
 }
 
 
-function generarPathEntregables(workbook,idReporte){
+function generarPathEntregables(presupuesto,idReporte){
     var tmpFilePath;
     try {
-        tmpFilePath = `./tmp/entregables-${idReporte}.xlsx`;
+        tmpFilePath = `./tmp/entregables-${idReporte}.json`;
         console.log("Path nuevo "+tmpFilePath);
-        XLSX.writeFile(workbook, tmpFilePath, { compression: true });
+        fs.writeFileSync(tmpFilePath, JSON.stringify(presupuesto));
     } catch (error) {
         console.log(error);
     }
