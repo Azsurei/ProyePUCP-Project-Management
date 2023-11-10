@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
+import CardItemRetro from "./CardItemRetro";
 
 function PlusIcon() {
     return (
@@ -73,18 +74,18 @@ function ColumnRetro({ columnState, state }) {
                     />
                 )}
             </div>
-            <div className="bg-gray-300 flex-1 flex items-center justify-center">
+            <div className="bg-gray-300 flex-1 flex">
                 {itemsList.length === 0 ? (
                     <p className="text-center">
                         Prueba escribiendo una retrospectiva en la barra
                         superior para que figure aquí
                     </p>
                 ) : (
-                    <ul className="list-disc">
+                    <div>
                         {itemsList.map((item) => (
-                            <li className="text-center">{item}</li>
+                            <CardItemRetro item={item}/>
                         ))}
-                    </ul>
+                    </div>
                 )}
             </div>
         </div>
