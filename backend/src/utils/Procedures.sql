@@ -4264,6 +4264,25 @@ BEGIN
     WHERE idResponsabilidadRol = _idResponsabilidadRol;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_RESPONSABILIDADROL_X_ID;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_RESPONSABILIDADROL_X_ID(
+    IN _idResponsabilidadRol INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descrpcionRol VARCHAR(255)
+)
+BEGIN
+    UPDATE ResponsabilidadRol
+    SET letraRol = _letraRol,
+        nombreRol = _nombreRol,
+        colorRol = _colorRol,
+        descrpcionRol = _descrpcionRol
+    WHERE idResponsabilidadRol = _idResponsabilidadRol;
+    SELECT _idResponsabilidadRol AS idResponsabilidadRol;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(
@@ -4539,3 +4558,21 @@ BEGIN
 END$
 
 SELECT * FROM ReporteXProyecto;
+
+DROP PROCEDURE IF EXISTS INSERTAR_GRUPO_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_GRUPO_PROYECTO(
+    IN _nombre VARCHAR(200)
+)
+BEGIN
+    DECLARE activo_val TINYINT;
+    DECLARE _idGrupoDeProyecto INT;
+    /* Generating the 'activo' value, for instance, setting it to 1 */
+    SET activo_val = 1;
+    /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
+    INSERT INTO GrupoDeProyecto (nombre, codigo, activo) 
+    VALUES (_nombre, 1, 1);
+    SET _idGrupoDeProyecto = @@last_insert_id;
+    SELECT _idGrupoDeProyecto AS idGrupoDeProyecto;
+END$
+DELIMITER ;
