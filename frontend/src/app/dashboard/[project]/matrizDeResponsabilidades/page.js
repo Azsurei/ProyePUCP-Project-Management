@@ -36,6 +36,8 @@ import {
 } from "@nextui-org/react";
 
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
+
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [dataFromApi, setDataFromApi] = useState([]);
@@ -722,7 +724,7 @@ export default function MatrizDeResponsabilidades(props) {
 
                     <Button
                         color="secondary"
-                        startContent={<SaveAsIcon />}
+                        startContent={<ContentPasteGoIcon />}
                         onPress={onModalPlantillas}
                     >
                         Plantillas
