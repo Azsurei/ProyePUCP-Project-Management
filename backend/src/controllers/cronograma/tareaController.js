@@ -263,7 +263,7 @@ async function insertarTareasPosteriores(
                 originalTareaData.idSubGrupo,
                 originalTareaData.idPadre, // (?)
                 idTareaPrevia,
-                tarea.idSprint,
+                0, //id sprint en 0
                 tarea.sumillaTarea,
                 tarea.descripcion,
                 originalTareaData.fechaFin,
