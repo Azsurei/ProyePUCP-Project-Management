@@ -23,6 +23,7 @@ import "@/styles/dashboardStyles/projectStyles/productBacklog/plantillaKB.css";
 import { set } from "date-fns";
 export const FlagRefreshContext = createContext();
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 
 export default function RootLayout({ children, params }) {
@@ -183,6 +184,12 @@ export default function RootLayout({ children, params }) {
 
     //Fin Plantillas
 
+    //Buscar PLantilla
+    const [filterValue, setFilterValue] = useState("");  
+    const onSearchChange = (value) => {
+        setFilterValue(value);
+    };
+
     return (
 
         
@@ -331,6 +338,38 @@ export default function RootLayout({ children, params }) {
                             <div style={{ marginBottom: '25px' }}>
                                 <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
                             </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    gap: ".6rem",
+                                    marginBottom:"25px",
+                                }}
+                            >
+                                <div className="divBuscador">
+                                    <Input
+                                        isClearable
+                                        className="w-full sm:max-w-[100%]"
+                                        placeholder="Ingresa una plantilla..."
+                                        startContent={<SearchIcon />}
+                                        value={filterValue}
+                                        onValueChange={onSearchChange}
+                                        variant="faded"
+                                    />
+                                </div>
+                                <Button
+                                    className="text-slate-50"
+                                    color="primary"
+                                    // onClick={refreshList}
+                                >
+                                    Buscar
+                                </Button>
+                            </div>
+
 
                            <ul>
                                 {plantillas.map((plantilla) => (

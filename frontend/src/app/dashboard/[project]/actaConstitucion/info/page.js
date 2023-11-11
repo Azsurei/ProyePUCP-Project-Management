@@ -36,7 +36,7 @@ import { SessionContext } from "../../../layout";
 import { HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
 
-
+import { SearchIcon } from "@/../public/icons/SearchIcon";
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
@@ -501,7 +501,34 @@ export default function Info(props) {
       }, [IdUsuario]);
 
       const [error, setError] = useState(null);
+      //Buscar PLantilla
+      const [filterValue, setFilterValue] = useState("");  
+      const onSearchChange = (value) => {
+          setFilterValue(value);
+      };
 
+
+      //lamado a la api de listar PLantillas por Nombre
+
+      const refreshList = () => {
+
+        const stringURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/listarPlantillasACxNombre";
+            axios
+                .post(stringURL, {
+                    nombrePlantilla: filterValue,
+                })
+                .then(function (response) {
+                    console.log(response.data.PlantillaAC);
+                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+                    setPlantillas(plantillasInvertidas);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+  
 
 
     return (
@@ -655,8 +682,43 @@ export default function Info(props) {
                     
                     <div style={{ marginBottom: '25px' }}>
 
-                    <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                    <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos</p>
                     </div>
+
+                    <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        gap: ".6rem",
+                        marginBottom:"25px",
+                    }}
+                >
+                    <div className="divBuscador">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[100%]"
+                            placeholder="Ingresa una plantilla..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            variant="faded"
+                        />
+                    </div>
+                    <NextUIButton
+                        className="text-slate-50"
+                        color="primary"
+                        // onClick={refreshList}
+                    >
+                        Buscar
+                    </NextUIButton>
+                </div>
+
+
+
+
                     <ul className="cardPlantillaKBList">
                     {plantillas.map((plantilla) => (
                         <li key={plantilla.idPlantillaAC}>
@@ -697,7 +759,7 @@ export default function Info(props) {
                     color="primary"
                     onClick={finalizarModalP}
                     >
-                    Continuar
+                    Usar
                     </NextUIButton>
                 </ModalFooter>
                 </>
