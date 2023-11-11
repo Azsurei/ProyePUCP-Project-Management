@@ -66,17 +66,17 @@ async function insertarEquipoYParticipantes(req, res, next) {
     }
 }
 
-async function eliminar(req,res,next){
-    const { idEquipo } = req.params;
+async function eliminar(idEquipo){
+    //const { idEquipo } = req.body;
     console.log(`Procediendo: Eliminar/Equipos ${idEquipo}...`);
     try {
         const result = await funcEliminar(idEquipo);
-        res.status(200).json({
-            idEquipo,
-            message: "Equipos eliminado"});
+        // res.status(200).json({
+        //     idEquipo,
+        //     message: "Equipos eliminado"});
         console.log(`Equipos ${idEquipo} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/Equipos", error);
     }
 }
 
@@ -85,7 +85,7 @@ async function funcEliminar(idEquipo) {
         const query = `CALL ELIMINAR_EQUIPOS_X_ID_EQUIPO(?);`;
         [results] = await connection.query(query,[idEquipo]);
     } catch (error) {
-        console.log("ERROR en Eliminar/Equipos", error);
+        console.log("ERROR 2 en Eliminar/Equipos", error);
         return 0;
     }
     return 1;

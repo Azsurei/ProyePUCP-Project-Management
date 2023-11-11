@@ -42,17 +42,17 @@ async function funcCrear(idProyecto){
     return idActaReunion;
 }
 
-async function eliminar(req,res,next){
-    const { idActaReunion } = req.params;
+async function eliminar(idActaReunion){
+    //const { idActaReunion } = req.body;
     console.log(`Procediendo: Eliminar/ActaReunion ${idActaReunion}...`);
     try {
         const result = await funcEliminar(idActaReunion);
-        res.status(200).json({
-            idActaReunion,
-            message: "ActaReunion eliminado"});
+        // res.status(200).json({
+        //     idActaReunion,
+        //     message: "ActaReunion eliminado"});
         console.log(`ActaReunion ${idActaReunion} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/ActaReunion", error);
     }
 }
 
@@ -61,7 +61,7 @@ async function funcEliminar(idActaReunion) {
         const query = `CALL ELIMINAR_ACTA_REUNION_X_ID_ACTA_REUNION(?);`;
         [results] = await connection.query(query,[idActaReunion]);
     } catch (error) {
-        console.log("ERROR en Eliminar/ActaReunion", error);
+        console.log("ERROR 2 en Eliminar/ActaReunion", error);
         return 0;
     }
     return 1;

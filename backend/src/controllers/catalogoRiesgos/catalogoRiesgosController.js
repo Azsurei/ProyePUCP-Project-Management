@@ -1,16 +1,16 @@
 const connection = require("../../config/db");
 
-async function eliminar(req,res,next){
-    const { idCatalogo } = req.params;
+async function eliminar(idCatalogo){
+    //const { idCatalogo } = req.body;
     console.log(`Procediendo: Eliminar/CatalogoRiesgos ${idCatalogo}...`);
     try {
         const result = await funcEliminar(idCatalogo);
-        res.status(200).json({
-            idCatalogo,
-            message: "CatalogoRiesgos eliminado"});
+        // res.status(200).json({
+        //     idCatalogo,
+        //     message: "CatalogoRiesgos eliminado"});
         console.log(`CatalogoRiesgos ${idCatalogo} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/CatalogoRiesgos", error);
     }
 }
 
@@ -19,7 +19,7 @@ async function funcEliminar(idCatalogo) {
         const query = `CALL ELIMINAR_CATALOGO_RIESGOS_X_ID_CATALOGO_RIESGOS(?);`;
         [results] = await connection.query(query,[idCatalogo]);
     } catch (error) {
-        console.log("ERROR en Eliminar/CatalogoRiesgos", error);
+        console.log("ERROR 2 en Eliminar/CatalogoRiesgos", error);
         return 0;
     }
     return 1;

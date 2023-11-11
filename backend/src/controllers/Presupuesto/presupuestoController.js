@@ -98,16 +98,16 @@ async function obtenerPresupuesto(req,res,next){
     }
 }
 
-async function eliminar(req,res,next){
-    const { idPresupuesto } = req.params;
+async function eliminar(idPresupuesto){
+    //const { idPresupuesto } = req.body;
     console.log(`Procediendo: Eliminar/Presupuesto ${idPresupuesto}...`);
     try {
         const result = await funcEliminar(idPresupuesto);
-        res.status(200).json({
-            message: "Presupuesto eliminado"});
+        // res.status(200).json({
+        //     message: "Presupuesto eliminado"});
         console.log(`Presupuesto ${idPresupuesto} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/Presupuesto", error);
     }
 }
 
@@ -116,7 +116,7 @@ async function funcEliminar(idPresupuesto) {
         const query = `CALL ELIMINAR_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
         [results] = await connection.query(query,[idPresupuesto]);
     } catch (error) {
-        console.log("ERROR en Eliminar/Presupuesto", error);
+        console.log("ERROR 2 en Eliminar/Presupuesto", error);
         return 0;
     }
     return 1;

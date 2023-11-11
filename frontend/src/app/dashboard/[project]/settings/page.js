@@ -1,6 +1,8 @@
 "use client";
 import { Button, Divider } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 function UsersScreen () {
     return (
@@ -56,6 +58,46 @@ function DatesScreen () {
     );
 }
 
+const deleteProject = () => {
+    const idProyecto = 200;
+
+    const resultado = axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/${idProyecto}/listarHerramientasDeProyecto`);
+    const herramientas = resultado.data.herramientas;
+    axios
+        .delete(
+            process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/eliminarProyecto',
+            {
+                idProyecto: idProyecto,
+                herramientas: herramientas,
+            }
+        )
+        .then(function (response) {
+            console.log(response);
+            console.log("Proyecto eliminado con éxito");
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+};
+
+function DeleteScreen () {
+    return(
+        <div className="flex flex-col flex-1 h-[100%] space-y-2">
+            <div className="flex flex-col mb-3">
+                <p className="text-2xl font-medium text-mainHeaders">Eliminar Proyecto</p>
+                <p className="text-slate-400">
+                    Elimina tu proyecto, tus herramientas y todos los datos asociados a él. ¡Ten cuidado!
+                </p>
+            </div>
+
+            <Divider></Divider>
+
+            <Button color="danger" className="max-w-xs w-60">
+                Eliminar Proyecto
+            </Button>
+        </div>
+    );
+}
 
 export default function Settings() {
     const [settingsState, setSettingsState] = useState("users");
@@ -114,11 +156,24 @@ export default function Settings() {
                         >
                             Fechas
                         </p>
+                        <p
+                            className={
+                                settingsState === "delete"
+                                    ? btnStyleActive
+                                    : btnStyle
+                            }
+                            onClick={() => {
+                                setSettingsState("delete");
+                            }}
+                        >
+                            Eliminar
+                        </p>
                     </div>
     
                     {settingsState==="users" && <UsersScreen></UsersScreen>}
                     {settingsState==="tools" && <ToolsScreen></ToolsScreen>}
                     {settingsState==="dates" && <DatesScreen></DatesScreen>}
+                    {settingsState==="delete" && <DeleteScreen></DeleteScreen>}
                 </div>
             </div>
         </div>

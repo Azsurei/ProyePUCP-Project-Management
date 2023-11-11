@@ -64,17 +64,17 @@ async function eliminarCampo(req,res,next){
     }
 }
 
-async function eliminar(req,res,next){
-    const { idActaConstitucion } = req.params;
+async function eliminar(idActaConstitucion){
+    //const { idActaConstitucion } = req.body;
     console.log(`Procediendo: Eliminar/ActaConstitucion ${idActaConstitucion}...`);
     try {
         const result = await funcEliminar(idActaConstitucion);
-        res.status(200).json({
-            idActaConstitucion,
-            message: "ActaConstitucion eliminado"});
+        // res.status(200).json({
+        //     idActaConstitucion,
+        //     message: "ActaConstitucion eliminado"});
         console.log(`ActaConstitucion ${idActaConstitucion} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/ActaConstitucion", error);
     }
 }
 
@@ -83,7 +83,7 @@ async function funcEliminar(idActaConstitucion) {
         const query = `CALL ELIMINAR_ACTA_CONSTITUCION_X_ID_ACTA_CONSTITUCION(?);`;
         [results] = await connection.query(query,[idActaConstitucion]);
     } catch (error) {
-        console.log("ERROR en Eliminar/ActaConstitucion", error);
+        console.log("ERROR 2 en Eliminar/ActaConstitucion", error);
         return 0;
     }
     return 1;

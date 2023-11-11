@@ -1,8 +1,65 @@
 ###
+GET http://localhost:8080/api/proyecto/200/listarHerramientasDeProyecto HTTP/1.1
+Content-Type: application/json
+
+###
 DELETE http://localhost:8080/api/proyecto/eliminarProyecto HTTP/1.1
 Content-Type: application/json
 
 {
-  "idProyecto": 200
-  
+  "idProyecto": 200,
+  "herramientas": [
+    {
+      "idHerramienta": 1,
+      "idHerramientaCreada": 85
+    },
+    {
+      "idHerramienta": 2,
+      "idHerramientaCreada": 70
+    },
+    {
+      "idHerramienta": 3,
+      "idHerramientaCreada": 67
+    },
+    {
+      "idHerramienta": 4,
+      "idHerramientaCreada": 62
+    },
+    {
+      "idHerramienta": 5,
+      "idHerramientaCreada": 38
+    },
+    {
+      "idHerramienta": 6,
+      "idHerramientaCreada": 30
+    },
+    {
+      "idHerramienta": 7,
+      "idHerramientaCreada": 50
+    },
+    {
+      "idHerramienta": 8,
+      "idHerramientaCreada": 35
+    },
+    {
+      "idHerramienta": 9,
+      "idHerramientaCreada": 55
+    },
+    {
+      "idHerramienta": 10,
+      "idHerramientaCreada": 41
+    },
+    {
+      "idHerramienta": 11,
+      "idHerramientaCreada": 46
+    },
+    {
+      "idHerramienta": 12,
+      "idHerramientaCreada": null
+    },
+    {
+      "idHerramienta": 13,
+      "idHerramientaCreada": 56
+    }
+  ]
 }

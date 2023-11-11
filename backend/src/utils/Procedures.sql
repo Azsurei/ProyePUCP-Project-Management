@@ -641,23 +641,23 @@ BEGIN
 		);
     UPDATE TemaReunion SET activo = 0 
 		WHERE idLineaActaReunion IN (
-			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion
+			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion
 		);
 
     UPDATE ParticipanteXReunion SET activo = 0
 		WHERE idLineaActaReunion IN (
-			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion
+			SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion
 		);
 	UPDATE Acuerdo SET activo = 0
 		WHERE idTemaReunion IN (
 			SELECT idTemaReunion FROM TemaReunion
             WHERE idLineaActaReunion IN (
-				SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = p_idActaReunion
+				SELECT idLineaActaReunion FROM LineaActaReunion WHERE idActaReunion = _idActaReunion
 			)
 		);
 	UPDATE ResponsableAcuerdo SET activo = 0 
     WHERE idAcuerdo IN (
-        SELECT idAcuerdo FROM Acuerdos 
+        SELECT idAcuerdo FROM Acuerdo 
         WHERE idTemaReunion IN (
             SELECT idTemaReunion FROM TemaReunion 
             WHERE idLineaActaReunion IN (
@@ -1652,7 +1652,7 @@ CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_MATRIZ_COMUNICACIONES_X_ID_MATRIZ_
 )
 BEGIN
 	UPDATE MatrizComunicacion SET activo = 0 WHERE idMatrizComunicacion = _idMatrizComunicacion;
-	UPDATE Comunicacion SET activo = 0 WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad;
+	UPDATE Comunicacion SET activo = 0 WHERE idMatrizComunicacion = _idMatrizComunicacion;
 END; //
 DELIMITER ;
 
@@ -3487,6 +3487,20 @@ BEGIN
     SELECT _idUsuarioXEquipo AS idUsuarioXEquipo;
 END$
 
+DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPOS_X_ID_EQUIPO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_EQUIPOS_X_ID_EQUIPO`(
+	IN _idEquipo INT
+)
+BEGIN
+	UPDATE Equipo SET activo = 0 WHERE idEquipo = _idEquipo;
+	UPDATE UsuarioXEquipoXRolEquipo SET activo = 0 WHERE idEquipo = _idEquipo;
+    UPDATE RolEquipo SET activo = 0
+		WHERE idRolEquipo IN (
+			SELECT DISTINCT idRolEquipo FROM UsuarioXEquipoXRolEquipo WHERE idEquipo = _idEquipo
+		);
+END; //
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPO_X_IDEQUIPO;
 DELIMITER $
@@ -4097,6 +4111,9 @@ BEGIN
     UPDATE Tarea SET activo = 0 WHERE idEquipo = _idEquipo;
     SELECT _idEquipo AS idEquipo;
 END$
+
+
+
 
 DROP PROCEDURE IF EXISTS INSERTAR_ROL_MIEMBRO_LIDER;
 DELIMITER $

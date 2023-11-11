@@ -1,16 +1,16 @@
 const connection = require("../../config/db");
 
-async function eliminar(req,res,next){
-    const { idMatrizComunicacion } = req.params;
+async function eliminar(idMatrizComunicacion){
+    //const { idMatrizComunicacion } = req.body;
     console.log(`Procediendo: Eliminar/MatrizComunicacion ${idMatrizComunicacion}...`);
     try {
         const result = await funcEliminar(idMatrizComunicacion);
-        res.status(200).json({
-            idMatrizComunicacion,
-            message: "MatrizComunicacion eliminado"});
+        // res.status(200).json({
+        //     idMatrizComunicacion,
+        //     message: "MatrizComunicacion eliminado"});
         console.log(`MatrizComunicacion ${idMatrizComunicacion} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/MatrizComunicacion", error);
     }
 }
 
@@ -19,7 +19,7 @@ async function funcEliminar(idProductBacklog) {
         const query = `CALL ELIMINAR_MATRIZ_COMUNICACIONES_X_ID_MATRIZ_C(?);`;
         [results] = await connection.query(query,[idProductBacklog]);
     } catch (error) {
-        console.log("ERROR en Eliminar/MatrizComunicacion", error);
+        console.log("ERROR 2 en Eliminar/MatrizComunicacion", error);
         return 0;
     }
     return 1;
