@@ -8,7 +8,7 @@ function TasksGraphicView({ chartGeneralData, chartSprintData }) {
 
 
     return (
-        <div className="flex-1 border border-red-500 flex flex-col relative">
+        <div className="flex-1 flex flex-col relative">
             <div className="flex flex-row gap-3 items-center">
                 <p className="font-semibold text-2xl text-mainHeaders flex-none">
                     Grafico de culminacion por sprints
@@ -25,7 +25,7 @@ function TasksGraphicView({ chartGeneralData, chartSprintData }) {
                 </Tabs>
             </div>
 
-            <div className="absolute top-unit-10 bottom-0 left-0 right-0 border border-green-500">
+            <div className="absolute top-unit-10 bottom-0 left-0 right-0 ">
                 <Bar
                     data={
                         selectedTab === "vGeneral"

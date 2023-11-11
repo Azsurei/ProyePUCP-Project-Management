@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TrashIcon from "./TrashIcon";
 import "@/styles/dashboardStyles/projectStyles/kanbanStyles/KanbanBoard.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Avatar, AvatarGroup } from "@nextui-org/react";
 
 function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
     const [mouseIsOver, setMouseIsOver] = useState(false);
@@ -34,6 +35,11 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
         setMouseIsOver(false);
     };
 
+    useEffect(() => {
+        console.log("DATA TASK");
+        console.log(task);
+    }, []);
+
     if (isDragging) {
         return (
             <div
@@ -59,12 +65,14 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
             style={style}
             {...attributes}
             {...listeners}
-            onClick={()=>{openViewTask(task.idTarea)}}
+            onClick={() => {
+                openViewTask(task.idTarea);
+            }}
             className="TaskContainerCard 
             bg-taskBackgroundColor
             p-2.5 h-[100px]
             min-h-[100px] items-center flex text-left rounded-xl
-            hover:ring-2 hover:ring-inset hover:ring-rose-500
+            hover:ring-2 hover:ring-inset hover:ring-primary
             cursor-grab relative"
             onMouseEnter={() => {
                 setMouseIsOver(true);
@@ -77,11 +85,46 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
                 className="
                 my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden 
                 whitespace-pre-wrap TaskContainerCard
-            "
+                "
             >
                 {task.sumillaTarea}
             </p>
-            {mouseIsOver && (
+
+            <AvatarGroup
+                //isBordered
+                max={1}
+                renderCount={(count) => (
+                    <Avatar
+                        isBordered={false}
+                        color={"primary"}
+                        className="w-[35px] h-[35px] min-w-[35px] min-h-[35px] text-tiny"
+                        fallback={<p className="font-[Montserrat] font-medium text-sm">+{count}</p>}
+                    />
+                )}
+                className=" absolute bottom-1 right-1 px-1 py-1"
+            >
+                {task.usuarios.map((user) => {
+                    return (
+                        <Avatar
+                            isBordered
+                            color="default"
+                            //as="button"
+                            key={user.idUsuario}
+                            className="transition-transform min-w-[35px] min-h-[35px] max-w-[35px] max-h-[35px]"
+                            src={user.imgLink}
+                            fallback={
+                                <p className=" bg-mainUserIcon">
+                                    {user.nombres[0] +
+                                        (user.apellidos !== null
+                                            ? user.apellidos[0]
+                                            : "")}
+                                </p>
+                            }
+                        />
+                    );
+                })}
+            </AvatarGroup>
+            {/* {mouseIsOver && (
                 <button
                     onClick={() => {
                         deleteTask(task.idTarea);
@@ -100,7 +143,7 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
                 >
                     <TrashIcon />
                 </button>
-            )}
+            )} */}
         </div>
     );
 }

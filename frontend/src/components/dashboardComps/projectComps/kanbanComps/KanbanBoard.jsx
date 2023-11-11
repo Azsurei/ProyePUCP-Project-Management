@@ -24,7 +24,7 @@ import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import { FlagRefreshContext } from "@/app/dashboard/[project]/backlog/layout";
 axios.defaults.withCredentials = true;
 
-export default function KanbanBoard({ projectId }) {
+export default function KanbanBoard({ projectName, projectId }) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { flagRefresh, setFlagRefresh } = useContext(FlagRefreshContext);
 
@@ -321,7 +321,7 @@ export default function KanbanBoard({ projectId }) {
                 currentTask={currentTaskViewing}
                 goToTaskDetail={(idTarea) => {
                     console.log("redireccionando a tarea");
-                    router.push("/dashboard");
+                    router.push('/dashboard/' + projectName + '=' + projectId + '/cronograma');
                 }}
             />
 

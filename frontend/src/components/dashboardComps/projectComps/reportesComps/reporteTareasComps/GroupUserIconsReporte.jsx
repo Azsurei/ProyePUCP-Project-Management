@@ -13,7 +13,7 @@ export default function GroupUserIconsReporte({ idTarea, listUsers, beImg }) {
         <AvatarGroup
             isGrid={true}
             isBordered
-            max={3}
+            max={2}
             renderCount={(count) => (
                     <Avatar
                     isBordered={false}
