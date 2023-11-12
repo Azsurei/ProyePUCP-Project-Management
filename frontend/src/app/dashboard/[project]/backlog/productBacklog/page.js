@@ -22,6 +22,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Tooltip,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
@@ -245,45 +246,29 @@ export default function ProductBacklog(props) {
                 return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
                 return (
-                    // <div className="relative flex justify-end items-center gap-2">
-                    //     <Dropdown>
-                    //         <DropdownTrigger>
-                    //             <Button isIconOnly size="sm" variant="light">
-                    //                 <VerticalDotsIcon className="text-default-300" />
-                    //             </Button>
-                    //         </DropdownTrigger>
-                    //         <DropdownMenu>
-                    //             <DropdownItem onClick={() => {
-                    //                 setRoutering(data)
-                    //             }}>
-
-                    //                     Editar
-                    //             </DropdownItem>
-
-                    //             <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
-                    //         </DropdownMenu>
-                    //     </Dropdown>
-                    // </div>
-                    <div
-                        className="flex"
-                        style={{ marginTop: "12px", marginLeft: "15px" }}
-                    >
-                        <button
-                            className=""
-                            type="button"
-                            onClick={() => {
-                                setRoutering(data);
-                            }}
-                        >
-                            <img src="/icons/editar.svg" />
-                        </button>
-                        <button
-                            className=""
-                            type="button"
-                            onClick={() => toggleModal(data)}
-                        >
-                            <img src="/icons/eliminar.svg" />
-                        </button>
+                    <div className="relative flex justify-center items-center gap-2">
+                        <div className="flex items-center">
+                            <Tooltip content="Editar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data);
+                                    }}
+                                >
+                                    <img src="/icons/editar.svg" />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Eliminar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => toggleModal(data)}
+                                >
+                                    <img src="/icons/eliminar.svg" />
+                                </button>
+                            </Tooltip>
+                        </div>
                     </div>
                 );
             case "NombrePrioridad":

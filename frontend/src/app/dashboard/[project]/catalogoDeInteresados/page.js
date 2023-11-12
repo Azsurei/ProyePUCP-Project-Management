@@ -131,7 +131,7 @@ export default function CatalogoDeInteresados(props) {
             name: " ",
             uid: "actions",
             className:
-                "w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left",
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
             sortable: false,
         },
     ];
