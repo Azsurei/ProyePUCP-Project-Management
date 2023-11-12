@@ -30,10 +30,12 @@ import ReporteCronograma from "@/components/dashboardComps/projectComps/reportes
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
 import { setId } from "@material-tailwind/react/components/Tabs/TabsContext";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 export default function ReporteGrupoProyectos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const {sessionData} = useContext(SessionContext);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -103,7 +105,7 @@ export default function ReporteGrupoProyectos(props) {
                                     <MyCombobox
                                         urlApi={
                                             process.env.NEXT_PUBLIC_BACKEND_URL +
-                                            "/api/proyecto/grupoProyectos/listarGruposProyecto"
+                                            "/api/proyecto/grupoProyectos/listarGruposProyecto/" + sessionData.idUsuario
                                         }
                                         property="grupos"
                                         nameDisplay="nombre"

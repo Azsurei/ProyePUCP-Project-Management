@@ -93,7 +93,7 @@ export default function ReportePresupuesto(props) {
     const DataProyectos = async () => {
       const fetchData = async () => {
           try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarProyectosXGrupo/${idGrupoProyecto}`);
+            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
             const data = response.data.proyectos;
             // setProyectos(response.data.proyectos);
             const proyectosConTotales = calcularTotales(data);
@@ -543,13 +543,9 @@ console.log('Fechas únicas:', uniqueDatesArray);
         <>
             {isClient && (  <div className="ReporteGrupoPresupuesto">
                                 <div className="flex">
-                                    <div className="GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
-                                        <Tabs key="uniqueKeyForTabs" color="success" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
-                                            {proyectos.map((proyecto, index) => (
-                                                    <Tab key={index} title={proyecto.nombreProyecto}/>  
-                                            ))}
-                                        </Tabs>
-                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={300} width={680}/>
+                                    <div className="GraficoCircular ">
+                                        
+                                        <PieChart options={options} series={series} client={isClient} title={"Grafico Estado"} height={1500} width = {580}/>
                                     </div>
                                     <div className="TablaComparacion flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
                                         <MyDynamicTable 
@@ -569,14 +565,19 @@ console.log('Fechas únicas:', uniqueDatesArray);
                                     </div>
                                 </div>
 
-                                <div className="flex">
+                                
                                     <div className="GraficoBarras">
-                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={680}/>
+                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={1000}/>
                                     </div>
-                                    <div className="GraficoCircular">
-                                        <PieChart options={options} series={series} client={isClient} title={"Grafico Estado"} height={1500} width = {580}/>
+                                    <div className=" GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                    <Tabs key="uniqueKeyForTabs" color="success" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
+                                            {proyectos.map((proyecto, index) => (
+                                                    <Tab key={index} title={proyecto.nombreProyecto}/>  
+                                            ))}
+                                        </Tabs>
+                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={300} width={1000}/>
                                     </div>
-                                </div>
+                                
 
                             </div>
             )}    
