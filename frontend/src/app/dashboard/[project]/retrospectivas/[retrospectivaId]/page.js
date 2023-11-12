@@ -124,7 +124,7 @@ function RetrospectivaView(props) {
                                 color="primary"
                                 className="font-[Montserrat] w-[190px]"
                             >
-                                Salir de modo edición
+                                Guardar
                             </Button>
                         )}
                     </div>
@@ -182,14 +182,33 @@ function RetrospectivaView(props) {
     }
 
     function handleSave() {
-        router.push(
-            "/dashboard/" +
-                projectName +
-                "=" +
-                projectId +
-                "/retrospectivas/" +
-                idLineaRetrospectiva
-        );
+        // Calculate the counts based on the number of items in each list
+        const cantBien = mainItemsList[0]?.items?.length || 0;
+        const cantMal = mainItemsList[1]?.items?.length || 0;
+        const cantQueHacer = mainItemsList[2]?.items?.length || 0;
+
+        const saveData = {
+            idLineaRetrospectiva: idLineaRetrospectiva,
+            idSprint: 1, // Assuming idSprint is static or retrieved from elsewhere
+            cantBien: cantBien,
+            cantMal: cantMal,
+            cantQueHacer: cantQueHacer
+        };
+
+        const saveURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/retrospectiva/modificarLineaRetrospectiva";
+
+        axios.put(saveURL, saveData)
+            .then(response => {
+                console.log('Save successful:', response);
+                toast.success('Retrospectiva actualizada con éxito');
+
+                // Redirect after saving
+                router.push("/dashboard/" + projectName + "=" + projectId + "/retrospectivas/" + idLineaRetrospectiva);
+            })
+            .catch(error => {
+                console.error('Error saving:', error);
+                toast.error('Error al actualizar la retrospectiva');
+            });
     }
 }
 export default RetrospectivaView;
