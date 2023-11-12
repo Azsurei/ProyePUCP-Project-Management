@@ -216,6 +216,10 @@ export default function ListProject(props) {
                 aria-label="Project Status Tabs"
                 color={"warning"}
                 variant={"bordered"}
+                classNames={{
+                    tabList: "gap-2 relative",
+                    tabContent: "group-data-[selected=true]:text-[#ffffff] font-bold"
+                }}
             >
                 <Tab
                     key="enProceso"
