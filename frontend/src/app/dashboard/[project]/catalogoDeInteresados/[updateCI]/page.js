@@ -699,8 +699,8 @@ export default function CatalogoDeInteresadosRegister(props) {
                         </div>
                     )}
                 </div>
-                {editMode === true && (
-                    <div className="containerBottomCI">
+                <div className="containerBottomCI">
+                    {editMode === true && (
                         <div className="twoButtonsCI">
                             <div className="buttonContainerCI">
                                 <Modal
@@ -709,13 +709,15 @@ export default function CatalogoDeInteresadosRegister(props) {
                                     textBody="¿Seguro que quiere descartar el registro de la información?"
                                     colorButton="w-36 bg-slate-100 text-black"
                                     oneButton={false}
-                                    secondAction={() => router.push(
-                                        "/dashboard/" +
-                                            projectName +
-                                            "=" +
-                                            projectId +
-                                            "/catalogoDeInteresados"
-                                    )}
+                                    secondAction={() =>
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/catalogoDeInteresados"
+                                        )
+                                    }
                                     textColor="red"
                                 />
                                 <Modal
@@ -761,8 +763,8 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 />
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
             <Toaster
                 position="bottom-left"
