@@ -89,11 +89,12 @@ async function listarDatosProyectosXGrupo(req, res, next) {
     const queryP1 = `CALL LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(?);`;
     const queryP2 = `CALL LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO(?);`;
 
-    //de entregables
-    const queryE1 = `CALL LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(?);`;
-
     //de tareas
     const queryT1 = "CALL LISTAR_TAREAS_GENERALES_X_ID_CRONOGRAMA(?);";
+
+    //de entregables
+    const queryE1 = `CALL LISTAR_ENTREGABLES_X_ID_EDT(?);`;
+    const queryE2 = `CALL LISTAR_TAREAS_ULTIMO_NIVEL_X_ID_CRONOGRAMA(?);`;
 
     try {
         const [results] = await connection.query(query, [idGrupoProyecto]);
@@ -104,7 +105,6 @@ async function listarDatosProyectosXGrupo(req, res, next) {
                 proyecto.idProyecto,
             ]);
             const idHerramientas = resultsB[0][0];
-            console.log("TODOS LOS IDS => " + JSON.stringify(idHerramientas));
 
             proyecto.EDT = {};
             proyecto.cronograma = {};
@@ -140,6 +140,7 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             proyecto.cronograma = cronograma;
             proyecto.presupuesto = presupuesto;
 
+
             //para presupuesto
             const [resultsP1] = await connection.query(queryP1, [
                 proyecto.presupuesto.idPresupuesto,
@@ -153,13 +154,44 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             const egresos = resultsP2[0];
             proyecto.presupuesto.egresos = egresos;
 
+
             //para tareas
             const [resultsT1] = await connection.query(queryT1, [
-                proyecto.cronograma.idCronograma
-            ])
+                proyecto.cronograma.idCronograma,
+            ]);
             const tareas = resultsT1[0];
             proyecto.cronograma.tareas = tareas;
 
+
+            //para entregables
+            const [resultsE1] = await connection.query(queryE1, [
+                proyecto.EDT.idEDT,
+            ]);
+            const [resultsE2] = await connection.query(queryE2, [
+                proyecto.cronograma.idCronograma,
+            ]);
+            const entregables = resultsE1[0];
+            const tareasUltimoNivel = resultsE2[0];
+            proyecto.EDT.entregables = entregables;
+
+            for (const entregable of proyecto.EDT.entregables) {
+                const filteredTareas = tareasUltimoNivel.filter(
+                    (tarea) => (tarea.idEntregable = entregable.idEntregable)
+                );
+                const cantidadTareas = filteredTareas.length;
+
+                let porcentajeSumarizado = 0;
+                for (const tareas of filteredTareas) {
+                    porcentajeSumarizado +=
+                        tareas.porcentajeProgreso / cantidadTareas;
+                }
+
+                const formattedProgress =
+                    typeof porcentajeSumarizado === "number"
+                        ? porcentajeSumarizado.toFixed(2)
+                        : porcentajeSumarizado;
+                entregable.porcentajeProgreso = formattedProgress;
+            }
         }
 
         res.status(200).json({

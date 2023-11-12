@@ -82,7 +82,7 @@ function ReporteEntregables(props) {
         setIsLoadingSmall(true);
         const tareasURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/reportes/generarReporteEntregables/" +
+            "/api/proyecto/reporte/traerInformacionReporteEntregable/" +
             projectId;
         axios
             .get(tareasURL)

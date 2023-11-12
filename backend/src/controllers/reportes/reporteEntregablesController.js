@@ -6,7 +6,7 @@ const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
 
-async function generarReporteEntregables(req, res, next) {
+async function traerInfoReporteEntregables(req, res, next) {
     const { idProyecto } = req.params;
     try {
         const query = `CALL LISTAR_ENTREGABLES_X_ID_PROYECTO(?);`;
@@ -372,5 +372,6 @@ function prueba(entregables) {
 module.exports = {
     generarReporte,
     obtenerReporte,
-    exportarReporteExcel
+    exportarReporteExcel,
+    traerInfoReporteEntregables
 };
