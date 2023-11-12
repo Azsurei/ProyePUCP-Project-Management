@@ -1,14 +1,20 @@
 const connection = require("../../config/db");
 
 async function insertarGrupoProyectos(req, res, next) {
-    const { nombreGrupo, proyectos } = req.body;
-    const query = `CALL INSERTAR_GRUPO_PROYECTO(?);`;
+    const { nombreGrupo, idUsuario, proyectos } = req.body;
+
+    const listProyectos = proyectos.map((proyect) => {
+        return parseInt(proyect);
+    });
+
+    const query = `CALL INSERTAR_GRUPO_PROYECTO(?,?);`;
     const query1 = `CALL INSERTAR_PROYECTO_EN_GRUPO(?,?);`;
     try {
-        const [results] = await connection.query(query,[nombreGrupo]);
+        const [results] = await connection.query(query,[nombreGrupo, idUsuario]);
         const idGrupoDeProyecto = results[0][0].idGrupoDeProyecto;
-        for(let proyecto of proyectos){
-            await connection.query(query1, [proyecto.idProyecto, idGrupoDeProyecto]);
+
+        for(let proyecto of listProyectos){
+            await connection.query(query1, [proyecto, idGrupoDeProyecto]);
         }
         res.status(200).json({
             message: "Se insertó exitosamente",
@@ -18,9 +24,10 @@ async function insertarGrupoProyectos(req, res, next) {
     }
 }
 async function listarGruposProyecto(req,res,next){
+    const { idUsuario } = req.params;
     try {
-        const query = `CALL LISTAR_GRUPO_PROYECTOS;`;
-        const [results] = await connection.query(query);
+        const query = `CALL LISTAR_GRUPO_PROYECTOS_X_ID_USUARIO(?);`;
+        const [results] = await connection.query(query,[idUsuario]);
         const grupos = results[0];
         res.status(200).json({grupos, message: "Grupos listados"});
     } catch (error) {
