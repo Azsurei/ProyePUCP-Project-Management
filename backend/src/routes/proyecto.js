@@ -48,6 +48,8 @@ routerProyecto.post("/listaProyectosPorNombre", verifyToken, proyectoController.
 routerProyecto.get("/:idProyecto/listarProyectoYGrupoDeProyecto", verifyToken, proyectoController.listarProyectoYGrupoProyecto);
 routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar);
 
+routerProyecto.get("/verInfoProyecto/:idProyecto", verifyToken, proyectoController.verInfoProyecto);
+
 // Sobre Usuarios del Proyecto
 routerProyecto.post("/listarUsuariosXidRolXidProyecto", verifyToken, proyectoController.listarUsuariosXRolXProyecto);
 routerProyecto.get("/listarUsuariosXdProyecto/:idProyecto", proyectoController.listarUsuariosXProyecto);
