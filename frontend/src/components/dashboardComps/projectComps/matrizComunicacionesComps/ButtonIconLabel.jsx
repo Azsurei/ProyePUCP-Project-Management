@@ -2,9 +2,9 @@ import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/ButtonIconLab
 import React from "react";
 import {Button} from "@nextui-org/react";
 
-export default function IconLabel({icon,label1,label2,className,onClickFunction}) {
+export default function IconLabel({icon,label1,label2,className,onClickFunction, isDisabled}) {
     return (
-        <Button color="primary" className={className} onClick={onClickFunction}>
+        <Button color="primary" className={className} onClick={!isDisabled ? onClickFunction : undefined}>
             <img src={icon} className="iconoMC"/>
             <div className="labelMC">
                 {label1}{/* <span>{label2}</span> */}

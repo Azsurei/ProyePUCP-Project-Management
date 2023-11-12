@@ -21,6 +21,7 @@ export default function Example({
     valorParam,
     widthCombo,
     onSelect2,
+    isDisabled = false,
 }) {
     const [selected, setSelected] = useState("");
     const [query, setQuery] = useState("");
@@ -82,7 +83,10 @@ export default function Example({
                         onSelectValor(selectedItem[valorParam]);
                     }
                     if (typeof onSelect2 === "function") {
-                        onSelect2(selectedItem[idParam],selectedItem[valorParam]);
+                        onSelect2(
+                            selectedItem[idParam],
+                            selectedItem[valorParam]
+                        );
                     }
                 }}
             >
@@ -107,12 +111,14 @@ export default function Example({
                             }}
                             {...(selected === "" ? { value: initialName } : {})}
                         />
-                        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronUpDownIcon
-                                className="h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                            />
-                        </Combobox.Button>
+                        {!isDisabled && (
+                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                />
+                            </Combobox.Button>
+                        )}
                     </div>
                     <Transition
                         as={Fragment}
