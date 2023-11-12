@@ -14,6 +14,7 @@ routerPlantillas.put("/seleccionarPlantillaAC",plantillaActaConstitucionControll
 //Kanban
 routerPlantillas.post("/guardarPlantillaKanban",plantillaKanbanController.guardarPlantillaKanban);
 routerPlantillas.get("/listarPlantillasKanban/:idUsuario",plantillaKanbanController.listarPlantillasKanban);
+routerPlantillas.get("/listarPlantillasKanbanXNombre/:idUsuario/:nombre",plantillaKanbanController.listarPlantillasKanbanXNombre);
 routerPlantillas.delete("/eliminarPlantillaKanban",plantillaKanbanController.eliminarPlantillaKanban);
 routerPlantillas.put("/seleccionarPlantillaKanban",plantillaKanbanController.seleccionarPlantillaKanban);
 
