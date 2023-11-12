@@ -4577,6 +4577,48 @@ BEGIN
     END IF;
 END$
 
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_MR(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaMR INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaMR(idUsuario,activo,nombrePlantilla) 
+    VALUES(_idUsuario,1,_nombrePlantilla);
+    SET _idPlantillaMR = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaMR AS idPlantillaMR;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_MR;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_MR(
+    IN _idMatrizResponsabilidad INT
+)
+BEGIN
+    SELECT letraRol, nombreRol, colorRol, descripcionRol
+    FROM ResponsabilidadRol
+    WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANTILLA_MR_CAMPOS;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANTILLA_MR_CAMPOS(
+    IN _idPlantillaMR INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descripcionRol VARCHAR(255)
+)
+BEGIN
+    INSERT INTO PlantillaMRDatos(idPlantillaMR, letraRol, nombreRol, colorRol, descripcionRol, activo)
+    VALUES(_idPlantillaMR, _letraRol, _nombreRol, _colorRol, _descripcionRol, 1);
+END$
+
 ########################################
 ## REPORTES
 ########################################
