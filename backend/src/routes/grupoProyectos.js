@@ -5,10 +5,7 @@ const grupoProyectosController = require("../controllers/grupoProyectos/grupoPro
 
 routerGrupoProyectos.post("/insertarGrupoProyectos", grupoProyectosController.insertarGrupoProyectos);
 routerGrupoProyectos.get("/listarGruposProyecto/:idUsuario", grupoProyectosController.listarGruposProyecto);
-
-//old
 routerGrupoProyectos.get("/listarProyectosXGrupo/:idGrupoProyecto", grupoProyectosController.listarProyectosXGrupo);
-//new
-routerGrupoProyectos.get("/listarDatosProyectosXGrupo/:idGrupoProyecto", grupoProyectosController.listarDatosProyectosXGrupo);
 
+routerGrupoProyectos.get("/listarDatosProyectosXGrupo/:idGrupoProyecto", grupoProyectosController.listarDatosProyectosXGrupo);
 module.exports.routerGrupoProyectos = routerGrupoProyectos;

@@ -1345,3 +1345,27 @@ CREATE TABLE PlantillaKanbanColumnas(
 )
 ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS PlantillaMR;
+CREATE TABLE PlantillaMR(
+    idPlantillaMR INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    nombrePlantilla VARCHAR(100),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario (idUsuario)
+
+)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS PlantillaMRDatos;
+CREATE TABLE PlantillaMRDatos(
+    idPlantillaMRDatos INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaMR INT,
+    letraRol VARCHAR(10),
+    nombreRol VARCHAR(100),
+    colorRol VARCHAR(100),
+    descripcionRol VARCHAR(255),
+    activo tinyint NOT NULL,
+    FOREIGN KEY(idPlantillaMR) REFERENCES PlantillaMR (idPlantillaMR)
+)
+ENGINE = InnoDB;
+

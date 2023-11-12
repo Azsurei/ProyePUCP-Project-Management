@@ -18,6 +18,7 @@ import {
     ModalBody,
     ModalFooter,
     ModalContent,
+
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import React, { useEffect, useState, useContext, useRef } from "react";
@@ -28,11 +29,29 @@ import CardContribuyente from "@/components/dashboardComps/projectComps/reportes
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import BarGraphic from "@/components/BarGraphic";
 axios.defaults.withCredentials = true;
 export default function ReporteCronograma(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [isClient, setIsClient] = useState(false);
+    const idGrupoProyecto = props.groupProject;
+    const urlPrueba = "http://localhost:8080/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/6";
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+              console.log("Id Grupo: ", idGrupoProyecto);
+              const data = response.data.proyectos;
+              console.log(`Estos son los proyectos:`, data);
+              
+            } catch (error) {
+              console.error('Error al obtener los proyectos:', error);
+            }
+          };
+            fetchData();
+        setIsClient(true);
+    }, []);
     const columns = [
         {
             name: 'Nombre',
@@ -87,7 +106,8 @@ export default function ReporteCronograma(props) {
             progreso: 0.75,
             tareas: 10,
             entrega: 'Cumplido',
-            id: 1
+            id: 1,
+            idCronograma: 1
         },
         {
             nombre: 'Proyecto B',
@@ -96,13 +116,13 @@ export default function ReporteCronograma(props) {
             progreso: 0.60,
             tareas: 15,
             entrega: 'Atrasado',
-            id: 2
+            id: 2,
+            idCronograma: 1
         },
         // ... Otros conjuntos de datos
     ];
     
-      
-      
+    
       
       const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
@@ -292,28 +312,146 @@ export default function ReporteCronograma(props) {
         setIsClient(true);
       }, []);
       
-      
+      const seriesBar = [
+        {
+          data: [44, 55, 41, 67, 22, 43],
+        },
+      ];
+      const optionsBar = {
+        chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            horizontal: true,
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        xaxis: {
+          categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+            'United States', 'China', 'Germany'
+          ],
+        }
+      };
+      const seriesTime = [
+        {
+          data: [
+            {
+              x: 'Analysis',
+              y: [
+                new Date('2019-02-27').getTime(),
+                new Date('2019-03-04').getTime()
+              ],
+              fillColor: '#008FFB'
+            },
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-04').getTime(),
+                new Date('2019-03-08').getTime()
+              ],
+              fillColor: '#00E396'
+            },
+            {
+              x: 'Coding',
+              y: [
+                new Date('2019-03-07').getTime(),
+                new Date('2019-03-10').getTime()
+              ],
+              fillColor: '#775DD0'
+            },
+            {
+              x: 'Testing',
+              y: [
+                new Date('2019-03-08').getTime(),
+                new Date('2019-03-12').getTime()
+              ],
+              fillColor: '#FEB019'
+            },
+            {
+              x: 'Deployment',
+              y: [
+                new Date('2019-03-12').getTime(),
+                new Date('2019-03-17').getTime()
+              ],
+              fillColor: '#FF4560'
+            }
+          ]
+        }
+      ]
+      const optionsTime = {
+        chart: {
+            height: 350,
+            type: 'rangeBar'
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+              distributed: true,
+              dataLabels: {
+                hideOverflowingLabels: false
+              }
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function(val, opts) {
+              var label = opts.w.globals.labels[opts.dataPointIndex]
+              var a = moment(val[0])
+              var b = moment(val[1])
+              var diff = b.diff(a, 'days')
+              return label + ': ' + diff + (diff > 1 ? ' days' : ' day')
+            },
+            style: {
+              colors: ['#f3f4f5', '#fff']
+            }
+          },
+          xaxis: {
+            type: 'datetime'
+          },
+          yaxis: {
+            show: false
+          },
+          grid: {
+            row: {
+              colors: ['#f3f4f5', '#fff'],
+              opacity: 1
+            }
+          }
+        };
     return (
         <>
             {isClient && (  <div className="ReporteGrupoPresupuesto">
                                 
-                                    
-                                    <div className="TablaComparacion flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
-                                        <MyDynamicTable 
-                                        label ="Tabla Proyectos" 
-                                        bottomContent={bottomContent} 
-                                        selectedKeys={selectedKeys}
-                                        setSelectedKeys={setSelectedKeys}
-                                        sortDescriptor = {sortDescriptor}
-                                        setSortDescriptor={setSortDescriptor}
-                                        topContent={topContent}
-                                        columns={columns}
-                                        sortedItems={sortedItems}
-                                        renderCell={renderCell}
-                                        idKey="id"
-                                        selectionMode="single"
-                                    />
+                                    <div className="flex">
+                                        <div className="Grafico Barras">
+                                            {/* <MyDynamicTable 
+                                            label ="Tabla Proyectos" 
+                                            bottomContent={bottomContent} 
+                                            selectedKeys={selectedKeys}
+                                            setSelectedKeys={setSelectedKeys}
+                                            sortDescriptor = {sortDescriptor}
+                                            setSortDescriptor={setSortDescriptor}
+                                            topContent={topContent}
+                                            columns={columns}
+                                            sortedItems={sortedItems}
+                                            renderCell={renderCell}
+                                            idKey="id"
+                                            selectionMode="single"
+                                            /> */}
+                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={750}/>
+                                        </div>
+                                        <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+
+                                        </div>  
                                     </div>
+                                    
+
+                                    <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4"></div>
                                     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                                         <ModalContent>
                                             {(onClose) => (

@@ -8,7 +8,8 @@ export default function ContainerRequirementsCI({
     indice,
     updateRequirementsField,
     requirements,
-    functionRemove
+    functionRemove,
+    isDisabled = false,
 }) {
     const inputId1 = `customPlaceholderRequirementsInput1-${indice}`;
 
@@ -23,7 +24,7 @@ export default function ContainerRequirementsCI({
     };
 
     return (
-        <div  className="containerBack">
+        <div className="containerBack">
             <Textarea
                 className="paddingTop custom-label"
                 label={`Requerimiento ${indice}`}
@@ -35,7 +36,7 @@ export default function ContainerRequirementsCI({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 placeholder="Escribe aquí"
                 maxLength="450"
                 onChange={(e) => {
@@ -43,16 +44,19 @@ export default function ContainerRequirementsCI({
                     isTextTooLong(e.target.value);
                 }}
                 value={requirements.requirements}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
-            <img
-                src="/icons/icon-trash.svg"
-                alt="Eliminar"
-                className="iconDelete2"
-                onClick={() => {
-                    console.log(indice-1);
-                    functionRemove(indice - 1);
-                }}
-            />
+            {!isDisabled && (
+                <img
+                    src="/icons/icon-trash.svg"
+                    alt="Eliminar"
+                    className="iconDelete2"
+                    onClick={() => {
+                        console.log(indice - 1);
+                        functionRemove(indice - 1);
+                    }}
+                />
+            )}
         </div>
     );
 }

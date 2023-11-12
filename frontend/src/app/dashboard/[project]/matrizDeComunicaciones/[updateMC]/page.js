@@ -50,8 +50,6 @@ export default function MatrizComunicacionesUpdate(props) {
     const isTextTooLong1 = sumilla.length > 400;
     const isTextTooLong2 = detail.length > 400;
     const isTextTooLong3 = groupReceiver.length > 400;
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [matrizComunicaciones, setMatrizComunicaciones] = useState(null);
 
     useEffect(() => {
@@ -398,27 +396,6 @@ export default function MatrizComunicacionesUpdate(props) {
                     />
                 </div>
                 <div className="containerBottomMC">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
                     {editMode === true && (
                         <div className="twoButtonsMC">
                             <div className="buttonContainerMC">
@@ -428,7 +405,15 @@ export default function MatrizComunicacionesUpdate(props) {
                                     textBody="¿Seguro que quiere descartar la actualización de la información?"
                                     colorButton="w-36 bg-slate-100 text-black"
                                     oneButton={false}
-                                    secondAction={() => router.back()}
+                                    secondAction={() => {
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/matrizDeComunicaciones"
+                                        );
+                                    }}
                                     textColor="red"
                                 />
                                 <Modal
