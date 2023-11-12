@@ -98,11 +98,24 @@ async function listarDatosProyectosXGrupo(req, res, next) {
 
         for(const proyecto of proyectos){
             const [resultsB] = await connection.query(queryA1,[proyecto.idProyecto]);
+            console.log(resultsB[0]);
             const idHerramientas = resultsB[0];
 
-            proyecto.EDT.idEDT = idHerramientas.idEDT;
-            proyecto.cronograma.idCronograma = idHerramientas.idCronograma;
-            proyecto.presupuesto.idPresupuesto = idHerramientas.idPresupuesto;
+            const EDT = {
+                idEDT: idHerramientas.idEDT
+            }
+            const cronograma = {
+                idCronograma: idHerramientas.idCronograma
+            }
+            const presupuesto = {
+                idPresupuesto: idHerramientas.idPresupuesto,
+                ingresos: [],
+                egresos: [],
+            }
+
+            proyecto.EDT = EDT;
+            proyecto.cronograma = cronograma;
+            proyecto.presupuesto = presupuesto;
 
             //para presupuesto
             const [resultsP1] = await connection.query(queryP1, [proyecto.presupuesto.idPresupuesto]);

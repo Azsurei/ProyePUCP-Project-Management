@@ -41,6 +41,38 @@ async function listarPlantillasAC(req, res, next) {
     }
 }
 
+async function listarPlantillasAC(req, res, next) {
+    const {idUsuario,nombre} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_ACTACONSTITUCION(?);`;
+    try {
+        //Traemos todas las plantillas de Acta de Constitucion del usuario
+        const [results] = await connection.query(query, [idUsuario]);
+        const plantillasAC = results[0];
+        res.status(200).json({
+            plantillasAC,
+            message: `Se listó las plantilas de Acta de constitucion del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarPlantillasACXNombre(req, res, next) {
+    const {idUsuario,nombre} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_ACTACONSTITUCIONXNOMBRE(?,?);`;
+    try {
+        //Traemos todas las plantillas de Acta de Constitucion del usuario
+        const [results] = await connection.query(query, [idUsuario,nombre]);
+        const plantillasAC = results[0];
+        res.status(200).json({
+            plantillasAC,
+            message: `Se listó las plantilas de Acta de constitucion del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function eliminarPlantillaAC(req, res, next) {
     const {idPlantillaAC} = req.body;
     const query = `CALL ELIMINAR_PLANTILLA_ACTACONSTITUCION(?);`;
@@ -81,5 +113,6 @@ module.exports = {
     guardarPlantillaAC,
     listarPlantillasAC,
     eliminarPlantillaAC,
-    seleccionarPlantillaAC
+    seleccionarPlantillaAC,
+    listarPlantillasACXNombre
 };
