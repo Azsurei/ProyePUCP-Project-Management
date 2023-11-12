@@ -8,6 +8,7 @@ const plantillaKanbanController = require("../controllers/plantillas/plantillaKa
 //Acta Constitucion
 routerPlantillas.post("/guardarPlantillaAC",plantillaActaConstitucionController.guardarPlantillaAC);
 routerPlantillas.get("/listarPlantillasAC/:idUsuario",plantillaActaConstitucionController.listarPlantillasAC);
+routerPlantillas.get("/listarPlantillasACXNombre/:idUsuario/:nombre",plantillaActaConstitucionController.listarPlantillasACXNombre);
 routerPlantillas.delete("/eliminarPlantillaAC",plantillaActaConstitucionController.eliminarPlantillaAC);
 routerPlantillas.put("/seleccionarPlantillaAC",plantillaActaConstitucionController.seleccionarPlantillaAC);
 

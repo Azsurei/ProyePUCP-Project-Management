@@ -4369,6 +4369,20 @@ BEGIN
     AND activo = 1;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_ACTACONSTITUCIONXNOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_ACTACONSTITUCIONXNOMBRE(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    SELECT *
+    FROM PlantillaActaConstitucion
+    WHERE idUsuario = _idUsuario
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
+    AND activo = 1;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_ACTACONSTITUCION;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_PLANTILLA_ACTACONSTITUCION(
@@ -4498,7 +4512,7 @@ BEGIN
     SELECT *
     FROM PlantillaKanban
     WHERE idUsuario = _idUsuario
-    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%');
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
     AND activo = 1;
 END$
 

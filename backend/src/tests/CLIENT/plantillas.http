@@ -60,6 +60,10 @@ Content-Type: application/json
   "idPlantillaKanban": 
 }
 
-###
-GET http://localhost:8080/api/proyecto/plantillas/listarPlantillasKanbanXNombre/97/a HTTP/1.1
+###a
+GET http://localhost:8080/api/proyecto/plantillas/listarPlantillasKanbanXNombre/96/a HTTP/1.1
+Content-Type: application/json
+
+###a
+GET http://localhost:8080/api/proyecto/plantillas/listarPlantillasACXNombre/96/a HTTP/1.1
 Content-Type: application/json
