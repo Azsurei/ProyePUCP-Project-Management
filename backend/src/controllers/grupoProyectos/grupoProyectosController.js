@@ -37,10 +37,7 @@ async function listarGruposProyecto(req,res,next){
 }
 
 
-//un arreglo de proyectos
-//cada proyecto debe tener data de presupuesto
-//cada proyecto debe tener data de entregables
-//cada proyecto debe tener data de tareas
+
 
 async function listarProyectosXGrupo(req, res, next) {
     const { idGrupoProyecto  } = req.params;
@@ -73,15 +70,47 @@ async function listarProyectosXGrupo(req, res, next) {
 }
 
 
+//un arreglo de proyectos
+//cada proyecto debe tener data de presupuesto
+//cada proyecto debe tener data de entregables
+//cada proyecto debe tener data de tareas
+
+
 async function listarDatosProyectosXGrupo(req, res, next) {
     const { idGrupoProyecto  } = req.params;
 
+    //de proyecto
+    const query = `CALL LISTAR_PROYECTOS_X_GRUPO_PROYECTOS(?);`;
+
+    //de herramientas
+    const queryA1 = `CALL LISTAR_EDT_CRONOGRAMA_PRESUPUESTO_X_ID_PROYECTO(?);`;
+
     //de presupuesto
-    const query = `CALL LISTAR_PRESUPUESTO_EDT_CRONOGRAMA_X_ID_GRUPO_PROYECTO(?);`;
+    const queryP1 = `CALL LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(?);`;
+    const queryP2 = `CALL LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO(?);`; 
 
     try {
         const [results] = await connection.query(query,[idGrupoProyecto]);
         const proyectos = results[0];
+
+        for(const proyecto of proyectos){
+            const [resultsB] = await connection.query(queryA1,[proyecto.idProyecto]);
+            const idHerramientas = resultsB[0];
+
+            proyecto.EDT.idEDT = idHerramientas.idEDT;
+            proyecto.cronograma.idCronograma = idHerramientas.idCronograma;
+            proyecto.presupuesto.idPresupuesto = idHerramientas.idPresupuesto;
+
+
+            const [resultsP1] = await connection.query(queryP1, [proyecto.presupuesto.idPresupuesto]);
+            const ingresos = resultsP1[0];
+            proyecto.presupuesto.ingresos = ingresos;
+
+            const [resultsP2] = await connection.query(queryP2, [proyecto.presupuesto.idPresupuesto]);
+            const egresos = resultsP2[0];
+            proyecto.presupuesto.egresos = egresos;
+        }
+
         res.status(200).json({
             proyectos,
             message: "Se listó exitosamente",
