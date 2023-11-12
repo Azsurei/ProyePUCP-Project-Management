@@ -212,22 +212,33 @@ export default function MatrizComunicacionesUpdate(props) {
                         Actualizar información requerida
                     </div>
                     <div>
-                        <Button
-                            color="primary"
-                            onPress={() => {
-                                router.push(
-                                    "/dashboard/" +
-                                        projectName +
-                                        "=" +
-                                        projectId +
-                                        "/matrizDeComunicaciones/" +
-                                        props.params.updateMC +
-                                        "=edit"
-                                );
-                            }}
-                        >
-                            Editar
-                        </Button>
+                        {!editMode ? (
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/matrizDeComunicaciones/" +
+                                            props.params.updateMC +
+                                            "=edit"
+                                    );
+                                }}
+                            >
+                                Editar
+                            </Button>
+                        ) : (
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    router.back();
+                                }}
+                            >
+                                Salir de edición
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <div>
