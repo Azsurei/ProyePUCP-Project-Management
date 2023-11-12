@@ -2915,7 +2915,7 @@ DELIMITER $
 CREATE PROCEDURE LISTAR_COMUNICACION_X_IDCOMUNICACION(IN _idComunicacion INT)
 BEGIN
     SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, 
-    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, c.grupoReceptor, c.activo
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, u.imgLink, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
     JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
     JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia

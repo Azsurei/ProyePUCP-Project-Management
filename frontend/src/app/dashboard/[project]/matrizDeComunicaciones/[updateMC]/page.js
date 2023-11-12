@@ -65,6 +65,7 @@ export default function MatrizComunicacionesUpdate(props) {
             setSelectedNameFormat(mcData.nombreFormato);
             setFormat(mcData.idFormato);
             const miembro = {
+                imagen: mcData.imgLink,
                 correoElecronico: mcData.correoElectronico,
                 idUsuario: mcData.responsableDeComunicar,
                 apellidos: mcData.apellidos,
@@ -282,7 +283,7 @@ export default function MatrizComunicacionesUpdate(props) {
                                 <div className="iconLabel2MC">
                                     <Avatar
                                         className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
-                                        src={component.imgLink}
+                                        src={component.imagen}
                                         fallback={
                                             <p className="profilePicMC">
                                                 {component.nombres[0] +
