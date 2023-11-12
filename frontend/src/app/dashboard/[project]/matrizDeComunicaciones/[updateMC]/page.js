@@ -428,7 +428,15 @@ export default function MatrizComunicacionesUpdate(props) {
                                     textBody="¿Seguro que quiere descartar la actualización de la información?"
                                     colorButton="w-36 bg-slate-100 text-black"
                                     oneButton={false}
-                                    secondAction={() => router.back()}
+                                    secondAction={() => {
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/matrizDeComunicaciones"
+                                        );
+                                    }}
                                     textColor="red"
                                 />
                                 <Modal
