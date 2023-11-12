@@ -3165,7 +3165,7 @@ DROP PROCEDURE IF EXISTS LISTAR_RIESGO_X_IDRIESGO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RIESGO_X_IDRIESGO(IN _idRiesgo INT)
 BEGIN
-    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, r.detalleRiesgo,
+    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, u.imgLink, r.detalleRiesgo,
     r.causaRiesgo, r.impactoRiesgo, r.estado, r.activo, r.idProbabilidad, rp.nombreProbabilidad, rp.valorProbabilidad, r.idImpacto, ri.nombreImpacto, ri.valorImpacto
 	FROM Riesgo AS r
     LEFT JOIN Usuario AS u ON r.duenoRiesgo = u.idUsuario

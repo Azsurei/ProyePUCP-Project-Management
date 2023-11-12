@@ -3,7 +3,7 @@ import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerC
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
-import { Textarea } from "@nextui-org/react";
+import { Textarea, Avatar } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter, useSearchParams } from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
@@ -75,6 +75,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 new Date(crData.fechaIdentificacion).toISOString().split("T")[0]
             );
             const miembro = {
+                imgLink: crData.imgLink,
                 correoElectronico: crData.correoElectronico,
                 idUsuario: crData.duenoRiesgo,
                 apellidos: crData.apellidos,
@@ -272,7 +273,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 (responsePlans) => responsePlans.responsePlans.trim() === ""
             ) ||
             contingencyPlans.some(
-                (contingencyPlans) => contingencyPlans.contingencyPlans.trim() === ""
+                (contingencyPlans) =>
+                    contingencyPlans.contingencyPlans.trim() === ""
             )
         );
     }
@@ -479,7 +481,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 Registrar riesgo
             </div>
             <div className="riskRegisterCR">
-                <div className="titleRiskRegisterCR dark:text-white">Actualizar nuevo riesgo</div>
+                <div className="titleRiskRegisterCR dark:text-white">
+                    Actualizar nuevo riesgo
+                </div>
                 <div>
                     <Textarea
                         isClearable
@@ -629,12 +633,19 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         {selectedMiembrosList.length > 0 ? (
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
-                                    <p className="profilePicCR">
-                                        {component.nombres[0] +
-                                            (component.apellidos !== null
-                                                ? component.apellidos[0]
-                                                : "")}
-                                    </p>
+                                    <Avatar
+                                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                        src={component.imgLink}
+                                        fallback={
+                                            <p className="profilePicCR">
+                                                {component.nombres[0] +
+                                                    (component.apellidos !==
+                                                    null
+                                                        ? component.apellidos[0]
+                                                        : "")}
+                                            </p>
+                                        }
+                                    />
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
                                             `${component.nombres} ${
@@ -672,12 +683,20 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             selectedMiembrosList1.map((component) => (
                                 <div className="containerUserMultiple">
                                     <div className="iconLabel3CR">
-                                        <p className="profilePicCR">
-                                            {component.nombres[0] +
-                                                (component.apellidos !== null
-                                                    ? component.apellidos[0]
-                                                    : "")}
-                                        </p>
+                                        <Avatar
+                                            className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                            src={component.imgLink}
+                                            fallback={
+                                                <p className="profilePicCR">
+                                                    {component.nombres[0] +
+                                                        (component.apellidos !==
+                                                        null
+                                                            ? component
+                                                                  .apellidos[0]
+                                                            : "")}
+                                                </p>
+                                            }
+                                        />
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
                                                 `${component.nombres} ${
