@@ -42,6 +42,22 @@ async function listarPlantillasKanban(req, res, next) {
     }
 }
 
+async function listarPlantillasKanbanXNombre(req, res, next) {
+    const {idUsuario,nombre} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_KANBAN_X_NOMBRE(?,?);`;
+    try {
+        //Traemos todas las plantillas de Kanban del usuario
+        const [results] = await connection.query(query, [idUsuario,nombre]);
+        const plantillasKanban = results[0];
+        res.status(200).json({
+            plantillasKanban,
+            message: `Se listó las plantilas de Kanban del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function eliminarPlantillaKanban(req, res, next) {
     const {idPlantillaKanban} = req.body;
     const query = `CALL ELIMINAR_PLANTILLA_KANBAN(?);`;
@@ -83,5 +99,6 @@ module.exports = {
     guardarPlantillaKanban,
     listarPlantillasKanban,
     eliminarPlantillaKanban,
-    seleccionarPlantillaKanban
+    seleccionarPlantillaKanban,
+    listarPlantillasKanbanXNombre
 };
