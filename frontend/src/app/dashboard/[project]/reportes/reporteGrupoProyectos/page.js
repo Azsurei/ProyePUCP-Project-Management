@@ -86,7 +86,7 @@ export default function ReporteGrupoProyectos(props) {
                             <ReporteAlcance isClient={isClient}/>
                         </Tab>
                         <Tab key="music" title="Cronograma">
-                            <ReporteCronograma isClient={isClient}/>
+                            <ReporteCronograma isClient={isClient} groupProject={selectedGrupoProyecto}/>
                         </Tab>
                         <Tab key="presupuesto" title="Presupuesto">
                             <ReportePresupuesto isClient={isClient} groupProject={selectedGrupoProyecto}/>

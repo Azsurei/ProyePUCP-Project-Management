@@ -158,7 +158,7 @@ async function listarDatosProyectosXGrupo(req, res, next) {
                 proyecto.cronograma.idCronograma
             ])
             const tareas = resultsT1[0];
-            proyecto.presupuesto.tareas = tareas;
+            proyecto.cronograma.tareas = tareas;
 
         }
 

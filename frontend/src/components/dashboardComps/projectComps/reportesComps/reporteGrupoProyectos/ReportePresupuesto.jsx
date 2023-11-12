@@ -93,15 +93,18 @@ export default function ReportePresupuesto(props) {
     const DataProyectos = async () => {
       const fetchData = async () => {
           try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarProyectosXGrupo/${idGrupoProyecto}`);
+            console.log("Id Grupo: ", idGrupoProyecto);
             const data = response.data.proyectos;
+           
             // setProyectos(response.data.proyectos);
             const proyectosConTotales = calcularTotales(data);
+            console.log("Paso1: ");
             setProyectos(proyectosConTotales);
             console.log(`Estos son los proyectos:`, data);
-              
+            
           } catch (error) {
-            console.error('Error al obtener las líneas de ingreso:', error);
+            console.error('Error al obtener los proyectos:', error);
           }
         };
           fetchData();

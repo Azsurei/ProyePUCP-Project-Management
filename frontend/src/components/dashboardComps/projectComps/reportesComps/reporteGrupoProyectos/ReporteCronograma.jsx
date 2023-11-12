@@ -35,6 +35,23 @@ export default function ReporteCronograma(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [isClient, setIsClient] = useState(false);
+    const idGrupoProyecto = props.groupProject;
+    const urlPrueba = "http://localhost:8080/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/6";
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+              console.log("Id Grupo: ", idGrupoProyecto);
+              const data = response.data.proyectos;
+              console.log(`Estos son los proyectos:`, data);
+              
+            } catch (error) {
+              console.error('Error al obtener los proyectos:', error);
+            }
+          };
+            fetchData();
+        setIsClient(true);
+    }, []);
     const columns = [
         {
             name: 'Nombre',
@@ -411,7 +428,7 @@ export default function ReporteCronograma(props) {
             {isClient && (  <div className="ReporteGrupoPresupuesto">
                                 
                                     <div className="flex">
-                                        <div className="Grafico Barras flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                        <div className="Grafico Barras">
                                             {/* <MyDynamicTable 
                                             label ="Tabla Proyectos" 
                                             bottomContent={bottomContent} 
