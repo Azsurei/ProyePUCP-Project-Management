@@ -7,7 +7,7 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner, Avatar } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/ContainerScenario2";
@@ -53,6 +53,7 @@ export default function ProductBacklogUpdate(props) {
     const [requirementFieldsOriginales, setRequirementFieldsOriginales] =
         useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
+    const [imagen, setImagen] = useState(null);
     const [historiaUsuario, setHistoriaUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState("");
@@ -75,6 +76,7 @@ export default function ProductBacklogUpdate(props) {
             setQuiero(historiaUsuario.hu[0].quiero);
             setPara(historiaUsuario.hu[0].para);
             setDatosUsuario(historiaUsuario.hu[0].NombreUsuario);
+            setImagen(historiaUsuario.hu[0].Imagen);
             const criteriosAceptacionOriginales =
                 historiaUsuario.criteriosAceptacion;
             const scenarioFieldsActualizados =
@@ -508,10 +510,18 @@ export default function ProductBacklogUpdate(props) {
                             </div>
                         ) : (
                             <div className="iconLabel2">
-                                <p className="profilePic">
-                                    {datosUsuario.split(" ")[0][0] +
-                                        datosUsuario.split(" ")[1][0]}
-                                </p>
+                                <Avatar
+                                    //isBordered
+                                    //as="button"
+                                    className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                    src={imagen}
+                                    fallback={
+                                        <p className="profilePic">
+                                            {datosUsuario.split(" ")[0][0] +
+                                                datosUsuario.split(" ")[1][0]}
+                                        </p>
+                                    }
+                                />
                                 <div className="labelDatoUsuario">{`${datosUsuario}`}</div>
                             </div>
                         )}
