@@ -4619,6 +4619,43 @@ BEGIN
     VALUES(_idPlantillaMR, _letraRol, _nombreRol, _colorRol, _descripcionRol, 1);
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_MR(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaMR
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_MR_X_NOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_MR_X_NOMBRE(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    SELECT *
+    FROM PlantillaMR
+    WHERE idUsuario = _idUsuario
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_MR(
+    IN _idPlantillaMR INT
+)
+BEGIN
+    UPDATE PlantillaMR SET activo = 0 WHERE idPlantillaMR = _idPlantillaMR;
+    UPDATE PlantillaMRDatos SET activo = 0 WHERE idPlantillaMR = _idPlantillaMR;
+END$
+
+
 ########################################
 ## REPORTES
 ########################################

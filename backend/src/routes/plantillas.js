@@ -22,5 +22,8 @@ routerPlantillas.put("/seleccionarPlantillaKanban",plantillaKanbanController.sel
 
 //Matriz de Responsabilidades
 routerPlantillas.post("/guardarPlantillaMR",plantillaMRController.guardarPlantillaMR);
+routerPlantillas.get("/listarPlantillasMR/:idUsuario",plantillaMRController.listarPlantillasMR);
+routerPlantillas.get("/listarPlantillasMRXNombre/:idUsuario/:nombre",plantillaMRController.listarPlantillasMRXNombre);
+routerPlantillas.delete("/eliminarPlantillaMR",plantillaMRController.eliminarPlantillaMR);
 
 module.exports.routerPlantillas = routerPlantillas;
