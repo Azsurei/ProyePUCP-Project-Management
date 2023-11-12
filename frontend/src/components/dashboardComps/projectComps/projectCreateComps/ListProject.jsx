@@ -40,6 +40,15 @@ const roleColor = [
 ];
 
 function ProjectCard(props) {
+    let msgNoDates;
+    console.log(props.fechaInicio);
+    if(props.fechaInicio === null || props.fechaFin === null || props.fechaInicio === "0000-00-00" || props.fechaFin === "0000-00-00"){
+        msgNoDates = "Sin fechas definidas";
+    }
+    else{
+        msgNoDates = 0;
+    }
+
     const startDate = new Date(props.fechaInicio);
     const endDate = new Date(props.fechaFin);
 
@@ -53,7 +62,7 @@ function ProjectCard(props) {
     const formattedEndDate = endDate.toLocaleDateString();
 
     useEffect(() => {
-        console.log("ROL TEST " + props.roleId);
+        console.log(msgNoDates);
     });
 
     return (
@@ -61,7 +70,8 @@ function ProjectCard(props) {
             <p className="cardTitleProject">{props.name}</p>
 
             <p className="cardDates">
-                {`${formattedStartDate} - ${formattedEndDate} (${diffInDays} días)`}
+                {msgNoDates === 0 && `${formattedStartDate} - ${formattedEndDate} (${diffInDays} días)`}
+                {msgNoDates !== 0 && `${msgNoDates}`}
             </p>
 
             {/* <div className={"teamTag bg-" + roleColor[props.roleId - 1].color}>
