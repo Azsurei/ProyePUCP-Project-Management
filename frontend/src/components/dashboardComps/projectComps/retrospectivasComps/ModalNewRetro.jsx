@@ -26,7 +26,7 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const msgEmptyField = "Este campo no puede estar vacio";
-
+    
     useEffect(() => {
         if (isOpen === true) {
             setRetroName("");
@@ -141,18 +141,18 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
                                 <Button
                                     isLoading={isLoading}
                                     color="primary"
-                                    onPress={()=>{
+                                    onPress={() => {
                                         let allValid = true;
-                                        if(retroName === ""){
+                                        if (retroName.trim() === "") {
                                             setValidName(false);
                                             allValid = false;
                                         }
-                                        if(retroSprint.size === 0){
+                                        if (retroSprint.size === 0) {
                                             setValidSprint(false);
                                             allValid = false;
                                         }
 
-                                        if(allValid === true){
+                                        if (allValid) {
                                             finalizarModal();
                                         }
                                     }}
