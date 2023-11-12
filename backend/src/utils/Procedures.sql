@@ -1840,7 +1840,7 @@ CREATE PROCEDURE LISTAR_HU_X_ID(
 )
 BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
-    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario"
+    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario", U.imgLink as "Imagen"
     FROM HistoriaDeUsuario HU
     JOIN Epica E
     ON HU.idEpica = E.idEpica

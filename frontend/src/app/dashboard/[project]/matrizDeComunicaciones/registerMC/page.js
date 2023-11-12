@@ -3,7 +3,7 @@ import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/registerMC.cs
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
-import { Textarea } from "@nextui-org/react";
+import { Textarea, Avatar} from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
@@ -227,12 +227,19 @@ export default function MatrizComunicacionesRegister(props) {
                         {selectedMiembrosList.length > 0 ? (
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2MC">
-                                    <p className="profilePicMC">
-                                        {component.nombres[0] +
-                                            (component.apellidos !== null
-                                                ? component.apellidos[0]
-                                                : "")}
-                                    </p>
+                                    <Avatar
+                                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                        src={component.imgLink}
+                                        fallback={
+                                            <p className="profilePicMC">
+                                                {component.nombres[0] +
+                                                    (component.apellidos !==
+                                                    null
+                                                        ? component.apellidos[0]
+                                                        : "")}
+                                            </p>
+                                        }
+                                    />
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
                                             `${component.nombres} ${
