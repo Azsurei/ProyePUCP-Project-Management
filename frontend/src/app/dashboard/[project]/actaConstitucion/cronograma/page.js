@@ -657,6 +657,7 @@ export default function CronogramaActa(props) {
                                                     Fecha tope
                                                 </p>
                                                 <DateInput
+                                                    isEditable={true}
                                                     className={""}
                                                     isInvalid={!validDate}
                                                     onChangeHandler={(e) => {
