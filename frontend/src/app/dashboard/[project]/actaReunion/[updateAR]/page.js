@@ -80,7 +80,10 @@ export default function editarActaReunion(props) {
                     'Content-Type': 'application/json'
                 }
             });
-
+            console.log("=============================================");
+            console.log("Respuesta del listar");
+            console.log(response.data.lineaActaReunion);
+            console.log("=============================================");
             // Update the actaReunion state with the fetched data
             setActaReunion(response.data);
             console.log(response.data);

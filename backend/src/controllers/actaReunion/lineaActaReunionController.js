@@ -105,17 +105,21 @@ async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,no
         [results] = await connection.query(query,[idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo]);
         const idLineaActaReunion = results[0][0].idLineaActaReunion;
 
-        console.log(idLineaActaReunion,results[0][0]);
+        //console.log(idLineaActaReunion,results[0][0]);
+        console.log("Temas:==========================================");
+        console.log(temas);
+        console.log("Comentarios:==========================================");
+        console.log(comentarios);
         for(const tema of temas){
-            temaReunionController.funcCrear(idLineaActaReunion,tema.descripcion,tema.acuerdos);
+            await temaReunionController.funcCrear(idLineaActaReunion,tema.descripcion,tema.acuerdos);
         }
 
         for(const participante of participantes){
-            participanteXReunionController.funcCrear(idLineaActaReunion,participante.idUsuarioXRolXProyecto,participante.asistio);
+            await participanteXReunionController.funcCrear(idLineaActaReunion, participante.idUsuarioXRolXProyecto, participante.asistio);
         }
 
         for(comentario of comentarios){
-            comentarioReunionController.funcCrear(idLineaActaReunion,comentario.descripcion);
+            await comentarioReunionController.funcCrear(idLineaActaReunion, comentario.descripcion);
         }
         return idLineaActaReunion;
     } catch (error) {
