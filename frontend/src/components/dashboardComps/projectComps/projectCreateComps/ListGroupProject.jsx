@@ -6,8 +6,8 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
-import { SessionContext } from "@/app/dashboard/layout";
 import { Avatar, Chip } from "@nextui-org/react";
+import { SessionContext } from "@/app/grupoProyectos/layout";
 axios.defaults.withCredentials = true;
 function GroupCard(props) {
     const startDate = new Date(props.fechaInicio);
@@ -81,7 +81,9 @@ function GroupCard(props) {
 }
 export default function ListGroupProject(props) {
     const router = useRouter();
+    const {sessionData} = useContext(SessionContext);
     const { filterValue, onSearchChange } = props;
+
     function handleClick(proy_id, proy_name) {
         // router.push("/dashboard/" + proy_name + "=" + proy_id);
     }
@@ -93,7 +95,7 @@ export default function ListGroupProject(props) {
         let gruposArray;
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/grupoProyectos/listarGruposProyecto";
+            "/api/proyecto/grupoProyectos/listarGruposProyecto/" + sessionData.idUsuario;
 
         axios
             .get(stringURL)
@@ -103,7 +105,7 @@ export default function ListGroupProject(props) {
 
                 gruposArray = gruposArray.map((grupos) => {
                     return {
-                        id: grupos.idGrupoProyecto,
+                        id: grupos.idGrupoDeProyecto,
                         name: grupos.nombre,
                     };
                 });
