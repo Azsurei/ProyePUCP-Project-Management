@@ -92,6 +92,9 @@ async function listarDatosProyectosXGrupo(req, res, next) {
     //de entregables
     const queryE1 = `CALL LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(?);`;
 
+    //de tareas
+    const queryT1 = "CALL LISTAR_TAREAS_GENERALES_X_ID_CRONOGRAMA(?);";
+
     try {
         const [results] = await connection.query(query, [idGrupoProyecto]);
         const proyectos = results[0];
@@ -150,7 +153,13 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             const egresos = resultsP2[0];
             proyecto.presupuesto.egresos = egresos;
 
-            //para entregables
+            //para tareas
+            const [resultsT1] = await connection.query(queryT1, [
+                proyecto.cronograma.idCronograma
+            ])
+            const tareas = resultsT1[0];
+            proyecto.presupuesto.tareas = tareas;
+
         }
 
         res.status(200).json({

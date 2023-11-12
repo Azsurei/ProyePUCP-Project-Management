@@ -212,7 +212,7 @@ export default function MatrizComunicacionesUpdate(props) {
                         Actualizar información requerida
                     </div>
                     <div>
-                        {!editMode ? (
+                        {!editMode && (
                             <Button
                                 color="primary"
                                 onPress={() => {
@@ -229,41 +229,28 @@ export default function MatrizComunicacionesUpdate(props) {
                             >
                                 Editar
                             </Button>
-                        ) : (
-                            <Button
-                                color="primary"
-                                onPress={() => {
-                                    router.back();
-                                }}
-                            >
-                                Salir de edición
-                            </Button>
                         )}
                     </div>
                 </div>
                 <div>
-                    {matrizComunicaciones ? (
-                        <Textarea
-                            label="Sumilla de la información requerida"
-                            variant="bordered"
-                            labelPlacement="outside"
-                            placeholder="Escriba aquí"
-                            isRequired
-                            className="custom-label"
-                            value={sumilla}
-                            onValueChange={setSumilla}
-                            maxLength="450"
-                            isInvalid={isTextTooLong1}
-                            errorMessage={
-                                isTextTooLong1
-                                    ? "El texto debe ser como máximo de 400 caracteres."
-                                    : ""
-                            }
-                            {...(!editMode ? { isReadOnly: true } : {})}
-                        />
-                    ) : (
-                        <div>Cargando datos...</div>
-                    )}
+                    <Textarea
+                        label="Sumilla de la información requerida"
+                        variant={editMode ? "bordered" : "flat"}
+                        labelPlacement="outside"
+                        placeholder="Escriba aquí"
+                        isRequired
+                        className="custom-label"
+                        value={sumilla}
+                        onValueChange={setSumilla}
+                        maxLength="450"
+                        isInvalid={isTextTooLong1}
+                        errorMessage={
+                            isTextTooLong1
+                                ? "El texto debe ser como máximo de 400 caracteres."
+                                : ""
+                        }
+                        {...(!editMode ? { isReadOnly: true } : {})}
+                    />
                 </div>
                 <div className="comboMC">
                     <div className="containerComboMC">
@@ -372,7 +359,7 @@ export default function MatrizComunicacionesUpdate(props) {
                 <div>
                     <Textarea
                         label="Detalle de la información requerida"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -393,7 +380,7 @@ export default function MatrizComunicacionesUpdate(props) {
                 <div>
                     <Textarea
                         label="Grupo receptor"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
