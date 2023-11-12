@@ -7,7 +7,8 @@ function RouteringMC({proy_name, proy_id, idMC}) {
     const proy_name1 = 'Mi primer proyecto';
     const proy_id1 = '42';
     const idMC1 = '5';
-    router.push("/dashboard/"+proy_name+"="+proy_id+"/matrizDeComunicaciones/" + idMC+"=edit");
+    router.push("/dashboard/"+proy_name+"="+proy_id+"/matrizDeComunicaciones/" + idMC);
+    //router.push("/dashboard/"+proy_name+"="+proy_id+"/matrizDeComunicaciones/" + idMC+"=edit");
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     setIsLoadingSmall(true);
 };
