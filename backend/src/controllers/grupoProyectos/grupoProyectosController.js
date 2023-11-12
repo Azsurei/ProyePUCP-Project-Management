@@ -87,7 +87,10 @@ async function listarDatosProyectosXGrupo(req, res, next) {
 
     //de presupuesto
     const queryP1 = `CALL LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(?);`;
-    const queryP2 = `CALL LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO(?);`; 
+    const queryP2 = `CALL LISTAR_LINEA_EGRESO_X_ID_PRESUPUESTO(?);`;
+    
+    //de entregables
+    const queryE1 = `CALL LISTAR_LINEA_INGRESO_X_ID_PRESUPUESTO(?);`
 
     try {
         const [results] = await connection.query(query,[idGrupoProyecto]);
@@ -101,7 +104,7 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             proyecto.cronograma.idCronograma = idHerramientas.idCronograma;
             proyecto.presupuesto.idPresupuesto = idHerramientas.idPresupuesto;
 
-
+            //para presupuesto
             const [resultsP1] = await connection.query(queryP1, [proyecto.presupuesto.idPresupuesto]);
             const ingresos = resultsP1[0];
             proyecto.presupuesto.ingresos = ingresos;
@@ -109,6 +112,9 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             const [resultsP2] = await connection.query(queryP2, [proyecto.presupuesto.idPresupuesto]);
             const egresos = resultsP2[0];
             proyecto.presupuesto.egresos = egresos;
+
+
+            //para entregables
         }
 
         res.status(200).json({

@@ -28,11 +28,13 @@ function capitalizeWords(str) {
 }
 
 export default function MatrizComunicacionesUpdate(props) {
+    const keyParamURL = decodeURIComponent(props.params.updateMC);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
+    const [editMode, setEditMode] = useState(false);
     const [sumilla, setSumilla] = useState("");
     const [detail, setDetail] = useState("");
     const [groupReceiver, setGroupReceiver] = useState("");
@@ -79,9 +81,27 @@ export default function MatrizComunicacionesUpdate(props) {
     }, [matrizComunicaciones]);
 
     useEffect(() => {
-        const stringURLMC =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        const numberPattern = /^\d+$/;
+        const editPattern = /^\d+=edit$/;
+        let stringURLMC;
+        console.log("El keyParamURL es:", keyParamURL);
+        if (numberPattern.test(keyParamURL)) {
+            console.log("It's a number:", keyParamURL);
+            setEditMode(false);
+            stringURLMC =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        } else if (editPattern.test(keyParamURL)) {
+            console.log("It's a number followed by '=edit':", keyParamURL);
+            setEditMode(true);
+            const updateId = parseInt(
+                keyParamURL.substring(0, keyParamURL.lastIndexOf("="))
+            );
+            stringURLMC =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/matrizDeComunicaciones/listarComunicacion/${updateId}`;
+        }
+
         axios
             .get(stringURLMC)
             .then(function (response) {
