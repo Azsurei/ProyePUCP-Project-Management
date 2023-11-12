@@ -15,11 +15,14 @@ import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
 export default function CatalogoDeInteresadosRegister(props) {
+    const keyParamURL = decodeURIComponent(props.params.updateCI);
     const decodedUrl = decodeURIComponent(props.params.project);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
+    const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
     const [organization, setOrganization] = useState("");
@@ -103,9 +106,27 @@ export default function CatalogoDeInteresadosRegister(props) {
     }, [catalogoInteresados]);
 
     useEffect(() => {
-        const stringURLCI =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/api/proyecto/catalogoInteresados/listarInteresado/${props.params.updateCI}`;
+        const numberPattern = /^\d+$/;
+        const editPattern = /^\d+=edit$/;
+        let stringURLCI;
+        console.log("El keyParamURL es:", keyParamURL);
+        if (numberPattern.test(keyParamURL)) {
+            console.log("It's a number:", keyParamURL);
+            setEditMode(false);
+            stringURLCI =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/catalogoInteresados/listarInteresado/${props.params.updateCI}`;
+        } else if (editPattern.test(keyParamURL)) {
+            console.log("It's a number followed by '=edit':", keyParamURL);
+            setEditMode(true);
+            const updateId = parseInt(
+                keyParamURL.substring(0, keyParamURL.lastIndexOf("="))
+            );
+            stringURLCI =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/catalogoInteresados/listarInteresado/${updateId}`;
+        }
+
         axios
             .get(stringURLCI)
             .then(function (response) {
@@ -384,14 +405,36 @@ export default function CatalogoDeInteresadosRegister(props) {
                 Interesados/ Actualizar interesado
             </div>
             <div className="interesedRegisterCI">
-                <div className="titleInteresedRegisterCI">
-                    Actualizar interesado
+                <div className="flex justify-between items-center">
+                    <div className="titleInteresedRegisterCI">
+                        Actualizar interesado
+                    </div>
+                    <div>
+                        {!editMode && (
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/catalogoDeInteresados/" +
+                                            props.params.updateCI +
+                                            "=edit"
+                                    );
+                                }}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </div>
                 </div>
                 <div className="containerInputCI">
                     <Input
-                        isClearable
+                        {...(editMode ? { isClearable: true } : {})}
                         label="Nombre completo"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -405,11 +448,12 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                     <Input
-                        isClearable
+                        {...(editMode ? { isClearable: true } : {})}
                         label="Rol en el proyecto"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         className="custom-labelCI"
@@ -422,11 +466,12 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                     <Input
-                        isClearable
+                        {...(editMode ? { isClearable: true } : {})}
                         label="Organización"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         className="custom-labelCI"
@@ -439,11 +484,12 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                     <Input
-                        isClearable
+                        {...(editMode ? { isClearable: true } : {})}
                         label="Cargo"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         className="custom-labelCI"
@@ -456,12 +502,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                     <Input
-                        isClearable
+                        {...(editMode ? { isClearable: true } : {})}
                         type="email"
                         label="Correo electrónico"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         startContent={
@@ -477,12 +524,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                     <Input
-                        isClearable
+                        {...(editMode ? { isClearable: true } : {})}
                         type="tel"
                         label="Número de teléfono"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         className="custom-labelCI"
@@ -495,12 +543,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 100 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div>
                     <Textarea
                         label="Otros datos de contacto"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         className="custom-labelCI"
@@ -515,6 +564,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div className="comboCI">
@@ -535,6 +585,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             onSelect={handleSelectedValueChangeAutority}
                             idParam="idInteresadoAutoridad"
                             initialName={selectedNameAutority}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerComboCI">
@@ -554,6 +605,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             onSelect={handleSelectedValueChangeCurrentAdhesion}
                             idParam="idInteresadoAdhesionActual"
                             initialName={selectedNameCurrentAdhesion}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerComboCI">
@@ -573,6 +625,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             onSelect={handleSelectedValueChangeFutureAdhesion}
                             idParam="idInteresadoAdhesionActual"
                             initialName={selectedNameFutureAdhesion}
+                            isDisabled={!editMode}
                         />
                     </div>
                 </div>
@@ -594,20 +647,23 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 }
                                 requirements={requirements}
                                 functionRemove={removeContainer1}
+                                isDisabled={!editMode}
                             />
                         ))
                     )}
-                    <div className="twoButtonsCI">
-                        <div className="buttonContainerCI">
-                            <Button
-                                onClick={addContainer1}
-                                className="buttonTitleCI"
-                                type="button"
-                            >
-                                Agregar
-                            </Button>
+                    {editMode === true && (
+                        <div className="twoButtonsCI">
+                            <div className="buttonContainerCI">
+                                <Button
+                                    onClick={addContainer1}
+                                    className="buttonTitleCI"
+                                    type="button"
+                                >
+                                    Agregar
+                                </Button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div>
                     <div className="titleButtonCI">
@@ -625,75 +681,88 @@ export default function CatalogoDeInteresadosRegister(props) {
                                 updateStrategiesField={updateStrategiesField}
                                 strategies={strategies}
                                 functionRemove={removeContainer2}
+                                isDisabled={!editMode}
                             />
                         ))
                     )}
-                    <div className="twoButtonsCI">
-                        <div className="buttonContainerCI">
-                            <Button
-                                onClick={addContainer2}
-                                className="buttonTitleCI2"
-                                type="button"
-                            >
-                                Agregar
-                            </Button>
+                    {editMode === true && (
+                        <div className="twoButtonsCI">
+                            <div className="buttonContainerCI">
+                                <Button
+                                    onClick={addContainer2}
+                                    className="buttonTitleCI2"
+                                    type="button"
+                                >
+                                    Agregar
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                {editMode === true && (
+                    <div className="containerBottomCI">
+                        <div className="twoButtonsCI">
+                            <div className="buttonContainerCI">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Registro"
+                                    textBody="¿Seguro que quiere descartar el registro de la información?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() => router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/catalogoDeInteresados"
+                                    )}
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Registrar Información"
+                                    textBody="¿Seguro que quiere registrar la información?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        onSubmit();
+                                        router.back();
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (
+                                            verifyFieldsEmpty() &&
+                                            verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos y se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsEmpty() &&
+                                            !verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsExcessive() &&
+                                            !verifyFieldsEmpty()
+                                        ) {
+                                            toast.error(
+                                                "Se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="containerBottomCI">
-                    <div className="twoButtonsCI">
-                        <div className="buttonContainerCI">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Registro"
-                                textBody="¿Seguro que quiere descartar el registro de la información?"
-                                colorButton="w-36 bg-slate-100 text-black"
-                                oneButton={false}
-                                secondAction={() => router.back()}
-                                textColor="red"
-                            />
-                            <Modal
-                                nameButton="Aceptar"
-                                textHeader="Registrar Información"
-                                textBody="¿Seguro que quiere registrar la información?"
-                                colorButton="w-36 bg-blue-950 text-white"
-                                oneButton={false}
-                                secondAction={() => {
-                                    onSubmit();
-                                    router.back();
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (
-                                        verifyFieldsEmpty() &&
-                                        verifyFieldsExcessive()
-                                    ) {
-                                        toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else if (
-                                        verifyFieldsEmpty() &&
-                                        !verifyFieldsExcessive()
-                                    ) {
-                                        toast.error("Faltan completar campos");
-                                        return false;
-                                    } else if (
-                                        verifyFieldsExcessive() &&
-                                        !verifyFieldsEmpty()
-                                    ) {
-                                        toast.error(
-                                            "Se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else {
-                                        return true;
-                                    }
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
             <Toaster
                 position="bottom-left"

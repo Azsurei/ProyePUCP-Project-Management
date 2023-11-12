@@ -413,7 +413,10 @@ export default function crearActaReunion(props) {
         const meetingJSON = JSON.stringify(meeting, null, 2);
 
         // Now you can save meetingJSON to a file or send it in a request
+        console.log("===============================");
+        console.log("Json al enviar");
         console.log(meetingJSON);
+        console.log("===============================");
         console.log("Seleccionados: ",selectedMiembrosList);
         console.log('id de acta reunion:', idActaReunion);
         console.log("Titulo de Reunion: ", nombreReunion);

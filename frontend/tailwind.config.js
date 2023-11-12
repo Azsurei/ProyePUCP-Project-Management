@@ -37,6 +37,7 @@ module.exports = {
                 //about kanban
                 'columnBackgroundColor': 'rgb(var(--color-columnBackgroundColor) / <alpha-value>)',
                 'taskBackgroundColor' : 'rgb(var(--color-taskBackgroundColor) / <alpha-value>)',
+                'generalBlue' : 'rgb(var(--color-generalBlue) / <alpha-value>)'
             }
         },
     },

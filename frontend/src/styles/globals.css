@@ -29,6 +29,7 @@
     
         --color-columnBackgroundColor: 241 245 249;
         --color-taskBackgroundColor: 255 255 255; 
+        --color-generalBlue: 23 37 84;
     }
 
     :root[class="dark"]{
@@ -43,6 +44,7 @@
 
         --color-columnBackgroundColor: 22 28 34;
         --color-taskBackgroundColor: 13 17 23;
+        --color-generalBlue: 0 112 240;
     }
 }
 

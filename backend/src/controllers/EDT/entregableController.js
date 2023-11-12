@@ -7,7 +7,7 @@ async function funcCrear(idComponenteEDT, data){
         const idEntregable = results[0][0].idEntregable;
         console.log("ID del Entregable: ", idEntregable);
     } catch (error) {
-        next(error);
+        console.log(error);
     }
     //return idEntregable;
 }

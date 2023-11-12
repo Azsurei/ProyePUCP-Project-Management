@@ -166,13 +166,13 @@ async function funcCrearComponenteEDT(idElementoPadre, idProyecto, descripcion, 
         console.log(idComponenteEDT,results[0][0]);
         for (const criterio of criterioAceptacion) {
             if(criterio.data !== ""){
-                criterioAceptacionController.funcCrear(idComponenteEDT, criterio.data);
+                await criterioAceptacionController.funcCrear(idComponenteEDT, criterio.data);
             }
         }
 
         for (const entregable of entregables) {
             if(entregable.data!==""){
-                entregableController.funcCrear(idComponenteEDT, entregable.data);
+                await entregableController.funcCrear(idComponenteEDT, entregable.data);
             }
         }
         return idComponenteEDT;

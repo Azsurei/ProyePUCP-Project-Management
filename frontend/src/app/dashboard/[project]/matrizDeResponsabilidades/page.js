@@ -907,7 +907,7 @@ export default function MatrizDeResponsabilidades(props) {
                     {(column) => (
                         <TableColumn
                             key={column.uid}
-                            className="bg-blue-600 text-white text-center text-[0.9rem]"
+                            className="text-white text-center text-[0.9rem]"
                         >
                             {column.name}
                         </TableColumn>

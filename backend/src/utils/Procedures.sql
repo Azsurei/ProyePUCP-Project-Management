@@ -1840,7 +1840,7 @@ CREATE PROCEDURE LISTAR_HU_X_ID(
 )
 BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
-    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario"
+    HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario", U.imgLink as "Imagen"
     FROM HistoriaDeUsuario HU
     JOIN Epica E
     ON HU.idEpica = E.idEpica
@@ -2915,7 +2915,7 @@ DELIMITER $
 CREATE PROCEDURE LISTAR_COMUNICACION_X_IDCOMUNICACION(IN _idComunicacion INT)
 BEGIN
     SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, 
-    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, c.grupoReceptor, c.activo
+    c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, u.imgLink, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
     JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
     JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
@@ -3165,7 +3165,7 @@ DROP PROCEDURE IF EXISTS LISTAR_RIESGO_X_IDRIESGO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_RIESGO_X_IDRIESGO(IN _idRiesgo INT)
 BEGIN
-    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, r.detalleRiesgo,
+    SELECT r.idRiesgo, r.nombreRiesgo, r.idCatalogo, r.fechaIdentificacion, r.duenoRiesgo, u.nombres, u.apellidos, u.correoElectronico, u.imgLink, r.detalleRiesgo,
     r.causaRiesgo, r.impactoRiesgo, r.estado, r.activo, r.idProbabilidad, rp.nombreProbabilidad, rp.valorProbabilidad, r.idImpacto, ri.nombreImpacto, ri.valorImpacto
 	FROM Riesgo AS r
     LEFT JOIN Usuario AS u ON r.duenoRiesgo = u.idUsuario
@@ -4369,6 +4369,20 @@ BEGIN
     AND activo = 1;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_ACTACONSTITUCIONXNOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_ACTACONSTITUCIONXNOMBRE(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    SELECT *
+    FROM PlantillaActaConstitucion
+    WHERE idUsuario = _idUsuario
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
+    AND activo = 1;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_ACTACONSTITUCION;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_PLANTILLA_ACTACONSTITUCION(
@@ -4476,6 +4490,32 @@ BEGIN
     AND activo = 1;
 END$
 
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_KANBAN;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_KANBAN(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaKanban
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_KANBAN_X_NOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_KANBAN_X_NOMBRE(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    SELECT *
+    FROM PlantillaKanban
+    WHERE idUsuario = _idUsuario
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
+    AND activo = 1;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_KANBAN;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_PLANTILLA_KANBAN(
@@ -4536,6 +4576,85 @@ BEGIN
         VALUES(_idProyecto,_nombre,_posicion,1);
     END IF;
 END$
+
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_MR(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaMR INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaMR(idUsuario,activo,nombrePlantilla) 
+    VALUES(_idUsuario,1,_nombrePlantilla);
+    SET _idPlantillaMR = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaMR AS idPlantillaMR;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_MR;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_MR(
+    IN _idMatrizResponsabilidad INT
+)
+BEGIN
+    SELECT letraRol, nombreRol, colorRol, descripcionRol
+    FROM ResponsabilidadRol
+    WHERE idMatrizResponsabilidad = _idMatrizResponsabilidad
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_PLANTILLA_MR_CAMPOS;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_PLANTILLA_MR_CAMPOS(
+    IN _idPlantillaMR INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descripcionRol VARCHAR(255)
+)
+BEGIN
+    INSERT INTO PlantillaMRDatos(idPlantillaMR, letraRol, nombreRol, colorRol, descripcionRol, activo)
+    VALUES(_idPlantillaMR, _letraRol, _nombreRol, _colorRol, _descripcionRol, 1);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_MR(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaMR
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_MR_X_NOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_MR_X_NOMBRE(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    SELECT *
+    FROM PlantillaMR
+    WHERE idUsuario = _idUsuario
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_MR(
+    IN _idPlantillaMR INT
+)
+BEGIN
+    UPDATE PlantillaMR SET activo = 0 WHERE idPlantillaMR = _idPlantillaMR;
+    UPDATE PlantillaMRDatos SET activo = 0 WHERE idPlantillaMR = _idPlantillaMR;
+END$
+
 
 ########################################
 ## REPORTES

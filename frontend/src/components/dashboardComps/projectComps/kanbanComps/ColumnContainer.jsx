@@ -188,7 +188,7 @@ function ColumnContainer({
             {/****************Main footer **************/}
             <button
                 className="ColumnContainer flex gap-2 items-center border-columnBackgroundColor border-4 rounded-md p-4
-                 hover:text-rose-500 hover:bg-taskBackgroundColor"
+                 hover:text-primary hover:bg-taskBackgroundColor"
                 onClick={() => {
                     createTask(column.idColumnaKanban);
                 }}

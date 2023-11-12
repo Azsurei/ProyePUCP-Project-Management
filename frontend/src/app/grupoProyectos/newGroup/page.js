@@ -297,6 +297,7 @@ export default function newProject() {
             } else {
                 const postData = {
                     nombreGrupo: nombreGrupo,
+                    idUsuario: sessionData.idUsuario,
                     proyectos: [...selectedKeys],
                 };
                 console.log("El postData es :", postData);
@@ -422,7 +423,7 @@ export default function newProject() {
             </div>
 
             
-                <Card class="w-4/5 mx-auto shadow-md p-4 rounded border border-solid border-gray-300">
+                <Card className="w-4/5 mx-auto shadow-md p-4 rounded border border-solid border-gray-300">
                     <CardBody>
                         <div className="flex items-center text-2xl font-montserrat font-bold">Nombre del Grupo</div>
                         <Input

@@ -3,7 +3,7 @@ import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/registerMC.cs
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
-import { Textarea } from "@nextui-org/react";
+import { Textarea, Avatar, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
@@ -28,11 +28,14 @@ function capitalizeWords(str) {
 }
 
 export default function MatrizComunicacionesUpdate(props) {
+    const keyParamURL = decodeURIComponent(props.params.updateMC);
     const decodedUrl = decodeURIComponent(props.params.project);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
+    const [editMode, setEditMode] = useState(false);
     const [sumilla, setSumilla] = useState("");
     const [detail, setDetail] = useState("");
     const [groupReceiver, setGroupReceiver] = useState("");
@@ -47,8 +50,6 @@ export default function MatrizComunicacionesUpdate(props) {
     const isTextTooLong1 = sumilla.length > 400;
     const isTextTooLong2 = detail.length > 400;
     const isTextTooLong3 = groupReceiver.length > 400;
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [matrizComunicaciones, setMatrizComunicaciones] = useState(null);
 
     useEffect(() => {
@@ -65,6 +66,7 @@ export default function MatrizComunicacionesUpdate(props) {
             setSelectedNameFormat(mcData.nombreFormato);
             setFormat(mcData.idFormato);
             const miembro = {
+                imgLink: mcData.imgLink,
                 correoElecronico: mcData.correoElectronico,
                 idUsuario: mcData.responsableDeComunicar,
                 apellidos: mcData.apellidos,
@@ -78,9 +80,27 @@ export default function MatrizComunicacionesUpdate(props) {
     }, [matrizComunicaciones]);
 
     useEffect(() => {
-        const stringURLMC =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        const numberPattern = /^\d+$/;
+        const editPattern = /^\d+=edit$/;
+        let stringURLMC;
+        console.log("El keyParamURL es:", keyParamURL);
+        if (numberPattern.test(keyParamURL)) {
+            console.log("It's a number:", keyParamURL);
+            setEditMode(false);
+            stringURLMC =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/matrizDeComunicaciones/listarComunicacion/${props.params.updateMC}`;
+        } else if (editPattern.test(keyParamURL)) {
+            console.log("It's a number followed by '=edit':", keyParamURL);
+            setEditMode(true);
+            const updateId = parseInt(
+                keyParamURL.substring(0, keyParamURL.lastIndexOf("="))
+            );
+            stringURLMC =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/matrizDeComunicaciones/listarComunicacion/${updateId}`;
+        }
+
         axios
             .get(stringURLMC)
             .then(function (response) {
@@ -185,31 +205,50 @@ export default function MatrizComunicacionesUpdate(props) {
                 Comunicaciones/ Actualizar elemento
             </div>
             <div className="backlogRegisterMC">
-                <div className="titleBacklogRegisterMC dark:text-white">
-                    Actualizar información requerida
+                <div className="flex justify-between items-center">
+                    <div className="titleBacklogRegisterMC dark:text-white">
+                        Actualizar información requerida
+                    </div>
+                    <div>
+                        {!editMode && (
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/matrizDeComunicaciones/" +
+                                            props.params.updateMC +
+                                            "=edit"
+                                    );
+                                }}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </div>
                 </div>
                 <div>
-                    {matrizComunicaciones ? (
-                        <Textarea
-                            label="Sumilla de la información requerida"
-                            variant="bordered"
-                            labelPlacement="outside"
-                            placeholder="Escriba aquí"
-                            isRequired
-                            className="custom-label"
-                            value={sumilla}
-                            onValueChange={setSumilla}
-                            maxLength="450"
-                            isInvalid={isTextTooLong1}
-                            errorMessage={
-                                isTextTooLong1
-                                    ? "El texto debe ser como máximo de 400 caracteres."
-                                    : ""
-                            }
-                        />
-                    ) : (
-                        <div>Cargando datos...</div>
-                    )}
+                    <Textarea
+                        label="Sumilla de la información requerida"
+                        variant={editMode ? "bordered" : "flat"}
+                        labelPlacement="outside"
+                        placeholder="Escriba aquí"
+                        isRequired
+                        className="custom-label"
+                        value={sumilla}
+                        onValueChange={setSumilla}
+                        maxLength="450"
+                        isInvalid={isTextTooLong1}
+                        errorMessage={
+                            isTextTooLong1
+                                ? "El texto debe ser como máximo de 400 caracteres."
+                                : ""
+                        }
+                        {...(!editMode ? { isReadOnly: true } : {})}
+                    />
                 </div>
                 <div className="comboMC">
                     <div className="containerComboMC">
@@ -229,6 +268,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             onSelect={handleSelectedValueChangeCanal}
                             idParam="idCanal"
                             initialName={selectedNameCanal}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerComboMC">
@@ -248,6 +288,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             onSelect={handleSelectedValueChangeFrecuency}
                             idParam="idFrecuencia"
                             initialName={selectedNameFrecuency}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerComboMC">
@@ -267,6 +308,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             onSelect={handleSelectedValueChangeFormat}
                             idParam="idFormato"
                             initialName={selectedNameFormat}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerButtonMC">
@@ -276,16 +318,24 @@ export default function MatrizComunicacionesUpdate(props) {
                             label2="responsable"
                             className="iconLabelButtonMC"
                             onClickFunction={toggleModal2}
+                            isDisabled={!editMode}
                         />
                         {selectedMiembrosList.length > 0 ? (
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2MC">
-                                    <p className="profilePicMC">
-                                        {component.nombres[0] +
-                                            (component.apellidos !== null
-                                                ? component.apellidos[0]
-                                                : "")}
-                                    </p>
+                                    <Avatar
+                                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                        src={component.imgLink}
+                                        fallback={
+                                            <p className="profilePicMC">
+                                                {component.nombres[0] +
+                                                    (component.apellidos !==
+                                                    null
+                                                        ? component.apellidos[0]
+                                                        : "")}
+                                            </p>
+                                        }
+                                    />
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
                                             `${component.nombres} ${
@@ -307,7 +357,7 @@ export default function MatrizComunicacionesUpdate(props) {
                 <div>
                     <Textarea
                         label="Detalle de la información requerida"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -322,12 +372,13 @@ export default function MatrizComunicacionesUpdate(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div>
                     <Textarea
                         label="Grupo receptor"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -341,82 +392,74 @@ export default function MatrizComunicacionesUpdate(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div className="containerBottomMC">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    <div className="twoButtonsMC">
-                        <div className="buttonContainerMC">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Actualización"
-                                textBody="¿Seguro que quiere descartar la actualización de la información?"
-                                colorButton="w-36 bg-slate-100 text-black"
-                                oneButton={false}
-                                secondAction={() => router.back()}
-                                textColor="red"
-                            />
-                            <Modal
-                                nameButton="Aceptar"
-                                textHeader="Actualizar información"
-                                textBody="¿Seguro que quiere actualizar la información?"
-                                colorButton="w-36 bg-blue-950 text-white"
-                                oneButton={false}
-                                secondAction={() => {
-                                    onSubmit();
-                                    router.back();
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (
-                                        verifyFieldsEmpty() &&
-                                        verifyFieldsExcessive()
-                                    ) {
-                                        toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
+                    {editMode === true && (
+                        <div className="twoButtonsMC">
+                            <div className="buttonContainerMC">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Actualización"
+                                    textBody="¿Seguro que quiere descartar la actualización de la información?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/matrizDeComunicaciones"
                                         );
-                                        return false;
-                                    } else if (
-                                        verifyFieldsEmpty() &&
-                                        !verifyFieldsExcessive()
-                                    ) {
-                                        toast.error("Faltan completar campos");
-                                        return false;
-                                    } else if (
-                                        verifyFieldsExcessive() &&
-                                        !verifyFieldsEmpty()
-                                    ) {
-                                        toast.error(
-                                            "Se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else {
-                                        return true;
-                                    }
-                                }}
-                            />
+                                    }}
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Actualizar información"
+                                    textBody="¿Seguro que quiere actualizar la información?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        onSubmit();
+                                        router.back();
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (
+                                            verifyFieldsEmpty() &&
+                                            verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos y se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsEmpty() &&
+                                            !verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsExcessive() &&
+                                            !verifyFieldsEmpty()
+                                        ) {
+                                            toast.error(
+                                                "Se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             {modal2 && (
