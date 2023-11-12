@@ -79,12 +79,13 @@ function ColumnRetro({
                     aria-label="Add"
                     className="bg-white"
                     onPress={addItem} // Trigger addItem when the plus icon is clicked
+                    isDisabled={state===false}
                 >
                     <PlusIcon />
                 </Button>
                 {state === false ? (
                     <p className="text-slate-500">
-                        Escribe tu idea aqui y presiona enter
+                        Presiona Editar para agregar items
                     </p>
                 ) : (
                     <Input
@@ -141,7 +142,14 @@ function ColumnRetro({
     }
 
     async function addItem() {
-        /*
+        // Check if the input field is not empty
+        if (itemValue.trim() === "") {
+            // Optionally show a message or handle the empty input scenario
+            toast.error("Por favor, ingrese un item a agregar");
+            return;
+        }
+
+        // Continue with the existing addItem logic
         const regResult = await handleRegisterItem();
         if (regResult === 1) {
             setItemValue("");
@@ -149,22 +157,6 @@ function ColumnRetro({
         } else {
             toast.error("Error al registrar item");
         }
-         */
-            // Check if the input field is not empty
-            if (itemValue.trim() === "") {
-                // Optionally show a message or handle the empty input scenario
-                toast.error("Please enter a value before adding");
-                return;
-            }
-
-            // Continue with the existing addItem logic
-            const regResult = await handleRegisterItem();
-            if (regResult === 1) {
-                setItemValue("");
-                toast.success("Se registro el item con exito");
-            } else {
-                toast.error("Error al registrar item");
-            }
 
     }
 
