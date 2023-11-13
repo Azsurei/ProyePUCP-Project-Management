@@ -160,14 +160,14 @@ function ListToolsInProject({ projectId, refreshPage }) {
 
     if (isLoadingInitial === true) {
         return (
-            <div className="flex justify-center items-center flex-1 pt-[200px]">
+            <div className="flex justify-center items-center flex-1">
                 <Spinner size="lg" />
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 overflow-y-auto">
             <ModalDeleteTool
                 isOpen={isModalDeleteOpen}
                 onOpenChange={onModalDeleteChange}

@@ -49,6 +49,7 @@ function ModalDeleteTool({
                             setTimeout(() => {
                                 refreshPage();
                             }, 1000);
+                            //onClose();
                         } else {
                             toast.error("Error al eliminar herramienta");
                             setIsLoading(false);
