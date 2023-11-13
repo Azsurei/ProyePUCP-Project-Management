@@ -5,9 +5,13 @@ import axios from "axios";
 import ModalDeleteConfirmation from "@/components/dashboardComps/projectComps/settingsComps/ModalDeleteConfirmation";
 import { SmallLoadingScreen } from "../layout";
 import { useRouter } from "next/navigation";
+import { SessionContext } from "../../layout";
+import ListUsersInProject from "@/components/dashboardComps/projectComps/settingsComps/ListUsersInProject";
 axios.defaults.withCredentials = true;
 
-function UsersScreen() {
+function UsersScreen({ userList }) {
+    const { sessionData } = useContext(SessionContext);
+
     return (
         <div className="flex flex-col flex-1 h-[100%] space-y-2">
             <div className="flex flex-col mb-3">
@@ -21,7 +25,7 @@ function UsersScreen() {
 
             <Divider></Divider>
 
-            <p>Actualmente en el proyecto:</p>
+            <ListUsersInProject userList={userList} />
         </div>
     );
 }
@@ -85,7 +89,7 @@ const deleteProject = () => {
         });
 };
 
-function DeleteScreen({handleDelete}) {
+function DeleteScreen({ handleDelete }) {
     return (
         <div className="flex flex-col flex-1 h-[100%] space-y-2">
             <div className="flex flex-col mb-3">
@@ -100,7 +104,11 @@ function DeleteScreen({handleDelete}) {
 
             <Divider></Divider>
 
-            <Button color="danger" className="max-w-xs w-60" onPress={handleDelete}>
+            <Button
+                color="danger"
+                className="max-w-xs w-60"
+                onPress={handleDelete}
+            >
                 Eliminar Proyecto
             </Button>
         </div>
@@ -120,15 +128,30 @@ export default function Settings(props) {
         onOpenChange: onModalDeleteChange,
     } = useDisclosure();
 
+    const [userList, setUserList] = useState([]);
+
     const [settingsState, setSettingsState] = useState("users");
     const btnStyle =
         "group hover:underline  font-medium px-4 py-2 rounded-md cursor-pointer";
     const btnStyleActive =
         "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] dark:bg-[#414141] cursor-pointer";
 
-    useEffect(()=>{
+    useEffect(() => {
         setIsLoadingSmall(false);
-    })
+        const usersURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/listarUsuariosXdProyecto/" +
+            projectId;
+        axios
+            .get(usersURL)
+            .then(function (response) {
+                console.log(response);
+                setUserList(response.data.usuarios);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
 
     return (
         <div className="w-[100%] min-h-full flex justify-center bg-mainBackground">
@@ -136,7 +159,7 @@ export default function Settings(props) {
                 isOpen={isModalDeleteOpen}
                 onOpenChange={onModalDeleteChange}
                 idProyecto={projectId}
-                handlePushToDashboard={()=>{
+                handlePushToDashboard={() => {
                     router.push("/dashboard");
                 }}
             />
@@ -205,11 +228,15 @@ export default function Settings(props) {
                         </p>
                     </div>
 
-                    {settingsState === "users" && <UsersScreen></UsersScreen>}
+                    {settingsState === "users" && (
+                        <UsersScreen userList={userList}></UsersScreen>
+                    )}
                     {settingsState === "tools" && <ToolsScreen></ToolsScreen>}
                     {settingsState === "dates" && <DatesScreen></DatesScreen>}
                     {settingsState === "delete" && (
-                        <DeleteScreen handleDelete={onModalDeleteOpen}></DeleteScreen>
+                        <DeleteScreen
+                            handleDelete={onModalDeleteOpen}
+                        ></DeleteScreen>
                     )}
                 </div>
             </div>
