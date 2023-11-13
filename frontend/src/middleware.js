@@ -25,7 +25,7 @@ export async function middleware(req){
     }
 
 
-    console.log("ENTRASTE EN MIDDLEWARE PARA /dashboard/* =====================");
+    console.log("ENTRASTE EN MIDDLEWARE PARA /dashboard/ o grupoProyectos* =====================");
     const jwt = req.cookies.get('tokenProyePUCP');
     if(jwt === undefined){
         console.log("No presentas token, chau");
@@ -44,5 +44,5 @@ export async function middleware(req){
 
 //aplica para toda subruta de /dashboard
 export const config = {
-    matcher: ['/dashboard/:path*','/login']
+    matcher: ['/dashboard/:path*','/grupoProyectos/:path*','/login']
 }

@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import ModalDeleteConfirmation from "@/components/dashboardComps/projectComps/settingsComps/ModalDeleteConfirmation";
 import { SmallLoadingScreen } from "../layout";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 
 function UsersScreen() {
@@ -107,6 +108,7 @@ function DeleteScreen({handleDelete}) {
 }
 
 export default function Settings(props) {
+    const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -134,6 +136,9 @@ export default function Settings(props) {
                 isOpen={isModalDeleteOpen}
                 onOpenChange={onModalDeleteChange}
                 idProyecto={projectId}
+                handlePushToDashboard={()=>{
+                    router.push("/dashboard");
+                }}
             />
 
             <div className="flex flex-col w-[100%] max-w-[1200px] h-[100%] p-[2.5rem] space-y-7 font-[Montserrat]">
