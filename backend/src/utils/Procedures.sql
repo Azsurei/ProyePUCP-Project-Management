@@ -4770,3 +4770,387 @@ BEGIN
     SELECT _idGrupoDeProyecto AS idGrupoDeProyecto;
 END$
 DELIMITER ;
+
+
+/*   ELIMINAR HERRAMIENTAS X ID_PROYECTO 
+        Esto es para los proyectos antiguos que no tenian idHerramientaCreada o 
+        herramientas que por alguna razón tengan errores al crearse
+        Es más lento que el eliminar x HerramientaCreada
+*/
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PRODUCT_BACKLOG_X_ID_PROYECTO;
+DELIMITER //
+/* ProductBacklog 85*/
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_PRODUCT_BACKLOG_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE ProductBacklog SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE Epica SET activo = 0 
+		WHERE idProductBacklog IN (
+			SELECT idProductBacklog FROM ProductBacklog WHERE idProyecto = _idProyecto
+		);
+    UPDATE Sprint SET activo = 0 
+		WHERE idProductBacklog IN (
+			SELECT idProductBacklog FROM ProductBacklog WHERE idProyecto = _idProyecto
+		);
+    UPDATE HistoriaDeUsuario SET activo = 0
+    WHERE idEpica IN (
+		SELECT idEpica FROM Epica 
+			WHERE idProductBacklog IN (
+				SELECT idProductBacklog FROM ProductBacklog WHERE idProyecto = _idProyecto
+		));
+    
+    UPDATE HistoriaCriterioDeAceptacion SET activo = 0
+		WHERE idHistoriaDeUsuario IN (
+			SELECT idHistoriaDeUsuario FROM HistoriaDeUsuario
+            WHERE idEpica IN (
+				SELECT idEpica FROM Epica 
+				WHERE idProductBacklog IN (
+					SELECT idProductBacklog FROM ProductBacklog 
+                    WHERE idProyecto = _idProyecto
+				)
+			)
+		);
+END; //
+DELIMITER ;
+
+/*call dbdibujitos.ELIMINAR_PRODUCT_BACKLOG_X_ID_PROYECTO(219);*/
+
+
+DROP PROCEDURE IF EXISTS ELIMINAR_EDT_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_EDT_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE EDT SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE ComponenteEDT SET activo = 0 
+    WHERE idEDT IN (
+			SELECT idEDT FROM EDT WHERE idProyecto = _idProyecto
+		);
+        
+    UPDATE Entregable SET activo = 0
+		WHERE idComponente IN (
+			SELECT idComponente FROM ComponenteEDT 
+            WHERE idEDT IN (
+				SELECT idEDT FROM EDT WHERE idProyecto = _idProyecto
+			)
+		);
+    UPDATE ComponenteCriterioDeAceptacion SET activo = 0
+		WHERE idComponenteEDT IN (
+			SELECT idComponente FROM ComponenteEDT 
+            WHERE idEDT IN (
+				SELECT idEDT FROM EDT WHERE idProyecto = _idProyecto
+			)
+		);
+END; //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ACTA_CONSTITUCION_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_ACTA_CONSTITUCION_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE ActaConstitucion SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE DetalleAC SET activo = 0 
+    WHERE idActaConstitucion IN (
+		SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto
+	);
+    UPDATE InteresadoAC SET activo = 0 
+    WHERE idActaConstitucion IN (
+		SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto
+	);
+    UPDATE HitoAC SET activo = 0 
+    WHERE idActaConstitucion IN (
+		SELECT idActaConstitucion FROM ActaConstitucion WHERE idProyecto = _idProyecto
+	);
+END; //
+DELIMITER ;
+
+/* PRUEBA CRONOGRAMA 
+	Cronograma 62
+    Tarea 259, 260, 264
+    UsuarioXTarea Ahi si son muchos, mira noma
+    */
+DROP PROCEDURE IF EXISTS ELIMINAR_CRONOGRAMA_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_CRONOGRAMA_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE Cronograma SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE Tarea SET activo = 0 
+    WHERE idCronograma IN (
+		SELECT idCronograma FROM Cronograma WHERE idProyecto = _idProyecto
+	);
+	UPDATE UsuarioXTarea SET activo = 0
+		WHERE idTarea IN (
+			SELECT idTarea FROM Tarea 
+            WHERE idCronograma IN (
+				SELECT idCronograma FROM Cronograma WHERE idProyecto = _idProyecto
+			)
+        );
+END; //
+DELIMITER ;
+
+/* Catalogo Riesgos 38 */
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_RIESGOS_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_CATALOGO_RIESGOS_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE CatalogoRiesgo SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE Riesgo SET activo = 0 
+    WHERE idCatalogo IN (
+		SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto
+	);
+	UPDATE PlanContingencia SET activo = 0
+		WHERE idRiesgo IN (
+			SELECT idRiesgo FROM Riesgo 
+            WHERE idCatalogo IN (
+				SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto
+			)
+        );
+	UPDATE PlanRespuesta SET activo = 0
+		WHERE idRiesgo IN (
+			SELECT idRiesgo FROM Riesgo 
+            WHERE idCatalogo IN (
+				SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto
+			)
+        );
+	UPDATE RiesgoXResponsable SET activo = 0
+		WHERE idRiesgo IN (
+			SELECT idRiesgo FROM Riesgo 
+            WHERE idCatalogo IN (
+				SELECT idCatalogo FROM CatalogoRiesgo WHERE idProyecto = _idProyecto
+			)
+        );
+END; //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_CATALOGO_INTERESADOS_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_CATALOGO_INTERESADOS_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE CatalogoInteresado SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE Interesado SET activo = 0 
+    WHERE idCatalogoInteresado IN (
+		SELECT idCatalogoInteresado FROM CatalogoInteresado WHERE idProyecto = _idProyecto
+	);
+	UPDATE InteresadoEstrategia SET activo = 0
+		WHERE idInteresado IN (
+			SELECT idInteresado FROM Interesado 
+            WHERE idCatalogoInteresado IN (
+				SELECT idCatalogoInteresado FROM CatalogoInteresado WHERE idProyecto = _idProyecto
+			)
+        );
+	UPDATE InteresadoRequerimiento SET activo = 0
+		WHERE idInteresado IN (
+			SELECT idInteresado FROM Interesado 
+            WHERE idCatalogoInteresado IN (
+				SELECT idCatalogoInteresado FROM CatalogoInteresado 
+                WHERE idProyecto = _idProyecto
+			)
+		);
+END; //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MATRIZ_COMUNICACIONES_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_MATRIZ_COMUNICACIONES_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE MatrizComunicacion SET activo = 0 WHERE idProyecto = _idProyecto;
+	UPDATE Comunicacion SET activo = 0 
+    WHERE idMatrizComunicacion IN (
+		SELECT idMatrizComunicacion FROM MatrizComunicacion WHERE idProyecto = _idProyecto
+	);
+END; //
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS ELIMINAR_MATRIZ_RESPONSABILIDADES_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_MATRIZ_RESPONSABILIDADES_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE MatrizResponsabilidad SET activo = 0 WHERE idProyecto = _idProyecto;
+	UPDATE ResponsabilidadRol SET activo = 0 
+    WHERE idMatrizResponsabilidad IN (
+		SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto
+	);
+	UPDATE EntregableXResponsabilidadRol SET activo = 0
+		WHERE idResponsabilidadRol IN (
+			SELECT idResponsabilidadRol FROM ResponsabilidadRol 
+            WHERE idMatrizResponsabilidad IN (
+				SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad 
+                WHERE idProyecto = _idProyecto
+			)
+        );
+END; //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_AUTOEVALUACION_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_AUTOEVALUACION_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE Autoevaluacion SET activo = 0 WHERE idProyecto = _idProyecto;
+	UPDATE AutoEvaluacionXProyecto SET estado = 2 
+    WHERE idAutoevaluacion IN (
+		SELECT idAutoevaluacion FROM Autoevaluacion WHERE idProyecto = _idProyecto
+	);
+END; //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_RETROSPECTIVA_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_RETROSPECTIVA_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE Retrospectiva SET activo = 0 WHERE idProyecto = _idProyecto;
+	UPDATE LineaRetrospectiva SET activo = 0 
+    WHERE idRetrospectiva IN (
+		SELECT idRetrospectiva FROM Retrospectiva WHERE idProyecto = _idProyecto
+	);
+    UPDATE ItemLineaRetrospectiva SET activo = 0
+		WHERE idLineaRetrospectiva IN (
+			SELECT idLineaRetrospectiva FROM LineaRetrospectiva 
+            WHERE idRetrospectiva IN (
+				SELECT idRetrospectiva FROM Retrospectiva 
+                WHERE idProyecto = _idProyecto
+			)
+        );
+END; //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ACTA_REUNION_X_ID_PROYECTO;
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ACTA_REUNION_X_ID_PROYECTO(
+	IN _idProyecto INT
+)
+BEGIN
+    -- Desactivar Acta de Reunión
+    UPDATE ActaReunion SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE LineaActaReunion SET activo = 0 
+    WHERE idActaReunion IN (
+		SELECT idActaReunion FROM ActaReunion WHERE idProyecto = _idProyecto
+	);
+    UPDATE ComentarioReunion SET activo = 0 
+		WHERE idLineaActaReunion IN (
+			SELECT idLineaActaReunion FROM LineaActaReunion 
+            WHERE idActaReunion IN (
+				SELECT idActaReunion FROM ActaReunion WHERE idProyecto = _idProyecto
+			)
+		);
+    UPDATE TemaReunion SET activo = 0 
+		WHERE idLineaActaReunion IN (
+			SELECT idLineaActaReunion FROM LineaActaReunion 
+            WHERE idActaReunion IN (
+				SELECT idActaReunion FROM ActaReunion WHERE idProyecto = _idProyecto
+			)
+		);
+
+    UPDATE ParticipanteXReunion SET activo = 0
+		WHERE idLineaActaReunion IN (
+			SELECT idLineaActaReunion FROM LineaActaReunion 
+            WHERE idActaReunion IN (
+				SELECT idActaReunion FROM ActaReunion WHERE idProyecto = _idProyecto
+			)
+		);
+	UPDATE Acuerdo SET activo = 0
+		WHERE idTemaReunion IN (
+			SELECT idTemaReunion FROM TemaReunion
+            WHERE idLineaActaReunion IN (
+				SELECT idLineaActaReunion FROM LineaActaReunion 
+                WHERE idActaReunion IN (
+					SELECT idActaReunion FROM ActaReunion 
+                    WHERE idProyecto = _idProyecto
+				)
+			)
+		);
+	UPDATE ResponsableAcuerdo SET activo = 0 
+    WHERE idAcuerdo IN (
+        SELECT idAcuerdo FROM Acuerdo 
+        WHERE idTemaReunion IN (
+            SELECT idTemaReunion FROM TemaReunion 
+            WHERE idLineaActaReunion IN (
+                SELECT idLineaActaReunion FROM LineaActaReunion 
+                WHERE idActaReunion IN (
+					SELECT idActaReunion FROM ActaReunion 
+                    WHERE idProyecto = _idProyecto
+				)
+            )
+        )
+    );
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_EQUIPOS_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_EQUIPOS_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE Equipo SET activo = 0 WHERE idProyecto = _idProyecto;
+	UPDATE UsuarioXEquipoXRolEquipo SET activo = 0 
+    WHERE idEquipo IN (
+		SELECT idEquipo FROM Equipo 
+		WHERE idProyecto = _idProyecto
+	);
+    UPDATE RolEquipo SET activo = 0
+		WHERE idRolEquipo IN (
+			SELECT DISTINCT idRolEquipo FROM UsuarioXEquipoXRolEquipo 
+            WHERE idEquipo IN (
+				SELECT idEquipo FROM Equipo 
+				WHERE idProyecto = _idProyecto
+			)
+		);
+END; //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PRESUPUESTO_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_PRESUPUESTO_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE Presupuesto SET activo = 0 WHERE idProyecto = _idProyecto;
+	UPDATE Ingreso SET activo = 0 
+    WHERE idPresupuesto IN (
+		SELECT idPresupuesto FROM Presupuesto 
+		WHERE idProyecto = _idProyecto
+	);
+    UPDATE Egreso SET activo = 0 
+    WHERE idPresupuesto IN (
+		SELECT idPresupuesto FROM Presupuesto 
+		WHERE idProyecto = _idProyecto
+	);
+    UPDATE LineaIngreso SET activo = 0 
+    WHERE idPresupuesto IN (
+		SELECT idPresupuesto FROM Presupuesto 
+		WHERE idProyecto = _idProyecto
+	);
+    UPDATE LineaEgreso SET activo = 0 
+    WHERE idPresupuesto IN (
+		SELECT idPresupuesto FROM Presupuesto 
+		WHERE idProyecto = _idProyecto
+	);
+    UPDATE LineaEstimacionCosto SET activo = 0 
+    WHERE idPresupuesto IN (
+		SELECT idPresupuesto FROM Presupuesto 
+		WHERE idProyecto = _idProyecto
+	);
+END; //
+DELIMITER ;
