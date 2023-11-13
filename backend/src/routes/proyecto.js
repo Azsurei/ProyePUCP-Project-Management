@@ -49,6 +49,7 @@ routerProyecto.get("/:idProyecto/listarProyectoYGrupoDeProyecto", verifyToken, p
 
 routerProyecto.delete("/eliminarProyecto",proyectoController.eliminar);
 routerProyecto.delete("/eliminarHerramientaDeProyecto", verifyToken, proyectoController.eliminarHerramientaDeProyecto);
+routerProyecto.post("/agregarHerramientaAProyecto", verifyToken, proyectoController.agregarHerramientaAProyecto);
 
 routerProyecto.get("/verInfoProyecto/:idProyecto", verifyToken, proyectoController.verInfoProyecto);
 

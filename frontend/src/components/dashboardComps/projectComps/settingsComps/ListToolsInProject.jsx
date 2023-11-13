@@ -208,12 +208,7 @@ function ListToolsInProject({ projectId, refreshPage }) {
                         }}
                         handlerAdd={() => {
                             setIsAdding(tool.idHerramienta);
-                            
-                            setTimeout(() => {
-                                //addTool();
-                                toast.warning("Falta procedure de back para esto");
-                                setIsAdding(null);
-                            }, 2000);
+                            addTool();
                         }}
                         isAdding={isAdding}
                     />
@@ -225,18 +220,27 @@ function ListToolsInProject({ projectId, refreshPage }) {
 
     async function addTool() {
         //FUNCION NO ESTA LISTA CUIDADO !!!!! //!!!!!
-        const uddURL =
+        const addURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/agregarHerramienta/" +
-            projectId;
+            "/api/proyecto/agregarHerramientaAProyecto";
+        const objToSend = {
+            idProyecto: projectId,
+            idHerramienta: isAdding,
+        }
         axios
-            .get(usersURL)
+            .post(addURL, objToSend)
             .then(function (response) {
                 console.log(response);
-                setUserList(response.data.usuarios);
+
+                toast.success("Herramienta agregada con exito");
+                setTimeout(() => {
+                    console.log("vamos a refrescar");
+                    refreshPage();
+                }, 500);
             })
             .catch(function (error) {
                 console.log(error);
+                toast.error("Error al agregar herramienta");
             });
     }
 }

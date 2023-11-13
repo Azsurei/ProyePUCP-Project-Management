@@ -118,9 +118,9 @@ function reporteTareas(props) {
                     .get(
                         process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
-                            herramientasInfo[0].idHerramientaCreada + //id backlog
+                            herramientasInfo.find(herramienta => herramienta.idHerramienta === 1).idHerramientaCreada + //id backlog
                             `/` +
-                            herramientasInfo[3].idHerramientaCreada //id cronograma
+                            herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada //id cronograma
                     )
                     .then((response) => {
                         console.log(response);
