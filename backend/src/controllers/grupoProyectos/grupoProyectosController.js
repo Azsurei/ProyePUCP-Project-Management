@@ -140,7 +140,6 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             proyecto.cronograma = cronograma;
             proyecto.presupuesto = presupuesto;
 
-
             //para presupuesto
             const [resultsP1] = await connection.query(queryP1, [
                 proyecto.presupuesto.idPresupuesto,
@@ -154,14 +153,12 @@ async function listarDatosProyectosXGrupo(req, res, next) {
             const egresos = resultsP2[0];
             proyecto.presupuesto.egresos = egresos;
 
-
             //para tareas
             const [resultsT1] = await connection.query(queryT1, [
                 proyecto.cronograma.idCronograma,
             ]);
             const tareas = resultsT1[0];
             proyecto.cronograma.tareas = tareas;
-
 
             //para entregables
             const [resultsE1] = await connection.query(queryE1, [
@@ -181,16 +178,20 @@ async function listarDatosProyectosXGrupo(req, res, next) {
                 const cantidadTareas = filteredTareas.length;
 
                 let porcentajeSumarizado = 0;
-                for (const tareas of filteredTareas) {
-                    porcentajeSumarizado +=
-                        tareas.porcentajeProgreso / cantidadTareas;
-                }
+                if (cantidadTareas === 0) {
+                    entregable.porcentajeProgreso = 0;
+                } else {
+                    for (const tareas of filteredTareas) {
+                        porcentajeSumarizado +=
+                            tareas.porcentajeProgreso / cantidadTareas;
+                    }
 
-                const formattedProgress =
-                    typeof porcentajeSumarizado === "number"
-                        ? porcentajeSumarizado.toFixed(2)
-                        : porcentajeSumarizado;
-                entregable.porcentajeProgreso = formattedProgress;
+                    const formattedProgress =
+                        typeof porcentajeSumarizado === "number"
+                            ? porcentajeSumarizado.toFixed(2)
+                            : porcentajeSumarizado;
+                    entregable.porcentajeProgreso = formattedProgress;
+                }
             }
         }
 

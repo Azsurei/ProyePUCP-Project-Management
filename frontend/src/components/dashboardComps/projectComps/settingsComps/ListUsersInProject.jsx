@@ -1,7 +1,8 @@
 "use client";
 import CardSelectedUser from "@/components/CardSelectedUser";
-import { Chip } from "@nextui-org/react";
+import { Button, Chip } from "@nextui-org/react";
 import { useEffect } from "react";
+import ModalUser from "../projectCreateComps/ModalUsers";
 
 function ListUsersInProject({ userList }) {
     const jefeProyecto = userList.filter((user) => user.idRol === 1);
@@ -12,13 +13,22 @@ function ListUsersInProject({ userList }) {
         console.log(JSON.stringify(jefeProyecto, null, 2));
     }, []);
 
-    const twStyle1="flex flex-col gap-2";
-    const twStyle2="flex flex-col gap-2";
+    const twStyle1 = "flex flex-col gap-2";
+    const twStyle2 = "flex flex-col gap-2";
 
     return (
-        <div className="flex flex-col gap-3 mt-1">
+        <div className="flex flex-col gap-6 pt-2 ">
+            <ModalUser
+                listAllUsers={false}
+                idProyecto={projectId}
+                handlerModalClose={toggleModal2}
+                handlerModalFinished={returnListParticipantes}
+                excludedUsers={participantsList}
+            ></ModalUser>
             <div className={twStyle2}>
-                <p className="text-xl font-medium">Jefe de proyecto:</p> 
+                <div className="flex flex-row gap-2 items-center">
+                    <p className="text-xl font-medium">Jefe de proyecto:</p>
+                </div>
                 {jefeProyecto.length !== 0 && (
                     <CardSelectedUser
                         isEditable={false}
@@ -28,7 +38,25 @@ function ListUsersInProject({ userList }) {
             </div>
 
             <div className={twStyle2}>
-                <p className="text-xl font-medium">Supervisores</p> 
+                <div className="flex flex-row gap-2 items-center">
+                    <p className="text-xl font-medium">Supervisores</p>
+                    <Button
+                        color="primary"
+                        onClick={() => {
+                            console.log("hola");
+                        }}
+                        className="px-unit-3 text-sm"
+                        size="sm"
+                    >
+                        <p>Buscar usuario</p>
+                        <img
+                            src="/icons/icon-searchBar.svg"
+                            alt=""
+                            className="icnSearch"
+                            style={{ width: "20px" }}
+                        />
+                    </Button>
+                </div>
                 <div className={twStyle1}>
                     {supervisores.length !== 0 &&
                         supervisores.map((supervisor) => {
@@ -47,7 +75,25 @@ function ListUsersInProject({ userList }) {
             </div>
 
             <div className={twStyle2}>
-                <p className="text-xl font-medium">Miembros de equipo</p>
+                <div className="flex flex-row gap-2 items-center">
+                    <p className="text-xl font-medium">Miembros de equipo</p>
+                    <Button
+                        color="primary"
+                        onClick={() => {
+                            console.log("hola");
+                        }}
+                        className="px-unit-3 text-sm"
+                        size="sm"
+                    >
+                        <p>Buscar usuario</p>
+                        <img
+                            src="/icons/icon-searchBar.svg"
+                            alt=""
+                            className="icnSearch"
+                            style={{ width: "20px" }}
+                        />
+                    </Button>
+                </div>
                 <div className={twStyle1}>
                     {miembros.length !== 0 &&
                         miembros.map((miembro) => {
@@ -64,7 +110,6 @@ function ListUsersInProject({ userList }) {
                         })}
                 </div>
             </div>
-
         </div>
     );
 }
