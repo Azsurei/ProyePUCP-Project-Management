@@ -15,7 +15,7 @@ import {
     Checkbox,
 } from "@nextui-org/react";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/LineaActaReunion.css";
 
@@ -696,13 +696,13 @@ export default function editarActaReunion(props) {
                                 </div>
                             ))}
                             {modal2 && (
-                                <ModalUsers
+                                <ModalUser
                                     listAllUsers={false}
                                     idProyecto={projectId}
                                     handlerModalClose={toggleModal2}
                                     handlerModalFinished={returnListParticipantes}
                                     excludedUsers={participantsList}
-                                ></ModalUsers>
+                                ></ModalUser>
                             )}
                         </CardBody>
                         <CardFooter></CardFooter>

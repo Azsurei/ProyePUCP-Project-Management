@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 
 import ModalUsersOne from "@/components/ModalUsersOne";
-import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/CrearActaReunion.css";
 import CardSelectedUser from "@/components/CardSelectedUser";
@@ -602,7 +602,7 @@ export default function crearActaReunion(props) {
                                 </ul>
                             </div>
                             {modal2 && (
-                                <ModalUsers
+                                <ModalUser
                                     listAllUsers={false}
                                     handlerModalClose={toggleModal2}
                                     handlerModalFinished={returnListOfMiembros}
@@ -610,7 +610,7 @@ export default function crearActaReunion(props) {
                                     idProyecto={projectId}
                                     excludedUniqueUser={selectedConvocanteList}
                                     isExcludedUniqueUser={true}
-                                ></ModalUsers>
+                                ></ModalUser>
                             )}
                             {/* Fin del selector de miembros */}
                         </CardBody>
