@@ -1,13 +1,16 @@
 "use client";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import { Button, Chip } from "@nextui-org/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ModalUser from "../projectCreateComps/ModalUsers";
 
-function ListUsersInProject({ userList }) {
+function ListUsersInProject({ userList, projectId }) {
     const jefeProyecto = userList.filter((user) => user.idRol === 1);
     const supervisores = userList.filter((user) => user.idRol === 2);
     const miembros = userList.filter((user) => user.idRol === 3);
+
+    const [isModalSupervOpen, setIsModalSupervOpen] = useState(false);
+    const [isModalMiembros, setIsModalMiembrosOpen] = useState(false);
 
     useEffect(() => {
         console.log(JSON.stringify(jefeProyecto, null, 2));
@@ -18,13 +21,34 @@ function ListUsersInProject({ userList }) {
 
     return (
         <div className="flex flex-col gap-6 pt-2 ">
-            <ModalUser
-                listAllUsers={false}
-                idProyecto={projectId}
-                handlerModalClose={toggleModal2}
-                handlerModalFinished={returnListParticipantes}
-                excludedUsers={participantsList}
-            ></ModalUser>
+            {isModalSupervOpen && (
+                <ModalUser
+                    listAllUsers={true}
+                    idProyecto={projectId}
+                    handlerModalClose={() => {
+                        setIsModalSupervOpen(false);
+                    }}
+                    handlerModalFinished={(users) => {
+                        console.log(JSON.stringify(users, null, 2));
+                    }}
+                    excludedUsers={[]}
+                ></ModalUser>
+            )}
+            {isModalMiembros && (
+                <ModalUser
+                    listAllUsers={true}
+                    idProyecto={projectId}
+                    handlerModalClose={() => {
+                        setIsModalMiembrosOpen(false);
+                    }}
+                    handlerModalFinished={(users) => {
+                        console.log(JSON.stringify(users, null, 2));
+                    }}
+                    excludedUsers={[]}
+                ></ModalUser>
+            )}
+
+
             <div className={twStyle2}>
                 <div className="flex flex-row gap-2 items-center">
                     <p className="text-xl font-medium">Jefe de proyecto:</p>
@@ -43,7 +67,7 @@ function ListUsersInProject({ userList }) {
                     <Button
                         color="primary"
                         onClick={() => {
-                            console.log("hola");
+                            setIsModalSupervOpen(true);
                         }}
                         className="px-unit-3 text-sm"
                         size="sm"
@@ -80,7 +104,7 @@ function ListUsersInProject({ userList }) {
                     <Button
                         color="primary"
                         onClick={() => {
-                            console.log("hola");
+                            setIsModalMiembrosOpen(true);
                         }}
                         className="px-unit-3 text-sm"
                         size="sm"

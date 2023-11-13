@@ -9,7 +9,7 @@ import { SessionContext } from "../../layout";
 import ListUsersInProject from "@/components/dashboardComps/projectComps/settingsComps/ListUsersInProject";
 axios.defaults.withCredentials = true;
 
-function UsersScreen({ userList }) {
+function UsersScreen({ userList, projectId }) {
     const { sessionData } = useContext(SessionContext);
 
     return (
@@ -25,7 +25,7 @@ function UsersScreen({ userList }) {
 
             <Divider></Divider>
 
-            <ListUsersInProject userList={userList} />
+            <ListUsersInProject userList={userList} projectId={projectId} />
         </div>
     );
 }
@@ -229,7 +229,7 @@ export default function Settings(props) {
                     </div>
 
                     {settingsState === "users" && (
-                        <UsersScreen userList={userList}></UsersScreen>
+                        <UsersScreen userList={userList} projectId={projectId}></UsersScreen>
                     )}
                     {settingsState === "tools" && <ToolsScreen></ToolsScreen>}
                     {settingsState === "dates" && <DatesScreen></DatesScreen>}
