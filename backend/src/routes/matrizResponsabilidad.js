@@ -4,6 +4,7 @@ const { verifyToken } = require("../middleware/middlewares");
 const matrizResponsabilidadController = require("../controllers/matrizResponsabilidad/matrizResponsabilidadController");
 
 routerMatrizResponsabilidad.delete("/eliminarMatrizResponsabilidades", matrizResponsabilidadController.eliminar);
+routerMatrizResponsabilidad.delete("/eliminarMatrizResponsabilidadesXProyecto", matrizResponsabilidadController.eliminarXProyecto);
 
 routerMatrizResponsabilidad.delete("/eliminarEntregableXResponsabilidadRol",matrizResponsabilidadController.eliminarEntregableXResponsabilidadRol);
 

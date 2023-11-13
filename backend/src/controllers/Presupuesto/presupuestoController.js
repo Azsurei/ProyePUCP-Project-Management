@@ -122,6 +122,30 @@ async function funcEliminar(idPresupuesto) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/Presupuesto del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`Presupuesto del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/Presupuesto X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_PRESUPUESTO_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/Presupuesto X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 
 
 module.exports = {
@@ -131,5 +155,6 @@ module.exports = {
     listarXIdPresupuesto,
     listarLineasIngresoYEgresoXIdPresupuesto,
     obtenerPresupuesto,
-    eliminar
+    eliminar,
+    eliminarXProyecto
 };

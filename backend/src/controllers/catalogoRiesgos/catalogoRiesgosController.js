@@ -25,6 +25,30 @@ async function funcEliminar(idCatalogo) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/CatalogoRiesgos del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`CatalogoRiesgos del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/CatalogoRiesgos X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_CATALOGO_RIESGOS_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/CatalogoRiesgos X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function insertarRiesgo(req,res,next){
     const{idProyecto, idProbabilidad, idImpacto, nombreRiesgo, fechaIdentificacion, duenoRiesgo, detalleRiesgo, causaRiesgo, 
         impactoRiesgo, estado, responsables, planesRespuesta, planesContigencia} = req.body;
@@ -373,6 +397,7 @@ async function modificarRiesgoRRC(req,res,next){
 
 module.exports = {
     eliminar,
+    eliminarXProyecto,
     insertarRiesgo,
     listarRiesgos,
     listarunRiesgo,

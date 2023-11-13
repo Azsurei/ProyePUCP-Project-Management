@@ -25,5 +25,6 @@ routerPlantillas.post("/guardarPlantillaMR",plantillaMRController.guardarPlantil
 routerPlantillas.get("/listarPlantillasMR/:idUsuario",plantillaMRController.listarPlantillasMR);
 routerPlantillas.get("/listarPlantillasMRXNombre/:idUsuario/:nombre",plantillaMRController.listarPlantillasMRXNombre);
 routerPlantillas.delete("/eliminarPlantillaMR",plantillaMRController.eliminarPlantillaMR);
+routerPlantillas.put("/seleccionarPlantillaMR",plantillaMRController.seleccionarPlantillaMR);
 
 module.exports.routerPlantillas = routerPlantillas;

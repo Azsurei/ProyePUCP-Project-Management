@@ -71,9 +71,33 @@ async function eliminarPlantillaMR(req, res, next) {
     }
 }
 
+async function seleccionarPlantillaMR(req, res, next) {
+    const {idProyecto,idPlantillaMR} = req.body;
+    const query = `CALL LIMPIAR_ROLES_PLANTILLA_MR(?);`;
+    const query1 = `CALL LISTAR_CAMPOS_PLANTILLA_MR_X_IDPLANTILLA(?);`;
+    const query2 = `CALL INSERTAR_CAMPOS_PLANTILLA_MR(?,?,?,?,?);`;
+    try {
+        //Primero eliminamos todos los campos de la actual plantilla de MR
+        await connection.query(query, [idProyecto]);
+        //Listamos los nuevos campos
+        const [results1] = await connection.query(query1, [idPlantillaMR]);
+        let camposMR = results1[0];
+        //Insertamos los nuevos roles al Matriz de Responsabilidad
+        for(let campoMR of camposMR){
+            await connection.query(query2, [idProyecto, campoMR.letraRol, campoMR.nombreRol, campoMR.colorRol, campoMR.descripcionRol]);
+        }
+        res.status(200).json({
+            message: `Se activó la plantilla ${idPlantillaMR} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     guardarPlantillaMR,
     listarPlantillasMR,
     listarPlantillasMRXNombre,
-    eliminarPlantillaMR
+    eliminarPlantillaMR,
+    seleccionarPlantillaMR
 };

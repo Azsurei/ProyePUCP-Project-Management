@@ -25,6 +25,30 @@ async function funcEliminar(idMatrizResponsabilidad) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/MatrizResponsabilidades del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`MatrizResponsabilidades del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/MatrizResponsabilidades X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_MATRIZ_RESPONSABILIDADES_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/MatrizResponsabilidades X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function eliminarEntregableXResponsabilidadRol(req,res,next){
     const{idProyecto} = req.body;
     const query = `CALL ELIMINAR_ENTREGABLE_X_RESPONSABILIDADROL_X_ID(?);`;
@@ -171,6 +195,7 @@ async function actualizarEntregables(req, res, next) {
 
 module.exports = {
     eliminar,
+    eliminarXProyecto,
     eliminarEntregableXResponsabilidadRol,
     insertarResponsabilidad,
     modificarResponsabilidad,

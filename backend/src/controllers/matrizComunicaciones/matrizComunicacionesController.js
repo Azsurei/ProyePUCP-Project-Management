@@ -25,6 +25,30 @@ async function funcEliminar(idProductBacklog) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/MatrizComunicacion del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`MatrizComunicacion del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/MatrizComunicacion X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_MATRIZ_COMUNICACIONES_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/MatrizComunicacion X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarCanales(req,res,next){
     try {
         const query = `CALL LISTAR_COMUNICACION_CANAL;`;
@@ -142,6 +166,7 @@ async function eliminarComunicacion(req,res,next){
 
 module.exports = {
     eliminar,
+    eliminarXProyecto,
     listarCanales,
     listarFrecuencia,
     listarFormato,

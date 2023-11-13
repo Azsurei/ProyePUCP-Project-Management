@@ -91,6 +91,30 @@ async function funcEliminar(idEquipo) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/Equipos del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`Equipos del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/Equipos X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_EQUIPOS_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/Equipos X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarXIdProyecto(req, res, next) {
     const { idProyecto } = req.params;
     try {
@@ -458,6 +482,7 @@ module.exports = {
     eliminarRol,
     insertarEquipo,
     eliminar,
+    eliminarXProyecto,
     insertarMiembros,
     eliminarEquipo,
     modificarMiembroEquipo,

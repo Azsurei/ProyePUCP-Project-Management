@@ -12,6 +12,7 @@ routerBacklog.use("/hu",routerHistoriaDeUsuario);
 
 routerBacklog.get("/:idProyecto/listarBacklog",verifyToken,backlogController.listarXIdProyecto);
 routerBacklog.delete("/eliminarProductBacklog",backlogController.eliminar);
+routerBacklog.delete("/eliminarProductBacklogXProyecto",backlogController.eliminarXProyecto);
 
 //Epicas
 routerBacklog.get("/listarEpicasXIdBacklog/:idBacklog",epicaController.listarEpicasXIdBacklog);

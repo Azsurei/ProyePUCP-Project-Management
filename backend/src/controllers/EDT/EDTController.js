@@ -299,6 +299,30 @@ async function funcEliminar(idEDT) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/EDT del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`EDT del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/EDT X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_EDT_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/EDT X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 module.exports = {
     listarComponentesEDT,
     listarEDT_X_IdProyecto,
@@ -307,5 +331,6 @@ module.exports = {
     modificarComponenteEDT,
     eliminarComponenteEDT,
     verInfoComponenteEDT,
-    eliminar
+    eliminar,
+    eliminarXProyecto
 }

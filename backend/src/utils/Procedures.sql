@@ -4655,6 +4655,58 @@ BEGIN
     UPDATE PlantillaMRDatos SET activo = 0 WHERE idPlantillaMR = _idPlantillaMR;
 END$
 
+DROP PROCEDURE IF EXISTS LIMPIAR_ROLES_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE LIMPIAR_ROLES_PLANTILLA_MR(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    UPDATE ResponsabilidadRol SET activo = 0 WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad;
+    UPDATE EntregableXResponsabilidadRol AS err
+    LEFT JOIN ResponsabilidadRol AS rr ON err.idResponsabilidadRol = rr.idResponsabilidadRol
+    SET err.activo = 0
+    WHERE rr.idMatrizResponsabilidad = @_idMatrizResponsabilidad;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CAMPOS_PLANTILLA_MR_X_IDPLANTILLA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CAMPOS_PLANTILLA_MR_X_IDPLANTILLA(
+    IN _idPlantillaMR INT
+)
+BEGIN
+    SELECT letraRol, nombreRol, colorRol, descripcionRol
+    FROM PlantillaMRDatos
+    WHERE idPlantillaMR = _idPlantillaMR
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_MR;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_MR(
+    IN _idProyecto INT,
+    IN _letraRol VARCHAR(10),
+    IN _nombreRol VARCHAR(100),
+    IN _colorRol VARCHAR(100),
+    IN _descripcionRol VARCHAR(255)
+)
+BEGIN
+    DECLARE _idResponsabilidadRol INT;
+    SET @_idMatrizResponsabilidad = (SELECT idMatrizResponsabilidad FROM MatrizResponsabilidad WHERE idProyecto = _idProyecto AND activo = 1);
+    -- Verificamos si el registro ya existe
+    SELECT idResponsabilidadRol INTO _idResponsabilidadRol
+    FROM ResponsabilidadRol
+    WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND letraRol = _letraRol AND nombreRol = _nombreRol AND colorRol=_colorRol AND descripcionRol = _descripcionRol;
+    IF _idResponsabilidadRol IS NOT NULL THEN
+        -- El registro ya existe, actualizamos el estado a 1
+        UPDATE ResponsabilidadRol
+        SET activo = 1
+        WHERE idMatrizResponsabilidad = @_idMatrizResponsabilidad AND letraRol = _letraRol AND nombreRol = _nombreRol AND colorRol=_colorRol AND descripcionRol = _descripcionRol;
+    ELSE
+        INSERT INTO ResponsabilidadRol(idMatrizResponsabilidad,letraRol,nombreRol,colorRol,descripcionRol,activo) 
+        VALUES(@_idMatrizResponsabilidad,_letraRol,_nombreRol,_colorRol,_descripcionRol,1);
+    END IF;
+END$
 
 ########################################
 ## REPORTES

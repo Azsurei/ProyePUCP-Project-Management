@@ -5,6 +5,7 @@ const lineaRetrospectivaController = require("../controllers/retrospectiva/linea
 const itemLineaRetrospectivaController = require("../controllers/retrospectiva/itemLineaRetrospectivaController");
 
 routerRetrospectiva.delete("/eliminarRetrospectiva",retrospectivaController.eliminar);
+routerRetrospectiva.delete("/eliminarRetrospectivaXProyecto",retrospectivaController.eliminarXProyecto);
 //Lineas retrospectiva
 routerRetrospectiva.post("/insertarLineaRetrospectiva", lineaRetrospectivaController.crear);
 routerRetrospectiva.get("/listarLineasRetrospectivaXIdRetrospectiva/:idRetrospectiva", lineaRetrospectivaController.listarXIdRetrospectiva);

@@ -1,5 +1,5 @@
 "use client";
-import { Button, Divider, useDisclosure } from "@nextui-org/react";
+import { Button, Chip, Divider, useDisclosure } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import ModalDeleteConfirmation from "@/components/dashboardComps/projectComps/settingsComps/ModalDeleteConfirmation";
@@ -7,9 +7,29 @@ import { SmallLoadingScreen } from "../layout";
 import { useRouter } from "next/navigation";
 import { SessionContext } from "../../layout";
 import ListUsersInProject from "@/components/dashboardComps/projectComps/settingsComps/ListUsersInProject";
+import ListToolsInProject from "@/components/dashboardComps/projectComps/settingsComps/ListToolsInProject";
 axios.defaults.withCredentials = true;
 
-function UsersScreen({ userList }) {
+function CheckIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+        </svg>
+    );
+}
+
+function UsersScreen({ userList, projectId }) {
     const { sessionData } = useContext(SessionContext);
 
     return (
@@ -25,24 +45,38 @@ function UsersScreen({ userList }) {
 
             <Divider></Divider>
 
-            <ListUsersInProject userList={userList} />
+            <ListUsersInProject userList={userList} projectId={projectId} />
         </div>
     );
 }
 
-function ToolsScreen() {
+function ToolsScreen({ projectId, refreshPage }) {
     return (
         <div className="flex flex-col flex-1 h-[100%] space-y-2">
             <div className="flex flex-col mb-3">
                 <p className="text-2xl font-medium text-mainHeaders">
                     Herramientas
                 </p>
-                <p className="text-slate-400">Personaliza tus herramientas</p>
+                <div className="text-slate-400 ">
+                    Personaliza tus herramientas. Recuerda que las marcadas
+                    como&nbsp;
+                    <Chip
+                        variant="flat"
+                        color="primary"
+                        endContent={<CheckIcon />}
+                    >
+                        Presente
+                    </Chip>
+                    &nbsp;son necesarias para el desarrollo del proyecto
+                </div>
             </div>
 
             <Divider></Divider>
 
-            <p>Herramientas usadas:</p>
+            <ListToolsInProject
+                projectId={projectId}
+                refreshPage={refreshPage}
+            />
         </div>
     );
 }
@@ -229,9 +263,20 @@ export default function Settings(props) {
                     </div>
 
                     {settingsState === "users" && (
-                        <UsersScreen userList={userList}></UsersScreen>
+                        <UsersScreen
+                            userList={userList}
+                            projectId={projectId}
+                        ></UsersScreen>
                     )}
-                    {settingsState === "tools" && <ToolsScreen></ToolsScreen>}
+                    {settingsState === "tools" && (
+                        <ToolsScreen
+                            projectId={projectId}
+                            refreshPage={() => {
+                                console.log("VAMOS A RECARGAR");
+                                window.location.reload();
+                            }}
+                        ></ToolsScreen>
+                    )}
                     {settingsState === "dates" && <DatesScreen></DatesScreen>}
                     {settingsState === "delete" && (
                         <DeleteScreen

@@ -89,6 +89,30 @@ async function funcEliminar(idActaConstitucion) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/ActaConstitucion del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`ActaConstitucion del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/ActaConstitucion X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_ACTA_CONSTITUCION_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/ActaConstitucion X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 ////////
 //HITO//
 ////////
@@ -227,6 +251,7 @@ module.exports = {
     crearCampos,
     eliminarCampo,
     eliminar,
+    eliminarXProyecto,
     listarInteresados,
     insertarInteresado,
     listarHito,

@@ -25,6 +25,30 @@ async function funcEliminar(idCatalogoInteresado) {
     return 1;
 }
 
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/CatalogoInteresados del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`CatalogoInteresados del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/CatalogoInteresados X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_CATALOGO_INTERESADOS_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/CatalogoInteresados X Proyecto", error);
+        return 0;
+    }
+    return 1;
+}
+
 async function listarAutoridad(req,res,next){
     try {
         const query = `CALL LISTAR_INTERESADO_AUTORIDAD;`;
@@ -222,6 +246,7 @@ async function modificarInteresados(req,res,next){
 
 module.exports = {
     eliminar,
+    eliminarXProyecto,
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,

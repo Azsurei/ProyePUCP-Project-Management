@@ -27,7 +27,7 @@ import {
 axios.defaults.withCredentials = true;
 
 function CardSelectTools(props) {
-
+    const mustBeSelectedTools = [1,2,4,13];
     const {
         isOpen: isModalFechaOpen,
         onOpen: onModalFecha,
@@ -50,7 +50,7 @@ function CardSelectTools(props) {
     const showPlantillaButton = ["Autoevaluacion", "Acta de constitucion"].includes(props.name);
 
     return (
-        <li className={isSelected ? "ToolCard active" : "ToolCard"} onClick={props.onClick}>
+        <li className={isSelected || mustBeSelectedTools.includes(props.id) ? "ToolCard active" : "ToolCard"} onClick={props.onClick}>
             <p className="titleTool">{props.name}</p>
 
             <div className="descriptionTool">
@@ -60,9 +60,10 @@ function CardSelectTools(props) {
             <div className="buttonContatinerTool">
                 
 
-                {isSelected != true &&<Button  onPress={handleSelectedOn} startContent={<PlusIcon/>} className="buttonOneTool">Agregar</Button>}
+                {isSelected != true && !mustBeSelectedTools.includes(props.id) &&<Button  onPress={handleSelectedOn} startContent={<PlusIcon/>} className="buttonOneTool">Agregar</Button>}
                            
-				{isSelected && <Button  onPress={handleSelectedOff} startContent={<ClearTwoToneIcon/>} className="buttonOneTool2">Eliminar</Button>}
+				{isSelected && !mustBeSelectedTools.includes(props.id) && <Button  onPress={handleSelectedOff} startContent={<ClearTwoToneIcon/>} className="buttonOneTool2">Eliminar</Button>}
+                {mustBeSelectedTools.includes(props.id) && <Button isDisabled className="buttonOneTool2">Seleccionado</Button>}
             </div>
         </li>
     );
