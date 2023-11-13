@@ -12,6 +12,7 @@ const responsableAcuerdoController = require("../controllers/actaReunion/respons
 routerActaReunion.post("/crearActaReunion", actaReunionController.crear);
 routerActaReunion.get("/listarActaReunionXIdProyecto/:idProyecto", actaReunionController.listarXIdProyecto);
 routerActaReunion.delete("/eliminarActaReunion", actaReunionController.eliminar);
+routerActaReunion.delete("/eliminarActaReunionXProyecto", actaReunionController.eliminarXProyecto);
 
 // Linea Acta Reunion
 routerActaReunion.post("/crearLineaActaReunion", lineaActaReunionController.crear);

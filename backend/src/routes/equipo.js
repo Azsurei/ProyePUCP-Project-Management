@@ -9,6 +9,7 @@ routerEquipo.get("/listarXIdProyecto/:idProyecto",equipoController.listarXIdProy
 routerEquipo.get("/listarEquiposYParticipantes/:idProyecto",equipoController.listarEquiposYParticipantes);
 routerEquipo.get("/listarTareasDeXIdEquipo/:idEquipo",equipoController.listarTareasDeXIdEquipo);
 routerEquipo.delete("/eliminarEquipos", equipoController.eliminar);
+routerEquipo.delete("/eliminarEquiposXProyecto",equipoController.eliminarXProyecto);
 
 //Roles
 routerEquipo.post("/insertarRol",equipoController.insertarRol);

@@ -63,3 +63,21 @@ Content-Type: application/json
     }
   ]
 }
+
+###
+DELETE http://localhost:8080/api/proyecto/eliminarProyecto HTTP/1.1
+Content-Type: application/json
+
+{
+  "idProyecto": 218,
+  "herramientas":[
+    {
+      "idHerramienta": 2,
+      "idHerramientaCreada": 85
+    },
+    {
+      "idHerramienta": 5,
+      "idHerramientaCreada": 47
+    }
+  ]
+}
