@@ -13,7 +13,9 @@ routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.li
 routerReporte.post("/generarReportePresupuesto", reportePresupuestoController.generarReporte);
 routerReporte.get("/obtenerReportePresupuestoXFileId/:fileId",reportePresupuestoController.obtenerReporte);
 routerReporte.post("/exportarReportePresupuestoXFileId",reportePresupuestoController.exportarReporteExcel);
+
 //Reporte entregables
+routerReporte.get("/traerInformacionReporteEntregable/:idProyecto",reporteEntregablesController.traerInfoReporteEntregables);
 routerReporte.post("/generarReporteEntregable",reporteEntregablesController.generarReporte);
 routerReporte.post("/exportarReporteEntregableXFileId",reporteEntregablesController.exportarReporteExcel);
 routerReporte.get("/obtenerReporteEntregableXFileId/:fileId",reporteEntregablesController.obtenerReporte);

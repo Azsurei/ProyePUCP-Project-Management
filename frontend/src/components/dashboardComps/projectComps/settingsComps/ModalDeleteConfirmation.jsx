@@ -8,19 +8,24 @@ import {
     ModalHeader,
     Textarea,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { HerramientasInfo } from "@/app/dashboard/[project]/layout";
 axios.defaults.withCredentials = true;
 
-function ModalDeleteConfirmation({ isOpen, onOpenChange, idProyecto }) {
+function ModalDeleteConfirmation({ isOpen, onOpenChange, idProyecto, handlePushToDashboard }) {
     const [isLoading, setIsLoading] = useState(false);
     const [inputText, setInputText] = useState("");
     const [validText, setValidText] = useState(true);
 
+    const { herramientasInfo } = useContext(HerramientasInfo);
+
     useEffect(() => {
         if (isOpen === true) {
             setIsLoading(false);
+            setInputText("");
+            setValidText(true);
         }
     }, [isOpen]);
 
@@ -28,7 +33,7 @@ function ModalDeleteConfirmation({ isOpen, onOpenChange, idProyecto }) {
         <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
-            //size="xl"
+            size="xl"
             isDismissable={false}
             classNames={{
                 closeButton: "hidden",
@@ -39,16 +44,14 @@ function ModalDeleteConfirmation({ isOpen, onOpenChange, idProyecto }) {
                     const finalizarModal = async () => {
                         if (inputText === "eliminar") {
                             setIsLoading(true);
-                            //const result = await deleteItemRetro();
-                            //if (result === 1) {
-                                //removeFromList();
-                                //toast.success("Item eliminado con exito");
-                                //onClose();
-                            //} else {
-                                //toast.error(
-                                    //"Hubo un error al eliminar el item"
-                                //);
-                            //}
+                            const result = await deleteProyect();
+                            if(result === 1){
+                                toast.success("Proyecto eliminado con exito");
+                                handlePushToDashboard();
+                            }
+                            else{
+                                toast.error("Error al eliminar proyecto");
+                            }
                         } else {
                             setValidText(false);
                         }
@@ -59,12 +62,12 @@ function ModalDeleteConfirmation({ isOpen, onOpenChange, idProyecto }) {
                                 Eliminar proyecto
                             </ModalHeader>
                             <ModalBody>
-                                <div>
-                                    <p className="text-lg">
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-base">
                                         Esta seguro que desea eliminar este
                                         proyecto?
                                     </p>
-                                    <p>
+                                    <p className="text-base">
                                         Para confirmar su decisión, escribe
                                         "eliminar":
                                     </p>
@@ -118,22 +121,23 @@ function ModalDeleteConfirmation({ isOpen, onOpenChange, idProyecto }) {
         </Modal>
     );
 
-    async function deleteItemRetro() {
+    async function deleteProyect() {
         try {
-            const newURL =
+            const deleteURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/retrospectiva/eliminarItemLineaRetrospectiva";
+                "/api/proyecto/eliminarProyecto";
 
-            const deleteItemResponse = await axios.delete(newURL, {
+            const deleteResponse = await axios.delete(deleteURL, {
                 data: {
-                    idItemLineaRetrospectiva: idItemLineRetro,
+                    idProyecto: idProyecto,
+                    herramientas: herramientasInfo,
                 },
             });
 
-            console.log("Se elimino el item correctamente");
+            console.log("Se elimino el proyecto correctamente");
             return 1;
         } catch (error) {
-            console.error("Error al eliminar item: ", error);
+            console.error("Error al eliminar proyecto: ", error);
             return 0;
         }
     }
