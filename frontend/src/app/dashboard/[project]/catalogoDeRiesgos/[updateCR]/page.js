@@ -662,7 +662,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         <Switch
                             isSelected={isSelected}
                             onValueChange={setIsSelected}
-                            {...(!editMode ? { isDisabled: true } : {})}
+                            {...(!editMode ? { isDisabled: true } : {isDisabled: false})}
                         >
                             {isSelected ? "Activo" : "Inactivo"}
                         </Switch>
