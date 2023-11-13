@@ -42,7 +42,7 @@ export default function ReporteGrupoProyectos(props) {
     const router = useRouter();
     const [isClient, setIsClient] = useState(false);
     const [proyecto1, setProyecto1] = useState([]);
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
     const [selectedGrupoProyecto, setSelectedGrupoProyecto,] = useState("");
     const [selectedGrupoProyectoId, setSelectedGrupoProyectoId,] = useState("");
     const pruebaURl = "http://localhost:8080/api/proyecto/grupoProyectos/listarGruposProyecto"
@@ -75,7 +75,7 @@ export default function ReporteGrupoProyectos(props) {
                             href={"/dashboard/" + projectName + "=" + projectId}
                             text={projectName}
                         />
-                        <BreadcrumbsItem href="" text="Historial de Reportes" />
+                        <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/reportes"} text="Historial de Reportes" />
                     </Breadcrumbs>
                 {isId && (<div className="reporteGrupoProyectos">
                     <div className="titleHistorialReporte text-mainHeaders">
@@ -96,7 +96,7 @@ export default function ReporteGrupoProyectos(props) {
                 )}
             </div>
             
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
                     <ModalContent>
                         {(onClose) => (
                             <>
@@ -121,8 +121,8 @@ export default function ReporteGrupoProyectos(props) {
                                     <Button color="danger" variant="light" onPress={() => router.back()}>
                                         Cerrar
                                     </Button>
-                                    <Button color="primary" onPress={() => { setIsId(true); onClose(); }}>
-                                        Action
+                                    <Button color="primary" onPress={() => { setIsId(true); onClose(); }} className="bg-blue-950 text-white">
+                                        Generar
                                     </Button>
                                 </ModalFooter>
                             </>

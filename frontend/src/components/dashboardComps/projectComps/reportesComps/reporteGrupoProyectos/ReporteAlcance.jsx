@@ -29,6 +29,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import DonutChart from "@/components/DonutChart";
+import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 export default function ReporteAlcance(props) {
     const [filterValue, setFilterValue] = React.useState("");
@@ -55,6 +56,7 @@ export default function ReporteAlcance(props) {
     };
 
     useEffect(() => {
+        setIsClient(false);
         const fetchData = async () => {
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
@@ -62,12 +64,12 @@ export default function ReporteAlcance(props) {
               const data = response.data.proyectos;
               console.log(`Estos son los proyectos:`, data);
               setProyectos(data);
+              setIsClient(true);
             } catch (error) {
               console.error('Error al obtener los proyectos:', error);
             }
           };
             fetchData();
-        setIsClient(true);
     }, []);
     const columns = [
         {

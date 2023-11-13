@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -66,7 +66,7 @@ function CardIngresos({
           setMontoAdapt(nuevoMonto);
           console.log("montoAdapt", nuevoMonto);
         }
-      }, [initialMoneda]);
+      }, [initialMoneda, IngresoObject.idMoneda]);
       
     return (
         <li
@@ -139,14 +139,14 @@ export default function IngresosList(props) {
     // const options = { day: 'numeric', month: 'long', year: 'numeric' };
     // const fechaFormateada = fechaTransaccion.toLocaleDateString('es-ES', options);
     // const horaIngreso = fechaTransaccion.toLocaleTimeString();
-    useEffect(() => {
-        const handleRefresh = async () => {
-            refresh();
+    // useEffect(() => {
+    //     const handleRefresh = async () => {
+    //         refresh();
             
-            console.log("refreshed");
-        };
-        handleRefresh();
-    }, []);
+    //         console.log("refreshed");
+    //     };
+    //     handleRefresh();
+    // }, []);
     const fechaGroups = {}; // Creamos un objeto para agrupar las fechas
 
     lista.forEach((component) => {

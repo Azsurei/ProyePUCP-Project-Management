@@ -102,7 +102,7 @@ export default function ReportePresupuesto(props) {
             console.log("Paso1: ");
             setProyectos(proyectosConTotales);
             console.log(`Estos son los proyectos:`, data);
-            
+            setIsClient(true);
           } catch (error) {
             console.error('Error al obtener los proyectos:', error);
           }
@@ -443,10 +443,11 @@ export default function ReportePresupuesto(props) {
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
     useEffect(() => {
         console.log("Grupo proyecto: ", props.groupProject);
+        setIsClient(false);
         // DataTable(idPresupuestoPrimerDato);
         DataProyectos();
         console.log("Proyectos Final", proyectos);
-        setIsClient(true);
+        
       }, [idPresupuestoPrimerDato, idGrupoProyecto]);
 //       const lineasIngreso = proyectos.length > 0 ? proyectos[0].ingresos : [];
 // const lineasEgreso = proyectos.length > 0 ? proyectos[0].egresos : [];
@@ -570,7 +571,7 @@ console.log('Fechas únicas:', uniqueDatesArray);
 
                                 
                                     <div className="GraficoBarras">
-                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={1000}/>
+                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={500} width={1500}/>
                                     </div>
                                     <div className=" GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
                                     <Tabs key="uniqueKeyForTabs" color="success" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
@@ -578,7 +579,7 @@ console.log('Fechas únicas:', uniqueDatesArray);
                                                     <Tab key={index} title={proyecto.nombreProyecto}/>  
                                             ))}
                                         </Tabs>
-                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={300} width={1000}/>
+                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={500} width={1500}/>
                                     </div>
                                 
 

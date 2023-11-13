@@ -129,13 +129,13 @@ export default function EgresosList(props) {
     // const options = { day: 'numeric', month: 'long', year: 'numeric' };
     // const fechaFormateada = fechaTransaccion.toLocaleDateString('es-ES', options);
     // const horaIngreso = fechaTransaccion.toLocaleTimeString();
-    useEffect(() => {
-        const handleRefresh = async () => {
-            // refresh();
-            console.log("refreshed");
-        };
-        handleRefresh();
-    }, []);
+    // useEffect(() => {
+    //     const handleRefresh = async () => {
+    //         // refresh();
+    //         console.log("refreshed");
+    //     };
+    //     handleRefresh();
+    // }, []);
     const fechaGroups = {}; // Creamos un objeto para agrupar las fechas
 
     lista.forEach((component) => {

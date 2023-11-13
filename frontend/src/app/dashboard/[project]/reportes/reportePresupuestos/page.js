@@ -226,7 +226,7 @@ export default function ReportePresupuestos(props) {
                                     href={"/dashboard/" + projectName + "=" + projectId}
                                     text={projectName}
                                 />
-                                <BreadcrumbsItem href="" text="Historial de Reportes" />
+                                <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/reportes"} text="Historial de Reportes" />
                             </Breadcrumbs>
                             <div className="flex flex-row justify-between items-center">
                                 <div className="titleHistorialReporte text-mainHeaders">
