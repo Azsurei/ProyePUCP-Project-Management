@@ -924,7 +924,13 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                     oneButton={false}
                                     secondAction={() => {
                                         onSubmit();
-                                        router.back();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/catalogoDeRiesgos"
+                                        );
                                     }}
                                     textColor="blue"
                                     verifyFunction={() => {

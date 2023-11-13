@@ -715,7 +715,13 @@ export default function ProductBacklogUpdate(props) {
                                     oneButton={false}
                                     secondAction={() => {
                                         onSubmit();
-                                        router.back();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/backlog/productBacklog"
+                                        );
                                     }}
                                     textColor="blue"
                                     verifyFunction={() => {
