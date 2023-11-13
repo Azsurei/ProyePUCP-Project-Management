@@ -83,7 +83,7 @@ export default function ReporteGrupoProyectos(props) {
                     </div>
                     <Tabs aria-label="Options" color="warning">
                         <Tab key="photos" title="Alcance">
-                            <ReporteAlcance isClient={isClient}/>
+                            <ReporteAlcance isClient={isClient} groupProject={selectedGrupoProyecto}/>
                         </Tab>
                         <Tab key="music" title="Cronograma">
                             <ReporteCronograma isClient={isClient} groupProject={selectedGrupoProyecto}/>

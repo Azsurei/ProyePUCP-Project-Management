@@ -28,11 +28,47 @@ import CardContribuyente from "@/components/dashboardComps/projectComps/reportes
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import DonutChart from "@/components/DonutChart";
 axios.defaults.withCredentials = true;
 export default function ReporteAlcance(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [isClient, setIsClient] = useState(false);
+    const idGrupoProyecto = props.groupProject;
+    const [proyectos, setProyectos] = useState([]);
+    const [entregables, setEntregables] = useState([]);
+    const promedioProgresoPorProyecto = proyectos.map((proyecto) => {
+        const numeroTareas = proyecto.EDT.entregables.length;
+        const progresoTotal = proyecto.EDT.entregables.reduce((total, tarea) => {
+            const progreso = tarea.porcentajeProgreso || 0; // Manejo de undefined
+            return total + progreso;
+        }, 0);
+        const promedio = numeroTareas > 0 ? progresoTotal / numeroTareas : 0;
+        return promedio;
+    });
+    const activeModal = () => {onOpen();};
+    const handleModal = (list) => {
+        setEntregables(list);
+        console.log("Lista de entregables: ", list);
+        activeModal();
+        
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+              console.log("Id Grupo: ", idGrupoProyecto);
+              const data = response.data.proyectos;
+              console.log(`Estos son los proyectos:`, data);
+              setProyectos(data);
+            } catch (error) {
+              console.error('Error al obtener los proyectos:', error);
+            }
+          };
+            fetchData();
+        setIsClient(true);
+    }, []);
     const columns = [
         {
             name: 'Nombre',
@@ -50,18 +86,6 @@ export default function ReporteAlcance(props) {
         {
             name: 'Fecha Fin',
             uid: 'fechaFin',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
-        },
-        {
-            name: '% Cumplido',
-            uid: 'cumplido',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
-        },
-        {
-            name: 'N° Entregables',
-            uid: 'entregables',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
@@ -109,7 +133,7 @@ export default function ReporteAlcance(props) {
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...data];
+        let filteredTemplates = [...proyectos];
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
@@ -205,7 +229,7 @@ export default function ReporteAlcance(props) {
                             auto
                             variant="ghost"
                             color="primary"
-                            onClick={onOpen}
+                            onPress={() => handleModal(data.EDT.entregables)}
                         >
                             <SearchIcon />
                         </Button>
@@ -275,19 +299,83 @@ export default function ReporteAlcance(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-    useEffect(() => {
+    const conteoEntregables = proyectos.map(proyecto => (proyecto.EDT && proyecto.EDT.entregables) ? proyecto.EDT.entregables.length : 0);
+    console.log("cantidad de entregables", conteoEntregables);
 
-        
-        setIsClient(true);
-      }, []);
+    const seriesPie = conteoEntregables;
+    const labelsPie = proyectos.map(proyecto => proyecto.nombre);
+    const optionsPie = {
+        chart: {
+          width: 380,
+          type: 'donut',
+        },
+        plotOptions: {
+          pie: {
+            startAngle: -90,
+            endAngle: 270
+          }
+        },
+        labels: labelsPie,
+        dataLabels: {
+          enabled: false
+        },
+        fill: {
+          type: 'gradient',
+        },
+        legend: {
+          formatter: function(val, opts) {
+            return val + " - " + opts.w.globals.series[opts.seriesIndex]
+          }
+        },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      };
+    
       
       
     return (
         <>
             {isClient && (  <div className="ReporteGrupoPresupuesto">
                                 
-                                    
+                                    <div className="flex">
+                                        <div className="GraficoCircular flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                            <DonutChart options={optionsPie} series={seriesPie} title="Cantidad de Entregables por Proyecto" height={1500} width={580} client={isClient}/>
+                                            
+                                        </div>
+                                        <div className="Progreso flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                        <div className="titleBalanceData">Progreso de entregables</div>
+                                            {proyectos.map((proyecto, index) => (
+                                                <>
+                                                    
+                                                    <Progress
+                                                    size="md"
+                                                    radius="sm"
+                                                    classNames={{
+                                                      base: "w-full pt-4 pb-4",
+                                                      track: "drop-shadow-md border border-default",
+                                                      indicator: "bg-gradient-to-r from-pink-500 to-yellow-500",
+                                                      label: "tracking-wider font-medium text-default-700",
+                                                      value: "text-foreground/100",
+                                                    }}
+                                                    label={proyecto.nombre}
+                                                    value={promedioProgresoPorProyecto[index]}
+                                                    showValueLabel={true}
+                                                  />
+                                                </>
+                                            ))}
+                                        </div>
+                                    </div>
                                     <div className="TablaComparacion flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                        <div className="titleBalanceData">Lista de Entregables por Proyecto</div>
                                         <MyDynamicTable 
                                         label ="Tabla Proyectos" 
                                         bottomContent={bottomContent} 
@@ -299,7 +387,7 @@ export default function ReporteAlcance(props) {
                                         columns={columns}
                                         sortedItems={sortedItems}
                                         renderCell={renderCell}
-                                        idKey="id"
+                                        idKey="idProyecto"
                                         selectionMode="single"
                                     />
                                     </div>
@@ -309,7 +397,12 @@ export default function ReporteAlcance(props) {
                                                 <>
                                                 <ModalHeader className="flex flex-col gap-1">Lista de Entregables</ModalHeader>
                                                 <ModalBody>
-                                                    <TablaEntregables/>
+                                                {entregables && entregables.length > 0 ? (
+                                                    <TablaEntregables entregables={entregables} />
+                                                ) : (
+                                                    <p>No hay datos de entregables disponibles.</p>
+                                                )}
+                                                    
                                                 </ModalBody>
                                                 <ModalFooter>                                   
                                                     <Button color="primary" onPress={onClose}>
