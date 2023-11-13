@@ -19,10 +19,13 @@ import {
     ModalFooter,
     ModalContent,
     input,
-
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef, use } from "react";
 import axios from "axios";
 import TablaCronograma from "@/components/dashboardComps/projectComps/reportesComps/reporteGrupoProyectos/TablaCronograma";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
@@ -42,6 +45,12 @@ export default function ReporteCronograma(props) {
     const urlPrueba = "http://localhost:8080/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/6";
     const [proyectos, setProyectos] = useState([]);
     const [cantidadTarea, setCantidadTarea] = useState(0);
+    const [primerNombreProyecto, setPrimerNombreProyecto] = useState("");
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set(["0"]));
+    // const selectedValue = React.useMemo(
+    //   () => Array.from(selectedKeys)
+    //   [selectedKeys]
+    // );
     useEffect(() => {
       setIsClient(false);
         const fetchData = async () => {
@@ -59,6 +68,10 @@ export default function ReporteCronograma(props) {
             fetchData();
         
     }, []);
+    const selectedValue = React.useMemo(() => {
+      const selectedIndex = Array.from(selectedKeys)[0]; // Obtiene el índice del Set
+      return proyectos[selectedIndex]?.nombre || '';
+    }, [selectedKeys, proyectos]);
     const nombresProyectos = proyectos.map(proyecto => proyecto.nombre);
     console.log(nombresProyectos);
 
@@ -190,6 +203,11 @@ export default function ReporteCronograma(props) {
     setActiveTab(index);
     console.log(`Tab activa:`, index);
   };
+  const handleKeysChange = (index) => {
+    setSelectedKeys(index);
+    console.log(`Key activa:`, index);
+  };
+
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -199,37 +217,55 @@ export default function ReporteCronograma(props) {
     return color;
   };
   const [seriesTime, setseriesTime,] = useState([]);
+  useEffect(() => {console.log("Esta es la llave", selectedKeys)}, [selectedKeys]);
   useEffect(() => {
     // Actualizar datos de seriesArea cuando cambie la pestaña/tab
-    const updateSeriesData = (index) => {// Obtener el proyecto correspondiente al índice de la pestaña
-      if (proyectos && proyectos.length > index) {
-        const proyecto = proyectos[index];
-        if (proyecto && proyecto.cronograma && proyecto.cronograma.tareas) {
+    // const updateSeriesData = (index) => {// Obtener el proyecto correspondiente al índice de la pestaña
+    //   if (proyectos && proyectos.length > index) {
+    //     const proyecto = proyectos[index];
+    //     if (proyecto && proyecto.cronograma && proyecto.cronograma.tareas) {
 
-          const newSeriesTime = [
-            {
-              data: proyecto.cronograma.tareas.map(task => ({
-               x: task.sumillaTarea,
-              y: [
-                new Date(task.fechaInicio).getTime(),
-                new Date(task.fechaFin).getTime()
-              ],
-              fillColor: getRandomColor()
-              }))
-            }
-          ];
+    //       const newSeriesTime = [
+    //         {
+    //           data: proyecto.cronograma.tareas.map(task => ({
+    //            x: task.sumillaTarea,
+    //           y: [
+    //             new Date(task.fechaInicio).getTime(),
+    //             new Date(task.fechaFin).getTime()
+    //           ],
+    //           fillColor: getRandomColor()
+    //           }))
+    //         }
+    //       ];
           
-          // Actualizar seriesArea con los datos del proyecto seleccionado
-          setseriesTime(newSeriesTime);
-        }
-      }
+    //       // Actualizar seriesArea con los datos del proyecto seleccionado
+    //       setseriesTime(newSeriesTime);
+    //     }
+    //   }
 
-    };
+    // };
     
-    // Lógica para cambiar la pestaña/tab y actualizar los datos
-    handleTabChange(activeTab);
-    updateSeriesData(activeTab); // Llamada inicial para establecer el primer proyecto al cargar
-  }, [ activeTab, proyectos]); 
+    // // Lógica para cambiar la pestaña/tab y actualizar los datos
+    // handleTabChange(activeTab);
+    // updateSeriesData(activeTab);
+    const selectedIndex = parseInt(Array.from(selectedKeys)[0]);
+  if (!isNaN(selectedIndex) && proyectos[selectedIndex]) {
+    const proyecto = proyectos[selectedIndex];
+    const newSeriesTime = [
+      {
+        data: proyecto.cronograma.tareas.map(task => ({
+          x: task.sumillaTarea,
+          y: [
+            new Date(task.fechaInicio).getTime(),
+            new Date(task.fechaFin).getTime()
+          ],
+          fillColor: getRandomColor()
+        }))
+      }
+    ];
+    setseriesTime(newSeriesTime); // Actualiza el estado con los datos del nuevo proyecto
+  } // Llamada inicial para establecer el primer proyecto al cargar
+  }, [ selectedKeys, proyectos]); 
     return (
         <>
             {isClient && (  <div className="ReporteGrupoPresupuesto">
@@ -278,11 +314,33 @@ export default function ReporteCronograma(props) {
                                     
 
                                     <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
-                                      <Tabs key="uniqueKeyForTabs" color="warning" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
+                                      {/* <Tabs key="uniqueKeyForTabs" color="warning" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
                                             {proyectos.map((proyecto, index) => (
                                                     <Tab key={index} title={proyecto.nombre}/>  
                                             ))}
-                                        </Tabs>
+                                        </Tabs> */}
+                                      <Dropdown>
+                                        <DropdownTrigger>
+                                          <Button 
+                                            variant="bordered" 
+                                            className="capitalize"
+                                          >
+                                            {selectedValue}
+                                          </Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu 
+                                          aria-label="Single selection example"
+                                          variant="flat"
+                                          disallowEmptySelection
+                                          selectionMode="single"
+                                          selectedKeys={selectedKeys}
+                                          onSelectionChange={setSelectedKeys}
+                                        >
+                                          {proyectos.map((proyecto, index) => (
+                                              <DropdownItem key={index} title={proyecto.nombre}>{proyecto.nombre}</DropdownItem>  
+                                            ))}
+                                        </DropdownMenu>
+                                      </Dropdown>
                                         <RangeBar options={optionsTime} series={seriesTime} client={isClient} height={500} width={1450}/>
                                     </div>
                                     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

@@ -28,6 +28,7 @@ import PopUpEliminateMC from "@/components/dashboardComps/projectComps/matrizCom
 import { set } from "date-fns";
 import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringMC";
 import RouteringRegisterMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringRegisterMC";
+import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 export default function MatrizDeComunicaciones(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -261,12 +262,13 @@ export default function MatrizDeComunicaciones(props) {
         switch (columnKey) {
             case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
-                return (
-                    <img
-                        src={imageOptions[cellValue]}
-                        alt={`Icono de ${cellValue}`}
-                    />
-                );
+                const imageSrc = cellValue ? imageOptions[cellValue] : null; // Establecer null si cellValue es nulo
+            return imageSrc ? (
+                <img
+                    src={imageSrc}
+                    alt={`Icono de ${cellValue}`}
+                />
+            ) : null;
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-2">
@@ -287,9 +289,19 @@ export default function MatrizDeComunicaciones(props) {
                             </DropdownMenu>
                         </Dropdown> */}
                         <div className="flex items-center">
+                            <Tooltip content="Visualizar">
+                                <button
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    type="button"
+        
+                                >
+                                    {/* <img src="/icons/eye.svg" /> */}
+                                    <EyeFilledIcon />
+                                </button>
+                            </Tooltip>
                             <Tooltip content="Editar">
                                 <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data);
@@ -300,7 +312,7 @@ export default function MatrizDeComunicaciones(props) {
                             </Tooltip>
                             <Tooltip content="Eliminar">
                                 <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
                                     type="button"
                                     onClick={() => toggleModal(data)}
                                 >

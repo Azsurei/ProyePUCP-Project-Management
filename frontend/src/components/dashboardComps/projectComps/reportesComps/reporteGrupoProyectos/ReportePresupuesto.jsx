@@ -12,6 +12,10 @@ import {
     CardBody,
     Input,
     Pagination,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import React, { useEffect, useState, useContext, useRef } from "react";
@@ -31,6 +35,7 @@ export default function ReportePresupuesto(props) {
     const [isClient, setIsClient] = useState(false);
     const idGrupoProyecto = props.groupProject;
     const urlPrueba = "http://localhost:8080/api/proyecto/grupoProyectos/listarProyectosXGrupo/4"
+    const [selectedKeysDrop, setSelectedKeysDrop] = React.useState(new Set(["0"]));
     const columns = [
         {
             name: 'Nombre',
@@ -109,6 +114,10 @@ export default function ReportePresupuesto(props) {
         };
           fetchData();
   };
+  const selectedValue = React.useMemo(() => {
+    const selectedIndex = Array.from(selectedKeysDrop)[0]; // Obtiene el índice del Set
+    return proyectos[selectedIndex]?.nombreProyecto || '';
+  }, [selectedKeysDrop, proyectos]);
     const data = [
         {
           idProyecto: 156,
@@ -462,36 +471,56 @@ const [activeTab, setActiveTab] = useState(0);
   const [seriesArea, setSeriesArea] = useState([]);
   useEffect(() => {
     // Actualizar datos de seriesArea cuando cambie la pestaña/tab
-    const updateSeriesData = (index) => {// Obtener el proyecto correspondiente al índice de la pestaña
-      if (proyectos && proyectos.length > index) {
-        const proyecto = proyectos[index];
-        if (proyecto && proyecto.ingresos && proyecto.egresos) {
-          setLineasIngreso(proyecto.ingresos);
-          setLineasEgreso(proyecto.egresos);
-          const newSeriesArea = [
-            {
-              name: 'Ingresos',
-              data: proyecto.ingresos.map(item => item.monto),
-              color: '#16C78E'
-            },
-            {
-              name: 'Egresos',
-              data: proyecto.egresos.map(item => item.costoReal),
-              color: '#FF4D4D'
-            }
-          ];
+    // const updateSeriesData = (index) => {// Obtener el proyecto correspondiente al índice de la pestaña
+    //   if (proyectos && proyectos.length > index) {
+    //     const proyecto = proyectos[index];
+    //     if (proyecto && proyecto.ingresos && proyecto.egresos) {
+    //       setLineasIngreso(proyecto.ingresos);
+    //       setLineasEgreso(proyecto.egresos);
+    //       const newSeriesArea = [
+    //         {
+    //           name: 'Ingresos',
+    //           data: proyecto.ingresos.map(item => item.monto),
+    //           color: '#16C78E'
+    //         },
+    //         {
+    //           name: 'Egresos',
+    //           data: proyecto.egresos.map(item => item.costoReal),
+    //           color: '#FF4D4D'
+    //         }
+    //       ];
           
-          // Actualizar seriesArea con los datos del proyecto seleccionado
-          setSeriesArea(newSeriesArea);
-        }
-      }
+    //       // Actualizar seriesArea con los datos del proyecto seleccionado
+    //       setSeriesArea(newSeriesArea);
+    //     }
+    //   }
 
-    };
+    // };
     
-    // Lógica para cambiar la pestaña/tab y actualizar los datos
-    handleTabChange(activeTab);
-    updateSeriesData(activeTab); // Llamada inicial para establecer el primer proyecto al cargar
-  }, [activeTab, proyectos]); 
+    // // Lógica para cambiar la pestaña/tab y actualizar los datos
+    // handleTabChange(activeTab);
+    // updateSeriesData(activeTab);
+    const selectedIndex = parseInt(Array.from(selectedKeysDrop)[0]);
+    if (!isNaN(selectedIndex) && proyectos[selectedIndex]) {
+      const proyecto = proyectos[selectedIndex];
+      setLineasIngreso(proyecto.ingresos);
+            setLineasEgreso(proyecto.egresos);
+            const newSeriesArea = [
+              {
+                name: 'Ingresos',
+                data: proyecto.ingresos.map(item => item.monto),
+                color: '#16C78E'
+              },
+              {
+                name: 'Egresos',
+                data: proyecto.egresos.map(item => item.costoReal),
+                color: '#FF4D4D'
+              }
+            ];
+      setSeriesArea(newSeriesArea);
+    }
+    // Llamada inicial para establecer el primer proyecto al cargar
+  }, [selectedKeysDrop, proyectos]); 
       // const seriesArea = [
       //   {
       //     name: 'Ingresos',
@@ -516,6 +545,10 @@ lineasEgreso.forEach(item => {
 });
 
 const uniqueDatesArray = Array.from(uniqueDatesSet);
+const formattedDates = uniqueDatesArray.map(date => {
+  const dateObj = new Date(date);
+  return new Intl.DateTimeFormat('es').format(dateObj);
+});
 console.log('Fechas únicas:', uniqueDatesArray);
       const optionsArea = {
         chart: {
@@ -533,7 +566,7 @@ console.log('Fechas únicas:', uniqueDatesArray);
           },
           xaxis: {
             type: 'date',
-            categories: uniqueDatesArray,
+            categories: formattedDates,
 
           },
           tooltip: {
@@ -574,11 +607,33 @@ console.log('Fechas únicas:', uniqueDatesArray);
                                         <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={500} width={1500}/>
                                     </div>
                                     <div className=" GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
-                                    <Tabs key="uniqueKeyForTabs" color="success" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
+                                    {/* <Tabs key="uniqueKeyForTabs" color="success" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
                                             {proyectos.map((proyecto, index) => (
                                                     <Tab key={index} title={proyecto.nombreProyecto}/>  
                                             ))}
-                                        </Tabs>
+                                        </Tabs> */}
+                                        <Dropdown>
+                                        <DropdownTrigger>
+                                          <Button 
+                                            variant="bordered" 
+                                            className="capitalize"
+                                          >
+                                            {selectedValue}
+                                          </Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu 
+                                          aria-label="Single selection example"
+                                          variant="flat"
+                                          disallowEmptySelection
+                                          selectionMode="single"
+                                          selectedKeys={selectedKeysDrop}
+                                          onSelectionChange={setSelectedKeysDrop}
+                                        >
+                                          {proyectos.map((proyecto, index) => (
+                                              <DropdownItem key={index} title={proyecto.nombreProyecto}>{proyecto.nombreProyecto}</DropdownItem>  
+                                            ))}
+                                        </DropdownMenu>
+                                      </Dropdown>
                                         <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={500} width={1500}/>
                                     </div>
                                 
