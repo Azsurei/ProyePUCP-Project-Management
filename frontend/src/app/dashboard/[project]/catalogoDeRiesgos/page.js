@@ -44,7 +44,7 @@ export default function catalogoDeRiesgos(props) {
     const [objectRC, setObjectRC] = useState(null);
     const [navegate, setNavegate] = useState(false);
     const [navegateRegister, setNavegateRegister] = useState(false);
-
+    const [edit, setEdit] = useState(false);
     function DataTable() {
         const fetchData = async () => {
             try {
@@ -85,10 +85,11 @@ export default function catalogoDeRiesgos(props) {
         console.log("El id del objeto es: ", selectedTask);
         setModal1(!modal1);
     };
-    const setRoutering = (objectID) => {
+    const setRoutering = (objectID, isEdit) => {
         setObjectRC(objectID);
         console.log("El id del objeto MC es: ", objectRC);
         setNavegate(!navegate);
+        setEdit(isEdit);
     };
     const columns = [
         {
@@ -267,12 +268,24 @@ export default function catalogoDeRiesgos(props) {
                             </DropdownMenu>
                         </Dropdown> */}
                         <div className="flex">
+                            <Tooltip content="Visualizar">
+                                <button
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, false);
+                                    }}
+                                >
+                                    <img src="/icons/view.svg" />
+                                    {/* <EyeFilledIcon /> */}
+                                </button>
+                            </Tooltip>
                             <Tooltip content="Editar">
                                 <button
                                     className=""
                                     type="button"
                                     onClick={() => {
-                                        setRoutering(data);
+                                        setRoutering(data, true);
                                     }}
                                 >
                                     <img src="/icons/editar.svg" />
@@ -447,6 +460,7 @@ export default function catalogoDeRiesgos(props) {
                     proy_name={projectName}
                     proy_id={projectId}
                     idRC={objectRC.idRiesgo}
+                    isEdit={edit}
                 />
             )}
         </div>

@@ -47,6 +47,7 @@ export default function MatrizDeComunicaciones(props) {
     const [navegate, setNavegate] = useState(false);
     const [navegateRegister, setNavegateRegister] = useState(false);
     const [idMatriz, setIdMatriz] = useState(null);
+    const [edit, setEdit] = useState(null);
     function DataTable() {
         const fetchData = async () => {
             try {
@@ -87,10 +88,11 @@ export default function MatrizDeComunicaciones(props) {
         console.log("El id del objeto es: ", selectedTask);
         setModal1(!modal1);
     };
-    const setRoutering = (objectID) => {
+    const setRoutering = (objectID, isEdit) => {
         setObjectMC(objectID);
         console.log("El id del objeto MC es: ", objectMC);
         setNavegate(!navegate);
+        setEdit(isEdit);
     };
     const setRouteringRegisterMC = () => {
         setNavegateRegister(!navegateRegister);
@@ -293,7 +295,9 @@ export default function MatrizDeComunicaciones(props) {
                                 <button
                                     className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
                                     type="button"
-        
+                                    onClick={() => {
+                                        setRoutering(data, false);
+                                    }}
                                 >
                                     <img src="/icons/view.svg" />
                                     {/* <EyeFilledIcon /> */}
@@ -304,7 +308,7 @@ export default function MatrizDeComunicaciones(props) {
                                     className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
                                     type="button"
                                     onClick={() => {
-                                        setRoutering(data);
+                                        setRoutering(data, true);
                                     }}
                                 >
                                     <img src="/icons/editar.svg" />
@@ -502,6 +506,7 @@ export default function MatrizDeComunicaciones(props) {
                     proy_name={projectName}
                     proy_id={projectId}
                     idMC={objectMC.idComunicacion}
+                    isEdit={edit}
                 />
             )}
             {navegateRegister && (
