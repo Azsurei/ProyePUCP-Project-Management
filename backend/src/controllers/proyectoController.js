@@ -74,28 +74,56 @@ async function crear(req, res, next) {
             try {
                 ///ahora, por cada herramienta, se creara en la DB y se asignara a proyecto
                 let query;
-                for (const herramienta of herramientas) {
-                    if (herramienta.idHerramienta === 1) {
-                        //Product Backlog
-                        query = `CALL INSERTAR_PRODUCT_BACKLOG(?);`;
-                        const [results] = await connection.query(query, [
-                            idProyecto,
-                        ]);
-                        const idProductBacklog = results[0][0].idProductBacklog;
-                    }
 
-                    if (herramienta.idHerramienta === 2) {
-                        //EDT
-                        query = `CALL INSERTAR_EDT(?,?,?,?,?);`;
-                        const [results] = await connection.query(query, [
-                            idProyecto,
-                            "",
-                            "",
-                            "",
-                            "",
-                        ]);
-                        const idEDT = results[0][0].idEDT;
-                    }
+                query = `CALL INSERTAR_PRODUCT_BACKLOG(?);`;
+                const [results1] = await connection.query(query, [idProyecto]);
+                const idProductBacklog = results1[0][0].idProductBacklog;
+
+                query = `CALL INSERTAR_EDT(?,?,?,?,?);`;
+                const [results2] = await connection.query(query, [
+                    idProyecto,
+                    "",
+                    "",
+                    "",
+                    "",
+                ]);
+                const idEDT = results2[0][0].idEDT;
+
+                query = `CALL INSERTAR_CRONOGRAMA(?);`;
+                const [results3] = await connection.query(query, [idProyecto]);
+                const idCronograma = results3[0][0].idCronograma;
+
+                query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
+                const [results4] = await connection.query(query, [
+                    idProyecto,
+                    2,
+                    0,
+                    0,
+                ]);
+                const idPresupuesto = results4[0][0].idPresupuesto;
+
+                for (const herramienta of herramientas) {
+                    // if (herramienta.idHerramienta === 1) {
+                    //     //Product Backlog
+                    //     query = `CALL INSERTAR_PRODUCT_BACKLOG(?);`;
+                    //     const [results] = await connection.query(query, [
+                    //         idProyecto,
+                    //     ]);
+                    //     const idProductBacklog = results[0][0].idProductBacklog;
+                    // }
+
+                    // if (herramienta.idHerramienta === 2) {
+                    //     //EDT
+                    //     query = `CALL INSERTAR_EDT(?,?,?,?,?);`;
+                    //     const [results] = await connection.query(query, [
+                    //         idProyecto,
+                    //         "",
+                    //         "",
+                    //         "",
+                    //         "",
+                    //     ]);
+                    //     const idEDT = results[0][0].idEDT;
+                    // }
 
                     if (herramienta.idHerramienta === 3) {
                         //Acta de Constitucion
@@ -208,18 +236,18 @@ async function crear(req, res, next) {
                         ]);
                     }
 
-                    if (herramienta.idHerramienta === 13) {
-                        //Presupeusto
-                        query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
-                        const [results] = await connection.query(query, [
-                            idProyecto,
-                            2,
-                            0,
-                            0,
-                        ]);
-                        //Esos dos 0s están por justo xdxd
-                        const idPresupuesto = results[0][0].idPresupuesto;
-                    }
+                    // if (herramienta.idHerramienta === 13) {
+                    //     //Presupeusto
+                    //     query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
+                    //     const [results] = await connection.query(query, [
+                    //         idProyecto,
+                    //         2,
+                    //         0,
+                    //         0,
+                    //     ]);
+                    //     //Esos dos 0s están por justo xdxd
+                    //     const idPresupuesto = results[0][0].idPresupuesto;
+                    // }
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
                     //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
                 }
@@ -745,7 +773,10 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
     //esto actualiza HerramientaXProyecto (elimina la linea de la herramienta)
     const query = `CALL ELIMINAR_HERRAMIENTA_DE_HERRAMIENTA_X_PROYECTO(?,?);`;
     try {
-        const [results] = await connection.query(query, [idProyecto, idHerramienta]);
+        const [results] = await connection.query(query, [
+            idProyecto,
+            idHerramienta,
+        ]);
 
         if (idHerramienta == 1) {
             if (
@@ -754,9 +785,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await backlogController.eliminarXProyecto(idProyecto);
             } else {
-                await backlogController.eliminar(
-                    idHerramientaCreada
-                );
+                await backlogController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 2) {
@@ -776,9 +805,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await actaConstitucionController.eliminarXProyecto(idProyecto);
             } else {
-                await actaConstitucionController.eliminar(
-                    idHerramientaCreada
-                );
+                await actaConstitucionController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 4) {
@@ -788,9 +815,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await cronogramaController.eliminarXProyecto(idProyecto);
             } else {
-                await cronogramaController.eliminar(
-                    idHerramientaCreada
-                );
+                await cronogramaController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 5) {
@@ -800,9 +825,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await catalogoRiesgosController.eliminarXProyecto(idProyecto);
             } else {
-                await catalogoRiesgosController.eliminar(
-                    idHerramientaCreada
-                );
+                await catalogoRiesgosController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 6) {
@@ -854,9 +877,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await autoEvaluacionController.eliminarXProyecto(idProyecto);
             } else {
-                await autoEvaluacionController.eliminar(
-                    idHerramientaCreada
-                );
+                await autoEvaluacionController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 10) {
@@ -866,9 +887,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await retrospectivaController.eliminarXProyecto(idProyecto);
             } else {
-                await retrospectivaController.eliminar(
-                    idHerramientaCreada
-                );
+                await retrospectivaController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 11) {
@@ -878,9 +897,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await actaReunionController.eliminarXProyecto(idProyecto);
             } else {
-                await actaReunionController.eliminar(
-                    idHerramientaCreada
-                );
+                await actaReunionController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 12) {
@@ -890,9 +907,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await equipoController.eliminarXProyecto(idProyecto);
             } else {
-                await equipoController.eliminar(
-                    idHerramientaCreada
-                );
+                await equipoController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 13) {
@@ -902,23 +917,16 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             ) {
                 await presupuestoController.eliminarXProyecto(idProyecto);
             } else {
-                await presupuestoController.eliminar(
-                    idHerramientaCreada
-                );
+                await presupuestoController.eliminar(idHerramientaCreada);
             }
         }
 
         res.status(200).json({
             message: "Herramientas eliminada exitosamente",
         });
-        console.log(
-            `Se elimino la herramienta de proyecto ${idProyecto}!`
-        );
+        console.log(`Se elimino la herramienta de proyecto ${idProyecto}!`);
     } catch (error) {
-        console.error(
-            "Error al elimnar la herramienta del proyecto: ",
-            error
-        );
+        console.error("Error al elimnar la herramienta del proyecto: ", error);
         res.status(500).send(
             "Error al elimnar la herramienta del proyecto: " + error.message
         );

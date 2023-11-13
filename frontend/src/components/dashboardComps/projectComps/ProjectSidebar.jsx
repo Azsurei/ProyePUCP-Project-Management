@@ -476,14 +476,6 @@ function ProjectSidebar(props) {
                                 ></MemberIcon>
                             );
                         })}
-                        <div
-                            className="addNewMContainer"
-                            onClick={() => {
-                                setIsModalUserOpen(true);
-                            }}
-                        >
-                            +
-                        </div>
                     </ul>
 
                     {props.projectIdRole === 1 && (
