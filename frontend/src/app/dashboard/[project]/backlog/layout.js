@@ -190,6 +190,36 @@ export default function RootLayout({ children, params }) {
         setFilterValue(value);
     };
 
+
+    const limpiarInput = () => {
+        setFilterValue("");
+        DataTable();
+  }
+
+
+  //lamado a la api de listar PLantillas por Nombre
+
+  const refreshList = async () => {
+    if (IdUsuario !== "" && filterValue !== "") {
+        try {
+            const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanbanXNombre/' + IdUsuario+'/'+filterValue;
+
+            console.log(IdUsuario+" "+filterValue);
+            console.log(url);
+            const response = await axios.get(url);
+
+            const plantillasInvertidas = response.data.plantillasKanban;
+            console.log(plantillasInvertidas);
+
+            setPlantillas(plantillasInvertidas);
+        } catch (error) {
+            console.error("Error al obtener las plantillas:", error);
+        }
+        }
+    }
+
+
+
     return (
 
         
@@ -314,7 +344,7 @@ export default function RootLayout({ children, params }) {
                                     }
                                     onClose();
                                     DataTable();
-
+                                    setFilterValue(""); 
  
                                 }
                                 else{
@@ -336,7 +366,7 @@ export default function RootLayout({ children, params }) {
                          <div className="modal-body">
 
                             <div style={{ marginBottom: '25px' }}>
-                                <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                                <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos</p>
                             </div>
 
                             <div
@@ -358,20 +388,21 @@ export default function RootLayout({ children, params }) {
                                         startContent={<SearchIcon />}
                                         value={filterValue}
                                         onValueChange={onSearchChange}
+                                        onClear={limpiarInput}
                                         variant="faded"
                                     />
                                 </div>
                                 <Button
                                     className="text-slate-50"
                                     color="primary"
-                                    // onClick={refreshList}
+                                    onClick={refreshList}
                                 >
                                     Buscar
                                 </Button>
                             </div>
 
 
-                           <ul>
+                           <ul className="cardPlantillaKBList">
                                 {plantillas.map((plantilla) => (
                                     <li key={plantilla.idPlantillaKanban}>
                                     <div className={`cardPlantillaKB ${selectedPlantilla === plantilla ? 'selected' : ''}`}
@@ -398,8 +429,9 @@ export default function RootLayout({ children, params }) {
                
                            onClick={() => {
                                onClose(); // Cierra el modal
+                               setSelectedPlantilla(null);
                                setError(null); // Establece error en null para desactivar el mensaje de error
-               
+                               limpiarInput();                                
                            }}
                            
                            >

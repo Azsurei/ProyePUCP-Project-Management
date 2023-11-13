@@ -507,25 +507,31 @@ export default function Info(props) {
           setFilterValue(value);
       };
 
+      const limpiarInput = () => {
+            setFilterValue("");
+            DataTable();
+      }
+
 
       //lamado a la api de listar PLantillas por Nombre
 
-      const refreshList = () => {
+      const refreshList = async () => {
+        if (IdUsuario !== "" && filterValue !== "") {
+            try {
+                const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasACXNombre/' + IdUsuario+'/'+filterValue;
 
-        const stringURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/listarPlantillasACxNombre";
-            axios
-                .post(stringURL, {
-                    nombrePlantilla: filterValue,
-                })
-                .then(function (response) {
-                    console.log(response.data.PlantillaAC);
-                    const plantillasInvertidas = response.data.plantillasAC.reverse();
-                    setPlantillas(plantillasInvertidas);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                console.log(IdUsuario+" "+filterValue);
+                console.log(url);
+                const response = await axios.get(url);
+
+                const plantillasInvertidas = response.data.plantillasAC;
+                console.log(plantillasInvertidas);
+
+                setPlantillas(plantillasInvertidas);
+            } catch (error) {
+                console.error("Error al obtener las plantillas:", error);
+            }
+            }
         }
 
   
@@ -664,7 +670,7 @@ export default function Info(props) {
                         setTimeout(() => {
                             updateListado();
                         }, 2000);
-                        
+                        setFilterValue(""); 
                     }
                     else{
                         setError("Seleccione una plantilla");
@@ -704,13 +710,14 @@ export default function Info(props) {
                             startContent={<SearchIcon />}
                             value={filterValue}
                             onValueChange={onSearchChange}
+                            onClear={limpiarInput}
                             variant="faded"
                         />
                     </div>
                     <NextUIButton
                         className="text-slate-50"
                         color="primary"
-                        // onClick={refreshList}
+                        onClick={refreshList}
                     >
                         Buscar
                     </NextUIButton>
@@ -719,7 +726,7 @@ export default function Info(props) {
 
 
 
-                    <ul className="cardPlantillaKBList">
+                    <ul className="cardPlantillaACList">
                     {plantillas.map((plantilla) => (
                         <li key={plantilla.idPlantillaAC}>
                             <div
@@ -748,7 +755,7 @@ export default function Info(props) {
                             onClose(); // Cierra el modal
                             setSelectedPlantilla(null);
                             setError(null); // Establece error en null para desactivar el mensaje de error
-            
+                            limpiarInput();                                
                         }}
                         
                         >
