@@ -479,7 +479,7 @@ function ProjectSidebar(props) {
                     </ul>
 
                     {props.projectIdRole === 1 && (
-                        <Link href={stringBase + "/settings"}>
+                        <Link href={stringBase + "/settings/general"}>
                             <div
                                 className="text-medium font-medium
                     bg-slate-300 dark:bg-slate-600

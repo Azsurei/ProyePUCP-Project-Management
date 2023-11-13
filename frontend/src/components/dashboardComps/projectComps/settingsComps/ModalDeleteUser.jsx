@@ -15,7 +15,7 @@ import { HerramientasInfo } from "@/app/dashboard/[project]/layout";
 import CardSelectedUser from "@/components/CardSelectedUser";
 axios.defaults.withCredentials = true;
 
-function ModalDeleteUser({ isOpen, onOpenChange, idProyecto, currentUser, removeFromList }) {
+function ModalDeleteUser({ isOpen, onOpenChange, idProyecto, currentUser, removeFromList, refreshPage }) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -39,9 +39,12 @@ function ModalDeleteUser({ isOpen, onOpenChange, idProyecto, currentUser, remove
                         setIsLoading(true);
                         const result = await deleteUser();
                         if (result === 1) {
-                            removeFromList();
+                            //removeFromList();
                             toast.success("Usuario eliminado con exito");
-                            onClose();
+                            setTimeout(() => {
+                                refreshPage();
+                            }, 500);
+                            //onClose();
                         } else {
                             toast.error("Error al eliminar usuario");
                             setIsLoading(false);
