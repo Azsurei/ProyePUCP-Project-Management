@@ -55,6 +55,8 @@ export default function EstimacionCosto(props) {
 
     useEffect(() => {
         const fetchData = async () => {
+
+            if(projectId!==""){    
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
               const herramientas = response.data.herramientas;
@@ -63,18 +65,16 @@ export default function EstimacionCosto(props) {
                     idHerramientaCreada = herramienta.idHerramientaCreada;
                     setPresupuestoId(idHerramientaCreada)
                     console.log("idPresupuesto es:", idHerramientaCreada);
-                    flag = 1;
                     break; // Puedes salir del bucle si has encontrado la herramienta
                 }
             }
-              console.log(`Esta es el id presupuesto:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
             } catch (error) {
               console.error('Error al obtener el presupuesto:', error);
             }
+        }
           };
             fetchData();
-    }, []);
+    }, [projectId]);
     //const router=userRouter();
 
     const onSearchChange = (value) => {
@@ -259,6 +259,8 @@ export default function EstimacionCosto(props) {
     
     const DataTable = async () => {
         const fetchData = async () => {
+
+            if(presupuestoId!==""){
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
@@ -268,26 +270,31 @@ export default function EstimacionCosto(props) {
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
-          };
-            fetchData();
+            }
+        };
+        fetchData();
     };
     const [presupuesto, setPresupuesto] = useState([]);
     const ObtenerPresupuesto = async () => {
         const fetchData = async () => {
-            try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
-              const data = response.data.presupuesto;
-              setPresupuesto(data);
-              if (presupuesto.idMoneda === 1) {
-                setIsSelected(false);
-              } else { 
-                setIsSelected(true);
-              }
-              console.log(`Esta es la data de presupuesto:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
-            } catch (error) {
-              console.error('Error al obtener las líneas de ingreso:', error);
+
+            if(presupuestoId!==""){
+                try {
+                    const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+                    const data = response.data.presupuesto;
+                    setPresupuesto(data);
+                    if (presupuesto.idMoneda === 1) {
+                      setIsSelected(false);
+                    } else { 
+                      setIsSelected(true);
+                    }
+                    console.log(`Esta es la data de presupuesto:`, data);
+                      console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+                  } catch (error) {
+                    console.error('Error al obtener las líneas de ingreso:', error);
+                  } 
             }
+
           };
             fetchData();
     };    

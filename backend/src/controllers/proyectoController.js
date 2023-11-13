@@ -138,15 +138,6 @@ async function crear(req, res, next) {
                             `);
                     }
 
-                    if (herramienta.idHerramienta === 4) {
-                        //Cronograma
-                        query = `CALL INSERTAR_CRONOGRAMA(?);`;
-                        const [results] = await connection.query(query, [
-                            idProyecto,
-                        ]);
-                        const idCronograma = results[0][0].idCronograma;
-                    }
-
                     if (herramienta.idHerramienta === 5) {
                         //Catalogo de riesgo
                         query = `CALL INSERTAR_CATALOGO_RIESGO(?);`;
@@ -933,6 +924,129 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
     }
 }
 
+async function agregarHerramientaAProyecto(req, res, next) {
+    const { idProyecto, idHerramienta } = req.body;
+
+    try {
+        let idDeHerramientaCreada = 0;
+        if (idHerramienta === 3) {
+            //Acta de Constitucion
+            query = `CALL INSERTAR_ACTA_CONSTITUCION(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idActaConstitucion = results[0][0].idActaConstitucion;
+            const [detalleAC] = await connection.query(`
+                CALL INSERTAR_DETALLEAC_CREADO(${idActaConstitucion});
+                `);
+            idDeHerramientaCreada = idActaConstitucion;
+        }
+
+        if (idHerramienta === 5) {
+            //Catalogo de riesgo
+            query = `CALL INSERTAR_CATALOGO_RIESGO(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idCatalogo = results[0][0].idCatalogo;
+
+            idDeHerramientaCreada = idCatalogo;
+        }
+
+        if (idHerramienta === 6) {
+            //Catalogo de interesados
+            query = `CALL INSERTAR_CATALOGO_INTERESADO(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idCatalogoInteresado = results[0][0].idCatalogoInteresado;
+
+            idDeHerramientaCreada = idCatalogoInteresado;
+        }
+
+        if (idHerramienta === 7) {
+            //Matriz de responsabilidad
+            query = `CALL INSERTAR_MATRIZ_RESPONSABILIDAD(?);`;
+            query1 = `CALL INSERTAR_RESPONSABILIDADROL_X_IDMATRIZ(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idMatrizResponsabilidad =
+                results[0][0].idMatrizResponsabilidad;
+            const [results1] = await connection.query(query1, [
+                idMatrizResponsabilidad,
+            ]);
+
+            idDeHerramientaCreada = idMatrizResponsabilidad;
+        }
+
+        if (idHerramienta === 8) {
+            //Matriz de comunicacion
+            query = `CALL INSERTAR_MATRIZ_COMUNICACION(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idMatrizComunicacion = results[0][0].idMatrizComunicacion;
+
+            idDeHerramientaCreada = idMatrizComunicacion;
+        }
+
+        if (idHerramienta === 9) {
+            //Autoevaluacion
+            query = `CALL INSERTAR_AUTOEVALUACION(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idAutoevaluacion = results[0][0].idAutoevaluacion;
+
+            idDeHerramientaCreada = idAutoevaluacion;
+        }
+
+        if (idHerramienta === 10) {
+            //Retrospectiva
+            query = `CALL INSERTAR_RETROSPECTIVA(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idRetrospectiva = results[0][0].idRetrospectiva;
+
+            idDeHerramientaCreada = idRetrospectiva;
+        }
+
+        if (idHerramienta === 11) {
+            //Acta de reunion
+            query = `CALL INSERTAR_ACTA_REUNION(?);`;
+            const [results] = await connection.query(query, [idProyecto]);
+            const idActaReunion = results[0][0].idActaReunion;
+
+            idDeHerramientaCreada = idActaReunion;
+        }
+
+        if (idHerramienta === 12) {
+            //Equipo
+            console.log("Llegue a recibir solicitud insertar equipo");
+            const query = `CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?,?);`;
+            const query1 = `CALL INSERTAR_ROL_MIEMBRO_LIDER(?);`;
+            const [results] = await connection.query(query, [
+                idProyecto,
+                12,
+                null,
+            ]);
+            const idEquipo = results[0][0].idEquipo;
+            console.log(`Se creo el equipo${idEquipo}!`);
+            const [results1] = await connection.query(query1, [idProyecto]);
+
+            idDeHerramientaCreada = null; //????????????????????????????????????????
+        }
+
+        //esto actualiza HerramientaXProyecto (elimina la linea de la herramienta)
+        const query = `CALL AGREGAR_HERRAMIENTA_DE_HERRAMIENTA_X_PROYECTO(?,?,?);`;
+
+        //TODO LO DE ARRIBA FUNCIONA, FALTA IMPRIMIR ESTOS DATOS Y VER PORQUE idHerramienta = NULL y idDeHerramientaCreada = null
+        const [results] = await connection.query(query, [
+            idProyecto,
+            idHerramienta,
+            idDeHerramientaCreada
+        ]);
+
+        res.status(200).json({
+            message: "Herramientas agregada exitosamente",
+        });
+        console.log(`Se agrego la herramienta de proyecto ${idProyecto}!`);
+    } catch (error) {
+        console.error("Error al agregar la herramienta del proyecto: ", error);
+        res.status(500).send(
+            "Error al agregar la herramienta del proyecto: " + error.message
+        );
+    }
+}
+
 module.exports = {
     crear,
     insertarUsuarioXRolXProyecto,
@@ -946,4 +1060,5 @@ module.exports = {
     agregarUsuariosAProyecto,
     eliminarUsuarioDeProyecto,
     eliminarHerramientaDeProyecto,
+    agregarHerramientaAProyecto,
 };

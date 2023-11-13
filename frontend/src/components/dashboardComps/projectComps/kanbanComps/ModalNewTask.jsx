@@ -205,9 +205,10 @@ function ModalNewTask({
                 {(onClose) => {
                     const finalizarModal = () => {
                         const result = onSubmit();
+                        
                         if (result === 1) {
                             const objTareaNueva = {
-                                idCronograma: herramientasInfo[3].idHerramientaCreada, 
+                                idCronograma: herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada, 
                                 idTareaEstado: 1, //No iniciado
                                 idSubGrupo: null,
                                 idPadre: null,

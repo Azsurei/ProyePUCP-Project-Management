@@ -8,7 +8,7 @@ import { Toaster, toast } from "sonner";
 import ModalDeleteUser from "./ModalDeleteUser";
 axios.defaults.withCredentials = true;
 
-function ListUsersInProject({ projectId }) {
+function ListUsersInProject({ projectId, refreshPage }) {
     const [isModalSupervOpen, setIsModalSupervOpen] = useState(false);
     const [isModalMiembros, setIsModalMiembrosOpen] = useState(false);
 
@@ -45,14 +45,14 @@ function ListUsersInProject({ projectId }) {
 
     if (isLoadingInitial === true) {
         return (
-            <div className="flex justify-center items-center flex-1 pt-[200px]">
+            <div className="flex justify-center items-center flex-1">
                 <Spinner size="lg" />
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-6 pt-2">
+        <div className="flex flex-col gap-6 pt-2 overflow-y-auto pb-4">
             {isModalSupervOpen && (
                 <ModalUser
                     listAllUsers={true}
@@ -91,6 +91,7 @@ function ListUsersInProject({ projectId }) {
                     setCurrentUserList([...newUserList]);
                     setUserToDelete(null);
                 }}
+                refreshPage={refreshPage}
             />
 
             <div className={twStyle2}>
@@ -220,6 +221,10 @@ function ListUsersInProject({ projectId }) {
                     console.log(response.data.message);
                     setCurrentUserList([...currentUserList, ...usersWithRol]);
                     resolve("exito");
+
+                    setTimeout(() => {
+                        refreshPage();
+                    }, 500);
                 })
                 .catch(function (error) {
                     console.log(error);

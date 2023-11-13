@@ -174,7 +174,7 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
                 "/api/proyecto/retrospectiva/insertarLineaRetrospectiva";
 
             const objLineaRetro = {
-                idRetrospectiva: herramientasInfo[9].idHerramientaCreada,
+                idRetrospectiva: herramientasInfo.find(herramienta => herramienta.idHerramienta === 10).idHerramientaCreada,
                 idSprint: parseInt(retroSprint.currentKey),
                 titulo: retroName,
                 cantBien: 0,

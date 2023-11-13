@@ -50,13 +50,14 @@ export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
     const decodedUrl = decodeURIComponent(props.params.project);
-    const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
     const stringUrlTipoIngreso = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoIngresosTodos`;
     const stringUrlTipoTransaccion = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarTipoTransaccionTodos`;
     const stringUrlPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdProyecto/100`;
     
+
+    const [projectId, setProjectId] = useState("");
     //const router=userRouter();
 
 
@@ -129,9 +130,16 @@ export default function Ingresos(props) {
     //const router=userRouter();
 
 
+    useEffect(() => {
+        const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+        setProjectId(projectId);
+
+    }, []);
+
     let flag=0;
     useEffect(() => {
         const fetchData = async () => {
+            if(projectId!==""){
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
               const herramientas = response.data.herramientas;
@@ -147,9 +155,10 @@ export default function Ingresos(props) {
             } catch (error) {
               console.error('Error al obtener el presupuesto:', error);
             }
+        }
           };
             fetchData();
-    }, []);
+    }, [projectId]);
 
     function insertarLineaIngreso() {
         return new Promise((resolve, reject) => {
@@ -280,6 +289,7 @@ export default function Ingresos(props) {
 
     const DataTable = async () => {
         const fetchData = async () => {
+            if(presupuestoId!==""){
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasIngreso;
@@ -289,6 +299,7 @@ export default function Ingresos(props) {
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
+            }
           };
             fetchData();
     };
@@ -296,20 +307,22 @@ export default function Ingresos(props) {
     const [presupuesto, setPresupuesto] = useState([]);
     const ObtenerPresupuesto = async () => {
         const fetchData = async () => {
-            try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
-              const data = response.data.presupuesto;
-              setPresupuesto(data);
-              if (presupuesto.idMoneda === 1) {
-                setIsSelected(false);
-              } else { 
-                setIsSelected(true);
-              }
-              console.log(`Esta es la data de presupuesto:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
-            } catch (error) {
-              console.error('Error al obtener las líneas de ingreso:', error);
-            }
+            if(presupuestoId!==""){
+                try {
+                const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
+                const data = response.data.presupuesto;
+                setPresupuesto(data);
+                if (presupuesto.idMoneda === 1) {
+                    setIsSelected(false);
+                } else { 
+                    setIsSelected(true);
+                }
+                console.log(`Esta es la data de presupuesto:`, data);
+                    console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+                } catch (error) {
+                console.error('Error al obtener las líneas de ingreso:', error);
+                }
+                }
           };
             fetchData();
     };    

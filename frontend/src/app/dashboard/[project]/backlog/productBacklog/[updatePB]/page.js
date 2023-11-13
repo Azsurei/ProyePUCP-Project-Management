@@ -34,7 +34,7 @@ export default function ProductBacklogUpdate(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
+    const idProductBacklog = herramientasInfo.find(herramienta => herramienta.idHerramienta===1).idHerramientaCreada;
     const stringURLEpics =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
@@ -63,6 +63,13 @@ export default function ProductBacklogUpdate(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
+    const [reloadData, setReloadData] = useState(false);
+    const [reloading, setReloading] = useState(true);
+
+    // Esta función se llama cuando deseas recargar los datos
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
 
     useEffect(() => {
         if (historiaUsuario && historiaUsuario.hu) {
@@ -114,14 +121,30 @@ export default function ProductBacklogUpdate(props) {
     const toggleModal = () => {
         setModal(!modal);
     };
+    const listarDenuevo = () => {
+        setReloading(!reloading);
+    };
+
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
+            setReloadData(true);
         } else {
             document.body.style.overflow = "auto";
+            setReloadData(false);
         }
         setIsLoadingSmall(false);
     }, [modal]);
+    useEffect(() => {
+        if (reloading) {
+            document.body.style.overflow = "hidden";
+            setReloadData(true);
+        } else {
+            document.body.style.overflow = "auto";
+            setReloadData(false);
+        }
+        setIsLoadingSmall(false);
+    }, [reloading]);
 
     useEffect(() => {
         const numberPattern = /^\d+$/;
@@ -498,6 +521,7 @@ export default function ProductBacklogUpdate(props) {
                                 hasColor={false}
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
+                                reloadData={reloadData}
                                 initialName={selectedNameEpic}
                                 isDisabled={!editMode}
                             />
@@ -715,7 +739,13 @@ export default function ProductBacklogUpdate(props) {
                                     oneButton={false}
                                     secondAction={() => {
                                         onSubmit();
-                                        router.back();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/backlog/productBacklog"
+                                        );
                                     }}
                                     textColor="blue"
                                     verifyFunction={() => {
@@ -762,6 +792,7 @@ export default function ProductBacklogUpdate(props) {
                             process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/hu/eliminarEpica`
                         }
+                        reloadData={() => listarDenuevo()}
                     />
                 )}
             </div>

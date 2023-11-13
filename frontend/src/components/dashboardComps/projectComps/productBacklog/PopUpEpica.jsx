@@ -186,10 +186,10 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, reloadData})
                     <>
                         
                     
-                            <ModalHeader className="flex flex-col gap-1">Lista de epicas</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1">Lista de épicas</ModalHeader>
                                 <div className="subcontainer flex justify-center gap-percent-22">
                                     <Button color="primary" endContent={<PlusIcon />} className="btnAddEpic" onClick={AddNewEpic}>
-                                        Agregar Epica
+                                        Agregar Épica
                                     </Button>
                                     
                                         <Button color="danger"  onClick={() => {
@@ -206,7 +206,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, reloadData})
                                 <Input
                                     isClearable
                                     className="w-full sm:max-w-[100%]"
-                                    placeholder="Ingresa una epica..."
+                                    placeholder="Busque una épica..."
                                     startContent={<SearchIcon />}
                                     value={filterValue}
                                     onValueChange={onSearchChange}
