@@ -295,8 +295,8 @@ export default function MatrizDeComunicaciones(props) {
                                     type="button"
         
                                 >
-                                    {/* <img src="/icons/eye.svg" /> */}
-                                    <EyeFilledIcon />
+                                    <img src="/icons/view.svg" />
+                                    {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
                             <Tooltip content="Editar">
