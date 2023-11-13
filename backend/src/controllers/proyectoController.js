@@ -969,6 +969,7 @@ async function agregarHerramientaAProyecto(req, res, next) {
                 idMatrizResponsabilidad,
             ]);
 
+            console.log("ID DE ESTO => " + idMatrizResponsabilidad);
             idDeHerramientaCreada = idMatrizResponsabilidad;
         }
 
@@ -1024,16 +1025,6 @@ async function agregarHerramientaAProyecto(req, res, next) {
 
             idDeHerramientaCreada = null; //????????????????????????????????????????
         }
-
-        //esto actualiza HerramientaXProyecto (elimina la linea de la herramienta)
-        const query = `CALL AGREGAR_HERRAMIENTA_DE_HERRAMIENTA_X_PROYECTO(?,?,?);`;
-
-        //TODO LO DE ARRIBA FUNCIONA, FALTA IMPRIMIR ESTOS DATOS Y VER PORQUE idHerramienta = NULL y idDeHerramientaCreada = null
-        const [results] = await connection.query(query, [
-            idProyecto,
-            idHerramienta,
-            idDeHerramientaCreada
-        ]);
 
         res.status(200).json({
             message: "Herramientas agregada exitosamente",
