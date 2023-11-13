@@ -489,7 +489,7 @@ export default function crearActaReunion(props) {
                                     onClick={toggleModal1}
                                     className="ml-3 bg-[#f0ae19] text-white w-8 h-8
                                         rounded-full">
-                                    <img src="/icons/icon-searchBar.svg"/>
+                                    <img src="/icons/icon-searchBar.svg" className="ml-1"/>
                                 </button>
 
                                 {modal1 && (

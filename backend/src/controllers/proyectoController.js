@@ -490,6 +490,9 @@ async function eliminar(req, res, next) {
     try {
         await funcEliminar(idProyecto, herramientas);
         console.log(`Proyecto ${idProyecto} eliminado`);
+        res.status(200).json({
+            message: "Proyecto eliminado correctamente",
+        });
     } catch (error) {
         next(error);
     }
@@ -505,146 +508,171 @@ async function funcEliminar(idProyecto, herramientas) {
         // idHerramienta es la herramienta en sí. NO SE ELIMINA
         for (const herramienta of herramientas) {
             if (herramienta.idHerramienta == 1) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await backlogController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await backlogController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await backlogController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 2) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await EDTController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await EDTController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await EDTController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 3) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
-                    await actaConstitucionController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await actaConstitucionController.eliminar(herramienta.idHerramientaCreada);
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await actaConstitucionController.eliminarXProyecto(
+                        idProyecto
+                    );
+                } else {
+                    await actaConstitucionController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 4) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await cronogramaController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await cronogramaController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await cronogramaController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 5) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
-                    await catalogoRiesgosController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await catalogoRiesgosController.eliminar(herramienta.idHerramientaCreada);
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await catalogoRiesgosController.eliminarXProyecto(
+                        idProyecto
+                    );
+                } else {
+                    await catalogoRiesgosController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 6) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
-                    await catalogoInteresadosController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await catalogoInteresadosController.eliminar(herramienta.idHerramientaCreada);
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await catalogoInteresadosController.eliminarXProyecto(
+                        idProyecto
+                    );
+                } else {
+                    await catalogoInteresadosController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 7) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
-                    await matrizResponsabilidadController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await matrizResponsabilidadController.eliminar(herramienta.idHerramientaCreada);
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await matrizResponsabilidadController.eliminarXProyecto(
+                        idProyecto
+                    );
+                } else {
+                    await matrizResponsabilidadController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 8) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
-                    await matrizComunicacionesController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await matrizComunicacionesController.eliminar(herramienta.idHerramientaCreada);
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await matrizComunicacionesController.eliminarXProyecto(
+                        idProyecto
+                    );
+                } else {
+                    await matrizComunicacionesController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 9) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
-                    await autoEvaluacionController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await autoEvaluacionController.eliminar(herramienta.idHerramientaCreada);
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await autoEvaluacionController.eliminarXProyecto(
+                        idProyecto
+                    );
+                } else {
+                    await autoEvaluacionController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 10) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await retrospectivaController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await retrospectivaController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await retrospectivaController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 11) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await actaReunionController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await actaReunionController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await actaReunionController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 12) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await equipoController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await equipoController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await equipoController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
             if (herramienta.idHerramienta == 13) {
-                if(herramienta.idHerramientaCreada == null || 
-                    herramienta.idHerramientaCreada == undefined)
-                {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
                     await presupuestoController.eliminarXProyecto(idProyecto);
-                }
-                else 
-                {
-                    await presupuestoController.eliminar(herramienta.idHerramientaCreada);
+                } else {
+                    await presupuestoController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
                 }
             }
         }
@@ -672,6 +700,231 @@ async function verInfoProyecto(req, res, next) {
     }
 }
 
+async function agregarUsuariosAProyecto(req, res, next) {
+    const { usuarios, idProyecto } = req.body;
+    let query = `CALL INSERTAR_USUARIO_X_ROL_X_PROYECTO(?,?,?);`;
+    try {
+        for (const usuario of usuarios) {
+            const [results] = await connection.query(query, [
+                usuario.idUsuario,
+                usuario.idRol,
+                idProyecto,
+            ]);
+            const successRes = results[0];
+        }
+        res.status(200).json({
+            message: "Usuario agregado correctamente",
+        });
+    } catch (error) {
+        console.error("Error al agregar usuario: ", error);
+        res.status(500).send("Error al agregar usuario: " + error.message);
+    }
+}
+
+async function eliminarUsuarioDeProyecto(req, res, next) {
+    const { idUsuario, idProyecto } = req.body;
+    let query = `CALL ELIMINAR_USUARIO_X_ID_PROYECTO(?,?);`;
+    try {
+        const [results] = await connection.query(query, [
+            idUsuario,
+            idProyecto,
+        ]);
+        const successRes = results[0];
+        res.status(200).json({
+            message: "Usuario eliminado correctamente",
+        });
+    } catch (error) {
+        console.error("Error al eliminar usuario: ", error);
+        res.status(500).send("Error al eliminar usuario: " + error.message);
+    }
+}
+
+async function eliminarHerramientaDeProyecto(req, res, next) {
+    const { idProyecto, idHerramienta, idHerramientaCreada } = req.body;
+
+    //esto actualiza HerramientaXProyecto (elimina la linea de la herramienta)
+    const query = `CALL ELIMINAR_HERRAMIENTA_DE_HERRAMIENTA_X_PROYECTO(?,?);`;
+    try {
+        const [results] = await connection.query(query, [idProyecto, idHerramienta]);
+
+        if (idHerramienta == 1) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await backlogController.eliminarXProyecto(idProyecto);
+            } else {
+                await backlogController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 2) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await EDTController.eliminarXProyecto(idProyecto);
+            } else {
+                await EDTController.eliminar(idHerramientaCreada);
+            }
+        }
+        if (idHerramienta == 3) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await actaConstitucionController.eliminarXProyecto(idProyecto);
+            } else {
+                await actaConstitucionController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 4) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await cronogramaController.eliminarXProyecto(idProyecto);
+            } else {
+                await cronogramaController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 5) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await catalogoRiesgosController.eliminarXProyecto(idProyecto);
+            } else {
+                await catalogoRiesgosController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 6) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await catalogoInteresadosController.eliminarXProyecto(
+                    idProyecto
+                );
+            } else {
+                await catalogoInteresadosController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 7) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await matrizResponsabilidadController.eliminarXProyecto(
+                    idProyecto
+                );
+            } else {
+                await matrizResponsabilidadController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 8) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await matrizComunicacionesController.eliminarXProyecto(
+                    idProyecto
+                );
+            } else {
+                await matrizComunicacionesController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 9) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await autoEvaluacionController.eliminarXProyecto(idProyecto);
+            } else {
+                await autoEvaluacionController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 10) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await retrospectivaController.eliminarXProyecto(idProyecto);
+            } else {
+                await retrospectivaController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 11) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await actaReunionController.eliminarXProyecto(idProyecto);
+            } else {
+                await actaReunionController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 12) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await equipoController.eliminarXProyecto(idProyecto);
+            } else {
+                await equipoController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+        if (idHerramienta == 13) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await presupuestoController.eliminarXProyecto(idProyecto);
+            } else {
+                await presupuestoController.eliminar(
+                    idHerramientaCreada
+                );
+            }
+        }
+
+        res.status(200).json({
+            message: "Herramientas eliminada exitosamente",
+        });
+        console.log(
+            `Se elimino la herramienta de proyecto ${idProyecto}!`
+        );
+    } catch (error) {
+        console.error(
+            "Error al elimnar la herramienta del proyecto: ",
+            error
+        );
+        res.status(500).send(
+            "Error al elimnar la herramienta del proyecto: " + error.message
+        );
+    }
+}
+
 module.exports = {
     crear,
     insertarUsuarioXRolXProyecto,
@@ -682,4 +935,7 @@ module.exports = {
     listarUsuariosXProyecto,
     eliminar,
     verInfoProyecto,
+    agregarUsuariosAProyecto,
+    eliminarUsuarioDeProyecto,
+    eliminarHerramientaDeProyecto,
 };
