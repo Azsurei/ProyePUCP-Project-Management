@@ -2859,11 +2859,11 @@ BEGIN
     SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, c.idMatrizComunicacion, mc.idProyecto, 
     c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correo, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
-    JOIN MatrizComunicacion AS mc ON c.idMatrizComunicacion = mc.idMatrizComunicacion
-    JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
-    JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
-    JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
-    JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
+    LEFT JOIN MatrizComunicacion AS mc ON c.idMatrizComunicacion = mc.idMatrizComunicacion
+    LEFT JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
+    LEFT JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
+    LEFT JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+    LEFT JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
 	WHERE mc.idProyecto = _idProyecto AND c.activo=1;
 END$
 
@@ -2917,10 +2917,10 @@ BEGIN
     SELECT c.idComunicacion, c.idCanal, cc.nombreCanal, c.idFrecuencia, cf.nombreFrecuencia, c.idFormato, cfo.nombreFormato, 
     c.sumillaInformacion, c.detalleInformacion, c.responsableDeComunicar, u.nombres, u.apellidos, u.correoElectronico, u.imgLink, c.grupoReceptor, c.activo
 	FROM Comunicacion AS c
-    JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
-    JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
-    JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
-    JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
+    LEFT JOIN ComCanal AS cc ON c.idCanal = cc.idCanal
+    LEFT JOIN ComFrecuencia AS cf ON c.idFrecuencia = cf.idFrecuencia
+    LEFT JOIN ComFormato AS cfo ON c.idFormato = cfo.idFormato
+    LEFT JOIN Usuario AS u ON c.responsableDeComunicar = u.idUsuario
 	WHERE c.idComunicacion = _idComunicacion AND c.activo=1;
 END$
 

@@ -728,7 +728,13 @@ export default function CatalogoDeInteresadosRegister(props) {
                                     oneButton={false}
                                     secondAction={() => {
                                         onSubmit();
-                                        router.back();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/catalogoDeInteresados"
+                                        );
                                     }}
                                     textColor="blue"
                                     verifyFunction={() => {

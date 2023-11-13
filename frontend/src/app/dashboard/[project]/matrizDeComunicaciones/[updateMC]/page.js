@@ -147,15 +147,7 @@ export default function MatrizComunicacionesUpdate(props) {
     };
 
     function verifyFieldsEmpty() {
-        return (
-            sumilla.trim() === "" ||
-            detail.trim() === "" ||
-            groupReceiver.trim() === "" ||
-            canal === null ||
-            frecuency === null ||
-            format === null ||
-            selectedMiembrosList.length === 0
-        );
+        return sumilla.trim() === "";
     }
 
     function verifyFieldsExcessive() {
@@ -328,7 +320,9 @@ export default function MatrizComunicacionesUpdate(props) {
                                         src={component.imgLink}
                                         fallback={
                                             <p className="profilePicMC">
-                                                {component.nombres[0] +
+                                                {(component.nombres !== null
+                                                    ? component.nombres[0]
+                                                    : "") +
                                                     (component.apellidos !==
                                                     null
                                                         ? component.apellidos[0]
@@ -338,7 +332,11 @@ export default function MatrizComunicacionesUpdate(props) {
                                     />
                                     <div className="labelDatoUsuarioMC">
                                         {capitalizeWords(
-                                            `${component.nombres} ${
+                                            `${
+                                                component.nombres != null
+                                                    ? component.nombres
+                                                    : ""
+                                            } ${
                                                 component.apellidos !== null
                                                     ? component.apellidos
                                                     : ""
@@ -360,7 +358,6 @@ export default function MatrizComunicacionesUpdate(props) {
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-label"
                         minRows="5"
                         value={detail}
@@ -381,7 +378,6 @@ export default function MatrizComunicacionesUpdate(props) {
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-label"
                         value={groupReceiver}
                         onValueChange={setGroupReceiver}
@@ -424,7 +420,13 @@ export default function MatrizComunicacionesUpdate(props) {
                                     oneButton={false}
                                     secondAction={() => {
                                         onSubmit();
-                                        router.back();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/matrizDeComunicaciones"
+                                        );
                                     }}
                                     textColor="blue"
                                     verifyFunction={() => {
