@@ -207,8 +207,9 @@ function ListToolsInProject({ projectId, refreshPage }) {
                             onModalDeleteOpen();
                         }}
                         handlerAdd={() => {
+
                             setIsAdding(tool.idHerramienta);
-                            addTool();
+                            addTool(tool.idHerramienta);
                         }}
                         isAdding={isAdding}
                     />
@@ -218,15 +219,16 @@ function ListToolsInProject({ projectId, refreshPage }) {
         </div>
     );
 
-    async function addTool() {
+    async function addTool(idDeHerramienta) {
         //FUNCION NO ESTA LISTA CUIDADO !!!!! //!!!!!
         const addURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/agregarHerramientaAProyecto";
         const objToSend = {
             idProyecto: projectId,
-            idHerramienta: isAdding,
+            idHerramienta: idDeHerramienta,
         }
+        console.log("MANDANDO OBJETO => " + JSON.stringify(objToSend));
         axios
             .post(addURL, objToSend)
             .then(function (response) {
