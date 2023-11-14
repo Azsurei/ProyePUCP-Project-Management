@@ -17,18 +17,19 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(cors({ origin: "http://localhost", credentials: true }));
 
-
 const routerAuth = require('./routes/auth').routerAuth;
 const routerProyecto = require('./routes/proyecto').routerProyecto;
 const routerUsuario = require('./routes/usuario').routerUsuario;
 const routerHerramientas = require('./routes/herramientas').routerHerramientas;
 const routerAdmin = require('./routes/admin').routerAdmin;
+const routerFiles = require('./routes/files').routerFiles;
 
 app.use('/api/herramientas',routerHerramientas);
 app.use('/api/auth',routerAuth);
 app.use('/api/proyecto',routerProyecto);
 app.use('/api/usuario',routerUsuario);
 app.use('/api/admin',routerAdmin);
+app.use('/api/files',routerFiles);
 
 const startCronJob = require('./config/cronJobs');
 
