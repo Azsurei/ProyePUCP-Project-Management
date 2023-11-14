@@ -194,14 +194,14 @@ export default function Info(props) {
 
     };
     
-    // useEffect(() => {
-    //     actualizarListado();
-    // }, []);
+    useEffect(() => {
+        actualizarListado();
+    }, []);
     
 
-    // const updateListado = () => {
-    //     actualizarListado();
-    // };
+    const updateListado = () => {
+        actualizarListado();
+    };
 
     const handleCancelEdit = () => {
         //reestablecemos el arreglo con lo que estaba originalmente en el arreglo del fetch

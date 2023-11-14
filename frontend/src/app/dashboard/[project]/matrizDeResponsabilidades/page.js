@@ -231,14 +231,14 @@ export default function MatrizDeResponsabilidades(props) {
             });
     }, [reList]);
 
-    useEffect(() => {
-        actualizarListado();
-    }, []);
+    // useEffect(() => {
+    //     actualizarListado();
+    // }, []);
     
 
-    const updateListado = () => {
-        actualizarListado();
-    };
+    // const updateListado = () => {
+    //     actualizarListado();
+    // };
 
     const columns = [
         { name: "Entregables", uid: "entregable" },
@@ -788,7 +788,6 @@ export default function MatrizDeResponsabilidades(props) {
                 error: "Error al agregar plantilla",
                 position: "bottom-right",
             });
-            
         } catch (error) {
             throw error; 
         } 
@@ -806,10 +805,11 @@ export default function MatrizDeResponsabilidades(props) {
                 position: "bottom-right",
             });
             
+
         } catch (error) {
             throw error; 
         }
-
+        
     };
 
     const usePlantillaMR = () => {
@@ -828,6 +828,9 @@ export default function MatrizDeResponsabilidades(props) {
                 .put(updateURL, updateData)
                 .then((response) => {
                     resolve(response);
+
+                    setIsLoadingSmall(true);
+                    setReList(!reList);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -1223,18 +1226,13 @@ export default function MatrizDeResponsabilidades(props) {
                         try {
                             await usarPlantilla();
                             setPlantillaElegida(false);
-                            
                         } catch (error) {
                             console.error('Error al Utilizar Plantilla:', error);
                         }
                         onClose();
-                        updateListado();
+                        
                         DataTable(); // Llamada a fetchPlantillas después de usar la plantilla
 
-
-                        // setTimeout(() => {
-                        //     updateListado();
-                        // }, 2000);
                         setFilterValue(""); 
                     }
                     else{
