@@ -1034,6 +1034,10 @@ export default function MatrizDeResponsabilidades(props) {
                 </ModalContent>
             </Modal>
             {/*El otro modal*/}
+
+                                         
+
+            
             <Modal
                 isOpen={isOpenAdd}
                 onOpenChange={onOpenChangeAdd}

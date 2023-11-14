@@ -289,17 +289,12 @@
 
 }
 
-.modalAddIngreso {
-    display: flex; /* Make it a flex container */
-    align-items: flex-start; /* Vertically center the children */
-    gap: 20px; /* Add some spacing between the elements */
-}
+
 
 .comboBoxMoneda {
     flex: 1; /* Allow the combo box to grow and take available space */
     transform: translateY(-9%);
     z-index: 2;
-
 
 }
 
@@ -309,8 +304,7 @@
     padding-left: 6px;
     display: flex; /* Make it a flex container */
     align-items: center; /* Vertically center the children */
-    justify-content: space-between; /* Espacio entre los elementos */
-
+    gap: 13rem;
     color: #000;
     font-family: Montserrat;
     font-size: 15px;

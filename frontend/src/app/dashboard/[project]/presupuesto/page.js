@@ -48,6 +48,7 @@ import { SmallLoadingScreen } from "../layout";
 import { set } from "date-fns";
 import { is } from "date-fns/locale";
 import { Today } from "@mui/icons-material";
+import { differenceInMonths } from 'date-fns';
 
 
 export default function Historial(props) {
@@ -113,6 +114,41 @@ export default function Historial(props) {
          
     }, []);
 
+    //Obtener Fechas de Proyecto
+    const [cantidadMesesProject,setcantidadMesesProject]=useState(0);
+
+    const DataTableProyecto = async () => {
+        const fetchFechasProyecto = async () => {
+                try {
+                    const url = process.env.NEXT_PUBLIC_BACKEND_URL +"/api/proyecto/verInfoProyecto/" +projectId;
+                    const response = await axios.get(url);
+
+                    const proyecto = response.data.infoProyecto;
+
+                    const fechaInicio = new Date(proyecto[0].fechaInicio);
+                    const fechaFin = new Date(proyecto[0].fechaFin);
+
+                    console.log("Fecha Inicio"+fechaInicio);
+                    console.log("Fecha Fin"+fechaFin);
+
+                    const diferenciaMeses = differenceInMonths(fechaFin, fechaInicio)+1;
+                    console.log("Cantidad Meses "+diferenciaMeses);
+
+                    setcantidadMesesProject(diferenciaMeses);
+
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
+        
+        };
+    
+        fetchFechasProyecto();
+    };
+
+    useEffect(() => {
+        DataTableProyecto();
+      }, [projectId]);
+
     //const router=userRouter();
     const [listUsers, setListUsers] = useState([]);
 
@@ -170,7 +206,7 @@ export default function Historial(props) {
                     const data = {
                         idMoneda: selectedMoneda,
                         presupuestoInicial: parseFloat(montoInicial),
-                        cantidadMeses: cantMeses,
+                        cantidadMeses: cantidadMesesProject,
                         idPresupuesto: idPresupuestoCreado
                     };
     
@@ -348,17 +384,7 @@ export default function Historial(props) {
           };
             fetchData();
     };
-    const dataEgreso = [
-        {
-            idLineaEgreso: 1,
-            descripcion: "Licencia de Software",
-            costoReal: 1000,
-            fechaRegistro: "2023-10-15T05:00:00.000Z",
-            cantidad: 1,
-            idMoneda: 1,
-            nombreMoneda: "Dolar",
-        }
-    ];
+
     const [presupuestoDisponible, setPresupuestoDisponible] = useState(0);
     const totalCalculate = () => {
         const totalI = lineasIngreso.reduce((total, item) => {
@@ -711,7 +737,7 @@ export default function Historial(props) {
                 </Modal>
  
                 
-                <Modal size='xl' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} 
+                <Modal size='lg' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} 
                             classNames={{
                                 closeButton: "hidden"
                             }}
@@ -727,11 +753,6 @@ export default function Historial(props) {
                                 
                                 }
 
-                                if(parseInt(cantMeses) < 0 || isNaN(parseInt(cantMeses))){
-                                    setValidcantMeses(false);
-                                    Isvalid = false;
-
-                                }
                                 if(selectedMoneda!==1 && selectedMoneda!==2){
                                     setValidTipoMoneda(false);
                                     Isvalid= false;
@@ -743,6 +764,8 @@ export default function Historial(props) {
                                 }
                                 if(Isvalid === true){
 
+
+                                    
                                     try {
                                         await nuevoPresupuestoInicial();     
     
@@ -773,12 +796,11 @@ export default function Historial(props) {
 
                                         <div className="modalPresupuestoTitulos">
                                             <p>Moneda</p>
-                                            <p>Presupuesto Inicial</p>
-                                            <p className="cantMeses">Cantidad Meses</p>
+                                            <p className="cantMeses">Presupuesto Inicial</p>
                                         </div>
                                         
                                         <div className="modalAddIngreso">
-                                            <div className="comboBoxMoneda" style={{width: '9rem'}}>
+                                            <div className="comboBoxMoneda" style={{width: '12rem'}}>
 
                                             <MyCombobox
                                                 urlApi={stringUrlMonedas}
@@ -789,13 +811,13 @@ export default function Historial(props) {
                                                 idParam="idMoneda"
                                                 initialName="Tipo Moneda"
                                                 inputWidth="32"
-                                                widthCombo="9"
+                                                widthCombo="19"
                                             />
 
                                             </div>
 
 
-                                           <div style={{ flex: '100%' }}>
+                                           <div >
 
                                                 <Input
                                                     value={montoInicial}
@@ -824,25 +846,7 @@ export default function Historial(props) {
  
                                             </div>
 
-                                            <div style={{ flex: '55%' }}>
 
-                                                    <Input
-                                                        type="number"
-                                                        value={cantMeses}
-                                                        onValueChange={setCantMeses}
-                                                        isInvalid={!validcantMeses}
-                                                        onChange={()=>{setValidcantMeses(true)}}
-                                                        errorMessage={
-                                                            !validcantMeses
-                                                                ? "Cantidad inválida"
-                                                                : ""
-                                                        }
-                                                        placeholder="0"
-                                                        labelPlacement="inside"
-
-                                            />
-                                            </div>
-                                            {cantMeses<0?setCantMeses(0):""}
               
                                             <div className="alertMoneda" >
                                                 <p className="text-tiny text-danger">            
