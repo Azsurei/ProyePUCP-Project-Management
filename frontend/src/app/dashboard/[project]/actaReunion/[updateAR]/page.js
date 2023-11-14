@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-
+import { Toaster, toast } from "sonner";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
 
@@ -822,12 +822,18 @@ export default function editarActaReunion(props) {
                                 secondAction={() => {
                                     saveMeetingChanges();
                                     router.refresh();
+                                    toast.success(
+                                        "Se ha modificado el Acta de Reunion exitosamente"
+                                    );
                                     router.push('/dashboard/' + projectName+'='+projectId + '/actaReunion');
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
                                     if (verifyFieldsEmpty()) {
                                         setFieldsEmpty(true);
+                                        toast.error(
+                                            "Faltan completar campos en el Acta de Reunion"
+                                        );
                                         return false;
                                     } else {
                                         setFieldsEmpty(false);
@@ -839,7 +845,15 @@ export default function editarActaReunion(props) {
                     </div>
                 )}
             </div>
-
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </div>
     )

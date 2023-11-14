@@ -6,6 +6,7 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
+import { Toaster, toast } from "sonner";
 import {Button, Avatar, AvatarGroup, Card, CardBody, CardHeader, Divider, Spacer} from '@nextui-org/react';
 import {Tabs, Tab} from '@nextui-org/react';
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -137,6 +138,9 @@ export default function ActaReunion(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
+                                    toast.success(
+                                        "Se ha eliminado el Acta de Reunion exitosamente"
+                                    );
                                 }}
                                 textColor="red"
                             />
@@ -201,6 +205,15 @@ export default function ActaReunion(props) {
                     </div>
                 )
             }
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }

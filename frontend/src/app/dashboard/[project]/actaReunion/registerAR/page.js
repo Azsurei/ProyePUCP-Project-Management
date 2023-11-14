@@ -16,6 +16,7 @@ import {
     CardFooter,
     Button, Spacer, Select, SelectItem,
 } from "@nextui-org/react";
+import { Toaster, toast } from "sonner";
 
 import ModalUsersOne from "@/components/ModalUsersOne";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
@@ -264,7 +265,7 @@ export default function crearActaReunion(props) {
             apellidos: " ",
             correoElectronico: " ",
             activo: 0,
-            imgLink: null,
+            imgLink: "",
             idUsuarioRolProyecto: 0 });
 
     useEffect(() => {
@@ -317,7 +318,7 @@ export default function crearActaReunion(props) {
         const newMembrsList = [...selectedConvocanteList, ...newMiembrosList];
         setSelectedConvocanteList(newMembrsList);
         setModal1(!modal1);
-
+        console.log(convocante);
         if (newMiembrosList.length > 0) {
             setConvocante(nuevoConvocante);
         }
@@ -725,16 +726,6 @@ export default function crearActaReunion(props) {
             </div>
 
             <div className="footer">
-                <div className="containerBottom">
-                    {fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                </div>
-
                 <div className="twoButtons1">
                     <div className="buttonContainer">
                         <Modal
@@ -755,15 +746,22 @@ export default function crearActaReunion(props) {
                             secondAction={() => {
                                 resetConvocante();
                                 createMeeting();
+                                toast.success(
+                                    "Se ha registrado el Acta de Reunion exitosamente"
+                                );
                                 router.push(previousUrl);
                             }}
                             textColor="blue"
                             verifyFunction={() => {
                                 if (verifyFieldsEmpty()) {
                                     setFieldsEmpty(true);
+                                    toast.error(
+                                        "Faltan completar campos en el Acta de Reunion"
+                                    );
                                     return false;
                                 } else {
                                     setFieldsEmpty(false);
+
                                     return true;
                                 }
                             }}
@@ -771,6 +769,15 @@ export default function crearActaReunion(props) {
                     </div>
                 </div>
             </div>
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     )
 }
