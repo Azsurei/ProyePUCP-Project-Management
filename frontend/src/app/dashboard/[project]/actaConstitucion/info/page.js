@@ -136,8 +136,6 @@ export default function Info(props) {
     };
 
 
-
-
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     // Manejando la carga de la lista de detalles de acta de constitucion
@@ -196,14 +194,14 @@ export default function Info(props) {
 
     };
     
-    useEffect(() => {
-        actualizarListado();
-    }, []);
+    // useEffect(() => {
+    //     actualizarListado();
+    // }, []);
     
 
-    const updateListado = () => {
-        actualizarListado();
-    };
+    // const updateListado = () => {
+    //     actualizarListado();
+    // };
 
     const handleCancelEdit = () => {
         //reestablecemos el arreglo con lo que estaba originalmente en el arreglo del fetch

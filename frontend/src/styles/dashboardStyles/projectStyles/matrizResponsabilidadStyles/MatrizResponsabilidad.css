@@ -1,0 +1,51 @@
+.cardPlantillaMR{
+
+    background-color: #f0f0f0;
+    padding: 10px;
+    transition: background-color 0.3s; /* Agrega una transición suave */
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    
+}
+
+.cardPlantillaMR:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+
+}
+
+.selected {
+    background-color: #3498db; /* Cambia el color de fondo cuando está seleccionado */
+    color: #ffffff; /* Cambia el color del texto cuando está seleccionado */
+  }
+
+  .selected:hover {
+    background-color: #3498db; /* Cambia el color de fondo cuando está seleccionado */
+    color: #ffffff; /* Cambia el color del texto cuando está seleccionado */
+  }
+
+  .cardPlantillaMRList {
+    height: 300px; /* Establece la altura máxima deseada */
+    overflow-y: auto; /* Añade una barra de desplazamiento vertical si es necesario */
+  }
+
+  .cardPlantillaMRList::-webkit-scrollbar {
+    width: 8px; /* Ancho de la barra de desplazamiento */
+  }
+  
+  .cardPlantillaMRList::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color del pulgar de la barra de desplazamiento */
+    border-radius: 6px; /* Bordes redondeados del pulgar */
+  }
+  
+  .cardPlantillaMRList::-webkit-scrollbar-track {
+    background-color: white; /* Color de fondo de la barra de desplazamiento */
+  }
+  
+.mainDivMR{
+    width: 100%;
+    height: 100%;
+    padding: 1.75rem 3.5rem;
+
+}

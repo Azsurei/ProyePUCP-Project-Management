@@ -39,6 +39,9 @@ import { SessionContext } from "../../layout";
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { id } from "date-fns/locale";
+import { SearchIcon } from "@/../public/icons/SearchIcon";
+import "@/styles/dashboardStyles/projectStyles/matrizResponsabilidadStyles/MatrizResponsabilidad.css";
+
 
 export default function MatrizDeResponsabilidades(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -227,6 +230,15 @@ export default function MatrizDeResponsabilidades(props) {
                 console.log(error);
             });
     }, [reList]);
+
+    useEffect(() => {
+        actualizarListado();
+    }, []);
+    
+
+    const updateListado = () => {
+        actualizarListado();
+    };
 
     const columns = [
         { name: "Entregables", uid: "entregable" },
@@ -706,7 +718,31 @@ export default function MatrizDeResponsabilidades(props) {
     const [IdMatrizRespon,setIdMatrizRespon]= useState("");
 
 
-    //averigar como obtener el idMatrizResponsabilidad
+    useEffect(() => {
+        const fetchData = async () => {
+            
+            try {
+              
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+              const herramientas = response.data.herramientas;
+              let idHerramientaCreada;
+              for (const herramienta of herramientas) {
+                if (herramienta.idHerramienta === 7) {
+                    
+                    idHerramientaCreada = herramienta.idHerramientaCreada;
+                    console.log(idHerramientaCreada);
+                    setIdMatrizRespon(idHerramientaCreada)
+                    break; // Puedes salir del bucle si has encontrado la herramienta
+                }
+            }
+            } catch (error) {
+              console.error('Error al obtener la Matriz:', error);
+            }
+          };
+            fetchData();
+
+         
+    }, []);
 
     const [plantillas, setPlantillas] = useState([]);
     const [selectedPlantilla, setSelectedPlantilla] = useState(null);
@@ -715,6 +751,10 @@ export default function MatrizDeResponsabilidades(props) {
     const savePlantilla = () => {
         return new Promise((resolve, reject) => {
         setIsLoadingSmall(true);
+
+        console.log("Nombre"+nombrePlantilla);
+        console.log("idUsuari"+IdUsuario);
+        console.log("idMatriz"+IdMatrizRespon);
         const updateURL =
             process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/plantillas/guardarPlantillaMR";
             //Cambiar con nuevo procedure
@@ -722,12 +762,10 @@ export default function MatrizDeResponsabilidades(props) {
             .post(updateURL, {
                 nombrePlantilla: nombrePlantilla,
                 idUsuario: IdUsuario,
-                idMatrizR: IdMatrizRespon,
+                idMatrizResponsabilidad: IdMatrizRespon,
             })
             .then((response) => {
-                setEditActive(false);
                 resolve(response);
-
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
@@ -777,9 +815,8 @@ export default function MatrizDeResponsabilidades(props) {
     const usePlantillaMR = () => {
         return new Promise((resolve, reject) => {
             setIsLoadingSmall(true);
-    
             const updateData = {
-                idMatrizR: IdMatrizRespon,
+                idProyecto: projectId,
                 idPlantillaMR: selectedPlantilla.idPlantillaMR,
                 
             };
@@ -790,7 +827,6 @@ export default function MatrizDeResponsabilidades(props) {
             axios
                 .put(updateURL, updateData)
                 .then((response) => {
-                    setEditActive(false);
                     resolve(response);
                 })
                 .catch(function (error) {
@@ -811,7 +847,7 @@ export default function MatrizDeResponsabilidades(props) {
                     const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasMR/' + IdUsuario;
                     const response = await axios.get(url);
     
-                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+                    const plantillasInvertidas = response.data.plantillasMR.reverse();
     
                     setPlantillas(plantillasInvertidas);
                 } catch (error) {
@@ -823,15 +859,55 @@ export default function MatrizDeResponsabilidades(props) {
         fetchPlantillas();
     };
 
-    // useEffect(() => {
-    //     if (IdUsuario !== "") {
-    //         DataTable();
-    //     }
-    //   }, [IdUsuario]);
+        
+    useEffect(() => {
+        if (IdUsuario !== "") {
+            DataTable();
+        }
+      }, [IdUsuario]);
 
-      const [error, setError] = useState(null);
+      //Buscar PLantilla
+      const [filterValue, setFilterValue] = useState("");  
+      const onSearchChange = (value) => {
+          setFilterValue(value);
+      };
 
+      const limpiarInput = () => {
+            setFilterValue("");
+            DataTable();
+      }
+
+    const refreshList = async () => {
+        if (IdUsuario !== "" && filterValue !== "") {
+            try {
+                const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasMRXNombre/' + IdUsuario+'/'+filterValue;
+                const response = await axios.get(url);
+                
+                const plantillasInvertidas = response.data.plantillasMR;
+                console.log("Plantillas MR"+plantillasInvertidas);
+
+                setPlantillas(plantillasInvertidas);
+            } catch (error) {
+                console.error("Error al obtener las plantillas:", error);
+            }
+            }
+        }
+
+    const [error, setError] = useState(null);
+    const [plantillaElegida, setPlantillaElegida] = useState(false);
+
+    const handlePlantillaClick = (plantilla) => {
+        setSelectedPlantilla(plantilla);
+        setPlantillaElegida(true);
+        setError(null);
+        console.log("Plantilla seleccionada:", plantilla.nombrePlantilla);
+
+      };
+    
     return (
+        <div className="mainDivMR">
+
+   
         <>
             <div className="px-[1rem] mt-[1rem]">
                 <Breadcrumbs>
@@ -1034,8 +1110,237 @@ export default function MatrizDeResponsabilidades(props) {
                 </ModalContent>
             </Modal>
             {/*El otro modal*/}
+            
 
-                                         
+            {<Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModaSavePlantillaChange}>
+                    <ModalContent>
+                        {(onClose) => {
+                        const finalizarModal = async () => {
+                            let Isvalid = true;
+
+                            if(nombrePlantilla===""){
+                                setValidNombrePlantilla(false);
+                                Isvalid = false;
+                            }
+
+                            if(Isvalid === true){
+                                console.log("IdUsuario: "+ sessionData.idUsuario);
+                                try {
+                                    await guardarPlantillaNueva();
+                                    setNombrePlantilla("");
+                                    setValidNombrePlantilla(true);
+                                    console.log("xd");
+                                    
+                                } catch (error) {
+                                    console.error('Error al Guardar Plantilla:', error);
+                                }
+
+                                onClose();
+                            
+                            }
+                        };
+                        return (
+                            <>
+
+                            <ModalHeader className="flex flex-col gap-1">
+                                        Guardado de Plantilla
+                                    </ModalHeader>
+                                    <ModalBody>
+                                    <p
+                                        style={{
+                                            color: "#494949",
+                                            fontSize: "16px",
+                                            fontStyle: "normal",
+                                            fontWeight: 400,
+                                        }}
+                                        >
+                                    Se guardarán los campos en una plantilla para poder usarlos en otros proyectos.
+                                    </p>
+
+                                    <Input type="email" variant={"underlined"} label="Nombre Plantilla" 
+                                        value={nombrePlantilla}
+                                        onValueChange={setNombrePlantilla}
+                                        isInvalid={!validNombrePlantilla}
+                                        onChange={()=>{setValidNombrePlantilla(true)}}    
+                                        errorMessage={
+                                                    !validNombrePlantilla
+                                                        ? "Ingrese un nombre"
+                                                        : ""
+                                            }
+                                    
+                                    />
+
+                                    <div>
+
+
+                                    </div>
+                                </ModalBody>
+                                  
+
+                            <ModalFooter>
+                                <Button
+                                color="danger" variant="light" 
+   
+                                onClick={() => {
+                                    onClose(); // Cierra el modal
+                                    setNombrePlantilla("");
+                                    setValidNombrePlantilla(true);
+  
+                                }}
+                            
+                                >
+                                Cancelar
+                                
+                                </Button>
+                                <Button
+                                color="primary"
+                                
+                                onClick={finalizarModal}
+                                >
+                                Guardar Plantilla
+                                </Button>
+                            </ModalFooter>
+                            </>
+                        );
+                        }}
+                    </ModalContent>
+            </Modal>
+            }
+
+
+            {<Modal size="lg" isOpen={isModalPlantillas} onOpenChange={onModalPlantillasChange}>
+            <ModalContent>
+            {(onClose) => {
+                const finalizarModalP = async () => {
+                    let Isvalid = true;
+
+                    if (selectedPlantilla === null) {
+                        setPlantillaElegida(false);
+                        Isvalid = false;
+                    }
+
+                    if(Isvalid === true){
+                        try {
+                            await usarPlantilla();
+                            setPlantillaElegida(false);
+                            
+                        } catch (error) {
+                            console.error('Error al Utilizar Plantilla:', error);
+                        }
+                        onClose();
+                        updateListado();
+                        DataTable(); // Llamada a fetchPlantillas después de usar la plantilla
+
+
+                        // setTimeout(() => {
+                        //     updateListado();
+                        // }, 2000);
+                        setFilterValue(""); 
+                    }
+                    else{
+                        setError("Seleccione una plantilla");
+                    }
+                };
+
+                return ( 
+                    <>
+        
+                <ModalHeader className="flex flex-col gap-1">
+                    Plantillas de Matriz de Responsabilidad
+                </ModalHeader>
+                <ModalBody>
+                <div className="modal-body">
+                    
+                    <div style={{ marginBottom: '25px' }}>
+
+                    <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos</p>
+                    </div>
+
+                    <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        gap: ".6rem",
+                        marginBottom:"25px",
+                    }}
+                >
+                    <div className="divBuscador">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[100%]"
+                            placeholder="Ingresa una plantilla..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            onClear={limpiarInput}
+                            variant="faded"
+                        />
+                    </div>
+                    <Button
+                        className="text-slate-50"
+                        color="primary"
+                        onClick={refreshList}
+                    >
+                        Buscar
+                    </Button>
+                </div>
+                    <ul className="cardPlantillaMRList">
+                     {plantillas.map((plantilla) => (
+                        <li key={plantilla.idPlantillaMR}>
+                            <div
+                                className={`cardPlantillaMR ${selectedPlantilla && selectedPlantilla === plantilla ? 'selected' : ''}`}
+                                onClick={() => handlePlantillaClick(plantilla)}
+                            >
+                                {plantilla.nombrePlantilla}
+                            </div>
+                        </li>
+                    ))} 
+                    </ul>
+                </div>
+        
+                </ModalBody>
+        
+                <ModalFooter>
+                <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+                {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
+        
+                </div>
+        
+                    <Button
+                        color="danger" variant="light" 
+            
+                        onClick={() => {
+                            onClose(); // Cierra el modal
+                            setSelectedPlantilla(null);
+                            setError(null); // Establece error en null para desactivar el mensaje de error
+                            limpiarInput();                                
+                        }}
+                        
+                        >
+                        Cancelar
+                    
+                    </Button>
+                    <Button
+                    color="primary"
+                    onClick={finalizarModalP}
+                    >
+                    Usar
+                    </Button>
+                </ModalFooter>
+                </>
+            );
+            }}
+        
+            </ModalContent>
+        
+            </Modal>
+            }              
+
+
+
 
             
             <Modal
@@ -1289,5 +1594,6 @@ export default function MatrizDeResponsabilidades(props) {
                 }}
             />
         </>
+        </div>
     );
 }
