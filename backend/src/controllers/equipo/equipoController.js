@@ -274,7 +274,7 @@ async function insertarMiembros(req, res, next) {
 
 async function eliminarEquipo(req, res, next) {
     const { idEquipo } = req.body;
-    const query = `CALL ELIMINAR_EQUIPO_X_ID_EQUIPO(?);`;
+    const query = `CALL ELIMINAR_EQUIPO_X_IDEQUIPO(?);`;
     try {
         await connection.query(query, [idEquipo]);
         console.log(`Se elimino el equipo ${idEquipo}!`);

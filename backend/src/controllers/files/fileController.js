@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
-const getSignedUrl = require("@aws-sdk/s3-request-presigner")
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const s3 = new S3Client({
     region: 'us-east-1'
@@ -22,12 +22,16 @@ async function postFile(req,res,next){
         ContentType: req.file.mimetype
     }
     const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
-        const [results] = await connection.query(query, [idProyecto]);
     try {
         const command = new PutObjectCommand(params);
         await s3.send(command);
         res.send();
         const [results] = await connection.query(query, [fileName, req.file.originalname]);
+        const idArchivo = results[0][0].idArchivo;
+        res.status(200).json({
+            idArchivo,
+            message: "Archivo insertado"
+        });
     } catch (error) {
         next(error);
     }
@@ -35,13 +39,17 @@ async function postFile(req,res,next){
 
 async function getFile(req,res,next){
     const { idArchivo } = req.params;
+    const query = `CALL OBTENER_ARCHIVO(?);`;
     try {
+        const [results] = await connection.query(query, [idArchivo]);
+        const file = results[0][0];
+        console.log(file.nombre_s3);
         // Create a presigned URL for the file
         const command = getSignedUrl(
             s3,
             new GetObjectCommand({
                 Bucket: bucketName,
-                Key: idArchivo,
+                Key: file.nombre_s3,
             }),
             { expiresIn: 3600 } // URL expiration time in seconds
         );

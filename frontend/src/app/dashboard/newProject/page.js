@@ -12,21 +12,23 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Link from "next/link";
 import { useState } from "react";
 import * as React from "react";
-import TracerNewProject  from "@/components/TracerNewProject";
+import TracerNewProject from "@/components/TracerNewProject";
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createContext } from "react";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepButton from '@mui/material/StepButton';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import Box from "@mui/material/Box";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepButton from "@mui/material/StepButton";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { SessionContext } from "../layout";
+
+import { Button as ButtonNextUI } from "@nextui-org/react";
 
 axios.defaults.withCredentials = true;
 
@@ -97,10 +99,9 @@ export const ToolCardsContext = createContext();
 
 export default function newProject() {
     const router = useRouter();
-    const {sessionData} = useContext(SessionContext);
+    const { sessionData } = useContext(SessionContext);
 
-    const steps = ['Información General', 'Herramientas', 'Participantes'];
-
+    const steps = ["Información General", "Herramientas", "Participantes"];
 
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
@@ -123,9 +124,9 @@ export default function newProject() {
 
     const handleNext = () => {
         const newActiveStep =
-        isLastStep() && !allStepsCompleted()
-            ? steps.findIndex((step, i) => !(i in completed))
-            : activeStep + 1;
+            isLastStep() && !allStepsCompleted()
+                ? steps.findIndex((step, i) => !(i in completed))
+                : activeStep + 1;
         setActiveStep(newActiveStep);
     };
 
@@ -148,7 +149,6 @@ export default function newProject() {
         setActiveStep(0);
         setCompleted({});
     };
-
 
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
@@ -207,14 +207,12 @@ export default function newProject() {
         console.log(newMembrsList);
     };
 
-
     const [nameProject, setNameProject] = useState("");
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
     const [listHerramientas, setListHerramientas] = useState([]);
 
     const [estadoProgress, setEstadoProgress] = useState(1);
-
 
     const cambiarEstadoAdelante = () => {
         if (estadoProgress != 3) {
@@ -228,7 +226,6 @@ export default function newProject() {
             setEstadoProgress(estadoProgress - 1);
             handleBack();
             handleReset();
-            
         }
     };
 
@@ -257,7 +254,8 @@ export default function newProject() {
 
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
-        const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/verInfoUsuario";
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verInfoUsuario";
 
         axios
             .get(stringURL)
@@ -303,12 +301,16 @@ export default function newProject() {
 
         const nombre = nameProject;
         axios
-            .post(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/insertarProyecto", {
-                proyecto: { nombre, fechaInicio, fechaFin },
-                herramientas: listHerramientas,
-                participantesSupervisores: selectedSupervisoresList,
-                participantesMiembros: selectedMiembrosList,
-            })
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/insertarProyecto",
+                {
+                    proyecto: { nombre, fechaInicio, fechaFin },
+                    herramientas: listHerramientas,
+                    participantesSupervisores: selectedSupervisoresList,
+                    participantesMiembros: selectedMiembrosList,
+                }
+            )
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
@@ -321,7 +323,8 @@ export default function newProject() {
     };
 
 
-    
+    const [isCreatingProject, setIsCreatingProject] = useState(false);
+
     return (
         <div className="mainDivNewProject">
             <div className="headerDiv">
@@ -336,20 +339,17 @@ export default function newProject() {
                 <p className="textProject2">Crea un Proyecto</p>
             </div>
 
-            <div >
-
-                <Box sx={{ width: '70%', mx: 'auto' ,marginTop: '20px'}}>
-
-                <Stepper nonLinear activeStep={activeStep}>
-                    {steps.map((label, index) => (
-                    <Step key={label} completed={completed[index]}>
-                        <StepButton color="inherit" disabled={true}>
-                        {label}
-                        </StepButton>
-                    </Step>
-                    ))}
-                </Stepper>
-
+            <div>
+                <Box sx={{ width: "70%", mx: "auto", marginTop: "20px" }}>
+                    <Stepper nonLinear activeStep={activeStep}>
+                        {steps.map((label, index) => (
+                            <Step key={label} completed={completed[index]}>
+                                <StepButton color="inherit" disabled={true}>
+                                    {label}
+                                </StepButton>
+                            </Step>
+                        ))}
+                    </Stepper>
                 </Box>
             </div>
 
@@ -393,16 +393,14 @@ export default function newProject() {
                         </ToolCardsContext.Provider>
                     )}
                     {estadoProgress === 3 && (
-                            <ChoiceUser
-                                toggleModal1={toggleModal1}
-                                toggleModal2={toggleModal2}
-                                selectedSupervisoresList={
-                                    selectedSupervisoresList
-                                }
-                                selectedMiembrosList={selectedMiembrosList}
-                                removeSupervisor={removeSupervisor}
-                                removeMiembro={removeMiembro}
-                            ></ChoiceUser>
+                        <ChoiceUser
+                            toggleModal1={toggleModal1}
+                            toggleModal2={toggleModal2}
+                            selectedSupervisoresList={selectedSupervisoresList}
+                            selectedMiembrosList={selectedMiembrosList}
+                            removeSupervisor={removeSupervisor}
+                            removeMiembro={removeMiembro}
+                        ></ChoiceUser>
                     )}
                 </div>
                 <div className="buttonContainer">
@@ -446,9 +444,17 @@ export default function newProject() {
                 >
                     {"<"}
                 </button>
-                <button className="createProjectButtonEnd" onClick={checkData}>
+                <ButtonNextUI
+                    className="bg-[#f0ae19] font-[Montserrat] font-medium text-white text-xl"
+                    size="lg"
+                    onClick={() => {
+                        setIsCreatingProject(true);
+                        checkData();
+                    }}
+                    isLoading={isCreatingProject}
+                >
                     Crear Proyecto
-                </button>
+                </ButtonNextUI>
                 <button
                     className="optionalGoMove"
                     onClick={cambiarEstadoAdelante}
@@ -461,14 +467,22 @@ export default function newProject() {
                 <ModalUser
                     handlerModalClose={toggleModal1}
                     handlerModalFinished={returnListOfSupervisores}
-                    excludedUsers={[...selectedMiembrosList,...selectedSupervisoresList,sessionData]}
+                    excludedUsers={[
+                        ...selectedMiembrosList,
+                        ...selectedSupervisoresList,
+                        sessionData,
+                    ]}
                 ></ModalUser>
             )}
             {modal2 && (
                 <ModalUser
                     handlerModalClose={toggleModal2}
                     handlerModalFinished={returnListOfMiembros}
-                    excludedUsers={[...selectedMiembrosList,...selectedSupervisoresList,sessionData]}
+                    excludedUsers={[
+                        ...selectedMiembrosList,
+                        ...selectedSupervisoresList,
+                        sessionData,
+                    ]}
                 ></ModalUser>
             )}
 

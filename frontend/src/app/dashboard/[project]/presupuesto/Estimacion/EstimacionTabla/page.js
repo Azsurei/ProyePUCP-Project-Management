@@ -532,12 +532,12 @@ function convertirTarifa(tarifa, idMoneda) {
           <Table sx={{ minWidth: 700 }} aria-label="spanning table">
             <TableHead>
               <TableRow>
-                <TableCell className="EstimaconceptoCell"  align="right" colSpan={2}>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right" colSpan={2}>
                   Cant. Recurso
                 </TableCell>
-                <TableCell className="EstimaconceptoCell"  align="right">Tarifa</TableCell>
-                <TableCell className="EstimaconceptoCell"  align="right">Tiempo Req</TableCell>
-                <TableCell className="EstimaconceptoCell"  align="right">Subtotal</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right">Tarifa</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right">Tiempo Req</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right">Subtotal</TableCell>
               </TableRow>
               
             </TableHead>
@@ -546,7 +546,7 @@ function convertirTarifa(tarifa, idMoneda) {
 
               return (
                 <TableRow key={row.descripcion}>
-                  <TableCell className="descriptionCell" >{row.descripcion}</TableCell>
+                  <TableCell className="text-gray-800 text-sm not-italic font-medium" >{row.descripcion}</TableCell>
                   <TableCell align="right">{row.cantidadRecurso}</TableCell>
                   <TableCell align="right">{MonedaPresupuesto === row.idMoneda
 
@@ -555,7 +555,7 @@ function convertirTarifa(tarifa, idMoneda) {
 
                   </TableCell>
                   <TableCell align="right">{row.tiempoRequerido}</TableCell>
-                  <TableCell className="EstimaconceptoCell" align="right">{MonedaPresupuesto === row.idMoneda
+                  <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{MonedaPresupuesto === row.idMoneda
 
                           ? ccyFormat(row.subtotal)
                           : ccyFormat(row.cantidadRecurso*convertirTarifa(row.tarifaUnitaria, row.idMoneda)*row.tiempoRequerido)
@@ -570,14 +570,14 @@ function convertirTarifa(tarifa, idMoneda) {
               <TableRow>
                 <TableCell rowSpan={9} />
                 <TableCell  colSpan={2} align="right">Total</TableCell>
-                <TableCell className="totalconceptoCell" colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                   align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
               </TableRow>
 
               <TableRow>
-                <TableCell className="EstimaconceptoCell" colSpan={2} align="right">Reserva Contingencia</TableCell>
-                <TableCell className="EstimaconceptoCell" align="right">{`${(Reserva*1).toFixed(2)} `}</TableCell>
-                <TableCell className="EstimaconceptoCell" colSpan={1}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Reserva Contingencia</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Reserva*1).toFixed(2)} `}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={1}
                 align="right">{ccyFormat(invoiceReserva*1)}</TableCell>
               </TableRow>
 
@@ -590,10 +590,10 @@ function convertirTarifa(tarifa, idMoneda) {
               </TableRow>
 
               <TableRow>
-                <TableCell className="totalconceptoCell" colSpan={2} align="right">Reserva de Gestión</TableCell>
-                <TableCell className="EstimaconceptoCell" align="right">{`${(Gestion*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Reserva de Gestión</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Gestion*1).toFixed(0)} %`}</TableCell>
 
-                <TableCell className="EstimaconceptoCell" colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceGestion)}</TableCell>
               </TableRow>
 
@@ -606,11 +606,11 @@ function convertirTarifa(tarifa, idMoneda) {
 
               {Ganancia>0 &&
               <TableRow>
-                <TableCell className="totalconceptoCell" colSpan={2} align="right">Ganancia</TableCell>
-                <TableCell className="totalconceptoCell" align="right">{`${(Ganancia*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Ganancia</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Ganancia*1).toFixed(0)} %`}</TableCell>
 
                 <TableCell colSpan={2}
-                className="totalconceptoCell" align="right">{ccyFormat(invoiceGanancia)}</TableCell>
+                className="text-gray-800 text-sm not-italic font-bold" align="right">{ccyFormat(invoiceGanancia)}</TableCell>
               </TableRow>
 
               }
@@ -627,17 +627,17 @@ function convertirTarifa(tarifa, idMoneda) {
 
               {IGV>0 &&
                 <TableRow>
-                <TableCell className="totalconceptoCell" colSpan={2} align="right">IGV</TableCell>
-                <TableCell className="totalconceptoCell" align="right">{`${(IGV*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">IGV</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(IGV*1).toFixed(0)} %`}</TableCell>
 
-                <TableCell className="totalconceptoCell" colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceIGV)}</TableCell>
               </TableRow>
               }
 
               <TableRow>
-                <TableCell className="totalconceptoCell" colSpan={2} align="right">TOTAL</TableCell>
-                <TableCell className="totalconceptoCell" colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">TOTAL</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceTotal)}</TableCell>
               </TableRow>
 
