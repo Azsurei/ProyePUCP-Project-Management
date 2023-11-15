@@ -20,9 +20,16 @@ async function postFile(req,res,next){
         Body: req.file.buffer,
         ContentType: req.file.mimetype
     }
-    const command = new PutObjectCommand(params);
-    await s3.send(command);
-    res.send();
+    const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
+        const [results] = await connection.query(query, [idProyecto]);
+    try {
+        const command = new PutObjectCommand(params);
+        await s3.send(command);
+        res.send();
+        const [results] = await connection.query(query, [fileName, req.file.originalname]);
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports = {
