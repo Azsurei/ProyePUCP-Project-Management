@@ -558,8 +558,8 @@ export default function crearActaReunion(props) {
                 <>
                     <div className="body m-5 mt-5">
                         <div className="mainInfo">
-                            <Card className="p-5 pt-3">
-                                <CardBody>
+                            <div className="p-5 pt-3">
+                                <div>
                                     <Input
                                         className="max-w-[1000px]"
                                         isRequired
@@ -655,8 +655,8 @@ export default function crearActaReunion(props) {
                                         value={motiveValue}
                                         onValueChange={setMotiveValue}
                                     />
-                                </CardBody>
-                                <CardFooter>
+                                </div>
+                                <div>
                                     <div className="mandatoryAdvise p-2">
                                         <img src="/icons/alert.svg" />
                                         <p>
@@ -665,20 +665,20 @@ export default function crearActaReunion(props) {
                                             Reunión
                                         </p>
                                     </div>
-                                </CardFooter>
-                            </Card>
+                                </div>
+                            </div>
                         </div>
                         <br />
                         <br />
                         <div className="invitedPeople p-5 ">
-                            <Card className="mx-auto">
-                                <CardHeader
+                            <div className="mx-auto">
+                                <div
                                     className="pt-5 pl-5 pb-2 mb-0 text-lg
                                 font-bold text-blue-950 font-sans"
                                 >
                                     <h3>Personas Convocadas</h3>
-                                </CardHeader>
-                                <CardBody className="py-0 mt-0 ml-2">
+                                </div>
+                                <div className="py-0 mt-0 ml-2">
                                     <p>Lista de Miembros</p>
                                     {/**** Selector de Miembros ***** */}
                                     <div className="SelectedUsersContainer">
@@ -751,13 +751,13 @@ export default function crearActaReunion(props) {
                                         ></ModalUser>
                                     )}
                                     {/* Fin del selector de miembros */}
-                                </CardBody>
-                                <CardFooter></CardFooter>
-                            </Card>
+                                </div>
+                                <div></div>
+                            </div>
                         </div>
                         <div className="meetingTopics p-5">
-                            <Card className="mx-auto">
-                                <CardHeader>
+                            <div className="mx-auto">
+                                <div>
                                     <div className="flex flex-col p-2">
                                         <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                             Temas a tratar
@@ -780,8 +780,8 @@ export default function crearActaReunion(props) {
                                             +
                                         </span>
                                     </button>
-                                </CardHeader>
-                                <CardBody className="mt-0 py-0 pl-8">
+                                </div>
+                                <div className="mt-0 py-0 pl-8">
                                     <div className="topicsContainer">
                                         <ListEditableInput
                                             beEditable={true}
@@ -791,9 +791,9 @@ export default function crearActaReunion(props) {
                                             typeName="Tema"
                                         ></ListEditableInput>
                                     </div>
-                                </CardBody>
-                                <CardFooter></CardFooter>
-                            </Card>
+                                </div>
+                                <div></div>
+                            </div>
                         </div>
 
                         {/*<div className="agreements p-5">
@@ -833,8 +833,8 @@ export default function crearActaReunion(props) {
                     </div>*/}
 
                         <div className="pendingComments p-5">
-                            <Card className="mx-auto">
-                                <CardHeader>
+                            <div className="mx-auto">
+                                <div>
                                     <div className="flex flex-col p-2">
                                         <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                             Comentarios Pendientes
@@ -856,8 +856,8 @@ export default function crearActaReunion(props) {
                                             +
                                         </span>
                                     </button>
-                                </CardHeader>
-                                <CardBody className="mt-0 py-0 pl-8">
+                                </div>
+                                <div className="mt-0 py-0 pl-8">
                                     <div className="topicsContainer">
                                         <ListEditableInput
                                             beEditable={true}
@@ -871,14 +871,14 @@ export default function crearActaReunion(props) {
                                             typeName="Comentario"
                                         ></ListEditableInput>
                                     </div>
-                                </CardBody>
-                                <CardFooter></CardFooter>
-                            </Card>
+                                </div>
+                                <div></div>
+                            </div>
                         </div>
                     </div>
                     <div className="meetingTopics p-5">
-                        <Card className="mx-auto">
-                            <CardHeader>
+                        <div className="mx-auto">
+                            <div>
                                 <div className="flex flex-col p-2">
                                     <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                         Temas a tratar
@@ -901,8 +901,8 @@ export default function crearActaReunion(props) {
                                         +
                                     </span>
                                 </button>
-                            </CardHeader>
-                            <CardBody className="mt-0 py-0 pl-8">
+                            </div>
+                            <div className="mt-0 py-0 pl-8">
                                 <div className="topicsContainer">
                                     <ListEditableInput
                                         beEditable={true}
@@ -912,9 +912,9 @@ export default function crearActaReunion(props) {
                                         typeName="Tema"
                                     ></ListEditableInput>
                                 </div>
-                            </CardBody>
-                            <CardFooter></CardFooter>
-                        </Card>
+                            </div>
+                            <div></div>
+                        </div>
                     </div>
 
                     {/*<div className="agreements p-5">
@@ -954,8 +954,8 @@ export default function crearActaReunion(props) {
                 </div>*/}
 
                     <div className="pendingComments p-5">
-                        <Card className="mx-auto">
-                            <CardHeader>
+                        <div className="mx-auto">
+                            <div>
                                 <div className="flex flex-col p-2">
                                     <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                         Comentarios Pendientes
@@ -977,8 +977,8 @@ export default function crearActaReunion(props) {
                                         +
                                     </span>
                                 </button>
-                            </CardHeader>
-                            <CardBody className="mt-0 py-0 pl-8">
+                            </div>
+                            <div className="mt-0 py-0 pl-8">
                                 <div className="topicsContainer">
                                     <ListEditableInput
                                         beEditable={true}
@@ -988,9 +988,9 @@ export default function crearActaReunion(props) {
                                         typeName="Comentario"
                                     ></ListEditableInput>
                                 </div>
-                            </CardBody>
-                            <CardFooter></CardFooter>
-                        </Card>
+                            </div>
+                            <div></div>
+                        </div>
                     </div>
 
                     <div className="footer">
