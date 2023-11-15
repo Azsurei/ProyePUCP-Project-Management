@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
-const getSignedUrl = require("@aws-sdk/s3-request-presigner")
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const s3 = new S3Client({
     region: 'us-east-1'
