@@ -5154,3 +5154,34 @@ BEGIN
 	);
 END; //
 DELIMITER ;
+----------
+--Archivos
+----------
+
+DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ARCHIVOS(
+    IN _nombre_s3 VARCHAR(200),
+    IN _nombre_real VARCHAR(500)
+)
+BEGIN
+    DECLARE _idArchivo INT;
+    /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
+    INSERT INTO Archivo (nombre_s3, nombre_real) 
+    VALUES (_nombre_s3, _nombre_real);
+    SET _idArchivo = @@last_insert_id;
+    SELECT _idArchivo AS idArchivo;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS OBTENER_ARCHIVO;
+DELIMITER $
+CREATE PROCEDURE OBTENER_ARCHIVO(
+    IN _idArchivo INT
+)
+BEGIN
+    SELECT *
+    FROM Archivo
+    WHERE idArchivo = _idArchivo;
+END$
+DELIMITER ;

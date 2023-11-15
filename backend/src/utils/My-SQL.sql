@@ -1369,3 +1369,12 @@ CREATE TABLE PlantillaMRDatos(
 )
 ENGINE = InnoDB;
 
+
+DROP TABLE IF EXISTS Archivo;
+CREATE TABLE Archivo(
+    idArchivo INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_s3 VARCHAR(500),
+    nombre_real VARCHAR(500)
+)
+ENGINE = InnoDB;
+

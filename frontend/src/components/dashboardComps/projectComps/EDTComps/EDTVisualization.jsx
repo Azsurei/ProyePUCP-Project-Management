@@ -11,7 +11,7 @@ export default function EDTVisualization({
     ListComps,
     handlerGoToNew,
     handleVerDetalle,
-    refreshComponentsEDT
+    refreshComponentsEDT,
 }) {
     const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -32,20 +32,39 @@ export default function EDTVisualization({
                 haveAddNew={true}
                 handlerAddNew={handlerGoToNew}
                 newPrimarySon={ListComps.length + 1}
-                breadcrump={"Inicio / Proyectos / "+projectName}
+                breadcrump={"Inicio / Proyectos / " + projectName}
                 btnText={"Nuevo componente"}
             >
                 EDT y diccionario EDT
             </HeaderWithButtonsSamePage>
 
+            {ListComps.length !== 0 && (
+                <p className="font-[Montserrat] text-lg font-medium text-slate-500">
+                    Presiona en uno de los componentes para ver a sus
+                    componentes hijos
+                </p>
+            )}
+
             {ListComps.length === 0 ? (
                 <div className="missingScrenContainer">
-                    <img src="/images/missing_EDTComponents.svg" alt="w" className="imgMissing"/>
-                    <p className="msgMissing"> Aún no has agregado un elemento a tu EDT!</p>
+                    <img
+                        src="/images/missing_EDTComponents.svg"
+                        alt="w"
+                        className="imgMissing"
+                    />
+                    <p className="msgMissing">
+                        {" "}
+                        Aún no has agregado un elemento a tu EDT!
+                    </p>
                 </div>
             ) : (
                 <OpenMenuContext.Provider
-                    value={{ openMenuId, toggleMenu, handlerGoToNew , handleVerDetalle}}
+                    value={{
+                        openMenuId,
+                        toggleMenu,
+                        handlerGoToNew,
+                        handleVerDetalle,
+                    }}
                 >
                     <ListElementsEDT
                         listData={ListComps}

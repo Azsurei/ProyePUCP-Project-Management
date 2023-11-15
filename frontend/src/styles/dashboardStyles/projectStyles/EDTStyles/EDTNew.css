@@ -26,7 +26,6 @@
 
 .EDTNew .NewEDTSection .Header{
     font-family: 'Montserrat';
-    color: #172B4D;
     font-size: 1.15rem;
     font-weight: 600;
 }
@@ -59,10 +58,8 @@
     padding: 1rem 1rem;
 }
 
-.EDTNew .NewEDTSection .FirstCardContainer .FirstLeftCont p{
+.EDTNew .NewEDTSection .FirstCardContainer .FirstLeftCont {
     font-family: 'Montserrat';
-    color: #172B4D;
-    font-weight: 500;
 }
 
 
@@ -75,7 +72,7 @@
 
 .EDTNew .NewEDTSection .FirstCardContainer .FirstRightCont p{
     font-family: 'Montserrat';
-    color: #172B4D;
+    /* color: #172B4D; */
     font-weight: 500;
 }
 
@@ -86,7 +83,7 @@
 
 .EDTNew .NewEDTSection .SecondCardContainer p{
     font-family: 'Montserrat';
-    color: #172B4D;
+    /* color: #172B4D; */
     font-weight: 500;
 }
 
