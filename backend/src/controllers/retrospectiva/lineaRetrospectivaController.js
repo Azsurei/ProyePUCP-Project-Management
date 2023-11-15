@@ -41,10 +41,10 @@ async function listarXIdRetrospectiva(req,res,next){
 }
 
 async function modificar(req,res,next){
-    const {idLineaRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer} = req.body;
+    const {idLineaRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer} = req.body;
     try {
-        const query = `CALL MODIFICAR_LINEA_RETROSPECTIVA(?,?,?,?,?,?);`;
-        await connection.query(query,[idLineaRetrospectiva,idSprint,titulo,cantBien,cantMal,cantQueHacer]);
+        const query = `CALL MODIFICAR_LINEA_RETROSPECTIVA(?,?,?,?,?);`;
+        await connection.query(query,[idLineaRetrospectiva,idSprint,cantBien,cantMal,cantQueHacer]);
         res.status(200).json({message: `Linea retrospectiva ${idLineaRetrospectiva} modificada`});
     } catch (error) {
         next(error);
