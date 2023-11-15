@@ -23,16 +23,7 @@ const bucketRegion = process.env.AWS_BUCKET_REGION;
 
 routerFiles.post("/postFile",upload.single('file'), fileController.postFile);
 
-routerFiles.get("/getFile",upload.single('image'), async (req, res) => {
-    const {imageName} = req.params;
-    const getObjectParams = {
-        Bucket: bucketName,
-        Key: imageName
-    }
-    const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-});
+routerFiles.get("/getFile/:idArchivo", fileController.getFile);
 
 
 module.exports.routerFiles = routerFiles;

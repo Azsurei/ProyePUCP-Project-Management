@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
+const getSignedUrl = require("@aws-sdk/s3-request-presigner")
 
 const s3 = new S3Client({
     region: 'us-east-1'
@@ -32,6 +33,27 @@ async function postFile(req,res,next){
     }
 }
 
+async function getFile(req,res,next){
+    const { idArchivo } = req.params;
+    try {
+        // Create a presigned URL for the file
+        const command = getSignedUrl(
+            s3,
+            new GetObjectCommand({
+                Bucket: bucketName,
+                Key: idArchivo,
+            }),
+            { expiresIn: 3600 } // URL expiration time in seconds
+        );
+        const url = await command;
+        res.json({ url });
+    } catch (error) {
+        console.error("Error generating signed URL:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
 module.exports = {
     postFile,
+    getFile
 }
