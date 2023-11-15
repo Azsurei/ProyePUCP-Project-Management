@@ -189,7 +189,6 @@ function RetrospectivaView(props) {
 
         const saveData = {
             idLineaRetrospectiva: idLineaRetrospectiva,
-            idSprint: 1, // Assuming idSprint is static or retrieved from elsewhere
             cantBien: cantBien,
             cantMal: cantMal,
             cantQueHacer: cantQueHacer
