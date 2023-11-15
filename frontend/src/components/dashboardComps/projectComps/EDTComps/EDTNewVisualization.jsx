@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
@@ -7,6 +7,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 
 import axios from "axios";
 import { Textarea } from "@nextui-org/react";
+import { HerramientasInfo } from "@/app/dashboard/[project]/layout";
 axios.defaults.withCredentials = true;
 
 export default function EDTNewVisualization({
@@ -457,4 +458,17 @@ export default function EDTNewVisualization({
             </div>
         </div>
     );
+
+    function registerComponent(){
+        const {herramientasInfo} = useContext(HerramientasInfo);
+        //verificamos si entregable no se repite en proyecto
+        for(const entregable of listEntregables){
+            const objToSend = {
+                idEDT: herramientasInfo.find(tool => tool.idHerramienta = 2),
+                nombreEntregable: entregable.data
+            };
+    
+            axios.post(link,)
+        }
+    }
 }
