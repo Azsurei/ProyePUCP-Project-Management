@@ -2,10 +2,11 @@ const express = require("express");
 const connection = require("../config/db");
 const routerAuth = express.Router();
 const cookie = require("cookie");
+require('dotenv').config({ path: './../../.env' });
 
 //de jsonwebtokens
 const jwt = require("jsonwebtoken");
-const secret = "oaiscmawiocnaoiwncioawniodnawoinda"; //es un tipo de password que se necesita, en futuro se movera
+const secret = process.env.JWT_SECRET; 
 const usuarioController = require("../controllers/usuario/usuarioController");
 routerAuth.get("/", (req, res) => {
     console.log("Llegue a autenticacion");
