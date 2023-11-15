@@ -193,7 +193,9 @@ function RetrospectivaView(props) {
             cantMal: cantMal,
             cantQueHacer: cantQueHacer
         };
-
+        console.log(cantBien);
+        console.log(cantMal);
+        console.log(cantQueHacer);
         const saveURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/retrospectiva/modificarLineaRetrospectiva";
 
         axios.put(saveURL, saveData)
