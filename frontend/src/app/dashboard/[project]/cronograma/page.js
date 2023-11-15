@@ -1298,6 +1298,13 @@ export default function Cronograma(props) {
                             <div className="flex flex-col gap-1">
                                 <p className={twStyle1}>Entregable Asociado</p>
                                 <Select
+                                    onClick={() => {
+                                        if (listEntregables.length === 0) {
+                                            toast.warning(
+                                                "No cuenta con entregables en el proyecto"
+                                            );
+                                        }
+                                    }}
                                     items={listEntregables}
                                     variant="bordered"
                                     isInvalid={!validEntregable}
@@ -1779,9 +1786,7 @@ export default function Cronograma(props) {
                                                 setValidFechas("isEmpty");
                                                 allValid = false;
                                             }
-                                            if (
-                                                tareaEntregable.length === 0
-                                            ) {
+                                            if (tareaEntregable.size === 0) {
                                                 console.log(tareaEntregable);
                                                 setValidEntregable(false);
                                                 allValid = false;
