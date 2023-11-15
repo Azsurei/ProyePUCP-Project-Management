@@ -138,7 +138,7 @@ export default function RootLayout({ children, params }) {
                                         justifyContent: "center",
                                         alignItems: "center",
                                         gap: ".2rem",
-                                        zIndex: 10,
+                                        zIndex: 99,
                                     }}
                                     className="bg-mainBackground"
                                 >
