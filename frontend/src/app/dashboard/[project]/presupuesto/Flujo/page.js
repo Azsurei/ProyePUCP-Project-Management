@@ -364,7 +364,7 @@ return (
               <TableCell>Meses</TableCell>
 
                 {mesesMostrados.map((mes, index) => (
-                <TableCell className="Meses" key={index} align="left">
+                <TableCell className="text-gray-800 text-sm not-italic font-medium" key={index} align="left">
                   {mes}
                 </TableCell>
                   ))}
@@ -376,7 +376,7 @@ return (
             <TableBody>
 
             <TableRow>
-              <TableCell className="IngEgTexto" align="left">Ingresos</TableCell>
+              <TableCell className="text-gray-800 text-sm not-italic font-medium" align="left">Ingresos</TableCell>
             </TableRow>
               
             {Object.keys(descripcionTipo).map((idTipo) => (
@@ -393,9 +393,9 @@ return (
 ))}      
 
             <TableRow>
-              <TableCell className="conceptoCell" align="left">Total Ingresos</TableCell>
+              <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Ingresos</TableCell>
               {mesesMostrados.map((mes, index) => (
-  <TableCell className="conceptoCell" key={index} align="left">
+  <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" key={index} align="left">
     {ingresosPorTipo && Object.keys(descripcionTipo).reduce((total, idTipo) => {
       const ingresoPorTipo = ingresosPorTipo[idTipo];
       return total + (ingresoPorTipo && ingresoPorTipo[index + 1] ? parseFloat(ingresoPorTipo[index + 1]) : 0);
@@ -407,7 +407,7 @@ return (
 
 
             <TableRow>
-              <TableCell className="IngEgTexto" align="left">Egresos</TableCell>
+              <TableCell className="text-gray-800 text-sm not-italic font-medium" align="left">Egresos</TableCell>
 
 
 
@@ -436,9 +436,9 @@ return (
 ))}
 
 <TableRow>
-  <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
+  <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Egresos</TableCell>
   {totalEgresosPorMes.map((total, index) => (
-    <TableCell className="conceptoCell" key={index} align="left">
+    <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" key={index} align="left">
       {total !== 0 ? total.toFixed(2) : "0"}
 
     </TableCell>
@@ -446,12 +446,12 @@ return (
 </TableRow>
 
 <TableRow>
-  <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
+  <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Acumulado</TableCell>
   {accumulatedTotals.map((total, index) => (
     <TableCell
       key={index}
       align="left"
-      className={`conceptoCell ${total > 0 ? 'positiveTotal' : total < 0 ? 'negativeTotal' : ''}`}
+      className={`text-gray-800 text-sm not-italic font-extrabold bg-gray-200 ${total > 0 ? 'text-green-600 text-base not-italic font-extrabold bg-gray-200' : total < 0 ? 'text-red-500 text-base not-italic font-extrabold bg-gray-200' : ''}`}
     >
       {total}
     </TableCell>
