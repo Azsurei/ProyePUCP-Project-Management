@@ -111,52 +111,7 @@ export default function ReporteCronograma(props) {
           categories: nombresProyectos,
         }
       };
-      // const seriesTime = [
-      //   {
-      //     data: [
-      //       {
-      //         x: 'Analysis',
-      //         y: [
-      //           new Date('2019-02-27').getTime(),
-      //           new Date('2019-03-04').getTime()
-      //         ],
-      //         fillColor: '#008FFB'
-      //       },
-      //       {
-      //         x: 'Design',
-      //         y: [
-      //           new Date('2019-03-04').getTime(),
-      //           new Date('2019-03-08').getTime()
-      //         ],
-      //         fillColor: '#00E396'
-      //       },
-      //       {
-      //         x: 'Coding',
-      //         y: [
-      //           new Date('2019-03-07').getTime(),
-      //           new Date('2019-03-10').getTime()
-      //         ],
-      //         fillColor: '#775DD0'
-      //       },
-      //       {
-      //         x: 'Testing',
-      //         y: [
-      //           new Date('2019-03-08').getTime(),
-      //           new Date('2019-03-12').getTime()
-      //         ],
-      //         fillColor: '#FEB019'
-      //       },
-      //       {
-      //         x: 'Deployment',
-      //         y: [
-      //           new Date('2019-03-12').getTime(),
-      //           new Date('2019-03-17').getTime()
-      //         ],
-      //         fillColor: '#FF4560'
-      //       }
-      //     ]
-      //   }
-      // ]
+
       const optionsTime = {
         chart: {
           height: 350,
@@ -219,35 +174,6 @@ export default function ReporteCronograma(props) {
   const [seriesTime, setseriesTime,] = useState([]);
   useEffect(() => {console.log("Esta es la llave", selectedKeys)}, [selectedKeys]);
   useEffect(() => {
-    // Actualizar datos de seriesArea cuando cambie la pestaña/tab
-    // const updateSeriesData = (index) => {// Obtener el proyecto correspondiente al índice de la pestaña
-    //   if (proyectos && proyectos.length > index) {
-    //     const proyecto = proyectos[index];
-    //     if (proyecto && proyecto.cronograma && proyecto.cronograma.tareas) {
-
-    //       const newSeriesTime = [
-    //         {
-    //           data: proyecto.cronograma.tareas.map(task => ({
-    //            x: task.sumillaTarea,
-    //           y: [
-    //             new Date(task.fechaInicio).getTime(),
-    //             new Date(task.fechaFin).getTime()
-    //           ],
-    //           fillColor: getRandomColor()
-    //           }))
-    //         }
-    //       ];
-          
-    //       // Actualizar seriesArea con los datos del proyecto seleccionado
-    //       setseriesTime(newSeriesTime);
-    //     }
-    //   }
-
-    // };
-    
-    // // Lógica para cambiar la pestaña/tab y actualizar los datos
-    // handleTabChange(activeTab);
-    // updateSeriesData(activeTab);
     const selectedIndex = parseInt(Array.from(selectedKeys)[0]);
   if (!isNaN(selectedIndex) && proyectos[selectedIndex]) {
     const proyecto = proyectos[selectedIndex];
@@ -268,24 +194,11 @@ export default function ReporteCronograma(props) {
   }, [ selectedKeys, proyectos]); 
     return (
         <>
-            {isClient && (  <div className="ReporteGrupoPresupuesto">
+            {isClient ? (  <div className="ReporteGrupoPresupuesto">
                                 
                                     <div className="flex">
                                         <div className="Grafico Barras">
-                                            {/* <MyDynamicTable 
-                                            label ="Tabla Proyectos" 
-                                            bottomContent={bottomContent} 
-                                            selectedKeys={selectedKeys}
-                                            setSelectedKeys={setSelectedKeys}
-                                            sortDescriptor = {sortDescriptor}
-                                            setSortDescriptor={setSortDescriptor}
-                                            topContent={topContent}
-                                            columns={columns}
-                                            sortedItems={sortedItems}
-                                            renderCell={renderCell}
-                                            idKey="id"
-                                            selectionMode="single"
-                                            /> */}
+                                           
                                         <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={750}/>
                                         </div>
                                         <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
@@ -314,11 +227,6 @@ export default function ReporteCronograma(props) {
                                     
 
                                     <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
-                                      {/* <Tabs key="uniqueKeyForTabs" color="warning" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
-                                            {proyectos.map((proyecto, index) => (
-                                                    <Tab key={index} title={proyecto.nombre}/>  
-                                            ))}
-                                        </Tabs> */}
                                       <Dropdown>
                                         <DropdownTrigger>
                                           <Button 
@@ -362,6 +270,10 @@ export default function ReporteCronograma(props) {
                                     </Modal>
 
                             </div>
+            ) : (
+              <div className="flex justify-center items-center h-full mt-32">
+                  <CircularProgress size="lg" aria-label="Loading..."/>
+              </div>
             )}    
         </>                
     );

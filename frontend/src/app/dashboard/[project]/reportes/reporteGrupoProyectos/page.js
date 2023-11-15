@@ -77,7 +77,7 @@ export default function ReporteGrupoProyectos(props) {
                         />
                         <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/reportes"} text="Historial de Reportes" />
                     </Breadcrumbs>
-                {isId && (<div className="reporteGrupoProyectos">
+                {isId && (<div className="reporteGrupoProyectos h-screen">
                     <div className="titleHistorialReporte text-mainHeaders">
                         Nombre Proyecto
                     </div>

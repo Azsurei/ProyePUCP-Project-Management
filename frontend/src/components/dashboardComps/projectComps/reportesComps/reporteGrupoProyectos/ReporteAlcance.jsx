@@ -3,7 +3,6 @@ import CardTareaDisplay from "@/components/dashboardComps/projectComps/reportesC
 import {
     Button,
     Chip,
-    CircularProgress,
     Divider,
     Progress,
     Tabs,
@@ -18,6 +17,7 @@ import {
     ModalBody,
     ModalFooter,
     ModalContent,
+    CircularProgress,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import React, { useEffect, useState, useContext, useRef } from "react";
@@ -28,6 +28,7 @@ import CardContribuyente from "@/components/dashboardComps/projectComps/reportes
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import { SmallLoadingScreen } from  "@/app/dashboard/[project]/layout"
 import DonutChart from "@/components/DonutChart";
 import { set } from "date-fns";
 axios.defaults.withCredentials = true;
@@ -38,6 +39,8 @@ export default function ReporteAlcance(props) {
     const idGrupoProyecto = props.groupProject;
     const [proyectos, setProyectos] = useState([]);
     const [entregables, setEntregables] = useState([]);
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const [value, setValue] = React.useState(0);
     const promedioProgresoPorProyecto = proyectos.map((proyecto) => {
         const numeroTareas = proyecto.EDT.entregables.length;
         const progresoTotal = proyecto.EDT.entregables.reduce((total, tarea) => {
@@ -57,6 +60,7 @@ export default function ReporteAlcance(props) {
 
     useEffect(() => {
         setIsClient(false);
+        // setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
@@ -65,6 +69,7 @@ export default function ReporteAlcance(props) {
               console.log(`Estos son los proyectos:`, data);
               setProyectos(data);
               setIsClient(true);
+            //   setIsLoadingSmall(false);
             } catch (error) {
               console.error('Error al obtener los proyectos:', error);
             }
@@ -346,7 +351,7 @@ export default function ReporteAlcance(props) {
       
     return (
         <>
-            {isClient && (  <div className="ReporteGrupoPresupuesto">
+            {isClient ? (  <div className="ReporteGrupoPresupuesto">
                                 
                                     <div className="flex">
                                         <div className="GraficoCircular flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
@@ -417,6 +422,10 @@ export default function ReporteAlcance(props) {
                                     </Modal>
 
                             </div>
+            ) : (
+                <div className="flex justify-center items-center h-full mt-32">
+                    <CircularProgress size="lg" aria-label="Loading..."/>
+                </div>
             )}    
         </>                
     );

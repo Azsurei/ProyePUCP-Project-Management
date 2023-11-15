@@ -578,7 +578,7 @@ console.log('Fechas únicas:', uniqueDatesArray);
       
     return (
         <>
-            {isClient && (  <div className="ReporteGrupoPresupuesto">
+            {isClient ? (  <div className="ReporteGrupoPresupuesto">
                                 <div className="flex">
                                     <div className="GraficoCircular ">
                                         
@@ -639,6 +639,10 @@ console.log('Fechas únicas:', uniqueDatesArray);
                                 
 
                             </div>
+            ): (
+              <div className="flex justify-center items-center h-full mt-32">
+                <CircularProgress size="lg" aria-label="Loading..."/>
+            </div>
             )}    
         </>                
     );
