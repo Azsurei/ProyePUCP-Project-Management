@@ -39,13 +39,17 @@ async function postFile(req,res,next){
 
 async function getFile(req,res,next){
     const { idArchivo } = req.params;
+    const query = `CALL OBTENER_ARCHIVO(?);`;
     try {
+        const [results] = await connection.query(query, [idArchivo]);
+        const file = results[0][0];
+        console.log(file.nombre_s3);
         // Create a presigned URL for the file
         const command = getSignedUrl(
             s3,
             new GetObjectCommand({
                 Bucket: bucketName,
-                Key: idArchivo,
+                Key: file.nombre_s3,
             }),
             { expiresIn: 3600 } // URL expiration time in seconds
         );
