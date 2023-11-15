@@ -106,7 +106,7 @@ function RetrospectivaView(props) {
                             }
                             btnText={""}
                         >
-                            {"Retrospectiva " + "hola"}
+                            {"Retrospectiva "}
                         </HeaderWithButtonsSamePage>
 
                         {editMode === false && (
