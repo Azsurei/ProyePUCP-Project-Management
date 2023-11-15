@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+"use client"
+import { useContext, useEffect, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
 import ButtonAddNew from "./ButtonAddNew";
@@ -8,6 +9,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import axios from "axios";
 import { Textarea } from "@nextui-org/react";
 import { HerramientasInfo } from "@/app/dashboard/[project]/layout";
+import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function EDTNewVisualization({
@@ -22,7 +24,8 @@ export default function EDTNewVisualization({
     const [validName, setValidName] = useState(true);
 
     const [inTipoComponente, setInTipoComponente] = useState("");
-    const [inCodigoComponente, setInCodigoComponente] = useState(codeNewComponent);
+    const [inCodigoComponente, setInCodigoComponente] =
+        useState(codeNewComponent);
     const [inFechaInicio, setInFechaInicio] = useState("");
     const [validFechaInicio, setValidFechaInicio] = useState(true);
 
@@ -43,7 +46,6 @@ export default function EDTNewVisualization({
 
     const [inObservaciones, setInObservaciones] = useState("");
     const [validObservaciones, setValidObservaciones] = useState(true);
-
 
     const [listEntregables, setListEntregables] = useState([
         { index: 1, data: "" },
@@ -143,7 +145,8 @@ export default function EDTNewVisualization({
     const axiosOptions = {
         method: "post", // El método de solicitud puede variar según tus necesidades
         url:
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/" +
             projectId +
             "/insertarComponenteEDT",
         headers: {
@@ -156,7 +159,8 @@ export default function EDTNewVisualization({
         console.log("Procediendo con insertar el componente");
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/" +
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/EDT/" +
                     projectId +
                     "/insertarComponenteEDT",
                 {
@@ -189,6 +193,37 @@ export default function EDTNewVisualization({
             });
     };
 
+    const [listEntregablesBD, setListEntregablesBD] = useState([]);
+
+    useEffect(() => {
+        const entregablesURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/cronograma/listarEntregablesXidProyecto/" +
+            projectId;
+        axios
+            .get(entregablesURL)
+            .then(function (response) {
+                console.log(response);
+                console.log("Respuesta conseguida");
+                const entregablesArray = response.data.entregables.map(
+                    (entregable) => {
+                        return {
+                            ...entregable,
+                            idEntregableString:
+                                entregable.idEntregable.toString(),
+                        };
+                    }
+                );
+
+                setListEntregablesBD(entregablesArray);
+                console.log("ENTREGABLES => " + JSON.stringify(entregablesArray,null,2));
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },[]);
+
     const missingTextMsg = "Este campo no puede estar vacio";
 
     return (
@@ -207,12 +242,17 @@ export default function EDTNewVisualization({
                 Crear nuevo componente
             </HeaderWithButtonsSamePage>
 
-            <div className="EDTNewResponsiveContainer">
-                <div className="NewEDTSection">
-                    <p className="Header">Informacion basica</p>
-                    <div className="FirstCardContainer">
-                        <div className="FirstLeftCont">
-                            <p>Nombre del componente</p>
+            <div className="EDTNewResponsiveContainer text-mainHeaders font-medium">
+                <div className="NewEDTSection text-mainHeaders font-medium">
+                    <p className="Header text-mainHeaders font-medium">
+                        Informacion basica
+                    </p>
+                    <div className="FirstCardContainer text-mainHeaders font-medium">
+                        <div className="FirstLeftCont text-mainHeaders font-medium">
+                            <div className="flex flex-row gap-1">
+                                <p>Nombre del componente</p>
+                                <p className="text-red-500 font-semibold">*</p>
+                            </div>
                             {/* <textarea
                                 rows="1"
                                 id="inputBoxGeneric"
@@ -255,7 +295,10 @@ export default function EDTNewVisualization({
                             ></input>
                         </div>
                         <div className="FirstRightCont">
-                            <p>Fecha de inicio</p>
+                            <div className="flex flex-row gap-1">
+                                <p>Fecha de inicio</p>
+                                <p className="text-red-500 font-semibold">*</p>
+                            </div>
                             <input
                                 type="date"
                                 id="inputBoxGeneric"
@@ -265,7 +308,10 @@ export default function EDTNewVisualization({
                                     setInFechaInicio(e.target.value);
                                 }}
                             ></input>
-                            <p>Fecha de fin</p>
+                            <div className="flex flex-row gap-1">
+                                <p>Fecha de fin</p>
+                                <p className="text-red-500 font-semibold">*</p>
+                            </div>
                             <input
                                 type="date"
                                 id="inputBoxGeneric"
@@ -454,21 +500,43 @@ export default function EDTNewVisualization({
                     secondAction={() => {
                         handleComponentRegister();
                     }}
+                    verifyFunction={() => {
+                        if (
+                            inComponentName === "" ||
+                            inFechaInicio === "" ||
+                            inFechaFin === ""
+                        ) {
+                            toast.error("Faltan completar campos obligatorios");
+                            return false;
+                        } else {
+                            for(const entregable of listEntregables){
+                                if(listEntregablesBD.some(entr => entr.nombre?.includes(entregable.data))){
+                                    toast.warning("Entregable ya registrado, intenta otro nombre");
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        }
+                    }}
                 />
             </div>
+            <Toaster richColors position="bottom-left" />
         </div>
     );
 
-    function registerComponent(){
-        const {herramientasInfo} = useContext(HerramientasInfo);
+    function registerComponent() {
+        const { herramientasInfo } = useContext(HerramientasInfo);
         //verificamos si entregable no se repite en proyecto
-        for(const entregable of listEntregables){
+        for (const entregable of listEntregables) {
             const objToSend = {
-                idEDT: herramientasInfo.find(tool => tool.idHerramienta = 2),
-                nombreEntregable: entregable.data
+                idEDT: herramientasInfo.find(
+                    (tool) => (tool.idHerramienta = 2)
+                ),
+                nombreEntregable: entregable.data,
             };
-    
-            axios.post(link,)
+
+            axios.post(link);
         }
     }
 }
