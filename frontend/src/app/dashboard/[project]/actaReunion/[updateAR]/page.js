@@ -549,8 +549,8 @@ export default function editarActaReunion(props) {
             </div>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
-                    <Card className="p-5 pt-3">
-                        <CardBody>
+                    <div className="p-5 pt-3">
+                        <div>
                             {actaReunion && (
                                 <input 
                                     className="lineMeetingTitle"
@@ -644,16 +644,16 @@ export default function editarActaReunion(props) {
                                 )}
 
                             </div>
-                        </CardBody>
-                        <CardFooter>
-                        </CardFooter>
-                    </Card>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
 
                 </div>
                 <br /><br />
                 <div className="invitedPeople p-5">
-                    <Card className="mx-auto">
-                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg
+                    <div className="mx-auto">
+                        <div className="pt-5 pl-5 pb-2 mb-0 text-lg
                             font-bold text-blue-950 font-sans">
                                 <div className="personasConvocadas flex align-center">
                                     <h3>Personas Convocadas</h3>
@@ -666,8 +666,8 @@ export default function editarActaReunion(props) {
                                         </button>
                                     )}
                                 </div>
-                        </CardHeader>
-                        <CardBody className="py-0 mt-0 ml-2">
+                        </div>
+                        <div className="py-0 mt-0 ml-2">
                             <div className="flex justify-between mb-2">
                                 <span className="text-mg font-semibold">Lista de Miembros</span>
                                 <span className="text-mg font-semibold mr-6">Asistencia</span>
@@ -704,14 +704,14 @@ export default function editarActaReunion(props) {
                                     excludedUsers={participantsList}
                                 ></ModalUser>
                             )}
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
 
                 <div className="meetingTopics p-5">
-                    <Card className="mx-auto">
-                        <CardHeader>
+                    <div className="mx-auto">
+                        <div>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                     Temas a tratar
@@ -729,8 +729,8 @@ export default function editarActaReunion(props) {
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                             )}
-                        </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8 pb-0 mb-0">
+                        </div>
+                        <div className="mt-0 py-0 pl-8 pb-0 mb-0">
                             <div className="topicsContainer">
                                 <TopicEditableList
                                     beEditable={isEditMode}
@@ -745,13 +745,13 @@ export default function editarActaReunion(props) {
                                 >
                                 </TopicEditableList>
                             </div>
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
                 <div className="pendingComments p-5">
-                    <Card className="mx-auto">
-                        <CardHeader>
+                    <div className="mx-auto">
+                        <div>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                     Comentarios Pendientes
@@ -769,8 +769,8 @@ export default function editarActaReunion(props) {
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                             )}
-                        </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8">
+                        </div>
+                        <div className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
                                 <ListEditableInput
                                     beEditable={true}
@@ -781,9 +781,9 @@ export default function editarActaReunion(props) {
                                     typeName="Comentario">
                                 </ListEditableInput>
                             </div>
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
 
             </div>
