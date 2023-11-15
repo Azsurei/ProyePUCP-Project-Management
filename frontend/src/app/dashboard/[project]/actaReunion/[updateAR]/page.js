@@ -549,7 +549,7 @@ export default function editarActaReunion(props) {
             </div>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
-                    <div className="p-5 pt-3">
+                    <div className="p-5 pt-3 border border-slate-300 shadow-md relative rounded-lg">
                         <div>
                             {actaReunion && (
                                 <input 
@@ -651,7 +651,7 @@ export default function editarActaReunion(props) {
 
                 </div>
                 <br /><br />
-                <div className="invitedPeople p-5">
+                <div className="invitedPeople p-5 border border-slate-300 shadow-md relative rounded-lg">
                     <div className="mx-auto">
                         <div className="pt-5 pl-5 pb-2 mb-0 text-lg
                             font-bold text-blue-950 font-sans">
@@ -708,8 +708,9 @@ export default function editarActaReunion(props) {
                         <div></div>
                     </div>
                 </div>
-
-                <div className="meetingTopics p-5">
+                <br/>
+                <br/>
+                <div className="meetingTopics p-5 border border-slate-300 shadow-md relative rounded-lg">
                     <div className="mx-auto">
                         <div>
                             <div className="flex flex-col p-2">
@@ -749,7 +750,9 @@ export default function editarActaReunion(props) {
                         <div></div>
                     </div>
                 </div>
-                <div className="pendingComments p-5">
+                <br/>
+                <br/>
+                <div className="pendingComments p-5 border border-slate-300 shadow-md relative rounded-lg">
                     <div className="mx-auto">
                         <div>
                             <div className="flex flex-col p-2">
@@ -787,7 +790,8 @@ export default function editarActaReunion(props) {
                 </div>
 
             </div>
-
+            <br/>
+            <br/>
             <div className="footer">
                 <div className="containerBottom">
                     {fieldsEmpty && (
@@ -801,18 +805,6 @@ export default function editarActaReunion(props) {
                 {hasChanges && (
                     <div className="twoButtons1">
                         <div className="buttonContainer">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Modificación"
-                                textBody="¿Seguro que quiere descartar la modificación de el Acta de Reunión?"
-                                colorButton="w-36 bg-slate-100 text-black font-semibold"
-                                oneButton={false}
-                                secondAction={() => {
-                                    toggleEditMode();
-                                    router.refresh();
-                                }}
-                                textColor="red"
-                            />
                             <Modal
                                 nameButton="Aceptar"
                                 textHeader="Modificar Acta de Reunión"

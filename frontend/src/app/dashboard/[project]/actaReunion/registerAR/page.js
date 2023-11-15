@@ -555,10 +555,10 @@ export default function crearActaReunion(props) {
             </Tabs>
 
             {tabSelected === "form" && (
-                <>
+                <div>
                     <div className="body m-5 mt-5">
                         <div className="mainInfo">
-                            <div className="p-5 pt-3">
+                            <div className="p-5 pt-3 border border-slate-400 shadow-md relative rounded-lg">
                                 <div>
                                     <Input
                                         className="max-w-[1000px]"
@@ -569,6 +569,7 @@ export default function crearActaReunion(props) {
                                         label="Título de Reunión"
                                         labelPlacement="outside"
                                         placeholder="Ingrese el título de reunión (Ej: Reunión para ver temas de gastos)"
+                                        variant={"bordered"}
                                         value={titleValue}
                                         onValueChange={setTitleValue}
                                     />
@@ -613,38 +614,42 @@ export default function crearActaReunion(props) {
                                             </p>
                                         )}
                                     </div>
-
-                                    <div className="dateAndTimeLine">
-                                        <p className="mt-5 mb-1 text-black text-sm font-medium">
-                                            Fecha y Hora de la Reunión
-                                        </p>
-                                        {/*}
-                                    <input
-                                        type="datetime-local"
-                                        id="datetimePicker"
-                                        name="datetimePicker"
-                                        onChange={handleChangeFechaHora}>
-                                    </input>
-                                    */}
-                                        <input
+                                    <p className="mt-5 mb-1 text-black text-sm font-medium">
+                                        Fecha y Hora de la reunion
+                                    </p>
+                                    <div className={"flex gap-4"}>
+                                        <Input
+                                            className="max-w-[1000px]"
+                                            isRequired
                                             type="date"
-                                            id="datePicker"
+                                            size="lg"
                                             name="datePicker"
+                                            label=""
+                                            labelPlacement="outside"
                                             min={getMinDate()}
                                             value={dateValue}
+                                            variant={"bordered"}
                                             onChange={handleChangeDate}
-                                        ></input>
-                                        <input
+                                        ></Input>
+
+                                        <Input
+                                            className="max-w-[1000px]"
+                                            isRequired
                                             type="time"
-                                            id="timePicker"
+                                            size="lg"
                                             name="timePicker"
+                                            label=""
+                                            labelPlacement="outside"
                                             min={getMinTime()}
                                             value={timeValue}
+                                            variant={"bordered"}
                                             onChange={handleChangeTime}
-                                        ></input>
+                                        ></Input>
                                     </div>
+
+                                    <br/>
                                     <Input
-                                        className="max-w-[1000px] mt-5"
+                                        className="max-w-[1000px]"
                                         isRequired
                                         key="meetingMotive"
                                         size="lg"
@@ -653,6 +658,7 @@ export default function crearActaReunion(props) {
                                         labelPlacement="outside"
                                         placeholder="Ingrese el motivo de la reunion"
                                         value={motiveValue}
+                                        variant={"bordered"}
                                         onValueChange={setMotiveValue}
                                     />
                                 </div>
@@ -670,7 +676,7 @@ export default function crearActaReunion(props) {
                         </div>
                         <br />
                         <br />
-                        <div className="invitedPeople p-5 ">
+                        <div className="invitedPeople p-5 border border-slate-400 shadow-md relative rounded-lg">
                             <div className="mx-auto">
                                 <div
                                     className="pt-5 pl-5 pb-2 mb-0 text-lg
@@ -755,7 +761,9 @@ export default function crearActaReunion(props) {
                                 <div></div>
                             </div>
                         </div>
-                        <div className="meetingTopics p-5">
+                        <br />
+                        <br />
+                        <div className="meetingTopics p-5 border border-slate-400 shadow-md relative rounded-lg">
                             <div className="mx-auto">
                                 <div>
                                     <div className="flex flex-col p-2">
@@ -763,22 +771,22 @@ export default function crearActaReunion(props) {
                                             Temas a tratar
                                         </h3>
                                         <p className="littleComment ml-2 text-small text-default-500">
-                                            ¿De qué temas se hablará en la
-                                            reunión? ¡Asegúrate de ser claro!
+                                            ¿De qué temas se hablará en la reunión?
+                                            ¡Asegúrate de ser claro!
                                         </p>
                                     </div>
                                     <button
                                         onClick={handleAddTema}
                                         className="bg-[#f0ae19] text-white w-8 h-8
-                                    rounded-full absolute right-4 top-4 cursor-pointer
-                                    transform transition-transform hover:-translate-y-1 hover:shadow-md"
+                                rounded-full absolute right-4 top-4 cursor-pointer
+                                transform transition-transform hover:-translate-y-1 hover:shadow-md"
                                     >
-                                        <span
-                                            className="text-xl"
-                                            style={{ fontSize: "30px" }}
-                                        >
-                                            +
-                                        </span>
+                                    <span
+                                        className="text-xl"
+                                        style={{ fontSize: "30px" }}
+                                    >
+                                        +
+                                    </span>
                                     </button>
                                 </div>
                                 <div className="mt-0 py-0 pl-8">
@@ -795,44 +803,9 @@ export default function crearActaReunion(props) {
                                 <div></div>
                             </div>
                         </div>
-
-                        {/*<div className="agreements p-5">
-                        <Card className="mx-auto">
-                            <CardHeader>
-                                <div className="flex flex-col p-2">
-                                    <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
-                                        Acuerdos
-                                    </h3>
-                                    <p className="littleComment ml-2 text-small text-default-500">
-                                        ¿A que acuerdos se llegaron en la reunión? ¡Recuerda ser responsable y razonable!
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={() => handleAddAcuerdo()}
-                                    className="bg-[#f0ae19] text-white w-8 h-8
-                                    rounded-full absolute right-4 top-4 cursor-pointer
-                                    transform transition-transform hover:-translate-y-1 hover:shadow-md">
-                                    <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
-                                </button>
-                            </CardHeader>
-                            {/*<CardBody className="mt-0 py-0 pl-8">
-                                <div className="topicsContainer">
-                                    <EditableList
-                                        items={listAcuerdos}
-                                        onAdd={() => handleAddAcuerdo()}
-                                        onChange={handleChangeAcuerdo}
-                                        onRemove={handleRemoveAcuerdo}
-                                        temas={listTemas}
-                                        onTemaChange={handleChangeTema}
-                                        isAcuerdo={true}
-                                    />
-                                </div>
-                            </CardBody>
-                            <CardFooter></CardFooter>
-                        </Card>
-                    </div>*/}
-
-                        <div className="pendingComments p-5">
+                        <br />
+                        <br />
+                        <div className="pendingComments p-5 border border-slate-400 shadow-md relative rounded-lg">
                             <div className="mx-auto">
                                 <div>
                                     <div className="flex flex-col p-2">
@@ -846,27 +819,23 @@ export default function crearActaReunion(props) {
                                     <button
                                         onClick={handleAddComentario}
                                         className="bg-[#f0ae19] text-white w-8 h-8
-                                    rounded-full absolute right-4 top-4 cursor-pointer
-                                    transform transition-transform hover:-translate-y-1 hover:shadow-md"
+                                rounded-full absolute right-4 top-4 cursor-pointer
+                                transform transition-transform hover:-translate-y-1 hover:shadow-md"
                                     >
-                                        <span
-                                            className="text-xl"
-                                            style={{ fontSize: "30px" }}
-                                        >
-                                            +
-                                        </span>
+                                    <span
+                                        className="text-xl"
+                                        style={{ fontSize: "30px" }}
+                                    >
+                                        +
+                                    </span>
                                     </button>
                                 </div>
                                 <div className="mt-0 py-0 pl-8">
                                     <div className="topicsContainer">
                                         <ListEditableInput
                                             beEditable={true}
-                                            handleChanges={
-                                                handleChangeComentario
-                                            }
-                                            handleRemove={
-                                                handleRemoveComentario
-                                            }
+                                            handleChanges={handleChangeComentario}
+                                            handleRemove={handleRemoveComentario}
                                             ListInputs={listComentarios}
                                             typeName="Comentario"
                                         ></ListEditableInput>
@@ -876,135 +845,13 @@ export default function crearActaReunion(props) {
                             </div>
                         </div>
                     </div>
-                    <div className="meetingTopics p-5">
-                        <div className="mx-auto">
-                            <div>
-                                <div className="flex flex-col p-2">
-                                    <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
-                                        Temas a tratar
-                                    </h3>
-                                    <p className="littleComment ml-2 text-small text-default-500">
-                                        ¿De qué temas se hablará en la reunión?
-                                        ¡Asegúrate de ser claro!
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={handleAddTema}
-                                    className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer
-                                transform transition-transform hover:-translate-y-1 hover:shadow-md"
-                                >
-                                    <span
-                                        className="text-xl"
-                                        style={{ fontSize: "30px" }}
-                                    >
-                                        +
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="mt-0 py-0 pl-8">
-                                <div className="topicsContainer">
-                                    <ListEditableInput
-                                        beEditable={true}
-                                        handleChanges={handleChangeTema}
-                                        handleRemove={handleRemoveTema}
-                                        ListInputs={listTemas}
-                                        typeName="Tema"
-                                    ></ListEditableInput>
-                                </div>
-                            </div>
-                            <div></div>
-                        </div>
-                    </div>
 
-                    {/*<div className="agreements p-5">
-                    <Card className="mx-auto">
-                        <CardHeader>
-                            <div className="flex flex-col p-2">
-                                <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
-                                    Acuerdos
-                                </h3>
-                                <p className="littleComment ml-2 text-small text-default-500">
-                                    ¿A que acuerdos se llegaron en la reunión? ¡Recuerda ser responsable y razonable!
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => handleAddAcuerdo()}
-                                className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer
-                                transform transition-transform hover:-translate-y-1 hover:shadow-md">
-                                <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
-                            </button>
-                        </CardHeader>
-                        {/*<CardBody className="mt-0 py-0 pl-8">
-                            <div className="topicsContainer">
-                                <EditableList
-                                    items={listAcuerdos}
-                                    onAdd={() => handleAddAcuerdo()}
-                                    onChange={handleChangeAcuerdo}
-                                    onRemove={handleRemoveAcuerdo}
-                                    temas={listTemas}
-                                    onTemaChange={handleChangeTema}
-                                    isAcuerdo={true}
-                                />
-                            </div>
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
-                </div>*/}
 
-                    <div className="pendingComments p-5">
-                        <div className="mx-auto">
-                            <div>
-                                <div className="flex flex-col p-2">
-                                    <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
-                                        Comentarios Pendientes
-                                    </h3>
-                                    <p className="littleComment ml-2 text-small text-default-500">
-                                        ¿Aún tienes algo que acotar?
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={handleAddComentario}
-                                    className="bg-[#f0ae19] text-white w-8 h-8
-                                rounded-full absolute right-4 top-4 cursor-pointer
-                                transform transition-transform hover:-translate-y-1 hover:shadow-md"
-                                >
-                                    <span
-                                        className="text-xl"
-                                        style={{ fontSize: "30px" }}
-                                    >
-                                        +
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="mt-0 py-0 pl-8">
-                                <div className="topicsContainer">
-                                    <ListEditableInput
-                                        beEditable={true}
-                                        handleChanges={handleChangeComentario}
-                                        handleRemove={handleRemoveComentario}
-                                        ListInputs={listComentarios}
-                                        typeName="Comentario"
-                                    ></ListEditableInput>
-                                </div>
-                            </div>
-                            <div></div>
-                        </div>
-                    </div>
+
 
                     <div className="footer">
                         <div className="twoButtons1">
                             <div className="buttonContainer">
-                                <Modal
-                                    nameButton="Descartar"
-                                    textHeader="Descartar Registro"
-                                    textBody="¿Seguro que quiere descartar el registro de el Acta de Reunión?"
-                                    colorButton="w-36 bg-slate-100 text-black font-semibold"
-                                    oneButton={false}
-                                    secondAction={() => {}}
-                                    textColor="red"
-                                />
                                 <Modal
                                     nameButton="Aceptar"
                                     textHeader="Registrar Acta de Reunión"
@@ -1037,7 +884,7 @@ export default function crearActaReunion(props) {
                             </div>
                         </div>
                     </div>
-                </>
+                </div>
             )}
 
             {tabSelected === "file" && (

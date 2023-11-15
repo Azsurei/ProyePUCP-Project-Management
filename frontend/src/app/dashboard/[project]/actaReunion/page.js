@@ -103,13 +103,13 @@ export default function ActaReunion(props) {
         return (
             <div
                 key={reunion.idLineaActaReunion}
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
+                className="flex flex-wrap items-start my-4 space-x-4 justify-center border border-slate-300 shadow-md relative rounded-lg" >
                 <div key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
                     <div className="p-4">
                         <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
                     </div>
                     <Divider orientation={"horizontal"}/>
-                    <div className="flex-row justify-between items-center h-36">
+                    <div className="flex flex-row justify-between items-center h-36 p-4">
                         <div className="mr-4">
                             <p className="text-blue-900 montserrat">Reunión convocada por:</p>
                             <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
