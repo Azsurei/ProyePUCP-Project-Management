@@ -6,6 +6,7 @@
         "dev": "next dev -p 80",
         "build": "next build",
         "start": "next start -p 80",
+        "production": "next build && next start -p 3000",
         "lint": "next lint",
         "preinstall": "npm config set legacy-peer-deps true"
     },
