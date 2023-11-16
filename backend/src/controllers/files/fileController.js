@@ -45,6 +45,29 @@ async function postFile(req,res,next){
     }
 }
 
+async function postArchivo(file){
+    const fileName = randomName();
+    const params={
+        Bucket: bucketName,
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: file.mimetype
+    }
+    const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
+    try {
+        const command = new PutObjectCommand(params);
+        await s3.send(command);
+        const [results] = await connection.query(query, [fileName, file.originalname]);
+        const idArchivo = results[0][0].idArchivo;
+        res.status(200).json({
+            idArchivo,
+            message: "Archivo insertado"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function getFile(req,res,next){
     const { idArchivo } = req.params;
     const query = `CALL OBTENER_ARCHIVO(?);`;
@@ -71,5 +94,6 @@ async function getFile(req,res,next){
 
 module.exports = {
     postFile,
-    getFile
+    getFile,
+    postArchivo
 }
