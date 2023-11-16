@@ -180,6 +180,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, reloadData})
                 isOpen={isOpen} 
                 onOpenChange={onOpenChange}
                 placement="top-center"
+                hideCloseButton
               >
                 <ModalContent>
                   {(onClose) => (
