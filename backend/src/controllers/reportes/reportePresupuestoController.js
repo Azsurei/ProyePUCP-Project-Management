@@ -1,15 +1,48 @@
 const connection = require("../../config/db");
 const XLSX = require('xlsx');
+const Exceljs = require('exceljs');
 const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
+const excelJSController = require("../xlxs/excelJSController");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
 //const upload = multer({ storage: storage });
-async function exportarReporteExcel(req,res,next){
+
+const headerTitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
+
+const headerSubtitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+
+};
+
+//Borde para la celda de excel
+const borderStyle = {
+    top: {style:'thin', color: {argb:'000000'}},
+    left: {style:'thin', color: {argb:'000000'}},
+    bottom: {style:'thin', color: {argb:'000000'}},
+    right: {style:'thin', color: {argb:'000000'}}
+  };
+
+const alignmentCenterStyle = {
+vertical: 'middle',
+horizontal: 'center'
+};
+
+async function descargarExcel(req,res,next){
     const {fileId} = req.body;
     const destinationFolder = path.join(__dirname, '../../tmp');
 
@@ -19,13 +52,13 @@ async function exportarReporteExcel(req,res,next){
         
         const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
         const jsonData = JSON.parse(fileContent);
-        console.log(jsonData);
-        const wb = XLSX.utils.book_new();
-        probandoExcelPresupuesto(jsonData,wb);
-
         const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
+        console.log(excelFilePath);
+        workbook = await generarExcelPresupuesto(jsonData);
+        
+        await workbook.xlsx.writeFile(excelFilePath);
 
-        res.download(excelFilePath , `${fileId}.json`, async(err) => {
+        res.download(excelFilePath , `${fileId}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
                 await fsp.unlink(tmpFilePath);
@@ -43,7 +76,105 @@ async function exportarReporteExcel(req,res,next){
     } 
 }
 
-async function generarReporte(req, res, next) {
+async function generarExcelPresupuesto(presupuesto){
+
+    try{
+        const workbook = new Exceljs.Workbook();
+        let filactual=1;
+
+        const WSGeneral = workbook.addWorksheet('General');
+        await agregarInformacionGeneralAExcel(presupuesto.general,WSGeneral,filactual);
+
+        if(presupuesto.lineasPresupuesto.lineasIngreso!=null){
+            console.log('Llegue');
+            const WSIngresos = workbook.addWorksheet('Ingresos');
+            await agregarIngresosAExcel(presupuesto.lineasPresupuesto.lineasIngreso,WSIngresos,filactual);
+            excelJSController.ajustarAnchoColumnas(WSIngresos);
+        }
+        
+        if(presupuesto.lineasPresupuesto.lineasEgreso!=null){
+            const WSEgresos = workbook.addWorksheet('Egresos');
+            await agregarEgresosAExcel(presupuesto.lineasPresupuesto.lineasEgreso,WSEgresos,filactual);
+            excelJSController.ajustarAnchoColumnas(WSEgresos);
+        }
+
+        if(presupuesto.lineasPresupuesto.lineasEstimacionCosto!=null){
+            const WSEstimacionCosto = workbook.addWorksheet('Estimaciones');
+            await agregarEstimacionesCostoAExcel(presupuesto.lineasPresupuesto.lineasEstimacionCosto,WSEstimacionCosto,filactual);
+            excelJSController.ajustarAnchoColumnas(WSEstimacionCosto);
+        }
+
+        excelJSController.ajustarAnchoColumnas(WSGeneral);
+        return workbook;
+        
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function agregarInformacionGeneralAExcel(general,WSGeneral,filaActual){
+    try{
+        const header1 = ["Proyecto asociado","Fecha de creacion de reporte"]
+        const header2 = ["Presupuesto inicial","Moneda principal","Meses del proyecto"];
+        filaActual = await excelJSController.agregaHeader(WSGeneral,filaActual,header1,headerTitulo,borderStyle);
+        WSGeneral.getRow(filaActual).values = [general.nombreProyecto,general.fechaCreacion];
+        filaActual++;
+
+        filaActual =await excelJSController.agregaHeader(WSGeneral,filaActual,header2,headerTitulo,borderStyle);
+        WSGeneral.getRow(filaActual).values = [general.presupuestoInicial,general.nombreMoneda,general.cantidadMeses];
+        filaActual++;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function agregarIngresosAExcel(lineasIngreso,WSIngresos,filactual){
+    try{
+        const header1 = ["Nro Linea", "Descripcion", "Monto", "Cantidad", "Fecha Transaccion", "Moneda", "Tipo Transaccion", "Tipo Ingreso"];
+        let i=1;
+        filactual = await excelJSController.agregaHeader(WSIngresos,filactual,header1,headerTitulo,borderStyle);
+        for(const linea of lineasIngreso){
+            WSIngresos.getRow(filactual).values = [i,linea.descripcion,linea.monto,linea.cantidad,linea.fechaTransaccion,linea.nombreMoneda,linea.descripcionTransaccionTipo,linea.descripcionIngresoTipo];
+            filactual++;
+            i++;
+        }
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function agregarEgresosAExcel(lineasEgreso,WSEgresos,filactual){
+    try{
+        const header1 = ["Nro Linea", "Descripcion", "Costo Real", "Cantidad", "Fecha Registro", "Moneda"];
+        let i=1;
+        filactual = await excelJSController.agregaHeader(WSEgresos,filactual,header1,headerTitulo,borderStyle);
+        for(const linea of lineasEgreso){
+            WSEgresos.getRow(filactual).values = [i,linea.descripcion,linea.costoReal,linea.cantidad,linea.fechaRegistro,linea.nombreMoneda];
+            filactual++;
+            i++;
+        }
+    }catch(error){
+        console.log(error);
+    }
+
+}
+
+async function agregarEstimacionesCostoAExcel(lineasEstimacionCosto,WSEstimacionCosto,filactual){
+    try{
+        const header1 = ["Nro Linea", "Descripcion", "Tarifa Unitaria", "Cantidad Recurso","Subtotal", "Fecha Inicio", "Moneda", "Tiempo Requerido"];
+        let i=1;
+        filactual = await excelJSController.agregaHeader(WSEstimacionCosto,filactual,header1,headerTitulo,borderStyle);
+        for(const linea of lineasEstimacionCosto){
+            WSEstimacionCosto.getRow(filactual).values = [i,linea.descripcion,linea.tarifaUnitaria,linea.cantidadRecurso,linea.subtotal,linea.fechaInicio,linea.nombreMoneda,linea.tiempoRequerido];
+            filactual++;
+            i++;
+        }
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function subirJSON(req, res, next) {
     const {idProyecto,nombre,presupuesto} = req.body;
     res.status(200);
     try {
@@ -80,8 +211,9 @@ async function generarReporte(req, res, next) {
     }
 }
 
-async function obtenerReporte(req,res,next){
+async function obtenerJSON(req,res,next){
     const {fileId} = req.params;
+    console.log(fileId);
     const destinationFolder = path.join(__dirname, '../../tmp');
     console.log(destinationFolder);
     try{
@@ -172,7 +304,7 @@ function jsonToSheet(data) {
 }
 
 module.exports = {
-    generarReporte,
-    obtenerReporte,
-    exportarReporteExcel
+    subirJSON,
+    descargarExcel,
+    obtenerJSON
 }

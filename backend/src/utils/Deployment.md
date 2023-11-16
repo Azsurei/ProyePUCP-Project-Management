@@ -82,6 +82,7 @@ FrontEnd
 pm2 start npm --name "PROYEPUCP-CLIENT" -- run start -p 3000
 
 Backend
+
 pm2 start server.js --name "PROYEPUCP-SERVER"
 
 

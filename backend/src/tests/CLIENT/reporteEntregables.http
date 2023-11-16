@@ -1,112 +1,18 @@
-#####
-## REPORTE
-##########
-
-### 
-GET http://localhost:8080/api/proyecto/reporte/listarReportesXIdProyecto/178 HTTP/1.1
-Content-Type:  application/json
-
-
-
 
 ###
-POST http://localhost:8080/api/proyecto/reporte/generarReportePresupuesto HTTP/1.1
-Content-Type:  application/json
-
-{
-  "idProyecto": 178,
-  "nombre": "pipipi",
-  "presupuesto":{
-    "general":{
-          "idPresupuesto": 37,
-          "idHerramienta": 13,
-          "nombreHerramienta": "Herramienta 1",
-          "presupuestoInicial": 100,
-          "activo": 1,
-          "idProyecto": 157,
-          "nombreProyecto": "Proyecto 1",
-          "fechaCreacion": "2023-10-28T05:00:00.000Z",
-          "idMoneda": 2,
-          "nombreMoneda": "PEN",
-          "cantidadMeses": 3
-    },
-
-    "lineasPresupuesto": {
-      "lineasIngreso": [
-        {
-          "idLineaIngreso": 129,
-          "monto": 1000,
-          "descripcion": "Presupuesto Inicial",
-          "cantidad": 1,
-          "fechaTransaccion": "2023-11-03T05:00:00.000Z",
-          "idTransaccionTipo": 1,
-          "descripcionTransaccionTipo": "Efectivo",
-          "descripcionIngresoTipo": "Prestamo",
-          "idMoneda": 2,
-          "nombreMoneda": "PEN"
-        }
-      ],
-      "lineasEgreso": [
-        {
-          "idLineaEgreso": 30,
-          "descripcion": "Gasto Paulo Londra",
-          "costoReal": 800,
-          "fechaRegistro": "2023-11-03T05:00:00.000Z",
-          "cantidad": 2,
-          "idMoneda": 2,
-          "nombreMoneda": "PEN"
-        },
-        {
-          "idLineaEgreso": 31,
-          "descripcion": "Gasto #2",
-          "costoReal": 400,
-          "fechaRegistro": "2023-12-20T05:00:00.000Z",
-          "cantidad": 1,
-          "idMoneda": 2,
-          "nombreMoneda": "PEN"
-        }
-      ],
-      "lineasEstimacionCosto": [
-        {
-          "idLineaEstimacion": 38,
-          "descripcion": "Paulo Londra",
-          "tarifaUnitaria": 400,
-          "cantidadRecurso": 3,
-          "subtotal": 2400,
-          "fechaInicio": "2023-12-06T05:00:00.000Z",
-          "idMoneda": 2,
-          "tiempoRequerido": 2,
-          "nombreMoneda": "PEN"
-        }
-      ]
-    }
-  }
-}
-
-###
-POST http://localhost:8080/api/proyecto/reporte/exportarReportePresupuestoXFileId HTTP/1.1
-Content-Type: application/json
-
-{
-  "fileId": "1p7g-lLygwuN0BzRVWf3gjVCecL8zG-DQ"
-}
-#####################################
-### REPORTE ENTREGABLE
-#####################################
-
-###
-GET http://localhost:8080/api/proyecto/reporte/obtenerReporteEntregableXFileId/1nOpP03eSsiSEkidUm6_fP-nhsSjweNbx HTTP/1.1
+GET http://localhost:8080/api/proyecto/reporte/obtenerJSONReporteEntregableXFileId/1nOpP03eSsiSEkidUm6_fP-nhsSjweNbx HTTP/1.1
 Content-Type: application/json
 
 ###
-POST http://localhost:8080/api/proyecto/reporte/exportarReporteEntregableXFileId HTTP/1.1
+POST http://localhost:8080/api/proyecto/reporte/descargarExcelReporteEntregableXFileId HTTP/1.1
 Content-Type: application/json
 
 {
-  "fileId": "17RgOgTHdfE6fgOjFaEiHw8vsCochhELO"
+  "fileId": "1ePgFEKpZoQ4EKbVqMeEk1ViJmmf_Jchs"
 }
+
 ###
-POST http://localhost:8080/api/proyecto/reporte/generarReporteEntregable HTTP/1.1
+POST http://localhost:8080/api/proyecto/reporte/subirReporteEntregableJSON HTTP/1.1
 Content-Type: application/json
 
 {
@@ -724,121 +630,6 @@ Content-Type: application/json
                 "porcentajeTotal": 10
             }
         ]
-    }
-  ]
-}
-
-
-###
-POST http://localhost:8080/api/proyecto/reporte/generarReporteRiesgos HTTP/1.1
-Content-Type: application/json
-
-{
-  "idProyecto": 178,
-  "nombre": "Probando Riesgos",
-  "riesgos": [
-    {
-      "idRiesgo": 9,
-      "nombreRiesgo": "RiesgoIwa",
-      "idCatalogo": 20,
-      "fechaIdentificacion": "2023-10-22T05:00:00.000Z",
-      "duenoRiesgo": 102,
-      "nombres": "DIEGO JAVIER KITAROU",
-      "apellidos": "IWASAKI MOREYRA",
-      "correoElectronico": "a20201540@pucp.edu.pe",
-      "detalleRiesgo": "dasasd",
-      "causaRiesgo": "asdasd",
-      "impactoRiesgo": "asdasd",
-      "estado": "Activo",
-      "activo": 1,
-      "idProbabilidad": 1,
-      "nombreProbabilidad": "Muy Baja",
-      "valorProbabilidad": 0.1,
-      "idImpacto": 1,
-      "nombreImpacto": "Insignificante",
-      "valorImpacto": 0.05,
-      "responsables": [
-        {
-          "correoElectronico": "a20203298@pucp.edu.pe",
-          "idUsuario": 97,
-          "apellidos": "ESTRADA MELGAREJO",
-          "nombres": "BRUCE ANTHONY",
-          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJfDJJnt4CClfOWItoYOykKhkSPpobVB82pkxKw7MAIOQ=s96-c"
-        },
-        {
-          "correoElectronico": "renzopinto25@gmail.com",
-          "idUsuario": 112,
-          "apellidos": "pinto",
-          "nombres": "rgpq25",
-          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c"
-        }
-      ]
-    }
-  ]
-}
-
-###
-POST http://localhost:8080/api/proyecto/reporte/exportarReporteRiesgosXFileId HTTP/1.1
-Content-Type: application/json
-
-{
-  "fileId": "1afTXpsQZKHkSkyXeD_3xnN1S4vCcMScX"
-}
-
-###
-GET http://localhost:8080/api/proyecto/reporte/obtenerReporteRiesgoXFileId/1afTXpsQZKHkSkyXeD_3xnN1S4vCcMScX HTTP/1.1
-Content-Type: application/json
-
-
-
-################################################3
-###
-
-
-###
-POST http://localhost:8080/api/proyecto/reporte/crearExcelprueba HTTP/1.1
-Content-Type: application/json
-
-{
-  "idProyecto": 178,
-  "nombre": "Probando Riesgos",
-  "riesgos": [
-    {
-      "idRiesgo": 9,
-      "nombreRiesgo": "RiesgoIwa",
-      "idCatalogo": 20,
-      "fechaIdentificacion": "2023-10-22T05:00:00.000Z",
-      "duenoRiesgo": 102,
-      "nombres": "DIEGO JAVIER KITAROU",
-      "apellidos": "IWASAKI MOREYRA",
-      "correoElectronico": "a20201540@pucp.edu.pe",
-      "detalleRiesgo": "dasasd",
-      "causaRiesgo": "asdasd",
-      "impactoRiesgo": "asdasd",
-      "estado": "Activo",
-      "activo": 1,
-      "idProbabilidad": 1,
-      "nombreProbabilidad": "Muy Baja",
-      "valorProbabilidad": 0.1,
-      "idImpacto": 1,
-      "nombreImpacto": "Insignificante",
-      "valorImpacto": 0.05,
-      "responsables": [
-        {
-          "correoElectronico": "a20203298@pucp.edu.pe",
-          "idUsuario": 97,
-          "apellidos": "ESTRADA MELGAREJO",
-          "nombres": "BRUCE ANTHONY",
-          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJfDJJnt4CClfOWItoYOykKhkSPpobVB82pkxKw7MAIOQ=s96-c"
-        },
-        {
-          "correoElectronico": "renzopinto25@gmail.com",
-          "idUsuario": 112,
-          "apellidos": "pinto",
-          "nombres": "rgpq25",
-          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c"
-        }
-      ]
     }
   ]
 }

@@ -106,6 +106,7 @@ async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,no
         const idLineaActaReunion = results[0][0].idLineaActaReunion;
 
         console.log(idLineaActaReunion,results[0][0]);
+        
         for(const tema of temas){
             temaReunionController.funcCrear(idLineaActaReunion,tema.descripcion,tema.acuerdos);
         }

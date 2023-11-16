@@ -5,6 +5,39 @@ const authGoogle = require("../authGoogle/authGoogle");
 const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
+const excelJSController = require("../xlxs/excelJSController");
+
+const headerTitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
+
+const headerSubtitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
+
+//Borde para la celda de excel
+const borderStyle = {
+    top: {style:'thin', color: {argb:'000000'}},
+    left: {style:'thin', color: {argb:'000000'}},
+    bottom: {style:'thin', color: {argb:'000000'}},
+    right: {style:'thin', color: {argb:'000000'}}
+  };
+
+const alignmentCenterStyle = {
+    vertical: 'middle',
+    horizontal: 'center'
+};
+
+
+
 
 async function generarReporteEntregables(req, res, next) {
     const { idProyecto } = req.params;
@@ -66,7 +99,7 @@ async function generarReporteEntregables(req, res, next) {
 }
 
 
-async function exportarReporteExcel(req, res, next) {
+async function descargarExcel(req, res, next) {
     const {fileId} = req.body;
     const destinationFolder = path.join(__dirname, '../../tmp');
 
@@ -78,17 +111,17 @@ async function exportarReporteExcel(req, res, next) {
 
         const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
         const jsonData = JSON.parse(fileContent);
-        console.log(jsonData);
-        workbook = generarExcelEntregables(jsonData);
-
         const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
-        XLSX.writeFile(workbook, excelFilePath);
 
+        console.log(jsonData);
+        workbook = await generarExcelEntregables(jsonData);
 
-        res.download(excelFilePath, `${fileId}.json`, async(err) => {
+        await workbook.xlsx.writeFile(excelFilePath);
+
+        res.download(excelFilePath, `${fileId}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
-                await fsp.unlink(tmpFilePath);
+                //await fsp.unlink(tmpFilePath);
             } catch (e) {
                 console.error("Error al eliminar el archivo temporal:", e.message);
             }
@@ -101,7 +134,7 @@ async function exportarReporteExcel(req, res, next) {
         next(error);
     } 
 }
-async function generarReporte(req, res, next) {
+async function subirJSON(req, res, next) {
     const { entregables,idProyecto,nombre} = req.body;
     //console.log(req.body);
 
@@ -142,7 +175,7 @@ async function generarReporte(req, res, next) {
     }
 }
 
-async function obtenerReporte(req, res, next) {
+async function obtenerJSON(req, res, next) {
     const {fileId} = req.params;
     const destinationFolder = path.join(__dirname, '../../tmp');
     console.log(destinationFolder);
@@ -163,19 +196,6 @@ async function obtenerReporte(req, res, next) {
     }   
 }
 
-async function convertirExcel2JSON(filePath){
-    const workbook = XLSX.readFile(filePath);
-    let result = {};
-    workbook.SheetNames.forEach(sheetName =>{
-        const woorksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(woorksheet);
-        result[sheetName] = json;
-    });
-
-    return result;
-}
-
-
 function generarPathEntregables(presupuesto,idReporte){
     var tmpFilePath;
     try {
@@ -188,189 +208,56 @@ function generarPathEntregables(presupuesto,idReporte){
     return tmpFilePath;
 }
 
-function generarExcelEntregables(entregables) {
+async function generarExcelEntregables(entregables) {
     try {
         
-        const wb = XLSX.utils.book_new();
+        const workbook = new Exceljs.Workbook();
 
-        entregables.forEach((entregable, index) => {
-            // Inicializa un array para las filas de la hoja de trabajo
-            
-
-            // Añade la descripción general del entregable directamente como un objeto, no como un array de objetos
-            var [descripcionGeneral] = xlsxController.extraerCampos(entregable, ["nombre","ComponenteEDTNombre","descripcion","hito","fechaInicio","fechaFin"]);
-            var filasHoja = [];
-            filasHoja.push({
-                c1: "Nombre del proyecto",
-                c2: "Reporte de Herramienta",
-                c3: "Presupuesto inicial",
-                c4: "Fecha de creacion",
-                c5: "MonedaPrincipal",
-                c6: "Meses del proyecto",
-            });
-            console.log(descripcionGeneral);
-            filasHoja.push({
-                c1: descripcionGeneral.nombre,
-                c2: descripcionGeneral.ComponenteEDTNombre,
-                c3: descripcionGeneral.descripcion,
-                c4: descripcionGeneral.hito,
-                c5: descripcionGeneral.fechaInicio,
-                c6: descripcionGeneral.fechaFin,
-                
-            });
-            agregarInformacionEntregableAHoja(filasHoja,entregable.barProgress,entregable.contribuyentes);
-            // Añade una fila vacía para separar la descripción general de las tareas
-            // Agrega los encabezados de las tareas y las tareas si existen
-            if (entregable.tareasEntregable && entregable.tareasEntregable.length > 0) {
-                // Encabezados de las tareas
-                filasHoja.push({
-                    c1: "ID Tarea",
-                    c2: "Nombre",
-                    c3: "Descripción",
-                    c4: "Fecha de Inicio",
-                    c5: "Fecha de Fin",
-                    // ... otros campos de encabezados de las tareas
-                });
-                agregarTareasAHoja(filasHoja,entregable.tareasEntregable);
-
-                // Tareas individuales
-                //filasHoja = filasHoja.concat(Object.values(entregable.tareasEntregable));
-            }
-
-            // Convierte el array de filas en una hoja de trabajo de Excel
-            var wsGeneral = XLSX.utils.json_to_sheet(filasHoja, { skipHeader: true });
-            xlsxController.ajustarAnchoDeColumna(wsGeneral, filasHoja);
-            // Agrega la hoja al libro
-            //xlsxController.ajustarRangoDeHoja(wsGeneral);
-            XLSX.utils.book_append_sheet(wb, wsGeneral, `Entregable ${index + 1}`);
-        });
-        return wb;
+        let filaActual=1;
+        
+        for(const entregable of entregables){
+            const WSEntregable = workbook.addWorksheet(`Entregable ${filaActual}`);
+            filaActual++;
+            await agregarEntregableAExcel(entregable,WSEntregable,filaActual);
+            excelJSController.ajustarAnchoColumnas(WSEntregable);
+        }
         // Escribe el libro de trabajo a un archivo
-        XLSX.writeFile(wb, 'entregables.xlsx', { compression: true });
+
+
+
         console.log("Se generó el reporte de entregables con éxito");
     } catch (error) {
         console.log(error);
     }
 }
 
-function verificarFilasHoja(filasHoja) {
-    for (let i = 0; i < filasHoja.length; i++) {
-        let fila = filasHoja[i];
-        if (Array.isArray(fila)) {
-            // Verifica si el primer elemento de la fila (arreglo) está vacío
-            if (fila.length === 0 || fila[0] === undefined || fila[0] === '') {
-                console.error('La fila ' + i + ' comienza con una celda vacía:', fila);
-            }
-        } else if (typeof fila === 'object') {
-            // Verifica si la primera propiedad del objeto está vacía
-            let primerValor = fila[Object.keys(fila)[0]];
-            if (primerValor === undefined || primerValor === '') {
-                console.error('La fila ' + i + ' comienza con una celda vacía:', fila);
-            }
-        }
-    }
-}
-
-function agregarInformacionEntregableAHoja(filasHoja,barProgress,contribuyentes){
-    // Primero agrega el progreso en su propia fila
-    filasHoja.push({
-        c1: "Progreso",
-        c2: barProgress
-    });
-    
-    filasHoja.push({
-        c1: "Contribuyentes"
-    });
-    
-    contribuyentes.forEach((contribuyente, index) => {
-        //console.log(contribuyente);
-        if(contribuyente!=null){
-            if(contribuyente.usuario!=null){
-                filasHoja.push({
-                    c1: "Nombres",
-                    c2: "Apellidos",
-                    c3: "Correo Electronico",
-                });
-            
-                filasHoja.push({
-                    c1: contribuyente.usuario.nombres,
-                    c2: contribuyente.usuario.apellidos,
-                    c3: contribuyente.usuario.correoElectronico,
-                });
-            }else if(contribuyente.equipo!=null){
-                filasHoja.push({
-                    c1: "Equipo"
-                });
-                filasHoja.push({
-                    c1: contribuyente.equipo.nombre
-                });
-    
-            }
-            //Falta implementar equipo
-        }
-    });
-}
-function agregarTareasAHoja(filasHoja,tareas){
-    tareas.forEach((tarea, index) => {
-        filasHoja.push({
-            c1: index+1,
-            c2: tarea.nombre,
-            c3: tarea.descripcion,
-            c4: tarea.fechaInicio,
-            c5: tarea.fechaFin,
-        });
-
-        if(tarea.equipo!=null){
-            filasHoja.push({
-                c1: "Por implementar",
-                c2: "Nombre",
-                c3: "Descripción",
-                c4: "Fecha de Inicio",
-                c5: "Fecha de Fin",
-            });
-        }else if(tarea.usuarios!=null){
-            filasHoja.push({
-                c1: "Nombres",
-                c2: "Apellidos",
-                c3: "Correo Electronico",
-            });
-            agregarUsuariosAHoja(filasHoja,tarea.usuarios);
-        }
-    });
-}
-
-function agregarUsuariosAHoja(filasHoja,usuarios){
-    usuarios.forEach((usuario, index) => {
-        filasHoja.push({
-            c1: usuario.nombres,
-            c2: usuario.apellidos,
-            c3: usuario.correoElectronico,
-        });
-    });
-}
-
-function prueba(entregables) {
-    try {
+async function agregarEntregableAExcel(entregable,WSEntregable,filaActual){
+    try{
+        await agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActual);
+        await agregarContribuyentesAExcel(entregable.contribuyentes,WSEntregable,filaActual);
+        await agregarTareasAExcel(entregable.tareasEntregable,WSEntregable,filaActual);
         
-        const wb = XLSX.utils.book_new();
-
-        entregables.forEach((entregable, index) => {
-
-
-
-            XLSX.utils.book_append_sheet(wb, wsGeneral, `Entregable ${index + 1}`);
-        });
-
-        // Escribe el libro de trabajo a un archivo
-        XLSX.writeFile(wb, 'entregables.xlsx', { compression: true });
-        console.log("Se generó el reporte de entregables con éxito");
-    } catch (error) {
+    }catch(error){
         console.log(error);
     }
+}
+
+async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActual){
+    const header1 = ["Nombre","Fecha Inicio","Fecha Fin"];
+    const header2 = ["Descripcion","ComponenteEDT","Hito asociado"];
+    const header3 = ["Progreso"];
+}
+
+async function agregarContribuyentesAExcel(contribuyentes,WSEntregable,filaActual){
+
+}
+
+async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
+
 }
 
 module.exports = {
-    generarReporte,
-    obtenerReporte,
-    exportarReporteExcel
+    subirJSON,
+    descargarExcel,
+    obtenerJSON
 };

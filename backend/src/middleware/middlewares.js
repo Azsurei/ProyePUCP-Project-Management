@@ -17,7 +17,5 @@ module.exports = {
         });
         console.log(`Token verificado.`);
     },
-
     // Middleware para otro propósito...
-
 }
