@@ -11,18 +11,18 @@ routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.li
 
 //Reporte presupuesto
 routerReporte.post("/subirReportePresupuestoJSON", reportePresupuestoController.subirJSON);
-routerReporte.post("/descargarExcelPresupuestoXFileId",reportePresupuestoController.descargarExcel);
+routerReporte.post("/descargarExcelPresupuestoXIdArchivo",reportePresupuestoController.descargarExcel);
 routerReporte.get("/obtenerJSONReportePresupuestoXIdArchivo/:idArchivo",reportePresupuestoController.obtenerJSON);
-
+routerReporte.post("/crearExcelCaja",reportePresupuestoController.crearExcelCaja);
 //Reporte entregables
 routerReporte.post("/subirReporteEntregableJSON",reporteEntregablesController.subirJSON);
-routerReporte.post("/descargarExcelReporteEntregableXFileId",reporteEntregablesController.descargarExcel);
-routerReporte.get("/obtenerJSONReporteEntregableXFileId/:fileId",reporteEntregablesController.obtenerJSON);
+routerReporte.post("/descargarExcelReporteEntregableXIdArchivo",reporteEntregablesController.descargarExcel);
+routerReporte.get("/obtenerJSONReporteEntregableXIdArchivo/:XIdArchivo",reporteEntregablesController.obtenerJSON);
 routerReporte.get("/traerInformacionReporteEntregable/:idProyecto",reporteEntregablesController.traerInfoReporteEntregables);
 
 //Reporte de riesgos
 routerReporte.post("/subirReporteRiesgosJSON",reporteActaRiesgosController.subirJSON);
-routerReporte.post("/descargarExcelReporteRiesgosXFileId",reporteActaRiesgosController.descargarExcel);
-routerReporte.get("/obtenerJSONReporteRiesgoXFileId/:fileId",reporteActaRiesgosController.obtenerJSON);
+routerReporte.post("/descargarExcelReporteRiesgosXIdArchivo",reporteActaRiesgosController.descargarExcel);
+routerReporte.get("/obtenerJSONReporteRiesgoXIdArchivo/:XIdArchivo",reporteActaRiesgosController.obtenerJSON);
 
 module.exports.routerReporte = routerReporte;
