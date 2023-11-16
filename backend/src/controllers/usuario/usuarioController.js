@@ -1,6 +1,6 @@
 const connection = require("../../config/db");
 
-async function listarUsuarios(req,res,next){
+async function listarUsuarios(req, res, next) {
     const { nombreCorreo } = req.body;
     //Insertar query aca
     console.log("Llegue a recibir solicitud listar usuariosXnombreCorreo");
@@ -21,7 +21,7 @@ async function listarUsuarios(req,res,next){
     }
 }
 
-async function verInfoUsuario(req,res,next){
+async function verInfoUsuario(req, res, next) {
     const idUsuario = req.user.id;
     //Insertar query aca
     console.log("Llegue a recibir solicitud ver informacion de tu usuario");
@@ -41,13 +41,16 @@ async function verInfoUsuario(req,res,next){
     }
 }
 
-async function verRolUsuarioEnProyecto(req,res,next){
-    const {idUsuario, idProyecto} = req.body;
+async function verRolUsuarioEnProyecto(req, res, next) {
+    const { idUsuario, idProyecto } = req.body;
 
     console.log("Llegue a recibir solicitud ver rol de tu usuario en proyecto");
     const query = `CALL LISTAR_ROL_X_IDUSUARIO_IDPROYECTO(?,?);`;
     try {
-        const [results] = await connection.query(query, [idUsuario, idProyecto]);
+        const [results] = await connection.query(query, [
+            idUsuario,
+            idProyecto,
+        ]);
         res.status(200).json({
             rol: results[0][0],
             message: "Rol de usuario obtenido exitosamente",
@@ -61,7 +64,7 @@ async function verRolUsuarioEnProyecto(req,res,next){
     }
 }
 
-async function insertarUsuariosAProyecto(req,res,next){
+async function insertarUsuariosAProyecto(req, res, next) {
     //Insertar query aca
     const { users, idProyecto } = req.body;
     //users debe tener atributos idUsuario y numRol (3=miembro)
@@ -96,19 +99,25 @@ async function insertarUsuariosAProyecto(req,res,next){
     }
 }
 
-async function cambiarPassword(req,res,next){
-    const {correo,password} = req.body;
+async function cambiarPassword(req, res, next) {
+    const { correo, password } = req.body;
     try {
         const query = `CALL CAMBIAR_PASSWORD_CUENTA_USUARIO(?,?);`;
-        await connection.query(query,[correo,password]);
-        res.status(200).json({message: `Password modificada`});
+        await connection.query(query, [correo, password]);
+        res.status(200).json({ message: `Password modificada` });
     } catch (error) {
         next(error);
     }
 }
 
-async function registrar(req,res,next){
-    const { nombres, apellidos, correoElectronico, password,tieneCuentaGoogle } = req.body;
+async function registrar(req, res, next) {
+    const {
+        nombres,
+        apellidos,
+        correoElectronico,
+        password,
+        tieneCuentaGoogle,
+    } = req.body;
     console.log("Realizando registro de usuario...");
 
     const query = `CALL INSERTAR_CUENTA_USUARIO(?,?,?,?,?)`;
@@ -118,7 +127,7 @@ async function registrar(req,res,next){
             apellidos,
             correoElectronico,
             password,
-            tieneCuentaGoogle
+            tieneCuentaGoogle,
         ]);
         const idUsuario = results[0][0].idUsuario;
         res.status(200).json({
@@ -127,35 +136,78 @@ async function registrar(req,res,next){
         });
         console.log(`Usuario ${idUsuario} agregado a la base de datos`);
     } catch (error) {
-        if(error.code === "ER_DUP_ENTRY"){
+        if (error.code === "ER_DUP_ENTRY") {
             return res.status(409).json({
-                message: "El correo electrónico ya está registrado. Por favor, utiliza uno diferente."
+                message:
+                    "El correo electrónico ya está registrado. Por favor, utiliza uno diferente.",
             });
-        }else{
+        } else {
             res.status(500).send("Error en el registro: " + error.message);
         }
         console.error("Error en el registro:", error);
     }
 }
 
-async function verificarSiCorreoEsDeGoogle(req,res,next){
-    const {correoElectronico} = req.body;
+async function verificarSiCorreoEsDeGoogle(req, res, next) {
+    const { correoElectronico } = req.body;
     try {
         const query = `CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE(?);`;
-        const [results] = await connection.query(query,[correoElectronico]);
+        const [results] = await connection.query(query, [correoElectronico]);
         console.log(results[0][0]);
         let tieneCuentaGoogle = results[0][0].tieneCuentaGoogle;
         console.log(tieneCuentaGoogle);
-        if(tieneCuentaGoogle === 1){
-            tieneCuentaGoogle=true;
-        }else{
-            tieneCuentaGoogle=false;
+        if (tieneCuentaGoogle === 1) {
+            tieneCuentaGoogle = true;
+        } else {
+            tieneCuentaGoogle = false;
         }
-        res.status(200).json({tieneCuentaGoogle, message: "Se verificó si el correo es de google"});
+        res.status(200).json({
+            tieneCuentaGoogle,
+            message: "Se verificó si el correo es de google",
+        });
     } catch (error) {
         next(error);
     }
 }
+
+
+
+async function enviarNotificacion(req, res, next) {
+    const { idUsuario, tipo, idLineaAsociada } = req.body;
+    console.log("enviando mensaje a usuario " + idUsuario);
+    try {
+        const query = `CALL INSERTAR_NOTIFICACION(?,?,?);`;
+        const [results] = await connection.query(query, [idUsuario, tipo, idLineaAsociada]);
+        
+        res.status(200).json({
+            message: "Se envio notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
+async function listarNotificaciones(req, res, next) {
+    const { idUsuario  } = req.body;
+    console.log("Listando notificaciones de usuario " + idUsuario);
+    try {
+        const query = `CALL LISTAR_NOTIFICACION_X_ID_USUARIO(?);`;
+        const [results] = await connection.query(query, [idUsuario]);
+
+        const notificaciones = results[0];
+        
+        res.status(200).json({
+            notificaciones,
+            message: "Se envio notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 
 module.exports = {
     listarUsuarios,
@@ -164,5 +216,7 @@ module.exports = {
     insertarUsuariosAProyecto,
     registrar,
     cambiarPassword,
-    verificarSiCorreoEsDeGoogle
-}
+    verificarSiCorreoEsDeGoogle,
+    enviarNotificacion,
+    listarNotificaciones
+};

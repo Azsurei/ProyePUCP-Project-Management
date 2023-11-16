@@ -10,5 +10,7 @@ routerUsuario.get("/verInfoUsuario", verifyToken, usuarioController.verInfoUsuar
 routerUsuario.post("/verRolUsuarioEnProyecto", verifyToken, usuarioController.verRolUsuarioEnProyecto);
 routerUsuario.post("/insertarUsuariosAProyecto", verifyToken, usuarioController.insertarUsuariosAProyecto);
 routerUsuario.put("/cambiarPassword", usuarioController.cambiarPassword);
+routerUsuario.post("/enviarNotificacion", verifyToken, usuarioController.enviarNotificacion );
+routerUsuario.post("/listarNotificaciones", verifyToken, usuarioController.listarNotificaciones );
 
 module.exports.routerUsuario = routerUsuario;

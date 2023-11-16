@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import "@/styles/dashboardStyles/DashboardNav.css";
 import { useRouter } from "next/navigation";
@@ -8,15 +8,21 @@ import Cookies from "js-cookie";
 import {
     Avatar,
     Badge,
+    Chip,
     Dropdown,
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     Switch,
 } from "@nextui-org/react";
 import axios from "axios";
 import { SunIcon } from "./SunIcon";
 import { MoonIcon } from "./MoonIcon";
+import NotificationCard from "./NotificationCard";
+import { NotificationsContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 function BellIcon() {
@@ -82,6 +88,9 @@ function MainLogoLeft() {
 }
 
 function DashboardNav({ userName, userLastName, userObj }) {
+
+    const {notifications, setNotifications} = useContext(NotificationsContext);
+
     const router = useRouter();
     const [theme, setTheme] = useState("light");
 
@@ -121,7 +130,6 @@ function DashboardNav({ userName, userLastName, userObj }) {
             });
     };
 
-    const [notifications, setNotifications] = useState([])
 
     return (
         <nav className="DashboardNav bg-mainBackground">
@@ -161,11 +169,56 @@ function DashboardNav({ userName, userLastName, userObj }) {
                     <p className="textGuide">Ayuda</p>
                 </li>
                 <li>
-                    <SettingsIcon/>
+                    <SettingsIcon />
                     <p className="textGuide">Configuración</p>
                 </li>
                 <li>
-                    <Badge content={notifications.length} color="primary" disableOutline={true} className="font-[Montserrat] font-medium"><BellIcon/></Badge>
+                    <Popover placement="bottom" showArrow offset={10}>
+                        <PopoverTrigger>
+                            <div className="border">
+                                <Badge
+                                    content={notifications.length !== 0 && notifications.length}
+                                    color="danger"
+                                    disableOutline={true}
+                                    
+                                    className="font-[Montserrat] font-medium"
+                                >
+                                    <BellIcon />
+                                </Badge>
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[350px] max-h-[300px] overflow-hidden flex justify-start p-2 rounded-lg">
+                            <div className="flex flex-col justify-start w-full gap-1 overflow-hidden">
+                                <div className="font-[Montserrat] text-medium font-semibold text-black rounded-lg  bg-slate-100 border border-slate-200 p-2 px-2 flex flex-row justify-between items-center">
+                                    <p>Notificaciones</p>
+                                    {notifications.length !== 0 && (
+                                        <Chip
+                                            className="rounded-md"
+                                            variant="bordered"
+                                            color="primary"
+                                        >
+                                            Limpiar
+                                        </Chip>
+                                    )}
+                                </div>
+                                {notifications.length === 0 && (
+                                    <div className="h-[150px] font-[Montserrat] text-slate-500 flex justify-center items-center">
+                                        No tienes notificaciones
+                                    </div>
+                                )}
+                                {notifications.length !== 0 && (
+                                    <div className="flex flex-col gap-1 overflow-auto">
+                                        {notifications.map((notif)=>{
+                                            return (
+                                                <NotificationCard key={notif.idNotificacion} type={notif.tipo} />
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+
                     <p className="textGuide">Notificaciones</p>
                 </li>
                 <li style={{ cursor: "pointer" }}>

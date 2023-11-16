@@ -10,12 +10,8 @@ const port = 8080;
 
 const http = require("http");
 const server = http.createServer(app);
-const io = socketIO(server, {
-    cors: {
-        origin: "http://localhost",
-        methods: ["GET", "POST"],
-    },
-});
+
+const initSocket = require("./sockets");
 
 //Usamos el router de loggin
 //const routerProgramacion = require('../../routes/routerLogin').routerLoggin;
@@ -47,41 +43,7 @@ const startCronJob = require("./config/cronJobs");
 startCronJob();
 
 
-const connectedUsers = new Map();
-io.on("connection", (socket) => {
-    // Extract idUsuario from the handshake query
-    const idUsuario = socket.handshake.query.idUsuario;
-    const nombreUsuario = socket.handshake.query.nombresUsuario;
-
-    console.log(
-        `===========================\nUser connected: ${socket.id}\nidUsuario => ${idUsuario}\n nombreUsuario => ${nombreUsuario}\n===========================`
-    );
-
-    connectedUsers.set(parseInt(idUsuario), socket.id);
-
-    socket.on("private_message", (data) => {
-        console.log("MIRA LA LISTA DE CONTECTADOS => " + JSON.stringify(connectedUsers,null,2));
-        const { targetUserId, message } = data;
-
-        const targetSocketId = connectedUsers.get(parseInt(targetUserId));
-
-        if (targetSocketId) {
-            io.to(targetSocketId).emit("private_message", {
-                senderUserId: idUsuario,
-                message,
-            });
-        } else {
-            console.log(`User with idUsuario ${targetUserId} is not connected`);
-        }
-    });
-
-    socket.on("disconnect", () => {
-        connectedUsers.delete(idUsuario);
-        console.log(
-            `User disconnected: ${socket.id} with idUsuario = ${idUsuario}`
-        );
-    });
-});
+const {io, connectedUsers} = initSocket(server);
 
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.SERVER_PORT || 8080;
