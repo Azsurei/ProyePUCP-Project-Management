@@ -2,7 +2,8 @@ const connection = require("../../config/db");
 const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
-const fetch = require("node-fetch");
+import fetch from 'node-fetch';
+
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
