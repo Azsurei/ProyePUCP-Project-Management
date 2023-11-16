@@ -177,7 +177,7 @@ async function agregarEstimacionesCostoAExcel(lineasEstimacionCosto,WSEstimacion
 
 async function subirJSON(req, res, next) {
     const {idProyecto,nombre,presupuesto} = req.body;
-    res.status(200);
+    
     try {
         
         console.log("Hola servidor");
