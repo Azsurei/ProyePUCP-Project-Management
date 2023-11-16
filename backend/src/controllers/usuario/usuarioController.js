@@ -207,6 +207,20 @@ async function listarNotificaciones(req, res, next) {
     }
 }
 
+async function actualizaNotificacionAR(req, res, next){
+    const {idOld, idNew} = req.body;
+    try{
+        const query = `CALL ACTUALIZA_ID_NOTIFICACION_AR(?,?);`;
+        const [results] = await connection.query(query, [idOld, idNew]);
+        
+        res.status(200).json({
+            message: "Se actualizo notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 
 module.exports = {
@@ -218,5 +232,6 @@ module.exports = {
     cambiarPassword,
     verificarSiCorreoEsDeGoogle,
     enviarNotificacion,
-    listarNotificaciones
+    listarNotificaciones,
+    actualizaNotificacionAR
 };
