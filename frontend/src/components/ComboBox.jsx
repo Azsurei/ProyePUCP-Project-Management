@@ -110,6 +110,7 @@ export default function Example({
                                 setQuery(event.target.value);
                             }}
                             {...(selected === "" ? { value: initialName } : {})}
+                            readOnly={isDisabled}
                         />
                         {!isDisabled && (
                             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
