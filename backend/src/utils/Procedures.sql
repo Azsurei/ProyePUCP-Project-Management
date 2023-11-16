@@ -4718,15 +4718,17 @@ DELIMITER $
 CREATE PROCEDURE INSERTAR_REPORTE_X_PROYECTO(
     IN _idProyecto INT,
     IN _idHerramienta INT,
-    IN _nombre VARCHAR(255)
+    IN _nombre VARCHAR(255),
+    IN _idArchivo INT
 )
 BEGIN
     DECLARE _idReporte INT;
-	INSERT INTO ReporteXProyecto(idProyecto,idHerramienta,nombre,fechaCreacion,activo)
-    VALUES (_idProyecto,_idHerramienta,_nombre,CURDATE(),1);
+	INSERT INTO ReporteXProyecto(idProyecto,idHerramienta,idArchivo,nombre,fechaCreacion,activo)
+    VALUES (_idProyecto,_idHerramienta,idArchivo,_nombre,CURDATE(),1);
     SET _idReporte = @@last_insert_id;
     SELECT _idReporte as idReporte;
 END$
+
 DROP PROCEDURE IF EXISTS LISTAR_REPORTES_X_ID_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_REPORTES_X_ID_PROYECTO(
@@ -5162,14 +5164,14 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ARCHIVOS(
-    IN _nombre_s3 VARCHAR(200),
+    IN _nombreGenerado VARCHAR(200),
     IN _nombre_real VARCHAR(500)
 )
 BEGIN
     DECLARE _idArchivo INT;
     /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
-    INSERT INTO Archivo (nombre_s3, nombre_real) 
-    VALUES (_nombre_s3, _nombre_real);
+    INSERT INTO Archivo (nombreGenerado, nombreReal) 
+    VALUES (_nombreGenerado, _nombre_real);
     SET _idArchivo = @@last_insert_id;
     SELECT _idArchivo AS idArchivo;
 END$
