@@ -311,7 +311,7 @@ export default function MatrizDeComunicaciones(props) {
                                         setRoutering(data, true);
                                     }}
                                 >
-                                    <img src="/icons/editar.svg" />
+                                    <img src="/icons/editar.svg"/>
                                 </button>
                             </Tooltip>
                             <Tooltip content="Eliminar">

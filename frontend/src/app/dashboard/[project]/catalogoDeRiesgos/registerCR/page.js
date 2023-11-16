@@ -51,6 +51,19 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [quantity2, setQuantity2] = useState(0);
 
     useEffect(() => {
+        // Obtener la fecha actual
+        const hoy = new Date();
+
+        // Obtener año, mes y día
+        const anio = hoy.getFullYear();
+        const mes = String(hoy.getMonth() + 1).padStart(2, "0"); // Padded con cero si es necesario
+        const dia = String(hoy.getDate()).padStart(2, "0"); // Padded con cero si es necesario
+
+        // Formatear la fecha en el formato deseado: yyyy-MM-dd
+        const fechaFormateada = `${anio}-${mes}-${dia}`;
+
+        // Actualizar el estado con la fecha formateada
+        setFechaInicio(fechaFormateada);
         setIsLoadingSmall(false);
     }, []);
 
@@ -180,14 +193,6 @@ export default function CatalogoDeRiesgosRegister(props) {
     function verifyFieldsEmpty() {
         return (
             name.trim() === "" ||
-            detail.trim() === "" ||
-            probability === null ||
-            impact === null ||
-            fechaInicio === null ||
-            cause.trim() === "" ||
-            impactDetail.trim() === "" ||
-            selectedMiembrosList.length === 0 ||
-            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans.trim() === ""
             ) ||
@@ -221,7 +226,7 @@ export default function CatalogoDeRiesgosRegister(props) {
             idImpacto: impact,
             nombreRiesgo: name,
             fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].idUsuario,
+            duenoRiesgo: selectedMiembrosList[0]?.idUsuario,
             detalleRiesgo: detail,
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
@@ -285,7 +290,6 @@ export default function CatalogoDeRiesgosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCR"
                         minRows="5"
                         value={detail}
@@ -506,7 +510,6 @@ export default function CatalogoDeRiesgosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCR"
                         minRows="5"
                         value={cause}
@@ -527,7 +530,6 @@ export default function CatalogoDeRiesgosRegister(props) {
                         variant="bordered"
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCR"
                         minRows="5"
                         value={impactDetail}
@@ -642,21 +644,25 @@ export default function CatalogoDeRiesgosRegister(props) {
                                         verifyFieldsExcessive()
                                     ) {
                                         toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                            "Faltan completar campos y se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos");
+                                        toast.error("Faltan completar campos", {
+                                            position: "bottom-left",
+                                        });
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
                                         toast.error(
-                                            "Se excedió el límite de caractéres"
+                                            "Se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else {
@@ -686,15 +692,6 @@ export default function CatalogoDeRiesgosRegister(props) {
                     idProyecto={projectId}
                 ></ModalUsersOne>
             )}
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }

@@ -279,14 +279,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
     function verifyFieldsEmpty() {
         return (
             name.trim() === "" ||
-            detail.trim() === "" ||
-            probability === null ||
-            impact === null ||
-            fechaInicio === null ||
-            cause.trim() === "" ||
-            impactDetail.trim() === "" ||
-            selectedMiembrosList.length === 0 ||
-            selectedMiembrosList1.length === 0 ||
             responsePlans.some(
                 (responsePlans) => responsePlans.responsePlans.trim() === ""
             ) ||
@@ -551,7 +543,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCR"
                         minRows="5"
                         value={detail}
@@ -662,7 +653,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         <Switch
                             isSelected={isSelected}
                             onValueChange={setIsSelected}
-                            {...(!editMode ? { isDisabled: true } : {isDisabled: false})}
+                            {...(!editMode
+                                ? { isDisabled: true }
+                                : { isDisabled: false })}
                         >
                             {isSelected ? "Activo" : "Inactivo"}
                         </Switch>
@@ -684,7 +677,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                         src={component.imgLink}
                                         fallback={
                                             <p className="profilePicCR">
-                                                {component.nombres[0] +
+                                                {(component.nombres !== null
+                                                    ? component.nombres[0]
+                                                    : "") +
                                                     (component.apellidos !==
                                                     null
                                                         ? component.apellidos[0]
@@ -694,7 +689,11 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                     />
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
-                                            `${component.nombres} ${
+                                            `${
+                                                component.nombres != null
+                                                    ? component.nombres
+                                                    : ""
+                                            } ${
                                                 component.apellidos !== null
                                                     ? component.apellidos
                                                     : ""
@@ -780,7 +779,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCR"
                         minRows="5"
                         value={cause}
@@ -802,7 +800,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
-                        isRequired
                         className="custom-labelCR"
                         minRows="5"
                         value={impactDetail}
