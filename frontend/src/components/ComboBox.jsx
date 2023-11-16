@@ -93,7 +93,7 @@ export default function Example({
                 <div className="relative mt-1">
                     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                         <Combobox.Input
-                            className={`w-${inputWidth} border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
+                            className={`w-${inputWidth} border-2 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white focus:ring-0`}
                             style={{
                                 ...(widthCombo
                                     ? { width: `${widthCombo}rem` }
@@ -114,7 +114,7 @@ export default function Example({
                         {!isDisabled && (
                             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
                                 <ChevronUpDownIcon
-                                    className="h-5 w-5 text-gray-400"
+                                    className="h-5 w-5 text-gray-400 dark:text-white"
                                     aria-hidden="true"
                                 />
                             </Combobox.Button>
@@ -130,9 +130,9 @@ export default function Example({
                         leaveTo="transform scale-95 opacity-0"
                         afterLeave={() => setQuery("")}
                     >
-                        <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-30">
+                        <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-[#3b3b3b] py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-30">
                             {filteredData?.length === 0 && query !== "" ? (
-                                <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                <div className="relative cursor-default select-none py-2 px-4 text-gray-700 dark:text-white">
                                     Nada encontrado.
                                 </div>
                             ) : (
@@ -142,8 +142,8 @@ export default function Example({
                                         className={({ active }) =>
                                             `relative cursor-default select-none py-2 pl-10 pr-4 ${
                                                 active
-                                                    ? "bg-teal-600 text-white"
-                                                    : "text-gray-900"
+                                                    ? "bg-teal-600 dark:bg-slate-700 text-white"
+                                                    : "text-gray-900 dark:text-white"
                                             }`
                                         }
                                         value={object}
@@ -165,7 +165,7 @@ export default function Example({
                                                         className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                                                             active
                                                                 ? "text-white"
-                                                                : "text-teal-600"
+                                                                : "text-teal-600 dark:text-slate-700"
                                                         }`}
                                                     >
                                                         <CheckIcon
