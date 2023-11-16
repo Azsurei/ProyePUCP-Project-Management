@@ -49,6 +49,7 @@ export default function MatrizDeComunicaciones(props) {
     const [idMatriz, setIdMatriz] = useState(null);
     const [edit, setEdit] = useState(null);
     function DataTable() {
+        setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
                 // Realiza la solicitud HTTP al endpoint del router
@@ -61,12 +62,12 @@ export default function MatrizDeComunicaciones(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.matrizComunicacion);
-                setIsLoadingSmall(false);
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.matrizComunicacion
                 );
+                setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
@@ -77,10 +78,6 @@ export default function MatrizDeComunicaciones(props) {
 
     useEffect(() => {
         DataTable();
-    }, []);
-
-    useEffect(() => {
-        setIsLoadingSmall(false);
     }, []);
 
     const toggleModal = (task) => {
@@ -265,12 +262,9 @@ export default function MatrizDeComunicaciones(props) {
             case "nombreFormato":
                 // return <img src={cellValue} alt="Icono de plantilla"></img>;
                 const imageSrc = cellValue ? imageOptions[cellValue] : null; // Establecer null si cellValue es nulo
-            return imageSrc ? (
-                <img
-                    src={imageSrc}
-                    alt={`Icono de ${cellValue}`}
-                />
-            ) : null;
+                return imageSrc ? (
+                    <img src={imageSrc} alt={`Icono de ${cellValue}`} />
+                ) : null;
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-2">
@@ -311,7 +305,7 @@ export default function MatrizDeComunicaciones(props) {
                                         setRoutering(data, true);
                                     }}
                                 >
-                                    <img src="/icons/editar.svg"/>
+                                    <img src="/icons/editar.svg" />
                                 </button>
                             </Tooltip>
                             <Tooltip content="Eliminar">

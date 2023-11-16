@@ -237,12 +237,7 @@ export default function ProductBacklogRegister(props) {
     function verifyFieldsEmpty() {
         return (
             name.trim() === "" ||
-            como.trim() === "" ||
-            quiero.trim() === "" ||
-            para.trim() === "" ||
             selectedValueEpic === null ||
-            selectedValuePriority === null ||
-            selectedValueState === null ||
             requirementFields.some(
                 (requirement) => requirement.requirement.trim() === ""
             ) ||
@@ -293,7 +288,6 @@ export default function ProductBacklogRegister(props) {
                 </div>
                 <h4 style={{ fontWeight: 600 }}>
                     Información de la historia de usuario
-                    <span className="text-red-500"> *</span>
                 </h4>
                 <div className="combo">
                     <div className="epic containerCombo">
@@ -412,7 +406,6 @@ export default function ProductBacklogRegister(props) {
                 <div>
                     <h4 style={{ fontWeight: 600 }}>
                         Descripción de usuario
-                        <span className="text-red-500"> *</span>
                     </h4>
                     <ContainerAsWantFor
                         como={como}
@@ -541,22 +534,26 @@ export default function ProductBacklogRegister(props) {
                                         verifyFieldsExcessive()
                                     ) {
                                         toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                            "Faltan completar campos y se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos");
+                                        toast.error("Faltan completar campos", {
+                                            position: "bottom-left",
+                                        });
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
                                         toast.error(
-                                            "Se excedió el límite de caractéres"
-                                        );
+                                            "Se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
+                                        );y
                                         return false;
                                     } else {
                                         return true;
@@ -580,15 +577,6 @@ export default function ProductBacklogRegister(props) {
                     />
                 )}
             </div>
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </form>
     );
 }

@@ -1842,13 +1842,13 @@ BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
     HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario", U.imgLink as "Imagen"
     FROM HistoriaDeUsuario HU
-    JOIN Epica E
+    LEFT JOIN Epica E
     ON HU.idEpica = E.idEpica
-    JOIN HistoriaEstado HE
+    LEFT JOIN HistoriaEstado HE
     ON HU.idHistoriaEstado = HE.idHistoriaEstado
-    JOIN HistoriaPrioridad HP
+    LEFT JOIN HistoriaPrioridad HP
     ON HU.idHistoriaPrioridad = HP.idHistoriaPrioridad
-    JOIN Usuario U
+    LEFT JOIN Usuario U
     ON HU.idUsuarioCreador = U.idUsuario
     WHERE HU.idHistoriaDeUsuario = _idHistoriaDeUsuario
     AND HU.activo=1;
