@@ -12,7 +12,7 @@ routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.li
 //Reporte presupuesto
 routerReporte.post("/subirReportePresupuestoJSON", reportePresupuestoController.subirJSON);
 routerReporte.post("/descargarExcelPresupuestoXFileId",reportePresupuestoController.descargarExcel);
-routerReporte.get("/obtenerJSONReportePresupuestoXFileId/:fileId",reportePresupuestoController.obtenerJSON);
+routerReporte.get("/obtenerJSONReportePresupuestoXIdArchivo/:idArchivo",reportePresupuestoController.obtenerJSON);
 
 //Reporte entregables
 routerReporte.post("/subirReporteEntregableJSON",reporteEntregablesController.subirJSON);
