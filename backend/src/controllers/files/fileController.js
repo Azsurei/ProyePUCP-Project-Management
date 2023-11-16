@@ -59,12 +59,10 @@ async function postArchivo(file){
         await s3.send(command);
         const [results] = await connection.query(query, [fileName, file.originalname]);
         const idArchivo = results[0][0].idArchivo;
-        res.status(200).json({
-            idArchivo,
-            message: "Archivo insertado"
-        });
+        console.log(`Archivo ${idArchivo} insertado`);
+        return idArchivo;
     } catch (error) {
-        next(error);
+        console.log(error);
     }
 }
 

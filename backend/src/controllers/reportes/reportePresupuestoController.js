@@ -7,6 +7,7 @@ const path = require('path');
 const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
 const excelJSController = require("../xlxs/excelJSController");
+const fileController = require("../files/fileController");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
@@ -178,28 +179,21 @@ async function subirJSON(req, res, next) {
     const {idProyecto,nombre,presupuesto} = req.body;
     res.status(200);
     try {
-        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,13,nombre]);
-        const idReporte = results[0][0].idReporte;
-
+        
+        console.log("Hola servidor");
         //let workbook = await probandoExcelPresupuesto(presupuesto);
         
-        var tmpFilePath = generarPathPresupuesto(presupuesto,idReporte)
-        const authClient = await authGoogle.authorize();
+        var tmpFilePath = generarPathPresupuesto(presupuesto,idProyecto);
 
-        const fileMetadata = {
-            name: `Reporte-Presupuesto-${idReporte}.json`,
-            parents:['1yjLLozOQpvB0NFPq0OBQgKj2TSN4fEmJ']
-        }
+        var file = fs.createReadStream(tmpFilePath)
+        
 
-        const media = {
-            mimeType: 'application/json',
-            body: fs.createReadStream(tmpFilePath)
-        };
-    
-        const driverResponse = await authGoogle.uploadFile(authClient,fileMetadata,media);
-        const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
-        const [results2] = await connection.query(query2, [idReporte,driverResponse.data.id]);
+        const idArchivo = await fileController.postArchivo(file);
+
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,13,nombre,idArchivo]);
+        const idReporte = results[0][0].idReporte;
+
         fs.unlinkSync(tmpFilePath);
         res.status(200).json({
             presupuesto,
