@@ -118,7 +118,8 @@ async function funcGetJSONFile(idArchivo) {
         );
 
         const url = await command;
-
+        console.log("========================================");
+        console.log(url);
         // Fetch the JSON data from the signed URL
         const response = await fetch(url);
         if (!response.ok) {
