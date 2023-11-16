@@ -80,27 +80,27 @@ async function generarExcelPresupuesto(presupuesto){
 
     try{
         const workbook = new Exceljs.Workbook();
-        let filactual=1;
+        let filaActual=1;
 
         const WSGeneral = workbook.addWorksheet('General');
-        await agregarInformacionGeneralAExcel(presupuesto.general,WSGeneral,filactual);
+        await agregarInformacionGeneralAExcel(presupuesto.general,WSGeneral,filaActual);
 
         if(presupuesto.lineasPresupuesto.lineasIngreso!=null){
             console.log('Llegue');
             const WSIngresos = workbook.addWorksheet('Ingresos');
-            await agregarIngresosAExcel(presupuesto.lineasPresupuesto.lineasIngreso,WSIngresos,filactual);
+            await agregarIngresosAExcel(presupuesto.lineasPresupuesto.lineasIngreso,WSIngresos,filaActual);
             excelJSController.ajustarAnchoColumnas(WSIngresos);
         }
         
         if(presupuesto.lineasPresupuesto.lineasEgreso!=null){
             const WSEgresos = workbook.addWorksheet('Egresos');
-            await agregarEgresosAExcel(presupuesto.lineasPresupuesto.lineasEgreso,WSEgresos,filactual);
+            await agregarEgresosAExcel(presupuesto.lineasPresupuesto.lineasEgreso,WSEgresos,filaActual);
             excelJSController.ajustarAnchoColumnas(WSEgresos);
         }
 
         if(presupuesto.lineasPresupuesto.lineasEstimacionCosto!=null){
             const WSEstimacionCosto = workbook.addWorksheet('Estimaciones');
-            await agregarEstimacionesCostoAExcel(presupuesto.lineasPresupuesto.lineasEstimacionCosto,WSEstimacionCosto,filactual);
+            await agregarEstimacionesCostoAExcel(presupuesto.lineasPresupuesto.lineasEstimacionCosto,WSEstimacionCosto,filaActual);
             excelJSController.ajustarAnchoColumnas(WSEstimacionCosto);
         }
 
@@ -128,14 +128,14 @@ async function agregarInformacionGeneralAExcel(general,WSGeneral,filaActual){
     }
 }
 
-async function agregarIngresosAExcel(lineasIngreso,WSIngresos,filactual){
+async function agregarIngresosAExcel(lineasIngreso,WSIngresos,filaActual){
     try{
         const header1 = ["Nro Linea", "Descripcion", "Monto", "Cantidad", "Fecha Transaccion", "Moneda", "Tipo Transaccion", "Tipo Ingreso"];
         let i=1;
-        filactual = await excelJSController.agregaHeader(WSIngresos,filactual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSIngresos,filaActual,header1,headerTitulo,borderStyle);
         for(const linea of lineasIngreso){
-            WSIngresos.getRow(filactual).values = [i,linea.descripcion,linea.monto,linea.cantidad,linea.fechaTransaccion,linea.nombreMoneda,linea.descripcionTransaccionTipo,linea.descripcionIngresoTipo];
-            filactual++;
+            WSIngresos.getRow(filaActual).values = [i,linea.descripcion,linea.monto,linea.cantidad,linea.fechaTransaccion,linea.nombreMoneda,linea.descripcionTransaccionTipo,linea.descripcionIngresoTipo];
+            filaActual++;
             i++;
         }
     }catch(error){
@@ -143,14 +143,14 @@ async function agregarIngresosAExcel(lineasIngreso,WSIngresos,filactual){
     }
 }
 
-async function agregarEgresosAExcel(lineasEgreso,WSEgresos,filactual){
+async function agregarEgresosAExcel(lineasEgreso,WSEgresos,filaActual){
     try{
         const header1 = ["Nro Linea", "Descripcion", "Costo Real", "Cantidad", "Fecha Registro", "Moneda"];
         let i=1;
-        filactual = await excelJSController.agregaHeader(WSEgresos,filactual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSEgresos,filaActual,header1,headerTitulo,borderStyle);
         for(const linea of lineasEgreso){
-            WSEgresos.getRow(filactual).values = [i,linea.descripcion,linea.costoReal,linea.cantidad,linea.fechaRegistro,linea.nombreMoneda];
-            filactual++;
+            WSEgresos.getRow(filaActual).values = [i,linea.descripcion,linea.costoReal,linea.cantidad,linea.fechaRegistro,linea.nombreMoneda];
+            filaActual++;
             i++;
         }
     }catch(error){
@@ -159,14 +159,14 @@ async function agregarEgresosAExcel(lineasEgreso,WSEgresos,filactual){
 
 }
 
-async function agregarEstimacionesCostoAExcel(lineasEstimacionCosto,WSEstimacionCosto,filactual){
+async function agregarEstimacionesCostoAExcel(lineasEstimacionCosto,WSEstimacionCosto,filaActual){
     try{
         const header1 = ["Nro Linea", "Descripcion", "Tarifa Unitaria", "Cantidad Recurso","Subtotal", "Fecha Inicio", "Moneda", "Tiempo Requerido"];
         let i=1;
-        filactual = await excelJSController.agregaHeader(WSEstimacionCosto,filactual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSEstimacionCosto,filaActual,header1,headerTitulo,borderStyle);
         for(const linea of lineasEstimacionCosto){
-            WSEstimacionCosto.getRow(filactual).values = [i,linea.descripcion,linea.tarifaUnitaria,linea.cantidadRecurso,linea.subtotal,linea.fechaInicio,linea.nombreMoneda,linea.tiempoRequerido];
-            filactual++;
+            WSEstimacionCosto.getRow(filaActual).values = [i,linea.descripcion,linea.tarifaUnitaria,linea.cantidadRecurso,linea.subtotal,linea.fechaInicio,linea.nombreMoneda,linea.tiempoRequerido];
+            filaActual++;
             i++;
         }
     }catch(error){
@@ -259,44 +259,7 @@ function generarPathPresupuesto(presupuesto,idReporte){
     return tmpFilePath;
 }
 
-async function probandoExcelPresupuesto(presupuesto,wb) {
-    
-    try {
-        const {general,lineasPresupuesto} = presupuesto;
-        
-        //const wb = XLSX.utils.book_new();
-        
-        // Encabezados personalizados
-        const headerGeneral = [["Nombre del proyecto","Reporte de Herramienta","Presupuesto inicial","Fecha de creacion","MonedaPrincipal","Meses del proyecto"]];
-        const headerIngreso = [["Nro Linea", "Descripcion", "Monto", "Cantidad", "Fecha Transaccion", "Moneda", "Tipo Transaccion", "Tipo Ingreso"]];
-        const headerEgreso = [["Nro Linea", "Descripcion", "Costo Real", "Cantidad", "Fecha Registro", "Moneda"]];
-        const headerEstimacionCosto = [["Nro Linea", "Descripcion", "Tarifa Unitaria", "Cantidad Recurso","Subtotal", "Fecha Inicio", "Moneda", "Tiempo Requerido"]];
 
-        const camposIngresos = ["idLineaIngreso","descripcion","monto","cantidad","fechaTransaccion","nombreMoneda","descripcionTransaccionTipo","descripcionIngresoTipo"];
-        const camposEgresos = ["idLineaEgreso","descripcion","costoReal","cantidad","fechaRegistro","nombreMoneda"];
-        const camposEstimacionCosto = ["idLineaEstimacion","descripcion","tarifaUnitaria","cantidadRecurso","subtotal","fechaInicio","nombreMoneda","tiempoRequerido"];
-        const camposInfoGeneral = ["nombreProyecto","nombreHerramienta","presupuestoInicial","fechaCreacion","nombreMoneda","cantidadMeses"]
-        
-        const lineasIngresoReducidas = xlsxController.extraerCampos(lineasPresupuesto.lineasIngreso, camposIngresos);
-        const lineasEgresoReducidas = xlsxController.extraerCampos(lineasPresupuesto.lineasEgreso, camposEgresos);
-        const lineasEstimacionCostoReducidas = xlsxController.extraerCampos(lineasPresupuesto.lineasEstimacionCosto, camposEstimacionCosto);
-        const infoGeneralReducida = xlsxController.extraerCampos(general,camposInfoGeneral);
-
-        // Crear hojas y añadir encabezados
-        xlsxController.agregarDatosAHoja(wb, headerGeneral, infoGeneralReducida, 'General');
-        xlsxController.agregarDatosAHoja(wb, headerIngreso, lineasIngresoReducidas, 'Ingresos');
-        xlsxController.agregarDatosAHoja(wb, headerEgreso, lineasEgresoReducidas, 'Egresos');
-        xlsxController.agregarDatosAHoja(wb, headerEstimacionCosto, lineasEstimacionCostoReducidas, 'Estimaciones');
-        
-        // Guardar el archivo Excel
-        //XLSX.writeFile(wb, 'presupuesto.xlsx', { compression: true });
-
-        console.log(`Archivo Excel 'presupuesto.xlsx' guardado con éxito.`);
-        return wb;
-    } catch (error) {
-        console.log(`Error en la funcion probandoExcelPresupuesto`+error); 
-    }
-}
 
 function jsonToSheet(data) {
     const ws = XLSX.utils.json_to_sheet(data);

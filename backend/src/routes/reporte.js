@@ -19,6 +19,7 @@ routerReporte.post("/subirReporteEntregableJSON",reporteEntregablesController.su
 routerReporte.post("/descargarExcelReporteEntregableXFileId",reporteEntregablesController.descargarExcel);
 routerReporte.get("/obtenerJSONReporteEntregableXFileId/:fileId",reporteEntregablesController.obtenerJSON);
 routerReporte.get("/traerInformacionReporteEntregable/:idProyecto",reporteEntregablesController.traerInfoReporteEntregables);
+
 //Reporte de riesgos
 routerReporte.post("/subirReporteRiesgosJSON",reporteActaRiesgosController.subirJSON);
 routerReporte.post("/descargarExcelReporteRiesgosXFileId",reporteActaRiesgosController.descargarExcel);

@@ -1,11 +1,11 @@
 const connection = require("../../config/db");
-const XLSX = require('xlsx');
-const xlsxController = require("../xlxs/xlxsController");
+
 const authGoogle = require("../authGoogle/authGoogle");
 const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
 const excelJSController = require("../xlxs/excelJSController");
+const Exceljs = require('exceljs');
 
 const headerTitulo = {
     fill: {
@@ -113,7 +113,7 @@ async function descargarExcel(req, res, next) {
         const jsonData = JSON.parse(fileContent);
         const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
 
-        console.log(jsonData);
+        //console.log(jsonData);
         workbook = await generarExcelEntregables(jsonData);
 
         await workbook.xlsx.writeFile(excelFilePath);
@@ -213,47 +213,184 @@ async function generarExcelEntregables(entregables) {
         
         const workbook = new Exceljs.Workbook();
 
-        let filaActual=1;
-        
+        let filaActual;
+        let nroEntregable = 1;
+        var WSEntregable;
         for(const entregable of entregables){
-            const WSEntregable = workbook.addWorksheet(`Entregable ${filaActual}`);
+            filaActual = 1; 
+            WSEntregable = workbook.addWorksheet(`Entregable ${nroEntregable}`);
             filaActual++;
-            await agregarEntregableAExcel(entregable,WSEntregable,filaActual);
+            filaActual = await agregarEntregableAExcel(entregable,WSEntregable,filaActual,nroEntregable);
             excelJSController.ajustarAnchoColumnas(WSEntregable);
+            nroEntregable++;
         }
         // Escribe el libro de trabajo a un archivo
 
-
-
         console.log("Se generó el reporte de entregables con éxito");
+        return workbook;
     } catch (error) {
         console.log(error);
     }
 }
 
-async function agregarEntregableAExcel(entregable,WSEntregable,filaActual){
+async function agregarEntregableAExcel(entregable,WSEntregable,filaActual,nroEntregable){
     try{
-        await agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActual);
-        await agregarContribuyentesAExcel(entregable.contribuyentes,WSEntregable,filaActual);
-        await agregarTareasAExcel(entregable.tareasEntregable,WSEntregable,filaActual);
-        
+        filaActual = await agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActual,nroEntregable);
+        filaActual = await agregarContribuyentesAExcel(entregable.contribuyentes,WSEntregable,filaActual);
+        filaActual = await agregarTareasAExcel(entregable.tareasEntregable,WSEntregable,filaActual);
+        return filaActual;
     }catch(error){
         console.log(error);
     }
 }
 
-async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActual){
-    const header1 = ["Nombre","Fecha Inicio","Fecha Fin"];
-    const header2 = ["Descripcion","ComponenteEDT","Hito asociado"];
-    const header3 = ["Progreso"];
+async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActual,nroEntregable){
+    if(nroEntregable==2){
+        console.log("Entregable 2 si llego unu");
+    }
+    try {
+        const header1 = [`Entregable ${nroEntregable}`];
+        const header2 = ["Nombre","Fecha Inicio","Fecha Fin"];
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
+        WSEntregable.getRow(filaActual).values = [ entregable.nombre,entregable.fechaInicio,entregable.fechaFin];
+        filaActual +=2;
+    
+        const header3 = ["ComponenteEDT","Descripcion","Hito asociado"];
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header3,headerTitulo,borderStyle);
+        WSEntregable.getRow(filaActual).values = [ entregable.ComponenteEDTNombre,entregable.descripcion,entregable.hito];
+        filaActual +=2;
+    
+        const header4 = ["Progreso",`${entregable.barProgress} %`];
+        WSEntregable.getRow(filaActual).values = header4;
+        let celdaProgreso = WSEntregable.getCell(filaActual,1);
+        celdaProgreso.style = {...headerTitulo, border: borderStyle};
+        filaActual +=2;
+    
+        return filaActual;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 async function agregarContribuyentesAExcel(contribuyentes,WSEntregable,filaActual){
+    try {
+        const header1 = ["Contribuyentes"];
+        const header2 = ["Nombre","Apellidos","Correo","Cantidad de tareas asignadas","Porcentaje realizado"];
+        let hayEquipo = false;
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
+        
+        for(const contribuyente of contribuyentes){
+            if(contribuyente.usuario!=null){
+                WSEntregable.getRow(filaActual).values = [ contribuyente.usuario.nombres,contribuyente.usuario.apellidos,contribuyente.usuario.correoElectronico,contribuyente.cantidadTareas,contribuyente.porcentajeTotal];
+                filaActual++;
+            }
 
+            if(contribuyente.equipo!=null){
+                hayEquipo = true;
+                if(hayEquipo){
+                    filaActual++;
+                    const header3 = ["Equipo"];
+                    const header4 = ["Nombre"];
+                    filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header3,headerTitulo,borderStyle);
+                    filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header4,headerTitulo,borderStyle);
+                }
+                filaActual = await agregarEquipoAExcel(contribuyente.equipo,WSEntregable,filaActual);
+            }
+        }
+
+        filaActual ++;
+
+        return filaActual;  
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
 
+async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
+    try {
+        let nroTarea = 1;
+        let hayEquipo = false;
+        
+    
+        for(const tarea of tareasEntregable){
+            const header1 = [`Tarea ${nroTarea}`];
+            filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
+    
+            const header2 = ["Sumilla","Descripcion","Fecha Inicio","Fecha Fin","Estado"];
+            filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
+    
+            WSEntregable.getRow(filaActual).values = [ tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado];
+            filaActual+=2;
+    
+            if(tarea.equipo != null){
+                hayEquipo = true;
+                if(hayEquipo){
+                    const header3 = ["Equipo"];
+                    const header4 = ["Nombre"];
+                    filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header3,headerTitulo,borderStyle);
+                    filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header4,headerTitulo,borderStyle);
+                }
+                filaActual = await agregarEquipoAExcel(tarea.equipo,WSEntregable,filaActual);
+            }
+            
+            if(tarea.usuarios!=null){
+                filaActual = await agregarUsuariosAExcel(tarea.usuarios,WSEntregable,filaActual);
+            }
+            
+            nroTarea++;
+        }
+    
+        filaActual ++;
+        return filaActual;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function agregarEquipoAExcel(equipo,WSEntregable,filaActual){
+    try {
+        //console.log(equipo);
+        
+        WSEntregable.getRow(filaActual).values = [ equipo.nombre];
+        filaActual++;
+        return filaActual;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function agregarUsuariosAExcel(usuarios, WSEntregable, filaActual) {
+    try {
+        const header1 = ["Usuarios"];
+        const header2 = ["Nombre", "Apellidos", "Correo"];
+
+        // Agrega el primer encabezado
+        filaActual = await excelJSController.agregaHeader(WSEntregable, filaActual, header1, headerTitulo, borderStyle);
+
+        // Combinar las celdas para el encabezado "Usuarios"
+        WSEntregable.mergeCells(filaActual-1, 1, filaActual-1, 3);
+        const mergedCell = WSEntregable.getCell(filaActual-1, 1);
+        mergedCell.style = {
+            ...mergedCell.style, // Mantén los estilos previos
+            alignment: alignmentCenterStyle
+        };
+
+        // Agrega el segundo encabezado
+        filaActual = await excelJSController.agregaHeader(WSEntregable, filaActual, header2, headerTitulo, borderStyle);
+
+        // Agrega los datos de los usuarios
+        for (const usuario of usuarios) {
+            WSEntregable.getRow(filaActual).values = [usuario.nombres, usuario.apellidos, usuario.correoElectronico];
+            filaActual++;
+        }
+        filaActual++;
+        return filaActual;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 module.exports = {
