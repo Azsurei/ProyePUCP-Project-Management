@@ -2,7 +2,7 @@ const connection = require("../../config/db");
 const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
