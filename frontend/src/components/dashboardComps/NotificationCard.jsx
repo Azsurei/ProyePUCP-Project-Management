@@ -4,6 +4,8 @@
 //nuevas actas de reunion con ellos incluidos de participantes
 //que mas?
 
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
+
 function TimeIcon() {
     return (
         <svg
@@ -12,7 +14,7 @@ function TimeIcon() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-7 h-7"
+            className="w-7 h-7 min-w-7 min-h-7"
         >
             <path
                 strokeLinecap="round"
@@ -31,7 +33,7 @@ function GroupIcon() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-7 h-7"
+            className="w-7 h-7 min-w-7 min-h-7"
         >
             <path
                 strokeLinecap="round"
@@ -50,7 +52,7 @@ function MoneyIcon() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-7 h-7"
+            className="w-7 h-7 min-w-7 min-h-7"
         >
             <path
                 strokeLinecap="round"
@@ -69,7 +71,7 @@ function TaskIcon() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-7 h-7"
+            className="w-7 h-7 min-w-7 min-h-7"
         >
             <path
                 strokeLinecap="round"
@@ -80,10 +82,10 @@ function TaskIcon() {
     );
 }
 
-function NotificationCard({ type }) {
-    const msgTxtTask = 'Te han asignado una nueva tarea "Hacer backlog". ';
+function NotificationCard({ type, campoAdicional }) {
+    const msgTxtTask = 'Te han asignado una nueva tarea "' + campoAdicional + '". ';
     const msgTxtMoney = "Estas por superar el limite de presupuesto. ";
-    const msgActa = "Tienes una nueva reunion agendada el 20/12/2023. ";
+    const msgActa = "Tienes una nueva reunion agendada el " + dbDateToDisplayDate(campoAdicional) + ". ";
     const msgTxtTaskAlert = "Se acerca la fecha de entrega de 1 tarea ";
     return (
         <div className="border flex flex-row items-center px-2 py-3 rounded-md gap-2 cursor-pointer shadow-sm">
@@ -91,7 +93,7 @@ function NotificationCard({ type }) {
             {type === 2 && <MoneyIcon />}
             {type === 3 && <GroupIcon />}
             {type === 4 && <TimeIcon />}
-            <div className="font-medium font-[Montserrat]">
+            <div className="font-medium font-[Montserrat] flex-1">
                 {type === 1 && msgTxtTask}
                 {type === 2 && msgTxtMoney}
                 {type === 3 && msgActa}

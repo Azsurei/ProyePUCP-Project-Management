@@ -630,10 +630,11 @@ export default function Cronograma(props) {
                             setListTareas(response.data.tareasOrdenadas);
                             console.log(response.data.tareasOrdenadas);
 
+                            //! No es realmente necesario un await ya que solo es una notificacion, no hay problema.
                             for(const usuario of selectedUsers){
                                 if(usuario.idUsuario !== sessionData.idUsuario){
-                                    //await sendNotification(usuario.idUsuario,1,nuevoIdTarea);
-                                    console.log("mandando notificacion")
+                                    sendNotification(usuario.idUsuario,1,nuevoIdTarea);
+                                    console.log("mandando notificacion a " + usuario.idUsuario);
                                 }
                             }
 

@@ -73,7 +73,14 @@ export default function RootLayout({ children }) {
                             console.log(
                                 `Tiene una nueva notificacion de ${senderUserId}, relistando notificaciones`
                             );
-                            toast.info("Tienes una nueva notificacion");
+                            toast.custom((t) => (
+                                <div>
+                                    <h1>Custom toast</h1>
+                                    <button onClick={() => toast.dismiss(t)}>
+                                        Dismiss
+                                    </button>
+                                </div>
+                            ));
                             fetchNotifications(user_data);
                         });
 
@@ -116,11 +123,7 @@ export default function RootLayout({ children }) {
             });
     }
 
-    async function sendNotification(
-        idDestinatario,
-        tipo,
-        idLineaAsociada
-    ) {
+    async function sendNotification(idDestinatario, tipo, idLineaAsociada) {
         try {
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +

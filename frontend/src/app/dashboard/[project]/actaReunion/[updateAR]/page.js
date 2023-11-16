@@ -523,6 +523,8 @@ export default function editarActaReunion(props) {
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
+
+                
             })
             .catch(function (error) {
                 console.log(error);

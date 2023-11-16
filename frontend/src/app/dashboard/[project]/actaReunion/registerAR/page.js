@@ -36,6 +36,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import FileDrop from "@/components/dashboardComps/projectComps/actaReunionComps/FileDrop";
 import { Toaster, toast } from "sonner";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 
 axios.defaults.withCredentials = true;
 
@@ -122,6 +123,9 @@ export default function crearActaReunion(props) {
     // Router. Helps you to move between pages
 
     const router = useRouter();
+    const { sessionData } = useContext(SessionContext);
+    const { sendNotification } =
+        useContext(NotificationsContext);
 
     // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -497,6 +501,13 @@ export default function crearActaReunion(props) {
             .then(function (response) {
                 console.log(response);
                 console.log("Conexion correcta");
+                const nuevoIdLineaAR = response.data.idLineaActaReunion;
+                for(const usuario of selectedMiembrosList){
+                    if(usuario.idUsuario !== sessionData.idUsuario){
+                        sendNotification(usuario.idUsuario,3,nuevoIdLineaAR);
+                        console.log("Mandando notificacion a " + usuario.idUsuario);
+                    }
+                }
             })
             .catch(function (error) {
                 console.log(error);

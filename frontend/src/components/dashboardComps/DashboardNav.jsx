@@ -210,7 +210,7 @@ function DashboardNav({ userName, userLastName, userObj }) {
                                     <div className="flex flex-col gap-1 overflow-auto">
                                         {notifications.map((notif)=>{
                                             return (
-                                                <NotificationCard key={notif.idNotificacion} type={notif.tipo} />
+                                                <NotificationCard key={notif.idNotificacion} type={notif.tipo} campoAdicional={notif.campoAdicional}/>
                                             );
                                         })}
                                     </div>
