@@ -2,6 +2,7 @@ const connection = require("../../config/db");
 const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
+const fetch = require("node-fetch");
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
@@ -68,6 +69,16 @@ async function postArchivo(file){
 
 async function getFile(req,res,next){
     const { idArchivo } = req.params;
+    try {
+        const url = await funcGetFile(idArchivo);
+        res.json({ url });
+    } catch (error) {
+        console.error("Error generating signed URL:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+async function funcGetFile(idArchivo){
     const query = `CALL OBTENER_ARCHIVO(?);`;
     try {
         const [results] = await connection.query(query, [idArchivo]);
@@ -83,15 +94,47 @@ async function getFile(req,res,next){
             { expiresIn: 3600 } // URL expiration time in seconds
         );
         const url = await command;
-        res.json({ url });
+        return url;
     } catch (error) {
         console.error("Error generating signed URL:", error);
-        res.status(500).json({ error: "Internal Server Error" });
     }
 }
 
+async function funcGetJSONFile(idArchivo) {
+    const query = `CALL OBTENER_ARCHIVO(?);`;
+    try {
+        const [results] = await connection.query(query, [idArchivo]);
+        const file = results[0][0];
+        console.log(file.nombre_s3);
+
+        // Create a presigned URL for the file
+        const command = getSignedUrl(
+            s3,
+            new GetObjectCommand({
+                Bucket: bucketName,
+                Key: file.nombre_s3,
+            }),
+            { expiresIn: 3600 } // URL expiration time in seconds
+        );
+
+        const url = await command;
+
+        // Fetch the JSON data from the signed URL
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const jsonData = await response.json(); // This parses the JSON
+
+        return jsonData; // Return the JSON data
+    } catch (error) {
+        console.error("Error getting JSON data:", error);
+    }
+}
 module.exports = {
     postFile,
     getFile,
-    postArchivo
+    postArchivo,
+    funcGetFile,
+    funcGetJSONFile
 }

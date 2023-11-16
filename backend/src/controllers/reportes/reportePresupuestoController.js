@@ -206,17 +206,10 @@ async function subirJSON(req, res, next) {
 }
 
 async function obtenerJSON(req,res,next){
-    const {fileId} = req.params;
-    console.log(fileId);
-    const destinationFolder = path.join(__dirname, '../../tmp');
-    console.log(destinationFolder);
-    try{
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        console.log(tmpFilePath);
+    const {idArchivo} = req.params;
 
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
-        const jsonData = JSON.parse(fileContent);
+    try{
+        const jsonData = await fileController.funcGetJSONFile(idArchivo)
         console.log(jsonData);
 
         res.status(200).json({
