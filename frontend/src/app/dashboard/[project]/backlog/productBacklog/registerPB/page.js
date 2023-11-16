@@ -46,7 +46,9 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    const idProductBacklog = herramientasInfo.find(herramienta => herramienta.idHerramienta===1).idHerramientaCreada;
+    const idProductBacklog = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 1
+    ).idHerramientaCreada;
     const stringURLEpics =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
@@ -286,16 +288,12 @@ export default function ProductBacklogRegister(props) {
                         onNameChange={setName}
                     />
                 </div>
-                <h4 style={{ fontWeight: 600 }}>
-                    Información de la historia de usuario
-                </h4>
                 <div className="combo">
                     <div className="epic containerCombo">
-                        <IconLabel
-                            icon="/icons/epicPB.svg"
-                            label="Épica"
-                            className="iconLabel"
-                        />
+                        <div className="iconLabelPB">
+                            <img src="/icons/epicPB.svg" className="iconoPB" />
+                            <div className="labelPB">Épica<span className="text-red-500"> *</span></div>
+                        </div>
                         <div className="subcontainerCombo flex items-center">
                             <MyCombobox
                                 urlApi={stringURLEpics}
@@ -404,9 +402,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div>
-                    <h4 style={{ fontWeight: 600 }}>
-                        Descripción de usuario
-                    </h4>
+                    <h4 style={{ fontWeight: 600 }}>Descripción de usuario</h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -553,7 +549,8 @@ export default function ProductBacklogRegister(props) {
                                         toast.error(
                                             "Se excedió el límite de caractéres",
                                             { position: "bottom-left" }
-                                        );y
+                                        );
+                                        y;
                                         return false;
                                     } else {
                                         return true;

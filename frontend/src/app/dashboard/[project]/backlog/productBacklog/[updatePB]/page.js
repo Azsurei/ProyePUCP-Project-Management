@@ -487,20 +487,13 @@ export default function ProductBacklogUpdate(props) {
                         )}
                     </div>
                 </div>
-                {historiaUsuario ? (
-                    <div>
-                        <DescriptionRequeriment
-                            name={name}
-                            onNameChange={setName}
-                            isDisabled={!editMode}
-                        />
-                    </div>
-                ) : (
-                    <div>Cargando datos...</div>
-                )}
-                <h4 style={{ fontWeight: 600 }}>
-                    Información de la historia de usuario
-                </h4>
+                <div>
+                    <DescriptionRequeriment
+                        name={name}
+                        onNameChange={setName}
+                        isDisabled={!editMode}
+                    />
+                </div>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel
@@ -794,6 +787,7 @@ export default function ProductBacklogUpdate(props) {
                     />
                 )}
             </div>
+            y
         </form>
     );
 }
