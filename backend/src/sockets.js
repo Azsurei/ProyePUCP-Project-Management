@@ -53,6 +53,21 @@ const initSocket = (server) => {
         }
     });
 
+    socket.on("send_relist_notification", (data) => {
+        console.log("recibi solicitud para relistar notificacion");
+        const { targetUserId } = data;
+
+        const targetSocketId = connectedUsers.get(parseInt(targetUserId));
+
+        if (targetSocketId) {
+            io.to(targetSocketId).emit("relist_notification", {
+                senderUserId: idUsuario
+            });
+        } else {
+            console.log(`User with idUsuario ${targetUserId} is not connected`);
+        }
+    });
+
 
     socket.on("disconnect", () => {
         connectedUsers.delete(idUsuario);
