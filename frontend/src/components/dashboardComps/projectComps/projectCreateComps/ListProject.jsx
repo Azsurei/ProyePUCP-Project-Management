@@ -42,7 +42,6 @@ const roleColor = [
 
 function ProjectCard(props) {
     let msgNoDates;
-    console.log(props.fechaInicio);
     if(props.fechaInicio === null || props.fechaFin === null || props.fechaInicio === "0000-00-00" || props.fechaFin === "0000-00-00"){
         msgNoDates = "Sin fechas definidas";
     }
@@ -62,9 +61,7 @@ function ProjectCard(props) {
     const formattedStartDate = startDate.toLocaleDateString();
     const formattedEndDate = endDate.toLocaleDateString();
 
-    useEffect(() => {
-        console.log(msgNoDates);
-    });
+    
 
     return (
         <li className="ProjectCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10" onClick={props.onClick}>
