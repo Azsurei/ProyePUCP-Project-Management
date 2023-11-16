@@ -3,7 +3,7 @@ import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerC
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
-import { Textarea } from "@nextui-org/react";
+import { Textarea, Avatar, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter, useSearchParams } from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
@@ -19,11 +19,14 @@ import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosUpdate(props) {
+    const keyParamURL = decodeURIComponent(props.params.updateCR);
     const decodedUrl = decodeURIComponent(props.params.project);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
+    const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
     const [probability, setProbability] = useState(null);
@@ -54,8 +57,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const isTextTooLong2 = detail.length > 400;
     const isTextTooLong3 = cause.length > 400;
     const isTextTooLong4 = impactDetail.length > 400;
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoRiesgos, setCatalogoRiesgos] = useState(null);
@@ -75,6 +76,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 new Date(crData.fechaIdentificacion).toISOString().split("T")[0]
             );
             const miembro = {
+                imgLink: crData.imgLink,
                 correoElectronico: crData.correoElectronico,
                 idUsuario: crData.duenoRiesgo,
                 apellidos: crData.apellidos,
@@ -114,9 +116,26 @@ export default function CatalogoDeRiesgosUpdate(props) {
     }, [catalogoRiesgos]);
 
     useEffect(() => {
-        const stringURLCR =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
+        const numberPattern = /^\d+$/;
+        const editPattern = /^\d+=edit$/;
+        let stringURLCR;
+        console.log("El keyParamURL es:", keyParamURL);
+        if (numberPattern.test(keyParamURL)) {
+            console.log("It's a number:", keyParamURL);
+            setEditMode(false);
+            stringURLCR =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/catalogoRiesgos/listarunRiesgo/${props.params.updateCR}`;
+        } else if (editPattern.test(keyParamURL)) {
+            console.log("It's a number followed by '=edit':", keyParamURL);
+            setEditMode(true);
+            const updateId = parseInt(
+                keyParamURL.substring(0, keyParamURL.lastIndexOf("="))
+            );
+            stringURLCR =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/catalogoRiesgos/listarunRiesgo/${updateId}`;
+        }
         axios
             .get(stringURLCR)
             .then(function (response) {
@@ -272,7 +291,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 (responsePlans) => responsePlans.responsePlans.trim() === ""
             ) ||
             contingencyPlans.some(
-                (contingencyPlans) => contingencyPlans.contingencyPlans.trim() === ""
+                (contingencyPlans) =>
+                    contingencyPlans.contingencyPlans.trim() === ""
             )
         );
     }
@@ -479,12 +499,36 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 Registrar riesgo
             </div>
             <div className="riskRegisterCR">
-                <div className="titleRiskRegisterCR dark:text-white">Actualizar nuevo riesgo</div>
+                <div className="flex justify-between items-center">
+                    <div className="titleRiskRegisterCR dark:text-white">
+                        Actualizar nuevo riesgo
+                    </div>
+                    <div>
+                        {!editMode && (
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/catalogoDeRiesgos/" +
+                                            props.params.updateCR +
+                                            "=edit"
+                                    );
+                                }}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </div>
+                </div>
                 <div>
                     <Textarea
                         isClearable
                         label="Nombre del riesgo"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -498,12 +542,13 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div>
                     <Textarea
                         label="Detalle del riesgo"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -518,6 +563,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div className="comboCR">
@@ -540,6 +586,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             idParam="idProbabilidad"
                             valorParam="valorProbabilidad"
                             initialName={selectedNameProbability}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerComboCR">
@@ -561,6 +608,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             idParam="idImpacto"
                             valorParam="valorImpacto"
                             initialName={selectedNameImpact}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="containerComboCR">
@@ -572,13 +620,13 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         <Input
                             type="date"
                             isRequired
-                            variant="bordered"
+                            variant={editMode ? "bordered" : "flat"}
                             radius="sm"
                             className="w-64"
                             name="datepicker"
                             value={fechaInicio}
                             onValueChange={setFechaInicio}
-                            isReadOnly={false}
+                            {...(!editMode ? { isReadOnly: true } : {})}
                         ></Input>
                     </div>
                     <div className="containerComboCR">
@@ -614,6 +662,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         <Switch
                             isSelected={isSelected}
                             onValueChange={setIsSelected}
+                            {...(!editMode ? { isDisabled: true } : {isDisabled: false})}
                         >
                             {isSelected ? "Activo" : "Inactivo"}
                         </Switch>
@@ -625,16 +674,24 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             label2="dueño"
                             className="iconLabelButtonMC"
                             onClickFunction={toggleModal2}
+                            isDisabled={!editMode}
                         />
                         {selectedMiembrosList.length > 0 ? (
                             selectedMiembrosList.map((component) => (
                                 <div className="iconLabel2CR">
-                                    <p className="profilePicCR">
-                                        {component.nombres[0] +
-                                            (component.apellidos !== null
-                                                ? component.apellidos[0]
-                                                : "")}
-                                    </p>
+                                    <Avatar
+                                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                        src={component.imgLink}
+                                        fallback={
+                                            <p className="profilePicCR">
+                                                {component.nombres[0] +
+                                                    (component.apellidos !==
+                                                    null
+                                                        ? component.apellidos[0]
+                                                        : "")}
+                                            </p>
+                                        }
+                                    />
                                     <div className="labelDatoUsuarioCR">
                                         {capitalizeWords(
                                             `${component.nombres} ${
@@ -666,18 +723,27 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         label2="responsables"
                         className="iconLabelButtonMC"
                         onClickFunction={toggleModal1}
+                        isDisabled={!editMode}
                     />
                     <div className="containerUserMultipleGrid">
                         {selectedMiembrosList1.length > 0 ? (
                             selectedMiembrosList1.map((component) => (
                                 <div className="containerUserMultiple">
                                     <div className="iconLabel3CR">
-                                        <p className="profilePicCR">
-                                            {component.nombres[0] +
-                                                (component.apellidos !== null
-                                                    ? component.apellidos[0]
-                                                    : "")}
-                                        </p>
+                                        <Avatar
+                                            className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                            src={component.imgLink}
+                                            fallback={
+                                                <p className="profilePicCR">
+                                                    {component.nombres[0] +
+                                                        (component.apellidos !==
+                                                        null
+                                                            ? component
+                                                                  .apellidos[0]
+                                                            : "")}
+                                                </p>
+                                            }
+                                        />
                                         <div className="labelDatoUsuarioCR">
                                             {capitalizeWords(
                                                 `${component.nombres} ${
@@ -688,14 +754,16 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                             )}
                                         </div>
                                     </div>
-                                    <img
-                                        src="/icons/icon-trash.svg"
-                                        alt="delete"
-                                        className="mb-4 cursor-pointer mr-2"
-                                        onClick={() => {
-                                            removeUser(component);
-                                        }}
-                                    />
+                                    {editMode && (
+                                        <img
+                                            src="/icons/icon-trash.svg"
+                                            alt="delete"
+                                            className="mb-4 cursor-pointer mr-2"
+                                            onClick={() => {
+                                                removeUser(component);
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             ))
                         ) : (
@@ -709,7 +777,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     <Textarea
                         isClearable
                         label="Causa"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -724,13 +792,14 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div>
                     <Textarea
                         isClearable
                         label="Impacto"
-                        variant="bordered"
+                        variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
                         placeholder="Escriba aquí"
                         isRequired
@@ -745,6 +814,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 ? "El texto debe ser como máximo de 400 caracteres."
                                 : ""
                         }
+                        {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
                 <div>
@@ -767,20 +837,23 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 }
                                 responsePlans={responsePlans}
                                 functionRemove={removeContainer1}
+                                isDisabled={!editMode}
                             />
                         ))
                     )}
-                    <div className="twoButtonsCR">
-                        <div className="buttonContainerCR">
-                            <button
-                                onClick={addContainer1}
-                                className="buttonTitleCR"
-                                type="button"
-                            >
-                                Agregar
-                            </button>
+                    {editMode && (
+                        <div className="twoButtonsCR">
+                            <div className="buttonContainerCR">
+                                <button
+                                    onClick={addContainer1}
+                                    className="buttonTitleCR"
+                                    type="button"
+                                >
+                                    Agregar
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div>
                     <div className="titleButtonCR">
@@ -804,95 +877,95 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 }
                                 contingencyPlans={contingencyPlans}
                                 functionRemove={removeContainer2}
+                                isDisabled={!editMode}
                             />
                         ))
                     )}
-                    <div className="twoButtonsCR">
-                        <div className="buttonContainerCR">
-                            <button
-                                onClick={addContainer2}
-                                className="buttonTitleCR"
-                                type="button"
-                            >
-                                Agregar
-                            </button>
+                    {editMode && (
+                        <div className="twoButtonsCR">
+                            <div className="buttonContainerCR">
+                                <button
+                                    onClick={addContainer2}
+                                    className="buttonTitleCR"
+                                    type="button"
+                                >
+                                    Agregar
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div className="containerBottomCR">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    <div className="twoButtonsCR">
-                        <div className="buttonContainerCR">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Actualización"
-                                textBody="¿Seguro que quiere descartar la cactualización de la información?"
-                                colorButton="w-36 bg-slate-100 text-black"
-                                oneButton={false}
-                                secondAction={() => router.back()}
-                                textColor="red"
-                            />
-                            <Modal
-                                nameButton="Aceptar"
-                                textHeader="Actualizar Información"
-                                textBody="¿Seguro que quiere actualizar la información?"
-                                colorButton="w-36 bg-blue-950 text-white"
-                                oneButton={false}
-                                secondAction={() => {
-                                    onSubmit();
-                                    router.back();
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (
-                                        verifyFieldsEmpty() &&
-                                        verifyFieldsExcessive()
-                                    ) {
-                                        toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else if (
-                                        verifyFieldsEmpty() &&
-                                        !verifyFieldsExcessive()
-                                    ) {
-                                        toast.error("Faltan completar campos");
-                                        return false;
-                                    } else if (
-                                        verifyFieldsExcessive() &&
-                                        !verifyFieldsEmpty()
-                                    ) {
-                                        toast.error(
-                                            "Se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else {
-                                        return true;
+                    {editMode && (
+                        <div className="twoButtonsCR">
+                            <div className="buttonContainerCR">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Actualización"
+                                    textBody="¿Seguro que quiere descartar la cactualización de la información?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() =>
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/catalogoDeRiesgos"
+                                        )
                                     }
-                                }}
-                            />
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Actualizar Información"
+                                    textBody="¿Seguro que quiere actualizar la información?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        onSubmit();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/catalogoDeRiesgos"
+                                        );
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (
+                                            verifyFieldsEmpty() &&
+                                            verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos y se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsEmpty() &&
+                                            !verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsExcessive() &&
+                                            !verifyFieldsEmpty()
+                                        ) {
+                                            toast.error(
+                                                "Se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             {modal1 && (

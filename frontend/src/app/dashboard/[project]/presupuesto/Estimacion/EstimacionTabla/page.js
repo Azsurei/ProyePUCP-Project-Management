@@ -43,7 +43,6 @@ const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 const decodedUrl = decodeURIComponent(props.params.project);
 const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
 const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-const stringUrlMonedas = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
 
 const [Gestion, setGestion] = useState(0.00);
 const [pGestion, setpGestion] = useState(0.00);
@@ -77,31 +76,80 @@ const {
 //Fin Modales
 const [presupuestoId, setPresupuestoId] = useState("");
 //const router=userRouter();
-let idHerramientaCreada;
-let flag=0;
+
+const [MonedaPresupuesto,setMonedaPresupuesto]=useState(0);
+
+const [tipoCambioDolar,setTipoCambioDolar]=useState(0);
 useEffect(() => {
-    setIsLoadingSmall(false)
-    const fetchData = async () => {
-        try {
-          const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
+  const tipoCambio = async () => {
+    
+      try {
+        const url = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+
+        const response = await axios.get(url);
+        const monedasData  = response.data.monedas;
+
+        const monedaId1 = monedasData.find((moneda) => moneda.idMoneda === 1);
+        setTipoCambioDolar(monedaId1.tipoCambio);
+        console.log("Tipo de Cambio:" + monedaId1.tipoCambio);
+      } catch (error) {
+        console.error("Error al obtener las plantillas:", error);
+      }
+
+  };
+
+  tipoCambio();
+},[]);
+
+
+useEffect(() => {
+  setIsLoadingSmall(false);
+
+  const fetchData = async () => {
+      let flag = 0; // Declarar la variable flag
+      let idHerramientaCreada;
+      if(projectId!==""){
+      try {
+          const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
           const herramientas = response.data.herramientas;
+
           for (const herramienta of herramientas) {
-            if (herramienta.idHerramienta === 13) {
-                idHerramientaCreada = herramienta.idHerramientaCreada;
-                setPresupuestoId(idHerramientaCreada)
-                console.log("idPresupuesto es:", idHerramientaCreada);
-                flag = 1;
-                break; // Puedes salir del bucle si has encontrado la herramienta
-            }
-        }
-          console.log(`Esta es el id presupuesto:`, data);
-            console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
-        } catch (error) {
+              if (herramienta.idHerramienta === 13) {
+                  idHerramientaCreada = herramienta.idHerramientaCreada;
+                  setPresupuestoId(idHerramientaCreada);
+                  console.log("idPresupuesto es:", idHerramientaCreada);
+                  flag = 1;
+                  break;
+              }
+          }
+
+          console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
+          console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+      } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
-        }
-      };
-        fetchData();
-}, []);
+      }
+
+      if (flag === 1) {
+          // Aquí encadenamos el segundo axios
+          const stringURLListarPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/presupuesto/listarPresupuesto/" + idHerramientaCreada;
+
+          axios.get(stringURLListarPresupuesto)
+              .then(response => {
+                  const presupuesto = response.data.presupuesto;
+                  const moneda = presupuesto[0].idMoneda;
+                  setMonedaPresupuesto(moneda);
+                  console.log("Moneda Presupuesto:" + moneda);
+              })
+              .catch(error => {
+                  console.error("Error al llamar a la API:", error);
+              });
+      }
+    }
+  };
+
+  fetchData();
+}, [projectId]);
+
 
   
 function ccyFormat(num) {
@@ -117,15 +165,14 @@ function createRow(descripcion, cantidadRecurso, tarifaUnitaria,tiempoRequerido)
   return { descripcion, cantidadRecurso, tarifaUnitaria, tiempoRequerido, subtotal };
 }
 
-function subtotal(items) {
-  return items.map(({ subtotal }) => subtotal).reduce((sum, i) => sum + i, 0);
+function subtotal(items, MonedaPresupuesto) {
+  return items.map(({ subtotal, cantidadRecurso,tarifaUnitaria,tiempoRequerido, idMoneda }) => {
+    return MonedaPresupuesto === idMoneda
+      ? subtotal
+      : cantidadRecurso * convertirTarifa(tarifaUnitaria, idMoneda)* tiempoRequerido;
+  }).reduce((sum, i) => sum + i, 0);
 }
 
-const rows = [
-  createRow('Estimacion #1', 1, 500,1),
-  createRow('Estimacion #2', 4, 50,2),
-  createRow('Estimacion #3', 2, 200,3),
-];
 const [lineasEstimacion, setLineasEstimacion] = useState([]);
 
     //Aqui va el data table de Iwa
@@ -133,6 +180,7 @@ const [lineasEstimacion, setLineasEstimacion] = useState([]);
     
     const DataTable = async () => {
         const fetchData = async () => {
+          if(presupuestoId!==""){
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
@@ -142,6 +190,7 @@ const [lineasEstimacion, setLineasEstimacion] = useState([]);
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
+          }
           };
             fetchData();
     };
@@ -149,8 +198,8 @@ const [lineasEstimacion, setLineasEstimacion] = useState([]);
       DataTable();
     }, [presupuestoId]);
 //Calculos
-const invoiceSubtotal = subtotal(lineasEstimacion);
-const invoiceReserva = Reserva/100 * invoiceSubtotal;
+const invoiceSubtotal = subtotal(lineasEstimacion, MonedaPresupuesto);
+const invoiceReserva = parseFloat(Reserva) ;
 
 const invoiceLineaBase = invoiceSubtotal + invoiceReserva;
 
@@ -167,9 +216,20 @@ const invoiceIGV= IGV/100 * invoiceTotalGanancia;
 const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
 
-//Fin Calculos
-
-// Calcula el subtotal
+function convertirTarifa(tarifa, idMoneda) {
+  console.log("Moneda Presu: xd"+ MonedaPresupuesto);
+    //Dolares
+    if(MonedaPresupuesto===1){
+      if(idMoneda===2){
+        return tarifa/tipoCambioDolar;
+      }
+    }else if(MonedaPresupuesto===2){
+      if(idMoneda===1){
+        return tarifa*tipoCambioDolar;
+      }
+      
+    }
+}
 
     return (
         <div className="mainDivPresupuesto">
@@ -285,10 +345,10 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
                             isInvalid={!validReserva}
                             onChange={() => { setValidReserva(true) }}
                             type="number"
-                            errorMessage={!validReserva ? "Porcentaje inválido" : ""}
+                            errorMessage={!validReserva ? "Monto inválido" : ""}
                             startContent={
                               <div className="pointer-events-none flex items-center">
-                                <span className="text-default-400 text-small">%</span>
+                                <span className="text-default-400 text-small"></span>
                               </div>
                             }
                           />
@@ -448,15 +508,15 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
                 
                 <div className="buttonContainerEstimacionTabla">
 
+                    <Button onPress={ondModalConfigurar} color="primary" startContent={<BuildIcon />} className="btnEditEstimacion">
+                      Configurar
+                    </Button> 
+
                     <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
                         <Button color="primary" startContent={<EditIcon />} className="btnEditarEstimacion">
                             Editar
                         </Button> 
                     </Link>
-
-                    <Button onPress={ondModalConfigurar} color="primary" startContent={<BuildIcon />} className="btnEditEstimacion">
-                      Configurar
-                    </Button> 
 
                     <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
                       Exportar
@@ -472,12 +532,12 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
           <Table sx={{ minWidth: 700 }} aria-label="spanning table">
             <TableHead>
               <TableRow>
-                <TableCell align="right" colSpan={2}>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right" colSpan={2}>
                   Cant. Recurso
                 </TableCell>
-                <TableCell align="right">Tarifa</TableCell>
-                <TableCell align="right">Tiempo Req</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right">Tarifa</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right">Tiempo Req</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold"  align="right">Subtotal</TableCell>
               </TableRow>
               
             </TableHead>
@@ -486,11 +546,22 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
               return (
                 <TableRow key={row.descripcion}>
-                  <TableCell>{row.descripcion}</TableCell>
+                  <TableCell className="text-gray-800 text-sm not-italic font-medium" >{row.descripcion}</TableCell>
                   <TableCell align="right">{row.cantidadRecurso}</TableCell>
-                  <TableCell align="right">{row.tarifaUnitaria}</TableCell>
+                  <TableCell align="right">{MonedaPresupuesto === row.idMoneda
+
+                    ? row.tarifaUnitaria
+                    : convertirTarifa(row.tarifaUnitaria, row.idMoneda)}
+
+                  </TableCell>
                   <TableCell align="right">{row.tiempoRequerido}</TableCell>
-                  <TableCell align="right">{ccyFormat(row.subtotal)}</TableCell>
+                  <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{MonedaPresupuesto === row.idMoneda
+
+                          ? ccyFormat(row.subtotal)
+                          : ccyFormat(row.cantidadRecurso*convertirTarifa(row.tarifaUnitaria, row.idMoneda)*row.tiempoRequerido)
+                          }
+                    
+                    </TableCell>
                 </TableRow>
               );
             })}
@@ -498,31 +569,31 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
               <TableRow>
                 <TableCell rowSpan={9} />
-                <TableCell colSpan={2} align="right">TOTAL</TableCell>
-                <TableCell colSpan={2}
+                <TableCell  colSpan={2} align="right">Total</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                   align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
               </TableRow>
 
               <TableRow>
-                <TableCell colSpan={2} align="right">Reserva Contingencia</TableCell>
-                <TableCell align="right">{`${(Reserva*1).toFixed(0)} %`}</TableCell>
-                <TableCell colSpan={1}
-                align="right">{ccyFormat(invoiceReserva)}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Reserva Contingencia</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Reserva*1).toFixed(2)} `}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={1}
+                align="right">{ccyFormat(invoiceReserva*1)}</TableCell>
               </TableRow>
 
               <TableRow>
                 
                 <TableCell colSpan={2} align="right">Linea Base de Costos</TableCell>
-                <TableCell colSpan={2}
+                <TableCell  colSpan={2}
                 align="right">{ccyFormat(invoiceLineaBase)}</TableCell>
 
               </TableRow>
 
               <TableRow>
-                <TableCell colSpan={2} align="right">Reserva de Gestión</TableCell>
-                <TableCell align="right">{`${(Gestion*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Reserva de Gestión</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Gestion*1).toFixed(0)} %`}</TableCell>
 
-                <TableCell colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceGestion)}</TableCell>
               </TableRow>
 
@@ -535,11 +606,11 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
               {Ganancia>0 &&
               <TableRow>
-                <TableCell colSpan={2} align="right">Ganancia</TableCell>
-                <TableCell align="right">{`${(Ganancia*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Ganancia</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Ganancia*1).toFixed(0)} %`}</TableCell>
 
                 <TableCell colSpan={2}
-                align="right">{ccyFormat(invoiceGanancia)}</TableCell>
+                className="text-gray-800 text-sm not-italic font-bold" align="right">{ccyFormat(invoiceGanancia)}</TableCell>
               </TableRow>
 
               }
@@ -556,17 +627,17 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
               {IGV>0 &&
                 <TableRow>
-                <TableCell colSpan={2} align="right">IGV</TableCell>
-                <TableCell align="right">{`${(IGV*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">IGV</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(IGV*1).toFixed(0)} %`}</TableCell>
 
-                <TableCell colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceIGV)}</TableCell>
               </TableRow>
               }
 
               <TableRow>
-                <TableCell colSpan={2} align="right">Total</TableCell>
-                <TableCell colSpan={2}
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">TOTAL</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceTotal)}</TableCell>
               </TableRow>
 

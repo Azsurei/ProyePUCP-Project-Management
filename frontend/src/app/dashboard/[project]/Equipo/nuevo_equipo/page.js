@@ -297,14 +297,14 @@ export default function crear_equipo(props) {
                     />
                 </Breadcrumbs>
             </div>
-            <div className="title">Crear Equipo</div>
-            <div className="nombreEquipo">
-                <h3>
+            <div className="title text-2xl">Crear Equipo</div>
+            <div className="nombreEquipo text-xl flex flex-col gap-1">
+                <h3 className="text-xl">
                     Nombre del equipo
                     <span className="text-red-500"> *</span>
                 </h3>
                 <Input
-                    className="mt-4"
+                    className="mt-1"
                     placeholder="Ingrese el nombre del equipo"
                     onChange={handleChangeTeamName}
                     variant="bordered"
@@ -318,80 +318,35 @@ export default function crear_equipo(props) {
                 />
             </div>
             <div style={{ marginBottom: "20px" }}></div>
-            <div className="participantes">
-                <h3>Líder del Equipo</h3>
-                <div className="SelectedUsersContainer">
-                    <Button
-                        color="primary"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                        onClick={toggleModal1}
-                    >
-                        <p>Buscar nuevo líder</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
-                        />
-                    </Button>
-
-                    {selectedUniqueMemberList.map((component, index) => {
-                        return (
-                            <div
-                                key={index}
-                                className="flex gap-2 items-center"
-                            >
-                                <CardSelectedUser
-                                    key={component.idUsuario}
-                                    name={component.nombres}
-                                    lastName={component.apellidos}
-                                    usuarioObject={component}
-                                    email={component.correoElectronico}
-                                    removeHandler={removeMiembroUnique}
-                                    isEditable={true}
-                                ></CardSelectedUser>
+            <div className="flex flex-col gap-5">
+                <div className="participantes flex flex-col gap-2">
+                    <div className="flex flex-row items-center justify-start gap-2">
+                        <h3 className="my-0 text-xl">Líder del Equipo</h3>
+                        <Button
+                            color="primary"
+                            onClick={toggleModal1}
+                            className="px-unit-5"
+                        >
+                            <p>Buscar nuevo líder</p>
+                            <img
+                                src="/icons/icon-searchBar.svg"
+                                alt=""
+                                className="icnSearch"
+                                style={{ width: "20px" }}
+                            />
+                        </Button>
+                    </div>
+                    <div className="SelectedUsersContainer">
+                        {selectedUniqueMemberList.length === 0 && (
+                            <div className="flex justify-center items-center min-h-[100px] font-medium text-slate-500">
+                                Añade un lider
                             </div>
-                        );
-                    })}
-                </div>
-            </div>
-            <div>
-                <h3 className="roles">Roles</h3>
-                <Button
-                    color="primary"
-                    startContent={<AddIcon />}
-                    onClick={() => toggleModal()}
-                    className="w-full"
-                >
-                    Agregar roles
-                </Button>
-            </div>
-            <div className="participantes">
-                <h3>Participantes</h3>
-                <div className="SelectedUsersContainer">
-                    <Button
-                        color="primary"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                        onClick={toggleModal2}
-                    >
-                        <p>Buscar nuevo participante</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
-                        />
-                    </Button>
-
-                    <ul
-                        className="listUsersContainer"
-                        style={{ width: "100%", padding: "0.2rem 0" }}
-                    >
-                        {selectedMiembrosList.map((component, index) => {
+                        )}
+                        {selectedUniqueMemberList.map((component, index) => {
                             return (
                                 <div
                                     key={index}
-                                    className="flex gap-2 items-center relative"
+                                    className="flex gap-2 items-center"
                                 >
                                     <CardSelectedUser
                                         key={component.idUsuario}
@@ -399,37 +354,110 @@ export default function crear_equipo(props) {
                                         lastName={component.apellidos}
                                         usuarioObject={component}
                                         email={component.correoElectronico}
-                                        removeHandler={removeMiembro}
+                                        removeHandler={removeMiembroUnique}
                                         isEditable={true}
                                     ></CardSelectedUser>
-                                    <ComboBoxArray
-                                        people={roles}
-                                        onSelect={(value) =>
-                                            handleSelectedValueChangeRol(
-                                                value,
-                                                component.idUsuario
-                                            )
-                                        }
-                                        isDropdownActive={
-                                            activeDropdown === index
-                                        }
-                                        setActiveDropdown={() => {
-                                            setActiveDropdown(index);
-                                        }}
-                                        autoSelectedValue={{
-                                            idRolEquipo: memberRoleId,
-                                            nombreRol: "Miembro",
-                                        }}
-                                    >
-                                        {handleAutoSelectedValueChangeRol(
-                                            memberRoleId,
-                                            component.idUsuario
-                                        )}
-                                    </ComboBoxArray>
                                 </div>
                             );
                         })}
-                    </ul>
+                    </div>
+                </div>
+                {/* <div className="">
+                    <h3 className="roles">Roles</h3>
+                    <Button
+                        color="primary"
+                        startContent={<AddIcon />}
+                        onClick={() => toggleModal()}
+                        className="w-full"
+                    >
+                        Agregar roles
+                    </Button>
+                </div> */}
+                <div className="participantes flex flex-col gap-2">
+                    <div className="flex flex-row justify-between">
+                        <div className="flex flex-row items-center justify-start gap-2">
+                            <h3 className="my-0 text-xl">Participantes</h3>
+                            <Button
+                                color="primary"
+                                onClick={toggleModal2}
+                                className="px-unit-5"
+                            >
+                                <p>Buscar nuevo participante</p>
+                                <img
+                                    src="/icons/icon-searchBar.svg"
+                                    alt=""
+                                    className="icnSearch"
+                                    style={{ width: "20px" }}
+                                />
+                            </Button>
+                        </div>
+
+                        <div className="flex flex-row items-center gap-2">
+                            <h3 className="roles text-xl">Roles</h3>
+                            <Button
+                                color="primary"
+                                startContent={<AddIcon />}
+                                onClick={() => toggleModal()}
+                                className="w-full"
+                            >
+                                Agregar roles
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="SelectedUsersContainer">
+                        <ul
+                            className="listUsersContainer"
+                            style={{ width: "100%", padding: "0.2rem 0" }}
+                        >
+                            {selectedMiembrosList.length === 0 && (
+                                <div className="flex justify-center items-center min-h-[100px] font-medium text-slate-500">
+                                    Añade miembros
+                                </div>
+                            )}
+                            {selectedMiembrosList.map((component, index) => {
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex gap-2 items-center relative"
+                                    >
+                                        <CardSelectedUser
+                                            key={component.idUsuario}
+                                            name={component.nombres}
+                                            lastName={component.apellidos}
+                                            usuarioObject={component}
+                                            email={component.correoElectronico}
+                                            removeHandler={removeMiembro}
+                                            isEditable={true}
+                                        ></CardSelectedUser>
+                                        <ComboBoxArray
+                                            people={roles}
+                                            onSelect={(value) =>
+                                                handleSelectedValueChangeRol(
+                                                    value,
+                                                    component.idUsuario
+                                                )
+                                            }
+                                            isDropdownActive={
+                                                activeDropdown === index
+                                            }
+                                            setActiveDropdown={() => {
+                                                setActiveDropdown(index);
+                                            }}
+                                            autoSelectedValue={{
+                                                idRolEquipo: memberRoleId,
+                                                nombreRol: "Miembro",
+                                            }}
+                                        >
+                                            {handleAutoSelectedValueChangeRol(
+                                                memberRoleId,
+                                                component.idUsuario
+                                            )}
+                                        </ComboBoxArray>
+                                    </div>
+                                );
+                            })}
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div style={{ marginBottom: "20px" }}></div>

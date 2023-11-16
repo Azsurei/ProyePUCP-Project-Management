@@ -23,6 +23,7 @@ import "@/styles/dashboardStyles/projectStyles/productBacklog/plantillaKB.css";
 import { set } from "date-fns";
 export const FlagRefreshContext = createContext();
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import { SearchIcon } from "@/../public/icons/SearchIcon";
 
 
 export default function RootLayout({ children, params }) {
@@ -183,6 +184,42 @@ export default function RootLayout({ children, params }) {
 
     //Fin Plantillas
 
+    //Buscar PLantilla
+    const [filterValue, setFilterValue] = useState("");  
+    const onSearchChange = (value) => {
+        setFilterValue(value);
+    };
+
+
+    const limpiarInput = () => {
+        setFilterValue("");
+        DataTable();
+  }
+
+
+  //lamado a la api de listar PLantillas por Nombre
+
+  const refreshList = async () => {
+    if (IdUsuario !== "" && filterValue !== "") {
+        try {
+            const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanbanXNombre/' + IdUsuario+'/'+filterValue;
+
+            console.log(IdUsuario+" "+filterValue);
+            console.log(url);
+            const response = await axios.get(url);
+
+            const plantillasInvertidas = response.data.plantillasKanban;
+            console.log(plantillasInvertidas);
+
+            setPlantillas(plantillasInvertidas);
+        } catch (error) {
+            console.error("Error al obtener las plantillas:", error);
+        }
+        }
+    }
+
+
+
     return (
 
         
@@ -307,7 +344,7 @@ export default function RootLayout({ children, params }) {
                                     }
                                     onClose();
                                     DataTable();
-
+                                    setFilterValue(""); 
  
                                 }
                                 else{
@@ -329,10 +366,43 @@ export default function RootLayout({ children, params }) {
                          <div className="modal-body">
 
                             <div style={{ marginBottom: '25px' }}>
-                                <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                                <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos</p>
                             </div>
 
-                           <ul>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    gap: ".6rem",
+                                    marginBottom:"25px",
+                                }}
+                            >
+                                <div className="divBuscador">
+                                    <Input
+                                        isClearable
+                                        className="w-full sm:max-w-[100%]"
+                                        placeholder="Ingresa una plantilla..."
+                                        startContent={<SearchIcon />}
+                                        value={filterValue}
+                                        onValueChange={onSearchChange}
+                                        onClear={limpiarInput}
+                                        variant="faded"
+                                    />
+                                </div>
+                                <Button
+                                    className="text-slate-50"
+                                    color="primary"
+                                    onClick={refreshList}
+                                >
+                                    Buscar
+                                </Button>
+                            </div>
+
+
+                           <ul className="cardPlantillaKBList">
                                 {plantillas.map((plantilla) => (
                                     <li key={plantilla.idPlantillaKanban}>
                                     <div className={`cardPlantillaKB ${selectedPlantilla === plantilla ? 'selected' : ''}`}
@@ -359,8 +429,9 @@ export default function RootLayout({ children, params }) {
                
                            onClick={() => {
                                onClose(); // Cierra el modal
+                               setSelectedPlantilla(null);
                                setError(null); // Establece error en null para desactivar el mensaje de error
-               
+                               limpiarInput();                                
                            }}
                            
                            >

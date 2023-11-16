@@ -49,11 +49,16 @@ const [cantMeses, setcantMeses] = useState(1);
 
 const [mesActual, setmesActual] = useState("");
 
-let idHerramientaCreada;
-let flag=0;
+
+const [MonedaPresupuesto,setMonedaPresupuesto]=useState(0);
+
 useEffect(() => {
     setIsLoadingSmall(false)
     const fetchData = async () => {
+      let idHerramientaCreada;
+      let flag=0;
+      if(projectId!==""){
+
         try {
           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/herramientas/${projectId}/listarHerramientasDeProyecto`);
           const herramientas = response.data.herramientas;
@@ -66,8 +71,8 @@ useEffect(() => {
                 break; // Puedes salir del bucle si has encontrado la herramienta
             }
         }
-          console.log(`Esta es el id presupuesto:`, data);
-            console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+          console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
+          console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
         } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
         }
@@ -84,42 +89,23 @@ useEffect(() => {
                   const fechaCreacion = new Date(fechaCreacionString);
 
                   const mes = fechaCreacion.getUTCMonth() + 1;
-                  console.log("Cantidad Meses:"+presupuesto[0].cantidadMeses);
                   setcantMeses(presupuesto[0].cantidadMeses);
-
-                  console.log("Mes:"+mes);
                   setmesActual(mes);
+
+                  const moneda = presupuesto[0].idMoneda;
+                  setMonedaPresupuesto(moneda);
+                  console.log("Moneda Presupuesto:" + moneda);
                   
               })
               .catch(error => {
                   console.error("Error al llamar a la API:", error);
               });
         }
-
+      }
       };
       fetchData();
 
 }, []);
-
-
-  
-function ccyFormat(num) {
-  return `${num.toFixed(2)}`;
-}
-
-function subtotalRow(cantidadRecurso, tarifaUnitaria, tiempoRequerido) {
-  return cantidadRecurso * tarifaUnitaria* tiempoRequerido;
-}
-
-function createRow(descripcion, cantidadRecurso, tarifaUnitaria,tiempoRequerido) {
-  const subtotal = subtotalRow(cantidadRecurso, tarifaUnitaria,tiempoRequerido);
-  return { descripcion, cantidadRecurso, tarifaUnitaria, tiempoRequerido, subtotal };
-}
-
-function subtotal(items) {
-  return items.map(({ subtotal }) => subtotal).reduce((sum, i) => sum + i, 0);
-}
-
 
 
 
@@ -132,27 +118,31 @@ const [totalAcumulado, setTotalAcumulado] = useState(0);
   
 const DataTable = async () => {
     const fetchData = async () => {
-        try {
-          const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
-          const dataIngreso = response.data.lineasIngreso;
-          setLineaIngreso(dataIngreso);
-          console.log(`Datos obtenidos exitosamente:`, dataIngreso);
-          
 
-          const responseEgreso = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/proyecto/presupuesto/listarLineasEgresoXIdPresupuesto/${presupuestoId}`);
-          
-          const dataEgreso = responseEgreso.data.lineasEgreso;
-          setLineaEgreso(dataEgreso);
-          console.log('Líneas de Egreso obtenidas exitosamente:', dataEgreso);
+      if(presupuestoId!==""){
 
-        } catch (error) {
-          console.error('Error al obtener las líneas de ingreso o egreso:', error);
-        }
+          try {
+            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
+            const dataIngreso = response.data.lineasIngreso;
+            setLineaIngreso(dataIngreso);
+            console.log(`Datos obtenidos exitosamente:`, dataIngreso);
+            
 
-        console.log('Data Ingreso:', lineaIngreso);
-        console.log('Data Egreso:', lineaEgreso);
+            const responseEgreso = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/proyecto/presupuesto/listarLineasEgresoXIdPresupuesto/${presupuestoId}`);
+            
+            const dataEgreso = responseEgreso.data.lineasEgreso;
+            setLineaEgreso(dataEgreso);
+            console.log('Líneas de Egreso obtenidas exitosamente:', dataEgreso);
 
-      } 
+          } catch (error) {
+            console.error('Error al obtener las líneas de ingreso o egreso:', error);
+          }
+
+          console.log('Data Ingreso:', lineaIngreso);
+          console.log('Data Egreso:', lineaEgreso);
+
+        } 
+    }
 
     fetchData();
 };
@@ -188,6 +178,43 @@ const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + cantMeses);
 
 const ingresosPorTipo = {};
 
+
+const [tipoCambioDolar,setTipoCambioDolar]=useState(0);
+useEffect(() => {
+  const tipoCambio = async () => {
+    
+      try {
+        const url = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarMonedasTodas`;
+
+        const response = await axios.get(url);
+        const monedasData  = response.data.monedas;
+
+        const monedaId1 = monedasData.find((moneda) => moneda.idMoneda === 1);
+        setTipoCambioDolar(monedaId1.tipoCambio);
+        console.log("Tipo de Cambio:" + monedaId1.tipoCambio);
+      } catch (error) {
+        console.error("Error al obtener las plantillas:", error);
+      }
+
+  };
+
+  tipoCambio();
+},[]);
+
+function convertirTarifa(tarifa, idMoneda) {
+    //Dolares
+    if(MonedaPresupuesto===1){
+      if(idMoneda===2){
+        return tarifa/tipoCambioDolar;
+      }
+    }else if(MonedaPresupuesto===2){
+      if(idMoneda===1){
+        return tarifa*tipoCambioDolar;
+      }
+      
+    }
+}
+
 // Iterar sobre las líneas de ingreso
 lineaIngreso.forEach((row) => {
   // Comprobar si el tipo de ingreso ya existe en el objeto
@@ -206,7 +233,10 @@ lineaIngreso.forEach((row) => {
     ingresosPorTipo[idTipo][mesReal] = 0;
   }
 
-  ingresosPorTipo[idTipo][mesReal] += row.monto;
+  ingresosPorTipo[idTipo][mesReal] += MonedaPresupuesto === row.idMoneda
+      ? row.monto
+      : convertirTarifa(row.monto, row.idMoneda);
+
 
   if (idTipo === 1) {
     console.log(ingresosPorTipo[idTipo][mesReal]);
@@ -244,7 +274,9 @@ function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
     const montoReal = parseFloat(egreso.costoReal);
 
     if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
-      totalEgresosPorMes[mesReal - 1] += montoReal;
+      totalEgresosPorMes[mesReal - 1] += MonedaPresupuesto === egreso.idMoneda
+      ? egreso.costoReal
+      : convertirTarifa(egreso.costoReal, egreso.idMoneda);;
     }
   });
 
@@ -332,7 +364,7 @@ return (
               <TableCell>Meses</TableCell>
 
                 {mesesMostrados.map((mes, index) => (
-                <TableCell className="Meses" key={index} align="left">
+                <TableCell className="text-gray-800 text-sm not-italic font-medium" key={index} align="left">
                   {mes}
                 </TableCell>
                   ))}
@@ -344,7 +376,7 @@ return (
             <TableBody>
 
             <TableRow>
-              <TableCell className="IngEgTexto" align="left">Ingresos</TableCell>
+              <TableCell className="text-gray-800 text-sm not-italic font-medium" align="left">Ingresos</TableCell>
             </TableRow>
               
             {Object.keys(descripcionTipo).map((idTipo) => (
@@ -353,7 +385,7 @@ return (
     {mesesMostrados.map((mes, index) => (
       <TableCell key={index} align="left">
                 {ingresosPorTipo[idTipo] && ingresosPorTipo[idTipo][index + 1] !== undefined
-          ? parseFloat(ingresosPorTipo[idTipo][index + 1])
+          ? parseFloat(ingresosPorTipo[idTipo][index + 1]).toFixed(2)
           : 0}
       </TableCell>
     ))}
@@ -361,9 +393,9 @@ return (
 ))}      
 
             <TableRow>
-              <TableCell className="conceptoCell" align="left">Total Ingresos</TableCell>
+              <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Ingresos</TableCell>
               {mesesMostrados.map((mes, index) => (
-  <TableCell className="conceptoCell" key={index} align="left">
+  <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" key={index} align="left">
     {ingresosPorTipo && Object.keys(descripcionTipo).reduce((total, idTipo) => {
       const ingresoPorTipo = ingresosPorTipo[idTipo];
       return total + (ingresoPorTipo && ingresoPorTipo[index + 1] ? parseFloat(ingresoPorTipo[index + 1]) : 0);
@@ -375,7 +407,7 @@ return (
 
 
             <TableRow>
-              <TableCell className="IngEgTexto" align="left">Egresos</TableCell>
+              <TableCell className="text-gray-800 text-sm not-italic font-medium" align="left">Egresos</TableCell>
 
 
 
@@ -390,9 +422,13 @@ return (
 
       return (
         <TableCell key={mesIndex} align="left">
-          {mesIndex === (mesReal - 1)  // Restamos 1 porque mesReal ya está ajustado
-            ? parseFloat(egreso.costoReal)
-            : 0}
+          {
+            mesIndex === (mesReal - 1)
+            ? MonedaPresupuesto === egreso.idMoneda
+              ? (parseFloat(egreso.costoReal).toFixed(2))
+              : (convertirTarifa(egreso.costoReal, egreso.idMoneda).toFixed(2))
+            : 0            
+          }
         </TableCell>
       );
     })}
@@ -400,18 +436,23 @@ return (
 ))}
 
 <TableRow>
-  <TableCell className="conceptoCell" align="left">Total Egresos</TableCell>
+  <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Egresos</TableCell>
   {totalEgresosPorMes.map((total, index) => (
-    <TableCell className="conceptoCell" key={index} align="left">
-      {total}
+    <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" key={index} align="left">
+      {total !== 0 ? total.toFixed(2) : "0"}
+
     </TableCell>
   ))}
 </TableRow>
 
 <TableRow>
-  <TableCell className="conceptoCell" align="left">Total Acumulado</TableCell>
+  <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Acumulado</TableCell>
   {accumulatedTotals.map((total, index) => (
-    <TableCell className="conceptoCell" key={index} align="left">
+    <TableCell
+      key={index}
+      align="left"
+      className={`text-gray-800 text-sm not-italic font-extrabold bg-gray-200 ${total > 0 ? 'text-green-600 text-base not-italic font-extrabold bg-gray-200' : total < 0 ? 'text-red-500 text-base not-italic font-extrabold bg-gray-200' : ''}`}
+    >
       {total}
     </TableCell>
   ))}

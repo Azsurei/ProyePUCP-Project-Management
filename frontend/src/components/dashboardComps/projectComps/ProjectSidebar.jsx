@@ -439,12 +439,14 @@ function ProjectSidebar(props) {
                         }`}
                     ></div>
                 </div>
-                {isOpen &&  (
+                {isOpen && (
                     <div>
                         <p className="SidebarHeader text-mainHeaders">
                             {props.projectName}
                         </p>
-                        <p className="dates">13/09/2023 - 20/10/2023 (50 dias)</p>
+                        <p className="dates">
+                            13/09/2023 - 20/10/2023 (50 dias)
+                        </p>
                         <div className="teamContainer">
                             <p className="teamHeader">Tu rol:</p>
 
@@ -460,7 +462,7 @@ function ProjectSidebar(props) {
                     </div>
                 )}
             </div>
-            {isOpen &&  (
+            {isOpen && (
                 <>
                     <ul className="members">
                         {membersData.map((member) => {
@@ -474,27 +476,21 @@ function ProjectSidebar(props) {
                                 ></MemberIcon>
                             );
                         })}
-                        <div
-                            className="addNewMContainer"
-                            onClick={() => {
-                                setIsModalUserOpen(true);
-                            }}
-                        >
-                            +
-                        </div>
                     </ul>
 
-                    <Link href={stringBase + "/settings"}>
-                        <div
-                            className="text-medium font-medium
+                    {props.projectIdRole === 1 && (
+                        <Link href={stringBase + "/settings/general"}>
+                            <div
+                                className="text-medium font-medium
                     bg-slate-300 dark:bg-slate-600
                     flex justify-center
                     rounded-md py-[.3rem]
                     cursor-pointer"
-                        >
-                            Configuracion de proyecto
-                        </div>
-                    </Link>
+                            >
+                                Configuracion de proyecto
+                            </div>
+                        </Link>
+                    )}
 
                     {/* <DropDownMenu info={listTools1}></DropDownMenu>
                     <DropDownMenu info={listTools2}></DropDownMenu> */}
@@ -533,7 +529,9 @@ function ProjectSidebar(props) {
                         </AccordionItem>
                     </Accordion>
 
-                    <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
+                    <GeneralLoadingScreen
+                        isLoading={isLoading}
+                    ></GeneralLoadingScreen>
 
                     {/* ESTO ESTA PENDIENTEEEE ================================================= */}
                     {isModalUserOpen && (

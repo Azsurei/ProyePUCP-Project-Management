@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SessionContext } from "@/app/dashboard/layout";
-import { Avatar, Chip } from "@nextui-org/react";
+import {Avatar, Chip, Spacer} from "@nextui-org/react";
+import { Tabs, Tab} from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 
 const memberDataProject = [
@@ -40,6 +41,15 @@ const roleColor = [
 ];
 
 function ProjectCard(props) {
+    let msgNoDates;
+    console.log(props.fechaInicio);
+    if(props.fechaInicio === null || props.fechaFin === null || props.fechaInicio === "0000-00-00" || props.fechaFin === "0000-00-00"){
+        msgNoDates = "Sin fechas definidas";
+    }
+    else{
+        msgNoDates = 0;
+    }
+
     const startDate = new Date(props.fechaInicio);
     const endDate = new Date(props.fechaFin);
 
@@ -53,7 +63,7 @@ function ProjectCard(props) {
     const formattedEndDate = endDate.toLocaleDateString();
 
     useEffect(() => {
-        console.log("ROL TEST " + props.roleId);
+        console.log(msgNoDates);
     });
 
     return (
@@ -61,7 +71,8 @@ function ProjectCard(props) {
             <p className="cardTitleProject">{props.name}</p>
 
             <p className="cardDates">
-                {`${formattedStartDate} - ${formattedEndDate} (${diffInDays} días)`}
+                {msgNoDates === 0 && `${formattedStartDate} - ${formattedEndDate} (${diffInDays} días)`}
+                {msgNoDates !== 0 && `${msgNoDates}`}
             </p>
 
             {/* <div className={"teamTag bg-" + roleColor[props.roleId - 1].color}>
@@ -160,29 +171,78 @@ export default function ListProject(props) {
         const projectName = component.name.toLowerCase();
         return projectName.includes(filterValue.toLowerCase());
     });
-    return (
-        <ul className="ListProject">
-            {filteredProjects.map((component) => {
-                return (
-                    <ProjectCard
-                        key={component.id}
-                        name={component.name}
-                        fechaInicio={component.dateStart}
-                        fechaFin={component.dateEnd}
-                        miembros={component.members}
-                        roleId={component.roleId}
-                        roleName={component.roleName}
-                        onClick={() => {
-                            // const updSessionData = {...sessionData};
-                            // updSessionData.rolInProject = component.roleId;
-                            // setSession(updSessionData);
-                            handleClick(component.id, component.name);
-                        }}
-                    ></ProjectCard>
-                );
-            })}
+    // State for active tab index
+    const [activeTabIndex, setActiveTabIndex] = useState(0);
 
+    // Split projects into 'In Progress' and 'Completed'
+    const proyectosEnProceso = ListComps.filter(proyecto => {
+        const endDate = new Date(proyecto.dateEnd);
+        return !endDate || endDate > new Date();
+    });
+
+    const proyectosFinalizados = ListComps.filter(proyecto => {
+        const endDate = new Date(proyecto.dateEnd);
+        return endDate && endDate <= new Date();
+    });
+
+    // Function to render projects in a list
+    const renderProjectList = (projects) => (
+        projects.filter(component => component.name.toLowerCase().includes(filterValue.toLowerCase()))
+            .map(component => (
+                <ProjectCard
+                    key={component.id}
+                    name={component.name}
+                    fechaInicio={component.dateStart}
+                    fechaFin={component.dateEnd}
+                    miembros={component.members}
+                    roleId={component.roleId}
+                    roleName={component.roleName}
+                    onClick={() => {
+                        // const updSessionData = {...sessionData};
+                        // updSessionData.rolInProject = component.roleId;
+                        // setSession(updSessionData);
+                        handleClick(component.id, component.name);
+                    }}
+                ></ProjectCard>
+            ))
+    );
+
+    return (
+        <div className="flex w-full flex-col">
+            <Spacer y={"12px"} />
+            <Tabs
+                value={activeTabIndex}
+                onChange={setActiveTabIndex}
+                aria-label="Project Status Tabs"
+                color={"warning"}
+                variant={"bordered"}
+                classNames={{
+                    tabList: "gap-2 relative",
+                    tabContent: "group-data-[selected=true]:text-[#ffffff] font-bold"
+                }}
+            >
+                <Tab
+                    key="enProceso"
+                    title="En Proceso"
+                    className="montserrat text-blue-900"
+                    radius="full"
+                >
+                    <ul className="ListProject">
+                        {renderProjectList(proyectosEnProceso)}
+                    </ul>
+                </Tab>
+                <Tab
+                    key="finalizadas"
+                    title="Finalizadas"
+                    className="montserrat text-blue-900"
+                    radius="full"
+                >
+                    <ul className="ListProject">
+                        {renderProjectList(proyectosFinalizados)}
+                    </ul>
+                </Tab>
+            </Tabs>
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
-        </ul>
+        </div>
     );
 }

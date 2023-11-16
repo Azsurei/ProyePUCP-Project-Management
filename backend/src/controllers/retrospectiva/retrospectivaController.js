@@ -23,17 +23,17 @@ async function funcCrear(idProyecto){
     }
 }
 
-async function eliminar(req,res,next){
-    const { idRetrospectiva } = req.params;
+async function eliminar(idRetrospectiva){
+    //const { idRetrospectiva } = req.body;
     console.log(`Procediendo: Eliminar/Retrospectiva ${idRetrospectiva}...`);
     try {
         const result = await funcEliminar(idRetrospectiva);
-        res.status(200).json({
-            idRetrospectiva,
-            message: "Retrospectiva eliminado"});
+        // res.status(200).json({
+        //     idRetrospectiva,
+        //     message: "Retrospectiva eliminado"});
         console.log(`Retrospectiva ${idRetrospectiva} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/Retrospectiva", error);
     }
 }
 
@@ -42,7 +42,31 @@ async function funcEliminar(idRetrospectiva) {
         const query = `CALL ELIMINAR_RETROSPECTIVA_X_ID_RETROSPECTIVA(?);`;
         [results] = await connection.query(query,[idRetrospectiva]);
     } catch (error) {
-        console.log("ERROR en Eliminar/Retrospectiva", error);
+        console.log("ERROR 2 en Eliminar/Retrospectiva", error);
+        return 0;
+    }
+    return 1;
+}
+
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/Retrospectiva del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`Retrospectiva del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/Retrospectiva X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_RETROSPECTIVA_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/Retrospectiva X Proyecto", error);
         return 0;
     }
     return 1;
@@ -51,5 +75,6 @@ async function funcEliminar(idRetrospectiva) {
 
 module.exports={
     crear,
-    eliminar
+    eliminar,
+    eliminarXProyecto
 }

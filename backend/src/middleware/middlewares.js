@@ -1,6 +1,8 @@
 // middlewares.js
+require('dotenv').config({ path: './../../.env' });
+
 const jwt = require("jsonwebtoken");
-const secret = "oaiscmawiocnaoiwncioawniodnawoinda";  // Considera guardar tu secret en variables de entorno
+const secret = process.env.JWT_SECRET; 
 
 module.exports = {
     // Middleware para verificar JWT

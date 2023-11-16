@@ -22,6 +22,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Tooltip,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
@@ -48,6 +49,7 @@ export default function ProductBacklog(props) {
     const [data, setData] = useState([]);
     const [objectID, setObjectID] = useState(null);
     const [navegate, setNavegate] = useState(false);
+    const [edit, setEdit] = useState(null);
     function DataTable() {
         const fetchData = async () => {
             try {
@@ -84,9 +86,10 @@ export default function ProductBacklog(props) {
         setModal1(!modal1);
     };
 
-    const setRoutering = (objectID) => {
+    const setRoutering = (objectID, isEdit) => {
         setObjectID(objectID);
         setNavegate(!navegate);
+        setEdit(isEdit);
     };
 
     const toggleModalAll = () => {
@@ -245,45 +248,41 @@ export default function ProductBacklog(props) {
                 return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
                 return (
-                    // <div className="relative flex justify-end items-center gap-2">
-                    //     <Dropdown>
-                    //         <DropdownTrigger>
-                    //             <Button isIconOnly size="sm" variant="light">
-                    //                 <VerticalDotsIcon className="text-default-300" />
-                    //             </Button>
-                    //         </DropdownTrigger>
-                    //         <DropdownMenu>
-                    //             <DropdownItem onClick={() => {
-                    //                 setRoutering(data)
-                    //             }}>
-
-                    //                     Editar
-                    //             </DropdownItem>
-
-                    //             <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
-                    //         </DropdownMenu>
-                    //     </Dropdown>
-                    // </div>
-                    <div
-                        className="flex"
-                        style={{ marginTop: "12px", marginLeft: "15px" }}
-                    >
-                        <button
-                            className=""
-                            type="button"
-                            onClick={() => {
-                                setRoutering(data);
-                            }}
-                        >
-                            <img src="/icons/editar.svg" />
-                        </button>
-                        <button
-                            className=""
-                            type="button"
-                            onClick={() => toggleModal(data)}
-                        >
-                            <img src="/icons/eliminar.svg" />
-                        </button>
+                    <div className="relative flex justify-center items-center gap-2">
+                        <div className="flex items-center">
+                            <Tooltip content="Visualizar">
+                                <button
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, false);
+                                    }}
+                                >
+                                    <img src="/icons/view.svg" />
+                                    {/* <EyeFilledIcon /> */}
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Editar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, true);
+                                    }}
+                                >
+                                    <img src="/icons/editar.svg" />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Eliminar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => toggleModal(data)}
+                                >
+                                    <img src="/icons/eliminar.svg" />
+                                </button>
+                            </Tooltip>
+                        </div>
                     </div>
                 );
             case "NombrePrioridad":
@@ -548,6 +547,7 @@ export default function ProductBacklog(props) {
                     proy_name={projectName}
                     proy_id={projectId}
                     idHu={objectID.idHistoriaDeUsuario}
+                    isEdit={edit}
                 />
             )}
         </div>

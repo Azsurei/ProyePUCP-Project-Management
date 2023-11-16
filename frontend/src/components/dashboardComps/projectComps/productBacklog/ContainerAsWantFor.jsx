@@ -9,6 +9,7 @@ export default function ContainerAsWantFor({
     onComoChange,
     onQuieroChange,
     onParaChange,
+    isDisabled = false,
 }) {
     const isTextTooLong = como.length > 400;
     const isTextTooLong2 = quiero.length > 400;
@@ -26,12 +27,13 @@ export default function ContainerAsWantFor({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 id="customPlaceholderInput1"
                 placeholder="Escribe aquí"
                 maxLength="450"
                 value={como}
                 onChange={(e) => onComoChange(e.target.value)}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
             <Textarea
                 className="paddingTop"
@@ -44,12 +46,13 @@ export default function ContainerAsWantFor({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 id="customPlaceholderInput2"
                 placeholder="Escribe aquí"
                 maxLength="450"
                 value={quiero}
                 onChange={(e) => onQuieroChange(e.target.value)}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
             <Textarea
                 className="paddingTop"
@@ -62,12 +65,13 @@ export default function ContainerAsWantFor({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 id="customPlaceholderInput3"
                 placeholder="Escribe aquí"
                 maxLength="450"
                 value={para}
                 onChange={(e) => onParaChange(e.target.value)}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
         </div>
     );

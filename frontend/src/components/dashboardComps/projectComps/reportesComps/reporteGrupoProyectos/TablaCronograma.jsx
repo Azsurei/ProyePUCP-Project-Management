@@ -29,7 +29,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
-export default function ReporteAlcance(props) {
+export default function TablaCronograma(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [isClient, setIsClient] = useState(false);

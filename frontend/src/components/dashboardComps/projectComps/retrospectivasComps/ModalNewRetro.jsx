@@ -26,7 +26,7 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const msgEmptyField = "Este campo no puede estar vacio";
-
+    
     useEffect(() => {
         if (isOpen === true) {
             setRetroName("");
@@ -54,7 +54,8 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
                         console.log(
                             "SPRINT => " + parseInt(retroSprint.currentKey)
                         );
-
+                            
+                        setIsLoading(true);
                         const result = await registerRetrospectiva();
                         if(result === 1){
                             await refreshList();
@@ -140,18 +141,18 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
                                 <Button
                                     isLoading={isLoading}
                                     color="primary"
-                                    onPress={()=>{
+                                    onPress={() => {
                                         let allValid = true;
-                                        if(retroName === ""){
+                                        if (retroName.trim() === "") {
                                             setValidName(false);
                                             allValid = false;
                                         }
-                                        if(retroSprint.size === 0){
+                                        if (retroSprint.size === 0) {
                                             setValidSprint(false);
                                             allValid = false;
                                         }
 
-                                        if(allValid === true){
+                                        if (allValid) {
                                             finalizarModal();
                                         }
                                     }}
@@ -173,7 +174,7 @@ function ModalNewRetro({ isOpen, onOpenChange, listSprints, refreshList }) {
                 "/api/proyecto/retrospectiva/insertarLineaRetrospectiva";
 
             const objLineaRetro = {
-                idRetrospectiva: herramientasInfo[9].idHerramientaCreada,
+                idRetrospectiva: herramientasInfo.find(herramienta => herramienta.idHerramienta === 10).idHerramientaCreada,
                 idSprint: parseInt(retroSprint.currentKey),
                 titulo: retroName,
                 cantBien: 0,

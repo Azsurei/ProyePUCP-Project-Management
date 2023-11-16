@@ -39,6 +39,47 @@ export default function ReportePresupuestos(props) {
     const [lineasEgreso, setLineasEgreso] = useState([]);
     const [lineasEstimacion, setLineasEstimacion] = useState([]);
     const [vistaReporte, setVistaReporte] = useState(false);
+    const [presupuesto, setPresupuesto] = useState([]);
+    const [presupuestoReporte, setPresupuestoReporte] = useState([]);
+    const [nombreMoneda, setNombreMoneda] = useState("");
+    const guardarReporte = async () => {
+      const postData = {
+        idProyecto: projectId,
+        nombre: "Reporte de Presupuesto",
+        presupuesto:  {
+          idPresupuesto: idPresupuesto,
+          idHerramienta: herramientasInfo[12].idHerramientaCreada,
+          nombreHerramienta: "Presupuesto",
+          presupuestoInicial: presupuesto.presupuestoInicial,
+          idMoneda: presupuesto.idMoneda,
+          nombreMoneda: nombreMoneda,
+          cantidadMeses: presupuesto.cantidadMeses,
+        },
+        lineasPresupuesto: {
+          lineasIngreso: lineasIngreso,
+          lineasEgreso: lineasEgreso,
+          lineasEstimacionCosto: lineasEstimacion,
+        }
+    };
+    console.log("El postData es :", postData);
+    axios
+        .post(
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/generarReportePresupuesto",
+            postData
+        )
+        .then((response) => {
+            // Manejar la respuesta de la solicitud POST
+            console.log("Respuesta del servidor:", response.data);
+            console.log("Guardado del reporte correcto");
+            // Realizar acciones adicionales si es necesario
+        })
+        .catch((error) => {
+            // Manejar errores si la solicitud POST falla
+            console.error("Error al realizar la solicitud POST:", error);
+        });
+    };
+    
     const DataTable = async () => {
         const fetchData = async () => {
             try {
@@ -58,7 +99,7 @@ export default function ReportePresupuestos(props) {
           
             fetchData();
     };
-    const [presupuesto, setPresupuesto] = useState([]);
+    
     const [isSelected, setIsSelected] = useState(false);
     const [montoInicial, setMontoInicial] = useState(0);
     const ObtenerPresupuesto = async () => {
@@ -69,9 +110,11 @@ export default function ReportePresupuestos(props) {
               setPresupuesto(data[0]);
               if (data[0].idMoneda === 1) {
                 setIsSelected(false);
+                setNombreMoneda("Dólares");
               } else {
                 console.log("Se seleccionó el sol"); 
                 setIsSelected(true);
+                setNombreMoneda("Soles");
               }
 
               console.log(`Esta es la data de presupuesto:`, data);
@@ -183,13 +226,13 @@ export default function ReportePresupuestos(props) {
                                     href={"/dashboard/" + projectName + "=" + projectId}
                                     text={projectName}
                                 />
-                                <BreadcrumbsItem href="" text="Historial de Reportes" />
+                                <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/reportes"} text="Historial de Reportes" />
                             </Breadcrumbs>
                             <div className="flex flex-row justify-between items-center">
                                 <div className="titleHistorialReporte text-mainHeaders">
                                     Reporte de Presupuesto
                                 </div>
-                                <Button color="warning" className="text-white">
+                                <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
                                     Guardar reporte
                                 </Button>
                              </div>

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 import InConstruction from "@/common/InConstruction";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
 import Link from "next/link";
 import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
-import axios from "axios"
+import axios from "axios";
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -15,26 +15,28 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-  } from "@nextui-org/react";
+    Tooltip
+} from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
 import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/RouteringCR";
 import ModalEliminateRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ModalEliminateRC";
-export default function catalogoDeRiesgos(props){
+export default function catalogoDeRiesgos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const stringPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarRiesgos/100"
+    const stringPrueba =
+        "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/100";
     console.log(projectId);
     console.log(projectName);
-    
+
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
@@ -42,30 +44,34 @@ export default function catalogoDeRiesgos(props){
     const [objectRC, setObjectRC] = useState(null);
     const [navegate, setNavegate] = useState(false);
     const [navegateRegister, setNavegateRegister] = useState(false);
-
-    function DataTable(){
+    const [edit, setEdit] = useState(false);
+    function DataTable() {
         const fetchData = async () => {
-          try {
-            // Realiza la solicitud HTTP al endpoint del router
-            const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarRiesgos/" +
-            projectId;
-            const response = await axios.get(stringURL);
-    
-            // Actualiza el estado 'data' con los datos recibidos
-            // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
-            setData(response.data.riesgos);
-            setIsLoadingSmall(false);
-            console.log(`Esta es la data:`, data);
-            console.log(`Datos obtenidos exitosamente:`, response.data.riesgos);
-          } catch (error) {
-            console.error('Error al obtener datos:', error);
-          }
+            try {
+                // Realiza la solicitud HTTP al endpoint del router
+                const stringURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoRiesgos/listarRiesgos/" +
+                    projectId;
+                const response = await axios.get(stringURL);
+
+                // Actualiza el estado 'data' con los datos recibidos
+                // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+                setData(response.data.riesgos);
+                setIsLoadingSmall(false);
+                console.log(`Esta es la data:`, data);
+                console.log(
+                    `Datos obtenidos exitosamente:`,
+                    response.data.riesgos
+                );
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
         };
-    
+
         fetchData();
-      };
-    
+    }
+
     useEffect(() => {
         DataTable();
     }, []);
@@ -79,48 +85,55 @@ export default function catalogoDeRiesgos(props){
         console.log("El id del objeto es: ", selectedTask);
         setModal1(!modal1);
     };
-    const setRoutering = (objectID) => {
+    const setRoutering = (objectID, isEdit) => {
         setObjectRC(objectID);
         console.log("El id del objeto MC es: ", objectRC);
         setNavegate(!navegate);
+        setEdit(isEdit);
     };
     const columns = [
         {
-            name: 'Riesgo',
-            uid: 'nombreRiesgo',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Riesgo",
+            uid: "nombreRiesgo",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Fecha identificacion',
-            uid: 'fechaIdentificacion',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Fecha identificacion",
+            uid: "fechaIdentificacion",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Probabilidad',
-            uid: 'nombreProbabilidad',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Probabilidad",
+            uid: "nombreProbabilidad",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Dueño del riesgo',
-            uid: 'nombres',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Dueño del riesgo",
+            uid: "nombres",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Estado',
-            uid: 'estado',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Estado",
+            uid: "estado",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: ' ',
-            uid: 'actions',
-            className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: false
-        }
+            name: " ",
+            uid: "actions",
+            className:
+                "w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: false,
+        },
     ];
     // const data = [
     //     {
@@ -131,7 +144,7 @@ export default function catalogoDeRiesgos(props){
     //         dueñoRiesgo: 'Anthony Estrada',
     //         estadoRiesgo: 'Estado',
     //     },
-        
+
     // ];
     const toolsOptions = [
         { name: "Herramienta 1", uid: "active" },
@@ -157,7 +170,9 @@ export default function catalogoDeRiesgos(props){
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                data.nombreRiesgo.toLowerCase().includes(filterValue.toLowerCase())
+                data.nombreRiesgo
+                    .toLowerCase()
+                    .includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -169,7 +184,6 @@ export default function catalogoDeRiesgos(props){
             );
         }
 
-        
         return filteredTemplates;
     }, [data, filterValue, toolsFilter]);
 
@@ -223,20 +237,19 @@ export default function catalogoDeRiesgos(props){
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
-        
+
         switch (columnKey) {
-                
             case "fechaIdentificacion":
                 const date = new Date(cellValue);
                 if (!isNaN(date)) {
-                    const day = String(date.getDate()).padStart(2, '0');
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, "0");
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
                     const year = date.getFullYear();
                     return `${day}/${month}/${year}`;
                 }
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
+                    <div className="relative flex justify-center items-center gap-2">
                         {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
@@ -254,15 +267,39 @@ export default function catalogoDeRiesgos(props){
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown> */}
-                        <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                            <button className="" type="button" onClick={() => {
-                                    setRoutering(data)
-                                 }}>
-                                <img src="/icons/editar.svg"/>
-                            </button>
-                            <button className="" type="button" onClick={() => toggleModal(data)}>
-                                <img src="/icons/eliminar.svg"/>
-                            </button>
+                        <div className="flex">
+                            <Tooltip content="Visualizar">
+                                <button
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, false);
+                                    }}
+                                >
+                                    <img src="/icons/view.svg" />
+                                    {/* <EyeFilledIcon /> */}
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Editar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, true);
+                                    }}
+                                >
+                                    <img src="/icons/editar.svg" />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Eliminar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => toggleModal(data)}
+                                >
+                                    <img src="/icons/eliminar.svg" />
+                                </button>
+                            </Tooltip>
                         </div>
                     </div>
                 );
@@ -283,18 +320,38 @@ export default function catalogoDeRiesgos(props){
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Button color="primary" endContent={<PlusIcon />} className="btnAddRiesgo" >
-                            <Link href={"/dashboard/"+projectName+"="+projectId+"/catalogoDeRiesgos/registerCR"}>
-                            Agregar
-                            </Link> 
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            className="btnAddRiesgo"
+                        >
+                            <Link
+                                href={
+                                    "/dashboard/" +
+                                    projectName +
+                                    "=" +
+                                    projectId +
+                                    "/catalogoDeRiesgos/registerCR"
+                                }
+                            >
+                                Agregar
+                            </Link>
                         </Button>
-                        <Button color="primary" endContent={<PlusIcon />} className="btnRiesgosExport">
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            className="btnRiesgosExport"
+                        >
                             Exportar
                         </Button>
-                        <Button color="danger" endContent={<PlusIcon />} className="btnRiesgosEliminar">
+                        <Button
+                            color="danger"
+                            endContent={<PlusIcon />}
+                            className="btnRiesgosEliminar"
+                        >
                             Eliminar
                         </Button>
                     </div>
@@ -364,49 +421,48 @@ export default function catalogoDeRiesgos(props){
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-    return(
-
+    return (
         <div className="container">
             <div className="header">
                 Inicio / Proyectos / Nombre del proyecto / Catálogo de Riesgos
             </div>
             <div className="catalogoRiesgos">
-                <div className="titleRiesgos dark:text-white">Catálogo de Riesgos</div>
+                <div className="titleRiesgos dark:text-white">
+                    Catálogo de Riesgos
+                </div>
                 <div>
-                       <MyDynamicTable 
-                            label ="Tabla Riesgos" 
-                            bottomContent={bottomContent} 
-                            selectedKeys={selectedKeys}
-                            setSelectedKeys={setSelectedKeys}
-                            sortDescriptor = {sortDescriptor}
-                            setSortDescriptor={setSortDescriptor}
-                            topContent={topContent}
-                            columns={columns}
-                            sortedItems={sortedItems}
-                            renderCell={renderCell}
-                            idKey="idRiesgo"
-                        />
-                
+                    <MyDynamicTable
+                        label="Tabla Riesgos"
+                        bottomContent={bottomContent}
+                        selectedKeys={selectedKeys}
+                        setSelectedKeys={setSelectedKeys}
+                        sortDescriptor={sortDescriptor}
+                        setSortDescriptor={setSortDescriptor}
+                        topContent={topContent}
+                        columns={columns}
+                        sortedItems={sortedItems}
+                        renderCell={renderCell}
+                        idKey="idRiesgo"
+                    />
                 </div>
             </div>
             {modal1 && selectedTask && (
                 <ModalEliminateRC
-                    modal = {modal1} 
+                    modal={modal1}
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.nombreRiesgo}
-                    idRiesgo = {selectedTask.idRiesgo}
+                    idRiesgo={selectedTask.idRiesgo}
                     refresh={DataTable}
                 />
             )}
             {navegate && objectRC.idRiesgo && (
                 <RouteringRC
-                    proy_name = {projectName}
-                    proy_id = {projectId}
-                    idRC = {objectRC.idRiesgo}
+                    proy_name={projectName}
+                    proy_id={projectId}
+                    idRC={objectRC.idRiesgo}
+                    isEdit={edit}
                 />
-            )
-            }
+            )}
         </div>
-        
     );
 }

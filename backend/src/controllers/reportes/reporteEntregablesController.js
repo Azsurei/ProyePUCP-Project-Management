@@ -39,7 +39,7 @@ const alignmentCenterStyle = {
 
 
 
-async function generarReporteEntregables(req, res, next) {
+async function traerInfoReporteEntregables(req, res, next) {
     const { idProyecto } = req.params;
     try {
         const query = `CALL LISTAR_ENTREGABLES_X_ID_PROYECTO(?);`;
@@ -259,5 +259,6 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
 module.exports = {
     subirJSON,
     descargarExcel,
-    obtenerJSON
+    obtenerJSON,
+    traerInfoReporteEntregables
 };

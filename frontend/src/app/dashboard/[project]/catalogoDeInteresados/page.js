@@ -1,11 +1,11 @@
-"use client"
+"use client";
 import InConstruction from "@/common/InConstruction";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
 import Link from "next/link";
 import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
-import axios from "axios"
+import axios from "axios";
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -15,13 +15,14 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-  } from "@nextui-org/react";
+    Tooltip,
+} from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
 import RouteringInteresados from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/RouteringInteresados";
 import ModalEliminateInteresado from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ModalEliminateInteresado";
@@ -31,10 +32,12 @@ export default function CatalogoDeInteresados(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const stringPrueba = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoRiesgos/listarRiesgos/100"
+    const stringPrueba =
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+        "/api/proyecto/catalogoRiesgos/listarRiesgos/100";
     console.log(projectId);
     console.log(projectName);
-    
+
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
@@ -42,31 +45,35 @@ export default function CatalogoDeInteresados(props) {
     const [objectRC, setObjectRC] = useState(null);
     const [navegate, setNavegate] = useState(false);
     const [navegateRegister, setNavegateRegister] = useState(false);
-
-    function DataTable(){
+    const [edit, setEdit] = useState(false);
+    function DataTable() {
         const fetchData = async () => {
-          try {
-            // Realiza la solicitud HTTP al endpoint del router
-            const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/catalogoInteresados/listarInteresados/" +
-            projectId;
-            const response = await axios.get(stringURL);
-    
-            // Actualiza el estado 'data' con los datos recibidos
-            // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
-            setData(response.data.interesados);
-            setIsLoadingSmall(false);
-            
-            console.log(`Esta es la data:`, data);
-            console.log(`Datos obtenidos exitosamente:`, response.data.interesados);
-          } catch (error) {
-            console.error('Error al obtener datos:', error);
-          }
+            try {
+                // Realiza la solicitud HTTP al endpoint del router
+                const stringURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/catalogoInteresados/listarInteresados/" +
+                    projectId;
+                const response = await axios.get(stringURL);
+
+                // Actualiza el estado 'data' con los datos recibidos
+                // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+                setData(response.data.interesados);
+                setIsLoadingSmall(false);
+
+                console.log(`Esta es la data:`, data);
+                console.log(
+                    `Datos obtenidos exitosamente:`,
+                    response.data.interesados
+                );
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
         };
-    
+
         fetchData();
-      };
-      useEffect(() => {
+    }
+    useEffect(() => {
         DataTable();
     }, []);
 
@@ -78,50 +85,56 @@ export default function CatalogoDeInteresados(props) {
         console.log("El id del objeto es: ", selectedTask);
         console.log("El modal es: ", modal1);
         setModal1(!modal1);
-        
     };
-    const setRoutering = (objectID) => {
+    const setRoutering = (objectID, isEdit) => {
         setObjectRC(objectID);
         console.log("El id del objeto MC es: ", objectRC);
         setNavegate(!navegate);
+        setEdit(isEdit);
     };
     const columns = [
         {
-            name: 'Nombre',
-            uid: 'nombreCompleto',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Nombre",
+            uid: "nombreCompleto",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Rol en el proyecto',
-            uid: 'rolEnProyecto',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Rol en el proyecto",
+            uid: "rolEnProyecto",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Nivel de autoridad',
-            uid: 'nombreAutoridad',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Nivel de autoridad",
+            uid: "nombreAutoridad",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Nivel de adhesión actual',
-            uid: 'nombreAdhesionActual',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Nivel de adhesión actual",
+            uid: "nombreAdhesionActual",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: 'Nivel de adhesion deseado',
-            uid: 'nombreAdhesionDeseado',
-            className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: true
+            name: "Nivel de adhesion deseado",
+            uid: "nombreAdhesionDeseado",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
         },
         {
-            name: ' ',
-            uid: 'actions',
-            className: 'w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left',
-            sortable: false
-        }
+            name: " ",
+            uid: "actions",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: false,
+        },
     ];
     const toolsOptions = [
         { name: "Herramienta 1", uid: "active" },
@@ -147,7 +160,9 @@ export default function CatalogoDeInteresados(props) {
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((data) =>
-                data.nombreCompleto.toLowerCase().includes(filterValue.toLowerCase())
+                data.nombreCompleto
+                    .toLowerCase()
+                    .includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -159,7 +174,6 @@ export default function CatalogoDeInteresados(props) {
             );
         }
 
-        
         return filteredTemplates;
     }, [data, filterValue, toolsFilter]);
     const items = React.useMemo(() => {
@@ -212,12 +226,11 @@ export default function CatalogoDeInteresados(props) {
 
     const renderCell = React.useCallback((data, columnKey) => {
         const cellValue = data[columnKey];
-        
+
         switch (columnKey) {
-                
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
+                    <div className="relative flex justify-center items-center gap-2">
                         {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
@@ -235,15 +248,39 @@ export default function CatalogoDeInteresados(props) {
                                 <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown> */}
-                        <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                            <button className="" type="button" onClick={() => {
-                                    setRoutering(data)
-                                 }}>
-                                <img src="/icons/editar.svg"/>
-                            </button>
-                            <button className="" type="button" onClick={() => toggleModal(data)}>
-                                <img src="/icons/eliminar.svg"/>
-                            </button>
+                        <div className="flex items-center">
+                            <Tooltip content="Visualizar">
+                                <button
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, false);
+                                    }}
+                                >
+                                    <img src="/icons/view.svg" />
+                                    {/* <EyeFilledIcon /> */}
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Editar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => {
+                                        setRoutering(data, true);
+                                    }}
+                                >
+                                    <img src="/icons/editar.svg" />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Eliminar">
+                                <button
+                                    className=""
+                                    type="button"
+                                    onClick={() => toggleModal(data)}
+                                >
+                                    <img src="/icons/eliminar.svg" />
+                                </button>
+                            </Tooltip>
                         </div>
                     </div>
                 );
@@ -263,18 +300,38 @@ export default function CatalogoDeInteresados(props) {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Button color="primary" endContent={<PlusIcon />} className="btnAddRiesgo" >
-                            <Link href={"/dashboard/"+projectName+"="+projectId+"/catalogoDeInteresados/registerCI"}>
-                            Agregar
-                            </Link> 
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            className="btnAddRiesgo"
+                        >
+                            <Link
+                                href={
+                                    "/dashboard/" +
+                                    projectName +
+                                    "=" +
+                                    projectId +
+                                    "/catalogoDeInteresados/registerCI"
+                                }
+                            >
+                                Agregar
+                            </Link>
                         </Button>
-                        <Button color="primary" endContent={<PlusIcon />} className="btnRiesgosExport">
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            className="btnRiesgosExport"
+                        >
                             Exportar
                         </Button>
-                        <Button color="danger" endContent={<PlusIcon />} className="btnRiesgosEliminar">
+                        <Button
+                            color="danger"
+                            endContent={<PlusIcon />}
+                            className="btnRiesgosEliminar"
+                        >
                             Eliminar
                         </Button>
                     </div>
@@ -343,49 +400,49 @@ export default function CatalogoDeInteresados(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-    return(
-
+    return (
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de Interesados
+                Inicio / Proyectos / Nombre del proyecto / Catálogo de
+                Interesados
             </div>
             <div className="catalogoRiesgos">
-                <div className="titleRiesgos dark:text-white">Catálogo de Interesados</div>
+                <div className="titleRiesgos dark:text-white">
+                    Catálogo de Interesados
+                </div>
                 <div>
-                       <MyDynamicTable 
-                            label ="Tabla Interesados" 
-                            bottomContent={bottomContent} 
-                            selectedKeys={selectedKeys}
-                            setSelectedKeys={setSelectedKeys}
-                            sortDescriptor = {sortDescriptor}
-                            setSortDescriptor={setSortDescriptor}
-                            topContent={topContent}
-                            columns={columns}
-                            sortedItems={sortedItems}
-                            renderCell={renderCell}
-                            idKey="idInteresado"
-                        />
-                
+                    <MyDynamicTable
+                        label="Tabla Interesados"
+                        bottomContent={bottomContent}
+                        selectedKeys={selectedKeys}
+                        setSelectedKeys={setSelectedKeys}
+                        sortDescriptor={sortDescriptor}
+                        setSortDescriptor={setSortDescriptor}
+                        topContent={topContent}
+                        columns={columns}
+                        sortedItems={sortedItems}
+                        renderCell={renderCell}
+                        idKey="idInteresado"
+                    />
                 </div>
             </div>
             {modal1 && selectedTask && (
                 <ModalEliminateInteresado
-                    modal = {modal1} 
+                    modal={modal1}
                     toggle={() => toggleModal(selectedTask)} // Pasa la función como una función de flecha
                     taskName={selectedTask.nombreCompleto}
-                    idInteresado = {selectedTask.idInteresado}
+                    idInteresado={selectedTask.idInteresado}
                     refresh={DataTable}
                 />
             )}
             {navegate && objectRC.idInteresado && (
                 <RouteringInteresados
-                    proy_name = {projectName}
-                    proy_id = {projectId}
-                    idInteresado = {objectRC.idInteresado}
+                    proy_name={projectName}
+                    proy_id={projectId}
+                    idInteresado={objectRC.idInteresado}
+                    isEdit={edit}
                 />
-            )
-            }
+            )}
         </div>
-        
     );
-};
+}

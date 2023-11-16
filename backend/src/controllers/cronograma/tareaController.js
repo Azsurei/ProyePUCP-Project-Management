@@ -156,8 +156,9 @@ async function funcAgregarTareasPosteriores(
                 idCronograma,
                 tarea.idTareaEstado,
                 tarea.idSubGrupo,
-                null,
+                tarea.idPadre,
                 idTareaAnterior,
+                0, //id sprint
                 tarea.sumillaTarea,
                 tarea.descripcion,
                 fechaFinNueva,
@@ -167,7 +168,7 @@ async function funcAgregarTareasPosteriores(
                 tarea.horasPlaneadas,
                 1,
                 idEntregable,
-                0
+                null
             );
 
             await usuarioXTareaController.funcCrearUsuariosXTarea(
@@ -270,10 +271,10 @@ async function insertarTareasPosteriores(
                 tarea.fechaFin,
                 0,
                 0,
-                null,
+                originalTareaData.horasPlaneadas,
                 1,
                 originalTareaData.idEntregable,
-                originalTareaData.idColumnaKanban
+                null
             );
             await usuarioXTareaController.funcCrearUsuariosXTarea(
                 originalTareaData.usuarios,

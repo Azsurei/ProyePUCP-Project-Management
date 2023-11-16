@@ -36,7 +36,7 @@ import { SessionContext } from "../../../layout";
 import { HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
 
-
+import { SearchIcon } from "@/../public/icons/SearchIcon";
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
@@ -134,8 +134,6 @@ export default function Info(props) {
         router.refresh();
   
     };
-
-
 
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -501,7 +499,40 @@ export default function Info(props) {
       }, [IdUsuario]);
 
       const [error, setError] = useState(null);
+      //Buscar PLantilla
+      const [filterValue, setFilterValue] = useState("");  
+      const onSearchChange = (value) => {
+          setFilterValue(value);
+      };
 
+      const limpiarInput = () => {
+            setFilterValue("");
+            DataTable();
+      }
+
+
+      //lamado a la api de listar PLantillas por Nombre
+
+      const refreshList = async () => {
+        if (IdUsuario !== "" && filterValue !== "") {
+            try {
+                const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasACXNombre/' + IdUsuario+'/'+filterValue;
+
+                console.log(IdUsuario+" "+filterValue);
+                console.log(url);
+                const response = await axios.get(url);
+
+                const plantillasInvertidas = response.data.plantillasAC;
+                console.log(plantillasInvertidas);
+
+                setPlantillas(plantillasInvertidas);
+            } catch (error) {
+                console.error("Error al obtener las plantillas:", error);
+            }
+            }
+        }
+
+  
 
 
     return (
@@ -637,7 +668,7 @@ export default function Info(props) {
                         setTimeout(() => {
                             updateListado();
                         }, 2000);
-                        
+                        setFilterValue(""); 
                     }
                     else{
                         setError("Seleccione una plantilla");
@@ -655,9 +686,45 @@ export default function Info(props) {
                     
                     <div style={{ marginBottom: '25px' }}>
 
-                    <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos:</p>
+                    <p style={{ fontSize: "15px" }}>Seleccione una plantilla para cargar los campos</p>
                     </div>
-                    <ul className="cardPlantillaKBList">
+
+                    <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        gap: ".6rem",
+                        marginBottom:"25px",
+                    }}
+                >
+                    <div className="divBuscador">
+                        <Input
+                            isClearable
+                            className="w-full sm:max-w-[100%]"
+                            placeholder="Ingresa una plantilla..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onValueChange={onSearchChange}
+                            onClear={limpiarInput}
+                            variant="faded"
+                        />
+                    </div>
+                    <NextUIButton
+                        className="text-slate-50"
+                        color="primary"
+                        onClick={refreshList}
+                    >
+                        Buscar
+                    </NextUIButton>
+                </div>
+
+
+
+
+                    <ul className="cardPlantillaACList">
                     {plantillas.map((plantilla) => (
                         <li key={plantilla.idPlantillaAC}>
                             <div
@@ -686,7 +753,7 @@ export default function Info(props) {
                             onClose(); // Cierra el modal
                             setSelectedPlantilla(null);
                             setError(null); // Establece error en null para desactivar el mensaje de error
-            
+                            limpiarInput();                                
                         }}
                         
                         >
@@ -697,7 +764,7 @@ export default function Info(props) {
                     color="primary"
                     onClick={finalizarModalP}
                     >
-                    Continuar
+                    Usar
                     </NextUIButton>
                 </ModalFooter>
                 </>

@@ -1,16 +1,16 @@
 const connection = require("../../config/db");
 
-async function eliminar(req,res,next){
-    const { idCatalogoInteresado } = req.params;
+async function eliminar(idCatalogoInteresado){
+    //const { idCatalogoInteresado } = req.body;
     console.log(`Procediendo: Eliminar/CatalogoInteresados ${idCatalogoInteresado}...`);
     try {
         const result = await funcEliminar(idCatalogoInteresado);
-        res.status(200).json({
-            idCatalogoInteresado,
-            message: "CatalogoInteresados eliminado"});
+        // res.status(200).json({
+        //     idCatalogoInteresado,
+        //     message: "CatalogoInteresados eliminado"});
         console.log(`CatalogoInteresados ${idCatalogoInteresado} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/CatalogoInteresados", error);
     }
 }
 
@@ -19,7 +19,31 @@ async function funcEliminar(idCatalogoInteresado) {
         const query = `CALL ELIMINAR_CATALOGO_INTERESADOS_X_ID_CATALOGO_INTERESADOS(?);`;
         [results] = await connection.query(query,[idCatalogoInteresado]);
     } catch (error) {
-        console.log("ERROR en Eliminar/CatalogoInteresados", error);
+        console.log("ERROR 2 en Eliminar/CatalogoInteresados", error);
+        return 0;
+    }
+    return 1;
+}
+
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/CatalogoInteresados del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`CatalogoInteresados del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/CatalogoInteresados X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_CATALOGO_INTERESADOS_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/CatalogoInteresados X Proyecto", error);
         return 0;
     }
     return 1;
@@ -222,6 +246,7 @@ async function modificarInteresados(req,res,next){
 
 module.exports = {
     eliminar,
+    eliminarXProyecto,
     listarAutoridad,
     listarAdhesion,
     insertarInteresado,

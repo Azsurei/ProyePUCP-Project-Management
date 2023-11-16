@@ -5,13 +5,7 @@ import { SmallLoadingScreen, HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-import {
-    DndContext,
-    DragOverlay,
-    PointerSensor,
-    useSensor,
-    useSensors,
-} from "@dnd-kit/core";
+import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
 import { toast, Toaster } from "sonner";
 
 import {
@@ -27,7 +21,7 @@ import {
     Button,
     Chip,
     Divider,
-    Modal,  
+    Modal,
     ModalContent,
     ModalHeader,
     ModalBody,
@@ -50,17 +44,16 @@ const getSprints = async () => {
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
-                    idBacklog + `/` + idCronograma  
+                    idBacklog +
+                    `/` +
+                    idCronograma
             )
             .then((response) => {
                 console.log(response);
                 resolve(response.data.sprints);
             })
             .catch((error) => {
-                console.error(
-                    "Error al obtener los datos de sprints: ",
-                    error
-                );
+                console.error("Error al obtener los datos de sprints: ", error);
                 reject(error);
             });
     });
@@ -167,9 +160,9 @@ const changeSprint = async (idTarea, idSprint) => {
         {
             idTarea: idTarea,
             idSprint: idSprint,
-        }
+        },
     ];
-        
+
     return new Promise((resolve, reject) => {
         axios
             .put(
@@ -215,9 +208,12 @@ export default function SprintBacklog(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    [idBacklog, idCronograma] = herramientasInfo
-        .filter((item) => [1, 4].includes(item.idHerramienta))
-        .map((item) => item.idHerramientaCreada);
+    idBacklog = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 1
+    ).idHerramientaCreada;
+    idCronograma = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 4
+    ).idHerramientaCreada;
 
     // Decodificacion de URL
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -383,6 +379,7 @@ export default function SprintBacklog(props) {
     }, [sprints]);
 
     console.log(sprints);
+    console.log("IDs: ", idBacklog, idCronograma);
 
     // Componente
     return (
@@ -424,9 +421,11 @@ export default function SprintBacklog(props) {
                                     key={sprint.idSprint}
                                     aria-label={sprint.nombre}
                                     title={sprint.nombre}
-                                    subtitle={`${dateFormat(
+                                    subtitle={`${dbDateToDisplayDate(
                                         sprint.fechaInicio
-                                    )} - ${dateFormat(sprint.fechaFin)}`}
+                                    )} - ${dbDateToDisplayDate(
+                                        sprint.fechaFin
+                                    )}`}
                                     className="montserrat font-semibold p-1"
                                 >
                                     <div className="px-10">
@@ -479,8 +478,12 @@ export default function SprintBacklog(props) {
                                                     >
                                                         <CardTask
                                                             tarea={tarea}
-                                                            setSelectedTask={setSelectedTask}
-                                                            onModalTaskViewOpen={onModalTaskViewOpen}
+                                                            setSelectedTask={
+                                                                setSelectedTask
+                                                            }
+                                                            onModalTaskViewOpen={
+                                                                onModalTaskViewOpen
+                                                            }
                                                             sprints={sprints}
                                                             changeSprint={
                                                                 handleChange
@@ -540,9 +543,11 @@ export default function SprintBacklog(props) {
                                     key={sprint.id}
                                     aria-label={sprint.nombre}
                                     title={sprint.nombre}
-                                    subtitle={`${dateFormat(
+                                    subtitle={`${dbDateToDisplayDate(
                                         sprint.fechaInicio
-                                    )} - ${dateFormat(sprint.fechaFin)}`}
+                                    )} - ${dbDateToDisplayDate(
+                                        sprint.fechaFin
+                                    )}`}
                                     className="montserrat font-semibold p-1"
                                 >
                                     <div className="px-10">
@@ -611,8 +616,12 @@ export default function SprintBacklog(props) {
                                                     >
                                                         <CardTask
                                                             tarea={tarea}
-                                                            setSelectedTask={setSelectedTask}
-                                                            onModalTaskViewOpen={onModalTaskViewOpen}
+                                                            setSelectedTask={
+                                                                setSelectedTask
+                                                            }
+                                                            onModalTaskViewOpen={
+                                                                onModalTaskViewOpen
+                                                            }
                                                             sprints={sprints}
                                                             changeSprint={
                                                                 handleChange
@@ -655,8 +664,12 @@ export default function SprintBacklog(props) {
                                                 >
                                                     <CardTask
                                                         tarea={tarea}
-                                                        setSelectedTask={setSelectedTask}
-                                                        onModalTaskViewOpen={onModalTaskViewOpen}
+                                                        setSelectedTask={
+                                                            setSelectedTask
+                                                        }
+                                                        onModalTaskViewOpen={
+                                                            onModalTaskViewOpen
+                                                        }
                                                         sprints={sprints}
                                                         changeSprint={
                                                             handleChange
@@ -687,9 +700,11 @@ export default function SprintBacklog(props) {
                                     key={sprint.id}
                                     aria-label={sprint.nombre}
                                     title={sprint.nombre}
-                                    subtitle={`${dateFormat(
+                                    subtitle={`${dbDateToDisplayDate(
                                         sprint.fechaInicio
-                                    )} - ${dateFormat(sprint.fechaFin)}`}
+                                    )} - ${dbDateToDisplayDate(
+                                        sprint.fechaFin
+                                    )}`}
                                     className="montserrat font-semibold p-1"
                                 >
                                     <div className="px-10">
@@ -742,8 +757,12 @@ export default function SprintBacklog(props) {
                                                     >
                                                         <CardTask
                                                             tarea={tarea}
-                                                            setSelectedTask={setSelectedTask}
-                                                            onModalTaskViewOpen={onModalTaskViewOpen}
+                                                            setSelectedTask={
+                                                                setSelectedTask
+                                                            }
+                                                            onModalTaskViewOpen={
+                                                                onModalTaskViewOpen
+                                                            }
                                                         />
                                                     </div>
                                                 ))
@@ -803,8 +822,14 @@ export default function SprintBacklog(props) {
                 onOpenChange={onModalTaskViewChange}
                 currentTask={selectedTask}
                 goToTaskDetail={(idTarea) => {
-                    console.log("Redireccionando a tarea...");
-                    router.push("/dashboard");
+                    console.log("Redireccionando a Cronograma...");
+                    router.push(
+                        "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/cronograma"
+                    );
                 }}
             />
         </>
@@ -813,14 +838,20 @@ export default function SprintBacklog(props) {
 
 // Funciones de modulación
 function CardTask(props) {
-    const { tarea, setSelectedTask, sprints, changeSprint, onModalTaskViewOpen } = props;
+    const {
+        tarea,
+        setSelectedTask,
+        sprints,
+        changeSprint,
+        onModalTaskViewOpen,
+    } = props;
 
     return (
         <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
             <p className="flex-1 grow-[6]">{tarea.sumillaTarea}</p>
-            <p className="flex-1 grow-[4]">{`Inicio: ${dateFormat(
+            <p className="flex-1 grow-[4]">{`Inicio: ${dbDateToDisplayDate(
                 tarea.fechaInicio
-            )} - Fin: ${dateFormat(tarea.fechaFin)}`}</p>
+            )} - Fin: ${dbDateToDisplayDate(tarea.fechaFin)}`}</p>
             <div className="flex flex-1 grow-[2] justify-center items-center">
                 <Chip
                     className="capitalize roboto"
@@ -833,7 +864,9 @@ function CardTask(props) {
             </div>
 
             <div className="flex flex-row">
-                <Button isIconOnly variant="light" 
+                <Button
+                    isIconOnly
+                    variant="light"
                     onPress={() => {
                         setSelectedTask(tarea);
                         onModalTaskViewOpen();
@@ -1178,8 +1211,8 @@ function ModalEditarSprint({
                 idSprint: selectedSprint.idSprint,
                 nombre: selectedSprint.nombre,
                 descripcion: selectedSprint.descripcion,
-                fechaInicio: dateInput(selectedSprint.fechaInicio),
-                fechaFin: dateInput(selectedSprint.fechaFin),
+                fechaInicio: dbDateToInputDate(selectedSprint.fechaInicio),
+                fechaFin: dbDateToInputDate(selectedSprint.fechaFin),
                 estado: selectedSprint.estado,
                 tareas: selectedSprint.tareas,
             });
@@ -1333,7 +1366,9 @@ function ModalEditarSprint({
                                         onPress={endDelete}
                                         className="bg-[#FF0000] text-white text-md"
                                         isDisabled={disabledButtons}
-                                        isLoading={statusForm === "loadingDelete"}
+                                        isLoading={
+                                            statusForm === "loadingDelete"
+                                        }
                                     >
                                         Eliminar
                                     </Button>
@@ -1353,7 +1388,9 @@ function ModalEditarSprint({
                                             onPress={endEdit}
                                             className="bg-[#172B4D] text-white text-md"
                                             isDisabled={disabledButtons}
-                                            isLoading={statusForm === "loadingEdit"}
+                                            isLoading={
+                                                statusForm === "loadingEdit"
+                                            }
                                         >
                                             Editar
                                         </Button>
@@ -1471,24 +1508,4 @@ function ModalFinalizarSprint({ isOpen, onOpenChange, handleFinish }) {
             </ModalContent>
         </Modal>
     );
-}
-
-// Funciones de utilidad
-function dateFormat(fechaOriginal) {
-    const fecha = new Date(fechaOriginal);
-    const dia = fecha.getDate().toString().padStart(2, "0");
-    const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
-    const año = fecha.getFullYear();
-    const fechaFormateada = `${dia}-${mes}-${año}`;
-
-    return fechaFormateada;
-}
-function dateInput(fechaOriginal) {   
-    const fecha = new Date(fechaOriginal);
-    const dia = fecha.getDate().toString().padStart(2, "0");
-    const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
-    const año = fecha.getFullYear();
-    const fechaInput = `${año}-${mes}-${dia}`;
-
-    return fechaInput;
 }

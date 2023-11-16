@@ -4,6 +4,7 @@ const { verifyToken } = require("../middleware/middlewares");
 const catalogoInteresadosController = require("../controllers/catalogoInteresados/catalogoInteresadosController");
 
 routerCatalogoInteresados.delete("/eliminarCatalogoInteresados", catalogoInteresadosController.eliminar);
+routerCatalogoInteresados.delete("/eliminarCatalogoInteresadosXProyecto", catalogoInteresadosController.eliminarXProyecto);
 
 routerCatalogoInteresados.get("/listarAutoridad", catalogoInteresadosController.listarAutoridad);
 routerCatalogoInteresados.get("/listarAdhesion", catalogoInteresadosController.listarAdhesion);

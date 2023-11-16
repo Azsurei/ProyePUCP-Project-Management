@@ -3,7 +3,7 @@ const connection = require("../../config/db");
 async function guardarPlantillaAC(req, res, next) {
     const {idActaConstitucion, idUsuario, nombrePlantilla} = req.body;
     const query = `CALL GUARDAR_PLANTILLA_ACTACONSTITUCION(?,?);`;
-    const query1 = `CALL LISTAR_NOMBRES_CAMPOS_AC(?);`;
+    const query1 = `CALL LISTAR_CAMPOS_MR(?);`;
     const query2 = `CALL INSERTAR_PLANTILLA_AC_TIPODATO(?,?);`;
     try {
         //Creamos primero la plantilla en general
@@ -31,6 +31,38 @@ async function listarPlantillasAC(req, res, next) {
     try {
         //Traemos todas las plantillas de Acta de Constitucion del usuario
         const [results] = await connection.query(query, [idUsuario]);
+        const plantillasAC = results[0];
+        res.status(200).json({
+            plantillasAC,
+            message: `Se listó las plantilas de Acta de constitucion del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarPlantillasAC(req, res, next) {
+    const {idUsuario,nombre} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_ACTACONSTITUCION(?);`;
+    try {
+        //Traemos todas las plantillas de Acta de Constitucion del usuario
+        const [results] = await connection.query(query, [idUsuario]);
+        const plantillasAC = results[0];
+        res.status(200).json({
+            plantillasAC,
+            message: `Se listó las plantilas de Acta de constitucion del ${idUsuario} exitosamente`,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listarPlantillasACXNombre(req, res, next) {
+    const {idUsuario,nombre} = req.params;
+    const query = `CALL LISTAR_PLANTILLA_ACTACONSTITUCIONXNOMBRE(?,?);`;
+    try {
+        //Traemos todas las plantillas de Acta de Constitucion del usuario
+        const [results] = await connection.query(query, [idUsuario,nombre]);
         const plantillasAC = results[0];
         res.status(200).json({
             plantillasAC,
@@ -81,5 +113,6 @@ module.exports = {
     guardarPlantillaAC,
     listarPlantillasAC,
     eliminarPlantillaAC,
-    seleccionarPlantillaAC
+    seleccionarPlantillaAC,
+    listarPlantillasACXNombre
 };

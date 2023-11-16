@@ -1,10 +1,17 @@
 {
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.450.0",
+    "@aws-sdk/s3-request-presigner": "^3.451.0",
+    "@prisma/client": "^5.6.0",
     "aws-sdk": "^2.1491.0",
     "axios": "^1.6.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+<<<<<<< HEAD
     "exceljs": "^4.4.0",
+=======
+    "dotenv": "^16.3.1",
+>>>>>>> 609094122aa500920762cd90c52bdde06abaf2a7
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "googleapis": "^128.0.0",

@@ -9,6 +9,7 @@ export default function ContainerScenario({
     onUpdateScenario,
     scenario,
     functionRemove,
+    isDisabled = false,
 }) {
     const inputId1 = `customPlaceholderScenarioInput1-${indice}`;
     const inputId2 = `customPlaceholderScenarioInput2-${indice}`;
@@ -49,7 +50,7 @@ export default function ContainerScenario({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 placeholder="Escribe aquí"
                 maxLength="450"
                 onChange={(e) => {
@@ -57,6 +58,7 @@ export default function ContainerScenario({
                     isTextTooLong("scenario", e.target.value);
                 }}
                 value={scenario.scenario}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
 
             <Textarea
@@ -70,7 +72,7 @@ export default function ContainerScenario({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 placeholder="Escribe aquí"
                 maxLength="450"
                 onChange={(e) => {
@@ -78,6 +80,7 @@ export default function ContainerScenario({
                     isTextTooLong("dadoQue", e.target.value);
                 }}
                 value={scenario.dadoQue}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
             <Textarea
                 className="paddingTop"
@@ -90,7 +93,7 @@ export default function ContainerScenario({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 placeholder="Escribe aquí"
                 maxLength="450"
                 onChange={(e) => {
@@ -98,6 +101,7 @@ export default function ContainerScenario({
                     isTextTooLong("cuando", e.target.value);
                 }}
                 value={scenario.cuando}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
 
             <Textarea
@@ -111,7 +115,7 @@ export default function ContainerScenario({
                         ? "El texto debe ser como máximo de 400 caracteres."
                         : ""
                 }
-                variant="bordered"
+                variant={!isDisabled ? "bordered" : "flat"}
                 placeholder="Escribe aquí"
                 maxLength="450"
                 onChange={(e) => {
@@ -119,16 +123,18 @@ export default function ContainerScenario({
                     isTextTooLong("entonces", e.target.value);
                 }}
                 value={scenario.entonces}
+                {...(isDisabled ? { isReadOnly: true } : {})}
             />
-
-            <img
-                src="/icons/icon-trash.svg"
-                alt="Eliminar"
-                className="iconDelete2"
-                onClick={() => {
-                    functionRemove(indice - 1);
-                }}
-            />
+            {!isDisabled && (
+                <img
+                    src="/icons/icon-trash.svg"
+                    alt="Eliminar"
+                    className="iconDelete2"
+                    onClick={() => {
+                        functionRemove(indice - 1);
+                    }}
+                />
+            )}
         </div>
     );
 }

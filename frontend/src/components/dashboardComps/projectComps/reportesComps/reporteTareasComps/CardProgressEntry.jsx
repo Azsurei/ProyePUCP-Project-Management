@@ -3,7 +3,7 @@ import { Avatar } from "@nextui-org/react";
 
 function CardProgressEntry({ progressEntry }) {
     return (
-        <div className="flex flex-row border-b-1 pb-2 pt-1 px-1 gap-2 items-center  max-w-full relative">
+        <div className="flex flex-row border-b-1 pb-1 pt-1 px-1 gap-2 items-center  max-w-full relative h-auto  overflow-x-hidden">
             <Avatar
                 //isBordered
                 //as="button"
@@ -18,7 +18,7 @@ function CardProgressEntry({ progressEntry }) {
                     </p>
                 }
             />
-            <div className="flex flex-col flex-1  gap-0 absolute right-1 left-[54px]">
+            <div className="flex flex-col flex-1  gap-0  overflow-hidden">
                 <div className="flex flex-row w-full justify-between">
                     <p>
                         <span className="font-semibold">{progressEntry.nombres}</span> agregó {progressEntry.porcentajeRegistrado}%
@@ -27,7 +27,7 @@ function CardProgressEntry({ progressEntry }) {
                 </div>
 
 
-                <p className="italic font-bold text-slate-500 truncate">&quot;{progressEntry.descripcion}&quot;</p>
+                <p className="italic font-bold text-slate-500 truncate max-w-full">&quot;{progressEntry.descripcion}&quot;</p>
             </div>
         </div>
     );

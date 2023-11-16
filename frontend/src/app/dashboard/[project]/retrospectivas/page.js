@@ -48,7 +48,7 @@ export default function Retrospectiva(props) {
             const lineasRetrospectivaResponse = await axios.get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/retrospectiva/listarLineasRetrospectivaXIdRetrospectiva/" +
-                    herramientasInfo[9].idHerramientaCreada
+                    herramientasInfo.find(herramienta => herramienta.idHerramienta === 10).idHerramientaCreada
             );
 
             setLRetrospectivas(
@@ -59,9 +59,9 @@ export default function Retrospectiva(props) {
             const sprintsResponse = await axios.get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
-                    herramientasInfo[0].idHerramientaCreada + //id backlog
+                    herramientasInfo.find(herramienta => herramienta.idHerramienta === 1).idHerramientaCreada + //id backlog
                     `/` +
-                    herramientasInfo[3].idHerramientaCreada //id cronograma
+                    herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada //id cronograma
             );
 
             setListSprints(
@@ -85,7 +85,7 @@ export default function Retrospectiva(props) {
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/retrospectiva/listarLineasRetrospectivaXIdRetrospectiva/" +
-                    herramientasInfo[9].idHerramientaCreada
+                    herramientasInfo.find(herramienta => herramienta.idHerramienta === 10).idHerramientaCreada
             )
             .then((response) => {
                 setLRetrospectivas(response.data.lineasRetrospectiva);
@@ -95,9 +95,9 @@ export default function Retrospectiva(props) {
                     .get(
                         process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
-                            herramientasInfo[0].idHerramientaCreada + //id backlog
+                            herramientasInfo.find(herramienta => herramienta.idHerramienta === 1).idHerramientaCreada + //id backlog
                             `/` +
-                            herramientasInfo[3].idHerramientaCreada //id cronograma
+                            herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada //id cronograma
                     )
                     .then((response) => {
                         console.log(response);

@@ -288,6 +288,8 @@ export default function Egresos(props) {
     
     const DataTable = async () => {
         const fetchData = async () => {
+            if(presupuestoId!==""){
+
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
@@ -297,12 +299,15 @@ export default function Egresos(props) {
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
+        }
+
           };
             fetchData();
     };
 
     const DataEgresos= async () => {
         const fetchData = async () => {
+            if(presupuestoId!==""){
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEgresoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEgreso;
@@ -312,6 +317,7 @@ export default function Egresos(props) {
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
+        }
           };
             fetchData();
     };
@@ -319,6 +325,9 @@ export default function Egresos(props) {
     const [presupuesto, setPresupuesto] = useState([]);
     const ObtenerPresupuesto = async () => {
         const fetchData = async () => {
+            if(presupuestoId!==""){
+            
+       
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${presupuestoId}`);
               const data = response.data.presupuesto;
@@ -333,6 +342,7 @@ export default function Egresos(props) {
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
+        }
           };
             fetchData();
     };    

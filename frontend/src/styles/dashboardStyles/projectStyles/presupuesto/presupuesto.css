@@ -289,17 +289,12 @@
 
 }
 
-.modalAddIngreso {
-    display: flex; /* Make it a flex container */
-    align-items: flex-start; /* Vertically center the children */
-    gap: 20px; /* Add some spacing between the elements */
-}
+
 
 .comboBoxMoneda {
     flex: 1; /* Allow the combo box to grow and take available space */
     transform: translateY(-9%);
     z-index: 2;
-
 
 }
 
@@ -309,8 +304,7 @@
     padding-left: 6px;
     display: flex; /* Make it a flex container */
     align-items: center; /* Vertically center the children */
-    justify-content: space-between; /* Espacio entre los elementos */
-
+    gap: 13rem;
     color: #000;
     font-family: Montserrat;
     font-size: 15px;
@@ -410,6 +404,26 @@
 
 }
 
+.positiveTotal {
+    color: #46bf4a; /* Verde menos brillante */
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    background-color: #DDDADA;
+
+  }
+  
+  .negativeTotal {
+    color: #FF5555; /* Rojo menos brillante */
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    background-color: #DDDADA;
+
+  }
+
 .descripcionIngEg{
 
     color: #172B4D;
@@ -445,5 +459,30 @@
     font-family: Roboto;
     font-weight: 800;
     font-size: 15px;
+
+}
+.EstimaconceptoCell{
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+
+}
+.descriptionCell{
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+
+}
+
+.totalconceptoCell{
+    color: #172B4D;
+    font-family: Roboto;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
 
 }

@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-
+import { Toaster, toast } from "sonner";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
 import { SmallLoadingScreen } from "../../layout";
 
@@ -15,7 +15,7 @@ import {
     Checkbox,
 } from "@nextui-org/react";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import ModalUsers from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
+import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ChoiceUser.css";
 import "@/styles/dashboardStyles/projectStyles/actaReunionStyles/LineaActaReunion.css";
 
@@ -80,7 +80,10 @@ export default function editarActaReunion(props) {
                     'Content-Type': 'application/json'
                 }
             });
-
+            console.log("=============================================");
+            console.log("Respuesta del listar");
+            console.log(response.data.lineaActaReunion);
+            console.log("=============================================");
             // Update the actaReunion state with the fetched data
             setActaReunion(response.data);
             console.log(response.data);
@@ -546,8 +549,8 @@ export default function editarActaReunion(props) {
             </div>
             <div className="body m-5 mt-5">
                 <div className="mainInfo">
-                    <Card className="p-5 pt-3">
-                        <CardBody>
+                    <div className="p-5 pt-3 border border-slate-300 shadow-md relative rounded-lg">
+                        <div>
                             {actaReunion && (
                                 <input 
                                     className="lineMeetingTitle"
@@ -641,16 +644,16 @@ export default function editarActaReunion(props) {
                                 )}
 
                             </div>
-                        </CardBody>
-                        <CardFooter>
-                        </CardFooter>
-                    </Card>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
 
                 </div>
                 <br /><br />
-                <div className="invitedPeople p-5">
-                    <Card className="mx-auto">
-                        <CardHeader className="pt-5 pl-5 pb-2 mb-0 text-lg
+                <div className="invitedPeople p-5 border border-slate-300 shadow-md relative rounded-lg">
+                    <div className="mx-auto">
+                        <div className="pt-5 pl-5 pb-2 mb-0 text-lg
                             font-bold text-blue-950 font-sans">
                                 <div className="personasConvocadas flex align-center">
                                     <h3>Personas Convocadas</h3>
@@ -663,8 +666,8 @@ export default function editarActaReunion(props) {
                                         </button>
                                     )}
                                 </div>
-                        </CardHeader>
-                        <CardBody className="py-0 mt-0 ml-2">
+                        </div>
+                        <div className="py-0 mt-0 ml-2">
                             <div className="flex justify-between mb-2">
                                 <span className="text-mg font-semibold">Lista de Miembros</span>
                                 <span className="text-mg font-semibold mr-6">Asistencia</span>
@@ -693,22 +696,23 @@ export default function editarActaReunion(props) {
                                 </div>
                             ))}
                             {modal2 && (
-                                <ModalUsers
+                                <ModalUser
                                     listAllUsers={false}
                                     idProyecto={projectId}
                                     handlerModalClose={toggleModal2}
                                     handlerModalFinished={returnListParticipantes}
                                     excludedUsers={participantsList}
-                                ></ModalUsers>
+                                ></ModalUser>
                             )}
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
-
-                <div className="meetingTopics p-5">
-                    <Card className="mx-auto">
-                        <CardHeader>
+                <br/>
+                <br/>
+                <div className="meetingTopics p-5 border border-slate-300 shadow-md relative rounded-lg">
+                    <div className="mx-auto">
+                        <div>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                     Temas a tratar
@@ -726,8 +730,8 @@ export default function editarActaReunion(props) {
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                             )}
-                        </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8 pb-0 mb-0">
+                        </div>
+                        <div className="mt-0 py-0 pl-8 pb-0 mb-0">
                             <div className="topicsContainer">
                                 <TopicEditableList
                                     beEditable={isEditMode}
@@ -742,13 +746,15 @@ export default function editarActaReunion(props) {
                                 >
                                 </TopicEditableList>
                             </div>
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
-                <div className="pendingComments p-5">
-                    <Card className="mx-auto">
-                        <CardHeader>
+                <br/>
+                <br/>
+                <div className="pendingComments p-5 border border-slate-300 shadow-md relative rounded-lg">
+                    <div className="mx-auto">
+                        <div>
                             <div className="flex flex-col p-2">
                                 <h3 className="text-lg font-bold text-blue-950 font-sans mb-1">
                                     Comentarios Pendientes
@@ -766,8 +772,8 @@ export default function editarActaReunion(props) {
                                 <span className="text-xl" style={{ fontSize: '30px' }}>+</span>
                             </button>
                             )}
-                        </CardHeader>
-                        <CardBody className="mt-0 py-0 pl-8">
+                        </div>
+                        <div className="mt-0 py-0 pl-8">
                             <div className="topicsContainer">
                                 <ListEditableInput
                                     beEditable={true}
@@ -778,13 +784,14 @@ export default function editarActaReunion(props) {
                                     typeName="Comentario">
                                 </ListEditableInput>
                             </div>
-                        </CardBody>
-                        <CardFooter></CardFooter>
-                    </Card>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
 
             </div>
-
+            <br/>
+            <br/>
             <div className="footer">
                 <div className="containerBottom">
                     {fieldsEmpty && (
@@ -799,18 +806,6 @@ export default function editarActaReunion(props) {
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Modificación"
-                                textBody="¿Seguro que quiere descartar la modificación de el Acta de Reunión?"
-                                colorButton="w-36 bg-slate-100 text-black font-semibold"
-                                oneButton={false}
-                                secondAction={() => {
-                                    toggleEditMode();
-                                    router.refresh();
-                                }}
-                                textColor="red"
-                            />
-                            <Modal
                                 nameButton="Aceptar"
                                 textHeader="Modificar Acta de Reunión"
                                 textBody="¿Seguro que quiere modificar el Acta de Reunión?"
@@ -819,12 +814,18 @@ export default function editarActaReunion(props) {
                                 secondAction={() => {
                                     saveMeetingChanges();
                                     router.refresh();
+                                    toast.success(
+                                        "Se ha modificado el Acta de Reunion exitosamente"
+                                    );
                                     router.push('/dashboard/' + projectName+'='+projectId + '/actaReunion');
                                 }}
                                 textColor="blue"
                                 verifyFunction={() => {
                                     if (verifyFieldsEmpty()) {
                                         setFieldsEmpty(true);
+                                        toast.error(
+                                            "Faltan completar campos en el Acta de Reunion"
+                                        );
                                         return false;
                                     } else {
                                         setFieldsEmpty(false);
@@ -836,7 +837,15 @@ export default function editarActaReunion(props) {
                     </div>
                 )}
             </div>
-
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
             <GeneralLoadingScreen isLoading={isLoading}></GeneralLoadingScreen>
         </div>
     )

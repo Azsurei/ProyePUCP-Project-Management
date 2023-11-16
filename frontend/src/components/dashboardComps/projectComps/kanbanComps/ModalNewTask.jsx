@@ -205,9 +205,10 @@ function ModalNewTask({
                 {(onClose) => {
                     const finalizarModal = () => {
                         const result = onSubmit();
+                        
                         if (result === 1) {
                             const objTareaNueva = {
-                                idCronograma: herramientasInfo[3].idHerramientaCreada, 
+                                idCronograma: herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada, 
                                 idTareaEstado: 1, //No iniciado
                                 idSubGrupo: null,
                                 idPadre: null,
@@ -395,6 +396,11 @@ function ModalNewTask({
                                                     Entregable asociado
                                                 </p>
                                                 <Select
+                                                    onClick={()=>{
+                                                        if(listEntregables.length === 0){
+                                                            toast.warning("No cuenta con entregables en el proyecto");
+                                                        }
+                                                    }}
                                                     items={listEntregables}
                                                     variant="bordered"
                                                     isInvalid={!validEntregable}
@@ -618,9 +624,11 @@ function ModalNewTask({
             taskDescription === "" ||
             taskFechaInicio === "" ||
             taskFechaFin === "" ||
-            taskEntregable.length === 0 ||
+            taskEntregable.size === 0 ||
             taskUsers.length === 0
         ) {
+            console.log(taskEntregable);
+            console.log("hola");
             return 0;
         } else {
             return 1;

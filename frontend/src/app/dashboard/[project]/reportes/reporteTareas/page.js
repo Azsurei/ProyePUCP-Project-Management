@@ -10,6 +10,7 @@ import {
     Tabs,
 } from "@nextui-org/react";
 import axios from "axios";
+import "@/styles/dashboardStyles/projectStyles/reportesStyles/reporteTareasStyles/repTareas.css";
 import ListTareasReporte from "@/components/dashboardComps/projectComps/reportesComps/reporteTareasComps/ListTareasReporte";
 import TaskProgressReport from "@/components/dashboardComps/projectComps/reportesComps/reporteTareasComps/TaskProgressReport";
 import TasksGraphicView from "@/components/dashboardComps/projectComps/reportesComps/reporteTareasComps/TasksGraphicView";
@@ -117,9 +118,9 @@ function reporteTareas(props) {
                     .get(
                         process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
-                            herramientasInfo[0].idHerramientaCreada + //id backlog
+                            herramientasInfo.find(herramienta => herramienta.idHerramienta === 1).idHerramientaCreada + //id backlog
                             `/` +
-                            herramientasInfo[3].idHerramientaCreada //id cronograma
+                            herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada //id cronograma
                     )
                     .then((response) => {
                         console.log(response);
@@ -257,7 +258,7 @@ function reporteTareas(props) {
             <Divider></Divider>
 
             <div className="flex-1 flex flex-col items-center justify-center relative">
-                <div className="flex flex-row absolute top-0 bottom-1/2 left-0 right-0 mb-4">
+                <div className="flex flex-row gap-3 absolute top-0 bottom-1/2 left-0 right-0 mb-4">
                     <div className="  flex flex-col overflow-hidden flex-1">
                         <p className={twStyle1}>Listado de tareas</p>
                         <p className=" text-slate-400">
@@ -281,7 +282,7 @@ function reporteTareas(props) {
                         </div>
                     </div>
 
-                    <Divider orientation="vertical" className="mx-4"></Divider>
+                    <Divider orientation="vertical" className=""></Divider>
 
                     {selectedTask === null && (
                         <div className="flex flex-col flex-1 overflow-y-hidden items-center justify-center">

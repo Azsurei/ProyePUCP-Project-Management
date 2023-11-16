@@ -11,6 +11,7 @@ axios.defaults.withCredentials = true;
 
 export const SmallLoadingScreen = createContext();
 export const HerramientasInfo = createContext();
+export const ProjectInfo = createContext();
 
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
@@ -19,6 +20,7 @@ export default function RootLayout({ children, params }) {
 
     const [isLoadingSmall, setIsLoadingSmall] = useState(true);
     const [herramientasInfo, setHerramientasInfo] = useState(null);
+    const [projectInfo, setProjectInfo] = useState(null);
 
     const { sessionData, setSession } = useContext(SessionContext);
     const [rolHasBeenAsigned, setRolAsigned] = useState(false);
@@ -63,6 +65,7 @@ export default function RootLayout({ children, params }) {
                 console.log(error);
             });
 
+
         const stringURL2 =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/herramientas/" +
@@ -76,6 +79,23 @@ export default function RootLayout({ children, params }) {
                     "============= LAYOUT HERRAMIENTAS TERMINO DE CARGAR"
                 );
                 //setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+        const stringURL3 =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/verInfoProyecto/" +
+            projectId;
+        axios
+            .get(stringURL3)
+            .then(function (response) {
+                setProjectInfo(response.data.infoProyecto);
+                console.log(
+                    "============= LAYOUT PROYECT INFO TERMINO DE CARGAR"
+                );
             })
             .catch(function (error) {
                 console.log(error);
@@ -98,54 +118,56 @@ export default function RootLayout({ children, params }) {
                     }}
                 ></ProjectSidebar>
 
-                <HerramientasInfo.Provider value={{ herramientasInfo }}>
-                    <div
-                        style={{
-                            flex: "1",
-                            position: "relative",
-                        }}
-                        className="h-[100%] bg-mainBackground"
-                    >
-                        {isLoadingSmall && (
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    width: "100%",
-                                    height: "100%",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: ".2rem",
-                                    zIndex: 10,
-                                }}
-                                className="bg-mainBackground"
-                            >
-                                <p
+                <ProjectInfo.Provider value={{projectInfo, setProjectInfo}}>
+                    <HerramientasInfo.Provider value={{ herramientasInfo }}>
+                        <div
+                            style={{
+                                flex: "1",
+                                position: "relative",
+                            }}
+                            className="h-[100%] bg-mainBackground"
+                        >
+                            {isLoadingSmall && (
+                                <div
                                     style={{
-                                        fontFamily: "Montserrat",
-                                        fontSize: "2.5rem",
-                                        color: "lightgray",
-                                        fontWeight: "700",
+                                        position: "absolute",
+                                        width: "100%",
+                                        height: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: ".2rem",
+                                        zIndex: 99,
                                     }}
+                                    className="bg-mainBackground"
                                 >
-                                    ProyePUCP
-                                </p>
-                                <Box
-                                    sx={{ width: "170px", color: "lightgray" }}
-                                >
-                                    <LinearProgress color="inherit" />
-                                </Box>
+                                    <p
+                                        style={{
+                                            fontFamily: "Montserrat",
+                                            fontSize: "2.5rem",
+                                            color: "lightgray",
+                                            fontWeight: "700",
+                                        }}
+                                    >
+                                        ProyePUCP
+                                    </p>
+                                    <Box
+                                        sx={{ width: "170px", color: "lightgray" }}
+                                    >
+                                        <LinearProgress color="inherit" />
+                                    </Box>
+                                </div>
+                            )}
+                            <div className="h-[100%] overflow-auto bg-mainBackground">
+                                {herramientasInfo !== null && projectInfo !== null &&
+                                    rolHasBeenAsigned &&
+                                    isSidebarDone &&
+                                    children}
                             </div>
-                        )}
-                        <div className="h-[100%] overflow-auto bg-mainBackground">
-                            {herramientasInfo !== null &&
-                                rolHasBeenAsigned &&
-                                isSidebarDone &&
-                                children}
                         </div>
-                    </div>
-                </HerramientasInfo.Provider>
+                    </HerramientasInfo.Provider>
+                </ProjectInfo.Provider>
             </SmallLoadingScreen.Provider>
         </div>
     );

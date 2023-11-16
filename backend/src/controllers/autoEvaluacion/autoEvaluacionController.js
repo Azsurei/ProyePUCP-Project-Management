@@ -170,17 +170,17 @@ async function finalizarAutoEvaluacion(req,res,next){
     }
 }
 
-async function eliminar(req,res,next){
-    const { idAutoevaluacion } = req.params;
+async function eliminar(idAutoevaluacion){
+    //const { idAutoevaluacion } = req.body;
     console.log(`Procediendo: Eliminar/Autoevaluacion ${idAutoevaluacion}...`);
     try {
         const result = await funcEliminar(idAutoevaluacion);
-        res.status(200).json({
-            idAutoevaluacion,
-            message: "Autoevaluacion eliminado"});
-        console.log(`Autoevaluacion ${idAutoevaluacion} eliminado.`);
+        // res.status(200).json({
+        //     idAutoevaluacion,
+        //     message: "Autoevaluacion eliminado"});
+        // console.log(`Autoevaluacion ${idAutoevaluacion} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/Autoevaluacion", error);
     }
 }
 
@@ -189,7 +189,31 @@ async function funcEliminar(idAutoevaluacion) {
         const query = `CALL ELIMINAR_AUTOEVALUACION_X_ID_AUTOEVALUACION(?);`;
         [results] = await connection.query(query,[idAutoevaluacion]);
     } catch (error) {
-        console.log("ERROR en Eliminar/Autoevaluacion", error);
+        console.log("ERROR 2 en Eliminar/Autoevaluacion", error);
+        return 0;
+    }
+    return 1;
+}
+
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/Autoevaluacion del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`Autoevaluacion del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/Autoevaluacion X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_AUTOEVALUACION_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/Autoevaluacion X Proyecto", error);
         return 0;
     }
     return 1;
@@ -237,5 +261,6 @@ module.exports = {
     activarAutoEvaluacion,
     finalizarAutoEvaluacion,
     eliminar,
+    eliminarXProyecto,
     listarAutoEvaluacionNotas
 };

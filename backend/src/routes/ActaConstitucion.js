@@ -8,6 +8,7 @@ routerActaConstitucion.put("/modificarCampos",verifyToken, actaConstitucionContr
 routerActaConstitucion.post("/crearCampos", verifyToken, actaConstitucionController.crearCampos);
 routerActaConstitucion.put("/eliminarCampo", verifyToken, actaConstitucionController.eliminarCampo);
 routerActaConstitucion.delete("/eliminarActaConstitucion", actaConstitucionController.eliminar);
+routerActaConstitucion.delete("/eliminarActaConstitucionXProyecto", actaConstitucionController.eliminarXProyecto);
 //Hito
 routerActaConstitucion.get("/listarHito/:idProyecto",verifyToken, actaConstitucionController.listarHito);
 routerActaConstitucion.post("/insertarHito",verifyToken, actaConstitucionController.insertarHito);

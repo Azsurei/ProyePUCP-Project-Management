@@ -8,7 +8,7 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner, Avatar } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
@@ -46,7 +46,7 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
+    const idProductBacklog = herramientasInfo.find(herramienta => herramienta.idHerramienta===1).idHerramientaCreada;
     const stringURLEpics =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
@@ -78,11 +78,10 @@ export default function ProductBacklogRegister(props) {
     const toggleModal = () => {
         handleReloadData();
         setModal(!modal);
-        
     };
     const listarDenuevo = () => {
         setReloading(!reloading);
-    }
+    };
 
     useEffect(() => {
         const stringURLUsuario =
@@ -364,14 +363,21 @@ export default function ProductBacklogRegister(props) {
                             <div className="flex gap-4">
                                 <Spinner size="lg" />
                             </div>
-                        ) : (   
+                        ) : (
                             <div className="iconLabel2">
-                                <p className="profilePic">
-                                    {datosUsuario?.nombres[0] +
-                                        (datosUsuario?.apellidos !== null
-                                            ? datosUsuario?.apellidos[0]
-                                            : "")}
-                                </p>
+                                <Avatar
+                                    className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                    src={datosUsuario?.imgLink}
+                                    fallback={
+                                        <p className="profilePic">
+                                            {datosUsuario?.nombres[0] +
+                                                (datosUsuario?.apellidos !==
+                                                null
+                                                    ? datosUsuario?.apellidos[0]
+                                                    : "")}
+                                        </p>
+                                    }
+                                />
                                 <div className="labelDatoUsuario">
                                     {capitalizeWords(
                                         `${datosUsuario?.nombres} ${
@@ -570,7 +576,7 @@ export default function ProductBacklogRegister(props) {
                             process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/hu/eliminarEpica`
                         }
-                        reloadData={()=>listarDenuevo()}
+                        reloadData={() => listarDenuevo()}
                     />
                 )}
             </div>

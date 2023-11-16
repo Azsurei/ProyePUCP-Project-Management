@@ -7,7 +7,7 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner, Avatar, Button } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import ContainerScenario2 from "@/components/dashboardComps/projectComps/productBacklog/ContainerScenario2";
@@ -26,16 +26,19 @@ function getCurrentDate() {
 }
 
 export default function ProductBacklogUpdate(props) {
+    const keyParamURL = decodeURIComponent(props.params.updatePB);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const idHU = props.params.updatePB;
     const decodedUrl = decodeURIComponent(props.params.project);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    const idProductBacklog = herramientasInfo[0].idHerramientaCreada;
+    const idProductBacklog = herramientasInfo.find(herramienta => herramienta.idHerramienta===1).idHerramientaCreada;
     const stringURLEpics =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
+    const [editMode, setEditMode] = useState(false);
     const [quantity, setQuantity] = useState(0);
     const [quantity1, setQuantity1] = useState(0);
     const [selectedValueEpic, setSelectedValueEpic] = useState(null);
@@ -53,14 +56,20 @@ export default function ProductBacklogUpdate(props) {
     const [requirementFieldsOriginales, setRequirementFieldsOriginales] =
         useState([]);
     const [datosUsuario, setDatosUsuario] = useState(null);
+    const [imagen, setImagen] = useState(null);
     const [historiaUsuario, setHistoriaUsuario] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState("");
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
+    const [reloadData, setReloadData] = useState(false);
+    const [reloading, setReloading] = useState(true);
+
+    // Esta función se llama cuando deseas recargar los datos
+    const handleReloadData = () => {
+        setReloadData(true);
+    };
 
     useEffect(() => {
         if (historiaUsuario && historiaUsuario.hu) {
@@ -75,6 +84,7 @@ export default function ProductBacklogUpdate(props) {
             setQuiero(historiaUsuario.hu[0].quiero);
             setPara(historiaUsuario.hu[0].para);
             setDatosUsuario(historiaUsuario.hu[0].NombreUsuario);
+            setImagen(historiaUsuario.hu[0].Imagen);
             const criteriosAceptacionOriginales =
                 historiaUsuario.criteriosAceptacion;
             const scenarioFieldsActualizados =
@@ -111,19 +121,53 @@ export default function ProductBacklogUpdate(props) {
     const toggleModal = () => {
         setModal(!modal);
     };
+    const listarDenuevo = () => {
+        setReloading(!reloading);
+    };
+
     useEffect(() => {
         if (modal) {
             document.body.style.overflow = "hidden";
+            setReloadData(true);
         } else {
             document.body.style.overflow = "auto";
+            setReloadData(false);
         }
         setIsLoadingSmall(false);
     }, [modal]);
+    useEffect(() => {
+        if (reloading) {
+            document.body.style.overflow = "hidden";
+            setReloadData(true);
+        } else {
+            document.body.style.overflow = "auto";
+            setReloadData(false);
+        }
+        setIsLoadingSmall(false);
+    }, [reloading]);
 
     useEffect(() => {
-        const stringURLHU =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            `/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
+        const numberPattern = /^\d+$/;
+        const editPattern = /^\d+=edit$/;
+        let stringURLHU;
+        console.log("El keyParamURL es:", keyParamURL);
+        if (numberPattern.test(keyParamURL)) {
+            console.log("It's a number:", keyParamURL);
+            setEditMode(false);
+            stringURLHU =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/backlog/hu/${idHU}/listarHistoriaDeUsuario`;
+        } else if (editPattern.test(keyParamURL)) {
+            console.log("It's a number followed by '=edit':", keyParamURL);
+            setEditMode(true);
+            const updateId = parseInt(
+                keyParamURL.substring(0, keyParamURL.lastIndexOf("="))
+            );
+            stringURLHU =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/backlog/hu/${updateId}/listarHistoriaDeUsuario`;
+        }
+
         axios
             .get(stringURLHU)
             .then(function (response) {
@@ -421,14 +465,37 @@ export default function ProductBacklogUpdate(props) {
                 Backlog / Registrar elemento
             </div> */}
             <div className="backlogRegisterPB">
-                <div className="titleBacklogRegisterPB dark:text-white">
-                    Editar elemento en el Backlog
+                <div className="flex justify-between items-center">
+                    <div className="titleBacklogRegisterPB dark:text-white">
+                        Editar elemento en el Backlog
+                    </div>
+                    <div>
+                        {!editMode && (
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/backlog/productBacklog/" +
+                                            props.params.updatePB +
+                                            "=edit"
+                                    );
+                                }}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </div>
                 </div>
                 {historiaUsuario ? (
                     <div>
                         <DescriptionRequeriment
                             name={name}
                             onNameChange={setName}
+                            isDisabled={!editMode}
                         />
                     </div>
                 ) : (
@@ -454,18 +521,22 @@ export default function ProductBacklogUpdate(props) {
                                 hasColor={false}
                                 onSelect={handleSelectedValueChangeEpic}
                                 idParam="idEpica"
+                                reloadData={reloadData}
                                 initialName={selectedNameEpic}
+                                isDisabled={!editMode}
                             />
-                            <button
-                                className="w-20 h-20"
-                                type="button"
-                                onClick={() => toggleModal()}
-                            >
-                                <img
-                                    src="/icons/btnEditImagen.svg"
-                                    alt="Descripción de la imagen"
-                                />
-                            </button>
+                            {editMode && (
+                                <button
+                                    className="w-20 h-20"
+                                    type="button"
+                                    onClick={() => toggleModal()}
+                                >
+                                    <img
+                                        src="/icons/btnEditImagen.svg"
+                                        alt="Descripción de la imagen"
+                                    />
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className="date containerCombo">
@@ -494,6 +565,7 @@ export default function ProductBacklogUpdate(props) {
                             onSelect={handleSelectedValueChangePriority}
                             idParam="idHistoriaPrioridad"
                             initialName={selectedNamePriority}
+                            isDisabled={!editMode}
                         />
                     </div>
                     <div className="createdBy containerCombo">
@@ -508,10 +580,18 @@ export default function ProductBacklogUpdate(props) {
                             </div>
                         ) : (
                             <div className="iconLabel2">
-                                <p className="profilePic">
-                                    {datosUsuario.split(" ")[0][0] +
-                                        datosUsuario.split(" ")[1][0]}
-                                </p>
+                                <Avatar
+                                    //isBordered
+                                    //as="button"
+                                    className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem]"
+                                    src={imagen}
+                                    fallback={
+                                        <p className="profilePic">
+                                            {datosUsuario.split(" ")[0][0] +
+                                                datosUsuario.split(" ")[1][0]}
+                                        </p>
+                                    }
+                                />
                                 <div className="labelDatoUsuario">{`${datosUsuario}`}</div>
                             </div>
                         )}
@@ -532,6 +612,7 @@ export default function ProductBacklogUpdate(props) {
                             onSelect={handleSelectedValueChangeState}
                             idParam="idHistoriaEstado"
                             initialName={selectedNameState}
+                            isDisabled={!editMode}
                         />
                     </div>
                 </div>
@@ -547,6 +628,7 @@ export default function ProductBacklogUpdate(props) {
                         onComoChange={setComo}
                         onQuieroChange={setQuiero}
                         onParaChange={setPara}
+                        isDisabled={!editMode}
                     />
                 </div>
                 <div className="acceptanceCriteria">
@@ -570,21 +652,24 @@ export default function ProductBacklogUpdate(props) {
                                 onUpdateScenario={onUpdateScenario}
                                 scenario={criterio}
                                 functionRemove={removeContainer}
+                                isDisabled={!editMode}
                             />
                         ))
                     )}
                     {console.log("Scenario fields: ", scenarioFields)}
-                    <div className="twoButtons">
-                        <div className="buttonContainer">
-                            <button
-                                onClick={addContainer}
-                                className="buttonTitle"
-                                type="button"
-                            >
-                                Agregar
-                            </button>
+                    {editMode && (
+                        <div className="twoButtons">
+                            <div className="buttonContainer">
+                                <button
+                                    onClick={addContainer}
+                                    className="buttonTitle"
+                                    type="button"
+                                >
+                                    Agregar
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div className="requirements">
                     <div className="titleButton">
@@ -605,97 +690,97 @@ export default function ProductBacklogUpdate(props) {
                                 updateRequirementField={updateRequirementField}
                                 requirement={requirement}
                                 functionRemove={removeContainer1}
+                                isDisabled={!editMode}
                             />
                         ))
                     )}
                     {console.log("Requeriments Fields: ", requirementFields)}
-                    <div className="twoButtons">
-                        <div className="buttonContainer">
-                            <button
-                                onClick={addContainer1}
-                                className="buttonTitle"
-                                type="button"
-                            >
-                                Agregar
-                            </button>
+                    {editMode && (
+                        <div className="twoButtons">
+                            <div className="buttonContainer">
+                                <button
+                                    onClick={addContainer1}
+                                    className="buttonTitle"
+                                    type="button"
+                                >
+                                    Agregar
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 <div className="containerBottom">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    <div className="twoButtons1">
-                        <div className="buttonContainer">
-                            <Modal
-                                nameButton="Descartar"
-                                textHeader="Descartar Actualización"
-                                textBody="¿Seguro que quiere descartar la actualización de la historia de usuario?"
-                                colorButton="w-36 bg-slate-100 text-black"
-                                oneButton={false}
-                                secondAction={() => router.back()}
-                                textColor="red"
-                            />
-                            <Modal
-                                nameButton="Aceptar"
-                                textHeader="Actualizar Historia de Usuario"
-                                textBody="¿Seguro que quiere actualizar la historia de usuario?"
-                                colorButton="w-36 bg-blue-950 text-white"
-                                oneButton={false}
-                                secondAction={() => {
-                                    onSubmit();
-                                    router.back();
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (
-                                        verifyFieldsEmpty() &&
-                                        verifyFieldsExcessive()
-                                    ) {
-                                        toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else if (
-                                        verifyFieldsEmpty() &&
-                                        !verifyFieldsExcessive()
-                                    ) {
-                                        toast.error("Faltan completar campos");
-                                        return false;
-                                    } else if (
-                                        verifyFieldsExcessive() &&
-                                        !verifyFieldsEmpty()
-                                    ) {
-                                        toast.error(
-                                            "Se excedió el límite de caractéres"
-                                        );
-                                        return false;
-                                    } else {
-                                        return true;
+                    {editMode && (
+                        <div className="twoButtons1">
+                            <div className="buttonContainer">
+                                <Modal
+                                    nameButton="Descartar"
+                                    textHeader="Descartar Actualización"
+                                    textBody="¿Seguro que quiere descartar la actualización de la historia de usuario?"
+                                    colorButton="w-36 bg-slate-100 text-black"
+                                    oneButton={false}
+                                    secondAction={() =>
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/backlog/productBacklog"
+                                        )
                                     }
-                                }}
-                            />
+                                    textColor="red"
+                                />
+                                <Modal
+                                    nameButton="Aceptar"
+                                    textHeader="Actualizar Historia de Usuario"
+                                    textBody="¿Seguro que quiere actualizar la historia de usuario?"
+                                    colorButton="w-36 bg-blue-950 text-white"
+                                    oneButton={false}
+                                    secondAction={() => {
+                                        onSubmit();
+                                        router.push(
+                                            "/dashboard/" +
+                                                projectName +
+                                                "=" +
+                                                projectId +
+                                                "/backlog/productBacklog"
+                                        );
+                                    }}
+                                    textColor="blue"
+                                    verifyFunction={() => {
+                                        if (
+                                            verifyFieldsEmpty() &&
+                                            verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos y se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsEmpty() &&
+                                            !verifyFieldsExcessive()
+                                        ) {
+                                            toast.error(
+                                                "Faltan completar campos"
+                                            );
+                                            return false;
+                                        } else if (
+                                            verifyFieldsExcessive() &&
+                                            !verifyFieldsEmpty()
+                                        ) {
+                                            toast.error(
+                                                "Se excedió el límite de caractéres"
+                                            );
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 {modal && (
                     <PopUpEpica
@@ -707,6 +792,7 @@ export default function ProductBacklogUpdate(props) {
                             process.env.NEXT_PUBLIC_BACKEND_URL +
                             `/api/proyecto/backlog/hu/eliminarEpica`
                         }
+                        reloadData={() => listarDenuevo()}
                     />
                 )}
             </div>

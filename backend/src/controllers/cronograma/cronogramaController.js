@@ -45,17 +45,17 @@ async function listarEntregablesXidProyecto(req,res,next){
     }
 }
 
-async function eliminar(req,res,next){
-    const { idCronograma } = req.params;
+async function eliminar(idCronograma){
+    //const { idCronograma } = req.body;
     console.log(`Procediendo: Eliminar/Cronograma ${idCronograma}...`);
     try {
         const result = await funcEliminar(idCronograma);
-        res.status(200).json({
-            idCronograma,
-            message: "Cronograma eliminado"});
+        // res.status(200).json({
+        //     idCronograma,
+        //     message: "Cronograma eliminado"});
         console.log(`Cronograma ${idCronograma} eliminado.`);
     } catch (error) {
-        next(error);
+        console.log("ERROR 1 en Eliminar/Cronograma", error);
     }
 }
 
@@ -64,7 +64,31 @@ async function funcEliminar(idCronograma) {
         const query = `CALL ELIMINAR_CRONOGRAMA_X_ID_CRONOGRAMA(?);`;
         [results] = await connection.query(query,[idCronograma]);
     } catch (error) {
-        console.log("ERROR en Eliminar/Cronograma", error);
+        console.log("ERROR 2 en Eliminar/Cronograma", error);
+        return 0;
+    }
+    return 1;
+}
+
+async function eliminarXProyecto(idProyecto){
+    // const { idProductBacklog } = req.body;
+    console.log(`Procediendo: Eliminar/Cronograma del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        // res.status(200).json({
+        //     message: "Product Backlog eliminado"});
+        console.log(`Cronograma del Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/Cronograma X Proyecto", error);
+    }
+}
+
+async function funcEliminarXProyecto(idProyecto) {
+    try {
+        const query = `CALL ELIMINAR_CRONOGRAMA_X_ID_PROYECTO(?);`;
+        [results] = await connection.query(query,[idProyecto]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/Cronograma X Proyecto", error);
         return 0;
     }
     return 1;
@@ -74,6 +98,7 @@ module.exports = {
     crear,
     actualizar,
     eliminar,
+    eliminarXProyecto,
     listar,
     listarEntregablesXidProyecto
 };

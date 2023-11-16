@@ -20,6 +20,12 @@ async function listarTareasTodasSinPosteriores(idProyecto) {
         const [resultsTareas] = await connection.query(query, [idProyecto]);
         tareas = resultsTareas[0];
 
+        for(const tarea of tareas){
+            const query2 = "CALL LISTAR_USUARIOS_X_ID_TAREA(?);"
+            const [resultUsuarios] = await connection.query(query2, [tarea.idTarea]);
+            tarea.usuarios = resultUsuarios[0];
+        }
+
         return tareas;
     } catch (error) {
         console.log(error);

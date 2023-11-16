@@ -6,6 +6,7 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
+import { Toaster, toast } from "sonner";
 import {Button, Avatar, AvatarGroup, Card, CardBody, CardHeader, Divider, Spacer} from '@nextui-org/react';
 import {Tabs, Tab} from '@nextui-org/react';
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -102,13 +103,13 @@ export default function ActaReunion(props) {
         return (
             <div
                 key={reunion.idLineaActaReunion}
-                className="flex flex-wrap items-start my-4 space-x-4 justify-center" >
-                <Card key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
-                    <CardHeader className="p-4">
+                className="flex flex-wrap items-start my-4 space-x-4 justify-center border border-slate-300 shadow-md relative rounded-lg" >
+                <div key={reunion.idLineaActaReunion} className="flex-grow w-full sm:w-72 md:w-80 lg:w-96 xl:w-[400px] mx-auto" isPressable={true}>
+                    <div className="p-4">
                         <h3 className="text-xl font-bold text-blue-900 montserrat">{reunion.nombreReunion}</h3>
-                    </CardHeader>
+                    </div>
                     <Divider orientation={"horizontal"}/>
-                    <CardBody className="flex-row justify-between items-center h-36">
+                    <div className="flex flex-row justify-between items-center h-36 p-4">
                         <div className="mr-4">
                             <p className="text-blue-900 montserrat">Reunión convocada por:</p>
                             <p className="text-blue-900 montserrat">{reunion.nombreConvocante}</p>
@@ -137,12 +138,15 @@ export default function ActaReunion(props) {
                                 oneButton={false}
                                 secondAction={() => {
                                     handleDelete(reunion.idLineaActaReunion).then(r => console.log(r));
+                                    toast.success(
+                                        "Se ha eliminado el Acta de Reunion exitosamente"
+                                    );
                                 }}
                                 textColor="red"
                             />
                         </div>
-                    </CardBody>
-                </Card>
+                    </div>
+                </div>
 
             </div>
 
@@ -201,6 +205,15 @@ export default function ActaReunion(props) {
                     </div>
                 )
             }
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
         </div>
     );
 }
