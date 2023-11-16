@@ -176,10 +176,10 @@ BEGIN
 END; //
 DELIMITER ;
 
-
-----------------------------------------------
+---------------------------------------------
 -- Sprints
-----------------------------------------------
+---------------------------------------------
+
 DROP PROCEDURE IF EXISTS INSERTAR_SPRINT;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_SPRINT(
@@ -538,11 +538,11 @@ BEGIN
     SELECT _idComponenteCriterioDeAceptacion AS idComponenteCriterioDeAceptacion;
 END$
 
-
+DROP PROCEDURE IF EXISTS INSERTAR_ENTREGABLE;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ENTREGABLE(
-    IN _nombre VARCHAR(255),
-    IN _idComponente	INT
+    IN _idComponente INT,
+    IN _nombre	VARCHAR(255)
 )
 BEGIN
 	DECLARE _idEntregable INT;
@@ -805,7 +805,7 @@ BEGIN
 END$
 
 CALL INSERTAR_TEMA_REUNION(1, 'Discusión sobre el plan de proyecto');
-CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(1)
+CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(170);
 
 DROP PROCEDURE IF EXISTS MODIFICAR_TEMA_REUNION;
 DELIMITER $
