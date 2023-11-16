@@ -105,14 +105,14 @@ async function funcGetJSONFile(idArchivo) {
     try {
         const [results] = await connection.query(query, [idArchivo]);
         const file = results[0][0];
-        console.log(file.nombre_s3);
+        console.log(file.nombreGenerado);
 
         // Create a presigned URL for the file
         const command = getSignedUrl(
             s3,
             new GetObjectCommand({
                 Bucket: bucketName,
-                Key: file.nombre_s3,
+                Key: file.nombreGenerado,
             }),
             { expiresIn: 3600 } // URL expiration time in seconds
         );
