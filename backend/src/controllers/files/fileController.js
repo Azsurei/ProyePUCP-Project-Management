@@ -5,11 +5,20 @@ const crypto = require("crypto");
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
+const region = process.env.AWS_BUCKET_REGION
+const accessKeyId = process.env.AWS_ACCESS_KEY
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+const sessiontoken = process.env.AWS_SESSION_TOKEN
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const s3 = new S3Client({
-    region: 'us-east-1'
-});
+    region,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+      sessiontoken
+    }
+  })
 
 
 async function postFile(req,res,next){

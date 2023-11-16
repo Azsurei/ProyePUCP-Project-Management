@@ -48,13 +48,16 @@ import {
 } from "@/common/dateFunctions";
 import CrossIcon from "@/components/dashboardComps/projectComps/cronogramaComps/CrossIcon";
 import ModalRegisterProgress from "@/components/dashboardComps/projectComps/cronogramaComps/ModalRegisterProgress";
-import { SessionContext } from "../../layout";
+import { NotificationsContext, SessionContext } from "../../layout";
 import Link from "next/link";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { sendNotification } =
+        useContext(NotificationsContext);
+
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -613,6 +616,7 @@ export default function Cronograma(props) {
                 .post(newURL, objTareaNueva)
                 .then(function (response) {
                     console.log(response.data.message);
+                    const nuevoIdTarea = response.data.idTarea;
                     //actualizamos lista de tareas
 
                     const tareasURL =
@@ -625,6 +629,13 @@ export default function Cronograma(props) {
                             console.log(response);
                             setListTareas(response.data.tareasOrdenadas);
                             console.log(response.data.tareasOrdenadas);
+
+                            for(const usuario of selectedUsers){
+                                if(usuario.idUsuario !== sessionData.idUsuario){
+                                    //await sendNotification(usuario.idUsuario,1,nuevoIdTarea);
+                                    console.log("mandando notificacion")
+                                }
+                            }
 
                             resolve(response);
                         })

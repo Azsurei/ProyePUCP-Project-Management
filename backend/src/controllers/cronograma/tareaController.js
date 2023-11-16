@@ -48,7 +48,10 @@ async function crear(req, res, next) {
 
         await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
         console.log(`Tarea ${idTarea} creada`);
-        res.status(200).json({ message: `Tarea ${idTarea} creada` });
+        res.status(200).json({ 
+            idTarea: idTarea,
+            message: `Tarea ${idTarea} creada`
+        });
     } catch (error) {
         next(error);
         console.log(error);
