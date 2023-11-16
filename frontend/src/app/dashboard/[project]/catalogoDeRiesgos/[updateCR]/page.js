@@ -75,6 +75,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             setFechaInicio(
                 new Date(crData.fechaIdentificacion).toISOString().split("T")[0]
             );
+            console.log("Fecha FORMATO:", new Date(crData.fechaIdentificacion).toISOString().split("T")[0]);
             const miembro = {
                 imgLink: crData.imgLink,
                 correoElectronico: crData.correoElectronico,
@@ -712,7 +713,6 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 <div className="titleButtonCR">
                     <h4 style={{ fontWeight: 600 }}>
                         Responsables del riesgo
-                        <span className="text-red-500"> *</span>
                     </h4>
                 </div>
                 <div className="containerResponsables">
