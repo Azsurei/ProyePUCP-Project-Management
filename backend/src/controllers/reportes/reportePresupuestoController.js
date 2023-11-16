@@ -207,7 +207,7 @@ async function subirJSON(req, res, next) {
 
 async function obtenerJSON(req,res,next){
     const {idArchivo} = req.params;
-
+    console.log(idArchivo);
     try{
         const jsonData = await fileController.funcGetJSONFile(idArchivo)
         console.log(jsonData);
