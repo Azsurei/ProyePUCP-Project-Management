@@ -12,12 +12,12 @@ const sessiontoken = process.env.AWS_SESSION_TOKEN
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const s3 = new S3Client({
-    region,
+    region/*,
     credentials: {
       accessKeyId,
       secretAccessKey,
       sessiontoken
-    }
+    */
   })
 
 
@@ -34,7 +34,6 @@ async function postFile(req,res,next){
     try {
         const command = new PutObjectCommand(params);
         await s3.send(command);
-        res.send();
         const [results] = await connection.query(query, [fileName, req.file.originalname]);
         const idArchivo = results[0][0].idArchivo;
         res.status(200).json({
