@@ -4733,8 +4733,9 @@ CREATE PROCEDURE LISTAR_REPORTES_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT rp.idReporteXProyecto,rp.fileId,rp.nombre ,rp.fechaCreacion, rp.fechaCreacion,h.idHerramienta, h.nombre as nombreHerramienta
-    FROM ReporteXProyecto rp LEFT JOIN Herramienta h ON h.idHerramienta = rp.idHerramienta WHERE rp.idProyecto = _idProyecto and rp.activo=1;
+	SELECT rp.idReporteXProyecto,a.nombreGenerado as fileId,a.nombreReal,rp.nombre ,rp.fechaCreacion, rp.fechaCreacion,h.idHerramienta, h.nombre as nombreHerramienta
+    FROM ReporteXProyecto rp LEFT JOIN Herramienta h ON h.idHerramienta = rp.idHerramienta LEFT JOIN Archivo a ON a.idArchivo = rp.idArchivo 
+    WHERE rp.idProyecto = _idProyecto and rp.activo=1;
 END$
 
 CALL LISTAR_REPORTES_X_ID_PROYECTO(178);

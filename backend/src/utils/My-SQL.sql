@@ -1297,7 +1297,7 @@ CREATE TABLE EntregableXResponsabilidadRol(
 )
 ENGINE = InnoDB;
 
-<<<<<<< HEAD
+
 #####################################
 ### REPORTE
 #####################################
@@ -1307,17 +1307,20 @@ CREATE TABLE ReporteXProyecto(
     idReporteXProyecto INT AUTO_INCREMENT PRIMARY KEY,
     idProyecto INT,
     idHerramienta INT,
+    idArchivo INT,
     fileId VARCHAR(30),
     nombre VARCHAR(255),
     fechaCreacion DATE,
     activo tinyint NOT NULL,
     FOREIGN KEY(idProyecto) REFERENCES Proyecto(idProyecto),
-    FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta)
+    FOREIGN KEY(idHerramienta) REFERENCES Herramienta(idHerramienta),
+	FOREIGN KEY(idArchivo) REFERENCES Archivo(idArchivo)
 )
 ENGINE = InnoDB;
 
 
 
+SELECT * FROM ReporteXProyecto;
 -----------------------
 -- Plantillas
 -----------------------
@@ -1368,13 +1371,13 @@ CREATE TABLE PlantillaMRDatos(
     FOREIGN KEY(idPlantillaMR) REFERENCES PlantillaMR (idPlantillaMR)
 )
 ENGINE = InnoDB;
-
-
+SELECT * FROM ReporteXProyecto;
+SELECT * FROM Archivo;
 DROP TABLE IF EXISTS Archivo;
 CREATE TABLE Archivo(
     idArchivo INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_s3 VARCHAR(500),
-    nombre_real VARCHAR(500)
+    nombreGenerado VARCHAR(500),
+    nombreReal VARCHAR(500)
 )
 ENGINE = InnoDB;
 
