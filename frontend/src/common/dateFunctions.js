@@ -4,7 +4,9 @@ export function dbDateToDisplayDate(dbDate) {
     // return formattedDate.toLocaleDateString();
     //return formattedDate.toISOString().split("T")[0];
 
-    const isoString = formattedDate.toISOString();
+    console.log("MI FECHA " + dbDate);
+    console.log(formattedDate);
+    const isoString = formattedDate.toISOString().split("T")[0];
     return `${isoString.slice(8, 10)}/${isoString.slice(
         5,
         7

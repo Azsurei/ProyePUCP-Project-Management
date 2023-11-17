@@ -13,7 +13,7 @@ import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reporteEntregablesStyles/repEntregables.css";
 import CardContribuyente from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/CardContribuyente";
 import PieChart from "@/components/dashboardComps/projectComps/reportesComps/reporeEntregablesComps/PieChart";
-import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import { dbDateToDisplayDate, inputDateToDisplayDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 
 const mockUsers = [
@@ -224,7 +224,7 @@ function ReporteEntregables(props) {
                                     variant="flat"
                                     className="min-h-[35px] text-base"
                                 >
-                                    {dbDateToDisplayDate(entregableFechaInicio)}
+                                    {entregableFechaInicio !== "" && dbDateToDisplayDate(entregableFechaInicio)}
                                 </Chip>
                                 <p>-</p>
                                 <Chip
@@ -233,7 +233,7 @@ function ReporteEntregables(props) {
                                     variant="flat"
                                     className="min-h-[35px] text-base"
                                 >
-                                    {dbDateToDisplayDate(entregableFechaFin)}
+                                    {entregableFechaFin !== "" && dbDateToDisplayDate(entregableFechaFin)}
                                 </Chip>
                             </div>
 
