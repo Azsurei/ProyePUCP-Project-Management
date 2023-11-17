@@ -76,7 +76,7 @@ function RetrospectivaView(props) {
                 })
                 .catch(function (error) {
                     console.log(error);
-                    toast.error("Error al cargar lista de items");
+                    toast.error("Error al cargar lista de items", {position: "top-center"});
                 });
         } else if (editPattern.test(keyParamURL)) {
             console.log("It's a number followed by '=edit':", keyParamURL);
@@ -100,7 +100,7 @@ function RetrospectivaView(props) {
                     setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
-                    toast.error("Error al cargar lista de items");
+                    toast.error("Error al cargar lista de items", {position: "top-center"});
                 });
         } else {
             router.push("/404");
@@ -242,14 +242,14 @@ function RetrospectivaView(props) {
         axios.put(saveURL, saveData)
             .then(response => {
                 console.log('Save successful:', response);
-                toast.success('Retrospectiva actualizada con éxito');
+                toast.success("Retrospectiva actualizada con éxito", {position:"top-center"});
 
                 // Redirect after saving
                 router.push("/dashboard/" + projectName + "=" + projectId + "/retrospectivas/" + idLineaRetrospectiva);
             })
             .catch(error => {
                 console.error('Error saving:', error);
-                toast.error('Error al actualizar la retrospectiva');
+                toast.error("Error al actualizar la retrospectiva", {position:"top-center"});
             });
     }
 }

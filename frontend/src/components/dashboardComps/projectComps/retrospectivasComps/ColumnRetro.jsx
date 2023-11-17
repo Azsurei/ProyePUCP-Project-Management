@@ -153,7 +153,7 @@ function ColumnRetro({
         // Check if the input field is not empty
         if (itemValue.trim() === "") {
             // Optionally show a message or handle the empty input scenario
-            toast.error("Por favor, ingrese un item a agregar");
+            toast.error("Por favor, ingrese un item a agregar", {position: "top-center"});
             return;
         }
 
@@ -162,9 +162,9 @@ function ColumnRetro({
         if (regResult === 1) {
             setItemValue("");
             updateItemCount(columnState, itemsList.length + 1);
-            toast.success("Se registro el item con exito");
+            toast.success("Se registro el item con exito", {position: "top-center"});
         } else {
-            toast.error("Error al registrar item");
+            toast.error("Error al registrar item", {position: "top-center"});
         }
 
     }

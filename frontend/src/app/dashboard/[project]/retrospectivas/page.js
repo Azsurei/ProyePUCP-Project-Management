@@ -75,7 +75,7 @@ export default function Retrospectiva(props) {
             console.log("Se completo el refresh con exito");
         } catch (error) {
             console.error("Error al obtener los datos: ", error);
-            toast.error("Hubo un error al cargar los datos");
+            toast.error("Hubo un error al cargar los datos" , {position: "top-center"});
         }
     };
 
@@ -119,12 +119,12 @@ export default function Retrospectiva(props) {
                             "Error al obtener los datos de sprints: ",
                             error
                         );
-                        toast.error("Error al cargar reporte con sprints");
+                        toast.error("Error al cargar reporte con sprints" , {position: "top-center"});
                     });
             })
             .catch((error) => {
                 console.error("Error al obtener retrospectivas: ", error);
-                toast.error("Error al cargar retrospectivas");
+                toast.error("Error al cargar retrospectivas" , {position: "top-center"});
             });
     }, []);
 
