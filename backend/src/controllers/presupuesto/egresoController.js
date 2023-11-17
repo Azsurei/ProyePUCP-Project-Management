@@ -109,6 +109,33 @@ async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fe
         console.log(error);
     }
 }
+
+async function ordenarLineasEgreso(lineasEgreso,mesActual,mesesMostrados){
+    const totalEgresosPorMes = Array.from({ length: mesesMostrados.length }, () => 0);
+
+    try {
+        lineasEgreso.forEach((egreso) => {
+            const fechaGasto = new Date(egreso.fechaRegistro);
+            const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
+            const montoReal = parseFloat(egreso.costoReal);
+    
+            /*if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
+            totalEgresosPorMes[mesReal - 1] += MonedaPresupuesto === egreso.idMoneda
+            ? egreso.costoReal
+            : convertirTarifa(egreso.costoReal, egreso.idMoneda);;
+            }*/
+            if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
+                totalEgresosPorMes[mesReal - 1] += egreso.costoReal;
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+  return totalEgresosPorMes;
+}
+
+
 module.exports = {
     crear,
     crearLineaEgreso,
@@ -117,5 +144,6 @@ module.exports = {
     listarLineasXIdPresupuesto,
     eliminarLineaEgreso,
     funcListarLineasXIdPresupuesto,
-    funcListarLineasFlujoCajaXIdPresupuesto
+    funcListarLineasFlujoCajaXIdPresupuesto,
+    ordenarLineasEgreso
 };

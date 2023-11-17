@@ -2400,17 +2400,18 @@ CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
     IN _fechaFin DATE
 )
 BEGIN
-    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion 
+    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion,l.idIngresoTipo
     FROM LineaIngreso l 
     WHERE l.idPresupuesto = _idPresupuesto 
       AND l.fechaTransaccion BETWEEN _fechaInicial AND _fechaFin 
       AND l.activo = 1;
 END$
 DELIMITER ;
-
+CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(37);	
 CALL LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(37, '2023-01-01', '2023-12-31');
 CALL LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(37, '2023-01-01', '2023-12-31');
 
+SELECT * FROM IngresoTipo;
 -- Procedimiento para obtener las líneas de egreso
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
 DELIMITER $
