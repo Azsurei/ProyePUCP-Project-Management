@@ -72,7 +72,7 @@ async function postArchivo(file){
 async function getFile(req,res,next){
     const { idArchivo } = req.params;
     try {
-        const url = await funcGetFile(idArchivo);
+        const url = await getArchivo(idArchivo);
         res.json({ url });
     } catch (error) {
         console.error("Error generating signed URL:", error);
@@ -80,7 +80,7 @@ async function getFile(req,res,next){
     }
 }
 
-async function funcGetFile(idArchivo){
+async function getArchivo(idArchivo){
     const query = `CALL OBTENER_ARCHIVO(?);`;
     try {
         const [results] = await connection.query(query, [idArchivo]);
@@ -138,6 +138,6 @@ module.exports = {
     postFile,
     getFile,
     postArchivo,
-    funcGetFile,
+    getArchivo,
     funcGetJSONFile
 }
