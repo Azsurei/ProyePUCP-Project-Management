@@ -4,7 +4,12 @@
 //nuevas actas de reunion con ellos incluidos de participantes
 //que mas?
 
-import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import {
+    dbDateToDisplayDate,
+    inputDateToDisplayDate,
+} from "@/common/dateFunctions";
+import { Spinner } from "@nextui-org/react";
+import { useState } from "react";
 
 function TimeIcon() {
     return (
@@ -82,13 +87,36 @@ function TaskIcon() {
     );
 }
 
-function NotificationCard({ type, campoAdicional }) {
-    const msgTxtTask = 'Te han asignado una nueva tarea "' + campoAdicional + '". ';
+function TrashIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            className="w-full h-full"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+            />
+        </svg>
+    );
+}
+
+function NotificationCard({ type, campoAdicional, handleDelete }) {
+    const [isLoading, setIsLoading] = useState(false);
+    const msgTxtTask =
+        'Te han asignado una nueva tarea "' + campoAdicional + '". ';
     const msgTxtMoney = "Estas por superar el limite de presupuesto. ";
-    const msgActa = "Tienes una nueva reunion agendada el " + dbDateToDisplayDate(campoAdicional) + ". ";
+    const msgActa =
+        "Tienes una nueva reunion agendada el " +
+        inputDateToDisplayDate(campoAdicional) +
+        ". ";
     const msgTxtTaskAlert = "Se acerca la fecha de entrega de 1 tarea ";
     return (
-        <div className="border flex flex-row items-center px-2 py-3 rounded-md gap-2 cursor-pointer shadow-sm">
+        <div className="border dark:border-slate-600 flex flex-row items-center px-2 py-3 rounded-md gap-2 cursor-pointer shadow-sm">
             {type === 1 && <TaskIcon />}
             {type === 2 && <MoneyIcon />}
             {type === 3 && <GroupIcon />}
@@ -100,6 +128,31 @@ function NotificationCard({ type, campoAdicional }) {
                 {type === 4 && msgTxtTaskAlert}
                 <span className="text-primary underline">Ver mas</span>
             </div>
+            {isLoading === false && (
+                <div
+                    className="bg-slate-200 dark:bg-slate-800 p-[.3rem] rounded-lg stroke-slate-500 hover:stroke-black dark:hover:stroke-white 
+                transition-colors duration-75 ease-in
+                min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px] w-[32px] h-[32px]"
+                    onClick={() => {
+                        setIsLoading(true);
+                        handleDelete();
+                    }}
+                >
+                    <TrashIcon />
+                </div>
+            )}
+            {isLoading === true && (
+                <div
+                    className="bg-slate-200 dark:bg-slate-800 p-[.3rem] rounded-lg stroke-slate-500 hover:stroke-black dark:hover:stroke-white 
+                transition-colors duration-75 ease-in
+                min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px] w-[32px] h-[32px]"
+                    onClick={() => {
+                        console.log("ya no puedes hacer nada");
+                    }}
+                >
+                    <Spinner size="sm" color="default" />
+                </div>
+            )}
         </div>
     );
 }

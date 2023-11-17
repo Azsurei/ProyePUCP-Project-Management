@@ -13,5 +13,7 @@ routerUsuario.put("/cambiarPassword", usuarioController.cambiarPassword);
 routerUsuario.post("/enviarNotificacion", verifyToken, usuarioController.enviarNotificacion );
 routerUsuario.post("/listarNotificaciones", verifyToken, usuarioController.listarNotificaciones );
 routerUsuario.post("/actualizaNotificacionAR", verifyToken, usuarioController.actualizaNotificacionAR );
+routerUsuario.post("/modificaEstadoNotificacionXIdNotificacion", verifyToken, usuarioController.modificaEstadoNotificacionXIdNotificacion );
+routerUsuario.post("/modificaEstadoNotificacionXIdUsuario", verifyToken, usuarioController.modificaEstadoNotificacionXIdUsuario );
 
 module.exports.routerUsuario = routerUsuario;
