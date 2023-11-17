@@ -417,7 +417,7 @@ async function listarProyectosXNombre(req, res, next) {
             proyectos: results[0],
             message: "Proyectos obtenidos exitosamente",
         });
-        console.log(results[0]);
+        //console.log(results[0]);
     } catch (error) {
         console.error("Error al obtener los proyectos:", error);
         res.status(500).send(
@@ -462,7 +462,7 @@ async function listarUsuariosXRolXProyecto(req, res) {
             usuarios: results[0],
             message: "Usuarios por rol en proyecto obtenidos exitosamente",
         });
-        console.log(results[0]);
+        //console.log(results[0]);
         console.log("Si se listaron los usuarios por rol en proyecto");
     } catch (error) {
         console.error(
@@ -487,7 +487,7 @@ async function listarUsuariosXProyecto(req, res) {
             usuarios: results[0],
             message: "Usuarios por rol en proyecto obtenidos exitosamente",
         });
-        console.log(results[0]);
+        //console.log(results[0]);
         console.log("Si se listaron los usuarios por rol en proyecto");
     } catch (error) {
         console.error(
