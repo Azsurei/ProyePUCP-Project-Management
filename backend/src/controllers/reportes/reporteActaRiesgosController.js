@@ -6,7 +6,7 @@ const fsp = require('fs').promises
 const path = require('path');
 const { error } = require("console");
 const excelJSController = require("../xlxs/excelJSController");
-
+const fileController = require("../files/fileController");
 const headerTitulo = {
     fill: {
         type: 'pattern',
@@ -58,34 +58,28 @@ async function obtenerJSON(req,res,next){
 async function subirJSON(req, res, next) {
     const {riesgos,idProyecto,nombre}=req.body;
     try {
-        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,5,nombre]);
-        const idReporte = results[0][0].idReporte;
-        //workbook = generarExcelRiesgos(riesgos);
-        
-        var tmpFilePath = generarPathRiesgos(riesgos,idReporte);
 
-        const authClient = await authGoogle.authorize();
-        const fileMetadata = {
-            name: `Reporte-Riesgos-${idReporte}.json`,
-            parents:['1IG3gNqlgWuTWHKnisQiJ_TvZlpWhG8eu']
+
+        var tmpFilePath = generarPathRiesgos(riesgos,idProyecto);
+        
+        const file = fs.readFileSync(tmpFilePath);
+        
+        const file2Upload = {
+            buffer:file,
+            mimetype: 'application/json',
+            originalname: `${nombre}.json`
         }
 
-        const media = {
-            mimeType: 'application/json',
-            body: fs.createReadStream(tmpFilePath)
-        };
+        const idArchivo = await fileController.postArchivo(file2Upload);
 
-        const driverResponse = await authGoogle.uploadFile(authClient,fileMetadata,media);
-        console.log(driverResponse.data.id);
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,5,nombre,idArchivo]);
+        const idReporte = results[0][0].idReporte;
         
-        const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
-        const [results2] = await connection.query(query2, [idReporte,driverResponse.data.id]);
-
         fs.unlinkSync(tmpFilePath);
+        console.log(`Se creo el reporte de acta de riesgos nro ${idReporte}`);
         res.status(200).json({
             riesgos,
-            fileId: driverResponse.data.id,
             message: "Se genero el reporte de entregables con exito",
         });
     } catch (error) {

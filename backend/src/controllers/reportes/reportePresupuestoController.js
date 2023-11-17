@@ -198,10 +198,15 @@ async function subirJSON(req, res, next) {
         var tmpFilePath = generarPathPresupuesto(presupuesto,idProyecto);
 
         //Escribir el archivo en el path temporal
-        var file = fs.createReadStream(tmpFilePath)
+        const file = fs.readFileSync(tmpFilePath);
         
+        const file2Upload = {
+            buffer:file,
+            mimetype: 'application/json',
+            originalname: `${nombre}.json`
+        }
         //Subir el archivo del path temporal a internet en este caso S3
-        const idArchivo = await fileController.postArchivo(file);
+        const idArchivo = await fileController.postArchivo(file2Upload);
 
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
         const [results] = await connection.query(query, [idProyecto,13,nombre,idArchivo]);
