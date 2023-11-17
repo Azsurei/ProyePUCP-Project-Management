@@ -21,7 +21,7 @@ import {
     Tooltip,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
-import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
 import { set } from "date-fns";
 import axios from "axios";
 import { id } from "date-fns/esm/locale";
@@ -40,14 +40,60 @@ export default function ReporteRiesgos(props) {
     const {herramientasInfo} = useContext(HerramientasInfo);
     const [responsables, setResponsables] = useState([]);
     const urlRiesgos = "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/156"
-    const idArchivo = props.params.reporteRiesgos;
+    const reportID = props.params.reportId;
     const [json, setJson] = useState(null);
      const [data, setData] = useState([]);
     useEffect(() => {
         setIsLoadingSmall(false);
         setIsClient(true);
     } , []);
-    const sacarInformacionReporte = async () => {
+    const guardarReporte = async () => {
+        const postData = {
+          idProyecto: projectId,
+          nombre: projectName,
+          riesgos:  {
+            idRiesgo: data.idRiesgo,
+            nombreRiesgo: data.nombreRiesgo,
+            idCatalogo: data.idCatalogo,
+            fechaIdentificacion: data.fechaIdentificacion,
+            duenoRiesgo: data.duenoRiesgo,
+            nombres: data.nombres,
+            apellidos: data.apellidos,
+            correoElectronico: data.correoElectronico,
+            detalleRiesgo: data.detalleRiesgo,
+            causaRiesgo: data.causaRiesgo,
+            impactoRiesgo: data.impactoRiesgo,
+            estado: data.estado,
+            activo: data.activo,
+            idProbabilidad: data.idProbabilidad,
+            nombreProbabilidad: data.nombreProbabilidad,
+            valorProbabilidad: data.valorProbabilidad,
+            idImpacto: data.idImpacto,
+            nombreImpacto: data.nombreImpacto,
+            valorImpacto: data.valorImpacto,
+            responsables: data.responsables,
+          },
+
+      };
+      console.log("El postData es :", postData);
+      axios
+          .post(
+              process.env.NEXT_PUBLIC_BACKEND_URL +
+                  "/api/proyecto/reporte/subirReporteRiesgosJSON",
+              postData
+          )
+          .then((response) => {
+              // Manejar la respuesta de la solicitud POST
+              console.log("Respuesta del servidor:", response.data);
+              console.log("Guardado del reporte correcto");
+              // Realizar acciones adicionales si es necesario
+          })
+          .catch((error) => {
+              // Manejar errores si la solicitud POST falla
+              console.error("Error al realizar la solicitud POST:", error);
+          });
+      };
+      const sacarInformacionReporte = async () => {
         setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
@@ -101,7 +147,12 @@ export default function ReporteRiesgos(props) {
     // }, [projectId]);
     useEffect(() => {
         setIsLoadingSmall(true);
-        sacarInformacionReporte();
+        if(reportID === "nuevoReporte"){
+            DataTable();
+        } else if (!isNaN(reportID)) {
+            sacarInformacionReporte();
+        }
+        
         setIsClient(true);
     }, [projectId]);
     const onSearchChange = React.useCallback((value) => {

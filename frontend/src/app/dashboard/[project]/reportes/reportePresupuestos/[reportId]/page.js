@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import BarGraphic from "@/components/BarGraphic";
-import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
 import { set } from "date-fns";
 import axios from "axios";
 import { id } from "date-fns/esm/locale";
@@ -42,62 +42,67 @@ export default function ReportePresupuestos(props) {
     const [presupuesto, setPresupuesto] = useState([]);
     const [presupuestoReporte, setPresupuestoReporte] = useState([]);
     const [nombreMoneda, setNombreMoneda] = useState("");
-    const idArchivo = props.params.reportePresupuestos;
+    const reportID = props.params.reportId;
     const [json, setJson] = useState(null);
-    const sacarInformacionReporte = async () => {
-        setIsLoadingSmall(true);
+    
+    const guardarReporte = async () => {
+      const postData = {
+        idProyecto: projectId,
+        nombre: "Reporte de Presupuesto",
+        presupuesto:  {
+          idPresupuesto: idPresupuesto,
+          idHerramienta: herramientasInfo[12].idHerramientaCreada,
+          nombreHerramienta: "Presupuesto",
+          presupuestoInicial: presupuesto.presupuestoInicial,
+          idMoneda: presupuesto.idMoneda,
+          nombreMoneda: nombreMoneda,
+          cantidadMeses: presupuesto.cantidadMeses,
+          lineasPresupuesto: {
+            lineasIngreso: lineasIngreso,
+            lineasEgreso: lineasEgreso,
+            lineasEstimacionCosto: lineasEstimacion,
+          }
+        },
+       
+    };
+    console.log("El postData es :", postData);
+    axios
+        .post(
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/subirReportePresupuestoJSON",
+            postData
+        )
+        .then((response) => {
+            // Manejar la respuesta de la solicitud POST
+            console.log("Respuesta del servidor:", response.data);
+            console.log("Guardado del reporte correcto");
+            // Realizar acciones adicionales si es necesario
+        })
+        .catch((error) => {
+            // Manejar errores si la solicitud POST falla
+            console.error("Error al realizar la solicitud POST:", error);
+        });
+    };
+    
+    const DataTable = async () => {
         const fetchData = async () => {
             try {
-                // Realiza la solicitud HTTP al endpoint del router
-                const stringURL =
-                    process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/reporte/obtenerJSONReportePresupuestoXIdArchivo/" +
-                    idArchivo;
-                console.log("URL: ", stringURL);
-                const response = await axios.get(stringURL);
-
-                // Actualiza el estado 'data' con los datos recibidos
-                setJson(response.data.jsonData);
-                setPresupuestoReporte(response.data.jsonData.presupuesto.general);
-                setLineasIngreso(response.data.jsonData.presupuesto.lineasPresupuesto.lineasIngreso);
-                setLineasEgreso(response.data.jsonData.presupuesto.lineasPresupuesto.lineasEgreso);
-                setLineasEstimacion(response.data.jsonData.presupuesto.lineasPresupuesto.lineasEstimacionCosto);
-                console.log(
-                    `Datos obtenidos exitosamente:`,
-                    response.data.jsonData
-                );
-                setIsLoadingSmall(false);
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasTodasXIdPresupuesto/${idPresupuesto}`);
+              const data = response.data.lineas;
+              setLineasIngreso(response.data.lineasPresupuesto.lineasIngreso);
+              setLineasEgreso(response.data.lineasPresupuesto.lineasEgreso);
+              setLineasEstimacion(response.data.lineasPresupuesto.lineasEstimacionCosto);
+              console.log(`Esta son las lineas:`, data);
+              console.log(`Esta son las lineas de ingreso:`, response.data.lineasPresupuesto.lineasIngreso);
+              setIsLoadingSmall(false);
+              setVistaReporte(true);
             } catch (error) {
-                console.error("Error al obtener datos:", error);
+              console.error('Error al obtener las líneas de ingreso:', error);
             }
-        };
-
-        fetchData();
-    };
-    useEffect(() => {
-        setIsLoadingSmall(true);
-        sacarInformacionReporte();
-        setIsClient(true);
-    }, [idArchivo]);
-    // const DataTable = async () => {
-    //     const fetchData = async () => {
-    //         try {
-    //           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasTodasXIdPresupuesto/${idPresupuesto}`);
-    //           const data = response.data.lineas;
-    //           setLineasIngreso(response.data.lineasPresupuesto.lineasIngreso);
-    //           setLineasEgreso(response.data.lineasPresupuesto.lineasEgreso);
-    //           setLineasEstimacion(response.data.lineasPresupuesto.lineasEstimacionCosto);
-    //           console.log(`Esta son las lineas:`, data);
-    //           console.log(`Esta son las lineas de ingreso:`, response.data.lineasPresupuesto.lineasIngreso);
-    //           setIsLoadingSmall(false);
-    //           setVistaReporte(true);
-    //         } catch (error) {
-    //           console.error('Error al obtener las líneas de ingreso:', error);
-    //         }
-    //       };
+          };
           
-    //         fetchData();
-    // };
+            fetchData();
+    };
     
     const [isSelected, setIsSelected] = useState(false);
     const [montoInicial, setMontoInicial] = useState(0);
@@ -126,17 +131,51 @@ export default function ReportePresupuestos(props) {
             }
           };
             fetchData();
-    };       
-    // useEffect(() => {
-    //     console.log('useEffect ran on the client');
-    //     console.log(herramientasInfo);
-    //     console.log("Id presupuesto", idPresupuesto);
-    //     setIsLoadingSmall(true);
-        
-    //     DataTable();
-    //     ObtenerPresupuesto();
-    //     setIsClient(true);
-    // }, [idPresupuesto]);
+    };
+    const sacarInformacionReporte = async () => {
+      setIsLoadingSmall(true);
+      const fetchData = async () => {
+          try {
+              // Realiza la solicitud HTTP al endpoint del router
+              const stringURL =
+                  process.env.NEXT_PUBLIC_BACKEND_URL +
+                  "/api/proyecto/reporte/obtenerJSONReportePresupuestoXIdArchivo/" +
+                  reportID;
+              console.log("URL: ", stringURL);
+              const response = await axios.get(stringURL);
+
+              // Actualiza el estado 'data' con los datos recibidos
+              setJson(response.data.jsonData);
+              setPresupuestoReporte(response.data.jsonData.presupuesto.general);
+              setLineasIngreso(response.data.jsonData.presupuesto.lineasPresupuesto.lineasIngreso);
+              setLineasEgreso(response.data.jsonData.presupuesto.lineasPresupuesto.lineasEgreso);
+              setLineasEstimacion(response.data.jsonData.presupuesto.lineasPresupuesto.lineasEstimacionCosto);
+              console.log(
+                  `Datos obtenidos exitosamente:`,
+                  response.data.jsonData
+              );
+              setIsLoadingSmall(false);
+          } catch (error) {
+              console.error("Error al obtener datos:", error);
+          }
+      };
+
+      fetchData();
+  };       
+    useEffect(() => {
+        console.log('useEffect ran on the client');
+        console.log(herramientasInfo);
+        console.log("Id presupuesto", idPresupuesto);
+        setIsLoadingSmall(true);
+        if (reportID === "nuevoReporte") {
+          DataTable();
+          ObtenerPresupuesto();
+        } else if (!isNaN(reportID)) {
+          sacarInformacionReporte();
+        }
+
+        setIsClient(true);
+    }, [idPresupuesto]);
     const series = [
         {
           name: "Ingresos",
