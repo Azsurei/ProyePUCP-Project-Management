@@ -147,17 +147,6 @@ async function subirJSON(req, res, next) {
         //workbook = generarExcelEntregables(entregables);
         
         var tmpFilePath = generarPathEntregables(entregables,idReporte);
-
-        const authClient = await authGoogle.authorize();
-        const fileMetadata = {
-            name: `Reporte-Entregables-${idReporte}.json`,
-            parents:['1sMwcqO-22Kga2KH0rduVbG4WN5If9X4C']
-        }
-
-        const media = {
-            mimeType: 'application/json',
-            body: fs.createReadStream(tmpFilePath)
-        };
         const fileContent = fs.readFileSync(tmpFilePath);
         console.log('Subiendo al S3');
         const idArchivo = await fileController.postArchivo(fileContent);

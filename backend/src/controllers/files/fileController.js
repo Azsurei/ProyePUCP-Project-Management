@@ -52,7 +52,7 @@ async function postArchivo(file){
     const fileName = randomName();
     const params={
         Bucket: bucketName,
-        Key: fileName,
+        Key: file.originalname,
         Body: file.buffer,
         ContentType: file.mimetype
     }
@@ -60,7 +60,7 @@ async function postArchivo(file){
     try {
         const command = new PutObjectCommand(params);
         await s3.send(command);
-        const [results] = await connection.query(query, [fileName, file.originalname]);
+        const [results] = await connection.query(query, [file.originalname, file.originalname]);
         const idArchivo = results[0][0].idArchivo;
         console.log(`Archivo ${idArchivo} insertado`);
         return idArchivo;
