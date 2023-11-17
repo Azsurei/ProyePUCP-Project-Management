@@ -84,7 +84,7 @@ function ColumnRetro({
                     aria-label="Add"
                     className="bg-white"
                     onPress={() => {
-                        addItem().then(r => console.log(r));
+                        addItem();
                     }}
                     isDisabled={state===false}
                 >
@@ -180,8 +180,6 @@ function ColumnRetro({
                 idCriterioRetrospectiva: columnState,
                 descripcion: itemValue,
             };
-
-            console.log(JSON.stringify(newItemObj, null, 2));
 
             const insertItemResponse = await axios.post(newItemURL, newItemObj);
             console.log(

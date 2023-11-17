@@ -24,14 +24,20 @@ function RetrospectivaView(props) {
 
     // ---------------
     // Conteo de items
-    const [countItemsWell, setCountItemsWell] = useState(0);
-    const [countItemsBad, setCountItemsBad] = useState(0);
-    const [countItemsToDo, setCountItemsToDo] = useState(0);
+    const [countItemsWell, setCountItemsWell] = useState(-1);
+    const [countItemsBad, setCountItemsBad] = useState(-1);
+    const [countItemsToDo, setCountItemsToDo] = useState(-1);
+
+    const [wellEmpty, setWellEmpty] = useState(false);
+    const [badEmpty, setBadEmpty] = useState(false);
+    const [todoEmpty, setTodoEmpty] = useState(false);
 
     const updateItemCount = (columnState, newCount) => {
         console.log("Hey, im counting!");
         console.log(columnState);
         console.log(newCount);
+
+
         if (columnState === 1) {
             setCountItemsWell(newCount);
         } else if (columnState === 2) {
@@ -66,7 +72,6 @@ function RetrospectivaView(props) {
                 .then(function (response) {
                     console.log(response);
                     setMainItemsList(response.data.LineaRetrospectiva);
-
                     setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
@@ -91,18 +96,28 @@ function RetrospectivaView(props) {
             axios
                 .get(viewItemsURL)
                 .then(function (response) {
-                    console.log(response);
                     setMainItemsList(response.data.LineaRetrospectiva);
                     setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
-                    console.log(error);
                     toast.error("Error al cargar lista de items");
                 });
         } else {
             router.push("/404");
         }
     }, []);
+
+
+    useEffect(() => {
+        if(mainItemsList && mainItemsList.length > 0) {
+            console.log("===================================");
+            console.log(mainItemsList);
+            console.log("===================================");
+            setCountItemsWell(mainItemsList[0].items.length);
+            setCountItemsBad(mainItemsList[1].items.length);
+            setCountItemsToDo(mainItemsList[2].items.length);
+        }
+    },[mainItemsList]);
 
     return (
         <>
@@ -213,12 +228,11 @@ function RetrospectivaView(props) {
         console.log(mainItemsList[2].items.length);
         console.log("Cuenta 3");
         console.log(countItemsToDo);
-
         const saveData = {
             idLineaRetrospectiva: idLineaRetrospectiva,
-            cantBien: countItemsWell === 0? mainItemsList[0].items.length:countItemsWell,
-            cantMal:  countItemsBad === 0? mainItemsList[1].items.length:countItemsBad,
-            cantQueHacer: countItemsToDo === 0? mainItemsList[2].items.length:countItemsToDo,
+            cantBien: countItemsWell,
+            cantMal:  countItemsBad,
+            cantQueHacer: countItemsToDo,
         };
         console.log(countItemsWell);
         console.log(countItemsBad);
