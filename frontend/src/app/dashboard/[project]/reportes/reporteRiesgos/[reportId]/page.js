@@ -41,6 +41,7 @@ export default function ReporteRiesgos(props) {
     const [responsables, setResponsables] = useState([]);
     const urlRiesgos = "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/156"
     const reportID = props.params.reportId;
+    const [isNewReport, setIsNewReport] = useState(false);
     const [json, setJson] = useState(null);
      const [data, setData] = useState([]);
     useEffect(() => {
@@ -51,28 +52,7 @@ export default function ReporteRiesgos(props) {
         const postData = {
           idProyecto: projectId,
           nombre: projectName,
-          riesgos:  {
-            idRiesgo: data.idRiesgo,
-            nombreRiesgo: data.nombreRiesgo,
-            idCatalogo: data.idCatalogo,
-            fechaIdentificacion: data.fechaIdentificacion,
-            duenoRiesgo: data.duenoRiesgo,
-            nombres: data.nombres,
-            apellidos: data.apellidos,
-            correoElectronico: data.correoElectronico,
-            detalleRiesgo: data.detalleRiesgo,
-            causaRiesgo: data.causaRiesgo,
-            impactoRiesgo: data.impactoRiesgo,
-            estado: data.estado,
-            activo: data.activo,
-            idProbabilidad: data.idProbabilidad,
-            nombreProbabilidad: data.nombreProbabilidad,
-            valorProbabilidad: data.valorProbabilidad,
-            idImpacto: data.idImpacto,
-            nombreImpacto: data.nombreImpacto,
-            valorImpacto: data.valorImpacto,
-            responsables: data.responsables,
-          },
+          riesgos: data.map(({ planContigencia, planRespuesta, ...rest }) => rest),
 
       };
       console.log("El postData es :", postData);
@@ -149,8 +129,10 @@ export default function ReporteRiesgos(props) {
         setIsLoadingSmall(true);
         if(reportID === "nuevoReporte"){
             DataTable();
+            setIsNewReport(true);
         } else if (!isNaN(reportID)) {
             sacarInformacionReporte();
+            setIsNewReport(false);
         }
         
         setIsClient(true);
@@ -722,9 +704,17 @@ export default function ReporteRiesgos(props) {
                     <div className="titleHistorialReporte text-mainHeaders">
                             Reporte de Riesgos
                     </div>
-                        <Button color="warning" className="text-white">
-                            Guardar reporte
-                        </Button>
+                        {isNewReport && (
+                                    <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
+                                        Guardar reporte
+                                    </Button>
+                                )}
+                                {!isNewReport && (
+                                    <Button color="success" className="text-white" onClick={()=>guardarReporte()}>
+                                      Exportar
+                                </Button>
+                                )
+                                }
                 </div>
                 <div className="ReporteRiesgos">
                     <div className="ListadoDeRiesgos">

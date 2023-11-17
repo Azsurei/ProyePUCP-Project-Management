@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
                         setNotifications(response.data.notificaciones);
 
                         //console.log("le estoy mandando el id " + userData)
-                        socketRef.current = io("http://localhost:8080", {
+                        socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
                             query: {
                                 idUsuario: user_data.idUsuario,
                                 nombresUsuario: user_data.nombres,
