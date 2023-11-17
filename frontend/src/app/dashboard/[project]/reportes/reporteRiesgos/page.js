@@ -45,6 +45,52 @@ export default function ReporteRiesgos(props) {
         setIsLoadingSmall(false);
         setIsClient(true);
     } , []);
+    const guardarReporte = async () => {
+        const postData = {
+          idProyecto: projectId,
+          nombre: projectName,
+          riesgos:  {
+            idRiesgo: data.idRiesgo,
+            nombreRiesgo: data.nombreRiesgo,
+            idCatalogo: data.idCatalogo,
+            fechaIdentificacion: data.fechaIdentificacion,
+            duenoRiesgo: data.duenoRiesgo,
+            nombres: data.nombres,
+            apellidos: data.apellidos,
+            correoElectronico: data.correoElectronico,
+            detalleRiesgo: data.detalleRiesgo,
+            causaRiesgo: data.causaRiesgo,
+            impactoRiesgo: data.impactoRiesgo,
+            estado: data.estado,
+            activo: data.activo,
+            idProbabilidad: data.idProbabilidad,
+            nombreProbabilidad: data.nombreProbabilidad,
+            valorProbabilidad: data.valorProbabilidad,
+            idImpacto: data.idImpacto,
+            nombreImpacto: data.nombreImpacto,
+            valorImpacto: data.valorImpacto,
+            responsables: data.responsables,
+          },
+
+      };
+      console.log("El postData es :", postData);
+      axios
+          .post(
+              process.env.NEXT_PUBLIC_BACKEND_URL +
+                  "/api/proyecto/reporte/subirReporteRiesgosJSON",
+              postData
+          )
+          .then((response) => {
+              // Manejar la respuesta de la solicitud POST
+              console.log("Respuesta del servidor:", response.data);
+              console.log("Guardado del reporte correcto");
+              // Realizar acciones adicionales si es necesario
+          })
+          .catch((error) => {
+              // Manejar errores si la solicitud POST falla
+              console.error("Error al realizar la solicitud POST:", error);
+          });
+      };
     function DataTable(){
         const fetchData = async () => {
           try {

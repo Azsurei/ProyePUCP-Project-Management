@@ -1,4 +1,4 @@
-// actaReunion/page.js
+
 "use client";
 
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
@@ -184,7 +184,14 @@ export default function Retrospectiva(props) {
                 Restrospectivas
             </HeaderWithButtonsSamePage>
             <Spacer y={4} />
-            {lretrospectivas.map((retro, index) => (
+            {lretrospectivas.length === 0 ? (
+                <div className="flex flex-col items-center justify-center">
+                    <br />
+                    <br />
+                    <MissingEDTComponents />
+                    <p>No hay retrospectivas registradas</p>
+                </div>
+            ) : (lretrospectivas.map((retro, index) => (
                 <div key={retro.idLineaRetrospectiva}>
                     <Card  className="flex-grow w-full mx-auto">
                         <CardHeader className="p-4">
@@ -228,10 +235,8 @@ export default function Retrospectiva(props) {
                         </CardBody>
                     </Card>
                     <Spacer y={4} />
-                </div>
+                </div>)
             ))}
-
-            <Toaster richColors />
         </div>
     );
 
