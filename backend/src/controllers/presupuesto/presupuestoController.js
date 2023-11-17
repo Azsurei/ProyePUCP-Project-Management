@@ -41,6 +41,21 @@ async function listarXIdPresupuesto(req,res,next){
     }
 }
 
+async function obtenerPresupuestoFlujoCaja(idPresupuesto,fechaIni,fechaFin){
+    try {
+        const lineasIngreso = await ingresoController.funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin);
+        const lineasEgreso = await egresoController.funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin);
+    
+        const presupuesto = {
+            lineasIngreso,
+            lineasEgreso
+        };
+        
+        return presupuesto;
+    } catch (error) {
+        console.log(error);
+    }
+}
 async function listarLineasTodas(req, res, next) {
     const {idPresupuesto} = req.params;
     try {
@@ -155,6 +170,7 @@ module.exports = {
     listarXIdPresupuesto,
     listarLineasIngresoYEgresoXIdPresupuesto,
     obtenerPresupuesto,
+    obtenerPresupuestoFlujoCaja,
     eliminar,
     eliminarXProyecto
 };

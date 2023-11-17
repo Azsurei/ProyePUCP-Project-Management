@@ -180,6 +180,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, reloadData})
                 isOpen={isOpen} 
                 onOpenChange={onOpenChange}
                 placement="top-center"
+                hideCloseButton
               >
                 <ModalContent>
                   {(onClose) => (
@@ -278,7 +279,7 @@ export default function PopUpEpica({ modal, toggle, url, backlogID, reloadData})
                         
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="danger" variant="light" onPress={()=>{reloadData(); onClose();}} className="">
+                        <Button color="danger" variant="light" onPress={()=>{reloadData(); onClose(); toggle();}} className="">
                           Cancelar
                         </Button>
                         <Button color="primary" onPress={handleInsertEpic} className="bg-blue-950 text-white">

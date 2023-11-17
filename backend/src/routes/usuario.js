@@ -12,5 +12,6 @@ routerUsuario.post("/insertarUsuariosAProyecto", verifyToken, usuarioController.
 routerUsuario.put("/cambiarPassword", usuarioController.cambiarPassword);
 routerUsuario.post("/enviarNotificacion", verifyToken, usuarioController.enviarNotificacion );
 routerUsuario.post("/listarNotificaciones", verifyToken, usuarioController.listarNotificaciones );
+routerUsuario.post("/actualizaNotificacionAR", verifyToken, usuarioController.actualizaNotificacionAR );
 
 module.exports.routerUsuario = routerUsuario;

@@ -51,6 +51,7 @@ export default function ProductBacklog(props) {
     const [navegate, setNavegate] = useState(false);
     const [edit, setEdit] = useState(null);
     function DataTable() {
+        setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
                 // Realiza la solicitud HTTP al endpoint del router
@@ -63,11 +64,11 @@ export default function ProductBacklog(props) {
 
                 // Actualiza el estado 'data' con los datos recibidos
                 setData(response.data.historias);
-                setIsLoadingSmall(false);
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.historias
                 );
+                setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }

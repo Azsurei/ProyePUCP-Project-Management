@@ -73,16 +73,15 @@ export default function RootLayout({ children }) {
                             console.log(
                                 `Tiene una nueva notificacion de ${senderUserId}, relistando notificaciones`
                             );
-                            toast.custom((t) => (
-                                <div>
-                                    <h1>Custom toast</h1>
-                                    <button onClick={() => toast.dismiss(t)}>
-                                        Dismiss
-                                    </button>
-                                </div>
-                            ));
+                            toast.message("Nueva notificación", {
+                                description: "Revisa tu bandeja de notificaciones",
+                            });
                             fetchNotifications(user_data);
                         });
+
+                        socketRef.current.on("relist_notification", (data) => {
+                            fetchNotifications(user_data);
+                        })
 
                         socketRef.current.on("private_message", (data) => {
                             const { senderUserId, message } = data;
@@ -147,6 +146,20 @@ export default function RootLayout({ children }) {
         }
     }
 
+    async function relistNotification(idDestinatario) {
+        try {
+            const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
+
+            socketRef.current.emit("send_relist_notification", {
+                targetUserId,
+            });
+
+            console.log("Se envio relistar notificacion");
+        } catch (error) {
+            console.error("Error al enviar relistar notificacion: ", error);
+        }
+    }
+
     //PROBLEMA CON LOADING SCREENS. al tratar de hacer su uso modular, puede que ocurra
     //que esta se apage, y la del hijo en {children} se prende consecuentemente por su renderizado
     //provocando un efecto de recarga VISIBLE en el loading screen (se nota en la barrita animada)
@@ -163,6 +176,7 @@ export default function RootLayout({ children }) {
                         notifications,
                         setNotifications,
                         sendNotification,
+                        relistNotification
                     }}
                 >
                     <>

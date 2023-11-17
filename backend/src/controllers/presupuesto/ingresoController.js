@@ -100,6 +100,19 @@ async function eliminarLineaIngreso(req,res,next){
     }
 }
 
+async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin){
+    let lineasIngreso = [];
+    try{
+        const query = `CALL LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(?,?,?);`;
+        const [results] = await connection.query(query, [idPresupuesto,fechaIni,fechaFin]);
+        lineasIngreso = results[0];
+    }catch(error){
+        console.log(error);
+    }
+    return lineasIngreso;
+
+}
+
 module.exports = {
     crear,
     crearLineaIngreso,
@@ -107,5 +120,6 @@ module.exports = {
     listarLineasXNombreFechas,
     eliminarLineaIngreso,
     listarLineasXIdPresupuesto,
-    funcListarLineasXIdPresupuesto
+    funcListarLineasXIdPresupuesto,
+    funcListarLineasFlujoCajaXIdPresupuesto
 };

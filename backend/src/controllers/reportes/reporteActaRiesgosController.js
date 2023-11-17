@@ -36,7 +36,7 @@ const borderStyle = {
   };
 
 async function obtenerJSON(req,res,next){
-    const {fileId} = req.params;
+    const {idArchivo} = req.params;
     const destinationFolder = path.join(__dirname, '../../tmp');
     try{
         const authClient = await authGoogle.authorize();
@@ -94,24 +94,24 @@ async function subirJSON(req, res, next) {
 }
 
 async function descargarExcel(req,res,next){
-    const {fileId} = req.body;
+    const {idArchivo} = req.body;
     const destinationFolder = path.join(__dirname, '../../tmp');
 
     try{
         
         const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,idArchivo,destinationFolder);
 
         const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
         const jsonData = JSON.parse(fileContent);
         //console.log(jsonData);
-        const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
+        const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
         workbook = await generarExcelRiesgos(jsonData);
         console.log(excelFilePath);
 
         await workbook.xlsx.writeFile(excelFilePath);
 
-        res.download(excelFilePath, `${fileId}.xlxs`, async(err) => {
+        res.download(excelFilePath, `${idArchivo}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
                 //await fsp.unlink(tmpFilePath);
