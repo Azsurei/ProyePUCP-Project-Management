@@ -524,7 +524,7 @@ export default function Historial(props) {
                 <div className="presupuesto">
                     
                     <div className="containerHeader">
-                        <div className="titlePresupuesto">Historial</div>
+                        <div className="titlePresupuesto text-[#172B4D] dark:text-white">Historial</div>
                         <div>
                             <Switch isSelected={isSelected} onValueChange={handleSelectedMoneda}>
                                  {isSelected ? "Soles" : "Dolares"}
@@ -586,7 +586,7 @@ export default function Historial(props) {
                         <div className="justify-center items-center w-1/2">
                             <Card className="w-[500px] h-[500px] border-none bg-gradient-to-br from-white-500 to-white-500 mx-auto my-auto">
                                 <CardHeader>
-                                    <p className="titleBalance">Balance</p>
+                                    <p className="titleBalance text-[#172B4D] dark:text-white">Balance</p>
                                 </CardHeader>
                                 <CardBody className="justify-center items-center my-0 p-0 flex-none">
                                     <CircularProgress
@@ -594,7 +594,7 @@ export default function Historial(props) {
                                         svg: "w-80 h-80 drop-shadow-md",
                                         indicator: "text-green-500",
                                         track: "stroke-current text-red-500",
-                                        value: "text-8xl font-semibold text-black",
+                                        value: "text-8xl font-semibold text-black dark:text-white",
                                     }}
                                     value={performance}
                                     strokeWidth={4}
@@ -605,16 +605,16 @@ export default function Historial(props) {
                                 <div className="text-left textBalance">
                                     <div className="dataBalance ">
                                         <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
-                                            <div className="titleBalanceData" style={{ textAlign: "left" }}>Ingresos: </div>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{monedaSymbol} {IngresosTotales}</div>
+                                            <div className="titleBalanceData text-[#172B4D] dark:text-white" style={{ textAlign: "left" }}>Ingresos: </div>
+                                            <div className="titleBalanceData text-[#172B4D] dark:text-white" style={{ textAlign: "right" }}>{monedaSymbol} {IngresosTotales}</div>
                                         </div>
                                         <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
-                                            <div className="titleBalanceData" style={{ textAlign: "left" }}>Egresos: </div>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{monedaSymbol} {EgresosTotales}</div>
+                                            <div className="titleBalanceData text-[#172B4D] dark:text-white" style={{ textAlign: "left" }}>Egresos: </div>
+                                            <div className="titleBalanceData text-[#172B4D] dark:text-white" style={{ textAlign: "right" }}>{monedaSymbol} {EgresosTotales}</div>
                                         </div>
                                         <div className="flex border-t-2 border-gray-500 border-opacity-75" style={{ display: "grid", gridTemplateColumns: "auto auto"}}>
-                                            <div className="titleBalanceData" style={{ textAlign: "left" }}>Disponible: </div>
-                                            <div className="titleBalanceData" style={{ textAlign: "right" }}>{IngresosTotales - EgresosTotales > 0 ? `${monedaSymbol} ${presupuestoDisponible}` : 'Sin fondos disponibles'}</div>
+                                            <div className="titleBalanceData text-[#172B4D] dark:text-white" style={{ textAlign: "left" }}>Disponible: </div>
+                                            <div className="titleBalanceData text-[#172B4D] dark:text-white" style={{ textAlign: "right" }}>{IngresosTotales - EgresosTotales > 0 ? `${monedaSymbol} ${presupuestoDisponible}` : 'Sin fondos disponibles'}</div>
                                         </div>
                                     </div>
                                 </div>

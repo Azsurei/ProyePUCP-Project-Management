@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
                         setNotifications(response.data.notificaciones);
 
                         //console.log("le estoy mandando el id " + userData)
-                        socketRef.current = io("http://localhost:8080", {
+                        socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
                             query: {
                                 idUsuario: user_data.idUsuario,
                                 nombresUsuario: user_data.nombres,
@@ -147,6 +147,18 @@ export default function RootLayout({ children }) {
         }
     }
 
+    async function sendNotificationOnlySocket(idDestinatario) {
+        try {
+            const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
+
+            socketRef.current.emit("send_notification", {
+                targetUserId,
+            });
+        } catch (error) {
+            console.error("Error al enviar notificacion: ", error);
+        }
+    }
+
     async function relistNotification(idDestinatario) {
         try {
             const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
@@ -201,7 +213,10 @@ export default function RootLayout({ children }) {
             })
             .then(function (response) {
                 console.log(response.data.message);
-                console.log("ARREGLO DE NOTIFICACIONES " + JSON.stringify(response.data.notificaciones, null, 2));
+                console.log(
+                    "ARREGLO DE NOTIFICACIONES " +
+                        JSON.stringify(response.data.notificaciones, null, 2)
+                );
                 setNotifications(response.data.notificaciones);
                 setNotifsTabIsLoading(false);
             })
@@ -209,8 +224,6 @@ export default function RootLayout({ children }) {
                 console.log(error);
             });
     }
-
-
 
     if (isLoading) {
         return (
@@ -224,6 +237,7 @@ export default function RootLayout({ children }) {
                         notifications,
                         setNotifications,
                         sendNotification,
+                        sendNotificationOnlySocket,
                         relistNotification,
                     }}
                 >
@@ -243,7 +257,7 @@ export default function RootLayout({ children }) {
                                 handleDeleteNotification={(idNotif) => {
                                     handleDeleteNotification(idNotif);
                                 }}
-                                handleModifyAllNotifications={(state)=>{
+                                handleModifyAllNotifications={(state) => {
                                     handleModifyAllNotifications(state);
                                 }}
                                 notifsTabIsLoading={notifsTabIsLoading}
@@ -261,7 +275,14 @@ export default function RootLayout({ children }) {
                                 {sessionData !== null && children}
                             </div>
                         </div>
-                        <Toaster richColors></Toaster>
+                        <Toaster
+                            richColors
+                            theme={"light"}
+                            closeButton={true}
+                            toastOptions={{
+                                style: { fontSize: "1rem" },
+                            }}
+                        ></Toaster>
                     </>
                 </NotificationsContext.Provider>
             </SessionContext.Provider>

@@ -123,7 +123,7 @@ function ColumnContainer({
                     {!editMode && column.nombre}
                     {editMode && (
                         <input
-                            className="ColumnContainer bg-white focus:border-rose-500 border rounded outline-none px-2"
+                            className="ColumnContainer bg-white dark:bg-black focus:border-rose-500 border rounded outline-none px-2"
                             value={column.nombre}
                             onChange={(e) =>
                                 updateColumn(

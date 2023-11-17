@@ -470,21 +470,28 @@ export default function CatalogoDeInteresadosRegister(props) {
                                         verifyFieldsExcessive()
                                     ) {
                                         toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                            "Faltan completar campos y se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos");
+                                        toast.error(
+                                            "Faltan completar campos",
+                                            {
+                                                position: "bottom-left",
+                                            }
+                                        );
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
                                         toast.error(
-                                            "Se excedió el límite de caractéres"
+                                            "Se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else {
@@ -496,15 +503,6 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                 </div>
             </div>
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }

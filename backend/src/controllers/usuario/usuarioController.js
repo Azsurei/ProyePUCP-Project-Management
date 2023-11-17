@@ -255,6 +255,50 @@ async function modificaEstadoNotificacionXIdUsuario(req, res, next){
 }
 
 
+async function verificarNotificacionesPresupuesto(req, res, next){
+    const {idPresupuesto, idProyecto} = req.body;
+    try{
+        const query = `CALL VER_USUARIOS_NOTIFICAR_PRESUPUESTO(?,?);`;
+        const [results] = await connection.query(query, [idPresupuesto, idProyecto]);
+        
+        const listaUsuarios = results[0];
+
+        console.log(JSON.stringify(listaUsuarios,null,2));
+
+        for(const usuario of listaUsuarios){
+            if(usuario.resultNotif === 1){
+                //debemos notificar
+                //procedure inserta notificacion si esque usuario no la tenia
+                console.log("Enviando notificacion");
+                const query1 = "CALL ENVIAR_NOTIFICACION_PRESUPUESTO(?,?);";
+                const [results1] = await connection.query(query1, [usuario.idUsuario, idProyecto]);
+                const resultado = results1[0][0].Resultado;
+
+                console.log(resultado);
+                usuario.resultNotif = resultado;
+            }
+            else{
+                //borramos notificacion
+                console.log("Eliminando notificacion");
+                const query2 = "CALL BORRAR_NOTIFICACION_PRESUPUESTO(?,?);";
+                const [results2] = await connection.query(query2, [usuario.idUsuario, idProyecto]);
+
+                const resultado = results2[0][0].Resultado;
+
+                console.log(resultado);
+                usuario.resultNotif = resultado
+            }
+        }
+        res.status(200).json({
+            usuariosNotifs: listaUsuarios,
+            message: "hola",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 
 module.exports = {
     listarUsuarios,
@@ -268,5 +312,6 @@ module.exports = {
     listarNotificaciones,
     actualizaNotificacionAR,
     modificaEstadoNotificacionXIdNotificacion,
-    modificaEstadoNotificacionXIdUsuario
+    modificaEstadoNotificacionXIdUsuario,
+    verificarNotificacionesPresupuesto
 };

@@ -1,9 +1,10 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { SmallLoadingScreen } from "@/app/dashboard/layout";
+// import { useContext } from 'react';
+// import { SmallLoadingScreen } from "@/app/dashboard/layout";
 function RouteringReporteGrupo({idGrupoProyecto}) {
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    setIsLoadingSmall(true);
+    // const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    // setIsLoadingSmall(true);
     const router= useRouter();
     const proy_name1 = 'Mi primer proyecto';
     const proy_id1 = '42';

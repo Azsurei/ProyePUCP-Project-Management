@@ -3,7 +3,8 @@ const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/clien
 const dotenv = require("dotenv");
 const crypto = require("crypto");
 const fetch = require('node-fetch');
-
+const fs = require('fs');
+const https = require('https');
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 dotenv.config();
 const bucketName = process.env.AWS_BUCKET_NAME;
@@ -134,10 +135,45 @@ async function funcGetJSONFile(idArchivo) {
         console.error("Error getting JSON data:", error);
     }
 }
+
+async function descargarDesdeURL(url, rutaDestino) {
+    return new Promise((resolve, reject) => {
+        const file = fs.createWriteStream(rutaDestino);
+
+        https.get(url, (response) => {
+            // Verificar si la respuesta es exitosa
+            if (response.statusCode < 200 || response.statusCode > 299) {
+                reject(new Error(`Falló la solicitud HTTP: Estado ${response.statusCode}`));
+                return;
+            }
+
+            response.pipe(file);
+
+            file.on('finish', () => {
+                file.close(() => {
+                    console.log('Archivo descargado correctamente');
+                    resolve();
+                });
+            });
+        }).on('error', (error) => {
+            fs.unlink(rutaDestino, () => {}); // Eliminar archivo en caso de error
+            console.error('Error al descargar el archivo:', error);
+            reject(error);
+        });
+
+        file.on('error', (error) => { // Manejar errores de escritura de archivo
+            fs.unlink(rutaDestino, () => {}); // Eliminar archivo en caso de error
+            console.error('Error al escribir el archivo:', error);
+            reject(error);
+        });
+    });
+}
+
 module.exports = {
     postFile,
     getFile,
     postArchivo,
     getArchivo,
-    funcGetJSONFile
+    funcGetJSONFile,
+    descargarDesdeURL
 }

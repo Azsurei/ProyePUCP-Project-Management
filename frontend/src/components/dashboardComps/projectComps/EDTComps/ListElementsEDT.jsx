@@ -40,7 +40,7 @@ function CardEDT({ showElimConfirm, ...props }) {
     return (
         <div>
             <li
-                className={openChilds === true ? "CardEDT active" : "CardEDT"}
+                className={openChilds === true ? "CardEDT active bg-mainBackground hover:bg-[#dadada] dark:hover:bg-[rgba(238,238,238,0.1)]" : "CardEDT bg-mainBackground hover:bg-[#dadada] dark:hover:bg-[rgba(238,238,238,0.1)]"}
                 onClick={handleClick}
             >
                 <div className="leftContainer">
