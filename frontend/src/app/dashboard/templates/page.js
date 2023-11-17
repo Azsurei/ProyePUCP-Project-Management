@@ -166,7 +166,11 @@ export default function MyTemplates() {
             setPlantillasAC(pAC);
             setPlantillasMR(pMR);
 
-            const listaUnida = [...pAC, ...pKB, ...pMR].map((item, index) => ({
+            const pKBNombre = pKB.map(item => ({ ...item, nombreHerramienta: 'Kanban' }));
+            const pAcNombre = pAC.map(item => ({ ...item, nombreHerramienta: 'Acta Constitución' }));
+            const pMRNombre = pMR.map(item => ({ ...item, nombreHerramienta: 'Matriz Responsabilidades' }));
+
+            const listaUnida = [...pAcNombre, ...pKBNombre, ...pMRNombre].map((item, index) => ({
                 ...item,
                 idPlantilla: index + 1,
             }));
@@ -201,12 +205,12 @@ export default function MyTemplates() {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(templates.length / rowsPerPage);
+    const pages = Math.ceil(plantillasUnidas.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...templates];
+        let filteredTemplates = [...plantillasUnidas];
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((template) =>
