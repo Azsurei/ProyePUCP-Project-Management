@@ -26,7 +26,7 @@ export default function TablaEntregables(props) {
     const columns = [
         {
             name: 'Nombre',
-            uid: 'nombreProyecto',
+            uid: 'nombre',
             className: 'px-4 py-2 text-xl font-semibold tracking-wide text-left',
             sortable: true
         },
