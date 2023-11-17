@@ -14,9 +14,15 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
     Chip,
     User,
     Pagination,
+    useDisclosure,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
@@ -28,6 +34,7 @@ import { SessionContext } from "../layout";
 import axios from "axios";
 import { set } from "date-fns";
 import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
+import { Toaster, toast } from "sonner";
 
 
 const columns = [
@@ -285,7 +292,7 @@ export default function MyTemplates() {
     // Renderizado de contenidos de tabla (celdas, parte superior, y parte inferior)
     const renderCell = React.useCallback((template, columnKey) => {
         const cellValue = template[columnKey];
-
+        
         switch (columnKey) {
             case "acciones":
                 return (
@@ -297,8 +304,11 @@ export default function MyTemplates() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem>Editar</DropdownItem>
-                                <DropdownItem>Eliminar</DropdownItem>
+                                
+                                <DropdownItem onPress={()=>{
+                                    onOpen();
+                                    setPlantillaSeleccionada(template);
+                                    }}>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -321,6 +331,9 @@ export default function MyTemplates() {
 
     const topContent = React.useMemo(() => {
         return (
+
+
+            
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
@@ -361,9 +374,7 @@ export default function MyTemplates() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="danger" startContent={<DeleteIcon />}>
-                            Eliminar
-                        </Button>
+
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -434,35 +445,161 @@ export default function MyTemplates() {
 
     //Elimnacion Plantillas APIS
 
-    //Kanban
+    const deletePlantilla = (template) => {
+        var idPlanttillaEliminar;
+        switch (template.nombreHerramienta) {
+            case "Kanban":
+                idPlanttillaEliminar=template.idPlantillaKanban;
+                break;
+            case "Acta Constitución":
+                idPlanttillaEliminar=template.idPlantillaAC;
+                break;
+            case "Matriz Responsabilidades":
+                idPlanttillaEliminar=template.idPlantillaMR;
+                break;
+            default:
+                break;
+        }
 
-    //Acta de constitucion
+        console.log(idPlanttillaEliminar);
+        console.log(template.nombreHerramienta);
+        console.log(template.nombrePlantilla);
 
-    //Matriz de responsabilidades
+        return new Promise(async (resolve, reject) => {
+            try {
+                let url;
+                let dataKey;
+        
+                switch (template.nombreHerramienta) {
+                    case "Kanban":
+                        url = "/api/proyecto/plantillas/eliminarPlantillaKanban";
+                        dataKey = "idPlantillaKanban";
+                        break;
+                    case "Acta Constitución":
+                        url = "/api/proyecto/plantillas/eliminarPlantillaAC";
+                        dataKey = "idPlantillaAC";
+                        break;
+                    case "Matriz Responsabilidades":
+                        url = "/api/proyecto/plantillas/eliminarPlantillaMR";
+                        dataKey = "idPlantillaMR";
+                        break;
+                    default:
+                        reject("Nombre de herramienta no reconocido");
+                        return;
+                }
+        
+                const response = await axios.delete(
+                    process.env.NEXT_PUBLIC_BACKEND_URL + url,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        data: {
+                            [dataKey]: idPlanttillaEliminar,
+                        },
+                    }
+                );
+        
+                console.log('Deleted successfully', response);
 
-    // const deleteMR = async () => {
-    //     try {
-    //         const response = await axios.delete(
-    //         process.env.NEXT_PUBLIC_BACKEND_URL +
-    //             "/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion",
-    //         {
-    //             headers: {
-    //             "Content-Type": "application/json",
-    //             },
-    //             data: {
-    //                 idPlantillaMR: idPlantillaMR,
-    //             },
-    //         }
-    //         );
-    //         console.log('Deleted successfully', response);
+                setPlantillasUnidas((prevPlantillas) =>
+                    prevPlantillas.filter(
+                        (plantilla) =>
+                            plantilla.idPlantilla !== template.idPlantilla
+                    )
+                );
 
-    //     } catch (error) {
-    //         console.error('Error deleting', error);
-    //     }
-    // };
+                resolve(response);
+            } catch (error) {
+                console.error('Error deleting', error);
+                reject(error);
+            }
+        });
+       
+    };
+    
+    
+    const eliminarPlantilla = async (plantillaSeleccionada) => {
+        try {
+            toast.promise(deletePlantilla(plantillaSeleccionada), {
+                loading: "Eliminando Plantilla...",
+                success: (data) => {
+                    return "La plantilla se eliminó con éxito!";
+                },
+                error: "Error al eliminar plantilla",
+                position: "bottom-right",
+            });
+        } catch (error) {
+            throw error;
+        }
+    };
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const [plantillaSeleccionada, setPlantillaSeleccionada] = useState({});
 
     return (
+
         <>
+
+
+
+        <Toaster
+            position="bottom-left"
+            richColors
+            theme={"light"}
+            closeButton={true}
+            toastOptions={{
+                style: { fontSize: "1rem" },
+            }}
+        />
+
+        <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            classNames={
+                {
+                    //closeButton: "hidden",
+                }
+            }
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const finalizarModal = () => {
+                        eliminarPlantilla(plantillaSeleccionada);
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col text-red-500">
+                                Eliminar una plantilla
+                            </ModalHeader>
+                            <ModalBody>
+                                <div>
+                                    ¿Seguro que desea eliminar esta plantilla?
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    onPress={finalizarModal}
+                                >
+                                    Aceptar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+
+
             <div className="space-x-4 mb-2">
                 <Breadcrumbs>
                     <BreadcrumbsItem
