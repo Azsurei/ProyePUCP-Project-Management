@@ -87,7 +87,7 @@ export default function Reportes(props) {
                 "permitiéndote evaluar de manera precisa la rentabilidad y la ejecución de tus proyectos. Además, te ofrece una panorámica completa de los aspectos " +
                 "financieros y operativos.",
             imgLink: "/images/report_3.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuestos"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuestos/nuevoReporte"
         },
         {
             id: "rep4",
@@ -96,7 +96,7 @@ export default function Reportes(props) {
                 "El reporte de Resumen de Riesgos te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. " +
                 "Este informe proporciona una evaluación detallada de los riesgos potenciales, identificando sus causas, impacto y probabilidad de ocurrencia.",
             imgLink: "/images/report_4.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteRiesgos"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteRiesgos/nuevoReporte"
         },
         {
             id: "rep5",
