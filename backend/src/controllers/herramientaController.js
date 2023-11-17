@@ -26,7 +26,7 @@ async function listarHerramientasDeProyecto(req, res, next) {
     const query = `CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
-        console.log(results[0]);
+        //console.log(results[0]);
         res.status(200).json({
             herramientas: results[0],
             message: "Herramientas de proyecto obtenidas exitosamente",

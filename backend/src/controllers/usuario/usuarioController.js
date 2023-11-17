@@ -12,7 +12,7 @@ async function listarUsuarios(req, res, next) {
             message: "Usuarios obtenidos exitosamente",
         });
         //console.log(results);
-        console.log("Si se listaron los usuarios");
+        //console.log("Si se listaron los usuarios");
         //console.log(results[0]);
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
@@ -79,10 +79,8 @@ async function insertarUsuariosAProyecto(req, res, next) {
             ]);
 
             const idUsuarioXRolProyecto = results[0][0].idUsuarioXRolProyecto;
-            console.log(
-                `Se agrego el usuario ${participante.id} al proyecto ${idProyecto} con el rol ${user.numRol}`
-            );
-            console.log("Usuario X Rol X Proyecto : ", idUsuarioXRolProyecto);
+            //console.log(`Se agrego el usuario ${participante.id} al proyecto ${idProyecto} con el rol ${user.numRol}`);
+            //console.log("Usuario X Rol X Proyecto : ", idUsuarioXRolProyecto);
         }
         res.status(200).json({
             message: "Usuarios registrados exitosamente",
@@ -153,7 +151,7 @@ async function verificarSiCorreoEsDeGoogle(req, res, next) {
     try {
         const query = `CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE(?);`;
         const [results] = await connection.query(query, [correoElectronico]);
-        console.log(results[0][0]);
+        //console.log(results[0][0]);
         let tieneCuentaGoogle = results[0][0].tieneCuentaGoogle;
         console.log(tieneCuentaGoogle);
         if (tieneCuentaGoogle === 1) {
@@ -242,11 +240,11 @@ async function modificaEstadoNotificacionXIdUsuario(req, res, next){
     try{
         const query = `CALL MODIFICAR_ESTADO_NOTIFICACION_X_ID_USUARIO(?,?);`;
         const [results] = await connection.query(query, [idUsuario, estado]);
-        console.log(JSON.stringify(results,null,2));
-        console.log("===================================");
-
+       // console.log(JSON.stringify(results,null,2));
+       // console.log("===================================");
+        console.log(`Se modifico el estado de las notificaciones del usuario ${idUsuario} a ${estado}`);
         const notificaciones = results[0];
-        console.log(JSON.stringify(notificaciones,null,2));
+        //console.log(JSON.stringify(notificaciones,null,2));
         res.status(200).json({
             notificaciones,
             message: "Se actualizo estado de notificaciones de usuario correctamente",
