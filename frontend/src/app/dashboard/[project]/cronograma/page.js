@@ -55,8 +55,7 @@ axios.defaults.withCredentials = true;
 export default function Cronograma(props) {
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const { sendNotification } =
-        useContext(NotificationsContext);
+    const { sendNotification } = useContext(NotificationsContext);
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -631,10 +630,19 @@ export default function Cronograma(props) {
                             console.log(response.data.tareasOrdenadas);
 
                             //! No es realmente necesario un await ya que solo es una notificacion, no hay problema.
-                            for(const usuario of selectedUsers){
-                                if(usuario.idUsuario !== sessionData.idUsuario){
-                                    sendNotification(usuario.idUsuario,1,nuevoIdTarea);
-                                    console.log("mandando notificacion a " + usuario.idUsuario);
+                            for (const usuario of selectedUsers) {
+                                if (
+                                    usuario.idUsuario !== sessionData.idUsuario
+                                ) {
+                                    sendNotification(
+                                        usuario.idUsuario,
+                                        1,
+                                        nuevoIdTarea
+                                    );
+                                    console.log(
+                                        "mandando notificacion a " +
+                                            usuario.idUsuario
+                                    );
                                 }
                             }
 
@@ -1047,6 +1055,22 @@ export default function Cronograma(props) {
                             )}
                             {listTareas.length !== 0 && (
                                 <div className="pb-[60px]">
+                                    <div className="flex flex-row">
+                                        <p>Aqui va input de nombre</p>
+                                        <p>Filtro fechas</p>
+                                    </div>
+                                    <div
+                                        className="flex flex-row py-[.4rem] px-[1rem] 
+                                bg-mainSidebar rounded-xl text-sm tracking-wider 
+                                items-center mt-5 mb-2 text-[#a1a1aa]"
+                                    >
+                                        <p className="flex-1">NOMBRE</p>
+                                        <p className="w-[30%] flex justify-center">
+                                            ASIGNADOS
+                                        </p>
+                                        <p className="w-[19.5%]">ESTADOS</p>
+                                        <p className="w-[27%]">FECHAS</p>
+                                    </div>
                                     <ListTareas
                                         listTareas={listTareas}
                                         leftMargin={"0px"}
