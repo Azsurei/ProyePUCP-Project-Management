@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback,useContext } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
     Table,
     TableHeader,
@@ -17,28 +17,28 @@ import {
     Chip,
     User,
     Pagination,
-  } from "@nextui-org/react";
+} from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { SessionContext } from "../layout";
 import axios from "axios";
-import { set } from 'date-fns';
+import { set } from "date-fns";
 
 const columns = [
-    { name: "Nombre", uid: "name", sortable: true},
+    { name: "Nombre", uid: "name", sortable: true },
     { name: "Herramienta", uid: "tool", sortable: true },
     { name: "Fecha de creacion", uid: "dateCreated", sortable: true },
-    { name: "Acciones", uid: "actions"},
+    { name: "Acciones", uid: "actions" },
 ];
 
 const toolsOptions = [
-    { name: "Kanban", uid: "active" },
-    { name: "Acta de constitucion", uid: "paused" },
-    { name: "Matriz Responsabilidades", uid: "vacation" },
+    { name: "Kanban", uid: "kanban" },
+    { name: "Acta de constitucion", uid: "actaconst" },
+    { name: "Matriz Responsabilidades", uid: "matrizresp" },
 ];
 
 const extensionOptions = [
@@ -50,153 +50,144 @@ const extensionOptions = [
 const templates = [
     {
         id: 1,
-        name: 'Backlog estandar 2023',
+        name: "Backlog estandar 2023",
         tool: "Gestion del Product Backlog",
         dateCreated: "2021-10-01",
     },
     {
         id: 2,
-        name: 'Registro de equipos',
+        name: "Registro de equipos",
         tool: "Cronograma",
         dateCreated: "2021-10-02",
     },
     {
         id: 3,
-        name: 'Presupuesto',
+        name: "Presupuesto",
         tool: "Backlog",
         dateCreated: "2021-10-03",
-
     },
     {
         id: 4,
-        name: 'Catalogo',
+        name: "Catalogo",
         tool: "Gestion del Product Backlog",
         dateCreated: "2021-10-01",
     },
     {
         id: 5,
-        name: 'Acta de constitucion',
+        name: "Acta de constitucion",
         tool: "Cronograma",
         dateCreated: "2021-10-02",
-
     },
     {
         id: 6,
-        name: 'Matriz de retrospectivas',
+        name: "Matriz de retrospectivas",
         tool: "Backlog",
         dateCreated: "2021-10-03",
     },
 ];
 
 export default function MyTemplates() {
-
     
+    // Variables de plantillas
     const [plantillasAC, setPlantillasAC] = useState([]);
     const [plantillasMR, setPlantillasMR] = useState([]);
     const [plantillasKB, setPlantillasKB] = useState([]);
+    const [plantillasUnidas, setPlantillasUnidas] = useState([]);
 
-    //obtener idUsuario
+    // Obtencion de idUsuario
     const [IdUsuario, setIdUsuario] = useState("");
     const { sessionData } = useContext(SessionContext);
     useEffect(() => {
         setIdUsuario(sessionData.idUsuario);
     }, [sessionData.idUsuario]);
 
-        
-    //Listados Plantillas (GET)
-
     //Kanban
     const DataTable2 = async () => {
-        
         return new Promise(async (resolve, reject) => {
             try {
-            const response = await axios.get(
-                process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanban/' + IdUsuario
-            );
-        
-            resolve(response.data.plantillasKanban);
+                const response = await axios.get(
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasKanban/" +
+                        IdUsuario
+                );
+
+                resolve(response.data.plantillasKanban);
             } catch (error) {
-            console.log("Error Plantilla MR");
-            reject(error);
+                console.log("Error Plantilla MR");
+                reject(error);
             }
         });
-        
     };
-
 
     //Acta de constitucion
     const DataTable = async () => {
-                
         return new Promise(async (resolve, reject) => {
             try {
-            const response = await axios.get(
-                process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario
-            );
-        
-            resolve(response.data.plantillasAC);
+                const response = await axios.get(
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasAC/" +
+                        IdUsuario
+                );
+
+                resolve(response.data.plantillasAC);
             } catch (error) {
-            console.log("Error Plantilla MR");
-            reject(error);
+                console.log("Error Plantilla MR");
+                reject(error);
             }
         });
-
-
     };
-    
+
     //Matriz de responsabilidades
-    
     const DataTable1 = async () => {
         return new Promise(async (resolve, reject) => {
-          try {
-            const response = await axios.get(
-              process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/plantillas/listarPlantillasMR/" +
-                IdUsuario
-            );
-      
-            resolve(response.data.plantillasMR);
-          } catch (error) {
-            console.log("Error Plantilla MR");
-            reject(error);
-          }
+            try {
+                const response = await axios.get(
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasMR/" +
+                        IdUsuario
+                );
+
+                resolve(response.data.plantillasMR);
+            } catch (error) {
+                console.log("Error Plantilla MR");
+                reject(error);
+            }
         });
-      };
-      
+    };
 
-    
-    const [plantillasUnidas, setPlantillasUnidas] = useState("");
-
+    // Unir todas las plantillas
     const fecthData = async () => {
-        try{
-            const pKB= await DataTable2();
-            const pAC= await DataTable();
-            const pMR= await DataTable1();
+        try {
+            const pKB = await DataTable2();
+            const pAC = await DataTable();
+            const pMR = await DataTable1();
 
             setPlantillasKB(pKB);
-            setPlantillasAC(pAC);   
+            setPlantillasAC(pAC);
             setPlantillasMR(pMR);
 
-            const listaUnida = [...pAC, ...pKB, ...pMR].map((item, index) => ({ ...item, idPlantilla: index + 1 }));
+            const listaUnida = [...pAC, ...pKB, ...pMR].map((item, index) => ({
+                ...item,
+                idPlantilla: index + 1,
+            }));
             setPlantillasUnidas(listaUnida);
-
 
             // Asignar nuevo campo idPlantilla de forma consecutiva
             console.log("Todas las llamadas asincronas se han completado");
-
         } catch (error) {
             console.error("Error en fecthData:", error);
         }
-
     };
 
+    // Funcion de effect inicial
     useEffect(() => {
         if (IdUsuario !== "") {
             console.log("idUsuario: " + IdUsuario);
             fecthData();
-
         }
     }, [IdUsuario]);
 
+    console.log(plantillasUnidas);
 
     // Estados generales
     const [filterValue, setFilterValue] = React.useState("");
@@ -325,7 +316,7 @@ export default function MyTemplates() {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
                         <Dropdown>
@@ -349,15 +340,13 @@ export default function MyTemplates() {
                                 onSelectionChange={setToolsFilter}
                             >
                                 {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
+                                    <DropdownItem key={status.uid}>
                                         {status.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="danger" startContent	={<DeleteIcon />}>
+                        <Button color="danger" startContent={<DeleteIcon />}>
                             Eliminar
                         </Button>
                     </div>
@@ -428,11 +417,6 @@ export default function MyTemplates() {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
-
-
-
-        
-
     //Elimnacion Plantillas APIS
 
     //Kanban
@@ -461,11 +445,6 @@ export default function MyTemplates() {
     //         console.error('Error deleting', error);
     //     }
     // };
-
-
-
-
-
 
     return (
         <>
