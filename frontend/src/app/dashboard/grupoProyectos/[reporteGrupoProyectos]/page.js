@@ -52,10 +52,11 @@ export default function ReporteGrupoProyectos(props) {
                     <Breadcrumbs>
                         <BreadcrumbsItem href="/" text="Inicio" />
                         <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                        <BreadcrumbsItem href="/dashboard/grupoProyectos" text="Grupo de Proyectos" />
                     </Breadcrumbs>
                 {isId && (<div className="reporteGrupoProyectos h-screen">
                     <div className="titleHistorialReporte text-mainHeaders">
-                        Nombre Proyecto
+                        Reporte de Grupo de Proyectos
                     </div>
                     <Tabs aria-label="Options" color="warning">
                         <Tab key="photos" title="Alcance">

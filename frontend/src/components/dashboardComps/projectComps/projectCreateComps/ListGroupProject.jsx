@@ -10,6 +10,9 @@ import { Avatar, Chip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Bu
 import { SessionContext } from "@/app/dashboard/layout";
 import TablaProyectos from "@/components/dashboardComps/projectComps/projectCreateComps/TablaProyectos";
 import RouteringReporteGrupo from "./RouteringReporteGrupo";
+import { MenuIcon } from "@/../public/icons/MenuIcon";
+import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
 axios.defaults.withCredentials = true;
 function GroupCard(props) {
     const fechaTransaccion = new Date(props.fechaCreacion);
@@ -70,11 +73,12 @@ function GroupCard(props) {
         <>
         <li className="ProjectCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10" onClick={props.onClick}>
             <div className="flex justify-between items-center">
-            <p className="cardTitleProject">{props.name}</p>
+            <p className="text-xl font-montserrat font-semibold">{props.name}</p>
             <Dropdown>
                     <DropdownTrigger>
                     <Button 
-                        variant="bordered" 
+                        variant="light" 
+                        endContent={<MenuIcon size={24} />}
                     >
                          Menu
                     </Button>
@@ -84,6 +88,7 @@ function GroupCard(props) {
                         key="new"
                         description="Visualiza los proyectos relacionados del grupo"
                         onPress={() => handleModal(proyectos)}
+                        startContent={<EyeFilledIcon size={24} />}
                       >
                         Visualizar Proyectos
                         
@@ -95,6 +100,7 @@ function GroupCard(props) {
                             setRoutering(idGrupoProyecto);
                         }
                         }
+                        startContent={<PlusIcon size={24} />}
                       >
                         Crear Reporte
                       </DropdownItem>
@@ -103,7 +109,7 @@ function GroupCard(props) {
             </div>
             
 
-            <p className="cardDates text-xl">
+            <p className="text-gray-600 font-montserrat text-base font-semibold leading-2 mt-2 mb-2">
                 {fechaFormateada}
             </p>
             
@@ -138,7 +144,7 @@ function GroupCard(props) {
             </div>
             )}
 
-            <p className="cardDates text-xl">
+            <p className="text-gray-600 font-montserrat text-base font-semibold leading-2 mt-2">
                 {proyectos.length} Proyectos involucrados 
             </p>
             
