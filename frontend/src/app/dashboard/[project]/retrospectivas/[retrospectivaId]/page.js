@@ -179,7 +179,6 @@ function RetrospectivaView(props) {
                     )}
                 </div>
             </div>
-            <Toaster richColors position="top-center"></Toaster>
         </>
     );
 
