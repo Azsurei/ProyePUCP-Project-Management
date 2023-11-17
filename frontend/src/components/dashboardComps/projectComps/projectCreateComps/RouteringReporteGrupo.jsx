@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useContext } from 'react';
 import { SmallLoadingScreen } from "@/app/dashboard/layout";
 function RouteringReporteGrupo({idGrupoProyecto}) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
