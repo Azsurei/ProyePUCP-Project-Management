@@ -14,7 +14,7 @@ routerEDT.post("/:idProyecto/insertarComponenteEDT", verifyToken, EDTController.
 routerEDT.post("/modificarComponenteEDT", verifyToken, EDTController.modificarComponenteEDT);
 routerEDT.post("/eliminarComponenteEDT", verifyToken, EDTController.eliminarComponenteEDT);
 routerEDT.post("/verInfoComponenteEDT", verifyToken, EDTController.verInfoComponenteEDT);
-routerEDT.delete("/eliminarEDT",EDTController.eliminar);
-routerEDT.delete("/eliminarEDTXProyecto",EDTController.eliminarXProyecto);
+routerEDT.delete("/eliminarEDT",verifyToken, EDTController.eliminar);
+routerEDT.delete("/eliminarEDTXProyecto",verifyToken, EDTController.eliminarXProyecto);
 
 module.exports.routerEDT = routerEDT;

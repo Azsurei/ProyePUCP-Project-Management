@@ -4,6 +4,7 @@ const authGoogle = require("../authGoogle/authGoogle");
 const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
+const https = require('https');
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require('../files/fileController');
 const Exceljs = require('exceljs');
@@ -106,11 +107,18 @@ async function descargarExcel(req, res, next) {
 
     try{
         
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,idArchivo,destinationFolder);
-        console.log(tmpFilePath);
+        const url = await fileController.getArchivo(idArchivo);
+        console.log(destinationFolder);
 
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        // Crear el nombre del archivo con el segmento de la URL
+        let filename = `${idArchivo}.json`; // Asumiendo que es un archivo JSON
+
+        // Combinar con el destinationFolder para crear la ruta completa
+        let fullPath = path.join(destinationFolder, filename);
+        console.log(destinationFolder);
+        await fileController.descargarDesdeURL(url,fullPath);
+
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
         const jsonData = JSON.parse(fileContent);
         const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
 

@@ -322,7 +322,6 @@ export default function newProject() {
             });
     };
 
-
     const [isCreatingProject, setIsCreatingProject] = useState(false);
 
     return (
@@ -444,17 +443,19 @@ export default function newProject() {
                 >
                     {"<"}
                 </button>
-                <ButtonNextUI
-                    className="bg-[#f0ae19] font-[Montserrat] font-medium text-white text-xl"
-                    size="lg"
-                    onClick={() => {
-                        setIsCreatingProject(true);
-                        checkData();
-                    }}
-                    isLoading={isCreatingProject}
-                >
-                    Crear Proyecto
-                </ButtonNextUI>
+                {nameProject !== "" && (
+                    <ButtonNextUI
+                        className="bg-[#f0ae19] font-[Montserrat] font-medium text-white text-xl"
+                        size="lg"
+                        onClick={() => {
+                            setIsCreatingProject(true);
+                            checkData();
+                        }}
+                        isLoading={isCreatingProject}
+                    >
+                        Crear Proyecto
+                    </ButtonNextUI>
+                )}
                 <button
                     className="optionalGoMove"
                     onClick={cambiarEstadoAdelante}
