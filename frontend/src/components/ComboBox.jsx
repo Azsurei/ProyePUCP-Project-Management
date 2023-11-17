@@ -2,9 +2,8 @@
 import { Fragment, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import axios from "axios";
-import { useEffect, useContext } from "react";
+import { useEffect } from "react";
 
 export default function Example({
     urlApi,
@@ -27,7 +26,6 @@ export default function Example({
     const [query, setQuery] = useState("");
     const [data, setData] = useState([]);
     const [dataWithId, setDataWithId] = useState([]);
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -40,7 +38,6 @@ export default function Example({
                 );
                 setDataWithId(dataWithId);
                 setData(response.data[property]);
-                //setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
