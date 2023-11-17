@@ -80,14 +80,16 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 "Fecha FORMATO:",
                 new Date(crData.fechaIdentificacion).toISOString().split("T")[0]
             );
-            const miembro = {
-                imgLink: crData.imgLink,
-                correoElectronico: crData.correoElectronico,
-                idUsuario: crData.duenoRiesgo,
-                apellidos: crData.apellidos,
-                nombres: crData.nombres,
-            };
-            setSelectedMiembrosList([miembro]);
+            if (crData.nombres !== null) {
+                const miembro = {
+                    imgLink: crData.imgLink,
+                    correoElectronico: crData.correoElectronico,
+                    idUsuario: crData.duenoRiesgo,
+                    apellidos: crData.apellidos,
+                    nombres: crData.nombres,
+                };
+                setSelectedMiembrosList([miembro]);
+            }
             setDetail(crData.detalleRiesgo);
             setCause(crData.causaRiesgo);
             setImpactDetail(crData.impactoRiesgo);

@@ -65,14 +65,16 @@ export default function MatrizComunicacionesUpdate(props) {
             setFrecuency(mcData.idFrecuencia);
             setSelectedNameFormat(mcData.nombreFormato);
             setFormat(mcData.idFormato);
-            const miembro = {
-                imgLink: mcData.imgLink,
-                correoElecronico: mcData.correoElectronico,
-                idUsuario: mcData.responsableDeComunicar,
-                apellidos: mcData.apellidos,
-                nombres: mcData.nombres,
-            };
-            setSelectedMiembrosList([miembro]);
+            if (mcData.nombres !== null) {
+                const miembro = {
+                    imgLink: mcData.imgLink,
+                    correoElecronico: mcData.correoElectronico,
+                    idUsuario: mcData.responsableDeComunicar,
+                    apellidos: mcData.apellidos,
+                    nombres: mcData.nombres,
+                };
+                setSelectedMiembrosList([miembro]);
+            }
             console.log("Terminó de cargar los datos");
             //setIsLoading(false);
             setIsLoadingSmall(false);
@@ -443,9 +445,12 @@ export default function MatrizComunicacionesUpdate(props) {
                                             verifyFieldsEmpty() &&
                                             !verifyFieldsExcessive()
                                         ) {
-                                            toast.error("Faltan completar campos", {
-                                                position: "bottom-left",
-                                            });
+                                            toast.error(
+                                                "Faltan completar campos",
+                                                {
+                                                    position: "bottom-left",
+                                                }
+                                            );
                                             return false;
                                         } else if (
                                             verifyFieldsExcessive() &&
