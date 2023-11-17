@@ -9,36 +9,36 @@ const lineaActaReunionController = require("../controllers/actaReunion/lineaActa
 const participantesXReunionController = require("../controllers/actaReunion/participanteXReunionController");
 const responsableAcuerdoController = require("../controllers/actaReunion/responsableAcuerdoController");
 
-routerActaReunion.post("/crearActaReunion", actaReunionController.crear);
-routerActaReunion.get("/listarActaReunionXIdProyecto/:idProyecto", actaReunionController.listarXIdProyecto);
-routerActaReunion.delete("/eliminarActaReunion", actaReunionController.eliminar);
-routerActaReunion.delete("/eliminarActaReunionXProyecto", actaReunionController.eliminarXProyecto);
+routerActaReunion.post("/crearActaReunion", verifyToken, actaReunionController.crear);
+routerActaReunion.get("/listarActaReunionXIdProyecto/:idProyecto", verifyToken, actaReunionController.listarXIdProyecto);
+routerActaReunion.delete("/eliminarActaReunion",verifyToken,actaReunionController.eliminar);
+routerActaReunion.delete("/eliminarActaReunionXProyecto",verifyToken,actaReunionController.eliminarXProyecto);
 
 // Linea Acta Reunion
-routerActaReunion.post("/crearLineaActaReunion", lineaActaReunionController.crear);
-routerActaReunion.get("/listarLineaActaReunionXIdActaReunion/:idActaReunion", lineaActaReunionController.listarXIdActaReunion);
-routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion", lineaActaReunionController.listarXIdLineaActaReunion);
-routerActaReunion.put("/modificarLineaActaReunion", lineaActaReunionController.modificar);
-routerActaReunion.delete("/eliminarLineaActaReunionXIdLineaActaReunion", lineaActaReunionController.eliminarXIdLineaActaReunion);
+routerActaReunion.post("/crearLineaActaReunion",verifyToken,lineaActaReunionController.crear);
+routerActaReunion.get("/listarLineaActaReunionXIdActaReunion/:idActaReunion",verifyToken,lineaActaReunionController.listarXIdActaReunion);
+routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion", verifyToken,lineaActaReunionController.listarXIdLineaActaReunion);
+routerActaReunion.put("/modificarLineaActaReunion",verifyToken,lineaActaReunionController.modificar);
+routerActaReunion.delete("/eliminarLineaActaReunionXIdLineaActaReunion",verifyToken,lineaActaReunionController.eliminarXIdLineaActaReunion);
 
 // Comentario reunion
-routerActaReunion.post("/crearComentarioReunion", comentarioReunionController.crear);
-routerActaReunion.get("/listarComentarioReunionXIdLineaActaReunion/:idLineaActaReunion", comentarioReunionController.listarXIdLineaActaReunion);
+routerActaReunion.post("/crearComentarioReunion",verifyToken,comentarioReunionController.crear);
+routerActaReunion.get("/listarComentarioReunionXIdLineaActaReunion/:idLineaActaReunion",verifyToken,comentarioReunionController.listarXIdLineaActaReunion);
 
 // Participante reunion
-routerActaReunion.post("/crearParticipanteXReunion", participantesXReunionController.crear);
-routerActaReunion.get("/listarParticipanteXReunionXIdActaReunion/:idActaReunion", participantesXReunionController.listarXIdLineaActaReunion);
+routerActaReunion.post("/crearParticipanteXReunion",verifyToken,participantesXReunionController.crear);
+routerActaReunion.get("/listarParticipanteXReunionXIdActaReunion/:idActaReunion",verifyToken,participantesXReunionController.listarXIdLineaActaReunion);
 
 // Tema reunion 
-routerActaReunion.post("/crearTemaReunion", temaReunionController.crear);
-routerActaReunion.get("/listarTemaReunionXIdLineaActaReunion/:idLineaActaReunion", temaReunionController.listarXIdLineaActaReunion);
+routerActaReunion.post("/crearTemaReunion",verifyToken,temaReunionController.crear);
+routerActaReunion.get("/listarTemaReunionXIdLineaActaReunion/:idLineaActaReunion",verifyToken,temaReunionController.listarXIdLineaActaReunion);
 
 // Acuerdo
-routerActaReunion.post("/crearAcuerdo", acuerdoController.crear);
-routerActaReunion.get("/listarAcuerdoXIdTemaReunion/:idTemaReunion", acuerdoController.listarXIdTemaReunion);
+routerActaReunion.post("/crearAcuerdo",verifyToken, acuerdoController.crear);
+routerActaReunion.get("/listarAcuerdoXIdTemaReunion/:idTemaReunion",verifyToken, acuerdoController.listarXIdTemaReunion);
 
 // Responsable acuerdo
-routerActaReunion.post("/crearResponsableAcuerdo", responsableAcuerdoController.crear);
-routerActaReunion.get("/listarResponsableAcuerdoXIdAcuerdo/:idAcuerdo", responsableAcuerdoController.listarXIdAcuerdo);
+routerActaReunion.post("/crearResponsableAcuerdo",verifyToken, responsableAcuerdoController.crear);
+routerActaReunion.get("/listarResponsableAcuerdoXIdAcuerdo/:idAcuerdo",verifyToken, responsableAcuerdoController.listarXIdAcuerdo);
 
 module.exports.routerActaReunion = routerActaReunion;
