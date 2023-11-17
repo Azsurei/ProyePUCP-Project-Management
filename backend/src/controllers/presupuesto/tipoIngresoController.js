@@ -15,6 +15,19 @@ async function listarTodos(req,res,next){
     }
 }
 
+async function funcListarTodos(){
+    try {
+        const query = `CALL LISTAR_TIPO_INGRESO_TODOS;`;
+        const [results] = await connection.query(query);
+        tiposIngreso = results[0];
+
+        return tiposIngreso;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports={
-    listarTodos
+    listarTodos,
+    funcListarTodos
 }

@@ -9,6 +9,9 @@ const authGoogle = require("../authGoogle/authGoogle");
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require("../files/fileController");
 const presupuestoController = require("../presupuesto/presupuestoController");
+const ingresoController = require("../presupuesto/ingresoController");
+const egresoController = require("../presupuesto/egresoController");
+const tipoIngresoController = require("../presupuesto/tipoIngresoController");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
@@ -44,8 +47,13 @@ vertical: 'middle',
 horizontal: 'center'
 };
 
+const meses = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre'
+  ];
+  
+
 async function descargarExcel(req,res,next){
-    const {fileId} = req.body;
+    const {idArchivo} = req.body;
     const destinationFolder = path.join(__dirname, '../../tmp');
 
     try{
@@ -56,10 +64,13 @@ async function descargarExcel(req,res,next){
         const jsonData = JSON.parse(fileContent);
         const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
         console.log(excelFilePath);
-        workbook = await generarExcelPresupuesto(jsonData);
         
+        //Con el id del archivo vamos a descargar el JSON
+        //Pasamos ese JSON a la funcion de generar excel y este nos va a devolver el workbook
+        workbook = await generarExcelPresupuesto(jsonData);
+        //Ese workbook se va a escribir en una ruta temporal
         await workbook.xlsx.writeFile(excelFilePath);
-
+        //Vamos a devolver ese workbook a front
         res.download(excelFilePath , `${fileId}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
@@ -75,7 +86,7 @@ async function descargarExcel(req,res,next){
     }catch(error){
         console.error("Error al exportar el reporte Excel:", error.message);
         next(error);
-    } 
+    }
 }
 
 async function generarExcelPresupuesto(presupuesto){
@@ -183,12 +194,13 @@ async function subirJSON(req, res, next) {
         
         console.log("Hola servidor");
         //let workbook = await probandoExcelPresupuesto(presupuesto);
-        
+        //Generamos el path temporal
         var tmpFilePath = generarPathPresupuesto(presupuesto,idProyecto);
 
+        //Escribir el archivo en el path temporal
         var file = fs.createReadStream(tmpFilePath)
         
-
+        //Subir el archivo del path temporal a internet en este caso S3
         const idArchivo = await fileController.postArchivo(file);
 
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
@@ -210,9 +222,10 @@ async function obtenerJSON(req,res,next){
     const {idArchivo} = req.params;
     console.log(idArchivo);
     try{
+        //Descargamos de la S3 el archivo del JSON y lo leemos y lo parseamos a JSON
         const jsonData = await fileController.funcGetJSONFile(idArchivo)
         console.log(jsonData);
-
+        //Lo devolvemos
         res.status(200).json({
             jsonData,
             message: "Detalles del reporte recuperados con éxito"
@@ -220,17 +233,6 @@ async function obtenerJSON(req,res,next){
     }catch(error){
         next(error);
     } 
-}
-
-async function convertirExcel2JSON(filePath){
-    const workbook = XLSX.readFile(filePath);
-    let result = {};
-    workbook.SheetNames.forEach(sheetName =>{
-        const woorksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(woorksheet);
-        result[sheetName] = json;
-    });
-    return result;
 }
 
 
@@ -254,11 +256,17 @@ async function crearExcelCaja(req,res,next){
     const destinationFolder = path.join(__dirname, '../../tmp');
     try {
         const presupuesto = await presupuestoController.obtenerPresupuestoFlujoCaja(idPresupuesto,fechaIni,fechaFin);
-        console.log(presupuesto);
-       
-        workbook = await funcCrearExcelCaja(presupuesto);
+        
+        const fechaCreacion = new Date(presupuesto.general.fechaCreacion);
+        const mesActual = fechaCreacion.getUTCMonth() + 1;
+        const lineasIngresoOrdenadas = await ingresoController.ordenarLineasIngreso(presupuesto.lineasIngreso,mesActual,presupuesto.general.cantidadMeses);
+        const lineasEgresoOrdenadas = await egresoController.ordenarLineasEgreso(presupuesto.lineasEgreso,mesActual,presupuesto.general.cantidadMeses);
+        const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + presupuesto.general.cantMeses);
+        
+        workbook = await funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas);
         const excelFilePath = path.join(destinationFolder, `${idPresupuesto}.xlsx`);
         await workbook.xlsx.writeFile(excelFilePath);
+        console.log(`Se creo el archivo ${excelFilePath}`);
         res.download(excelFilePath , `${idPresupuesto}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
@@ -276,49 +284,96 @@ async function crearExcelCaja(req,res,next){
 }
 
 
-async function funcCrearExcelCaja(presupuesto){
+async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas){
     try {
 
         let filaActual=1;
         const workbook = new Exceljs.Workbook();
         const WSCaja = workbook.addWorksheet('Caja');
         // Crear header
-        
+        let totalIngresos = 0;
+        let totalEgresos = 0;
         // Imprimir Ingresos
-        filaActual = await agregarIngresosAExcelCaja(presupuesto.lineasIngreso,WSCaja,filaActual);
+        [filaActual, totalIngresos] = await agregarIngresosAExcelCaja(lineasIngresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //ImprimirEgresos
-        filaActual = await agregarEgresosAExcelCaja(presupuesto.lineasEgreso,WSCaja,filaActual);
+        [filaActual, totalEgresos] = await agregarEgresosAExcelCaja(lineasEgresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //Imprimir acumulado
+        WSCaja.getRow(filaActual).values = ["Acumulado",totalIngresos-totalEgresos];
+        let celdaAcumulado = WSCaja.getCell(filaActual,1);
+        celdaAcumulado.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        excelJSController.ajustarAnchoColumnas(WSCaja);
         return workbook;
     } catch (error) {
         console.log(error);    
     }
 }
 
-async function agregarIngresosAExcelCaja(lineasIngreso,WSCaja,filaActual){
-    try{
+async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaActual,cantidadMeses) {
+    try {
+
+        let i = 0;
+        let sumasPorMes = new Array(cantidadMeses).fill(0); // Inicializa el array para las sumas por mes
+    
         WSCaja.getRow(filaActual).values = ["Ingresos(*)"];
         filaActual++;
-        for(const lineaIngreso of lineasIngreso){
-            WSCaja.getRow(filaActual).values = [lineaIngreso.descripcion,lineaIngreso.monto*lineaIngreso.cantidad];
+        
+        const tiposIngreso = await tipoIngresoController.funcListarTodos();
+        
+        for(const lineaMes of lineasIngresoOrdenadas){
+            let filaArray = [tiposIngreso[i].descripcion]; // Asume que quieres etiquetar cada fila con "Tipo n"
+            filaArray.push(...lineaMes);
+            WSCaja.getRow(filaActual).values = filaArray;
+
+            // Sumar los ingresos de cada mes a sumasPorMes
+            lineaMes.forEach((monto, mesIndex) => {
+                sumasPorMes[mesIndex] += monto;
+            });
+            i++;
             filaActual++;
         }
-        return filaActual;
-    }catch(error){
-        console.log(error);
+    
+        WSCaja.getRow(filaActual).values = ["Total Ingresos", ...sumasPorMes];
+        let celdaTotalIngresos = WSCaja.getCell(filaActual, 1);
+        celdaTotalIngresos.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+    
+        return [filaActual, sumasPorMes]; // Retornar también el array de sumas por mes
+    } catch (error) {
+        console.error(error);
     }
 }
 
-async function agregarEgresosAExcelCaja(lineasEgreso,WSCaja,filaActual){
-    try{
-        WSCaja.getRow(filaActual).values = ["Egresos"];
+async function agregarEgresosAExcelCaja(lineasEgresoOrdenadas, WSCaja, filaActual,cantidadMeses) {
+    try {
+        let i = 0;
+        let sumasPorMes = new Array(cantidadMeses).fill(0); // Inicializa el array para las sumas por mes
+
+        WSCaja.getRow(filaActual).values = ["Egresos(*)"];
         filaActual++;
-        for(const lineaEgreso of lineasEgreso){
-            WSCaja.getRow(filaActual).values = [lineaEgreso.descripcion,lineaEgreso.costoReal*lineaEgreso.cantidad];
+        
+        for(const lineaMes of lineasEgresoOrdenadas){
+            let filaArray = lineaMes;
+            WSCaja.getRow(filaActual).values = filaArray;
+
+            // Sumar los ingresos de cada mes a sumasPorMes
+            lineaMes.forEach((costoReal, mesIndex) => {
+                if(mesIndex!=0){
+                    sumasPorMes[mesIndex-1] += costoReal;
+                }
+            });
+            i++;
             filaActual++;
         }
-        return filaActual;
-    }catch(error){
+
+        WSCaja.getRow(filaActual).values = ["Total Egresos", ...sumasPorMes];
+        let celdaTotalEgresos = WSCaja.getCell(filaActual,1);
+        celdaTotalEgresos.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        return [filaActual, sumasPorMes];
+    } catch (error) {
         console.log(error);
     }
 }

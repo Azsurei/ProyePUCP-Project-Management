@@ -113,6 +113,35 @@ async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fe
 
 }
 
+async function ordenarLineasIngreso(lineasIngreso, mesActual, cantidadMeses) {
+    const ingresosPorTipo = [];
+
+    // Inicializa los arrays para cada tipo de ingreso (1-4).
+    for (let i = 0; i < 4; i++) {
+        ingresosPorTipo[i] = new Array(cantidadMeses).fill(0);
+    }
+
+    try {
+        lineasIngreso.forEach((row) => {
+            const fechaCreacion = new Date(row.fechaTransaccion);
+            const mesTransaccion = fechaCreacion.getUTCMonth() + 1; // Los meses en JavaScript empiezan en 0
+            const mesReal = mesTransaccion - mesActual; // Ajusta según el mes actual
+            const idTipo = row.idIngresoTipo - 1; // Ajustar para índice base 0
+
+            // Asegúrate de que idTipo esté en el rango de 0 a 3 (para tipos de ingreso 1-4).
+            // Asegúrate de que el mesReal esté dentro del rango de la matriz.
+            if (idTipo >= 0 && idTipo < 4 && mesReal >= 0 && mesReal < cantidadMeses) {
+                ingresosPorTipo[idTipo][mesReal] += row.monto;
+            }
+        });
+    } catch (error) {
+        console.error(error);
+    }
+
+    // No necesitamos mapear a través de ingresosPorTipo ya que todos los sub-arrays ya tienen la misma longitud
+    return ingresosPorTipo;
+}
+
 module.exports = {
     crear,
     crearLineaIngreso,
@@ -121,5 +150,6 @@ module.exports = {
     eliminarLineaIngreso,
     listarLineasXIdPresupuesto,
     funcListarLineasXIdPresupuesto,
-    funcListarLineasFlujoCajaXIdPresupuesto
+    funcListarLineasFlujoCajaXIdPresupuesto,
+    ordenarLineasIngreso    
 };

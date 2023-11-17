@@ -873,6 +873,7 @@ CREATE TABLE PlantillaActaConstitucion(
     idUsuario INT,
     activo TINYINT,
     nombrePlantilla VARCHAR(200),
+    fechaCreacion DATE,
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 )
 ENGINE = InnoDB;
@@ -1331,6 +1332,7 @@ CREATE TABLE PlantillaKanban(
     idUsuario INT,
     nombrePlantilla VARCHAR(100),
     activo tinyint NOT NULL,
+    fechaCreacion DATE,
     FOREIGN KEY(idUsuario) REFERENCES Usuario (idUsuario)
 
 )
@@ -1354,6 +1356,7 @@ CREATE TABLE PlantillaMR(
     idUsuario INT,
     nombrePlantilla VARCHAR(100),
     activo tinyint NOT NULL,
+    fechaCreacion DATE,
     FOREIGN KEY(idUsuario) REFERENCES Usuario (idUsuario)
 
 )

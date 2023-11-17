@@ -28,9 +28,7 @@ async function modificar(req,res,next){
 async function listarXIdPresupuesto(req,res,next){
     const {idPresupuesto} = req.params;
     try {
-        const query = `CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
-        const [results] = await connection.query(query,[idPresupuesto]);
-        const presupuesto = results[0];
+        const presupuesto = await funcListarXIdPresupuesto(idPresupuesto);
         
         res.status(200).json({
             presupuesto,
@@ -41,16 +39,31 @@ async function listarXIdPresupuesto(req,res,next){
     }
 }
 
+async function funcListarXIdPresupuesto(idPresupuesto){
+    let presupuesto = [];
+    try {
+        const query = `CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
+        const [results] = await connection.query(query,[idPresupuesto]);
+        presupuesto = results[0][0];
+    } catch (error) {
+        console.log(error);
+    }
+    return presupuesto;
+}
+
 async function obtenerPresupuestoFlujoCaja(idPresupuesto,fechaIni,fechaFin){
     try {
+        const general = await funcListarXIdPresupuesto(idPresupuesto);
+        
         const lineasIngreso = await ingresoController.funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin);
+        
         const lineasEgreso = await egresoController.funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin);
     
         const presupuesto = {
+            general,
             lineasIngreso,
             lineasEgreso
         };
-        
         return presupuesto;
     } catch (error) {
         console.log(error);
@@ -101,15 +114,24 @@ async function listarLineasIngresoYEgresoXIdPresupuesto(req, res, next) {
 async function obtenerPresupuesto(req,res,next){
     const {idPresupuesto} = req.params;
     try {
-        const query = `CALL OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
-        const [results] = await connection.query(query,[idPresupuesto]);
-        const reporte = results[0];
+        const reporte = await funcObtenerPresupuesto(idPresupuesto);
         res.status(200).json({
             reporte,
             message: "Presupuesto obtenido correctamente"
         });
     } catch (error) {
         next(error);
+    }
+}
+
+async function funcObtenerPresupuesto(idPresupuesto){
+    try {
+        const query = `CALL OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(?);`;
+        const [results] = await connection.query(query,[idPresupuesto]);
+        const presupuesto = results[0][0];
+        return presupuesto;
+    } catch (error) {
+        console.log(error);
     }
 }
 
