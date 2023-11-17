@@ -147,14 +147,14 @@ export default function RootLayout({ children }) {
         }
     }
 
-    async function sendNotificationOnlySocket(idDestinatario){
-        try{
+    async function sendNotificationOnlySocket(idDestinatario) {
+        try {
             const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
 
             socketRef.current.emit("send_notification", {
                 targetUserId,
             });
-        }catch (error) {
+        } catch (error) {
             console.error("Error al enviar notificacion: ", error);
         }
     }
@@ -213,7 +213,10 @@ export default function RootLayout({ children }) {
             })
             .then(function (response) {
                 console.log(response.data.message);
-                console.log("ARREGLO DE NOTIFICACIONES " + JSON.stringify(response.data.notificaciones, null, 2));
+                console.log(
+                    "ARREGLO DE NOTIFICACIONES " +
+                        JSON.stringify(response.data.notificaciones, null, 2)
+                );
                 setNotifications(response.data.notificaciones);
                 setNotifsTabIsLoading(false);
             })
@@ -221,8 +224,6 @@ export default function RootLayout({ children }) {
                 console.log(error);
             });
     }
-
-
 
     if (isLoading) {
         return (
@@ -256,7 +257,7 @@ export default function RootLayout({ children }) {
                                 handleDeleteNotification={(idNotif) => {
                                     handleDeleteNotification(idNotif);
                                 }}
-                                handleModifyAllNotifications={(state)=>{
+                                handleModifyAllNotifications={(state) => {
                                     handleModifyAllNotifications(state);
                                 }}
                                 notifsTabIsLoading={notifsTabIsLoading}
@@ -274,7 +275,14 @@ export default function RootLayout({ children }) {
                                 {sessionData !== null && children}
                             </div>
                         </div>
-                        <Toaster richColors></Toaster>
+                        <Toaster
+                            richColors
+                            theme={"light"}
+                            closeButton={true}
+                            toastOptions={{
+                                style: { fontSize: "1rem" },
+                            }}
+                        ></Toaster>
                     </>
                 </NotificationsContext.Provider>
             </SessionContext.Provider>
