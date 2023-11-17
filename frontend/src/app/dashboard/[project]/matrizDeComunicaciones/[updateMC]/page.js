@@ -113,7 +113,6 @@ export default function MatrizComunicacionesUpdate(props) {
                 console.log(error);
             })
             .finally(() => {
-                //setIsLoadingSmall(false);
                 console.log("Finalizó la carga de datos");
             });
     }, []);

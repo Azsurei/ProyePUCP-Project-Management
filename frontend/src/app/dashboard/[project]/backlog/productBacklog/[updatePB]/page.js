@@ -177,7 +177,6 @@ export default function ProductBacklogUpdate(props) {
                 console.log("ID HU:", idHU);
                 console.log("DATA:", huData);
                 setHistoriaUsuario(huData);
-                setIsLoadingSmall(false);
                 // Puedes manejar el estado de isLoading aquí
             })
             .catch(function (error) {
@@ -471,6 +470,7 @@ export default function ProductBacklogUpdate(props) {
                             <Button
                                 color="primary"
                                 onPress={() => {
+                                    setIsLoadingSmall(true);
                                     router.push(
                                         "/dashboard/" +
                                             projectName +

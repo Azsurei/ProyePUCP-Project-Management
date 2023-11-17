@@ -26,6 +26,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
+    const [signal, setSignal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
@@ -115,9 +116,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
             setContingencyPlansOriginales(contingencyPlansActualizados);
             setQuantity2(contingencyPlansActualizados.length);
             console.log("Terminó de cargar los datos");
-            setIsLoadingSmall(false);
+            setSignal(true);
         }
     }, [catalogoRiesgos]);
+
+    useEffect(() => {
+        if (signal) {
+            setIsLoadingSmall(false);
+        }
+    }, [signal]);
 
     useEffect(() => {
         const numberPattern = /^\d+$/;
@@ -504,6 +511,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             <Button
                                 color="primary"
                                 onPress={() => {
+                                    setIsLoadingSmall(true);
                                     router.push(
                                         "/dashboard/" +
                                             projectName +

@@ -40,7 +40,7 @@ export default function Example({
                 );
                 setDataWithId(dataWithId);
                 setData(response.data[property]);
-                setIsLoadingSmall(false);
+                //setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
