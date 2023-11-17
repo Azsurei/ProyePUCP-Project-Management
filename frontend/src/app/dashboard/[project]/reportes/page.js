@@ -67,7 +67,7 @@ export default function Reportes(props) {
                 "Este tipo de reporte de entregables proporciona una visión detallada del estado actual de los entregables y " +
                 "las tareas asociadas en tu proyecto. Te permite supervisar el progreso, identificar obstáculos y tomar decisiones informadas para mantener tu proyecto en el camino correcto",
             imgLink: "/images/report_1.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteEntregables"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteEntregables/nuevoReporte"
         },
         {
             id: "rep2",
@@ -77,7 +77,7 @@ export default function Reportes(props) {
                 " proyecto. Este informe se centra en la disposición de las tareas por sprint, permitiéndote gestionar eficazmente la ejecución " +
                 "y el seguimiento de tus actividades.",
             imgLink: "/images/report_2.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteTareas"
+            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteTareas/nuevoReporte"
         },
         {
             id: "rep3",
