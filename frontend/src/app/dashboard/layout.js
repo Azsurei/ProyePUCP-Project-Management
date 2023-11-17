@@ -147,6 +147,18 @@ export default function RootLayout({ children }) {
         }
     }
 
+    async function sendNotificationOnlySocket(idDestinatario){
+        try{
+            const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
+
+            socketRef.current.emit("send_notification", {
+                targetUserId,
+            });
+        }catch (error) {
+            console.error("Error al enviar notificacion: ", error);
+        }
+    }
+
     async function relistNotification(idDestinatario) {
         try {
             const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
@@ -224,6 +236,7 @@ export default function RootLayout({ children }) {
                         notifications,
                         setNotifications,
                         sendNotification,
+                        sendNotificationOnlySocket,
                         relistNotification,
                     }}
                 >
