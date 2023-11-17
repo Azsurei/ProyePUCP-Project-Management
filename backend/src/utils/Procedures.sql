@@ -4366,8 +4366,8 @@ CREATE PROCEDURE GUARDAR_PLANTILLA_ACTACONSTITUCION(
 BEGIN
     DECLARE _idPlantillaAC INT;
     -- Primero creamos los datos iniciales de la plantilla
-	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla) 
-    VALUES(_idUsuario,1,_nombrePlantilla);
+	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla,fechaCreacion) 
+    VALUES(_idUsuario,1,_nombrePlantilla,NOW());
     SET _idPlantillaAC = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaAC AS idPlantillaAC;
@@ -4486,8 +4486,8 @@ CREATE PROCEDURE GUARDAR_PLANTILLA_KANBAN(
 BEGIN
     DECLARE _idPlantillaKanban INT;
     -- Primero creamos los datos iniciales de la plantilla
-	INSERT INTO PlantillaKanban(idUsuario,nombrePlantilla,activo) 
-    VALUES(_idUsuario,_nombrePlantilla,1);
+	INSERT INTO PlantillaKanban(idUsuario,nombrePlantilla,activo,fechaCreacion) 
+    VALUES(_idUsuario,_nombrePlantilla,1,NOW());
     SET _idPlantillaKanban = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaKanban AS idPlantillaKanban;
@@ -4625,8 +4625,8 @@ CREATE PROCEDURE GUARDAR_PLANTILLA_MR(
 BEGIN
     DECLARE _idPlantillaMR INT;
     -- Primero creamos los datos iniciales de la plantilla
-	INSERT INTO PlantillaMR(idUsuario,activo,nombrePlantilla) 
-    VALUES(_idUsuario,1,_nombrePlantilla);
+	INSERT INTO PlantillaMR(idUsuario,activo,nombrePlantilla,fechaCreacion) 
+    VALUES(_idUsuario,1,_nombrePlantilla,NOW());
     SET _idPlantillaMR = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaMR AS idPlantillaMR;
