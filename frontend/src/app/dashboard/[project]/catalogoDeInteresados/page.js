@@ -247,7 +247,7 @@ export default function CatalogoDeInteresados(props) {
                             </DropdownMenu>
                         </Dropdown> */}
                         <div className="flex items-center">
-                            <Tooltip content="Visualizar">
+                            <Tooltip content="Visualizar" color="primary">
                                 <button
                                     className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
                                     type="button"
@@ -259,7 +259,7 @@ export default function CatalogoDeInteresados(props) {
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Editar">
+                            <Tooltip content="Editar" color="warning">
                                 <button
                                     className=""
                                     type="button"
@@ -270,7 +270,7 @@ export default function CatalogoDeInteresados(props) {
                                     <img src="/icons/editar.svg" />
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Eliminar">
+                            <Tooltip content="Eliminar" color="danger">
                                 <button
                                     className=""
                                     type="button"

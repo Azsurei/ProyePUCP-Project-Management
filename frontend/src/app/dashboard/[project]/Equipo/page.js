@@ -33,11 +33,10 @@ export default function Equipo(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
-    //setIsLoadingSmall(false);
     const [ListComps, setListComps] = useState([]);
 
     const [screenState, setScreenState] = useState(0);
+    const [signal, setSignal] = useState(false);
     //0 es vista de equipos
     //1 es vista de un equipo particular
 
@@ -105,7 +104,7 @@ export default function Equipo(props) {
         }
     }, [modal]);
 
-    const removeTeam = (team) => {  
+    const removeTeam = (team) => {
         const nuevoListComps = ListComps.filter((equipo) => equipo !== team);
         setListComps(nuevoListComps);
     };
@@ -126,7 +125,7 @@ export default function Equipo(props) {
                 return participant;
             }),
         };
-        console.log("EL ID DEL ROL SELECCIONADO ES:",value);
+        console.log("EL ID DEL ROL SELECCIONADO ES:", value);
         // Actualiza el estado con el nuevo selectedTeam
         setSelectedTeam(updatedSelectedTeam);
     };
@@ -188,6 +187,7 @@ export default function Equipo(props) {
                             );
 
                             setListComps(teamsArray);
+                            setSignal(true);
                         })
                         .catch(function (error) {
                             console.log(
@@ -196,13 +196,19 @@ export default function Equipo(props) {
                             );
                         });
                 }
-                setIsLoadingSmall(false);
+
                 console.log("ya pase");
             })
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
             });
     };
+
+    useEffect(() => {
+        if (signal) {
+            setIsLoadingSmall(false);
+        }
+    }, [signal]);
 
     useEffect(() => {
         fetchTeamsData();
@@ -403,7 +409,11 @@ export default function Equipo(props) {
             modifiedArray: modifiedRoles,
             deletedArray: deletedRoles,
             addedArray: addedRoles,
-        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRolEquipo");
+        } = findModifiedDeletedAddedForRoles(
+            rolesOriginales,
+            roles,
+            "idRolEquipo"
+        );
 
         console.log("Modified Roles:", modifiedRoles);
         console.log("Deleted Roles:", deletedRoles);
@@ -524,7 +534,9 @@ export default function Equipo(props) {
                             />
                         </Breadcrumbs>
                     </div>
-                    <div className="text-[1.8rem] font-bold py-[1rem] dark:text-white">Equipos</div>
+                    <div className="text-[1.8rem] font-bold py-[1rem] dark:text-white">
+                        Equipos
+                    </div>
                     <div className="titleAndOptions">
                         <div className="subtitle dark:text-white">
                             Divide tu trabajo en los equipos que consideres
@@ -819,7 +831,8 @@ export default function Equipo(props) {
                                                             )
                                                         }
                                                         autoSelectedValue={{
-                                                            idRolEquipo: member.idRolEquipo,
+                                                            idRolEquipo:
+                                                                member.idRolEquipo,
                                                             nombreRol:
                                                                 member.nombreRol,
                                                         }}
