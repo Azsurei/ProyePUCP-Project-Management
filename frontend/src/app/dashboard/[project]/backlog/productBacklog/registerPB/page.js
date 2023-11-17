@@ -15,7 +15,6 @@ import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/
 import { useContext } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
 import { Toaster, toast } from "sonner";
-import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -66,8 +65,6 @@ export default function ProductBacklogRegister(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [reloading, setReloading] = useState(true);
@@ -481,27 +478,6 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="containerBottom">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal
@@ -550,7 +526,6 @@ export default function ProductBacklogRegister(props) {
                                             "Se excedió el límite de caractéres",
                                             { position: "bottom-left" }
                                         );
-                                        y;
                                         return false;
                                     } else {
                                         return true;

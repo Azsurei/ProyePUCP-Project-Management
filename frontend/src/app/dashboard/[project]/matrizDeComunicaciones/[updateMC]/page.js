@@ -206,6 +206,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             <Button
                                 color="primary"
                                 onPress={() => {
+                                    setIsLoadingSmall(true);
                                     router.push(
                                         "/dashboard/" +
                                             projectName +

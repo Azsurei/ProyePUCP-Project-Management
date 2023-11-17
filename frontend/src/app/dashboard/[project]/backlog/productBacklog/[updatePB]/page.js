@@ -787,7 +787,6 @@ export default function ProductBacklogUpdate(props) {
                     />
                 )}
             </div>
-            y
         </form>
     );
 }
