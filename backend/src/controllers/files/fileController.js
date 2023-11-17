@@ -48,6 +48,7 @@ async function postFile(req,res,next){
 }
 
 async function postArchivo(file){
+    console.log(file);
     const fileName = randomName();
     const params={
         Bucket: bucketName,
