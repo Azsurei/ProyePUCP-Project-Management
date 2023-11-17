@@ -30,7 +30,7 @@ function ColumnRetro({
     columnState,
     state,
     idLineaRetrospectiva,
-    baseItemsList,
+    baseItemsList, updateItemCount,
 }) {
     let twStyle1;
     let title;
@@ -51,6 +51,11 @@ function ColumnRetro({
     const [itemValue, setItemValue] = useState("");
 
     const [itemToDelete, setItemToDelete] = useState(null);
+
+    const handleItemChange = () => {
+        // Actualiza el contador en el componente padre
+        updateItemCount(columnState, itemsList.length);
+    };
 
     const {
         isOpen: isModalDeleteOpen,
@@ -78,7 +83,9 @@ function ColumnRetro({
                     isIconOnly
                     aria-label="Add"
                     className="bg-white"
-                    onPress={addItem} // Trigger addItem when the plus icon is clicked
+                    onPress={() => {
+                        addItem().then(r => console.log(r));
+                    }}
                     isDisabled={state===false}
                 >
                     <PlusIcon />
@@ -139,6 +146,7 @@ function ColumnRetro({
     function removeFromList(){
         const newItemsList = itemsList.filter(item => item.idItemLineaRetrospectiva !== itemToDelete);
         setItemsList(newItemsList);
+        updateItemCount(columnState, itemsList.length - 1);
     }
 
     async function addItem() {
@@ -153,6 +161,7 @@ function ColumnRetro({
         const regResult = await handleRegisterItem();
         if (regResult === 1) {
             setItemValue("");
+            updateItemCount(columnState, itemsList.length + 1);
             toast.success("Se registro el item con exito");
         } else {
             toast.error("Error al registrar item");
@@ -188,7 +197,7 @@ function ColumnRetro({
                 descripcion: itemValue,
             };
             setItemsList([...itemsList, newItem]);
-
+            handleItemChange(); // Actualizar el contador después de añadir el ítem
             console.log("Se registro el item con exito");
             return 1;
         } catch (error) {

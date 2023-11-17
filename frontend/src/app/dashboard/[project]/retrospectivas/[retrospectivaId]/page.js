@@ -22,9 +22,25 @@ function RetrospectivaView(props) {
     const [idLineaRetrospectiva, setIdLineaRetrospectiva] = useState(null);
     const [mainItemsList, setMainItemsList] = useState([]);
 
-    //puede ser id
-    //puede ser id=edit
-    //else pagina no existe
+    // ---------------
+    // Conteo de items
+    const [countItemsWell, setCountItemsWell] = useState(0);
+    const [countItemsBad, setCountItemsBad] = useState(0);
+    const [countItemsToDo, setCountItemsToDo] = useState(0);
+
+    const updateItemCount = (columnState, newCount) => {
+        console.log("Hey, im counting!");
+        console.log(columnState);
+        console.log(newCount);
+        if (columnState === 1) {
+            setCountItemsWell(newCount);
+        } else if (columnState === 2) {
+            setCountItemsBad(newCount);
+        } else if (columnState === 3) {
+            setCountItemsToDo(newCount);
+        }
+    };
+    //---------------------------------------------
 
     useEffect(() => {
         setIsLoadingSmall(true);
@@ -50,6 +66,7 @@ function RetrospectivaView(props) {
                 .then(function (response) {
                     console.log(response);
                     setMainItemsList(response.data.LineaRetrospectiva);
+
                     setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
@@ -142,18 +159,21 @@ function RetrospectivaView(props) {
                                 state={editMode}
                                 idLineaRetrospectiva={idLineaRetrospectiva}
                                 baseItemsList={mainItemsList[0].items}
+                                updateItemCount={updateItemCount}
                             />
                             <ColumnRetro
                                 columnState={2}
                                 state={editMode}
                                 idLineaRetrospectiva={idLineaRetrospectiva}
                                 baseItemsList={mainItemsList[1].items}
+                                updateItemCount={updateItemCount}
                             />
                             <ColumnRetro
                                 columnState={3}
                                 state={editMode}
                                 idLineaRetrospectiva={idLineaRetrospectiva}
                                 baseItemsList={mainItemsList[2].items}
+                                updateItemCount={updateItemCount}
                             />
                         </>
                     )}
@@ -182,20 +202,28 @@ function RetrospectivaView(props) {
     }
 
     function handleSave() {
-        // Calculate the counts based on the number of items in each list
-        const cantBien = mainItemsList[0]?.items?.length || 0;
-        const cantMal = mainItemsList[1]?.items?.length || 0;
-        const cantQueHacer = mainItemsList[2]?.items?.length || 0;
+        console.log("Lista de columna 1");
+        console.log(mainItemsList[0].items.length);
+        console.log("Cuenta 1");
+        console.log(countItemsWell);
+        console.log("Lista de columna 2");
+        console.log(mainItemsList[1].items.length);
+        console.log("Cuenta 2");
+        console.log(countItemsBad);
+        console.log("Lista de columna 3");
+        console.log(mainItemsList[2].items.length);
+        console.log("Cuenta 3");
+        console.log(countItemsToDo);
 
         const saveData = {
             idLineaRetrospectiva: idLineaRetrospectiva,
-            cantBien: cantBien,
-            cantMal: cantMal,
-            cantQueHacer: cantQueHacer
+            cantBien: countItemsWell === 0? mainItemsList[0].items.length:countItemsWell,
+            cantMal:  countItemsBad === 0? mainItemsList[1].items.length:countItemsBad,
+            cantQueHacer: countItemsToDo === 0? mainItemsList[2].items.length:countItemsToDo,
         };
-        console.log(cantBien);
-        console.log(cantMal);
-        console.log(cantQueHacer);
+        console.log(countItemsWell);
+        console.log(countItemsBad);
+        console.log(countItemsToDo);
         const saveURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/retrospectiva/modificarLineaRetrospectiva";
 
         axios.put(saveURL, saveData)
