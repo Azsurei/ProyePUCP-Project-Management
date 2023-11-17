@@ -260,13 +260,10 @@ async function crearExcelCaja(req,res,next){
         const fechaCreacion = new Date(presupuesto.general.fechaCreacion);
         const mesActual = fechaCreacion.getUTCMonth() + 1;
         const lineasIngresoOrdenadas = await ingresoController.ordenarLineasIngreso(presupuesto.lineasIngreso,mesActual,presupuesto.general.cantidadMeses);
-
+        const lineasEgresoOrdenadas = await egresoController.ordenarLineasEgreso(presupuesto.lineasEgreso,mesActual,presupuesto.general.cantidadMeses);
         const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + presupuesto.general.cantMeses);
         
-        const lineasEgresoOrdenadas = await egresoController.ordenarLineasEgreso(presupuesto.lineasEgreso,mesActual,mesesMostrados);
-        console.log(lineasIngresoOrdenadas);
-        
-        workbook = await funcCrearExcelCaja(presupuesto,lineasIngresoOrdenadas);
+        workbook = await funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas);
         const excelFilePath = path.join(destinationFolder, `${idPresupuesto}.xlsx`);
         await workbook.xlsx.writeFile(excelFilePath);
         console.log(`Se creo el archivo ${excelFilePath}`);
@@ -287,7 +284,7 @@ async function crearExcelCaja(req,res,next){
 }
 
 
-async function funcCrearExcelCaja(presupuesto,lineasIngresoOrdenadas){
+async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas){
     try {
 
         let filaActual=1;
@@ -299,7 +296,7 @@ async function funcCrearExcelCaja(presupuesto,lineasIngresoOrdenadas){
         // Imprimir Ingresos
         [filaActual, totalIngresos] = await agregarIngresosAExcelCaja(lineasIngresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //ImprimirEgresos
-        [filaActual, totalEgresos] = await agregarEgresosAExcelCaja(presupuesto.lineasEgreso,WSCaja,filaActual);
+        [filaActual, totalEgresos] = await agregarEgresosAExcelCaja(lineasEgresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //Imprimir acumulado
         WSCaja.getRow(filaActual).values = ["Acumulado",totalIngresos-totalEgresos];
         let celdaAcumulado = WSCaja.getCell(filaActual,1);
@@ -348,24 +345,34 @@ async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaAct
     }
 }
 
-async function agregarEgresosAExcelCaja(lineasEgreso, WSCaja, filaActual) {
+async function agregarEgresosAExcelCaja(lineasEgresoOrdenadas, WSCaja, filaActual,cantidadMeses) {
     try {
-        let totalEgresos = 0;
-        WSCaja.getRow(filaActual).values = ["Egresos"];
+        let i = 0;
+        let sumasPorMes = new Array(cantidadMeses).fill(0); // Inicializa el array para las sumas por mes
+
+        WSCaja.getRow(filaActual).values = ["Egresos(*)"];
         filaActual++;
-        console.log(lineasEgreso);
-        for (const lineaEgreso of lineasEgreso) {
-            let egreso = lineaEgreso.costoReal * lineaEgreso.cantidad;
-            WSCaja.getRow(filaActual).values = [lineaEgreso.descripcion, egreso];
-            totalEgresos += egreso;
+        
+        for(const lineaMes of lineasEgresoOrdenadas){
+            let filaArray = lineaMes;
+            WSCaja.getRow(filaActual).values = filaArray;
+
+            // Sumar los ingresos de cada mes a sumasPorMes
+            lineaMes.forEach((costoReal, mesIndex) => {
+                if(mesIndex!=0){
+                    sumasPorMes[mesIndex-1] += costoReal;
+                }
+            });
+            i++;
             filaActual++;
         }
 
-        WSCaja.getRow(filaActual).values = ["Total Egresos", totalEgresos];
+        WSCaja.getRow(filaActual).values = ["Total Egresos", ...sumasPorMes];
         let celdaTotalEgresos = WSCaja.getCell(filaActual,1);
         celdaTotalEgresos.style = {...headerTitulo, border: borderStyle};
         filaActual++;
-        return [filaActual, totalEgresos];
+
+        return [filaActual, sumasPorMes];
     } catch (error) {
         console.log(error);
     }

@@ -110,29 +110,26 @@ async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fe
     }
 }
 
-async function ordenarLineasEgreso(lineasEgreso,mesActual,mesesMostrados){
-    const totalEgresosPorMes = Array.from({ length: mesesMostrados.length }, () => 0);
+async function ordenarLineasEgreso(lineasEgreso, mesActual, mesesMostrados) {
+    // Crear una matriz, inicializando cada fila con la descripción y luego llenándola con ceros
+    let matrizEgresos = lineasEgreso.map(egreso => [egreso.descripcion].concat(new Array(mesesMostrados).fill(0)));
 
     try {
-        lineasEgreso.forEach((egreso) => {
+        lineasEgreso.forEach((egreso, indexEgreso) => {
             const fechaGasto = new Date(egreso.fechaRegistro);
-            const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
-            const montoReal = parseFloat(egreso.costoReal);
-    
-            /*if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
-            totalEgresosPorMes[mesReal - 1] += MonedaPresupuesto === egreso.idMoneda
-            ? egreso.costoReal
-            : convertirTarifa(egreso.costoReal, egreso.idMoneda);;
-            }*/
-            if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
-                totalEgresosPorMes[mesReal - 1] += egreso.costoReal;
+            const mesGasto = fechaGasto.getUTCMonth() + 1;
+            const mesRelativo = mesGasto - mesActual;
+
+            // Asegúrate de ajustar el índice para los meses, ya que el primer elemento es la descripción
+            if (mesRelativo >= 0 && mesRelativo < mesesMostrados) {
+                matrizEgresos[indexEgreso][mesRelativo + 1] += parseFloat(egreso.costoReal);
             }
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 
-  return totalEgresosPorMes;
+    return matrizEgresos;
 }
 
 
