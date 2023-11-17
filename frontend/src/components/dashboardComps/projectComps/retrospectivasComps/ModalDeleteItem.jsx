@@ -32,11 +32,11 @@ function ModalDeleteItem({isOpen, onOpenChange, idItemLineRetro, removeFromList}
                         const result = await deleteItemRetro();
                         if(result === 1){
                             removeFromList();
-                            toast.success("Item eliminado con exito");
+                            toast.success("Item eliminado con exito", {position: "top-center"});
                             onClose();
                         }
                         else{
-                            toast.error("Hubo un error al eliminar el item");
+                            toast.error("Hubo un error al eliminar el item", {position: "top-center"});
                         }
                     };
                     return (

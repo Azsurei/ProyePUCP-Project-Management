@@ -157,6 +157,7 @@ export default function Retrospectiva(props) {
                     )
                 );
                 //fetchData();
+                toast.success("Retrospectiva eliminada con éxito.");
             }
         } catch (error) {
             console.error("Error deleting data:", error);
