@@ -5,6 +5,7 @@ const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
 const excelJSController = require("../xlxs/excelJSController");
+const fileController = require('../files/fileController');
 const Exceljs = require('exceljs');
 
 const headerTitulo = {
@@ -140,8 +141,8 @@ async function subirJSON(req, res, next) {
 
 
     try {
-        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,2,nombre]);
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,2,nombre, null]);
         const idReporte = results[0][0].idReporte;
         //workbook = generarExcelEntregables(entregables);
         
@@ -157,17 +158,18 @@ async function subirJSON(req, res, next) {
             mimeType: 'application/json',
             body: fs.createReadStream(tmpFilePath)
         };
-
-        const driverResponse = await authGoogle.uploadFile(authClient,fileMetadata,media);
-        console.log(driverResponse.data.id);
+        const fileContent = fs.readFileSync(tmpFilePath);
+        console.log('Subiendo al S3');
+        const idArchivo = await fileController.postArchivo(fileContent);
+        console.log(idArchivo);
         
         const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
-        const [results2] = await connection.query(query2, [idReporte,driverResponse.data.id]);
+        const [results2] = await connection.query(query2, [idReporte,idArchivo]);
 
         fs.unlinkSync(tmpFilePath);
         res.status(200).json({
             entregables,
-            fileId: driverResponse.data.id,
+            fileId: idArchivo,
             message: "Se genero el reporte de entregables con exito",
         });
     } catch (error) {
