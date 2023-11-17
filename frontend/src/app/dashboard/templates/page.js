@@ -27,6 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SessionContext } from "../layout";
 import axios from "axios";
 import { set } from "date-fns";
+import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
+
 
 const columns = [
     { name: "Nombre", uid: "nombrePlantilla", sortable: true },
@@ -301,6 +303,17 @@ export default function MyTemplates() {
                         </Dropdown>
                     </div>
                 );
+
+            case "fechaCreacion":
+
+
+                if(cellValue === null){
+                return "Sin fecha"
+                }else{
+                return dbDateToDisplayDate(cellValue)
+                }
+
+
             default:
                 return cellValue;
         }
@@ -499,7 +512,7 @@ export default function MyTemplates() {
                     items={sortedItems}
                 >
                     {(item) => (
-                        <TableRow key={item.id}>
+                        <TableRow key={item.idPlantilla}>
                             {(columnKey) => (
                                 <TableCell>
                                     {renderCell(item, columnKey)}
