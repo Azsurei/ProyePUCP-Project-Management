@@ -30,7 +30,7 @@ import {
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import ModalUser from "@/components/dashboardComps/projectComps/projectCreateComps/ModalUsers";
-import { SessionContext } from "./layout";
+import { SessionContext } from "../layout";
 import ListGroupProject from "@/components/dashboardComps/projectComps/projectCreateComps/ListGroupProject";
 
 export default function Dashboard() {
@@ -45,125 +45,8 @@ export default function Dashboard() {
     };
 
     if (sessionData.Privilegios_idPrivilegios === 3) {
-        //debe ser 2
-
-        const [listPrivUsers, setListPrivUsers] = useState([]);
-        const [userSearchValue, setUserSearchValue] = useState("");
-        const [modalSearchUser, setModalSearchUser] = useState(false);
-
-        const toggleModal = () => {
-            setModalSearchUser(!modalSearchUser);
-        };
-
-        function promiseCambiar_A_Alumno(usuario) {
-            return new Promise((resolve, reject) => {
-                const stringURL =
-                    process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/cambiarPrivilegioUsuario";
-                axios
-                    .put(stringURL, {
-                        idUsuario: usuario.idUsuario,
-                        idPrivilegio: 1,
-                    })
-                    .then((response) => {
-                        console.log(response);
-                        resolve(response);
-                    })
-
-                    .catch(function (error) {
-                        console.log("Error al eliminar usuario", error);
-                        reject(error);
-                    });
-            });
-        }
-
-        const removeHandler = (usuario) => {
-            const newArray = listPrivUsers.filter(
-                (item) => item.idUsuario !== usuario.idUsuario
-            );
-            setListPrivUsers(newArray);
-
-            //lanzamos notificaicon de eliminacion
-            toast.promise(promiseCambiar_A_Alumno(usuario), {
-                loading: "Quitando privilegio a usuario...",
-                success: (data) => {
-                    return "El usuario ya no cuenta con privilegios";
-                },
-                error: "Error al quitar privilegio a usuario",
-                position: "bottom-right",
-            });
-        };
-
-        function promiseAñadirProfesores(listSelected) {
-            return new Promise((resolve, reject) => {
-                for (const usuario of listSelected) {
-                    const stringURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/cambiarPrivilegioUsuario";
-                    axios
-                        .put(stringURL, {
-                            idUsuario: usuario.idUsuario,
-                            idPrivilegio: 2,
-                        })
-                        .then((response) => {
-                            console.log(response);
-                        })
-
-                        .catch(function (error) {
-                            console.log("Error al eliminar usuario", error);
-                            reject(error);
-                        });
-                }
-                resolve("listo");
-            });
-        }
-
-        const returnListSelected = (listSelected) => {
-            setModalSearchUser(false);
-            console.log("se recibio: " + listSelected);
-
-            const strLoading =
-                listSelected.length > 1
-                    ? "Añadiendo profesores..."
-                    : "Añadiendo profesor...";
-            const strSuccess =
-                listSelected.length > 1
-                    ? "Los profesores fueron añadidos con exito!"
-                    : "El profesor fue añadido con exito!";
-            const strError =
-                listSelected.length > 1
-                    ? "Error al añadir los profesores"
-                    : "Error al añadir al profesor";
-
-            toast.promise(promiseAñadirProfesores(listSelected), {
-                loading: strLoading,
-                success: (data) => {
-                    return strSuccess;
-                },
-                error: strError,
-                position: "bottom-right",
-            });
-
-            const newList = [...listPrivUsers, ...listSelected];
-            console.log(newList);
-            setListPrivUsers(newList);
-        };
-
-        useEffect(() => {
-            const stringURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/listarUsuariosConPrivilegios";
-            axios
-                .get(stringURL)
-                .then((response) => {
-                    console.log(response);
-                    setListPrivUsers(response.data.usuariosPriv);
-                })
-
-                .catch(function (error) {
-                    console.log(
-                        "Error al cargar la lista de usuarios con privilegios",
-                        error
-                    );
-                });
-        }, []);
+       
+    
 
         return (
             <div className="border border-red-500 w-[100%] flex justify-center">
@@ -267,7 +150,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="mainDiv">
+        <div className="GrupoProyectos mainDiv">
             <div className="headerDiv text-mainHeaders">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -296,7 +179,7 @@ export default function Dashboard() {
 
                         <div className="butonAddProject">
                             <Link
-                                href="/grupoProyectos/newGroup"
+                                href="/dashboard/grupoProyectos/newGroup"
                                 id="newProBtnContainer"
                             >
                                 <button className="addProjectbtn">

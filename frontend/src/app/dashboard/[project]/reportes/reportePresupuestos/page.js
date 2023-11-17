@@ -65,7 +65,7 @@ export default function ReportePresupuestos(props) {
     axios
         .post(
             process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/reporte/generarReportePresupuesto",
+                "/api/proyecto/reporte/subirReportePresupuestoJSON",
             postData
         )
         .then((response) => {

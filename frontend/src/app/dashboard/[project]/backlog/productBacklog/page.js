@@ -300,9 +300,12 @@ export default function ProductBacklog(props) {
                 );
             case "NombreEstado":
                 return (
-                    <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
+                    (cellValue && (
+                        <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
                         {cellValue}
                     </span>
+                    ))
+
                 );
             case "color":
                 return null;
