@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback,useContext } from 'react';
 import {
     Table,
     TableHeader,
@@ -23,21 +23,21 @@ import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { SessionContext } from "../layout";
+import axios from "axios";
 
 const columns = [
     { name: "Nombre", uid: "name", sortable: true},
     { name: "Herramienta", uid: "tool", sortable: true },
     { name: "Fecha de creacion", uid: "dateCreated", sortable: true },
-    { name: "Fecha de modificacion", uid: "dateModified", sortable: true },
-    { name: "Tipo", uid: "iconSrc"},
-    { name: "Tamaño", uid: "fileSize", sortable: true},
     { name: "Acciones", uid: "actions"},
 ];
 
 const toolsOptions = [
-    { name: "Backlog", uid: "active" },
+    { name: "Kanban", uid: "active" },
     { name: "Acta de constitucion", uid: "paused" },
-    { name: "EDT", uid: "vacation" },
+    { name: "Matriz Responsabilidades", uid: "vacation" },
 ];
 
 const extensionOptions = [
@@ -52,54 +52,38 @@ const templates = [
         name: 'Backlog estandar 2023',
         tool: "Gestion del Product Backlog",
         dateCreated: "2021-10-01",
-        dateModified: "2021-10-01",
-        iconSrc: "/icons/icon-excel.svg",
-        fileSize: "1.2 MB",	
     },
     {
         id: 2,
         name: 'Registro de equipos',
         tool: "Cronograma",
         dateCreated: "2021-10-02",
-        dateModified: "2021-10-01",
-        iconSrc: "/icons/icon-excel.svg",
-        fileSize: "1.2 MB",
     },
     {
         id: 3,
         name: 'Presupuesto',
         tool: "Backlog",
         dateCreated: "2021-10-03",
-        dateModified: "2021-10-01",
-        iconSrc: "/icons/icon-word.svg",
-        fileSize: "1.2 MB",
+
     },
     {
         id: 4,
         name: 'Catalogo',
         tool: "Gestion del Product Backlog",
         dateCreated: "2021-10-01",
-        dateModified: "2021-10-01",
-        iconSrc: "/icons/icon-excel.svg",
-        fileSize: "1.2 MB",
     },
     {
         id: 5,
         name: 'Acta de constitucion',
         tool: "Cronograma",
         dateCreated: "2021-10-02",
-        dateModified: "2021-10-01",
-        iconSrc: "/icons/icon-excel.svg",
-        fileSize: "1.2 MB",
+
     },
     {
         id: 6,
         name: 'Matriz de retrospectivas',
         tool: "Backlog",
         dateCreated: "2021-10-03",
-        dateModified: "2021-10-01",
-        iconSrc: "/icons/icon-word.svg",
-        fileSize: "1.2 MB",
     },
 ];
 
@@ -263,10 +247,7 @@ export default function MyTemplates() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />}>
-                            Exportar
-                        </Button>
-                        <Button color="danger" endContent={<PlusIcon />}>
+                        <Button color="danger" startContent	={<DeleteIcon />}>
                             Eliminar
                         </Button>
                     </div>
@@ -336,6 +317,126 @@ export default function MyTemplates() {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+
+
+
+    const [plantillasAC, setPlantillasAC] = useState([]);
+    const [plantillasMR, setPlantillasMR] = useState([]);
+    const [plantillasKB, setPlantillasKB] = useState([]);
+
+    //obtener idUsuario
+    const [IdUsuario, setIdUsuario] = useState("");
+    const { sessionData } = useContext(SessionContext);
+    useEffect(() => {
+        setIdUsuario(sessionData.idUsuario);
+    }, [sessionData.idUsuario]);
+
+        
+    //Listados Plantillas (GET)
+
+    //Kanban
+    const DataTable2 = async () => {
+        const fetchPlantillas = async () => {
+            try {
+              const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanban/' + IdUsuario;
+              const response = await axios.get(url);
+              const plantillasInvertidas = response.data.plantillasKanban.reverse();
+              setPlantillasKB(plantillasInvertidas);
+            } catch (error) {
+              console.error("Error al obtener las plantillas:", error);
+            }
+          };
+          fetchPlantillas();
+        };
+
+    //Acta de constitucion
+    const DataTable = async () => {
+        const fetchPlantillas = async () => {
+            if (IdUsuario !== "") {
+                try {
+                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
+                    const response = await axios.get(url);
+    
+                    const plantillasInvertidas = response.data.plantillasAC.reverse();
+    
+                    setPlantillasAC(plantillasInvertidas);
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
+            }
+        };
+    
+        fetchPlantillas();
+    };
+    
+    //Matriz de responsabilidades
+    
+    const DataTable1 = async () => {
+        const fetchPlantillas = async () => {
+            if (IdUsuario !== "") {
+                try {
+                    const url =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasMR/" +
+                        IdUsuario;
+                    const response = await axios.get(url);
+
+                    const plantillasInvertidas =
+                        response.data.plantillasMR.reverse();
+                    setPlantillasMR(plantillasInvertidas);
+                } catch (error) {
+                    console.error("Error al obtener las plantillas:", error);
+                }
+            }
+        };
+
+        fetchPlantillas();
+    };
+
+    useEffect(() => {
+        if (IdUsuario !== "") {
+            console.log("idUsuario: " + IdUsuario);
+            DataTable();
+            DataTable1();
+            DataTable2();
+            
+        }
+    }, [IdUsuario]);
+
+
+    //Elimnacion Plantillas APIS
+
+    //Kanban
+
+    //Acta de constitucion
+
+    //Matriz de responsabilidades
+
+    // const deleteMR = async () => {
+    //     try {
+    //         const response = await axios.delete(
+    //         process.env.NEXT_PUBLIC_BACKEND_URL +
+    //             "/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion",
+    //         {
+    //             headers: {
+    //             "Content-Type": "application/json",
+    //             },
+    //             data: {
+    //                 idPlantillaMR: idPlantillaMR,
+    //             },
+    //         }
+    //         );
+    //         console.log('Deleted successfully', response);
+
+    //     } catch (error) {
+    //         console.error('Error deleting', error);
+    //     }
+    // };
+
+
+
+
+
 
     return (
         <>
