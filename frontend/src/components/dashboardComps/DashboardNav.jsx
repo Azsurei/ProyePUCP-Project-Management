@@ -16,6 +16,7 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
+    Spinner,
     Switch,
 } from "@nextui-org/react";
 import axios from "axios";
@@ -87,9 +88,16 @@ function MainLogoLeft() {
     );
 }
 
-function DashboardNav({ userName, userLastName, userObj }) {
-
-    const {notifications, setNotifications} = useContext(NotificationsContext);
+function DashboardNav({
+    userName,
+    userLastName,
+    userObj,
+    handleDeleteNotification,
+    handleModifyAllNotifications,
+    notifsTabIsLoading,
+}) {
+    const { notifications, setNotifications } =
+        useContext(NotificationsContext);
 
     const router = useRouter();
     const [theme, setTheme] = useState("light");
@@ -129,7 +137,6 @@ function DashboardNav({ userName, userLastName, userObj }) {
                 console.log("Error al hacer logout", error);
             });
     };
-
 
     return (
         <nav className="DashboardNav bg-mainBackground">
@@ -173,48 +180,97 @@ function DashboardNav({ userName, userLastName, userObj }) {
                     <p className="textGuide">Configuración</p>
                 </li>
                 <li>
-                    <Popover placement="bottom" showArrow offset={10}>
+                    <Popover
+                        placement="bottom"
+                        showArrow
+                        offset={10}
+                        onOpenChange={(e) => {
+                            if (
+                                e === true &&
+                                notifications.filter(
+                                    (notif) => notif.estado === 1
+                                ).length > 0
+                            ) {
+                                console.log(
+                                    "must execute update to set them as read"
+                                );
+                                handleModifyAllNotifications(2);
+                            }
+                        }}
+                    >
                         <PopoverTrigger>
-                            <div className="border">
+                            <div className="flex items-center">
                                 <Badge
-                                    content={notifications.length !== 0 && notifications.length}
+                                    content={
+                                        notifications.filter(
+                                            (notif) => notif.estado === 1
+                                        ).length > 0 &&
+                                        notifications.filter(
+                                            (notif) => notif.estado === 1
+                                        ).length
+                                    }
                                     color="danger"
                                     disableOutline={true}
-                                    
                                     className="font-[Montserrat] font-medium"
                                 >
                                     <BellIcon />
                                 </Badge>
                             </div>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[350px] max-h-[300px] overflow-hidden flex justify-start p-2 rounded-lg">
+                        <PopoverContent className="w-[450px] max-h-[300px] overflow-hidden flex justify-start p-2 rounded-lg">
                             <div className="flex flex-col justify-start w-full gap-1 overflow-hidden">
-                                <div className="font-[Montserrat] text-medium font-semibold text-black rounded-lg  bg-slate-100 border border-slate-200 p-2 px-2 flex flex-row justify-between items-center">
+                                <div className="font-[Montserrat] text-medium font-semibold rounded-lg  bg-slate-100 dark:bg-gray-700 border light:border-slate-200 dark:border-slate-800 p-2 px-2 flex flex-row justify-between items-center">
                                     <p>Notificaciones</p>
-                                    {notifications.length !== 0 && (
-                                        <Chip
-                                            className="rounded-md"
-                                            variant="bordered"
-                                            color="primary"
-                                        >
-                                            Limpiar
-                                        </Chip>
-                                    )}
+                                    {notifications.length !== 0 &&
+                                        notifsTabIsLoading === false && (
+                                            <Chip
+                                                className="rounded-md transition-colors duration-0 ease-in hover:bg-primary hover:text-white hover:font-semibold cursor-pointer"
+                                                variant="bordered"
+                                                color="primary"
+                                                onClick={() => {
+                                                    handleModifyAllNotifications(
+                                                        0
+                                                    );
+                                                }}
+                                            >
+                                                Limpiar
+                                            </Chip>
+                                        )}
                                 </div>
-                                {notifications.length === 0 && (
+                                {notifsTabIsLoading === true && (
                                     <div className="h-[150px] font-[Montserrat] text-slate-500 flex justify-center items-center">
-                                        No tienes notificaciones
+                                        <Spinner color="default" />
                                     </div>
                                 )}
-                                {notifications.length !== 0 && (
-                                    <div className="flex flex-col gap-1 overflow-auto">
-                                        {notifications.map((notif)=>{
-                                            return (
-                                                <NotificationCard key={notif.idNotificacion} type={notif.tipo} campoAdicional={notif.campoAdicional}/>
-                                            );
-                                        })}
-                                    </div>
-                                )}
+                                {notifications.length === 0 &&
+                                    notifsTabIsLoading === false && (
+                                        <div className="h-[150px] font-[Montserrat] text-slate-500 flex justify-center items-center">
+                                            No tienes notificaciones
+                                        </div>
+                                    )}
+                                {notifications.length !== 0 &&
+                                    notifsTabIsLoading === false && (
+                                        <div className="flex flex-col gap-1 overflow-auto">
+                                            {notifications.map((notif) => {
+                                                return (
+                                                    <NotificationCard
+                                                        key={
+                                                            notif.idNotificacion
+                                                        }
+                                                        type={notif.tipo}
+                                                        campoAdicional={
+                                                            notif.campoAdicional
+                                                        }
+                                                        handleDelete={() => {
+                                                            handleDeleteNotification(
+                                                                notif.idNotificacion
+                                                            );
+                                                        }}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                             </div>
                         </PopoverContent>
                     </Popover>

@@ -214,7 +214,42 @@ async function actualizaNotificacionAR(req, res, next){
         const [results] = await connection.query(query, [idOld, idNew]);
         
         res.status(200).json({
-            message: "Se actualizo notificacion correctamente",
+            message: "Se actualizo id de notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function modificaEstadoNotificacionXIdNotificacion(req, res, next){
+    const {idNotificacion, estado} = req.body;
+    try{
+        const query = `CALL MODIFICAR_ESTADO_NOTIFICACION_X_ID_NOTIFICACION(?,?);`;
+        const [results] = await connection.query(query, [idNotificacion, estado]);
+        
+        res.status(200).json({
+            message: "Se actualizo estado de notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function modificaEstadoNotificacionXIdUsuario(req, res, next){
+    const {idUsuario, estado} = req.body;
+    try{
+        const query = `CALL MODIFICAR_ESTADO_NOTIFICACION_X_ID_USUARIO(?,?);`;
+        const [results] = await connection.query(query, [idUsuario, estado]);
+        console.log(JSON.stringify(results,null,2));
+        console.log("===================================");
+
+        const notificaciones = results[0];
+        console.log(JSON.stringify(notificaciones,null,2));
+        res.status(200).json({
+            notificaciones,
+            message: "Se actualizo estado de notificaciones de usuario correctamente",
         });
     } catch (error) {
         next(error);
@@ -233,5 +268,7 @@ module.exports = {
     verificarSiCorreoEsDeGoogle,
     enviarNotificacion,
     listarNotificaciones,
-    actualizaNotificacionAR
+    actualizaNotificacionAR,
+    modificaEstadoNotificacionXIdNotificacion,
+    modificaEstadoNotificacionXIdUsuario
 };

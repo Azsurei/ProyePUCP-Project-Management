@@ -74,14 +74,15 @@ export default function RootLayout({ children }) {
                                 `Tiene una nueva notificacion de ${senderUserId}, relistando notificaciones`
                             );
                             toast.message("Nueva notificación", {
-                                description: "Revisa tu bandeja de notificaciones",
+                                description:
+                                    "Revisa tu bandeja de notificaciones",
                             });
                             fetchNotifications(user_data);
                         });
 
                         socketRef.current.on("relist_notification", (data) => {
                             fetchNotifications(user_data);
-                        })
+                        });
 
                         socketRef.current.on("private_message", (data) => {
                             const { senderUserId, message } = data;
@@ -160,9 +161,56 @@ export default function RootLayout({ children }) {
         }
     }
 
-    //PROBLEMA CON LOADING SCREENS. al tratar de hacer su uso modular, puede que ocurra
-    //que esta se apage, y la del hijo en {children} se prende consecuentemente por su renderizado
-    //provocando un efecto de recarga VISIBLE en el loading screen (se nota en la barrita animada)
+    function handleDeleteNotification(idNotificacion) {
+        console.log("Eliminando notificacion de id " + idNotificacion);
+
+        const deleteNotifURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/usuario/modificaEstadoNotificacionXIdNotificacion";
+
+        axios
+            .post(deleteNotifURL, {
+                idNotificacion: idNotificacion,
+                estado: 0,
+            })
+            .then(function (response) {
+                console.log(response.data.message);
+                const newNotifsArray = notifications.filter(
+                    (notif) => notif.idNotificacion !== idNotificacion
+                );
+                setNotifications(newNotifsArray);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const [notifsTabIsLoading, setNotifsTabIsLoading] = useState(false);
+
+    function handleModifyAllNotifications(estado) {
+        console.log("modifying notifications with state " + estado);
+        setNotifsTabIsLoading(true);
+        const deleteNotifURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/usuario/modificaEstadoNotificacionXIdUsuario";
+
+        axios
+            .post(deleteNotifURL, {
+                idUsuario: sessionData.idUsuario,
+                estado: estado,
+            })
+            .then(function (response) {
+                console.log(response.data.message);
+                console.log("ARREGLO DE NOTIFICACIONES " + JSON.stringify(response.data.notificaciones, null, 2));
+                setNotifications(response.data.notificaciones);
+                setNotifsTabIsLoading(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+
 
     if (isLoading) {
         return (
@@ -176,7 +224,7 @@ export default function RootLayout({ children }) {
                         notifications,
                         setNotifications,
                         sendNotification,
-                        relistNotification
+                        relistNotification,
                     }}
                 >
                     <>
@@ -192,6 +240,13 @@ export default function RootLayout({ children }) {
                                 userName={sessionData.nombres}
                                 userLastName={sessionData.apellidos}
                                 userObj={sessionData}
+                                handleDeleteNotification={(idNotif) => {
+                                    handleDeleteNotification(idNotif);
+                                }}
+                                handleModifyAllNotifications={(state)=>{
+                                    handleModifyAllNotifications(state);
+                                }}
+                                notifsTabIsLoading={notifsTabIsLoading}
                             />
                             <DashboardSecondNav />
                             <div
