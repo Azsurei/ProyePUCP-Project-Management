@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback,useContext } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
     Table,
     TableHeader,
@@ -17,27 +17,30 @@ import {
     Chip,
     User,
     Pagination,
-  } from "@nextui-org/react";
+} from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { SessionContext } from "../layout";
 import axios from "axios";
+import { set } from "date-fns";
+import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
+
 
 const columns = [
-    { name: "Nombre", uid: "name", sortable: true},
-    { name: "Herramienta", uid: "tool", sortable: true },
-    { name: "Fecha de creacion", uid: "dateCreated", sortable: true },
-    { name: "Acciones", uid: "actions"},
+    { name: "Nombre", uid: "nombrePlantilla", sortable: true },
+    { name: "Herramienta", uid: "nombreHerramienta", sortable: true },
+    { name: "Fecha de creacion", uid: "fechaCreacion", sortable: true },
+    { name: "Acciones", uid: "acciones" },
 ];
 
 const toolsOptions = [
-    { name: "Kanban", uid: "active" },
-    { name: "Acta de constitucion", uid: "paused" },
-    { name: "Matriz Responsabilidades", uid: "vacation" },
+    { name: "Kanban", uid: "kanban" },
+    { name: "Acta de constitucion", uid: "actaconst" },
+    { name: "Matriz Responsabilidades", uid: "matrizresp" },
 ];
 
 const extensionOptions = [
@@ -49,67 +52,171 @@ const extensionOptions = [
 const templates = [
     {
         id: 1,
-        name: 'Backlog estandar 2023',
+        name: "Backlog estandar 2023",
         tool: "Gestion del Product Backlog",
         dateCreated: "2021-10-01",
     },
     {
         id: 2,
-        name: 'Registro de equipos',
+        name: "Registro de equipos",
         tool: "Cronograma",
         dateCreated: "2021-10-02",
     },
     {
         id: 3,
-        name: 'Presupuesto',
+        name: "Presupuesto",
         tool: "Backlog",
         dateCreated: "2021-10-03",
-
     },
     {
         id: 4,
-        name: 'Catalogo',
+        name: "Catalogo",
         tool: "Gestion del Product Backlog",
         dateCreated: "2021-10-01",
     },
     {
         id: 5,
-        name: 'Acta de constitucion',
+        name: "Acta de constitucion",
         tool: "Cronograma",
         dateCreated: "2021-10-02",
-
     },
     {
         id: 6,
-        name: 'Matriz de retrospectivas',
+        name: "Matriz de retrospectivas",
         tool: "Backlog",
         dateCreated: "2021-10-03",
     },
 ];
 
 export default function MyTemplates() {
+    
+    // Variables de plantillas
+    const [plantillasAC, setPlantillasAC] = useState([]);
+    const [plantillasMR, setPlantillasMR] = useState([]);
+    const [plantillasKB, setPlantillasKB] = useState([]);
+    const [plantillasUnidas, setPlantillasUnidas] = useState([]);
+
+    // Obtencion de idUsuario
+    const [IdUsuario, setIdUsuario] = useState("");
+    const { sessionData } = useContext(SessionContext);
+    useEffect(() => {
+        setIdUsuario(sessionData.idUsuario);
+    }, [sessionData.idUsuario]);
+
+    //Kanban
+    const DataTable2 = async () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await axios.get(
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasKanban/" +
+                        IdUsuario
+                );
+
+                resolve(response.data.plantillasKanban);
+            } catch (error) {
+                console.log("Error Plantilla MR");
+                reject(error);
+            }
+        });
+    };
+
+    //Acta de constitucion
+    const DataTable = async () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await axios.get(
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasAC/" +
+                        IdUsuario
+                );
+
+                resolve(response.data.plantillasAC);
+            } catch (error) {
+                console.log("Error Plantilla MR");
+                reject(error);
+            }
+        });
+    };
+
+    //Matriz de responsabilidades
+    const DataTable1 = async () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await axios.get(
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/plantillas/listarPlantillasMR/" +
+                        IdUsuario
+                );
+
+                resolve(response.data.plantillasMR);
+            } catch (error) {
+                console.log("Error Plantilla MR");
+                reject(error);
+            }
+        });
+    };
+
+    // Unir todas las plantillas
+    const fecthData = async () => {
+        try {
+            const pKB = await DataTable2();
+            const pAC = await DataTable();
+            const pMR = await DataTable1();
+
+            setPlantillasKB(pKB);
+            setPlantillasAC(pAC);
+            setPlantillasMR(pMR);
+
+            const pKBNombre = pKB.map(item => ({ ...item, nombreHerramienta: 'Kanban' }));
+            const pAcNombre = pAC.map(item => ({ ...item, nombreHerramienta: 'Acta Constitución' }));
+            const pMRNombre = pMR.map(item => ({ ...item, nombreHerramienta: 'Matriz Responsabilidades' }));
+
+            const listaUnida = [...pAcNombre, ...pKBNombre, ...pMRNombre].map((item, index) => ({
+                ...item,
+                idPlantilla: index + 1,
+            }));
+            setPlantillasUnidas(listaUnida);
+
+            // Asignar nuevo campo idPlantilla de forma consecutiva
+            console.log("Todas las llamadas asincronas se han completado");
+        } catch (error) {
+            console.error("Error en fecthData:", error);
+        }
+    };
+
+    // Funcion de effect inicial
+    useEffect(() => {
+        if (IdUsuario !== "") {
+            console.log("idUsuario: " + IdUsuario);
+            fecthData();
+        }
+    }, [IdUsuario]);
+
+    console.log(plantillasUnidas);
+
     // Estados generales
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState({
-        column: "name",
+        column: "nombreHerramienta",
         direction: "ascending",
     });
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(templates.length / rowsPerPage);
+    const pages = Math.ceil(plantillasUnidas.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...templates];
+        let filteredTemplates = [...plantillasUnidas];
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((template) =>
-                template.name.toLowerCase().includes(filterValue.toLowerCase())
+                template.nombrePlantilla.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -117,12 +224,12 @@ export default function MyTemplates() {
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
             filteredTemplates = filteredTemplates.filter((template) =>
-                Array.from(toolsFilter).includes(template.tools)
+                Array.from(toolsFilter).includes(template.nombreHerramienta)
             );
         }
 
         return filteredTemplates;
-    }, [templates, filterValue, toolsFilter]);
+    }, [plantillasUnidas, filterValue, toolsFilter]);
 
     // Items de tabla paginados
     const items = React.useMemo(() => {
@@ -180,9 +287,7 @@ export default function MyTemplates() {
         const cellValue = template[columnKey];
 
         switch (columnKey) {
-            case "iconSrc":
-                return <img src={cellValue} alt="Icono de plantilla"></img>;
-            case "actions":
+            case "acciones":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
                         <Dropdown>
@@ -198,6 +303,17 @@ export default function MyTemplates() {
                         </Dropdown>
                     </div>
                 );
+
+            case "fechaCreacion":
+
+
+                if(cellValue === null){
+                return "Sin fecha"
+                }else{
+                return dbDateToDisplayDate(cellValue)
+                }
+
+
             default:
                 return cellValue;
         }
@@ -215,7 +331,7 @@ export default function MyTemplates() {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        variant='faded'
+                        variant="faded"
                     />
                     <div className="flex gap-3">
                         <Dropdown>
@@ -239,22 +355,20 @@ export default function MyTemplates() {
                                 onSelectionChange={setToolsFilter}
                             >
                                 {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
+                                    <DropdownItem key={status.uid}>
                                         {status.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="danger" startContent	={<DeleteIcon />}>
+                        <Button color="danger" startContent={<DeleteIcon />}>
                             Eliminar
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {templates.length} plantillas
+                        Total: {plantillasUnidas.length} plantillas
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -274,7 +388,7 @@ export default function MyTemplates() {
         filterValue,
         toolsFilter,
         onRowsPerPageChange,
-        templates.length,
+        plantillasUnidas.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -318,92 +432,6 @@ export default function MyTemplates() {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
-
-
-    const [plantillasAC, setPlantillasAC] = useState([]);
-    const [plantillasMR, setPlantillasMR] = useState([]);
-    const [plantillasKB, setPlantillasKB] = useState([]);
-
-    //obtener idUsuario
-    const [IdUsuario, setIdUsuario] = useState("");
-    const { sessionData } = useContext(SessionContext);
-    useEffect(() => {
-        setIdUsuario(sessionData.idUsuario);
-    }, [sessionData.idUsuario]);
-
-        
-    //Listados Plantillas (GET)
-
-    //Kanban
-    const DataTable2 = async () => {
-        const fetchPlantillas = async () => {
-            try {
-              const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanban/' + IdUsuario;
-              const response = await axios.get(url);
-              const plantillasInvertidas = response.data.plantillasKanban.reverse();
-              setPlantillasKB(plantillasInvertidas);
-            } catch (error) {
-              console.error("Error al obtener las plantillas:", error);
-            }
-          };
-          fetchPlantillas();
-        };
-
-    //Acta de constitucion
-    const DataTable = async () => {
-        const fetchPlantillas = async () => {
-            if (IdUsuario !== "") {
-                try {
-                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
-                    const response = await axios.get(url);
-    
-                    const plantillasInvertidas = response.data.plantillasAC.reverse();
-    
-                    setPlantillasAC(plantillasInvertidas);
-                } catch (error) {
-                    console.error("Error al obtener las plantillas:", error);
-                }
-            }
-        };
-    
-        fetchPlantillas();
-    };
-    
-    //Matriz de responsabilidades
-    
-    const DataTable1 = async () => {
-        const fetchPlantillas = async () => {
-            if (IdUsuario !== "") {
-                try {
-                    const url =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/plantillas/listarPlantillasMR/" +
-                        IdUsuario;
-                    const response = await axios.get(url);
-
-                    const plantillasInvertidas =
-                        response.data.plantillasMR.reverse();
-                    setPlantillasMR(plantillasInvertidas);
-                } catch (error) {
-                    console.error("Error al obtener las plantillas:", error);
-                }
-            }
-        };
-
-        fetchPlantillas();
-    };
-
-    useEffect(() => {
-        if (IdUsuario !== "") {
-            console.log("idUsuario: " + IdUsuario);
-            DataTable();
-            DataTable1();
-            DataTable2();
-            
-        }
-    }, [IdUsuario]);
-
-
     //Elimnacion Plantillas APIS
 
     //Kanban
@@ -432,11 +460,6 @@ export default function MyTemplates() {
     //         console.error('Error deleting', error);
     //     }
     // };
-
-
-
-
-
 
     return (
         <>
@@ -476,7 +499,7 @@ export default function MyTemplates() {
                         <TableColumn
                             key={column.uid}
                             align={
-                                column.uid === "actions" ? "center" : "start"
+                                column.uid === "acciones" ? "center" : "start"
                             }
                             allowsSorting={column.sortable}
                         >
@@ -489,7 +512,7 @@ export default function MyTemplates() {
                     items={sortedItems}
                 >
                     {(item) => (
-                        <TableRow key={item.id}>
+                        <TableRow key={item.idPlantilla}>
                             {(columnKey) => (
                                 <TableCell>
                                     {renderCell(item, columnKey)}

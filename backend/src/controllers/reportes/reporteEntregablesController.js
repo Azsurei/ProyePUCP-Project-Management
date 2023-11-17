@@ -146,7 +146,7 @@ async function subirJSON(req, res, next) {
         const idReporte = results[0][0].idReporte;
         //workbook = generarExcelEntregables(entregables);
         
-        var tmpFilePath = generarPathEntregables(entregables,idReporte);
+        var tmpFilePath = await generarPathEntregables(entregables,idReporte);
         const fileContent = fs.readFileSync(tmpFilePath);
         console.log('Subiendo al S3');
         const idArchivo = await fileController.postArchivo(fileContent);
@@ -187,8 +187,9 @@ async function obtenerJSON(req, res, next) {
     }   
 }
 
-function generarPathEntregables(presupuesto,idReporte){
+async function generarPathEntregables(presupuesto,idReporte){
     var tmpFilePath;
+    console.log(presupuesto);
     try {
         tmpFilePath = `./tmp/entregables-${idReporte}.json`;
         console.log("Path nuevo "+tmpFilePath);
