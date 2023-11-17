@@ -141,19 +141,28 @@ async function subirJSON(req, res, next) {
 
 
     try {
+        var tmpFilePath = await generarPathEntregables(entregables,idProyecto);
+        const file = fs.readFileSync(tmpFilePath);
+        
+
+        const file2Upload ={
+            buffer:file,
+            mimetype: 'application/json',
+            originalname: `${nombre}.json`
+        }
+        
+        console.log(file);
+        
+        const idArchivo = await fileController.postArchivo(file2Upload);
+        console.log(idArchivo);
+        
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,2,nombre, null]);
+        const [results] = await connection.query(query, [idProyecto,2,nombre, idArchivo]);
         const idReporte = results[0][0].idReporte;
         //workbook = generarExcelEntregables(entregables);
         
-        var tmpFilePath = await generarPathEntregables(entregables,idReporte);
-        const fileContent = fs.readFileSync(tmpFilePath);
-        console.log('Subiendo al S3');
-        const idArchivo = await fileController.postArchivo(fileContent);
-        console.log(idArchivo);
         
-        const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
-        const [results2] = await connection.query(query2, [idReporte,idArchivo]);
+        console.log('Subiendo al S3');
 
         fs.unlinkSync(tmpFilePath);
         res.status(200).json({
