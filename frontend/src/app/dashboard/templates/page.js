@@ -26,6 +26,7 @@ import { Breadcrumbs, BreadcrumbsItem } from '@/components/Breadcrumb';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SessionContext } from "../layout";
 import axios from "axios";
+import { set } from 'date-fns';
 
 const columns = [
     { name: "Nombre", uid: "name", sortable: true},
@@ -88,6 +89,115 @@ const templates = [
 ];
 
 export default function MyTemplates() {
+
+    
+    const [plantillasAC, setPlantillasAC] = useState([]);
+    const [plantillasMR, setPlantillasMR] = useState([]);
+    const [plantillasKB, setPlantillasKB] = useState([]);
+
+    //obtener idUsuario
+    const [IdUsuario, setIdUsuario] = useState("");
+    const { sessionData } = useContext(SessionContext);
+    useEffect(() => {
+        setIdUsuario(sessionData.idUsuario);
+    }, [sessionData.idUsuario]);
+
+        
+    //Listados Plantillas (GET)
+
+    //Kanban
+    const DataTable2 = async () => {
+        
+        return new Promise(async (resolve, reject) => {
+            try {
+            const response = await axios.get(
+                process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanban/' + IdUsuario
+            );
+        
+            resolve(response.data.plantillasKanban);
+            } catch (error) {
+            console.log("Error Plantilla MR");
+            reject(error);
+            }
+        });
+        
+    };
+
+
+    //Acta de constitucion
+    const DataTable = async () => {
+                
+        return new Promise(async (resolve, reject) => {
+            try {
+            const response = await axios.get(
+                process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario
+            );
+        
+            resolve(response.data.plantillasAC);
+            } catch (error) {
+            console.log("Error Plantilla MR");
+            reject(error);
+            }
+        });
+
+
+    };
+    
+    //Matriz de responsabilidades
+    
+    const DataTable1 = async () => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const response = await axios.get(
+              process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/plantillas/listarPlantillasMR/" +
+                IdUsuario
+            );
+      
+            resolve(response.data.plantillasMR);
+          } catch (error) {
+            console.log("Error Plantilla MR");
+            reject(error);
+          }
+        });
+      };
+      
+
+    
+    const [plantillasUnidas, setPlantillasUnidas] = useState("");
+
+    const fecthData = async () => {
+        try{
+            const pKB= await DataTable2();
+            const pAC= await DataTable();
+            const pMR= await DataTable1();
+
+            setPlantillasKB(pKB);
+            setPlantillasAC(pAC);   
+            setPlantillasMR(pMR);
+
+            const listaUnida = [...pAC, ...pKB, ...pMR].map((item, index) => ({ ...item, idPlantilla: index + 1 }));
+            setPlantillasUnidas(listaUnida);
+
+
+            // Asignar nuevo campo idPlantilla de forma consecutiva
+            console.log("Todas las llamadas asincronas se han completado");
+
+        } catch (error) {
+            console.error("Error en fecthData:", error);
+        }
+
+    };
+
+    useEffect(() => {
+        if (IdUsuario !== "") {
+            console.log("idUsuario: " + IdUsuario);
+            fecthData();
+
+        }
+    }, [IdUsuario]);
+
+
     // Estados generales
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -320,89 +430,8 @@ export default function MyTemplates() {
 
 
 
-    const [plantillasAC, setPlantillasAC] = useState([]);
-    const [plantillasMR, setPlantillasMR] = useState([]);
-    const [plantillasKB, setPlantillasKB] = useState([]);
-
-    //obtener idUsuario
-    const [IdUsuario, setIdUsuario] = useState("");
-    const { sessionData } = useContext(SessionContext);
-    useEffect(() => {
-        setIdUsuario(sessionData.idUsuario);
-    }, [sessionData.idUsuario]);
 
         
-    //Listados Plantillas (GET)
-
-    //Kanban
-    const DataTable2 = async () => {
-        const fetchPlantillas = async () => {
-            try {
-              const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasKanban/' + IdUsuario;
-              const response = await axios.get(url);
-              const plantillasInvertidas = response.data.plantillasKanban.reverse();
-              setPlantillasKB(plantillasInvertidas);
-            } catch (error) {
-              console.error("Error al obtener las plantillas:", error);
-            }
-          };
-          fetchPlantillas();
-        };
-
-    //Acta de constitucion
-    const DataTable = async () => {
-        const fetchPlantillas = async () => {
-            if (IdUsuario !== "") {
-                try {
-                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
-                    const response = await axios.get(url);
-    
-                    const plantillasInvertidas = response.data.plantillasAC.reverse();
-    
-                    setPlantillasAC(plantillasInvertidas);
-                } catch (error) {
-                    console.error("Error al obtener las plantillas:", error);
-                }
-            }
-        };
-    
-        fetchPlantillas();
-    };
-    
-    //Matriz de responsabilidades
-    
-    const DataTable1 = async () => {
-        const fetchPlantillas = async () => {
-            if (IdUsuario !== "") {
-                try {
-                    const url =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/plantillas/listarPlantillasMR/" +
-                        IdUsuario;
-                    const response = await axios.get(url);
-
-                    const plantillasInvertidas =
-                        response.data.plantillasMR.reverse();
-                    setPlantillasMR(plantillasInvertidas);
-                } catch (error) {
-                    console.error("Error al obtener las plantillas:", error);
-                }
-            }
-        };
-
-        fetchPlantillas();
-    };
-
-    useEffect(() => {
-        if (IdUsuario !== "") {
-            console.log("idUsuario: " + IdUsuario);
-            DataTable();
-            DataTable1();
-            DataTable2();
-            
-        }
-    }, [IdUsuario]);
-
 
     //Elimnacion Plantillas APIS
 
