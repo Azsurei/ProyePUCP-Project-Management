@@ -28,7 +28,7 @@ import CardContribuyente from "@/components/dashboardComps/projectComps/reportes
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
-import { SmallLoadingScreen } from  "@/app/dashboard/[project]/layout"
+
 import DonutChart from "@/components/DonutChart";
 import { set } from "date-fns";
 axios.defaults.withCredentials = true;
@@ -39,7 +39,6 @@ export default function ReporteAlcance(props) {
     const idGrupoProyecto = props.groupProject;
     const [proyectos, setProyectos] = useState([]);
     const [entregables, setEntregables] = useState([]);
-    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const [value, setValue] = React.useState(0);
     const promedioProgresoPorProyecto = proyectos.map((proyecto) => {
         const numeroTareas = proyecto.EDT.entregables.length;
