@@ -141,6 +141,10 @@ async function listarInfoTarea(req, res, next) {
         const [results] = await connection.query(query, [idTarea]);
         const tareaData = results[0][0];
 
+        if(tareaData == null){
+            console.log("No se encontro la tarea con id: " + idTarea);
+        }
+
         if (tareaData.idEquipo !== null) {
             const query2 = `CALL LISTAR_EQUIPO_X_ID_EQUIPO(?);`;
             const [equipo] = await connection.query(query2, [
