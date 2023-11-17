@@ -414,6 +414,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                             <Button
                                 color="primary"
                                 onPress={() => {
+                                    setIsLoadingSmall(true);
                                     router.push(
                                         "/dashboard/" +
                                             projectName +
