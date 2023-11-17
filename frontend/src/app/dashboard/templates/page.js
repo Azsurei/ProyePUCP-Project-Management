@@ -29,10 +29,10 @@ import axios from "axios";
 import { set } from "date-fns";
 
 const columns = [
-    { name: "Nombre", uid: "name", sortable: true },
-    { name: "Herramienta", uid: "tool", sortable: true },
-    { name: "Fecha de creacion", uid: "dateCreated", sortable: true },
-    { name: "Acciones", uid: "actions" },
+    { name: "Nombre", uid: "nombrePlantilla", sortable: true },
+    { name: "Herramienta", uid: "nombreHerramienta", sortable: true },
+    { name: "Fecha de creacion", uid: "fechaCreacion", sortable: true },
+    { name: "Acciones", uid: "acciones" },
 ];
 
 const toolsOptions = [
@@ -199,7 +199,7 @@ export default function MyTemplates() {
     const [toolsFilter, setToolsFilter] = React.useState("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState({
-        column: "name",
+        column: "nombreHerramienta",
         direction: "ascending",
     });
     const [page, setPage] = React.useState(1);
@@ -214,7 +214,7 @@ export default function MyTemplates() {
 
         if (hasSearchFilter) {
             filteredTemplates = filteredTemplates.filter((template) =>
-                template.name.toLowerCase().includes(filterValue.toLowerCase())
+                template.nombrePlantilla.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -222,12 +222,12 @@ export default function MyTemplates() {
             Array.from(toolsFilter).length !== toolsOptions.length
         ) {
             filteredTemplates = filteredTemplates.filter((template) =>
-                Array.from(toolsFilter).includes(template.tools)
+                Array.from(toolsFilter).includes(template.nombreHerramienta)
             );
         }
 
         return filteredTemplates;
-    }, [templates, filterValue, toolsFilter]);
+    }, [plantillasUnidas, filterValue, toolsFilter]);
 
     // Items de tabla paginados
     const items = React.useMemo(() => {
@@ -285,9 +285,7 @@ export default function MyTemplates() {
         const cellValue = template[columnKey];
 
         switch (columnKey) {
-            case "iconSrc":
-                return <img src={cellValue} alt="Icono de plantilla"></img>;
-            case "actions":
+            case "acciones":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
                         <Dropdown>
@@ -357,7 +355,7 @@ export default function MyTemplates() {
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {templates.length} plantillas
+                        Total: {plantillasUnidas.length} plantillas
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -377,7 +375,7 @@ export default function MyTemplates() {
         filterValue,
         toolsFilter,
         onRowsPerPageChange,
-        templates.length,
+        plantillasUnidas.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -488,7 +486,7 @@ export default function MyTemplates() {
                         <TableColumn
                             key={column.uid}
                             align={
-                                column.uid === "actions" ? "center" : "start"
+                                column.uid === "acciones" ? "center" : "start"
                             }
                             allowsSorting={column.sortable}
                         >
