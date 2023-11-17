@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
                         setNotifications(response.data.notificaciones);
 
                         //console.log("le estoy mandando el id " + userData)
-                        socketRef.current = io("http://localhost:8080", {
+                        socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
                             query: {
                                 idUsuario: user_data.idUsuario,
                                 nombresUsuario: user_data.nombres,
@@ -147,6 +147,18 @@ export default function RootLayout({ children }) {
         }
     }
 
+    async function sendNotificationOnlySocket(idDestinatario){
+        try{
+            const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
+
+            socketRef.current.emit("send_notification", {
+                targetUserId,
+            });
+        }catch (error) {
+            console.error("Error al enviar notificacion: ", error);
+        }
+    }
+
     async function relistNotification(idDestinatario) {
         try {
             const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario
@@ -224,6 +236,7 @@ export default function RootLayout({ children }) {
                         notifications,
                         setNotifications,
                         sendNotification,
+                        sendNotificationOnlySocket,
                         relistNotification,
                     }}
                 >

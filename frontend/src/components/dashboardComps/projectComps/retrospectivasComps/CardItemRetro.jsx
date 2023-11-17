@@ -65,7 +65,7 @@ export default function CardItemRetro({ item, deleteHandler, state, setNewValueD
                                     handleUpdate();
 
                                     setEditLineState(false);
-                                    toast.success("Se actualizo el nombre con exito");
+                                    toast.success("Se actualizo el nombre con exito" , {position: "top-center"});
                                 }
                             }
                         }}

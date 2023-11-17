@@ -4,6 +4,7 @@ const authGoogle = require("../authGoogle/authGoogle");
 const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
+const https = require('https');
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require('../files/fileController');
 const Exceljs = require('exceljs');
@@ -106,11 +107,18 @@ async function descargarExcel(req, res, next) {
 
     try{
         
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,idArchivo,destinationFolder);
-        console.log(tmpFilePath);
+        const url = await fileController.getArchivo(idArchivo);
+        console.log(destinationFolder);
 
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        // Crear el nombre del archivo con el segmento de la URL
+        let filename = `${idArchivo}.json`; // Asumiendo que es un archivo JSON
+
+        // Combinar con el destinationFolder para crear la ruta completa
+        let fullPath = path.join(destinationFolder, filename);
+        console.log(destinationFolder);
+        await fileController.descargarDesdeURL(url,fullPath);
+
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
         const jsonData = JSON.parse(fileContent);
         const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
 
@@ -141,19 +149,28 @@ async function subirJSON(req, res, next) {
 
 
     try {
+        var tmpFilePath = await generarPathEntregables(entregables,idProyecto);
+        const file = fs.readFileSync(tmpFilePath);
+        
+
+        const file2Upload ={
+            buffer:file,
+            mimetype: 'application/json',
+            originalname: `${nombre}.json`
+        }
+        
+        console.log(file);
+        
+        const idArchivo = await fileController.postArchivo(file2Upload);
+        console.log(idArchivo);
+        
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,2,nombre, null]);
+        const [results] = await connection.query(query, [idProyecto,2,nombre, idArchivo]);
         const idReporte = results[0][0].idReporte;
         //workbook = generarExcelEntregables(entregables);
         
-        var tmpFilePath = generarPathEntregables(entregables,idReporte);
-        const fileContent = fs.readFileSync(tmpFilePath);
-        console.log('Subiendo al S3');
-        const idArchivo = await fileController.postArchivo(fileContent);
-        console.log(idArchivo);
         
-        const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
-        const [results2] = await connection.query(query2, [idReporte,idArchivo]);
+        console.log('Subiendo al S3');
 
         fs.unlinkSync(tmpFilePath);
         res.status(200).json({
@@ -187,8 +204,9 @@ async function obtenerJSON(req, res, next) {
     }   
 }
 
-function generarPathEntregables(presupuesto,idReporte){
+async function generarPathEntregables(presupuesto,idReporte){
     var tmpFilePath;
+    console.log(presupuesto);
     try {
         tmpFilePath = `./tmp/entregables-${idReporte}.json`;
         console.log("Path nuevo "+tmpFilePath);

@@ -52,17 +52,59 @@ const meses = [
   ];
   
 
+
+  async function descargarDesdeURL(url, rutaDestino) {
+    return new Promise((resolve, reject) => {
+        const file = fs.createWriteStream(rutaDestino);
+
+        https.get(url, (response) => {
+            // Verificar si la respuesta es exitosa
+            if (response.statusCode < 200 || response.statusCode > 299) {
+                reject(new Error(`Falló la solicitud HTTP: Estado ${response.statusCode}`));
+                return;
+            }
+
+            response.pipe(file);
+
+            file.on('finish', () => {
+                file.close(() => {
+                    console.log('Archivo descargado correctamente');
+                    resolve();
+                });
+            });
+        }).on('error', (error) => {
+            fs.unlink(rutaDestino, () => {}); // Eliminar archivo en caso de error
+            console.error('Error al descargar el archivo:', error);
+            reject(error);
+        });
+
+        file.on('error', (error) => { // Manejar errores de escritura de archivo
+            fs.unlink(rutaDestino, () => {}); // Eliminar archivo en caso de error
+            console.error('Error al escribir el archivo:', error);
+            reject(error);
+        });
+    });
+}
+
 async function descargarExcel(req,res,next){
     const {idArchivo} = req.body;
     const destinationFolder = path.join(__dirname, '../../tmp');
 
     try{
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        const url = await fileController.getArchivo(idArchivo);
+        console.log(destinationFolder);
+
+        // Crear el nombre del archivo con el segmento de la URL
+        let filename = `${idArchivo}.json`; // Asumiendo que es un archivo JSON
+
+        // Combinar con el destinationFolder para crear la ruta completa
+        let fullPath = path.join(destinationFolder, filename);
+        console.log(destinationFolder);
+        await fileController.descargarDesdeURL(url,fullPath);
         
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
         const jsonData = JSON.parse(fileContent);
-        const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
+        const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
         console.log(excelFilePath);
         
         //Con el id del archivo vamos a descargar el JSON
@@ -71,11 +113,11 @@ async function descargarExcel(req,res,next){
         //Ese workbook se va a escribir en una ruta temporal
         await workbook.xlsx.writeFile(excelFilePath);
         //Vamos a devolver ese workbook a front
-        res.download(excelFilePath , `${fileId}.xlxs`, async(err) => {
+        res.download(excelFilePath , `${idArchivo}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
-                await fsp.unlink(tmpFilePath);
-                await fsp.unlink(excelFilePath);
+                //await fsp.unlink(fullPath);
+                //await fsp.unlink(excelFilePath);
             } catch (e) {
                 console.error("Error al eliminar el archivo temporal:", e.message);
             }
@@ -198,10 +240,15 @@ async function subirJSON(req, res, next) {
         var tmpFilePath = generarPathPresupuesto(presupuesto,idProyecto);
 
         //Escribir el archivo en el path temporal
-        var file = fs.createReadStream(tmpFilePath)
+        const file = fs.readFileSync(tmpFilePath);
         
+        const file2Upload = {
+            buffer:file,
+            mimetype: 'application/json',
+            originalname: `${nombre}.json`
+        }
         //Subir el archivo del path temporal a internet en este caso S3
-        const idArchivo = await fileController.postArchivo(file);
+        const idArchivo = await fileController.postArchivo(file2Upload);
 
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
         const [results] = await connection.query(query, [idProyecto,13,nombre,idArchivo]);

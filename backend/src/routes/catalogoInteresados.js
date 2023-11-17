@@ -3,19 +3,19 @@ const routerCatalogoInteresados = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
 const catalogoInteresadosController = require("../controllers/catalogoInteresados/catalogoInteresadosController");
 
-routerCatalogoInteresados.delete("/eliminarCatalogoInteresados", catalogoInteresadosController.eliminar);
-routerCatalogoInteresados.delete("/eliminarCatalogoInteresadosXProyecto", catalogoInteresadosController.eliminarXProyecto);
+routerCatalogoInteresados.delete("/eliminarCatalogoInteresados",verifyToken,catalogoInteresadosController.eliminar);
+routerCatalogoInteresados.delete("/eliminarCatalogoInteresadosXProyecto",verifyToken,catalogoInteresadosController.eliminarXProyecto);
 
-routerCatalogoInteresados.get("/listarAutoridad", catalogoInteresadosController.listarAutoridad);
-routerCatalogoInteresados.get("/listarAdhesion", catalogoInteresadosController.listarAdhesion);
+routerCatalogoInteresados.get("/listarAutoridad",verifyToken,catalogoInteresadosController.listarAutoridad);
+routerCatalogoInteresados.get("/listarAdhesion",verifyToken,catalogoInteresadosController.listarAdhesion);
 
-routerCatalogoInteresados.post("/insertarInteresado", catalogoInteresadosController.insertarInteresado);
-routerCatalogoInteresados.get("/listarInteresados/:idProyecto", catalogoInteresadosController.listarInteresados);
-routerCatalogoInteresados.get("/listarInteresado/:idInteresado", catalogoInteresadosController.listarInteresado);
-routerCatalogoInteresados.delete("/eliminarInteresado", catalogoInteresadosController.eliminarInteresado);
+routerCatalogoInteresados.post("/insertarInteresado",verifyToken,catalogoInteresadosController.insertarInteresado);
+routerCatalogoInteresados.get("/listarInteresados/:idProyecto",verifyToken,catalogoInteresadosController.listarInteresados);
+routerCatalogoInteresados.get("/listarInteresado/:idInteresado",verifyToken,catalogoInteresadosController.listarInteresado);
+routerCatalogoInteresados.delete("/eliminarInteresado",verifyToken,catalogoInteresadosController.eliminarInteresado);
 
-routerCatalogoInteresados.delete("/eliminarRequirementStrategies", catalogoInteresadosController.eliminarRequirementStrategies);
-routerCatalogoInteresados.post("/insertarRequirementStrategies", catalogoInteresadosController.insertarRequirementStrategies);
-routerCatalogoInteresados.put("/modificarInteresados", catalogoInteresadosController.modificarInteresados);
+routerCatalogoInteresados.delete("/eliminarRequirementStrategies",verifyToken, catalogoInteresadosController.eliminarRequirementStrategies);
+routerCatalogoInteresados.post("/insertarRequirementStrategies",verifyToken, catalogoInteresadosController.insertarRequirementStrategies);
+routerCatalogoInteresados.put("/modificarInteresados",verifyToken, catalogoInteresadosController.modificarInteresados);
 
 module.exports.routerCatalogoInteresados = routerCatalogoInteresados;
