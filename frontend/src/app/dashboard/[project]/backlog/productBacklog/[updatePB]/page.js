@@ -135,7 +135,6 @@ export default function ProductBacklogUpdate(props) {
             document.body.style.overflow = "auto";
             setReloadData(false);
         }
-        setIsLoadingSmall(false);
     }, [modal]);
     useEffect(() => {
         if (reloading) {
@@ -145,7 +144,6 @@ export default function ProductBacklogUpdate(props) {
             document.body.style.overflow = "auto";
             setReloadData(false);
         }
-        setIsLoadingSmall(false);
     }, [reloading]);
 
     useEffect(() => {
