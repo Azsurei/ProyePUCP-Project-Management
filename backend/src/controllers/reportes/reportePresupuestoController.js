@@ -8,6 +8,7 @@ const xlsxController = require("../xlxs/xlxsController");
 const authGoogle = require("../authGoogle/authGoogle");
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require("../files/fileController");
+const presupuestoController = require("../presupuesto/presupuestoController");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
@@ -177,7 +178,7 @@ async function agregarEstimacionesCostoAExcel(lineasEstimacionCosto,WSEstimacion
 
 async function subirJSON(req, res, next) {
     const {idProyecto,nombre,presupuesto} = req.body;
-    res.status(200);
+    
     try {
         
         console.log("Hola servidor");
@@ -206,17 +207,10 @@ async function subirJSON(req, res, next) {
 }
 
 async function obtenerJSON(req,res,next){
-    const {fileId} = req.params;
-    console.log(fileId);
-    const destinationFolder = path.join(__dirname, '../../tmp');
-    console.log(destinationFolder);
+    const {idArchivo} = req.params;
+    console.log(idArchivo);
     try{
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        console.log(tmpFilePath);
-
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
-        const jsonData = JSON.parse(fileContent);
+        const jsonData = await fileController.funcGetJSONFile(idArchivo)
         console.log(jsonData);
 
         res.status(200).json({
@@ -255,13 +249,83 @@ function generarPathPresupuesto(presupuesto,idReporte){
 
 
 
-function jsonToSheet(data) {
-    const ws = XLSX.utils.json_to_sheet(data);
-    return ws;
+async function crearExcelCaja(req,res,next){
+    const {idPresupuesto,fechaIni,fechaFin} = req.body;
+    const destinationFolder = path.join(__dirname, '../../tmp');
+    try {
+        const presupuesto = await presupuestoController.obtenerPresupuestoFlujoCaja(idPresupuesto,fechaIni,fechaFin);
+        console.log(presupuesto);
+       
+        workbook = await funcCrearExcelCaja(presupuesto);
+        const excelFilePath = path.join(destinationFolder, `${idPresupuesto}.xlsx`);
+        await workbook.xlsx.writeFile(excelFilePath);
+        res.download(excelFilePath , `${idPresupuesto}.xlxs`, async(err) => {
+            try {
+                // Eliminar el archivo temporal de forma asíncrona
+                //await fsp.unlink(excelFilePath);
+            } catch (e) {
+                console.error("Error al eliminar el archivo temporal:", e.message);
+            }
+            if (err) {
+                next(err);
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function funcCrearExcelCaja(presupuesto){
+    try {
+
+        let filaActual=1;
+        const workbook = new Exceljs.Workbook();
+        const WSCaja = workbook.addWorksheet('Caja');
+        // Crear header
+        
+        // Imprimir Ingresos
+        filaActual = await agregarIngresosAExcelCaja(presupuesto.lineasIngreso,WSCaja,filaActual);
+        //ImprimirEgresos
+        filaActual = await agregarEgresosAExcelCaja(presupuesto.lineasEgreso,WSCaja,filaActual);
+        //Imprimir acumulado
+        return workbook;
+    } catch (error) {
+        console.log(error);    
+    }
+}
+
+async function agregarIngresosAExcelCaja(lineasIngreso,WSCaja,filaActual){
+    try{
+        WSCaja.getRow(filaActual).values = ["Ingresos(*)"];
+        filaActual++;
+        for(const lineaIngreso of lineasIngreso){
+            WSCaja.getRow(filaActual).values = [lineaIngreso.descripcion,lineaIngreso.monto*lineaIngreso.cantidad];
+            filaActual++;
+        }
+        return filaActual;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function agregarEgresosAExcelCaja(lineasEgreso,WSCaja,filaActual){
+    try{
+        WSCaja.getRow(filaActual).values = ["Egresos"];
+        filaActual++;
+        for(const lineaEgreso of lineasEgreso){
+            WSCaja.getRow(filaActual).values = [lineaEgreso.descripcion,lineaEgreso.costoReal*lineaEgreso.cantidad];
+            filaActual++;
+        }
+        return filaActual;
+    }catch(error){
+        console.log(error);
+    }
 }
 
 module.exports = {
     subirJSON,
     descargarExcel,
-    obtenerJSON
+    obtenerJSON,
+    crearExcelCaja
 }

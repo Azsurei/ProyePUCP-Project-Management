@@ -34,7 +34,9 @@ export default function ProductBacklogUpdate(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    const idProductBacklog = herramientasInfo.find(herramienta => herramienta.idHerramienta===1).idHerramientaCreada;
+    const idProductBacklog = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 1
+    ).idHerramientaCreada;
     const stringURLEpics =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
@@ -420,12 +422,7 @@ export default function ProductBacklogUpdate(props) {
     function verifyFieldsEmpty() {
         return (
             name.trim() === "" ||
-            como.trim() === "" ||
-            quiero.trim() === "" ||
-            para.trim() === "" ||
             selectedValueEpic === null ||
-            selectedValuePriority === null ||
-            selectedValueState === null ||
             requirementFields.some(
                 (requirement) => requirement.requirement.trim() === ""
             ) ||
@@ -490,21 +487,13 @@ export default function ProductBacklogUpdate(props) {
                         )}
                     </div>
                 </div>
-                {historiaUsuario ? (
-                    <div>
-                        <DescriptionRequeriment
-                            name={name}
-                            onNameChange={setName}
-                            isDisabled={!editMode}
-                        />
-                    </div>
-                ) : (
-                    <div>Cargando datos...</div>
-                )}
-                <h4 style={{ fontWeight: 600 }}>
-                    Información de la historia de usuario
-                    <span className="text-red-500"> *</span>
-                </h4>
+                <div>
+                    <DescriptionRequeriment
+                        name={name}
+                        onNameChange={setName}
+                        isDisabled={!editMode}
+                    />
+                </div>
                 <div className="combo">
                     <div className="epic containerCombo">
                         <IconLabel
@@ -587,8 +576,8 @@ export default function ProductBacklogUpdate(props) {
                                     src={imagen}
                                     fallback={
                                         <p className="profilePic">
-                                            {datosUsuario.split(" ")[0][0] +
-                                                datosUsuario.split(" ")[1][0]}
+                                            {datosUsuario?.split(" ")[0][0] +
+                                                datosUsuario?.split(" ")[1][0]}
                                         </p>
                                     }
                                 />
@@ -617,10 +606,7 @@ export default function ProductBacklogUpdate(props) {
                     </div>
                 </div>
                 <div className="userDescription">
-                    <h4 style={{ fontWeight: 600 }}>
-                        Descripción de usuario
-                        <span className="text-red-500"> *</span>
-                    </h4>
+                    <h4 style={{ fontWeight: 600 }}>Descripción de usuario</h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -754,7 +740,8 @@ export default function ProductBacklogUpdate(props) {
                                             verifyFieldsExcessive()
                                         ) {
                                             toast.error(
-                                                "Faltan completar campos y se excedió el límite de caractéres"
+                                                "Faltan completar campos y se excedió el límite de caractéres",
+                                                { position: "bottom-left" }
                                             );
                                             return false;
                                         } else if (
@@ -762,7 +749,10 @@ export default function ProductBacklogUpdate(props) {
                                             !verifyFieldsExcessive()
                                         ) {
                                             toast.error(
-                                                "Faltan completar campos"
+                                                "Faltan completar campos",
+                                                {
+                                                    position: "bottom-left",
+                                                }
                                             );
                                             return false;
                                         } else if (
@@ -770,7 +760,8 @@ export default function ProductBacklogUpdate(props) {
                                             !verifyFieldsEmpty()
                                         ) {
                                             toast.error(
-                                                "Se excedió el límite de caractéres"
+                                                "Se excedió el límite de caractéres",
+                                                { position: "bottom-left" }
                                             );
                                             return false;
                                         } else {
@@ -796,15 +787,7 @@ export default function ProductBacklogUpdate(props) {
                     />
                 )}
             </div>
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
+            y
         </form>
     );
 }

@@ -47,6 +47,7 @@ export default function CatalogoDeInteresados(props) {
     const [navegateRegister, setNavegateRegister] = useState(false);
     const [edit, setEdit] = useState(false);
     function DataTable() {
+        setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
                 // Realiza la solicitud HTTP al endpoint del router
@@ -59,13 +60,13 @@ export default function CatalogoDeInteresados(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.interesados);
-                setIsLoadingSmall(false);
 
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.interesados
                 );
+                setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
@@ -77,9 +78,6 @@ export default function CatalogoDeInteresados(props) {
         DataTable();
     }, []);
 
-    useEffect(() => {
-        setIsLoadingSmall(false);
-    }, []);
     const toggleModal = (task) => {
         setSelectedTask(task);
         console.log("El id del objeto es: ", selectedTask);

@@ -154,7 +154,7 @@ function DashboardNav({ userName, userLastName, userObj }) {
             </div>
 
             <ul className="NavIconList">
-                {/* <li>
+                <li>
                     <Switch
                         defaultSelected={selectedTheme === "light"}
                         size="lg"
@@ -163,7 +163,7 @@ function DashboardNav({ userName, userLastName, userObj }) {
                         endContent={<MoonIcon />}
                         onChange={toggleTheme}
                     ></Switch>
-                </li> */}
+                </li>
                 <li>
                     <img src="/icons/icon-help.svg" alt="" className="icon" />
                     <p className="textGuide">Ayuda</p>

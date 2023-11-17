@@ -1842,13 +1842,13 @@ BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
     HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario", U.imgLink as "Imagen"
     FROM HistoriaDeUsuario HU
-    JOIN Epica E
+    LEFT JOIN Epica E
     ON HU.idEpica = E.idEpica
-    JOIN HistoriaEstado HE
+    LEFT JOIN HistoriaEstado HE
     ON HU.idHistoriaEstado = HE.idHistoriaEstado
-    JOIN HistoriaPrioridad HP
+    LEFT JOIN HistoriaPrioridad HP
     ON HU.idHistoriaPrioridad = HP.idHistoriaPrioridad
-    JOIN Usuario U
+    LEFT JOIN Usuario U
     ON HU.idUsuarioCreador = U.idUsuario
     WHERE HU.idHistoriaDeUsuario = _idHistoriaDeUsuario
     AND HU.activo=1;
@@ -2389,6 +2389,44 @@ CREATE PROCEDURE LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
 	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
+
+
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
+    IN _idPresupuesto INT,
+    IN _fechaInicial DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion 
+    FROM LineaIngreso l 
+    WHERE l.idPresupuesto = _idPresupuesto 
+      AND l.fechaTransaccion BETWEEN _fechaInicial AND _fechaFin 
+      AND l.activo = 1;
+END$
+DELIMITER ;
+
+CALL LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(37, '2023-01-01', '2023-12-31');
+CALL LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(37, '2023-01-01', '2023-12-31');
+
+-- Procedimiento para obtener las líneas de egreso
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
+    IN _idPresupuesto INT,
+	IN _fechaInicial DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    SELECT le.idLineaEgreso, le.costoReal, le.cantidad, le.descripcion, le.fechaRegistro 
+    FROM LineaEgreso le 
+    WHERE le.idPresupuesto = _idPresupuesto 
+      AND le.fechaRegistro BETWEEN _fechaInicial AND _fechaFin 
+      AND le.activo = 1;
+END$
+DELIMITER ;
 
 DELIMITER $
 CREATE PROCEDURE OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
@@ -4712,7 +4750,7 @@ END$
 ## REPORTES
 ########################################
 SELECT * FROM Herramienta;
-
+SELECT * FROM Archivo;
 DROP PROCEDURE IF EXISTS INSERTAR_REPORTE_X_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_REPORTE_X_PROYECTO(
@@ -5188,3 +5226,4 @@ BEGIN
     WHERE idArchivo = _idArchivo;
 END$
 DELIMITER ;
+
