@@ -1,4 +1,27 @@
 const connection = require("../../config/db");
+const excelJSController = require("../xlxs/excelJSController");
+const ExcelJS = require("exceljs");
+const path = require("path");
+const headerTitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
+//Borde para la celda de excel
+const borderStyle = {
+    top: {style:'thin', color: {argb:'000000'}},
+    left: {style:'thin', color: {argb:'000000'}},
+    bottom: {style:'thin', color: {argb:'000000'}},
+    right: {style:'thin', color: {argb:'000000'}}
+  };
+
+  const alignmentCenterStyle = {
+    vertical: 'middle',
+    horizontal: 'center'
+};
+
 
 async function crear(req,res,next){
     const {idProyecto} = req.body;
@@ -94,11 +117,89 @@ async function funcEliminarXProyecto(idProyecto) {
     return 1;
 }
 
+async function descargarExcel(req,res,next){
+    const {tareas} = req.body;
+    //console.log(req.body);
+    try{
+        const workbook = await generarExcel(tareas,`tareas`);
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `tareas.xlsx`);
+
+        // Enviar el archivo
+        await workbook.xlsx.write(res);
+        res.end();
+    }catch(error){
+        next(error);
+    }
+}
+
+async function generarExcel(tareas,nombreArchivo){
+    try{
+        const workbook = new ExcelJS.Workbook();
+        const WSTareas = workbook.addWorksheet("Tareas");
+        let filaActual = 1;
+        
+        let cadenaTarea = "";
+        const header1 = ["Cronograma de tareas"];
+        const header2 = ["Codigo","Nombre","Descripcion","Horas asignadas","Entregable Asignado","Fecha de inicio","Fecha de fin","Estado","Progreso"];
+        filaActual = await excelJSController.agregaHeader(WSTareas,filaActual,header1,headerTitulo,borderStyle);
+        
+        WSTareas.mergeCells(filaActual-1, 1, filaActual-1, 9);
+        const mergedCell = WSTareas.getCell(filaActual-1, 1);
+        mergedCell.style = {
+            ...mergedCell.style, // Mantén los estilos previos
+            alignment: alignmentCenterStyle
+        };
+
+        filaActual = await excelJSController.agregaHeader(WSTareas,filaActual,header2,headerTitulo,borderStyle);
+
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        const excelFilePath = path.join(destinationFolder, `${nombreArchivo}.xlsx`);
+        console.log(excelFilePath,filaActual);
+
+        let nroTarea = 1;
+        for(const tarea of tareas){
+            filaActual = await agregarTareaAExcel(tarea,WSTareas,filaActual,`${nroTarea}`);
+            nroTarea++;
+        }
+
+        excelJSController.ajustarAnchoColumnas(WSTareas);
+        await workbook.xlsx.writeFile(excelFilePath);
+        return workbook;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+
+
+async function agregarTareaAExcel(tarea,WSTareas,filaActual,cadenaTarea){
+    try {
+        let nroTarea = 1;
+        WSTareas.getRow(filaActual).values = [cadenaTarea,tarea.nombre,tarea.descripcion,tarea.horasPlaneadas,tarea.nombreEntregable,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado,`${tarea.porcentajeProgreso}%`];
+        filaActual++;
+        
+        if(tarea.tareasHijas){
+            for(const tareaHija of tarea.tareasHijas){
+                //console.log("Tarea posterior: ",tareaPosterior.idTarea);
+                filaActual = await agregarTareaAExcel(tareaHija,WSTareas,filaActual,`${cadenaTarea}.${nroTarea}`);
+                nroTarea++;
+            }
+        }
+        
+    } catch (error) {
+        console.log(error);
+    }
+    return filaActual;
+}
+
 module.exports = {
     crear,
     actualizar,
     eliminar,
     eliminarXProyecto,
     listar,
-    listarEntregablesXidProyecto
+    listarEntregablesXidProyecto,
+    descargarExcel
 };

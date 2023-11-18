@@ -24,6 +24,8 @@ routerCronograma.put("/actualizarIdSprintXTarea",tareaController.modificarIdSpri
 routerCronograma.get("/listarTareasXidProyecto/:idProyecto", tareaController.listarXIdProyecto);
 routerCronograma.get("/listarEntregablesXidProyecto/:idProyecto", cronogramaController.listarEntregablesXidProyecto);
 
+routerCronograma.post("/descargarExcelCronogramaTareas", cronogramaController.descargarExcel);
+
 routerCronograma.delete("/eliminarTarea", tareaController.eliminarTarea);
 
 

@@ -323,6 +323,27 @@ async function funcEliminarXProyecto(idProyecto) {
     return 1;
 }
 
+async function descargarExcel(req,res,next){
+    const {EDT} = req.body;
+
+    try{
+        const excelFilePath = await generarExcel(EDT,`tareas`);
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
+
+        // Enviar el archivo
+        await workbook.xlsx.write(res);
+        res.end();
+    }catch(error){
+        next(error);
+    }
+}
+
+async function generarExcel(EDT, nombreArchivo) {
+    
+}
+
 module.exports = {
     listarComponentesEDT,
     listarEDT_X_IdProyecto,
@@ -332,5 +353,6 @@ module.exports = {
     eliminarComponenteEDT,
     verInfoComponenteEDT,
     eliminar,
-    eliminarXProyecto
+    eliminarXProyecto,
+    descargarExcel
 }

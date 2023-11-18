@@ -154,3 +154,268 @@ Content-Type:  application/json
 ###
 GET http://localhost:8080/api/proyecto/cronograma/listarTareasXidProyecto/188 HTTP/1.1
 Content-Type:  application/json
+
+###
+POST http://localhost:8080/api/proyecto/cronograma/descargarExcelCronogramaTareas HTTP/1.1
+Content-Type: application/json
+
+{
+    "tareas": [
+{
+    "idTarea": 362,
+    "idEquipo": 128,
+    "idPadre": null,
+    "idTareaAnterior": null,
+    "sumillaTarea": "tarea",
+    "descripcion": "asc",
+    "fechaInicio": "2023-11-09T05:00:00.000Z",
+    "fechaFin": "2023-11-22T05:00:00.000Z",
+    "cantSubTareas": 0,
+    "cantPosteriores": 0,
+    "horasPlaneadas": 2,
+    "fechaUltimaModificacionEstado": "2023-11-18T05:00:00.000Z",
+    "idTareaEstado": 2,
+    "nombreTareaEstado": "En progreso",
+    "colorTareaEstado": "primary",
+    "esPosterior": 0,
+    "idEntregable": 64,
+    "porcentajeProgreso": 0,
+    "equipo": {
+    "idEquipo": 128,
+    "idProyecto": 234,
+    "nombre": "Backend",
+    "fechaCreacion": "2023-11-18T05:00:00.000Z",
+    "activo": 1,
+    "participantes": [
+        {
+        "idUsuario": 132,
+        "nombres": "CHRISTIAN SEBASTIAN",
+        "apellidos": "CHIRA MALLQUI",
+        "correoElectronico": "s.chira@pucp.edu.pe",
+        "activo": 1,
+        "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJIe497b9iwVshhqsRLw5wG-D38RwfgS8xx0gyn0siNoE8=s96-c",
+        "idRolEquipo": 128,
+        "nombreRol": "Líder"
+        },
+        {
+        "idUsuario": 81,
+        "nombres": "Andrea",
+        "apellidos": "Gonzales",
+        "correoElectronico": "andrea@pucp.edu.pe",
+        "activo": 1,
+        "imgLink": null,
+        "idRolEquipo": 129,
+        "nombreRol": "Miembro"
+        },
+        {
+        "idUsuario": 79,
+        "nombres": "Juan Angelo",
+        "apellidos": "Flores Rubio",
+        "correoElectronico": "juanflores@pucp.edu.pe",
+        "activo": 1,
+        "imgLink": null,
+        "idRolEquipo": 129,
+        "nombreRol": "Miembro"
+        },
+        {
+        "idUsuario": 95,
+        "nombres": "RENZO GABRIEL",
+        "apellidos": "PINTO QUIROZ",
+        "correoElectronico": "a20201491@pucp.edu.pe",
+        "activo": 1,
+        "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+        "idRolEquipo": 129,
+        "nombreRol": "Miembro"
+        }
+    ]
+    },
+    "usuarios": [],
+    "tareasPosteriores": [],
+    "tareasHijas": []
+},
+{
+    "idTarea": 373,
+    "idEquipo": null,
+    "idPadre": null,
+    "idTareaAnterior": null,
+    "sumillaTarea": "fdgn",
+    "descripcion": "dfgn",
+    "fechaInicio": "2023-11-09T05:00:00.000Z",
+    "fechaFin": "2023-11-29T05:00:00.000Z",
+    "cantSubTareas": 0,
+    "cantPosteriores": 0,
+    "horasPlaneadas": 3,
+    "fechaUltimaModificacionEstado": "2023-11-18T05:00:00.000Z",
+    "idTareaEstado": 2,
+    "nombreTareaEstado": "En progreso",
+    "colorTareaEstado": "primary",
+    "esPosterior": 0,
+    "idEntregable": null,
+    "porcentajeProgreso": 0,
+    "usuarios": [
+    {
+        "idUsuario": 95,
+        "nombres": "RENZO GABRIEL",
+        "apellidos": "PINTO QUIROZ",
+        "correoElectronico": "a20201491@pucp.edu.pe",
+        "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c"
+    },
+    {
+        "idUsuario": 79,
+        "nombres": "Juan Angelo",
+        "apellidos": "Flores Rubio",
+        "correoElectronico": "juanflores@pucp.edu.pe",
+        "imgLink": null
+    }
+    ],
+    "equipo": null,
+    "tareasPosteriores": [
+    {
+        "idTarea": 374,
+        "idEquipo": null,
+        "idPadre": null,
+        "idTareaAnterior": 373,
+        "sumillaTarea": "posterio!",
+        "descripcion": "asc",
+        "fechaInicio": "2023-11-29T05:00:00.000Z",
+        "fechaFin": "2023-11-30T05:00:00.000Z",
+        "cantSubTareas": 0,
+        "cantPosteriores": 0,
+        "horasPlaneadas": 3,
+        "fechaUltimaModificacionEstado": "2023-11-18T05:00:00.000Z",
+        "idTareaEstado": 1,
+        "nombreTareaEstado": "No iniciado",
+        "colorTareaEstado": "default",
+        "esPosterior": 1,
+        "idEntregable": null,
+        "porcentajeProgreso": 0,
+        "usuarios": [
+        {
+            "idUsuario": 95,
+            "nombres": "RENZO GABRIEL",
+            "apellidos": "PINTO QUIROZ",
+            "correoElectronico": "a20201491@pucp.edu.pe",
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c"
+        },
+        {
+            "idUsuario": 79,
+            "nombres": "Juan Angelo",
+            "apellidos": "Flores Rubio",
+            "correoElectronico": "juanflores@pucp.edu.pe",
+            "imgLink": null
+        }
+        ],
+        "equipo": null,
+        "tareasPosteriores": []
+    }
+    ],
+    "tareasHijas": [
+    {
+        "idTarea": 375,
+        "idEquipo": 128,
+        "idPadre": 373,
+        "idTareaAnterior": null,
+        "sumillaTarea": "suuuu",
+        "descripcion": "ascasc",
+        "fechaInicio": "2023-11-10T05:00:00.000Z",
+        "fechaFin": "2023-11-23T05:00:00.000Z",
+        "cantSubTareas": 0,
+        "cantPosteriores": 0,
+        "horasPlaneadas": 4,
+        "fechaUltimaModificacionEstado": "2023-11-18T05:00:00.000Z",
+        "idTareaEstado": 2,
+        "nombreTareaEstado": "En progreso",
+        "colorTareaEstado": "primary",
+        "esPosterior": 0,
+        "idEntregable": null,
+        "porcentajeProgreso": 0,
+        "equipo": {
+        "idEquipo": 128,
+        "idProyecto": 234,
+        "nombre": "Backend",
+        "fechaCreacion": "2023-11-18T05:00:00.000Z",
+        "activo": 1,
+        "participantes": [
+            {
+            "idUsuario": 132,
+            "nombres": "CHRISTIAN SEBASTIAN",
+            "apellidos": "CHIRA MALLQUI",
+            "correoElectronico": "s.chira@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJIe497b9iwVshhqsRLw5wG-D38RwfgS8xx0gyn0siNoE8=s96-c",
+            "idRolEquipo": 128,
+            "nombreRol": "Líder"
+            },
+            {
+            "idUsuario": 81,
+            "nombres": "Andrea",
+            "apellidos": "Gonzales",
+            "correoElectronico": "andrea@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": null,
+            "idRolEquipo": 129,
+            "nombreRol": "Miembro"
+            },
+            {
+            "idUsuario": 79,
+            "nombres": "Juan Angelo",
+            "apellidos": "Flores Rubio",
+            "correoElectronico": "juanflores@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": null,
+            "idRolEquipo": 129,
+            "nombreRol": "Miembro"
+            },
+            {
+            "idUsuario": 95,
+            "nombres": "RENZO GABRIEL",
+            "apellidos": "PINTO QUIROZ",
+            "correoElectronico": "a20201491@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+            "idRolEquipo": 129,
+            "nombreRol": "Miembro"
+            }
+        ]
+        },
+        "usuarios": [],
+        "tareasPosteriores": [],
+        "tareasHijas": [
+        {
+            "idTarea": 376,
+            "idEquipo": null,
+            "idPadre": 375,
+            "idTareaAnterior": null,
+            "sumillaTarea": "advasdv",
+            "descripcion": "asdvasd",
+            "fechaInicio": "2023-11-09T05:00:00.000Z",
+            "fechaFin": "2023-11-30T05:00:00.000Z",
+            "cantSubTareas": 0,
+            "cantPosteriores": 0,
+            "horasPlaneadas": 4,
+            "fechaUltimaModificacionEstado": "2023-11-18T05:00:00.000Z",
+            "idTareaEstado": 2,
+            "nombreTareaEstado": "En progreso",
+            "colorTareaEstado": "primary",
+            "esPosterior": 0,
+            "idEntregable": null,
+            "porcentajeProgreso": 0,
+            "usuarios": [
+            {
+                "idUsuario": 96,
+                "nombres": "JUAN ANGELO",
+                "apellidos": "FLORES RUBIO",
+                "correoElectronico": "angelo.flores@pucp.edu.pe",
+                "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLWS53LV_YEk7R075wQoeLMJZ7shVi5xzY7MXVFIMu5V5k=s96-c"
+            }
+            ],
+            "equipo": null,
+            "tareasPosteriores": [],
+            "tareasHijas": []
+        }
+        ]
+    }
+    ]
+}
+]
+}
