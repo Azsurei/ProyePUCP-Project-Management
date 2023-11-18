@@ -377,6 +377,13 @@ function ProjectSidebar(props) {
             optName: "Matriz de comunicaciones",
             goTo: `${stringBase}/matrizDeComunicaciones`,
         },
+        {
+            id: 14,
+            position: 11,
+            optIcon: "/icons/sideBarDropDown_icons/sbdd13.svg",
+            optName: "Repositorio de documentos",
+            goTo: `${stringBase}/repositorioDocumentos`,
+        },
     ];
 
     const sidebar2Data = {
