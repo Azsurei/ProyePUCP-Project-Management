@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS Egreso;
 DROP TABLE IF EXISTS EstimacionCosto;
 DROP TABLE IF EXISTS LineaEgreso;
 DROP TABLE IF EXISTS LineaEstimacionCosto;
+DROP TABLE IF EXISTS PlanCalidad;
 -- -----------------------------------------------------
 -- CREACION DE TABLAS
 -- -----------------------------------------------------
@@ -1393,5 +1394,65 @@ CREATE TABLE RepositorioDocumento(
     activo TINYINT,
     FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
+
+-----------------------
+-- Plan de Calidad
+-----------------------
+
+DROP TABLE IF EXISTS PlanCalidad;
+CREATE TABLE PlanCalidad(
+    idPlanCalidad INT AUTO_INCREMENT PRIMARY KEY,
+    idHerramienta INT,
+    idProyecto INT,
+    idActaConstitucion INT,
+    fechaCreacion DATE,
+    activo TINYINT NOT NULL,
+    elaboradoPor VARCHAR(200),
+    fechaUltimaModificacion DATE,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto),
+    FOREIGN KEY (idActaConstitucion) REFERENCES ActaConstitucion(idActaConstitucion)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE EstandarCalidad(
+	idEstandarCalidad INT AUTO_INCREMENT PRIMARY KEY,
+    idPlanCalidad INT,
+    descripcion VARCHAR(200),
+    activo TINYINT,
+    FOREIGN KEY (idPlanCalidad) REFERENCES PlanCalidad(idPlanCalidad)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ActividadPrevencion(
+	idActividadPrevencion INT AUTO_INCREMENT PRIMARY KEY,
+    idPlanCalidad INT,
+    descripcion VARCHAR(200),
+    activo TINYINT,
+    FOREIGN KEY (idPlanCalidad) REFERENCES PlanCalidad(idPlanCalidad)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE ActividadControlCalidad(
+	idActividadControlCalidad INT AUTO_INCREMENT PRIMARY KEY,
+    idPlanCalidad INT,
+    descripcion VARCHAR(200),
+    activo TINYINT,
+    FOREIGN KEY (idPlanCalidad) REFERENCES PlanCalidad(idPlanCalidad)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE MetricaCalidad(
+	idMetricaCalidad INT AUTO_INCREMENT PRIMARY KEY,
+    idPlanCalidad INT,
+    descripcionMetrica VARCHAR(200),
+    fuente VARCHAR(200),
+    frecuencia VARCHAR(200),
+    responsable VARCHAR(200),
+    limitesControl VARCHAR(200),
+    activo TINYINT,
+    FOREIGN KEY (idPlanCalidad) REFERENCES PlanCalidad(idPlanCalidad)
 )
 ENGINE = InnoDB;

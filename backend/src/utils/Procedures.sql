@@ -4353,6 +4353,140 @@ END$
 
 DELIMITER ;
 
+--------------------------
+--  Plan de Calidad
+--------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_PLAN_CALIDAD;
+DELIMITER //
+CREATE DEFINER=`admin`@`%` PROCEDURE `INSERTAR_PLAN_CALIDAD`(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idPlanCalidad INT;
+	INSERT INTO PlanCalidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(15,_idProyecto,curdate(),1);
+    SET _idPlanCalidad = @@last_insert_id;
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,15,_idPlanCalidad,1);
+    SELECT _idPlanCalidad AS idPlanCalidad;
+END //
+-------------------------------------
+-- Actividades de Control de Calidad
+-------------------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_ACTIVIDAD_CONTROL_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ACTIVIDAD_CONTROL_CALIDAD(
+    IN _idPlanCalidad INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idActividadControlCalidad INT;
+	INSERT INTO ActividadControlCalidad(idPlanCalidad,descripcion,activo)
+		VALUES(_idPlanCalidad,_descripcion,1);
+    SET _idActividadControlCalidad = @@last_insert_id;
+    SELECT _idActividadControlCalidad AS idActividadControlCalidad;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ACTIVIDAD_CONTROL_CALIDAD_X_ID_PLAN_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTIVIDAD_CONTROL_CALIDAD_X_ID_PLAN_CALIDAD(
+    IN _idPlanCalidad INT
+)
+BEGIN
+    SELECT *
+    FROM ActividadControlCalidad 
+    WHERE idPlanCalidad = _idPlanCalidad 
+    AND activo=1;
+END$
+-------------------------
+-- Estandares de Calidad
+-------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_ESTANDAR_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ESTANDAR_CALIDAD(
+    IN _idPlanCalidad INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idEstandarCalidad INT;
+	INSERT INTO EstandarCalidad(idPlanCalidad,descripcion,activo)
+		VALUES(_idPlanCalidad,_descripcion,1);
+    SET _idEstandarCalidad = @@last_insert_id;
+    SELECT _idEstandarCalidad AS idEstandarCalidad;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ESTANDAR_CALIDAD_X_ID_PLAN_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ESTANDAR_CALIDAD_X_ID_PLAN_CALIDAD(
+    IN _idPlanCalidad INT
+)
+BEGIN
+    SELECT *
+    FROM EstandarCalidad 
+    WHERE idPlanCalidad = _idPlanCalidad 
+    AND activo=1;
+END$
+
+-------------------------
+-- Actividades de Prevencion
+-------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_ACTIVIDAD_PREVENCION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ACTIVIDAD_PREVENCION(
+    IN _idPlanCalidad INT,
+    IN _descripcion VARCHAR(500)
+)
+BEGIN
+	DECLARE _idActividadPrevencion INT;
+	INSERT INTO ActividadPrevencion(idPlanCalidad,descripcion,activo)
+		VALUES(_idPlanCalidad,_descripcion,1);
+    SET _idActividadPrevencion = @@last_insert_id;
+    SELECT _idActividadPrevencion AS idActividadPrevencion;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_ACTIVIDAD_PREVENCION_X_ID_PLAN_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ACTIVIDAD_PREVENCION_X_ID_PLAN_CALIDAD(
+    IN _idPlanCalidad INT
+)
+BEGIN
+    SELECT *
+    FROM ActividadPrevencion 
+    WHERE idPlanCalidad = _idPlanCalidad 
+    AND activo=1;
+END$
+
+-------------------------
+-- Metricas de Calidad
+-------------------------
+DROP PROCEDURE IF EXISTS INSERTAR_METRICA_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_METRICA_CALIDAD(
+    IN _idPlanCalidad INT,
+    IN _descripcionMetrica VARCHAR(500),
+    IN _fuente VARCHAR(200),
+    IN _frecuencia VARCHAR(200),
+    IN _responsable VARCHAR(200),
+    IN _limitesControl VARCHAR(200)
+)
+BEGIN
+	DECLARE _idMetricaCalidad INT;
+	INSERT INTO MetricaCalidad(idPlanCalidad,descripcionMetrica,fuente,frecuencia,responsable,limitesControl,activo)
+		VALUES(_idPlanCalidad,_descripcionMetrica,_fuente,_frecuencia,_responsable,_limitesControl,1);
+    SET _idMetricaCalidad = @@last_insert_id;
+    SELECT _idMetricaCalidad AS idMetricaCalidad;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_METRICA_CALIDAD_X_ID_PLAN_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE LISTAR_METRICA_CALIDAD_X_ID_PLAN_CALIDAD(
+    IN _idPlanCalidad INT
+)
+BEGIN
+    SELECT *
+    FROM MetricaCalidad 
+    WHERE idPlanCalidad = _idPlanCalidad 
+    AND activo=1;
+END$
+
 -----------------------
 -- Plantillas
 -----------------------

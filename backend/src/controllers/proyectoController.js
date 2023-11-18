@@ -250,6 +250,15 @@ async function crear(req, res, next) {
                         ]);
                         const idRepositorioDocumentos = results[0][0].idRepositorioDocumentos;
                     }
+
+                    if (herramienta.idHerramienta === 15) {
+                        // Repositorio de documentos
+                        query = `CALL INSERTAR_PLAN_CALIDAD(?);`;
+                        const [results] = await connection.query(query, [
+                            idProyecto,
+                        ]);
+                        const idPlanCalidad = results[0][0].idPlanCalidad;
+                    }
                 }
                 // Insertamos los supervisores
                 try {

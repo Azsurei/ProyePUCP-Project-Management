@@ -32,7 +32,7 @@ INSERT INTO Herramienta (nombre,descripcion,imageURL, activo) VALUES ('Retrospec
 INSERT INTO Herramienta (nombre,descripcion,imageURL, activo) VALUES ('Acta de reunion','Es una acta de reunion',NULL, 1);
 INSERT INTO Herramienta (nombre,descripcion,imageURL,activo) VALUES("Registro de equipos","Ayuda a dividir el grupo en subequipos",NULL,1);
 INSERT INTO Herramienta (nombre,descripcion,imageURL,activo) VALUES("Presupuesto","Registra eficientemente tus gastos y ingresos",NULL,1);
-
+INSERT INTO Herramienta (nombre, descripcion, activo) VALUES ('Plan de Calidad', 'Contiene los estándares de calidad del proyecto', 1);
 
 -- INSERTS MONEDA
 
