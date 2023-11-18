@@ -4778,8 +4778,9 @@ BEGIN
     FROM ReporteXProyecto rp LEFT JOIN Herramienta h ON h.idHerramienta = rp.idHerramienta LEFT JOIN Archivo a ON a.idArchivo = rp.idArchivo 
     WHERE rp.idProyecto = _idProyecto and rp.activo=1;
 END$
-
+SELECT * FROM Tarea;
 CALL LISTAR_REPORTES_X_ID_PROYECTO(178);
+SELECT * FROM Archivo;
 SELECT * FROM ReporteXProyecto;
 
 DROP PROCEDURE IF EXISTS ACTUALIZAR_FILE_ID;
