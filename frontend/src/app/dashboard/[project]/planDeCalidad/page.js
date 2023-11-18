@@ -22,6 +22,48 @@ export default function PlanDeCalidad(props) {
         setIsLoadingSmall(false);
     }, []);
 
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        // Encuentra elementos modificados y eliminados
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                    modifiedArray.push(newItem);
+                } */
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
+    };
+
     return (
         <div class="flex-1 font-[Montserrat] flex flex-col w-full h-auto pl-8 pr-8">
             <div class="flex items-center w-full pt-4 pb-3">
