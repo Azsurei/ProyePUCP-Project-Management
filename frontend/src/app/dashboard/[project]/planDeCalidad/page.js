@@ -84,7 +84,7 @@ export default function PlanDeCalidad(props) {
             const updatedFields = [...prevFields];
             updatedFields[index - 1].activitiesControl = value;
             return updatedFields;
-        }); 
+        });
     };
 
     function removeContainer1(indice) {
@@ -223,7 +223,7 @@ export default function PlanDeCalidad(props) {
                 </div>
                 {quantity1 === 0 ? (
                     <div className="flex justify-center items-center">
-                        <div>
+                        <div className="mt-2">
                             ¡Puede agregar algunos estándares y normas de
                             calidad!
                         </div>
@@ -262,7 +262,7 @@ export default function PlanDeCalidad(props) {
                 </div>
                 {quantity2 === 0 ? (
                     <div className="flex justify-center items-center">
-                        <div>
+                        <div className="mt-2">
                             ¡Puede agregar algunas actividades de prevención y
                             aseguramiento de calidad!
                         </div>
@@ -301,8 +301,9 @@ export default function PlanDeCalidad(props) {
                 </div>
                 {quantity3 === 0 ? (
                     <div className="flex justify-center items-center">
-                        <div>
-                            ¡Puede agregar algunas actividades de control de calidad!
+                        <div className="mt-2">
+                            ¡Puede agregar algunas actividades de control de
+                            calidad!
                         </div>
                     </div>
                 ) : (
@@ -310,7 +311,9 @@ export default function PlanDeCalidad(props) {
                         <ContainerActivitiesControlPC
                             key={index}
                             indice={index + 1}
-                            updateActivitiesControlField={updateActivitiesControlField}
+                            updateActivitiesControlField={
+                                updateActivitiesControlField
+                            }
                             activitiesControl={activitiesControl}
                             functionRemove={removeContainer3}
                             isDisabled={!editMode}
