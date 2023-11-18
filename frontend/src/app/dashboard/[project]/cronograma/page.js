@@ -394,6 +394,7 @@ export default function Cronograma(props) {
         setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
+        console.log("TRAYENDO TAREA CON ENTREGABLE " + tarea.idEntregable);
         if (tarea.idEntregable === null) {
             setTareaEntregable(new Set([]));
         } else {
@@ -432,6 +433,7 @@ export default function Cronograma(props) {
         setValidFechas(true);
         setValidAsigned(true);
         setValidSelectedSubteamUsers(true);
+        setValidEntregable(true);
 
         setStateSecond(3);
         setToggleNew(true);
@@ -603,10 +605,10 @@ export default function Cronograma(props) {
                 usuarios: selectedUsers, //veriifcar posible error
                 subTareas: null,
                 tareasPosteriores: listPosteriores,
-                idEntregable: parseInt(tareaEntregable[0], 10),
+                idEntregable: parseInt(tareaEntregable.currentKey),
                 idColumnaKanban: 0,
             };
-            console.log(objTareaNueva, null, 2);
+            console.log(objTareaNueva);
 
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -714,6 +716,9 @@ export default function Cronograma(props) {
 
             //como conseguimos los nuevos? nuevaLista - listaOriginal
 
+            console.log("SOBRE ENTREGABLE");
+            console.log(tareaEntregable);
+
             const objToEdit = {
                 idCronograma: cronogramaId,
                 idTarea: idTareaToEdit,
@@ -728,10 +733,12 @@ export default function Cronograma(props) {
                 tareasPosterioresEliminadas: listPosterioresOriginal,
                 usuariosAgregados: selectedUsers, //al final se barren todos los antiguos xde, se deben agregar todos dnv
                 usuariosEliminados: deletedUsers,
-                idEntregable: parseInt(tareaEntregable[0], 10),
+                idEntregable: parseInt(tareaEntregable.currentKey),
             };
 
-            console.log(objToEdit);
+            console.log(
+                "ESTO VAMOS A EDITAR " + JSON.stringify(objToEdit, null, 2)
+            );
 
             const editURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -827,7 +834,7 @@ export default function Cronograma(props) {
                         .get(tareasURL)
                         .then(function (response) {
                             setListTareas(response.data.tareasOrdenadas);
-                            console.log(response.data.tareasOrdenadas);
+                            console.log(JSON.stringify(response.data.tareasOrdenadas,null,2));
 
                             const entregablesURL =
                                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -1358,32 +1365,14 @@ export default function Cronograma(props) {
                                     size="md"
                                     //color={}
                                     onChange={(e) => {
-                                        // const state = {
-                                        //     id: dropBoxItems.find(item => item.itemKey === e.target.value).id,
-                                        //     itemKey: e.target.value
-                                        // }
-                                        if (e.target.value === "") {
-                                            console.log("caso 1");
-                                            setTareaEntregable(new Set([]));
-                                        } else {
-                                            console.log(
-                                                "caso 2 con " +
-                                                    e.target.value +
-                                                    " " +
-                                                    tareaEntregable[0]
-                                            );
-                                            setTareaEntregable([
-                                                e.target.value,
-                                            ]);
-                                            setValidEntregable(true);
-                                            console.log(tareaEntregable);
-                                        }
+                                        setValidEntregable(true);
                                     }}
+                                    onSelectionChange={setTareaEntregable}
                                     selectedKeys={tareaEntregable}
                                 >
                                     {listEntregables.map((items) => (
                                         <SelectItem
-                                            key={items.idEntregable}
+                                            key={items.idEntregableString}
                                             value={items.idEntregableString}
                                         >
                                             {items.nombre}
@@ -1868,14 +1857,6 @@ export default function Cronograma(props) {
                     )}
                 </>
             )}
-
-            <Toaster
-                richColors
-                closeButton={true}
-                //toastOptions={{
-                //    style: { fontSize: "1rem" },
-                //}}
-            />
         </div>
     );
 }

@@ -377,6 +377,20 @@ function ProjectSidebar(props) {
             optName: "Matriz de comunicaciones",
             goTo: `${stringBase}/matrizDeComunicaciones`,
         },
+        {
+            id: 15,
+            position: 11,
+            optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
+            optName: "Plan de calidad",
+            goTo: `${stringBase}/planDeCalidad`,
+        },
+        {
+            id: 14,
+            position: 12,
+            optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
+            optName: "Repositorio de documentos",
+            goTo: `${stringBase}/repositorioDocumentos`,
+        }
     ];
 
     const sidebar2Data = {

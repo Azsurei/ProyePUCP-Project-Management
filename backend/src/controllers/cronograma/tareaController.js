@@ -320,8 +320,11 @@ async function listarXIdProyecto(req, res, next) {
                 tarea.equipo = null;
             }
         }
-
+        console.log("==========TAREAS==========");
+        console.log(JSON.stringify(tareas,null,2));
         const tareasConPosteriores = await repositionPosteriores(tareas);
+        console.log("==========TAREAS CON POSTERIORES==========");
+        console.log(JSON.stringify(tareasConPosteriores,null,2));
         const tareasOrdenadas = await structureData(tareasConPosteriores);
         res.status(200).json({
             tareasOrdenadas,
@@ -395,9 +398,17 @@ function repositionPosteriores(tareas) {
     tareas.forEach((task) => {
         const parentId = task.idTareaAnterior;
         if (!result[parentId]) {
+            //si no tiene arreglo, crealo
             result[parentId] = [];
         }
-        result[parentId].push(task);
+
+
+        if(task.esPosterior === 0){
+            result[null].push(task);
+        }
+        else{
+            result[parentId].push(task);
+        }
     });
 
     if (!result[null]) {

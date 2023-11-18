@@ -205,15 +205,6 @@ export default function ActaReunion(props) {
                     </div>
                 )
             }
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }
