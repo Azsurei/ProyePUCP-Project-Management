@@ -25,5 +25,9 @@ routerFiles.post("/postFile",upload.single('file'), fileController.postFile);
 
 routerFiles.get("/getFile/:idArchivo", fileController.getFile);
 
+routerFiles.post("/postArchivo",upload.single('file'), fileController.postFile);
+
+routerFiles.get("/getArchivo/:idArchivo", fileController.getArchivo);
+
 
 module.exports.routerFiles = routerFiles;

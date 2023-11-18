@@ -788,3 +788,57 @@ Content-Type: application/json
 ###
 GET http://localhost:8080/api/proyecto/reporte/obtenerReporteRiesgoXFileId/1afTXpsQZKHkSkyXeD_3xnN1S4vCcMScX HTTP/1.1
 Content-Type: application/json
+
+
+
+################################################3
+###
+
+
+###
+POST http://localhost:8080/api/proyecto/reporte/crearExcelprueba HTTP/1.1
+Content-Type: application/json
+
+{
+  "idProyecto": 178,
+  "nombre": "Probando Riesgos",
+  "riesgos": [
+    {
+      "idRiesgo": 9,
+      "nombreRiesgo": "RiesgoIwa",
+      "idCatalogo": 20,
+      "fechaIdentificacion": "2023-10-22T05:00:00.000Z",
+      "duenoRiesgo": 102,
+      "nombres": "DIEGO JAVIER KITAROU",
+      "apellidos": "IWASAKI MOREYRA",
+      "correoElectronico": "a20201540@pucp.edu.pe",
+      "detalleRiesgo": "dasasd",
+      "causaRiesgo": "asdasd",
+      "impactoRiesgo": "asdasd",
+      "estado": "Activo",
+      "activo": 1,
+      "idProbabilidad": 1,
+      "nombreProbabilidad": "Muy Baja",
+      "valorProbabilidad": 0.1,
+      "idImpacto": 1,
+      "nombreImpacto": "Insignificante",
+      "valorImpacto": 0.05,
+      "responsables": [
+        {
+          "correoElectronico": "a20203298@pucp.edu.pe",
+          "idUsuario": 97,
+          "apellidos": "ESTRADA MELGAREJO",
+          "nombres": "BRUCE ANTHONY",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJfDJJnt4CClfOWItoYOykKhkSPpobVB82pkxKw7MAIOQ=s96-c"
+        },
+        {
+          "correoElectronico": "renzopinto25@gmail.com",
+          "idUsuario": 112,
+          "apellidos": "pinto",
+          "nombres": "rgpq25",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c"
+        }
+      ]
+    }
+  ]
+}

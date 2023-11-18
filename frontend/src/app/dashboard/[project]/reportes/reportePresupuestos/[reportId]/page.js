@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import BarGraphic from "@/components/BarGraphic";
-import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
 import { set } from "date-fns";
 import axios from "axios";
 import { id } from "date-fns/esm/locale";
@@ -31,7 +31,8 @@ export default function ReportePresupuestos(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const [isClient, setIsClient] = useState(false);
     const {herramientasInfo} = useContext(HerramientasInfo);
-    const idPresupuesto = herramientasInfo[12].idHerramientaCreada;
+    // const idPresupuesto = herramientasInfo[12].idHerramientaCreada;
+    const idPresupuesto = herramientasInfo.find(herramienta => herramienta.idHerramienta === 13).idHerramientaCreada;
     const [IngresosTotales, setIngresosTotales] = useState(null);
     const [EgresosTotales, setEgresosTotales] = useState(null);
     const [EstimacionTotales, setEstimacionTotales] = useState(null);
@@ -42,30 +43,41 @@ export default function ReportePresupuestos(props) {
     const [presupuesto, setPresupuesto] = useState([]);
     const [presupuestoReporte, setPresupuestoReporte] = useState([]);
     const [nombreMoneda, setNombreMoneda] = useState("");
+    const reportID = props.params.reportId;
+    const [isNewReport, setIsNewReport] = useState(false);
+    const [json, setJson] = useState(null);
+    
     const guardarReporte = async () => {
       const postData = {
         idProyecto: projectId,
-        nombre: "Reporte de Presupuesto",
+        nombre: projectName,
         presupuesto:  {
-          idPresupuesto: idPresupuesto,
-          idHerramienta: herramientasInfo[12].idHerramientaCreada,
-          nombreHerramienta: "Presupuesto",
-          presupuestoInicial: presupuesto.presupuestoInicial,
-          idMoneda: presupuesto.idMoneda,
-          nombreMoneda: nombreMoneda,
-          cantidadMeses: presupuesto.cantidadMeses,
+          general: {
+            idPresupuesto: idPresupuesto,
+            idHerramienta: 13,
+            nombreHerramienta: "Presupuesto",
+            presupuestoInicial: presupuesto.presupuestoInicial,
+            activo: 1,
+            idProyecto: projectId,
+            nombreProyecto: projectName,
+            fechaCreacion: presupuesto.fechaCreacion,
+            idMoneda: presupuesto.idMoneda,
+            nombreMoneda: nombreMoneda,
+            cantidadMeses: presupuesto.cantidadMeses,
+          },
+          lineasPresupuesto: {
+            lineasIngreso: lineasIngreso,
+            lineasEgreso: lineasEgreso,
+            lineasEstimacionCosto: lineasEstimacion,
+          }
         },
-        lineasPresupuesto: {
-          lineasIngreso: lineasIngreso,
-          lineasEgreso: lineasEgreso,
-          lineasEstimacionCosto: lineasEstimacion,
-        }
+       
     };
     console.log("El postData es :", postData);
     axios
         .post(
             process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/reporte/generarReportePresupuesto",
+                "/api/proyecto/reporte/subirReportePresupuestoJSON",
             postData
         )
         .then((response) => {
@@ -107,35 +119,71 @@ export default function ReportePresupuestos(props) {
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarPresupuesto/${idPresupuesto}`);
               const data = response.data.presupuesto;
-              setPresupuesto(data[0]);
-              if (data[0].idMoneda === 1) {
+              setPresupuesto(data);
+              if (data.idMoneda === 1) {
                 setIsSelected(false);
-                setNombreMoneda("Dólares");
+                setNombreMoneda("USD");
               } else {
                 console.log("Se seleccionó el sol"); 
                 setIsSelected(true);
-                setNombreMoneda("Soles");
+                setNombreMoneda("PEN");
               }
 
               console.log(`Esta es la data de presupuesto:`, data);
-                console.log(`Esta es la moneda:`, data[0].idMoneda);
-                setMontoInicial(data[0].presupuestoInicial);
-                console.log(`Este es el monto inicial:`, data[0].presupuestoInicial);
+                console.log(`Esta es la moneda:`, data.idMoneda);
+                setMontoInicial(data.presupuestoInicial);
+                console.log(`Este es el monto inicial:`, data.presupuestoInicial);
                 console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
             } catch (error) {
-              console.error('Error al obtener las líneas de ingreso:', error);
+              console.error('Error al obtener presupuesto', error);
             }
           };
             fetchData();
-    };       
+    };
+    const sacarInformacionReporte = async () => {
+      setIsLoadingSmall(true);
+      const fetchData = async () => {
+          try {
+              // Realiza la solicitud HTTP al endpoint del router
+              const stringURL =
+                  process.env.NEXT_PUBLIC_BACKEND_URL +
+                  "/api/proyecto/reporte/obtenerJSONReportePresupuestoXIdArchivo/" +
+                  reportID;
+              console.log("URL: ", stringURL);
+              const response = await axios.get(stringURL);
+
+              // Actualiza el estado 'data' con los datos recibidos
+              setJson(response.data.jsonData);
+              setPresupuestoReporte(response.data.jsonData.presupuesto.general);
+              setLineasIngreso(response.data.jsonData.presupuesto.lineasPresupuesto.lineasIngreso);
+              setLineasEgreso(response.data.jsonData.presupuesto.lineasPresupuesto.lineasEgreso);
+              setLineasEstimacion(response.data.jsonData.presupuesto.lineasPresupuesto.lineasEstimacionCosto);
+              console.log(
+                  `Datos obtenidos exitosamente:`,
+                  response.data.jsonData
+              );
+              setIsLoadingSmall(false);
+          } catch (error) {
+              console.error("Error al obtener datos:", error);
+          }
+      };
+
+      fetchData();
+  };       
     useEffect(() => {
         console.log('useEffect ran on the client');
         console.log(herramientasInfo);
         console.log("Id presupuesto", idPresupuesto);
         setIsLoadingSmall(true);
-        
-        DataTable();
-        ObtenerPresupuesto();
+        if (reportID === "nuevoReporte") {
+          DataTable();
+          ObtenerPresupuesto();
+          setIsNewReport(true);
+        } else if (!isNaN(reportID)) {
+          sacarInformacionReporte();
+          setIsNewReport(false);
+        }
+
         setIsClient(true);
     }, [idPresupuesto]);
     const series = [
@@ -218,7 +266,7 @@ export default function ReportePresupuestos(props) {
         <>
         {vistaReporte && (
                     <div className="divHistorialReportes">
-                    <div className="flex-1 border border-green-400">
+                    <div className="flex-1">
                             <Breadcrumbs>
                                 <BreadcrumbsItem href="/" text="Inicio" />
                                 <BreadcrumbsItem href="/dashboard" text="Proyectos" />
@@ -232,9 +280,18 @@ export default function ReportePresupuestos(props) {
                                 <div className="titleHistorialReporte text-mainHeaders">
                                     Reporte de Presupuesto
                                 </div>
-                                <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
-                                    Guardar reporte
+                                {isNewReport && (
+                                    <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
+                                        Guardar reporte
+                                    </Button>
+                                )}
+                                {!isNewReport && (
+                                    <Button color="success" className="text-white" onClick={()=>guardarReporte()}>
+                                      Exportar
                                 </Button>
+                                )
+                                }
+
                              </div>
             
                             <div className="ReportesPresupuesto">

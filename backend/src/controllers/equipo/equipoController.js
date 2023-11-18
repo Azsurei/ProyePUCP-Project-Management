@@ -143,6 +143,11 @@ async function listarEquiposYParticipantes(req, res, next) {
                 equipo.idEquipo,
             ]);
             equipo.participantes = participantes[0];
+
+            const query2 = `CALL LISTAR_TAREAS_X_IDEQUIPO(?);`;
+            const [tareas] = await connection.query(query2, [equipo.idEquipo]);
+            const tareasEquipo = tareas[0];
+            equipo.tareas = tareasEquipo;
         }
 
         //falta fetchear tareas totales y tareas completadas para propositos de la pantalla

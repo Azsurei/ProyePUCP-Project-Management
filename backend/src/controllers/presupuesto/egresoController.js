@@ -98,6 +98,41 @@ async function eliminarLineaEgreso(req,res,next){
     }
 }
 
+async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin){
+    let lineasEgreso = [];
+    try {
+        const query = `CALL LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(?,?,?);`;
+        const [results] = await connection.query(query, [idPresupuesto,fechaIni,fechaFin]);
+        lineasEgreso = results[0];
+        return lineasEgreso;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function ordenarLineasEgreso(lineasEgreso, mesActual, mesesMostrados) {
+    // Crear una matriz, inicializando cada fila con la descripción y luego llenándola con ceros
+    let matrizEgresos = lineasEgreso.map(egreso => [egreso.descripcion].concat(new Array(mesesMostrados).fill(0)));
+
+    try {
+        lineasEgreso.forEach((egreso, indexEgreso) => {
+            const fechaGasto = new Date(egreso.fechaRegistro);
+            const mesGasto = fechaGasto.getUTCMonth() + 1;
+            const mesRelativo = mesGasto - mesActual;
+
+            // Asegúrate de ajustar el índice para los meses, ya que el primer elemento es la descripción
+            if (mesRelativo >= 0 && mesRelativo < mesesMostrados) {
+                matrizEgresos[indexEgreso][mesRelativo + 1] += parseFloat(egreso.costoReal);
+            }
+        });
+    } catch (error) {
+        console.error(error);
+    }
+
+    return matrizEgresos;
+}
+
+
 module.exports = {
     crear,
     crearLineaEgreso,
@@ -105,5 +140,7 @@ module.exports = {
     listarLineasXNombreFechas,
     listarLineasXIdPresupuesto,
     eliminarLineaEgreso,
-    funcListarLineasXIdPresupuesto
+    funcListarLineasXIdPresupuesto,
+    funcListarLineasFlujoCajaXIdPresupuesto,
+    ordenarLineasEgreso
 };

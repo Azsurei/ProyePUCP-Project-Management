@@ -12,7 +12,7 @@ async function listarUsuarios(req, res, next) {
             message: "Usuarios obtenidos exitosamente",
         });
         //console.log(results);
-        console.log("Si se listaron los usuarios");
+        //console.log("Si se listaron los usuarios");
         //console.log(results[0]);
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
@@ -79,10 +79,8 @@ async function insertarUsuariosAProyecto(req, res, next) {
             ]);
 
             const idUsuarioXRolProyecto = results[0][0].idUsuarioXRolProyecto;
-            console.log(
-                `Se agrego el usuario ${participante.id} al proyecto ${idProyecto} con el rol ${user.numRol}`
-            );
-            console.log("Usuario X Rol X Proyecto : ", idUsuarioXRolProyecto);
+            //console.log(`Se agrego el usuario ${participante.id} al proyecto ${idProyecto} con el rol ${user.numRol}`);
+            //console.log("Usuario X Rol X Proyecto : ", idUsuarioXRolProyecto);
         }
         res.status(200).json({
             message: "Usuarios registrados exitosamente",
@@ -153,7 +151,7 @@ async function verificarSiCorreoEsDeGoogle(req, res, next) {
     try {
         const query = `CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE(?);`;
         const [results] = await connection.query(query, [correoElectronico]);
-        console.log(results[0][0]);
+        //console.log(results[0][0]);
         let tieneCuentaGoogle = results[0][0].tieneCuentaGoogle;
         console.log(tieneCuentaGoogle);
         if (tieneCuentaGoogle === 1) {
@@ -207,6 +205,99 @@ async function listarNotificaciones(req, res, next) {
     }
 }
 
+async function actualizaNotificacionAR(req, res, next){
+    const {idOld, idNew} = req.body;
+    try{
+        const query = `CALL ACTUALIZA_ID_NOTIFICACION_AR(?,?);`;
+        const [results] = await connection.query(query, [idOld, idNew]);
+        
+        res.status(200).json({
+            message: "Se actualizo id de notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function modificaEstadoNotificacionXIdNotificacion(req, res, next){
+    const {idNotificacion, estado} = req.body;
+    try{
+        const query = `CALL MODIFICAR_ESTADO_NOTIFICACION_X_ID_NOTIFICACION(?,?);`;
+        const [results] = await connection.query(query, [idNotificacion, estado]);
+        
+        res.status(200).json({
+            message: "Se actualizo estado de notificacion correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function modificaEstadoNotificacionXIdUsuario(req, res, next){
+    const {idUsuario, estado} = req.body;
+    try{
+        const query = `CALL MODIFICAR_ESTADO_NOTIFICACION_X_ID_USUARIO(?,?);`;
+        const [results] = await connection.query(query, [idUsuario, estado]);
+       // console.log(JSON.stringify(results,null,2));
+       // console.log("===================================");
+        console.log(`Se modifico el estado de las notificaciones del usuario ${idUsuario} a ${estado}`);
+        const notificaciones = results[0];
+        //console.log(JSON.stringify(notificaciones,null,2));
+        res.status(200).json({
+            notificaciones,
+            message: "Se actualizo estado de notificaciones de usuario correctamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+async function verificarNotificacionesPresupuesto(req, res, next){
+    const {idPresupuesto, idProyecto} = req.body;
+    try{
+        const query = `CALL VER_USUARIOS_NOTIFICAR_PRESUPUESTO(?,?);`;
+        const [results] = await connection.query(query, [idPresupuesto, idProyecto]);
+        
+        const listaUsuarios = results[0];
+
+        console.log(JSON.stringify(listaUsuarios,null,2));
+
+        for(const usuario of listaUsuarios){
+            if(usuario.resultNotif === 1){
+                //debemos notificar
+                //procedure inserta notificacion si esque usuario no la tenia
+                console.log("Enviando notificacion");
+                const query1 = "CALL ENVIAR_NOTIFICACION_PRESUPUESTO(?,?);";
+                const [results1] = await connection.query(query1, [usuario.idUsuario, idProyecto]);
+                const resultado = results1[0][0].Resultado;
+
+                console.log(resultado);
+                usuario.resultNotif = resultado;
+            }
+            else{
+                //borramos notificacion
+                console.log("Eliminando notificacion");
+                const query2 = "CALL BORRAR_NOTIFICACION_PRESUPUESTO(?,?);";
+                const [results2] = await connection.query(query2, [usuario.idUsuario, idProyecto]);
+
+                const resultado = results2[0][0].Resultado;
+
+                console.log(resultado);
+                usuario.resultNotif = resultado
+            }
+        }
+        res.status(200).json({
+            usuariosNotifs: listaUsuarios,
+            message: "hola",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 
 module.exports = {
@@ -218,5 +309,9 @@ module.exports = {
     cambiarPassword,
     verificarSiCorreoEsDeGoogle,
     enviarNotificacion,
-    listarNotificaciones
+    listarNotificaciones,
+    actualizaNotificacionAR,
+    modificaEstadoNotificacionXIdNotificacion,
+    modificaEstadoNotificacionXIdUsuario,
+    verificarNotificacionesPresupuesto
 };

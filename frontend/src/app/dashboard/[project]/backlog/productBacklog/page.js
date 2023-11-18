@@ -51,6 +51,7 @@ export default function ProductBacklog(props) {
     const [navegate, setNavegate] = useState(false);
     const [edit, setEdit] = useState(null);
     function DataTable() {
+        setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
                 // Realiza la solicitud HTTP al endpoint del router
@@ -63,11 +64,11 @@ export default function ProductBacklog(props) {
 
                 // Actualiza el estado 'data' con los datos recibidos
                 setData(response.data.historias);
-                setIsLoadingSmall(false);
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.historias
                 );
+                setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
@@ -250,7 +251,7 @@ export default function ProductBacklog(props) {
                 return (
                     <div className="relative flex justify-center items-center gap-2">
                         <div className="flex items-center">
-                            <Tooltip content="Visualizar">
+                            <Tooltip content="Visualizar" color="primary">
                                 <button
                                     className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
                                     type="button"
@@ -262,7 +263,7 @@ export default function ProductBacklog(props) {
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Editar">
+                            <Tooltip content="Editar" color="warning">
                                 <button
                                     className=""
                                     type="button"
@@ -273,7 +274,7 @@ export default function ProductBacklog(props) {
                                     <img src="/icons/editar.svg" />
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Eliminar">
+                            <Tooltip content="Eliminar" color="danger">
                                 <button
                                     className=""
                                     type="button"
@@ -299,9 +300,12 @@ export default function ProductBacklog(props) {
                 );
             case "NombreEstado":
                 return (
-                    <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
+                    (cellValue && (
+                        <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
                         {cellValue}
                     </span>
+                    ))
+
                 );
             case "color":
                 return null;

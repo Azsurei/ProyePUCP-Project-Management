@@ -6,77 +6,181 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
-import { Avatar, Chip } from "@nextui-org/react";
-import { SessionContext } from "@/app/grupoProyectos/layout";
+import { Avatar, Chip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Modal, ModalContent, ModalHeader, ModalFooter, ModalBody, useDisclosure } from "@nextui-org/react";
+import { SessionContext } from "@/app/dashboard/layout";
+import TablaProyectos from "@/components/dashboardComps/projectComps/projectCreateComps/TablaProyectos";
+import RouteringReporteGrupo from "./RouteringReporteGrupo";
+import { MenuIcon } from "@/../public/icons/MenuIcon";
+import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
 axios.defaults.withCredentials = true;
 function GroupCard(props) {
-    const startDate = new Date(props.fechaInicio);
-    const endDate = new Date(props.fechaFin);
+    const fechaTransaccion = new Date(props.fechaCreacion);
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const fechaFormateada = fechaTransaccion.toLocaleDateString('es-ES', options);
+    const idUsuario = props.idUsuario;
+    const idGrupoProyecto = props.id;
+    const urlPrueba = "http://localhost:8080/api/usuario/verInfoUsuario/"
+    const [usuario, setUsuario] = useState([]);
+    const [proyectos, setProyectos] = useState([]);
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [idGrupo, setIdGrupo] = useState("");
+    const [navegate, setNavegate] = useState(false);
+    const setRoutering = (objectID) => {
+        setIdGrupo(objectID);
+        setNavegate(!navegate);
+    };
+    const handleModal = (list) => {
+        onOpen();
+        
+    };
+    const DataProyectos = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+              console.log("Id Grupo: ", idGrupoProyecto);
+              const data = response.data.proyectos;
+              setProyectos(data);
+              console.log(`Estos son los proyectos:`, data);
+            } catch (error) {
+              console.error('Error al obtener los proyectos:', error);
+            }
+          };
+            fetchData();
+    };
+    useEffect(() => {
+        DataProyectos();
+    }, [idGrupoProyecto]);
+    useEffect(() => {
+        const stringURLUsuario =
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verInfoUsuario";
 
-    // Calcula la diferencia en días
-    const diffInDays = Math.floor(
-        (endDate - startDate) / (1000 * 60 * 60 * 24)
-    );
-
-    // Formatea las fechas
-    const formattedStartDate = startDate.toLocaleDateString();
-    const formattedEndDate = endDate.toLocaleDateString();
-
-    // useEffect(() => {
-    //     console.log("ROL TEST " + props.roleId);
-    // });
+        axios
+            .get(stringURLUsuario)
+            .then(function (response) {
+                const userData = response.data.usuario[0];
+                setUsuario(userData);
+                setIsLoading(false);
+                setIsLoadingSmall(false);
+                console.log("Usuario: ", userData)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, [idUsuario]);
 
     return (
+        <>
         <li className="ProjectCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10" onClick={props.onClick}>
-            <p className="cardTitleProject">{props.name}</p>
+            <div className="flex justify-between items-center">
+            <p className="text-xl font-montserrat font-semibold">{props.name}</p>
+            <Dropdown>
+                    <DropdownTrigger>
+                    <Button 
+                        variant="light" 
+                        endContent={<MenuIcon size={24} />}
+                    >
+                         Menu
+                    </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description" >
+                      <DropdownItem
+                        key="new"
+                        description="Visualiza los proyectos relacionados del grupo"
+                        onPress={() => handleModal(proyectos)}
+                        startContent={<EyeFilledIcon size={24} />}
+                      >
+                        Visualizar Proyectos
+                        
+                      </DropdownItem>
+                      <DropdownItem
+                        key="copy"
+                        description="Crea un reporte de grupo de proyectos"
+                        onPress={() => {
+                            setRoutering(idGrupoProyecto);
+                        }
+                        }
+                        startContent={<PlusIcon size={24} />}
+                      >
+                        Crear Reporte
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+            </div>
+            
 
-            {/* <p className="cardDates">
-                {`${formattedStartDate} - ${formattedEndDate} (${diffInDays} días)`}
-            </p> */}
+            <p className="text-gray-600 font-montserrat text-base font-semibold leading-2 mt-2 mb-2">
+                {fechaFormateada}
+            </p>
+            
+            {usuario && (
+                <div className="flex items-center justify-center gap-4">
+                    <Avatar
+                        key={usuario.idUsuario}
+                        className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem] bg-mainUserIcon"
+                        radius="md"
+                        src={usuario.imgLink}
+                        fallback={
+                            <p
+                                className="membersIcon bg-mainUserIcon"
+                                key={usuario.idUsuario}
+                            >
+                                {usuario.nombres}
+                                {usuario.apellidos !== null
+                                    ? usuario.apellidos
+                                : ""}
+                            </p>
+                        }
+                        
+                    />
+                     <Chip
+                        className="capitalize"
+                        color="primary"
+                        size="md"
+                        variant="flat"
+                    >
+                        {usuario.nombres} {usuario.apellidos}
+                    </Chip>
+            </div>
+            )}
 
-            {/* <div className={"teamTag bg-" + roleColor[props.roleId - 1].color}>
-                <p>{props.roleName}</p>
-            </div> */}
-{/* 
-            <Chip
-                className="capitalize"
-                color={roleColor[props.roleId - 1].color}
-                size="md"
-                variant="flat"
-            >
-                {props.roleName}
-            </Chip>
+            <p className="text-gray-600 font-montserrat text-base font-semibold leading-2 mt-2">
+                {proyectos.length} Proyectos involucrados 
+            </p>
+            
 
-            {props.miembros.length > 0 ? (
-                <div className="divPictures">
-                    {props.miembros.map((member) => (
-                        <Avatar
-                            //isBordered
-                            //as="button"
-                            key={member.idUsuario}
-                            className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem] bg-mainUserIcon"
-                            radius="md"
-                            src={member.imgLink}
-                            fallback={
-                                <p
-                                    className="membersIcon bg-mainUserIcon"
-                                    key={member.idUsuario}
-                                >
-                                    {member.nombres[0]}
-                                    {member.apellidos !== null
-                                        ? member.apellidos[0]
-                                        : ""}
-                                </p>
-                            }
-                        />
-                    ))}
-                </div>
-            ) : (
-                <p className="emptyMembers mt-2">
-                    Este proyecto no cuenta con miembros
-                </p>
-            )} */}
+
+           
         </li>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                                        <ModalContent>
+                                            {(onClose) => (
+                                                <>
+                                                <ModalHeader className="flex flex-col gap-1">Lista de Proyectos</ModalHeader>
+                                                <ModalBody>
+                                                {proyectos && proyectos.length > 0 ? (
+                                                    <TablaProyectos proyectos={proyectos} />
+                                                ) : (
+                                                    <p>No hay datos de proyectos disponibles.</p>
+                                                )}
+                                                    
+                                                </ModalBody>
+                                                <ModalFooter>                                   
+                                                    <Button color="primary" onPress={onClose}>
+                                                            Aceptar
+                                                    </Button>
+                                                </ModalFooter>
+                                                </>
+                                            )}
+                                        </ModalContent>
+                                    </Modal>
+            {navegate && idGrupo && (
+                <RouteringReporteGrupo
+                idGrupoProyecto={idGrupo}
+                />
+            )}
+        </>
+        
     );
 }
 export default function ListGroupProject(props) {
@@ -107,6 +211,8 @@ export default function ListGroupProject(props) {
                     return {
                         id: grupos.idGrupoDeProyecto,
                         name: grupos.nombre,
+                        date: grupos.fechaCreacion,
+                        usuuario: grupos.idUsuario,
                     };
                 });
 
@@ -118,6 +224,7 @@ export default function ListGroupProject(props) {
                 console.log(error);
             });
     }, []);
+
     const filteredProjects = ListComps.filter((component) => {
         const projectName = component.name.toLowerCase();
         return projectName.includes(filterValue.toLowerCase());
@@ -126,17 +233,19 @@ export default function ListGroupProject(props) {
         <ul className="ListProject">
             {filteredProjects.map((component) => {
                 return (
-                    <GroupCard
-                        key={component.id}
-                        name={component.name}
-
-                        onClick={() => {
-                            // const updSessionData = {...sessionData};
-                            // updSessionData.rolInProject = component.roleId;
-                            // setSession(updSessionData);
-                            // handleClick(component.id, component.name);
-                        }}
-                    ></GroupCard>
+                                        <GroupCard
+                                        key={component.id}
+                                        id={component.id}
+                                        name={component.name}
+                                        fechaCreacion = {component.date}
+                                        idUsuario = {component.usuario}
+                                        onClick={() => {
+                                            // const updSessionData = {...sessionData};
+                                            // updSessionData.rolInProject = component.roleId;
+                                            // setSession(updSessionData);
+                                            // handleClick(component.id, component.name);
+                                        }}
+                                    ></GroupCard>   
                 );
             })}
 

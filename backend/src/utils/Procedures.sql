@@ -176,10 +176,10 @@ BEGIN
 END; //
 DELIMITER ;
 
-
-----------------------------------------------
+---------------------------------------------
 -- Sprints
-----------------------------------------------
+---------------------------------------------
+
 DROP PROCEDURE IF EXISTS INSERTAR_SPRINT;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_SPRINT(
@@ -538,11 +538,11 @@ BEGIN
     SELECT _idComponenteCriterioDeAceptacion AS idComponenteCriterioDeAceptacion;
 END$
 
-
+DROP PROCEDURE IF EXISTS INSERTAR_ENTREGABLE;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ENTREGABLE(
-    IN _nombre VARCHAR(255),
-    IN _idComponente	INT
+    IN _idComponente INT,
+    IN _nombre	VARCHAR(255)
 )
 BEGIN
 	DECLARE _idEntregable INT;
@@ -805,7 +805,7 @@ BEGIN
 END$
 
 CALL INSERTAR_TEMA_REUNION(1, 'Discusión sobre el plan de proyecto');
-CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(1)
+CALL LISTAR_TEMA_REUNION_X_ID_LINEA_ACTA_REUNION(170);
 
 DROP PROCEDURE IF EXISTS MODIFICAR_TEMA_REUNION;
 DELIMITER $
@@ -1842,13 +1842,13 @@ BEGIN
     SELECT HU.idHistoriaDeUsuario, HU.idEpica, E.nombre as "NombreEpica", HU.idHistoriaPrioridad, HP.nombre as "NombrePrioridad", HU.idHistoriaEstado, HE.descripcion as "DescripcionEstado",
     HU.descripcion, HU.como, HU.quiero, HU.para, HU.para, HU.activo, HU.fechaCreacion, HU.idUsuarioCreador, CONCAT(U.nombres, ' ', U.apellidos) AS "NombreUsuario", U.imgLink as "Imagen"
     FROM HistoriaDeUsuario HU
-    JOIN Epica E
+    LEFT JOIN Epica E
     ON HU.idEpica = E.idEpica
-    JOIN HistoriaEstado HE
+    LEFT JOIN HistoriaEstado HE
     ON HU.idHistoriaEstado = HE.idHistoriaEstado
-    JOIN HistoriaPrioridad HP
+    LEFT JOIN HistoriaPrioridad HP
     ON HU.idHistoriaPrioridad = HP.idHistoriaPrioridad
-    JOIN Usuario U
+    LEFT JOIN Usuario U
     ON HU.idUsuarioCreador = U.idUsuario
     WHERE HU.idHistoriaDeUsuario = _idHistoriaDeUsuario
     AND HU.activo=1;
@@ -2389,6 +2389,45 @@ CREATE PROCEDURE LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
 	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
+
+
+
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
+    IN _idPresupuesto INT,
+    IN _fechaInicial DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion,l.idIngresoTipo
+    FROM LineaIngreso l 
+    WHERE l.idPresupuesto = _idPresupuesto 
+      AND l.fechaTransaccion BETWEEN _fechaInicial AND _fechaFin 
+      AND l.activo = 1;
+END$
+DELIMITER ;
+CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(37);	
+CALL LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(37, '2023-01-01', '2023-12-31');
+CALL LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(37, '2023-01-01', '2023-12-31');
+
+SELECT * FROM IngresoTipo;
+-- Procedimiento para obtener las líneas de egreso
+DROP PROCEDURE IF EXISTS LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
+DELIMITER $
+CREATE PROCEDURE LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
+    IN _idPresupuesto INT,
+	IN _fechaInicial DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    SELECT le.idLineaEgreso, le.costoReal, le.cantidad, le.descripcion, le.fechaRegistro 
+    FROM LineaEgreso le 
+    WHERE le.idPresupuesto = _idPresupuesto 
+      AND le.fechaRegistro BETWEEN _fechaInicial AND _fechaFin 
+      AND le.activo = 1;
+END$
+DELIMITER ;
 
 DELIMITER $
 CREATE PROCEDURE OBTENER_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
@@ -4327,8 +4366,8 @@ CREATE PROCEDURE GUARDAR_PLANTILLA_ACTACONSTITUCION(
 BEGIN
     DECLARE _idPlantillaAC INT;
     -- Primero creamos los datos iniciales de la plantilla
-	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla) 
-    VALUES(_idUsuario,1,_nombrePlantilla);
+	INSERT INTO PlantillaActaConstitucion(idUsuario,activo,nombrePlantilla,fechaCreacion) 
+    VALUES(_idUsuario,1,_nombrePlantilla,NOW());
     SET _idPlantillaAC = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaAC AS idPlantillaAC;
@@ -4447,8 +4486,8 @@ CREATE PROCEDURE GUARDAR_PLANTILLA_KANBAN(
 BEGIN
     DECLARE _idPlantillaKanban INT;
     -- Primero creamos los datos iniciales de la plantilla
-	INSERT INTO PlantillaKanban(idUsuario,nombrePlantilla,activo) 
-    VALUES(_idUsuario,_nombrePlantilla,1);
+	INSERT INTO PlantillaKanban(idUsuario,nombrePlantilla,activo,fechaCreacion) 
+    VALUES(_idUsuario,_nombrePlantilla,1,NOW());
     SET _idPlantillaKanban = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaKanban AS idPlantillaKanban;
@@ -4586,8 +4625,8 @@ CREATE PROCEDURE GUARDAR_PLANTILLA_MR(
 BEGIN
     DECLARE _idPlantillaMR INT;
     -- Primero creamos los datos iniciales de la plantilla
-	INSERT INTO PlantillaMR(idUsuario,activo,nombrePlantilla) 
-    VALUES(_idUsuario,1,_nombrePlantilla);
+	INSERT INTO PlantillaMR(idUsuario,activo,nombrePlantilla,fechaCreacion) 
+    VALUES(_idUsuario,1,_nombrePlantilla,NOW());
     SET _idPlantillaMR = @@last_insert_id;
     -- Ahora con el idPlantillaAC copiamos los registros de la bd
     SELECT _idPlantillaMR AS idPlantillaMR;
@@ -4712,32 +4751,36 @@ END$
 ## REPORTES
 ########################################
 SELECT * FROM Herramienta;
-
+SELECT * FROM Archivo;
 DROP PROCEDURE IF EXISTS INSERTAR_REPORTE_X_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_REPORTE_X_PROYECTO(
     IN _idProyecto INT,
     IN _idHerramienta INT,
-    IN _nombre VARCHAR(255)
+    IN _nombre VARCHAR(255),
+    IN _idArchivo INT
 )
 BEGIN
     DECLARE _idReporte INT;
-	INSERT INTO ReporteXProyecto(idProyecto,idHerramienta,nombre,fechaCreacion,activo)
-    VALUES (_idProyecto,_idHerramienta,_nombre,CURDATE(),1);
+	INSERT INTO ReporteXProyecto(idProyecto,idHerramienta,idArchivo,nombre,fechaCreacion,activo)
+    VALUES (_idProyecto,_idHerramienta,_idArchivo,_nombre,CURDATE(),1);
     SET _idReporte = @@last_insert_id;
     SELECT _idReporte as idReporte;
 END$
+
 DROP PROCEDURE IF EXISTS LISTAR_REPORTES_X_ID_PROYECTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_REPORTES_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	SELECT rp.idReporteXProyecto,rp.fileId,rp.nombre ,rp.fechaCreacion, rp.fechaCreacion,h.idHerramienta, h.nombre as nombreHerramienta
-    FROM ReporteXProyecto rp LEFT JOIN Herramienta h ON h.idHerramienta = rp.idHerramienta WHERE rp.idProyecto = _idProyecto and rp.activo=1;
+	SELECT rp.idReporteXProyecto,a.idArchivo,a.nombreGenerado,a.nombreReal,rp.nombre ,rp.fechaCreacion, rp.fechaCreacion,h.idHerramienta, h.nombre as nombreHerramienta
+    FROM ReporteXProyecto rp LEFT JOIN Herramienta h ON h.idHerramienta = rp.idHerramienta LEFT JOIN Archivo a ON a.idArchivo = rp.idArchivo 
+    WHERE rp.idProyecto = _idProyecto and rp.activo=1;
 END$
 
 CALL LISTAR_REPORTES_X_ID_PROYECTO(178);
+SELECT * FROM ReporteXProyecto;
 
 DROP PROCEDURE IF EXISTS ACTUALIZAR_FILE_ID;
 DELIMITER $
@@ -5161,14 +5204,14 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS;
 DELIMITER $
 CREATE PROCEDURE INSERTAR_ARCHIVOS(
-    IN _nombre_s3 VARCHAR(200),
+    IN _nombreGenerado VARCHAR(200),
     IN _nombre_real VARCHAR(500)
 )
 BEGIN
     DECLARE _idArchivo INT;
     /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
-    INSERT INTO Archivo (nombre_s3, nombre_real) 
-    VALUES (_nombre_s3, _nombre_real);
+    INSERT INTO Archivo (nombreGenerado, nombreReal) 
+    VALUES (_nombreGenerado, _nombre_real);
     SET _idArchivo = @@last_insert_id;
     SELECT _idArchivo AS idArchivo;
 END$
@@ -5184,4 +5227,17 @@ BEGIN
     FROM Archivo
     WHERE idArchivo = _idArchivo;
 END$
+DELIMITER ;
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_REPOSTORIO_DOCUMENTOS(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idRepositorioDocumentos INT;
+	INSERT INTO RepositorioDocumento(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(14,_idProyecto,curdate(),1);
+    SET _idRepositorioDocumentos = @@last_insert_id;
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,14,_idRepositorioDocumentos,1);
+    SELECT _idRepositorioDocumentos AS idRepositorioDocumentos;
+END$$
 DELIMITER ;

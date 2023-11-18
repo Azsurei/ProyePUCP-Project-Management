@@ -15,7 +15,6 @@ import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/
 import { useContext } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
 import { Toaster, toast } from "sonner";
-import { set } from "date-fns";
 axios.defaults.withCredentials = true;
 
 function getCurrentDate() {
@@ -46,7 +45,9 @@ export default function ProductBacklogRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const { herramientasInfo } = useContext(HerramientasInfo);
-    const idProductBacklog = herramientasInfo.find(herramienta => herramienta.idHerramienta===1).idHerramientaCreada;
+    const idProductBacklog = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 1
+    ).idHerramientaCreada;
     const stringURLEpics =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/backlog/listarEpicasXIdBacklog/${idProductBacklog}`;
@@ -64,8 +65,6 @@ export default function ProductBacklogRegister(props) {
     const [como, setComo] = useState("");
     const [quiero, setQuiero] = useState("");
     const [para, setPara] = useState("");
-    const [fieldsEmpty, setFieldsEmpty] = useState(false);
-    const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [modal, setModal] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [reloading, setReloading] = useState(true);
@@ -237,12 +236,7 @@ export default function ProductBacklogRegister(props) {
     function verifyFieldsEmpty() {
         return (
             name.trim() === "" ||
-            como.trim() === "" ||
-            quiero.trim() === "" ||
-            para.trim() === "" ||
             selectedValueEpic === null ||
-            selectedValuePriority === null ||
-            selectedValueState === null ||
             requirementFields.some(
                 (requirement) => requirement.requirement.trim() === ""
             ) ||
@@ -291,17 +285,12 @@ export default function ProductBacklogRegister(props) {
                         onNameChange={setName}
                     />
                 </div>
-                <h4 style={{ fontWeight: 600 }}>
-                    Información de la historia de usuario
-                    <span className="text-red-500"> *</span>
-                </h4>
                 <div className="combo">
                     <div className="epic containerCombo">
-                        <IconLabel
-                            icon="/icons/epicPB.svg"
-                            label="Épica"
-                            className="iconLabel"
-                        />
+                        <div className="iconLabelPB">
+                            <img src="/icons/epicPB.svg" className="iconoPB" />
+                            <div className="labelPB">Épica<span className="text-red-500"> *</span></div>
+                        </div>
                         <div className="subcontainerCombo flex items-center">
                             <MyCombobox
                                 urlApi={stringURLEpics}
@@ -410,10 +399,7 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div>
-                    <h4 style={{ fontWeight: 600 }}>
-                        Descripción de usuario
-                        <span className="text-red-500"> *</span>
-                    </h4>
+                    <h4 style={{ fontWeight: 600 }}>Descripción de usuario</h4>
                     <ContainerAsWantFor
                         como={como}
                         quiero={quiero}
@@ -492,27 +478,6 @@ export default function ProductBacklogRegister(props) {
                     </div>
                 </div>
                 <div className="containerBottom">
-                    {fieldsEmpty && !fieldsExcessive && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && !fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
-                    {fieldsExcessive && fieldsEmpty && (
-                        <IconLabel
-                            icon="/icons/alert.svg"
-                            label="Faltan completar campos y se excedió el límite de caracteres"
-                            className="iconLabel3"
-                        />
-                    )}
                     <div className="twoButtons1">
                         <div className="buttonContainer">
                             <Modal
@@ -541,21 +506,25 @@ export default function ProductBacklogRegister(props) {
                                         verifyFieldsExcessive()
                                     ) {
                                         toast.error(
-                                            "Faltan completar campos y se excedió el límite de caractéres"
+                                            "Faltan completar campos y se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else if (
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error("Faltan completar campos");
+                                        toast.error("Faltan completar campos", {
+                                            position: "bottom-left",
+                                        });
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&
                                         !verifyFieldsEmpty()
                                     ) {
                                         toast.error(
-                                            "Se excedió el límite de caractéres"
+                                            "Se excedió el límite de caractéres",
+                                            { position: "bottom-left" }
                                         );
                                         return false;
                                     } else {
@@ -580,15 +549,6 @@ export default function ProductBacklogRegister(props) {
                     />
                 )}
             </div>
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </form>
     );
 }

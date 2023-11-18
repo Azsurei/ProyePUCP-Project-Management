@@ -3,7 +3,7 @@ const socketIO = require("socket.io");
 const initSocket = (server) => {
   const io = socketIO(server, {
     cors: {
-      origin: "http://localhost",
+      origin: process.env.SERVER_URL,
       methods: ["GET", "POST"],
     },
   });
@@ -46,6 +46,21 @@ const initSocket = (server) => {
 
         if (targetSocketId) {
             io.to(targetSocketId).emit("recieve_notification", {
+                senderUserId: idUsuario
+            });
+        } else {
+            console.log(`User with idUsuario ${targetUserId} is not connected`);
+        }
+    });
+
+    socket.on("send_relist_notification", (data) => {
+        console.log("recibi solicitud para relistar notificacion");
+        const { targetUserId } = data;
+
+        const targetSocketId = connectedUsers.get(parseInt(targetUserId));
+
+        if (targetSocketId) {
+            io.to(targetSocketId).emit("relist_notification", {
                 senderUserId: idUsuario
             });
         } else {

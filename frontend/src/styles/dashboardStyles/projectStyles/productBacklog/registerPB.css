@@ -158,3 +158,20 @@
     font-weight: 600; /* Cambia el peso de la fuente a bold (600) */
     font-size: 1rem;
 }
+
+.iconLabelPB{
+    display: flex;
+    align-items: center;
+    width: 25%;
+    gap: 10%;
+    font-weight: 600;
+}
+
+.iconoPB{
+    width: 20px;
+}
+
+.labelPB{
+    display: flex;
+    flex: 1;
+}

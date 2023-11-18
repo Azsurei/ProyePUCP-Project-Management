@@ -13,7 +13,7 @@ import { Collapse } from "react-collapse";
 import { useContext, useState } from "react";
 import GroupUserIconsReporte from "./GroupUserIconsReporte";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
-import { TaskSelector } from "@/app/dashboard/[project]/reportes/reporteTareas/page";
+import { TaskSelector } from "@/app/dashboard/[project]/reportes/reporteTareas/[reportId]/page";
 
 function CardTarea({
     tarea,

@@ -65,14 +65,16 @@ export default function MatrizComunicacionesUpdate(props) {
             setFrecuency(mcData.idFrecuencia);
             setSelectedNameFormat(mcData.nombreFormato);
             setFormat(mcData.idFormato);
-            const miembro = {
-                imgLink: mcData.imgLink,
-                correoElecronico: mcData.correoElectronico,
-                idUsuario: mcData.responsableDeComunicar,
-                apellidos: mcData.apellidos,
-                nombres: mcData.nombres,
-            };
-            setSelectedMiembrosList([miembro]);
+            if (mcData.nombres !== null) {
+                const miembro = {
+                    imgLink: mcData.imgLink,
+                    correoElecronico: mcData.correoElectronico,
+                    idUsuario: mcData.responsableDeComunicar,
+                    apellidos: mcData.apellidos,
+                    nombres: mcData.nombres,
+                };
+                setSelectedMiembrosList([miembro]);
+            }
             console.log("Terminó de cargar los datos");
             //setIsLoading(false);
             setIsLoadingSmall(false);
@@ -113,7 +115,6 @@ export default function MatrizComunicacionesUpdate(props) {
                 console.log(error);
             })
             .finally(() => {
-                //setIsLoadingSmall(false);
                 console.log("Finalizó la carga de datos");
             });
     }, []);
@@ -206,6 +207,7 @@ export default function MatrizComunicacionesUpdate(props) {
                             <Button
                                 color="primary"
                                 onPress={() => {
+                                    setIsLoadingSmall(true);
                                     router.push(
                                         "/dashboard/" +
                                             projectName +
@@ -435,7 +437,8 @@ export default function MatrizComunicacionesUpdate(props) {
                                             verifyFieldsExcessive()
                                         ) {
                                             toast.error(
-                                                "Faltan completar campos y se excedió el límite de caractéres"
+                                                "Faltan completar campos y se excedió el límite de caractéres",
+                                                { position: "bottom-left" }
                                             );
                                             return false;
                                         } else if (
@@ -443,7 +446,10 @@ export default function MatrizComunicacionesUpdate(props) {
                                             !verifyFieldsExcessive()
                                         ) {
                                             toast.error(
-                                                "Faltan completar campos"
+                                                "Faltan completar campos",
+                                                {
+                                                    position: "bottom-left",
+                                                }
                                             );
                                             return false;
                                         } else if (
@@ -451,7 +457,8 @@ export default function MatrizComunicacionesUpdate(props) {
                                             !verifyFieldsEmpty()
                                         ) {
                                             toast.error(
-                                                "Se excedió el límite de caractéres"
+                                                "Se excedió el límite de caractéres",
+                                                { position: "bottom-left" }
                                             );
                                             return false;
                                         } else {
@@ -473,15 +480,6 @@ export default function MatrizComunicacionesUpdate(props) {
                     idProyecto={projectId}
                 ></ModalUsersOne>
             )}
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }

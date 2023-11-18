@@ -25,7 +25,7 @@ import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Typography from '@mui/material/Typography';
 import { useContext, useCallback } from "react";
-import { SessionContext } from "../layout";
+import { SessionContext } from "../../layout";
 import { 
     Card, 
     CardBody, 

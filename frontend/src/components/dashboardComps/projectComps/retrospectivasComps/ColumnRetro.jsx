@@ -30,7 +30,7 @@ function ColumnRetro({
     columnState,
     state,
     idLineaRetrospectiva,
-    baseItemsList,
+    baseItemsList, updateItemCount,
 }) {
     let twStyle1;
     let title;
@@ -51,6 +51,11 @@ function ColumnRetro({
     const [itemValue, setItemValue] = useState("");
 
     const [itemToDelete, setItemToDelete] = useState(null);
+
+    const handleItemChange = () => {
+        // Actualiza el contador en el componente padre
+        updateItemCount(columnState, itemsList.length);
+    };
 
     const {
         isOpen: isModalDeleteOpen,
@@ -78,7 +83,9 @@ function ColumnRetro({
                     isIconOnly
                     aria-label="Add"
                     className="bg-white"
-                    onPress={addItem} // Trigger addItem when the plus icon is clicked
+                    onPress={() => {
+                        addItem();
+                    }}
                     isDisabled={state===false}
                 >
                     <PlusIcon />
@@ -139,13 +146,14 @@ function ColumnRetro({
     function removeFromList(){
         const newItemsList = itemsList.filter(item => item.idItemLineaRetrospectiva !== itemToDelete);
         setItemsList(newItemsList);
+        updateItemCount(columnState, itemsList.length - 1);
     }
 
     async function addItem() {
         // Check if the input field is not empty
         if (itemValue.trim() === "") {
             // Optionally show a message or handle the empty input scenario
-            toast.error("Por favor, ingrese un item a agregar");
+            toast.error("Por favor, ingrese un item a agregar", {position: "top-center"});
             return;
         }
 
@@ -153,9 +161,10 @@ function ColumnRetro({
         const regResult = await handleRegisterItem();
         if (regResult === 1) {
             setItemValue("");
-            toast.success("Se registro el item con exito");
+            updateItemCount(columnState, itemsList.length + 1);
+            toast.success("Se registro el item con exito", {position: "top-center"});
         } else {
-            toast.error("Error al registrar item");
+            toast.error("Error al registrar item", {position: "top-center"});
         }
 
     }
@@ -172,8 +181,6 @@ function ColumnRetro({
                 descripcion: itemValue,
             };
 
-            console.log(JSON.stringify(newItemObj, null, 2));
-
             const insertItemResponse = await axios.post(newItemURL, newItemObj);
             console.log(
                 "respuesta de server => " +
@@ -188,7 +195,7 @@ function ColumnRetro({
                 descripcion: itemValue,
             };
             setItemsList([...itemsList, newItem]);
-
+            handleItemChange(); // Actualizar el contador después de añadir el ítem
             console.log("Se registro el item con exito");
             return 1;
         } catch (error) {

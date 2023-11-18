@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
 import { Avatar, Progress } from "@nextui-org/react";
+import Link from "next/link";
 
 axios.defaults.withCredentials = true;
 
@@ -33,11 +34,10 @@ export default function Equipo(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
-    //setIsLoadingSmall(false);
     const [ListComps, setListComps] = useState([]);
 
     const [screenState, setScreenState] = useState(0);
+    const [signal, setSignal] = useState(false);
     //0 es vista de equipos
     //1 es vista de un equipo particular
 
@@ -105,7 +105,7 @@ export default function Equipo(props) {
         }
     }, [modal]);
 
-    const removeTeam = (team) => {  
+    const removeTeam = (team) => {
         const nuevoListComps = ListComps.filter((equipo) => equipo !== team);
         setListComps(nuevoListComps);
     };
@@ -126,7 +126,7 @@ export default function Equipo(props) {
                 return participant;
             }),
         };
-        console.log("EL ID DEL ROL SELECCIONADO ES:",value);
+        console.log("EL ID DEL ROL SELECCIONADO ES:", value);
         // Actualiza el estado con el nuevo selectedTeam
         setSelectedTeam(updatedSelectedTeam);
     };
@@ -158,51 +158,38 @@ export default function Equipo(props) {
                 for (const equipo of teamsArray) {
                     equipo.tareasNoIniciado = 0;
                     equipo.tareasFinished = 0;
+
+                    const tareasTotales = equipo.tareas.filter(
+                        (tarea) => tarea.idTareaEstado !== 4
+                    ).length;
+                    const tareasFinished = equipo.tareas.filter(
+                        (tarea) => tarea.idTareaEstado === 4
+                    ).length;
+                    equipo.tareasTotales = tareasTotales;
+                    equipo.tareasFinished = tareasFinished;
+                    console.log(
+                        "este equipo tuvo " +
+                            tareasTotales +
+                            " y " +
+                            tareasFinished
+                    );
                 }
 
-                for (const equipo of teamsArray) {
-                    const verTareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
-                        equipo.idEquipo;
-                    axios
-                        .get(verTareasURL)
-                        .then((response) => {
-                            console.log(response.data.message);
-                            console.log(response.data.tareasEquipo);
-                            const tareasTotales =
-                                response.data.tareasEquipo.filter(
-                                    (tarea) => tarea.idTareaEstado !== 4
-                                ).length;
-                            const tareasFinished =
-                                response.data.tareasEquipo.filter(
-                                    (tarea) => tarea.idTareaEstado === 4
-                                ).length;
-                            equipo.tareasTotales = tareasTotales;
-                            equipo.tareasFinished = tareasFinished;
-                            console.log(
-                                "este equipo tuvo " +
-                                    tareasTotales +
-                                    " y " +
-                                    tareasFinished
-                            );
+                setListComps(teamsArray);
+                setSignal(true);
 
-                            setListComps(teamsArray);
-                        })
-                        .catch(function (error) {
-                            console.log(
-                                "Error al cargar la lista de tareas del equipo: ",
-                                error
-                            );
-                        });
-                }
-                setIsLoadingSmall(false);
                 console.log("ya pase");
             })
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
             });
     };
+
+    useEffect(() => {
+        if (signal) {
+            setIsLoadingSmall(false);
+        }
+    }, [signal]);
 
     useEffect(() => {
         fetchTeamsData();
@@ -403,7 +390,11 @@ export default function Equipo(props) {
             modifiedArray: modifiedRoles,
             deletedArray: deletedRoles,
             addedArray: addedRoles,
-        } = findModifiedDeletedAddedForRoles(rolesOriginales, roles, "idRolEquipo");
+        } = findModifiedDeletedAddedForRoles(
+            rolesOriginales,
+            roles,
+            "idRolEquipo"
+        );
 
         console.log("Modified Roles:", modifiedRoles);
         console.log("Deleted Roles:", deletedRoles);
@@ -524,7 +515,9 @@ export default function Equipo(props) {
                             />
                         </Breadcrumbs>
                     </div>
-                    <div className="text-[1.8rem] font-bold py-[1rem] dark:text-white">Equipos</div>
+                    <div className="text-[1.8rem] font-bold py-[1rem] dark:text-white">
+                        Equipos
+                    </div>
                     <div className="titleAndOptions">
                         <div className="subtitle dark:text-white">
                             Divide tu trabajo en los equipos que consideres
@@ -570,7 +563,7 @@ export default function Equipo(props) {
                                 ¿Quieres crear un equipo?
                             </p>
                             <div className="noTeamsButtonAddTeam">
-                                <a
+                                <Link
                                     href={
                                         "/dashboard/" +
                                         projectName +
@@ -582,7 +575,7 @@ export default function Equipo(props) {
                                     <button className="addTeambtn">
                                         Crear Equipo
                                     </button>
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     )}
@@ -819,7 +812,8 @@ export default function Equipo(props) {
                                                             )
                                                         }
                                                         autoSelectedValue={{
-                                                            idRolEquipo: member.idRolEquipo,
+                                                            idRolEquipo:
+                                                                member.idRolEquipo,
                                                             nombreRol:
                                                                 member.nombreRol,
                                                         }}

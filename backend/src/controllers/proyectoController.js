@@ -241,6 +241,15 @@ async function crear(req, res, next) {
                     // }
                     //13 (Presupuesto) si necesitaria su CALL INSERTAR_PRESUPUESTO, pero la tabla de presupuesto
                     //esta mal porque no tiene de columna idProyecto, no se le puede asociar a un proyecto aun
+
+                    if (herramienta.idHerramienta === 14) {
+                        // Repositorio de documentos
+                        query = `CALL INSERTAR_REPOSTORIO_DOCUMENTOS(?);`;
+                        const [results] = await connection.query(query, [
+                            idProyecto,
+                        ]);
+                        const idRepositorioDocumentos = results[0][0].idRepositorioDocumentos;
+                    }
                 }
                 // Insertamos los supervisores
                 try {
@@ -417,7 +426,7 @@ async function listarProyectosXNombre(req, res, next) {
             proyectos: results[0],
             message: "Proyectos obtenidos exitosamente",
         });
-        console.log(results[0]);
+        //console.log(results[0]);
     } catch (error) {
         console.error("Error al obtener los proyectos:", error);
         res.status(500).send(
@@ -449,12 +458,6 @@ async function listarProyectoYGrupoProyecto(req, res) {
 async function listarUsuariosXRolXProyecto(req, res) {
     //Insertar query aca
     const { idRol, idProyecto } = req.body;
-    console.log(
-        "Llegue a recibir solicitud listar usuarios por rol en proyecto con idRol = " +
-            idRol +
-            " y idProyecto = " +
-            idProyecto
-    );
     const query = `CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(?,?);`;
     try {
         const [results] = await connection.query(query, [idRol, idProyecto]);
@@ -462,7 +465,7 @@ async function listarUsuariosXRolXProyecto(req, res) {
             usuarios: results[0],
             message: "Usuarios por rol en proyecto obtenidos exitosamente",
         });
-        console.log(results[0]);
+        //console.log(results[0]);
         console.log("Si se listaron los usuarios por rol en proyecto");
     } catch (error) {
         console.error(
@@ -487,7 +490,7 @@ async function listarUsuariosXProyecto(req, res) {
             usuarios: results[0],
             message: "Usuarios por rol en proyecto obtenidos exitosamente",
         });
-        console.log(results[0]);
+        //console.log(results[0]);
         console.log("Si se listaron los usuarios por rol en proyecto");
     } catch (error) {
         console.error(

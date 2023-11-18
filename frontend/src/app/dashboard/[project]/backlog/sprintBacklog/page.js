@@ -386,7 +386,7 @@ export default function SprintBacklog(props) {
         <>
             <div className="flex flex-col py-4 lg:px-8 gap-4 mt-4">
                 <div className="flex flex-row items-center justify-between">
-                    <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
+                    <h3 className="montserrat text-[#172B4D] dark:text-white text-2xl font-semibold">
                         Sprint actual
                     </h3>
                     {sprints.filter((sprint) => sprint.estado === 2).length ===
@@ -508,7 +508,7 @@ export default function SprintBacklog(props) {
                 )}
 
                 <div className="flex flex-row items-center justify-between mt-4">
-                    <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
+                    <h3 className="montserrat text-[#172B4D] dark:text-white text-2xl font-semibold">
                         Sprints del proyecto
                     </h3>
                     <div className="flex flex-row gap-4">
@@ -685,7 +685,7 @@ export default function SprintBacklog(props) {
                     ))}
 
                 <div className="flex flex-row items-center justify-between mt-4">
-                    <h3 className="montserrat text-[#172B4D] text-2xl font-semibold">
+                    <h3 className="montserrat text-[#172B4D] dark:text-white text-2xl font-semibold">
                         Sprints completados
                     </h3>
                 </div>

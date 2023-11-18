@@ -22,9 +22,31 @@ function RetrospectivaView(props) {
     const [idLineaRetrospectiva, setIdLineaRetrospectiva] = useState(null);
     const [mainItemsList, setMainItemsList] = useState([]);
 
-    //puede ser id
-    //puede ser id=edit
-    //else pagina no existe
+    // ---------------
+    // Conteo de items
+    const [countItemsWell, setCountItemsWell] = useState(-1);
+    const [countItemsBad, setCountItemsBad] = useState(-1);
+    const [countItemsToDo, setCountItemsToDo] = useState(-1);
+
+    const [wellEmpty, setWellEmpty] = useState(false);
+    const [badEmpty, setBadEmpty] = useState(false);
+    const [todoEmpty, setTodoEmpty] = useState(false);
+
+    const updateItemCount = (columnState, newCount) => {
+        console.log("Hey, im counting!");
+        console.log(columnState);
+        console.log(newCount);
+
+
+        if (columnState === 1) {
+            setCountItemsWell(newCount);
+        } else if (columnState === 2) {
+            setCountItemsBad(newCount);
+        } else if (columnState === 3) {
+            setCountItemsToDo(newCount);
+        }
+    };
+    //---------------------------------------------
 
     useEffect(() => {
         setIsLoadingSmall(true);
@@ -54,7 +76,7 @@ function RetrospectivaView(props) {
                 })
                 .catch(function (error) {
                     console.log(error);
-                    toast.error("Error al cargar lista de items");
+                    toast.error("Error al cargar lista de items", {position: "top-center"});
                 });
         } else if (editPattern.test(keyParamURL)) {
             console.log("It's a number followed by '=edit':", keyParamURL);
@@ -74,18 +96,28 @@ function RetrospectivaView(props) {
             axios
                 .get(viewItemsURL)
                 .then(function (response) {
-                    console.log(response);
                     setMainItemsList(response.data.LineaRetrospectiva);
                     setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
-                    console.log(error);
-                    toast.error("Error al cargar lista de items");
+                    toast.error("Error al cargar lista de items", {position: "top-center"});
                 });
         } else {
             router.push("/404");
         }
     }, []);
+
+
+    useEffect(() => {
+        if(mainItemsList && mainItemsList.length > 0) {
+            console.log("===================================");
+            console.log(mainItemsList);
+            console.log("===================================");
+            setCountItemsWell(mainItemsList[0].items.length);
+            setCountItemsBad(mainItemsList[1].items.length);
+            setCountItemsToDo(mainItemsList[2].items.length);
+        }
+    },[mainItemsList]);
 
     return (
         <>
@@ -142,24 +174,26 @@ function RetrospectivaView(props) {
                                 state={editMode}
                                 idLineaRetrospectiva={idLineaRetrospectiva}
                                 baseItemsList={mainItemsList[0].items}
+                                updateItemCount={updateItemCount}
                             />
                             <ColumnRetro
                                 columnState={2}
                                 state={editMode}
                                 idLineaRetrospectiva={idLineaRetrospectiva}
                                 baseItemsList={mainItemsList[1].items}
+                                updateItemCount={updateItemCount}
                             />
                             <ColumnRetro
                                 columnState={3}
                                 state={editMode}
                                 idLineaRetrospectiva={idLineaRetrospectiva}
                                 baseItemsList={mainItemsList[2].items}
+                                updateItemCount={updateItemCount}
                             />
                         </>
                     )}
                 </div>
             </div>
-            <Toaster richColors position="top-center"></Toaster>
         </>
     );
 
@@ -182,33 +216,40 @@ function RetrospectivaView(props) {
     }
 
     function handleSave() {
-        // Calculate the counts based on the number of items in each list
-        const cantBien = mainItemsList[0]?.items?.length || 0;
-        const cantMal = mainItemsList[1]?.items?.length || 0;
-        const cantQueHacer = mainItemsList[2]?.items?.length || 0;
-
+        console.log("Lista de columna 1");
+        console.log(mainItemsList[0].items.length);
+        console.log("Cuenta 1");
+        console.log(countItemsWell);
+        console.log("Lista de columna 2");
+        console.log(mainItemsList[1].items.length);
+        console.log("Cuenta 2");
+        console.log(countItemsBad);
+        console.log("Lista de columna 3");
+        console.log(mainItemsList[2].items.length);
+        console.log("Cuenta 3");
+        console.log(countItemsToDo);
         const saveData = {
             idLineaRetrospectiva: idLineaRetrospectiva,
-            cantBien: cantBien,
-            cantMal: cantMal,
-            cantQueHacer: cantQueHacer
+            cantBien: countItemsWell,
+            cantMal:  countItemsBad,
+            cantQueHacer: countItemsToDo,
         };
-        console.log(cantBien);
-        console.log(cantMal);
-        console.log(cantQueHacer);
+        console.log(countItemsWell);
+        console.log(countItemsBad);
+        console.log(countItemsToDo);
         const saveURL = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/retrospectiva/modificarLineaRetrospectiva";
 
         axios.put(saveURL, saveData)
             .then(response => {
                 console.log('Save successful:', response);
-                toast.success('Retrospectiva actualizada con éxito');
+                toast.success("Retrospectiva actualizada con éxito", {position:"top-center"});
 
                 // Redirect after saving
                 router.push("/dashboard/" + projectName + "=" + projectId + "/retrospectivas/" + idLineaRetrospectiva);
             })
             .catch(error => {
                 console.error('Error saving:', error);
-                toast.error('Error al actualizar la retrospectiva');
+                toast.error("Error al actualizar la retrospectiva", {position:"top-center"});
             });
     }
 }

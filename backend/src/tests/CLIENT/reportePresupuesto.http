@@ -1,0 +1,95 @@
+###
+POST http://localhost:8080/api/proyecto/reporte/subirReportePresupuestoJSON HTTP/1.1
+Content-Type:  application/json
+
+{
+  "idProyecto": 178,
+  "nombre": "pipipi",
+  "presupuesto":{
+    "general":{
+          "idPresupuesto": 37,
+          "idHerramienta": 13,
+          "nombreHerramienta": "Herramienta 1",
+          "presupuestoInicial": 100,
+          "activo": 1,
+          "idProyecto": 157,
+          "nombreProyecto": "Proyecto 1",
+          "fechaCreacion": "2023-10-28T05:00:00.000Z",
+          "idMoneda": 2,
+          "nombreMoneda": "PEN",
+          "cantidadMeses": 3
+    },
+
+    "lineasPresupuesto": {
+      "lineasIngreso": [
+        {
+          "idLineaIngreso": 129,
+          "monto": 1000,
+          "descripcion": "Presupuesto Inicial",
+          "cantidad": 1,
+          "fechaTransaccion": "2023-11-03T05:00:00.000Z",
+          "idTransaccionTipo": 1,
+          "descripcionTransaccionTipo": "Efectivo",
+          "descripcionIngresoTipo": "Prestamo",
+          "idMoneda": 2,
+          "nombreMoneda": "PEN"
+        }
+      ],
+      "lineasEgreso": [
+        {
+          "idLineaEgreso": 30,
+          "descripcion": "Gasto Paulo Londra",
+          "costoReal": 800,
+          "fechaRegistro": "2023-11-03T05:00:00.000Z",
+          "cantidad": 2,
+          "idMoneda": 2,
+          "nombreMoneda": "PEN"
+        },
+        {
+          "idLineaEgreso": 31,
+          "descripcion": "Gasto #2",
+          "costoReal": 400,
+          "fechaRegistro": "2023-12-20T05:00:00.000Z",
+          "cantidad": 1,
+          "idMoneda": 2,
+          "nombreMoneda": "PEN"
+        }
+      ],
+      "lineasEstimacionCosto": [
+        {
+          "idLineaEstimacion": 38,
+          "descripcion": "Paulo Londra",
+          "tarifaUnitaria": 400,
+          "cantidadRecurso": 3,
+          "subtotal": 2400,
+          "fechaInicio": "2023-12-06T05:00:00.000Z",
+          "idMoneda": 2,
+          "tiempoRequerido": 2,
+          "nombreMoneda": "PEN"
+        }
+      ]
+    }
+  }
+}
+
+###
+GET http://localhost:8080/api/proyecto/reporte/obtenerJSONReportePresupuestoXFileId/5 HTTP/1.1
+Content-Type: application/json
+
+###
+POST http://localhost:8080/api/proyecto/reporte/descargarExcelPresupuestoXFileId HTTP/1.1
+Content-Type: application/json
+
+{
+  "fileId": "15uOTdMwymRwqwvXBGFdAvtuhSe1BMEvu"
+}
+
+###
+POST http://localhost:8080/api/proyecto/reporte/crearExcelCaja HTTP/1.1
+Content-Type: application/json
+
+{
+  "idPresupuesto": 37,
+  "fechaIni": "2023-01-01",
+  "fechaFin": "2023-12-31"
+}

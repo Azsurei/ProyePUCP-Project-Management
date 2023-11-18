@@ -11,8 +11,8 @@ function DashboardSecondNav() {
             </li>
             <li>
                 <img src="/icons/sidebarIcon2.svg" className='sideIcon'></img>
-                <Link href='/grupoProyectos'>
-                    <p>Proyectos</p>
+                <Link href='/dashboard/grupoProyectos'>
+                    <p>Grupo de Proyectos</p>
                 </Link>
             </li>
             <li>

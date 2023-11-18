@@ -60,7 +60,6 @@ function ProjectCard(props) {
     // Formatea las fechas
     const formattedStartDate = startDate.toLocaleDateString();
     const formattedEndDate = endDate.toLocaleDateString();
-
     
 
     return (
@@ -174,7 +173,7 @@ export default function ListProject(props) {
     // Split projects into 'In Progress' and 'Completed'
     const proyectosEnProceso = ListComps.filter(proyecto => {
         const endDate = new Date(proyecto.dateEnd);
-        return !endDate || endDate > new Date();
+        return proyecto.dateEnd === "0000-00-00" || proyecto.dateEnd === null || endDate > new Date();
     });
 
     const proyectosFinalizados = ListComps.filter(proyecto => {

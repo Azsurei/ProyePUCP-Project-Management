@@ -21,7 +21,7 @@ import {
     Tooltip,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
-import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
 import { set } from "date-fns";
 import axios from "axios";
 import { id } from "date-fns/esm/locale";
@@ -40,11 +40,66 @@ export default function ReporteRiesgos(props) {
     const {herramientasInfo} = useContext(HerramientasInfo);
     const [responsables, setResponsables] = useState([]);
     const urlRiesgos = "http://localhost:8080/api/proyecto/catalogoRiesgos/listarRiesgos/156"
+    const reportID = props.params.reportId;
+    const [isNewReport, setIsNewReport] = useState(false);
+    const [json, setJson] = useState(null);
      const [data, setData] = useState([]);
     useEffect(() => {
         setIsLoadingSmall(false);
         setIsClient(true);
     } , []);
+    const guardarReporte = async () => {
+        const postData = {
+          idProyecto: projectId,
+          nombre: projectName,
+          riesgos: data.map(({ planContigencia, planRespuesta, ...rest }) => rest),
+
+      };
+      console.log("El postData es :", postData);
+      axios
+          .post(
+              process.env.NEXT_PUBLIC_BACKEND_URL +
+                  "/api/proyecto/reporte/subirReporteRiesgosJSON",
+              postData
+          )
+          .then((response) => {
+              // Manejar la respuesta de la solicitud POST
+              console.log("Respuesta del servidor:", response.data);
+              console.log("Guardado del reporte correcto");
+              // Realizar acciones adicionales si es necesario
+          })
+          .catch((error) => {
+              // Manejar errores si la solicitud POST falla
+              console.error("Error al realizar la solicitud POST:", error);
+          });
+      };
+      const sacarInformacionReporte = async () => {
+        setIsLoadingSmall(true);
+        const fetchData = async () => {
+            try {
+                // Realiza la solicitud HTTP al endpoint del router
+                const stringURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/reporte/obtenerJSONReportePresupuestoXIdArchivo/" +
+                    idArchivo;
+                console.log("URL: ", stringURL);
+                const response = await axios.get(stringURL);
+
+                // Actualiza el estado 'data' con los datos recibidos
+                setJson(response.data.jsonData);
+                setData(response.data.jsonData.riesgos);
+                console.log(
+                    `Datos obtenidos exitosamente:`,
+                    response.data.jsonData
+                );
+                setIsLoadingSmall(false);
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
+        };
+
+        fetchData();
+    };
     function DataTable(){
         const fetchData = async () => {
           try {
@@ -72,7 +127,14 @@ export default function ReporteRiesgos(props) {
     // }, [projectId]);
     useEffect(() => {
         setIsLoadingSmall(true);
-        DataTable();
+        if(reportID === "nuevoReporte"){
+            DataTable();
+            setIsNewReport(true);
+        } else if (!isNaN(reportID)) {
+            sacarInformacionReporte();
+            setIsNewReport(false);
+        }
+        
         setIsClient(true);
     }, [projectId]);
     const onSearchChange = React.useCallback((value) => {
@@ -642,9 +704,17 @@ export default function ReporteRiesgos(props) {
                     <div className="titleHistorialReporte text-mainHeaders">
                             Reporte de Riesgos
                     </div>
-                        <Button color="warning" className="text-white">
-                            Guardar reporte
-                        </Button>
+                        {isNewReport && (
+                                    <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
+                                        Guardar reporte
+                                    </Button>
+                                )}
+                                {!isNewReport && (
+                                    <Button color="success" className="text-white" onClick={()=>guardarReporte()}>
+                                      Exportar
+                                </Button>
+                                )
+                                }
                 </div>
                 <div className="ReporteRiesgos">
                     <div className="ListadoDeRiesgos">

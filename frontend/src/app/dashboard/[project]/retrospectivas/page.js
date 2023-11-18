@@ -1,4 +1,4 @@
-// actaReunion/page.js
+
 "use client";
 
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
@@ -75,7 +75,7 @@ export default function Retrospectiva(props) {
             console.log("Se completo el refresh con exito");
         } catch (error) {
             console.error("Error al obtener los datos: ", error);
-            toast.error("Hubo un error al cargar los datos");
+            toast.error("Hubo un error al cargar los datos" , {position: "top-center"});
         }
     };
 
@@ -119,12 +119,12 @@ export default function Retrospectiva(props) {
                             "Error al obtener los datos de sprints: ",
                             error
                         );
-                        toast.error("Error al cargar reporte con sprints");
+                        toast.error("Error al cargar reporte con sprints" , {position: "top-center"});
                     });
             })
             .catch((error) => {
                 console.error("Error al obtener retrospectivas: ", error);
-                toast.error("Error al cargar retrospectivas");
+                toast.error("Error al cargar retrospectivas" , {position: "top-center"});
             });
     }, []);
 
@@ -157,6 +157,7 @@ export default function Retrospectiva(props) {
                     )
                 );
                 //fetchData();
+                toast.success("Retrospectiva eliminada con éxito.");
             }
         } catch (error) {
             console.error("Error deleting data:", error);
@@ -184,7 +185,14 @@ export default function Retrospectiva(props) {
                 Restrospectivas
             </HeaderWithButtonsSamePage>
             <Spacer y={4} />
-            {lretrospectivas.map((retro, index) => (
+            {lretrospectivas.length === 0 ? (
+                <div className="flex flex-col items-center justify-center">
+                    <br />
+                    <br />
+                    <MissingEDTComponents />
+                    <p>No hay retrospectivas registradas</p>
+                </div>
+            ) : (lretrospectivas.map((retro, index) => (
                 <div key={retro.idLineaRetrospectiva}>
                     <Card  className="flex-grow w-full mx-auto">
                         <CardHeader className="p-4">
@@ -228,10 +236,8 @@ export default function Retrospectiva(props) {
                         </CardBody>
                     </Card>
                     <Spacer y={4} />
-                </div>
+                </div>)
             ))}
-
-            <Toaster richColors />
         </div>
     );
 

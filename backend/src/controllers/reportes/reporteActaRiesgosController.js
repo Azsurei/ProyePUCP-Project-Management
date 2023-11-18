@@ -1,24 +1,52 @@
 const connection = require("../../config/db");
-const XLSX = require('xlsx');
-const xlsxController = require("../xlxs/xlxsController");
+const Exceljs = require('exceljs');
 const authGoogle = require("../authGoogle/authGoogle");
 const fs = require('fs');
 const fsp = require('fs').promises
 const path = require('path');
+const { error } = require("console");
+const excelJSController = require("../xlxs/excelJSController");
+const fileController = require("../files/fileController");
+const https = require('https');
+const headerTitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
 
-async function obtenerReporte(req,res,next){
-    const {fileId} = req.params;
+const headerSubtitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
+
+const borderStyle = {
+    top: {style:'thin', color: {argb:'000000'}},
+    left: {style:'thin', color: {argb:'000000'}},
+    bottom: {style:'thin', color: {argb:'000000'}},
+    right: {style:'thin', color: {argb:'000000'}}
+  };
+
+  const alignmentCenterStyle = {
+    vertical: 'middle',
+    horizontal: 'center'
+  };
+
+async function obtenerJSON(req,res,next){
+    const {idArchivo} = req.params;
     const destinationFolder = path.join(__dirname, '../../tmp');
-    console.log(destinationFolder);
     try{
         const authClient = await authGoogle.authorize();
         const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        console.log(tmpFilePath);
 
         const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
-        const jsonData = JSON.parse(fileContent);
+        const riesgos = JSON.parse(fileContent);
         res.status(200).json({
-            jsonData,
+            riesgos,
             message: "Detalles del reporte recuperados con éxito"
         });
     }catch(error){
@@ -28,37 +56,31 @@ async function obtenerReporte(req,res,next){
 
 
 
-async function generarReporte(req, res, next) {
+async function subirJSON(req, res, next) {
     const {riesgos,idProyecto,nombre}=req.body;
     try {
-        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,5,nombre]);
-        const idReporte = results[0][0].idReporte;
-        //workbook = generarExcelRiesgos(riesgos);
-        
-        var tmpFilePath = generarPathRiesgos(riesgos,idReporte);
 
-        const authClient = await authGoogle.authorize();
-        const fileMetadata = {
-            name: `Reporte-Riesgos-${idReporte}.json`,
-            parents:['1IG3gNqlgWuTWHKnisQiJ_TvZlpWhG8eu']
+
+        var tmpFilePath = generarPathRiesgos(riesgos,idProyecto);
+        
+        const file = fs.readFileSync(tmpFilePath);
+        
+        const file2Upload = {
+            buffer:file,
+            mimetype: 'application/json',
+            originalname: `${nombre}.json`
         }
 
-        const media = {
-            mimeType: 'application/json',
-            body: fs.createReadStream(tmpFilePath)
-        };
+        const idArchivo = await fileController.postArchivo(file2Upload);
 
-        const driverResponse = await authGoogle.uploadFile(authClient,fileMetadata,media);
-        console.log(driverResponse.data.id);
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,5,nombre,idArchivo]);
+        const idReporte = results[0][0].idReporte;
         
-        const query2 = `CALL ACTUALIZAR_FILE_ID(?,?);`;
-        const [results2] = await connection.query(query2, [idReporte,driverResponse.data.id]);
-
         fs.unlinkSync(tmpFilePath);
+        console.log(`Se creo el reporte de acta de riesgos nro ${idReporte}`);
         res.status(200).json({
             riesgos,
-            fileId: driverResponse.data.id,
             message: "Se genero el reporte de entregables con exito",
         });
     } catch (error) {
@@ -66,26 +88,32 @@ async function generarReporte(req, res, next) {
     }
 }
 
-async function exportarReporteExcel(req,res,next){
-    const {fileId} = req.body;
-    const destinationFolder = path.join(__dirname, '../../tmp');
+async function descargarExcel(req,res,next){
+    const {idArchivo} = req.body;
+    let destinationFolder = path.join(__dirname, '../../tmp');
 
     try{
-        
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
-        console.log(tmpFilePath);
+        const url = await fileController.getArchivo(idArchivo);
+        console.log(destinationFolder);
 
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        // Crear el nombre del archivo con el segmento de la URL
+        let filename = `${idArchivo}.json`; // Asumiendo que es un archivo JSON
+
+        // Combinar con el destinationFolder para crear la ruta completa
+        let fullPath = path.join(destinationFolder, filename);
+        console.log(destinationFolder);
+        await fileController.descargarDesdeURL(url,fullPath);
+        
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
         const jsonData = JSON.parse(fileContent);
         //console.log(jsonData);
-        workbook = generarExcelRiesgos(jsonData);
+        const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
+        workbook = await generarExcelRiesgos(jsonData);
+        console.log(excelFilePath);
 
-        const excelFilePath = path.join(destinationFolder, `${fileId}.xlsx`);
-        XLSX.writeFile(workbook, excelFilePath);
+        await workbook.xlsx.writeFile(excelFilePath);
 
-        console.log(jsonData);
-        res.download(excelFilePath, `${fileId}.json`, async(err) => {
+        res.download(excelFilePath, `${idArchivo}.xlxs`, async(err) => {
             try {
                 // Eliminar el archivo temporal de forma asíncrona
                 //await fsp.unlink(tmpFilePath);
@@ -102,99 +130,111 @@ async function exportarReporteExcel(req,res,next){
     } 
 }
 
-function generarExcelRiesgos(riesgos){
+async function generarExcelRiesgos(riesgos){
+   
     try{
-        const wb = XLSX.utils.book_new();
-        riesgos.forEach((riesgo,index) => {
-            var filasHoja = [];
-            generarWSCatalogo(riesgo,filasHoja);
-            generarWSParticipantes(riesgo.responsables,filasHoja);
 
-            var ws = XLSX.utils.json_to_sheet(filasHoja, {skipHeader:true});
-            xlsxController.ajustarAnchoDeColumna(ws,filasHoja);
-            XLSX.utils.book_append_sheet(wb, ws, `Riesgo ${index}`);
-        });
+        const workbook = new Exceljs.Workbook();
+        const WSRiesgos = workbook.addWorksheet('Riesgos');
 
-        return wb;
+        let filaActual = 1;
+        for (const riesgo of riesgos) {
+            filaActual = await agregarRiesgoAExcel(riesgo, WSRiesgos, filaActual);
+        }
+
+        excelJSController.ajustarAnchoColumnas(WSRiesgos);
+        return workbook;
+    }catch(error){ 
+        console.log(error);
+    }
+    
+    return error;
+}
+
+async function agregarRiesgoAExcel(riesgo,WSRiesgos,filaActual){
+    try{
+        filaActual=await agregarDatosGeneralesAExcel(riesgo,WSRiesgos,filaActual);
+        filaActual=await agregarResponsablesAExcel(riesgo.responsables,WSRiesgos,filaActual);
     }catch(error){
         console.log(error);
     }
+
 }
 
-function generarWSParticipantes(responsables,filasHoja){
+async function agregarDatosGeneralesAExcel(riesgo,WSRiesgos,filaActual){
     try {
-        filasHoja.push({});
+        const header0 = ["Nombre del riesgo","Fecha de identificacion"];
+        const header1 = ["","Dueño del riesgo",""];
+        const header2 = ["Nombres","Apellidos","Correo"];
+        filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header0,headerTitulo);
+        const formattedDate = await excelJSController.convertISOToDate(riesgo.fechaIdentificacion);
+        WSRiesgos.getRow(filaActual).values = [riesgo.nombreRiesgo,formattedDate];
+        filaActual +=2;
 
-        filasHoja.push({
-            c1: "Elaborado por"
-        })
+        filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header1,headerTitulo);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header2,headerSubtitulo);
 
-        filasHoja.push({
-            c1: "Nombre"
-        })
-        //console.log(responsables);
-        responsables.forEach((responsable,index) => {
-            filasHoja.push({
-                c1: responsable.nombres + responsable.apellidos
-            })
-        });
+        WSRiesgos.getRow(filaActual).values = [riesgo.nombres,riesgo.apellidos,riesgo.correoElectronico];
+        filaActual+=2;
+
+        const header3 = ["Detalle","Causa","Impacto","Estado del riesgo"];
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header3,headerTitulo);
+        WSRiesgos.getRow(filaActual).values = [riesgo.nombreRiesgo,riesgo.causaRiesgo,riesgo.impactoRiesgo,riesgo.estado];
+        filaActual++;
+        filaActual+=2;
+
+        const header4 = ["Probabilidad"];
+        const header5 = ["Descripcion","Porcentaje estimado"];
+
+        //Header probabilidad
+        WSRiesgos.getRow(filaActual).values = header4;
+        WSRiesgos.getRow(filaActual).eachCell({ includeEmpty: true }, (cell) => {
+            cell.style = {...headerTitulo, border: borderStyle};
+          });
+        WSRiesgos.mergeCells(filaActual, 1, filaActual, 2);
+        const mergedCell = WSRiesgos.getCell(filaActual, 1);
+        mergedCell.style = {
+        ...mergedCell.style, // Mantén los estilos previos
+        alignment: alignmentCenterStyle
+        };
+        filaActual++;
+
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header5,headerTitulo);
+        WSRiesgos.getRow(filaActual).values = [riesgo.nombreProbabilidad,riesgo.valorProbabilidad];
+        filaActual+=2;
+
+        const header6 = ["Impacto","Valor asociado"];
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header6,headerTitulo);
+        WSRiesgos.getRow(filaActual).values = [riesgo.nombreImpacto,riesgo.valorImpacto];
+        filaActual+=2;
+
     } catch (error) {
         console.log(error);
     }
+    return filaActual;
 }
 
-function generarWSCatalogo(riesgo,filasHoja){
-    try {
 
-        filasHoja.push({
-            c1: "ID",
-            c2: "Riesgo",
-            c3: "Causa",
-            c4: "Impacto",
-            c5: "Fecha identificacion",
-            c6: "Probabilidad",
-            c7: "Impacto",
-            c8: "Severidad",
-            c9: "Dueño del Riesgo",
-            c10: "Planes de respuesta",
-            c11: "Responsable Ejecucion",
-            c12: "Planes de Contingencia",
-            c13: "Estado"    
-        })
 
-        filasHoja.push({
-            c1: riesgo.idRiesgo,
-            c2: riesgo.nombreRiesgo,
-            c3: riesgo.causaRiesgo,
-            c4: riesgo.impactoRiesgo,
-            c5: riesgo.fechaIdentificacion,
-            c6: riesgo.nombreProbabilidad,
-            c7: riesgo.nombreImpacto,
-            c8: riesgo.nombres+" "+ riesgo.apellidos,
-            c9: riesgo.estado
-        })
+async function agregarResponsablesAExcel(responsables,WSRiesgos,filaActual){
+    try{
+        const header1 = ["","Responsables",""];
+        const header2 = ["Nombres","Apellidos","Correo Electronico"];
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header1,headerTitulo);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header2,headerTitulo);
 
-        
-    } catch (error) {
+        for (const responsable of responsables) {
+            console.log(`Fila actual: ${filaActual}, nombres: ${responsable.nombres}, apellidos: ${responsable.apellidos}, correo: ${responsable.correoElectronico}`);
+            WSRiesgos.getRow(filaActual).values = [responsable.nombres, responsable.apellidos, responsable.correoElectronico];
+            filaActual++;
+        }
+    }catch(error){
         console.log(error);
     }
+    return filaActual;
 }
 
-function agregarResponsablesAHoja(responsables,filasHoja){
-    try {
-        filasHoja.push({
-            c1: "Responsables"
-        })
-        responsables.forEach((responsable,index) => {
-            filasHoja.push({
-                c1: responsable.nombres+" "+responsable.apellidos,
-                c2: responsable.correoElectronico
-            })
-        });
-    } catch (error) {
-        console.log(error);
-    }
-}
+
 function generarPathRiesgos(riesgos,idReporte){
     var tmpFilePath;
     try {
@@ -206,8 +246,11 @@ function generarPathRiesgos(riesgos,idReporte){
     }
     return tmpFilePath;
 }
+
+
 module.exports = {
-    generarReporte,
-    exportarReporteExcel,
-    obtenerReporte
+    subirJSON,
+    descargarExcel,
+    obtenerJSON,
+    generarExcelRiesgos
 }
