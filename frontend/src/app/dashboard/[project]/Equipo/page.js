@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
 import { Avatar, Progress } from "@nextui-org/react";
+import Link from "next/link";
 
 axios.defaults.withCredentials = true;
 
@@ -157,45 +158,25 @@ export default function Equipo(props) {
                 for (const equipo of teamsArray) {
                     equipo.tareasNoIniciado = 0;
                     equipo.tareasFinished = 0;
+
+                    const tareasTotales = equipo.tareas.filter(
+                        (tarea) => tarea.idTareaEstado !== 4
+                    ).length;
+                    const tareasFinished = equipo.tareas.filter(
+                        (tarea) => tarea.idTareaEstado === 4
+                    ).length;
+                    equipo.tareasTotales = tareasTotales;
+                    equipo.tareasFinished = tareasFinished;
+                    console.log(
+                        "este equipo tuvo " +
+                            tareasTotales +
+                            " y " +
+                            tareasFinished
+                    );
                 }
 
-                for (const equipo of teamsArray) {
-                    const verTareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/equipo/listarTareasDeXIdEquipo/" +
-                        equipo.idEquipo;
-                    axios
-                        .get(verTareasURL)
-                        .then((response) => {
-                            console.log(response.data.message);
-                            console.log(response.data.tareasEquipo);
-                            const tareasTotales =
-                                response.data.tareasEquipo.filter(
-                                    (tarea) => tarea.idTareaEstado !== 4
-                                ).length;
-                            const tareasFinished =
-                                response.data.tareasEquipo.filter(
-                                    (tarea) => tarea.idTareaEstado === 4
-                                ).length;
-                            equipo.tareasTotales = tareasTotales;
-                            equipo.tareasFinished = tareasFinished;
-                            console.log(
-                                "este equipo tuvo " +
-                                    tareasTotales +
-                                    " y " +
-                                    tareasFinished
-                            );
-
-                            setListComps(teamsArray);
-                            setSignal(true);
-                        })
-                        .catch(function (error) {
-                            console.log(
-                                "Error al cargar la lista de tareas del equipo: ",
-                                error
-                            );
-                        });
-                }
+                setListComps(teamsArray);
+                setSignal(true);
 
                 console.log("ya pase");
             })
@@ -582,7 +563,7 @@ export default function Equipo(props) {
                                 ¿Quieres crear un equipo?
                             </p>
                             <div className="noTeamsButtonAddTeam">
-                                <a
+                                <Link
                                     href={
                                         "/dashboard/" +
                                         projectName +
@@ -594,7 +575,7 @@ export default function Equipo(props) {
                                     <button className="addTeambtn">
                                         Crear Equipo
                                     </button>
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     )}
