@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import ContainerStandarsPC from "@/components/dashboardComps/projectComps/planDeCalidadComps/ContainerStandarsPC";
 import ContainerActivitiesPC from "@/components/dashboardComps/projectComps/planDeCalidadComps/ContainerActivitiesPC";
+import ContainerActivitiesControlPC from "@/components/dashboardComps/projectComps/planDeCalidadComps/ContainerActivitiesControlPC";
 axios.defaults.withCredentials = true;
 
 export default function PlanDeCalidad(props) {
@@ -20,8 +21,10 @@ export default function PlanDeCalidad(props) {
     const [editMode, setEditMode] = useState(false);
     const [standars, setStandars] = useState([]);
     const [activities, setActivities] = useState([]);
+    const [activitiesControl, setActivitiesControl] = useState([]);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
+    const [quantity3, setQuantity3] = useState(0);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -49,6 +52,17 @@ export default function PlanDeCalidad(props) {
         setQuantity2(quantity2 + 1);
     }
 
+    function addContainer3() {
+        setActivitiesControl([
+            ...activitiesControl,
+            {
+                idActivitiesControl: `a${quantity3}`,
+                activitiesControl: "",
+            },
+        ]);
+        setQuantity3(quantity3 + 1);
+    }
+
     const updateStandarsField = (index, value) => {
         setStandars((prevFields) => {
             const updatedFields = [...prevFields];
@@ -65,6 +79,14 @@ export default function PlanDeCalidad(props) {
         });
     };
 
+    const updateActivitiesControlField = (index, value) => {
+        setActivitiesControl((prevFields) => {
+            const updatedFields = [...prevFields];
+            updatedFields[index - 1].activitiesControl = value;
+            return updatedFields;
+        }); 
+    };
+
     function removeContainer1(indice) {
         setQuantity1(quantity1 - 1);
         setStandars((prevFields) => {
@@ -78,6 +100,16 @@ export default function PlanDeCalidad(props) {
     function removeContainer2(indice) {
         setQuantity2(quantity2 - 1);
         setActivities((prevFields) => {
+            const updatedFields = [...prevFields];
+            // Elimina el elemento con el índice proporcionado
+            updatedFields.splice(indice, 1);
+            return updatedFields;
+        });
+    }
+
+    function removeContainer3(indice) {
+        setQuantity3(quantity3 - 1);
+        setActivitiesControl((prevFields) => {
             const updatedFields = [...prevFields];
             // Elimina el elemento con el índice proporcionado
             updatedFields.splice(indice, 1);
@@ -231,7 +263,8 @@ export default function PlanDeCalidad(props) {
                 {quantity2 === 0 ? (
                     <div className="flex justify-center items-center">
                         <div>
-                            ¡Puede agregar algunas actividades de prevención y aseguramiento de calidad!
+                            ¡Puede agregar algunas actividades de prevención y
+                            aseguramiento de calidad!
                         </div>
                     </div>
                 ) : (
@@ -251,6 +284,44 @@ export default function PlanDeCalidad(props) {
                         <div className="flex gap-10 p-4">
                             <Button
                                 onClick={addContainer2}
+                                className="bg-yellow-500 border-2 border-yellow-500 h-10 text-white text-sm font-semibold w-28 cursor-pointer outline-none"
+                                type="button"
+                            >
+                                Agregar
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </div>
+            <div>
+                <div class="flex gap-3">
+                    <h4 class="font-semibold">
+                        Actividades de control de calidad
+                    </h4>
+                </div>
+                {quantity3 === 0 ? (
+                    <div className="flex justify-center items-center">
+                        <div>
+                            ¡Puede agregar algunas actividades de control de calidad!
+                        </div>
+                    </div>
+                ) : (
+                    activitiesControl.map((activitiesControl, index) => (
+                        <ContainerActivitiesControlPC
+                            key={index}
+                            indice={index + 1}
+                            updateActivitiesControlField={updateActivitiesControlField}
+                            activitiesControl={activitiesControl}
+                            functionRemove={removeContainer3}
+                            isDisabled={!editMode}
+                        />
+                    ))
+                )}
+                {editMode === true && (
+                    <div className="flex justify-end">
+                        <div className="flex gap-10 p-4">
+                            <Button
+                                onClick={addContainer3}
                                 className="bg-yellow-500 border-2 border-yellow-500 h-10 text-white text-sm font-semibold w-28 cursor-pointer outline-none"
                                 type="button"
                             >
