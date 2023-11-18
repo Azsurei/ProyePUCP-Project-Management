@@ -23,6 +23,22 @@ async function funcCrear(idProyecto){
     return idPlanCalidad;
 }
 
+async function listar(req, res, next) {
+    const { idProyecto } = req.params;
+    try {
+        const query = `CALL LISTAR_PLAN_CALIDAD_X_ID_PROYECTO(?);`;
+        const [results] = await connection.query(query, [idProyecto]);
+        planCalidad = results[0][0];
+
+        res.status(200).json({
+            data: planCalidad,
+            message: "Plan de Calidad listado"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function eliminar(idPlanCalidad){
     //const { idActaReunion } = req.body;
     console.log(`Procediendo: Eliminar/PlanCalidad ${idPlanCalidad}...`);
@@ -36,6 +52,8 @@ async function eliminar(idPlanCalidad){
         console.log("ERROR 1 en Eliminar/PlanCalidad", error);
     }
 }
+
+
 
 async function funcEliminar(idPlanCalidad) {
     try {
@@ -74,6 +92,7 @@ async function funcEliminarXProyecto(idProyecto) {
 
 module.exports = {
     crear,
+    listar,
     eliminar,
     eliminarXProyecto
 }

@@ -13,6 +13,7 @@ const retrospectivaController = require("../controllers/retrospectiva/retrospect
 const actaReunionController = require("../controllers/actaReunion/actaReunionController");
 const equipoController = require("../controllers/equipo/equipoController");
 const presupuestoController = require("../controllers/presupuesto/presupuestoController");
+const planCalidadController = require("../controllers/planCalidad/planCalidadController");
 
 async function crear(req, res, next) {
     const idUsuario = req.user.id; //del token
@@ -706,6 +707,18 @@ async function funcEliminar(idProyecto, herramientas) {
                     );
                 }
             }
+            if (herramienta.idHerramienta == 15) {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await planCalidadController.eliminarXProyecto(idProyecto);
+                } else {
+                    await planCalidadController.eliminar(
+                        herramienta.idHerramientaCreada
+                    );
+                }
+            }
         }
     } catch (error) {
         console.log("Error al eliminar Proyecto", error);
@@ -921,6 +934,16 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
                 await presupuestoController.eliminarXProyecto(idProyecto);
             } else {
                 await presupuestoController.eliminar(idHerramientaCreada);
+            }
+        }
+        if (idHerramienta == 15) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await planCalidadController.eliminarXProyecto(idProyecto);
+            } else {
+                await planCalidadController.eliminar(idHerramientaCreada);
             }
         }
 

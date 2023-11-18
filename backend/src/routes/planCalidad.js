@@ -9,7 +9,9 @@ const metricaCalidadController = require("../controllers/planCalidad/metricaCali
 
 // Plan de Calidad
 routerPlanCalidad.post("/crearPlanCalidad", verifyToken, planCalidadController.crear);
+routerPlanCalidad.get("/listarPlanCalidad/:idProyecto", verifyToken, planCalidadController.listar);
 routerPlanCalidad.delete("/eliminarPlanCalidad", verifyToken, planCalidadController.eliminar);
+routerPlanCalidad.delete("/eliminarPlanCalidadXIdProyecto", verifyToken, planCalidadController.eliminarXProyecto);
 
 // Estandares de Calidad
 routerPlanCalidad.post("/crearEstandarCalidad",verifyToken,estandarCalidadController.crear);

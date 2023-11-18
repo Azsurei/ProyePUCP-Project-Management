@@ -4368,6 +4368,32 @@ BEGIN
     INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,15,_idPlanCalidad,1);
     SELECT _idPlanCalidad AS idPlanCalidad;
 END //
+
+DROP PROCEDURE IF EXISTS LISTAR_PLAN_CALIDAD_X_ID_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLAN_CALIDAD_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT * 
+    FROM PlanCalidad
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLAN_CALIDAD_X_ID_PLAN_CALIDAD;
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_PLAN_CALIDAD_X_ID_PLAN_CALIDAD(
+	_idPlanCalidad INT
+)
+BEGIN
+    UPDATE PlanCalidad SET activo = 0 WHERE idPlanCalidad = _idPlanCalidad;
+    UPDATE EstandarCalidad SET activo = 0 WHERE idPlanCalidad = _idPlanCalidad;
+    UPDATE ActividadPrevencion SET activo = 0 WHERE idPlanCalidad = _idPlanCalidad;
+    UPDATE ActividadControlCalidad SET activo = 0 WHERE idPlanCalidad = _idPlanCalidad;
+    UPDATE MetricaCalidad SET activo = 0 WHERE idPlanCalidad = _idPlanCalidad;
+END //
+DELIMITER ;
 -------------------------------------
 -- Actividades de Control de Calidad
 -------------------------------------
@@ -5332,6 +5358,33 @@ BEGIN
 	);
 END; //
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLAN_CALIDAD_X_ID_PROYECTO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_PLAN_CALIDAD_X_ID_PROYECTO`(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE PlanCalidad SET activo = 0 WHERE idProyecto = _idProyecto;
+    UPDATE EstandarCalidad SET activo = 0 
+    WHERE idPlanCalidad IN (
+		SELECT idPlanCalidad FROM PlanCalidad WHERE idProyecto = _idProyecto
+	);
+    UPDATE ActividadPrevencion SET activo = 0 
+    WHERE idPlanCalidad IN (
+		SELECT idPlanCalidad FROM PlanCalidad WHERE idProyecto = _idProyecto
+	);
+    UPDATE ActividadControlCalidad SET activo = 0 
+    WHERE idPlanCalidad IN (
+		SELECT idPlanCalidad FROM PlanCalidad WHERE idProyecto = _idProyecto
+	);
+    UPDATE MetricaCalidad SET activo = 0 
+    WHERE idPlanCalidad IN (
+		SELECT idPlanCalidad FROM PlanCalidad WHERE idProyecto = _idProyecto
+	);
+END; //
+DELIMITER ;
+
 ----------
 --Archivos
 ----------
