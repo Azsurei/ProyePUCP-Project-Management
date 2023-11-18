@@ -13,20 +13,16 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs6" />
-  <sodipodi:namedview
-     id="namedview4"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0" />
-  <g
-     inkscape:groupmode="layer"
-     inkscape:label="Image"
-     id="g8">
+  <defs>
+    <filter id="colorize" x="0" y="0" width="100%" height="100%">
+      <feColorMatrix type="matrix" values="
+                                               0 0 0 0 1
+                                               0 0 0 0 1
+                                               0 0 0 0 1
+                                               0 0 0 1 0 "/>
+    </filter>
+  </defs>
+  <g filter="url(#colorize)">
     <image
        width="512"
        height="512"
