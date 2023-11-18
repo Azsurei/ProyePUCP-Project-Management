@@ -378,7 +378,7 @@ function ProjectSidebar(props) {
             goTo: `${stringBase}/matrizDeComunicaciones`,
         },
         {
-            id: 14,
+            id: 15,
             position: 11,
             optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
             optName: "Plan de calidad",
