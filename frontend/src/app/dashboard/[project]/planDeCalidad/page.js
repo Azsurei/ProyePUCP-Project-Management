@@ -9,6 +9,14 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import ContainerStandarsPC from "@/components/dashboardComps/projectComps/planDeCalidadComps/ContainerStandarsPC";
 import ContainerActivitiesPC from "@/components/dashboardComps/projectComps/planDeCalidadComps/ContainerActivitiesPC";
 import ContainerActivitiesControlPC from "@/components/dashboardComps/projectComps/planDeCalidadComps/ContainerActivitiesControlPC";
+import MyDynamicTable from "@/components/DynamicTable";
+import React from "react";
+import { SearchIcon } from "@/../public/icons/SearchIcon";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
+import {
+    Pagination,
+    Tooltip
+} from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 
 export default function PlanDeCalidad(props) {
@@ -25,7 +33,246 @@ export default function PlanDeCalidad(props) {
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [quantity3, setQuantity3] = useState(0);
+    // const [data, setData] = useState([]);
+    const data = [
+        {
+            idMetricaCalidad: 1,
+            descripcionMetrica: "Metrica 1",
+            fuente: "Fuente 1",
+            frecuencia: "Frecuencia 1",
+            responsable: "Responsable 1",
+            limitesControl: "Limites de control 1",
+        }
+    ]
+    const columns = [
+        {
+            name: "Metrica",
+            uid: "descripcionMetrica",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
+        },
+        {
+            name: "Fuente",
+            uid: "fuente",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
+        },
+        {
+            name: "Frecuencia",
+            uid: "frecuencia",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
+        },
+        {
+            name: "Responsable",
+            uid: "responsable",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
+        },
+        {
+            name: "Limites de control",
+            uid: "limitesControl",
+            className:
+                "px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: true,
+        },
+        {
+            name: " ",
+            uid: "actions",
+            className:
+                "w-12 px-4 py-2 text-xl font-semibold tracking-wide text-left",
+            sortable: false,
+        },
+    ];
+    const [filterValue, setFilterValue] = React.useState("");
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+    const [toolsFilter, setToolsFilter] = React.useState("all");
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [sortDescriptor, setSortDescriptor] = React.useState({
+        column: "descripcion",
+        direction: "ascending",
+    });
+    const [page, setPage] = React.useState(1);
 
+    // Variables adicionales
+    const pages = Math.ceil(data.length / rowsPerPage);
+    const hasSearchFilter = Boolean(filterValue);
+
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...data];
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((data) =>
+                data.descripcionMetrica
+                    .toLowerCase()
+                    .includes(filterValue.toLowerCase())
+            );
+        }
+        if (
+            toolsFilter !== "all" &&
+            Array.from(toolsFilter).length !== toolsOptions.length
+        ) {
+            filteredTemplates = filteredTemplates.filter((data) =>
+                Array.from(toolsFilter).includes(data.descripcionMetrica)
+            );
+        }
+
+        return filteredTemplates;
+    }, [data, filterValue, toolsFilter]);
+
+    const items = React.useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        return filteredItems.slice(start, end);
+    }, [page, filteredItems, rowsPerPage]);
+
+    const sortedItems = React.useMemo(() => {
+        return [...items].sort((a, b) => {
+            const first = a[sortDescriptor.column];
+            const second = b[sortDescriptor.column];
+            const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+            return sortDescriptor.direction === "descending" ? -cmp : cmp;
+        });
+    }, [sortDescriptor, items]);
+
+    const onNextPage = React.useCallback(() => {
+        if (page < pages) {
+            setPage(page + 1);
+        }
+    }, [page, pages]);
+
+    const onPreviousPage = React.useCallback(() => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    }, [page]);
+
+    const onRowsPerPageChange = React.useCallback((e) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
+    }, []);
+
+    const onSearchChange = React.useCallback((value) => {
+        if (value) {
+            setFilterValue(value);
+            setPage(1);
+        } else {
+            setFilterValue("");
+        }
+    }, []);
+
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+        setPage(1);
+    }, []);
+
+    const renderCell = React.useCallback((data, columnKey) => {
+        const cellValue = data[columnKey];
+
+        switch (columnKey) {
+            case "actions":
+                return (
+                    <div className="relative flex justify-center items-center gap-2">
+                        <div className="flex">
+                            <Tooltip content="Editar" color="warning">
+                                <button
+                                    className=""
+                                    type="button"
+                                >
+                                    <img src="/icons/editar.svg" />
+                                </button>
+                            </Tooltip>
+                            <Tooltip content="Eliminar" color="danger">
+                                <button
+                                    className=""
+                                    type="button"
+                                >
+                                    <img src="/icons/eliminar.svg" />
+                                </button>
+                            </Tooltip>
+                        </div>
+                    </div>
+                );
+            default:
+                return cellValue;
+        }
+    }, []);
+
+    const topContent = React.useMemo(() => {
+        return (
+            <div className="flex flex-col gap-10">
+                <div className="flex justify-between gap-3 items-end">
+                    <Input
+                        isClearable
+                        className="w-full sm:max-w-[44%]"
+                        placeholder="Buscar por metrica..."
+                        startContent={<SearchIcon />}
+                        value={filterValue}
+                        onClear={() => onClear()}
+                        onValueChange={onSearchChange}
+                        variant="faded"
+                    />
+                    <div className="flex gap-3">
+                        <Button
+                            color="primary"
+                            endContent={<PlusIcon />}
+                            className="btnAddRiesgo"
+                        >
+                                Agregar
+
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }, [
+        filterValue,
+        toolsFilter,
+        onRowsPerPageChange,
+        data.length,
+        onSearchChange,
+        hasSearchFilter,
+    ]);
+
+    const bottomContent = React.useMemo(() => {
+        return (
+            <div className="py-2 px-2 flex justify-between items-center gap-4">
+                <Pagination
+                    isCompact
+                    showControls
+                    showShadow
+                    color="primary"
+                    page={page}
+                    total={pages}
+                    onChange={setPage}
+                />
+                <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                    <Button
+                        isDisabled={pages === 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onPreviousPage}
+                    >
+                        Ant.
+                    </Button>
+                    <Button
+                        isDisabled={pages === 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onNextPage}
+                    >
+                        Sig.
+                    </Button>
+                </div>
+            </div>
+        );
+    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
     useEffect(() => {
         setIsLoadingSmall(false);
     }, []);
@@ -333,6 +580,22 @@ export default function PlanDeCalidad(props) {
                         </div>
                     </div>
                 )}
+
+            </div>
+            <div>
+                <MyDynamicTable 
+                        label="Tabla Metricas de calidad"
+                        bottomContent={bottomContent}
+                        selectedKeys={selectedKeys}
+                        setSelectedKeys={setSelectedKeys}
+                        sortDescriptor={sortDescriptor}
+                        setSortDescriptor={setSortDescriptor}
+                        topContent={topContent}
+                        columns={columns}
+                        sortedItems={sortedItems}
+                        renderCell={renderCell}
+                        idKey="idMetricaCalidad"                
+                />
             </div>
         </div>
     );
