@@ -15,19 +15,19 @@ routerPlanCalidad.delete("/eliminarPlanCalidadXIdProyecto", verifyToken, planCal
 
 // Estandares de Calidad
 routerPlanCalidad.post("/crearEstandarCalidad",verifyToken,estandarCalidadController.crear);
-routerPlanCalidad.get("/listarEstandarCalidadXIdPlanCalidad",verifyToken,estandarCalidadController.listarXIdPlanCalidad);
+routerPlanCalidad.get("/listarEstandarCalidadXIdPlanCalidad/:idPlanCalidad",verifyToken,estandarCalidadController.listarXIdPlanCalidad);
 
 // Actividades de Prevencion
 routerPlanCalidad.post("/crearActividadPrevencion",verifyToken,actividadPrevencionController.crear);
-routerPlanCalidad.delete("/listarActividadPrevencionXIdPlanCalidad",verifyToken,actividadPrevencionController.listarXIdPlanCalidad);
+routerPlanCalidad.delete("/listarActividadPrevencionXIdPlanCalidad/:idPlanCalidad",verifyToken,actividadPrevencionController.listarXIdPlanCalidad);
 
 // Actividades de Control de Calidad
 routerPlanCalidad.post("/crearActividadControlCalidad",verifyToken,actividadControlCalidadController.crear);
-routerPlanCalidad.delete("/listarActividadControlCalidadXIdPlanCalidad",verifyToken,actividadControlCalidadController.listarXIdPlanCalidad);
+routerPlanCalidad.delete("/listarActividadControlCalidadXIdPlanCalidad/:idPlanCalidad",verifyToken,actividadControlCalidadController.listarXIdPlanCalidad);
 
 // Métricas de Calidad
 routerPlanCalidad.post("/crearMetricaCalidad",verifyToken,metricaCalidadController.crear);
-routerPlanCalidad.delete("/listarMetricaCalidadXIdPlanCalidad",verifyToken,metricaCalidadController.listarXIdPlanCalidad);
+routerPlanCalidad.delete("/listarMetricaCalidadXIdPlanCalidad/:idPlanCalidad",verifyToken,metricaCalidadController.listarXIdPlanCalidad);
 
 
 module.exports.routerPlanCalidad = routerPlanCalidad;
