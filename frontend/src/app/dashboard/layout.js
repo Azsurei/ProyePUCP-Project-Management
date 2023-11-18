@@ -279,9 +279,6 @@ export default function RootLayout({ children }) {
                             richColors
                             theme={"light"}
                             closeButton={true}
-                            toastOptions={{
-                                style: { fontSize: "1rem" },
-                            }}
                         ></Toaster>
                     </>
                 </NotificationsContext.Provider>

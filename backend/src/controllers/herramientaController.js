@@ -19,9 +19,6 @@ async function listarHerramientas(req, res, next) {
 }
 
 async function listarHerramientasDeProyecto(req, res, next) {
-    console.log(
-        "Llegue a recibir solicitud de listar las herramientas de un proyecto"
-    );
     const idProyecto = req.params.idProyecto;
     const query = `CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(?);`;
     try {
