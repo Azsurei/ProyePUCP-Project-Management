@@ -5229,3 +5229,15 @@ BEGIN
 END$
 DELIMITER ;
 
+DELIMITER $
+CREATE PROCEDURE INSERTAR_REPOSTORIO_DOCUMENTOS(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idRepositorioDocumentos INT;
+	INSERT INTO RepositorioDocumento(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(14,_idProyecto,curdate(),1);
+    SET _idRepositorioDocumentos = @@last_insert_id;
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,14,_idRepositorioDocumentos,1);
+    SELECT _idRepositorioDocumentos AS idRepositorioDocumentos;
+END$$
+DELIMITER ;

@@ -1384,3 +1384,14 @@ CREATE TABLE Archivo(
 )
 ENGINE = InnoDB;
 
+--Repositorio
+CREATE TABLE RepositorioDocumento(
+	idRepositorioDocumentos INT AUTO_INCREMENT PRIMARY KEY,
+	idHerramienta INT,
+    idProyecto INT,
+    fechaCreacion DATE,
+    activo TINYINT,
+    FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+)
+ENGINE = InnoDB;
