@@ -314,7 +314,7 @@ function DashboardNav({
                             variant="flat"
                         >
                             <DropdownItem key="settings" onPress={()=>{
-                                router.push("/dashboard/configuracion");
+                                router.push("/dashboard/configuracion/perfil");
                             }}>
                                 Mi perfil
                             </DropdownItem>
