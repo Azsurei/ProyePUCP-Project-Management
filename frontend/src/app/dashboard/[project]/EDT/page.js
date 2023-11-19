@@ -41,7 +41,7 @@ export default function EDT(props) {
             .get(stringURL)
             .then(function (response) {
                 const componentsArray = response.data.componentesEDT;
-                console.log(componentsArray);
+                console.log(JSON.stringify(componentsArray,null,2));
                 setListComps(componentsArray);
 
                 setIsLoadingSmall(false);

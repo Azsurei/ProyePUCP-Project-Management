@@ -6,6 +6,7 @@ import {
     CircularProgress,
     Divider,
     Progress,
+    useDisclosure,
 } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
@@ -20,6 +21,8 @@ import { SmallLoadingScreen } from "../../../layout";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 const mockUsers = [
@@ -83,6 +86,7 @@ function ExportIcon() {
 function ReporteEntregables(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { sessionData } = useContext(SessionContext);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -105,6 +109,13 @@ function ReporteEntregables(props) {
 
     //state para guardar/exportar
     const [isNewReport, setIsNewReport] = useState(false);
+    const [isSavingLoading, setIsSavingLoading] = useState(false);
+    
+    const {
+        isOpen: isModalSaveOpen,
+        onOpen: onModalSaveOpen,
+        onOpenChange: onModalSaveOpenChange,
+    } = useDisclosure();
 
     useEffect(() => {
         const reportId = decodeURIComponent(props.params.reportId);
@@ -546,43 +557,6 @@ function ReporteEntregables(props) {
             setEntregableFechaFin(mockObj[0].fechaFin);
 
             setIsLoadingSmall(false);
-
-            // const reportURL =
-            //     process.env.NEXT_PUBLIC_BACKEND_URL +
-            //     "/api/proyecto/reporte/listarReporteXId/" +
-            //     reportId;
-            // axios
-            //     .get(reportURL)
-            //     .then(function (response) {
-            //         setListEntregables(response.data.entregables);
-            //         setSelectedEntregable(
-            //             response.data.entregables[0].idEntregable
-            //         );
-
-            //         setListTareas(
-            //             response.data.entregables[0].tareasEntregable
-            //         );
-            //         getEntregableStatistics(response.data.entregables[0]);
-            //         setEntregableName(response.data.entregables[0].nombre);
-            //         setEntregableComponentName(
-            //             response.data.entregables[0].ComponenteEDTNombre
-            //         );
-            //         setEntregableDescripcion(
-            //             response.data.entregables[0].descripcion
-            //         );
-            //         setEntregableFechaInicio(
-            //             response.data.entregables[0].fechaInicio
-            //         );
-            //         setEntregableFechaFin(
-            //             response.data.entregables[0].fechaFin
-            //         );
-
-            //         setIsLoadingSmall(false);
-            //     })
-            //     .catch(function (error) {
-            //         console.log(error);
-            //         toast.error("Error de conexion al generar reporte");
-            //     });
         } else {
             router.push("/404");
         }
@@ -595,6 +569,14 @@ function ReporteEntregables(props) {
 
     return (
         <div className="flex h-full flex-col p-[2.5rem] font-[Montserrat] gap-y-6 min-h-[800px]">
+            <ModalSave
+                isOpen={isModalSaveOpen}
+                onOpenChange={onModalSaveOpenChange}
+                guardarReporte={async (name)=>{
+                    return await handleSaveReport(name);
+                }}
+            />
+
             <div className="flex flex-row justify-between items-end">
                 {/* <p className="text-4xl text-mainHeaders font-semibold">
                     Reporte de entregables
@@ -602,9 +584,19 @@ function ReporteEntregables(props) {
                 <HeaderWithButtonsSamePage
                     haveReturn={true}
                     haveAddNew={false}
-                    handlerReturn={()=>{router.push("/dashboard/"+projectName +"=" +projectId +"/reportes")}}
+                    handlerReturn={() => {
+                        router.push(
+                            "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/reportes"
+                        );
+                    }}
                     //newPrimarySon={ListComps.length + 1}
-                    breadcrump={"Inicio / Proyectos / " + projectName + " / Reportes"}
+                    breadcrump={
+                        "Inicio / Proyectos / " + projectName + " / Reportes"
+                    }
                 >
                     Reporte de entregables
                 </HeaderWithButtonsSamePage>
@@ -613,11 +605,13 @@ function ReporteEntregables(props) {
                         color="warning"
                         className="text-white font-semibold"
                         onPress={() => {
-                            console.log(
-                                JSON.stringify(listEntregables, null, 2)
-                            );
+                            // console.log(
+                            //     JSON.stringify(listEntregables, null, 2)
+                            // );
                             //handleSaveReport(listEntregables);
+                            onModalSaveOpen();
                         }}
+                        isLoading={isSavingLoading}
                     >
                         Guardar reporte
                     </Button>
@@ -627,9 +621,9 @@ function ReporteEntregables(props) {
                         color="success"
                         className="text-white font-semibold"
                         onPress={() => {
-                            console.log(
-                                JSON.stringify(listEntregables, null, 2)
-                            );
+                            // console.log(
+                            //     JSON.stringify(listEntregables, null, 2)
+                            // );
                             //handleSaveReport(listEntregables);
                         }}
                         startContent={<ExportIcon />}
@@ -819,7 +813,8 @@ function ReporteEntregables(props) {
         </div>
     );
 
-    function handleSaveReport(listEntregables) {
+    async function handleSaveReport(reportName) {
+        setIsSavingLoading(true);
         for (const entregable of listEntregables) {
             const {
                 entCharData,
@@ -837,7 +832,30 @@ function ReporteEntregables(props) {
         console.log(
             "==================== DATA A MANDAR ========================="
         );
-        console.log(listEntregables);
+        console.log(JSON.stringify(listEntregables, null, 2));
+
+        try {
+            const saveURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/subirReporteEntregableJSON";
+
+            const response = await axios.post(saveURL, {
+                entregables: listEntregables,
+                idProyecto: projectId,
+                nombre: reportName,
+                idUsuarioCreador: sessionData.idUsuario
+            });
+
+            setIsSavingLoading(false);
+            console.log(response);
+            toast.success("Su reporte se guardo con exito");
+            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + response.data.idReporte);
+            return 1;
+        } catch (error) {
+            toast.error("Error al guardar tu reporte");
+            console.log(error);
+            return 0;
+        }
     }
 
     function getEntregableStatistics(entregable) {

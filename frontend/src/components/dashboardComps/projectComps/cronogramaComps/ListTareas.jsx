@@ -186,7 +186,7 @@ export default function ListTareas({
     handleEdit,
     handleAddNewSon,
     handleRegisterProgress,
-    handleDelete,
+    handleDelete
 }) {
     return (
         <div className="tareasListContainer" style={{ marginLeft: leftMargin }}>

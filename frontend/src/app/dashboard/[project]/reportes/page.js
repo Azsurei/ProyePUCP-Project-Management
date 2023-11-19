@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
-import { 
+import {
     Button,
     Input,
     DropdownTrigger,
@@ -11,19 +11,31 @@ import {
     DropdownMenu,
     DropdownItem,
 } from "@nextui-org/react";
-import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
+import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
-import TuneIcon from '@mui/icons-material/Tune';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import TuneIcon from "@mui/icons-material/Tune";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+} from "@nextui-org/react";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
-import AssessmentIcon from '@mui/icons-material/Assessment';
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ReportTypeCard from "@/components/dashboardComps/projectComps/reportesComps/ReportTypeCard";
 import ListReport from "@/components/dashboardComps/projectComps/reportesComps/ListReport";
 import DateInput from "@/components/DateInput";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+axios.defaults.withCredentials = true;
+
 export default function Reportes(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -67,7 +79,12 @@ export default function Reportes(props) {
                 "Este tipo de reporte de entregables proporciona una visión detallada del estado actual de los entregables y " +
                 "las tareas asociadas en tu proyecto. Te permite supervisar el progreso, identificar obstáculos y tomar decisiones informadas para mantener tu proyecto en el camino correcto",
             imgLink: "/images/report_1.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteEntregables/nuevoReporte"
+            hrefGoTo:
+                "/dashboard/" +
+                projectName +
+                "=" +
+                projectId +
+                "/reportes/reporteEntregables/nuevoReporte",
         },
         {
             id: "rep2",
@@ -77,7 +94,12 @@ export default function Reportes(props) {
                 " proyecto. Este informe se centra en la disposición de las tareas por sprint, permitiéndote gestionar eficazmente la ejecución " +
                 "y el seguimiento de tus actividades.",
             imgLink: "/images/report_2.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteTareas/nuevoReporte"
+            hrefGoTo:
+                "/dashboard/" +
+                projectName +
+                "=" +
+                projectId +
+                "/reportes/reporteTareas/nuevoReporte",
         },
         {
             id: "rep3",
@@ -87,7 +109,12 @@ export default function Reportes(props) {
                 "permitiéndote evaluar de manera precisa la rentabilidad y la ejecución de tus proyectos. Además, te ofrece una panorámica completa de los aspectos " +
                 "financieros y operativos.",
             imgLink: "/images/report_3.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reportePresupuestos/nuevoReporte"
+            hrefGoTo:
+                "/dashboard/" +
+                projectName +
+                "=" +
+                projectId +
+                "/reportes/reportePresupuestos/nuevoReporte",
         },
         {
             id: "rep4",
@@ -96,7 +123,12 @@ export default function Reportes(props) {
                 "El reporte de Resumen de Riesgos te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. " +
                 "Este informe proporciona una evaluación detallada de los riesgos potenciales, identificando sus causas, impacto y probabilidad de ocurrencia.",
             imgLink: "/images/report_4.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteRiesgos/nuevoReporte"
+            hrefGoTo:
+                "/dashboard/" +
+                projectName +
+                "=" +
+                projectId +
+                "/reportes/reporteRiesgos/nuevoReporte",
         },
         {
             id: "rep5",
@@ -105,12 +137,34 @@ export default function Reportes(props) {
                 "Un reporte de grupo de proyectos es un resumen estructurado que detalla información relevante sobre varios proyectos agrupados en función de ciertos criterios comunes" +
                 "Proporciona una visión global de múltiples iniciativas en un solo documento, permitiendo una evaluación eficiente de la situación y el progreso colectivo de proyectos relacionados.",
             imgLink: "/images/report_4.webp",
-            hrefGoTo: "/dashboard/"+projectName +"=" +projectId +"/reportes/reporteGrupoProyectos"
+            hrefGoTo:
+                "/dashboard/" +
+                projectName +
+                "=" +
+                projectId +
+                "/reportes/reporteGrupoProyectos",
         },
     ];
 
+    const [listReportes, setListReportes] = useState([]);
+
     useEffect(() => {
-        setIsLoadingSmall(false);
+        setIsLoadingSmall(true);
+
+        const listURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/reporte/listarReportesXIdProyecto/" +
+            projectId;
+        axios
+            .get(listURL)
+            .then(function (response) {
+                console.log(response);
+                setListReportes(response.data);
+                setIsLoadingSmall(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }, []);
 
     //esta sera la pantalla de vista de reportes generados y la pantalla para crear uno nuevo (seleccionar cual)
@@ -155,9 +209,14 @@ export default function Reportes(props) {
                                 onValueChange={onSearchChange}
                                 variant="faded"
                             />
-                            <div className="buttonReporteContainer"> 
-                                <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
-                                 Filtrar
+                            <div className="buttonReporteContainer">
+                                <Button
+                                    onPress={onModalFecha}
+                                    color="primary"
+                                    startContent={<TuneIcon />}
+                                    className="btnFiltro"
+                                >
+                                    Filtrar
                                 </Button>
                                 <Dropdown>
                                     <DropdownTrigger className="btnFiltro">
@@ -170,28 +229,31 @@ export default function Reportes(props) {
                                         >
                                             Proyectos
                                         </Button>
-                                        </DropdownTrigger>
-                                        <DropdownMenu
-                                            disallowEmptySelection
-                                             aria-label="Table Columns"
-                                            closeOnSelect={false}
-                                            selectedKeys={toolsFilter}
-                                            selectionMode="multiple"
-                                            onSelectionChange={setToolsFilter}
-                                        >
-                                            {toolsOptions.map((status) => (
-                                                <DropdownItem
-                                                    key={status.uid}
-                                                 >
-                                                    {status.name}
-                                                </DropdownItem>
-                                            ))}
-                                        </DropdownMenu>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        disallowEmptySelection
+                                        aria-label="Table Columns"
+                                        closeOnSelect={false}
+                                        selectedKeys={toolsFilter}
+                                        selectionMode="multiple"
+                                        onSelectionChange={setToolsFilter}
+                                    >
+                                        {toolsOptions.map((status) => (
+                                            <DropdownItem key={status.uid}>
+                                                {status.name}
+                                            </DropdownItem>
+                                        ))}
+                                    </DropdownMenu>
                                 </Dropdown>
                             </div>
-                        </div> 
+                        </div>
                         <div className="mt-5 ">
-                            <ListReport></ListReport>
+                            <ListReport
+                                listReportes={listReportes}
+                                handleViewReport={(idReporte) => {
+                                    router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + idReporte);
+                                }}
+                            ></ListReport>
                         </div>
                     </div>
                 </div>
@@ -224,16 +286,22 @@ export default function Reportes(props) {
                                     img={card.imgLink}
                                     hrefGoTo={card.hrefGoTo}
                                     isActive={cardActive === card.id}
-                                    setActive={()=>{setCardActive(card.id)}}
+                                    setActive={() => {
+                                        setCardActive(card.id);
+                                    }}
                                 />
                             );
                         })}
                     </div>
                 </div>
             )}
-            <Modal size="xl" isOpen={isModalFechaOpen} onOpenChange={onModalFechachange}>
-                    <ModalContent>
-                        {(onClose) => {
+            <Modal
+                size="xl"
+                isOpen={isModalFechaOpen}
+                onOpenChange={onModalFechachange}
+            >
+                <ModalContent>
+                    {(onClose) => {
                         const finalizarModal = () => {
                             //filtraFecha();
                             setFiltrarFecha(true);
@@ -241,105 +309,109 @@ export default function Reportes(props) {
                         };
                         return (
                             <>
-                            <ModalHeader>Filtra tus reportes</ModalHeader>
+                                <ModalHeader>Filtra tus reportes</ModalHeader>
 
-                            <ModalBody>
-                                <p
-                                style={{
-                                    color: "#494949",
-                                    fontSize: "16px",
-                                    fontStyle: "normal",
-                                    fontWeight: 400,
-                                }}
-                                >
-                                Elige la fecha que deseas consultar
-                                </p>
+                                <ModalBody>
+                                    <p
+                                        style={{
+                                            color: "#494949",
+                                            fontSize: "16px",
+                                            fontStyle: "normal",
+                                            fontWeight: 400,
+                                        }}
+                                    >
+                                        Elige la fecha que deseas consultar
+                                    </p>
 
-                                <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    marginTop: "1rem",
-                                }}
-                                >
-                                <p
-                                    style={{
-                                    color: "#002D74",
-                                    fontSize: "16px",
-                                    fontStyle: "normal",
-                                    fontWeight: 500,
-                                    }}
-                                >
-                                    Desde
-                                </p>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "space-between",
+                                            marginTop: "1rem",
+                                        }}
+                                    >
+                                        <p
+                                            style={{
+                                                color: "#002D74",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            Desde
+                                        </p>
 
-                                <p
-                                    style={{
-                                    color: "#002D74",
-                                    fontSize: "16px",
-                                    fontStyle: "normal",
-                                    fontWeight: 500,
-                                    flex: 0.43,
-                                    }}
-                                >
-                                    Hasta
-                                </p>
-                                </div>
+                                        <p
+                                            style={{
+                                                color: "#002D74",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 500,
+                                                flex: 0.43,
+                                            }}
+                                        >
+                                            Hasta
+                                        </p>
+                                    </div>
 
-                                <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    gap: "2rem",
-                                    marginBottom: "1.2rem",
-                                }}
-                                >
-                                <DateInput
-                                    isEditable={true}
-                                    value={fechaInicio}
-                                    onChangeHandler={handleChangeFechaInicioFilter}
-                                />
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "space-between",
+                                            gap: "2rem",
+                                            marginBottom: "1.2rem",
+                                        }}
+                                    >
+                                        <DateInput
+                                            isEditable={true}
+                                            value={fechaInicio}
+                                            onChangeHandler={
+                                                handleChangeFechaInicioFilter
+                                            }
+                                        />
 
-                                <span style={{ margin: "0 10px" }}>
-                                    <ArrowRightAltIcon />
-                                </span>
+                                        <span style={{ margin: "0 10px" }}>
+                                            <ArrowRightAltIcon />
+                                        </span>
 
-                                <DateInput
-                                    value={fechaFin}
-                                    isEditable={true}
-                                    onChangeHandler={handleChangeFechaFinFilter}
-                                />
-                                </div>
-                            </ModalBody>
+                                        <DateInput
+                                            value={fechaFin}
+                                            isEditable={true}
+                                            onChangeHandler={
+                                                handleChangeFechaFinFilter
+                                            }
+                                        />
+                                    </div>
+                                </ModalBody>
 
-                            <ModalFooter>
-                                <Button
-                                className="text-white"
-                                variant="light"
-                                onPress={() => {
-                                    onClose(); // Cierra el modal
-                                    setFechaInicio("");
-                                    setFechaFin("");
-                                }}
-                                style={{ color: "#EA541D" }}
-                                >
-                                Limpiar Búsqueda
-                                </Button>
-                                <Button
-                                style={{ backgroundColor: "#EA541D" }}
-                                className="text-white"
-                                onPress={finalizarModal}
-                                >
-                                Filtrar
-                                </Button>
-                            </ModalFooter>
+                                <ModalFooter>
+                                    <Button
+                                        className="text-white"
+                                        variant="light"
+                                        onPress={() => {
+                                            onClose(); // Cierra el modal
+                                            setFechaInicio("");
+                                            setFechaFin("");
+                                        }}
+                                        style={{ color: "#EA541D" }}
+                                    >
+                                        Limpiar Búsqueda
+                                    </Button>
+                                    <Button
+                                        style={{ backgroundColor: "#EA541D" }}
+                                        className="text-white"
+                                        onPress={finalizarModal}
+                                    >
+                                        Filtrar
+                                    </Button>
+                                </ModalFooter>
                             </>
                         );
-                        }}
-                    </ModalContent>
-                </Modal>
+                    }}
+                </ModalContent>
+            </Modal>
         </div>
     );
 }
