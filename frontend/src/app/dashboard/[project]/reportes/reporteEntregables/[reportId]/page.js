@@ -110,7 +110,7 @@ function ReporteEntregables(props) {
     //state para guardar/exportar
     const [isNewReport, setIsNewReport] = useState(false);
     const [isSavingLoading, setIsSavingLoading] = useState(false);
-    
+
     const {
         isOpen: isModalSaveOpen,
         onOpen: onModalSaveOpen,
@@ -159,7 +159,10 @@ function ReporteEntregables(props) {
                     console.log(error);
                     toast.error("Error de conexion al generar reporte");
                 });
-        } else if (!isNaN(reportId)) {
+        } else if (
+            //!isNaN(reportId)
+            true
+        ) {
             setIsNewReport(false);
             setIsLoadingSmall(true);
 
@@ -545,6 +548,20 @@ function ReporteEntregables(props) {
                 },
             ];
 
+            const listURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/obtenerJSONReporteEntregableXIdArchivo/" +
+                reportId;
+            axios
+                .get(listURL)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toast.error("Error de conexion al generar reporte");
+                });
+
             setListEntregables(mockObj);
             setSelectedEntregable(mockObj[0].idEntregable);
 
@@ -572,7 +589,7 @@ function ReporteEntregables(props) {
             <ModalSave
                 isOpen={isModalSaveOpen}
                 onOpenChange={onModalSaveOpenChange}
-                guardarReporte={async (name)=>{
+                guardarReporte={async (name) => {
                     return await handleSaveReport(name);
                 }}
             />
@@ -843,13 +860,20 @@ function ReporteEntregables(props) {
                 entregables: listEntregables,
                 idProyecto: projectId,
                 nombre: reportName,
-                idUsuarioCreador: sessionData.idUsuario
+                idUsuarioCreador: sessionData.idUsuario,
             });
 
             setIsSavingLoading(false);
             console.log(response);
             toast.success("Su reporte se guardo con exito");
-            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + response.data.idReporte);
+            router.push(
+                "/dashboard/" +
+                    projectName +
+                    "=" +
+                    projectId +
+                    "/reportes/reporteEntregables/" +
+                    response.data.idReporte
+            );
             return 1;
         } catch (error) {
             toast.error("Error al guardar tu reporte");

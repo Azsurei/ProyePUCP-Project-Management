@@ -32,6 +32,7 @@ import ListReport from "@/components/dashboardComps/projectComps/reportesComps/L
 import DateInput from "@/components/DateInput";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function Reportes(props) {
@@ -250,8 +251,14 @@ export default function Reportes(props) {
                         <div className="mt-5 ">
                             <ListReport
                                 listReportes={listReportes}
-                                handleViewReport={(idReporte) => {
-                                    router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + idReporte);
+                                handleViewReport={(idReporte, fileId) => {
+                                    if(fileId !== null){
+                                        console.log("abriendo de file id");
+                                        router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
+                                    }
+                                    else{
+                                        toast.error("Error al cargar reporte");
+                                    }
                                 }}
                             ></ListReport>
                         </div>
