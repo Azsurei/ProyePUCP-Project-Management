@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
-import { SmallLoadingScreen } from "../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../layout";
 import { Textarea, Input, Button } from "@nextui-org/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -13,37 +13,61 @@ import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { Toaster} from "sonner";
 import {
     Pagination,
-    Tooltip
+    Tooltip,
+    useDisclosure,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,  
 } from "@nextui-org/react";
+import id from "date-fns/locale/id/index";
 axios.defaults.withCredentials = true;
 
 export default function PlanDeCalidad(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idPlanCalidad = herramientasInfo.find(herramienta => herramienta.idHerramienta === 15).idHerramientaCreada;
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
     const [editMode, setEditMode] = useState(false);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [standars, setStandars] = useState([]);
     const [activities, setActivities] = useState([]);
     const [activitiesControl, setActivitiesControl] = useState([]);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [quantity3, setQuantity3] = useState(0);
-    // const [data, setData] = useState([]);
-    const data = [
-        {
-            idMetricaCalidad: 1,
-            descripcionMetrica: "Metrica 1",
-            fuente: "Fuente 1",
-            frecuencia: "Frecuencia 1",
-            responsable: "Responsable 1",
-            limitesControl: "Limites de control 1",
-        }
-    ]
+    const [metrica, setMetrica] = useState("");
+    const [fuente, setFuente] = useState("");
+    const [frecuencia, setFrecuencia] = useState("");
+    const [responsable, setResponsable] = useState("");
+    const [limitesControl, setLimitesControl] = useState("");
+    const [validMetrica, setValidMetrica] = useState(true);
+    const [validFuente, setValidFuente] = useState(true);
+    const [validFrecuencia, setValidFrecuencia] = useState(true);
+    const [validResponsable, setValidResponsable] = useState(true);
+    const [validLimitesControl, setValidLimitesControl] = useState(true);
+
+    console.log("El id del plan de calidad es:", idPlanCalidad);
+    const activeModal = () => {onOpen();};
+    const [data, setData] = useState([]);
+    // const data = [
+    //     {
+    //         idMetricaCalidad: 1,
+    //         descripcionMetrica: "Metrica 1",
+    //         fuente: "Fuente 1",
+    //         frecuencia: "Frecuencia 1",
+    //         responsable: "Responsable 1",
+    //         limitesControl: "Limites de control 1",
+    //     }
+    // ]
     const columns = [
         {
             name: "Metrica",
@@ -223,9 +247,10 @@ export default function PlanDeCalidad(props) {
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddRiesgo"
+                            onPress={() => activeModal()}
                         >
                                 Agregar
-
+                        
                         </Button>
                     </div>
                 </div>
@@ -274,8 +299,9 @@ export default function PlanDeCalidad(props) {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
     useEffect(() => {
+        DataTable();
         setIsLoadingSmall(false);
-    }, []);
+    }, [idPlanCalidad]);
 
     function addContainer1() {
         setStandars([
@@ -405,10 +431,85 @@ export default function PlanDeCalidad(props) {
 
         return { modifiedArray, deletedArray, addedArray };
     };
+    function DataTable() {
+        setIsLoadingSmall(true);
+        const fetchData = async () => {
+            try {
+                // Realiza la solicitud HTTP al endpoint del router
+                const stringURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/planCalidad/listarMetricaCalidadXIdPlanCalidad/" +
+                    idPlanCalidad;
+                const response = await axios.get(stringURL);
+
+                // Actualiza el estado 'data' con los datos recibidos
+                // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
+                setData(response.data.metricasCalidad);
+                console.log(`Esta es la data:`, data);
+                console.log(
+                    `Datos obtenidos exitosamente:`,
+                    response.data.metricasCalidad
+                );
+                setIsLoadingSmall(false);
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
+        };
+
+        fetchData();
+    }
+    function ingresarMetrica() {
+        return new Promise((resolve, reject) => {
+            setIsLoadingSmall(true);
+            const stringURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/planCalidad/crearMetricaCalidad";
+                const postData = {
+                    idPlanCalidad: idPlanCalidad,
+                    descripcionMetrica: metrica,
+                    fuente: fuente,
+                    frecuencia: frecuencia,
+                    responsable: responsable,
+                    limitesControl: limitesControl,
+
+                };
+                console.log("El postData es :", postData);
+                axios
+                    .post(
+                        stringURL,
+                        postData
+                    )
+                    .then((response) => {
+                        // Manejar la respuesta de la solicitud POST
+                        console.log("Respuesta del servidor:", response.data);
+                        console.log("Guardado de la metrica correcto");
+                        resolve(response);
+                        // Realizar acciones adicionales si es necesario
+                    })
+                    .catch((error) => {
+                        // Manejar errores si la solicitud POST falla
+                        console.error("Error al realizar la solicitud POST:", error);
+                        reject(error);
+                    });
+        });
+
+
+    }
+    const nuevaMetrica = () => {
+        toast.promise(ingresarMetrica, {
+            loading: "Registrando nuevo metrica...",
+            success: (data) => {
+                return "La metrica se agregó con éxito!";
+            },
+            error: "Error al agregar metrica",
+            position: "bottom-right",
+        });
+
+    };
 
     return (
-        <div class="flex-1 font-[Montserrat] flex flex-col w-full h-auto pl-8 pr-8 gap-4">
-            <div class="flex items-center w-full pt-4">
+        <div className="flex-1 font-[Montserrat] flex flex-col w-full h-auto pl-8 pr-8 gap-4">
+            <div className="flex items-center w-full pt-4">
                 <Breadcrumbs>
                     <BreadcrumbsItem
                         href="/dashboard"
@@ -463,8 +564,8 @@ export default function PlanDeCalidad(props) {
                 </div>
             </div>
             <div>
-                <div class="flex gap-3">
-                    <h4 class="font-semibold">
+                <div className="flex gap-3">
+                    <h4 className="font-semibold">
                         Estándares y normas de calidad
                     </h4>
                 </div>
@@ -502,8 +603,8 @@ export default function PlanDeCalidad(props) {
                 )}
             </div>
             <div>
-                <div class="flex gap-3">
-                    <h4 class="font-semibold">
+                <div className="flex gap-3">
+                    <h4 className="font-semibold">
                         Actividades de prevención y aseguramiento de calidad
                     </h4>
                 </div>
@@ -541,8 +642,8 @@ export default function PlanDeCalidad(props) {
                 )}
             </div>
             <div>
-                <div class="flex gap-3">
-                    <h4 class="font-semibold">
+                <div className="flex gap-3">
+                    <h4 className="font-semibold">
                         Actividades de control de calidad
                     </h4>
                 </div>
@@ -583,6 +684,9 @@ export default function PlanDeCalidad(props) {
 
             </div>
             <div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Metricas
+                </div>
                 <MyDynamicTable 
                         label="Tabla Metricas de calidad"
                         bottomContent={bottomContent}
@@ -597,6 +701,141 @@ export default function PlanDeCalidad(props) {
                         idKey="idMetricaCalidad"                
                 />
             </div>
+            <Modal 
+                isOpen={isOpen} 
+                onOpenChange={onOpenChange}
+                placement="top-center"
+            >
+                <ModalContent>
+                    {(onClose) => {
+                        const cerrarModal = async() => {
+
+                            let Isvalid = true;
+                            if (metrica === "") {
+                                setValidMetrica(false);
+                                Isvalid = false;
+                            
+                            }
+
+                            if(fuente === ""){
+                                setValidFuente(false);
+                                Isvalid= false;
+                            }
+
+                            if(frecuencia === ""){ 
+                                setValidFrecuencia(false);
+                                Isvalid= false;
+                            
+                            }
+                            if(responsable === ""){ 
+                                setValidResponsable(false);
+                                Isvalid= false;
+                            
+                            }
+                            if(limitesControl === ""){ 
+                                setValidLimitesControl(false);
+                                Isvalid= false;
+                            
+                            }
+                            if(Isvalid === true){
+
+
+                                
+                                try {
+                                    await nuevaMetrica();     
+
+                                    
+                                } catch (error) {
+                                    console.error('Error al registrar la línea de ingreso o al obtener los datos:', error);
+                                }
+          
+                                onClose();
+                                setIsLoadingSmall(false);
+                            }
+
+
+
+                        };
+                        return (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">Registrar nueva metrica</ModalHeader>
+                            <ModalBody>
+                                <Input
+                                    autoFocus
+                                    label="Metrica"
+                                    placeholder="Ingresa tu metrica"
+                                    variant="bordered"
+                                    value={metrica}
+                                    onValueChange={setMetrica}
+                                    isInvalid={!validMetrica}
+                                    onChange={()=>{setValidMetrica(true)}}
+                                    errorMessage={
+                                        !validMetrica ? "La metrica no puede estar vacia" : ""
+                                    }
+                                />
+                                <Input
+                                    label="Fuente"
+                                    placeholder="Ingresa la fuente"
+                                    variant="bordered"
+                                    value={fuente}
+                                    onValueChange={setFuente}
+                                    isInvalid={!validFuente}
+                                    onChange={()=>{setValidFuente(true)}}
+                                    errorMessage={
+                                        !validFuente ? "La fuente no puede estar vacia" : ""
+                                    }
+                                />
+                                <Input
+                                    label="Frecuencia"
+                                    placeholder="Ingresa la frecuencia"
+                                    variant="bordered"
+                                    value={frecuencia}
+                                    onValueChange={setFrecuencia}
+                                    isInvalid={!validFrecuencia}
+                                    onChange={()=>{setValidFrecuencia(true)}}
+                                    errorMessage={
+                                        !validFrecuencia ? "La frecuencia no puede estar vacia" : ""
+                                    }
+                                />
+                                <Input
+                                    label="Responsable"
+                                    placeholder="Ingresa un responsable"
+                                    variant="bordered"
+                                    value={responsable}
+                                    onValueChange={setResponsable}
+                                    isInvalid={!validResponsable}
+                                    onChange={()=>{setValidResponsable(true)}}
+                                    errorMessage={
+                                        !validResponsable ? "El responsable no puede estar vacio" : ""
+                                    }
+
+                                />
+                                <Input
+                                    label="Limites de Control"
+                                    placeholder="Ingresa la fuente"
+                                    variant="bordered"
+                                    value={limitesControl}
+                                    onValueChange={setLimitesControl}
+                                    isInvalid={!validLimitesControl}
+                                    onChange={()=>{setValidLimitesControl(true)}}
+                                    errorMessage={
+                                        !validLimitesControl ? "El limite de control no puede estar vacio" : ""
+                                    }
+                                />                                                                                                
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancelar
+                </Button>
+                <Button className="bg-blue-950 text-white" onPress={cerrarModal}>
+                  Guardar
+                </Button>
+              </ModalFooter>
+            </>
+            );
+            }}
+        </ModalContent>
+      </Modal>
         </div>
     );
 }

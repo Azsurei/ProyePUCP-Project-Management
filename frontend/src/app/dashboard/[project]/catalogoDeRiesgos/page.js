@@ -10,11 +10,8 @@ axios.defaults.withCredentials = true;
 import {
     Input,
     Button,
-    DropdownTrigger,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
     Pagination,
+    useDisclosure,
     Tooltip
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
@@ -29,6 +26,7 @@ import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRies
 import ModalEliminateRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ModalEliminateRC";
 export default function catalogoDeRiesgos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));

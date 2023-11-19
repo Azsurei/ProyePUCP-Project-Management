@@ -21,7 +21,7 @@ const routerPlantillas = require('./plantillas').routerPlantillas;
 const routerGrupoProyectos = require('./grupoProyectos').routerGrupoProyectos;
 
 const proyectoController = require("../controllers/proyectoController");
-
+const routerPlanCalidad = require("./planCalidad").routerPlanCalidad;
 
 routerProyecto.use("/backlog", routerBacklog);
 routerProyecto.use("/EDT", routerEDT);
@@ -39,6 +39,7 @@ routerProyecto.use("/retrospectiva", routerRetrospectiva);
 routerProyecto.use("/matrizResponsabilidad", routerMatrizResponsabilidad);
 routerProyecto.use("/plantillas", routerPlantillas);
 routerProyecto.use("/grupoProyectos", routerGrupoProyectos);
+routerProyecto.use("/planCalidad", routerPlanCalidad);
 
 // Sobre el Proyecto
 routerProyecto.post("/insertarProyecto", verifyToken, proyectoController.crear);

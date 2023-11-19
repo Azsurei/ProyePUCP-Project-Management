@@ -1060,6 +1060,16 @@ async function agregarHerramientaAProyecto(req, res, next) {
 
             idDeHerramientaCreada = null; //????????????????????????????????????????
         }
+        if (idHerramienta === 15) {
+            // Repositorio de documentos
+            query = `CALL INSERTAR_PLAN_CALIDAD(?);`;
+            const [results] = await connection.query(query, [
+                idProyecto,
+            ]);
+            const idPlanCalidad = results[0][0].idPlanCalidad;
+
+            idDeHerramientaCreada = idPlanCalidad;
+        }
 
         res.status(200).json({
             message: "Herramientas agregada exitosamente",

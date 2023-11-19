@@ -27,7 +27,7 @@ routerPlanCalidad.delete("/listarActividadControlCalidadXIdPlanCalidad/:idPlanCa
 
 // Métricas de Calidad
 routerPlanCalidad.post("/crearMetricaCalidad",verifyToken,metricaCalidadController.crear);
-routerPlanCalidad.delete("/listarMetricaCalidadXIdPlanCalidad/:idPlanCalidad",verifyToken,metricaCalidadController.listarXIdPlanCalidad);
+routerPlanCalidad.get("/listarMetricaCalidadXIdPlanCalidad/:idPlanCalidad",verifyToken,metricaCalidadController.listarXIdPlanCalidad);
 
 
 module.exports.routerPlanCalidad = routerPlanCalidad;
