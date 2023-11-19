@@ -387,7 +387,7 @@ function ProjectSidebar(props) {
         {
             id: 14,
             position: 12,
-            optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
+            optIcon: "/icons/sideBarDropDown_icons/sbdd15.svg",
             optName: "Repositorio de documentos",
             goTo: `${stringBase}/repositorioDocumentos`,
         }
