@@ -280,17 +280,6 @@ function DashboardNav({
                 <li style={{ cursor: "pointer" }}>
                     <Dropdown placement="bottom-end">
                         <DropdownTrigger>
-                            {/* <Avatar
-                                isBordered
-                                as="button"
-                                className="transition-transform"
-                                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                            /> */}
-                            {/* <p className="profilePic">
-                                {userName[0]}
-                                {userLastName !== null ? userLastName[0] : ""}
-                            </p> */}
-
                             <Avatar
                                 isBordered
                                 as="button"
@@ -324,7 +313,9 @@ function DashboardNav({
                             aria-label="Profile Actions"
                             variant="flat"
                         >
-                            <DropdownItem key="settings">
+                            <DropdownItem key="settings" onPress={()=>{
+                                router.push("/dashboard/configuracion");
+                            }}>
                                 Mi perfil
                             </DropdownItem>
                             <DropdownItem
