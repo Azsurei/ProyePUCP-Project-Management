@@ -83,7 +83,7 @@ function GroupCard(props) {
                          Menu
                     </Button>
                     </DropdownTrigger>
-                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description" >
+                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description" disabledKeys="reporte">
                       <DropdownItem
                         key="new"
                         description="Visualiza los proyectos relacionados del grupo"
@@ -94,13 +94,14 @@ function GroupCard(props) {
                         
                       </DropdownItem>
                       <DropdownItem
-                        key="copy"
+                        key="reporte"
                         description="Crea un reporte de grupo de proyectos"
                         onPress={() => {
                             setRoutering(idGrupoProyecto);
                         }
                         }
                         startContent={<PlusIcon size={24} />}
+                        isDisabled={proyectos.length === 0}
                       >
                         Crear Reporte
                       </DropdownItem>

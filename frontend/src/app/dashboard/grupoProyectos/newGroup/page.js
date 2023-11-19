@@ -335,7 +335,7 @@ export default function newProject() {
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Button isDisabled={selectedKeys.size === 0} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onPress={() => {agregarGrupo(); router.back();}}>
+                        <Button isDisabled={nombreGrupo === ""} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onPress={() => {agregarGrupo(); router.back();}}>
                             Agregar
                         </Button>
                     </div>
