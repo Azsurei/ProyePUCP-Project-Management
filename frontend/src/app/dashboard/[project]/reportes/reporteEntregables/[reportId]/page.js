@@ -169,10 +169,10 @@ function ReporteEntregables(props) {
             const mockObj = [
                 {
                     idEntregable: 61,
-                    nombre: "poto",
+                    nombre: "entregable",
                     idComponente: 94,
                     activo: 1,
-                    ComponenteEDTNombre: "muerde penes",
+                    ComponenteEDTNombre: "mock",
                     descripcion: "",
                     hito: "",
                     fechaInicio: "2023-11-16T05:00:00.000Z",
@@ -298,10 +298,10 @@ function ReporteEntregables(props) {
                 },
                 {
                     idEntregable: 62,
-                    nombre: "nickher",
+                    nombre: "otro entregable",
                     idComponente: 94,
                     activo: 1,
-                    ComponenteEDTNombre: "muerde penes",
+                    ComponenteEDTNombre: "mock",
                     descripcion: "",
                     hito: "",
                     fechaInicio: "2023-11-16T05:00:00.000Z",
@@ -548,6 +548,7 @@ function ReporteEntregables(props) {
                 },
             ];
 
+            console.log("EL fileId del reporte es " + reportId);
             const listURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/reporte/obtenerJSONReporteEntregableXIdArchivo/" +
