@@ -5,6 +5,7 @@ const initSocket = (server) => {
     cors: {
       origin: process.env.SERVER_URL,
       methods: ["GET", "POST"],
+      credentials: true
     },
   });
 
