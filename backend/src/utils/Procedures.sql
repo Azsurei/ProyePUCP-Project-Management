@@ -4513,6 +4513,36 @@ BEGIN
     AND activo=1;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_METRICA_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_METRICA_CALIDAD(
+	IN _idMetricaCalidad INT,
+    in _descripcionMetrica VARCHAR(200),
+    IN _fuente VARCHAR(200),
+    IN _frecuencia VARCHAR(200),
+    IN _responsable VARCHAR(200),
+    IN _limitesControl VARCHAR(200)
+)
+BEGIN
+	UPDATE MetricaCalidad 
+    SET descripcionMetrica = _descripcionMetrica, 
+		fuente = _fuente, 
+        frecuencia = _frecuencia, 
+        responsable = _responsable, 
+        limitesControl =_limitesControl
+    WHERE idMetricaCalidad = _idMetricaCalidad AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_METRICA_CALIDAD;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_METRICA_CALIDAD(
+	IN _idMetricaCalidad INT
+)
+BEGIN
+	UPDATE MetricaCalidad SET activo = 0 
+    WHERE idMetricaCalidad = _idMetricaCalidad AND activo = 1;
+END$
+
 -----------------------
 -- Plantillas
 -----------------------

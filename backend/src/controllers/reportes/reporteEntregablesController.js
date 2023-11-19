@@ -144,7 +144,7 @@ async function descargarExcel(req, res, next) {
     } 
 }
 async function subirJSON(req, res, next) {
-    const { entregables,idProyecto,nombre} = req.body;
+    const { entregables,idProyecto,nombre,idUsuarioCreador } = req.body;
     //console.log(req.body);
 
 
@@ -164,8 +164,8 @@ async function subirJSON(req, res, next) {
         const idArchivo = await fileController.postArchivo(file2Upload);
         console.log(idArchivo);
         
-        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,2,nombre, idArchivo]);
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,2,nombre, idArchivo,idUsuarioCreador]);
         const idReporte = results[0][0].idReporte;
         //workbook = generarExcelEntregables(entregables);
         
@@ -174,6 +174,7 @@ async function subirJSON(req, res, next) {
 
         fs.unlinkSync(tmpFilePath);
         res.status(200).json({
+            idReporte: idReporte,
             entregables,
             fileId: idArchivo,
             message: "Se genero el reporte de entregables con exito",

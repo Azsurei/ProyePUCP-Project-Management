@@ -50,6 +50,8 @@ import CrossIcon from "@/components/dashboardComps/projectComps/cronogramaComps/
 import ModalRegisterProgress from "@/components/dashboardComps/projectComps/cronogramaComps/ModalRegisterProgress";
 import { NotificationsContext, SessionContext } from "../../layout";
 import Link from "next/link";
+import { SearchIcon } from "public/icons/SearchIcon";
+import { saveAs } from "file-saver";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -834,7 +836,13 @@ export default function Cronograma(props) {
                         .get(tareasURL)
                         .then(function (response) {
                             setListTareas(response.data.tareasOrdenadas);
-                            console.log(JSON.stringify(response.data.tareasOrdenadas,null,2));
+                            console.log(
+                                JSON.stringify(
+                                    response.data.tareasOrdenadas,
+                                    null,
+                                    2
+                                )
+                            );
 
                             const entregablesURL =
                                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -894,6 +902,84 @@ export default function Cronograma(props) {
     //         setValidSelectedSubteamUsers(true);
     //     }
     // }, [selectedSubteam]);
+
+    const [searchValue, setSearchValue] = useState("");
+    const [isExportLoading, setIsExportLoading] = useState(false);
+
+    async function handlerExport() {
+        try {
+            setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/cronograma/descargarExcelCronogramaTareas";
+
+            const response = await axios.post(
+                exportURL,
+                {
+                    tareas: listTareas,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+
+            setTimeout(() => {
+                const today = new Date();
+
+                let day = today.getDate();
+                let month = today.getMonth() + 1;
+                let year = today.getFullYear();
+
+                day = day < 10 ? "0" + day : day;
+                month = month < 10 ? "0" + month : month;
+
+                // Create the formatted date string
+                let formattedDate = `${day}_${month}_${year}`;
+
+                const fileName =
+                    projectName.split(" ").join("") + "_" + formattedDate + ".xlsx";
+                console.log(fileName);
+                saveAs(response.data, fileName);
+
+                setIsExportLoading(false);
+                toast.success("Se exporto el cronograma con exito");
+            }, 500);
+        } catch (error) {
+            toast.error("Error al exportar tu cronograma");
+            console.log(error);
+        }
+    }
+
+    function filterTasks(task, filterValue) {
+        function findTaskAndSubtree(task) {
+            // Check if the current task's name matches the filterValue
+            const isMatch = task.sumillaTarea
+                .toLowerCase()
+                .includes(filterValue.toLowerCase());
+
+            if (isMatch) {
+                return 1;
+            }
+
+            // Recursively check subtasks
+            if (task.tareasHijas && task.tareasHijas.length > 0) {
+                for (const tarea of task.tareasHijas) {
+                    if (findTaskAndSubtree(tarea, filterValue) === 1) {
+                        return 1;
+                    }
+                }
+                return 0;
+            } else {
+                return 0;
+            }
+        }
+
+        if (findTaskAndSubtree(task) === 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     return (
         <div className="cronogramaDiv bg-mainBackground">
@@ -1042,6 +1128,11 @@ export default function Cronograma(props) {
                                     "Inicio / Proyectos / " + projectName
                                 }
                                 btnText={"Nueva tarea"}
+                                haveExport={true}
+                                isExportLoading={isExportLoading}
+                                handlerExport={async () => {
+                                    await handlerExport();
+                                }}
                             >
                                 Cronograma
                             </HeaderWithButtonsSamePage>
@@ -1063,8 +1154,18 @@ export default function Cronograma(props) {
                             {listTareas.length !== 0 && (
                                 <div className="pb-[60px]">
                                     <div className="flex flex-row">
-                                        <p>Aqui va input de nombre</p>
-                                        <p>Filtro fechas</p>
+                                        <Input
+                                            isClearable
+                                            className="w-full"
+                                            placeholder="Buscar por nombre..."
+                                            startContent={<SearchIcon />}
+                                            value={searchValue}
+                                            onClear={() => {
+                                                setSearchValue("");
+                                            }}
+                                            onValueChange={setSearchValue}
+                                            variant="faded"
+                                        />
                                     </div>
                                     <div
                                         className="flex flex-row py-[.4rem] px-[1rem] 
@@ -1079,7 +1180,9 @@ export default function Cronograma(props) {
                                         <p className="w-[27%]">FECHAS</p>
                                     </div>
                                     <ListTareas
-                                        listTareas={listTareas}
+                                        listTareas={listTareas.filter((tarea) =>
+                                            filterTasks(tarea, searchValue)
+                                        )}
                                         leftMargin={"0px"}
                                         handleVerDetalle={handleVerDetalle}
                                         handleAddNewSon={handleAddNewSon}
