@@ -1,6 +1,32 @@
 const connection = require("../../config/db");
 const criterioAceptacionController = require("./criterioAceptacionController");
 const entregableController = require("./entregableController");
+const ExcelJS = require("exceljs");
+const excelJSController = require("../xlxs/excelJSController");
+const path = require("path");
+const dateController = require("../dateController");
+
+const headerTitulo = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+    }
+};
+//Borde para la celda de excel
+const borderStyle = {
+    top: {style:'thin', color: {argb:'000000'}},
+    left: {style:'thin', color: {argb:'000000'}},
+    bottom: {style:'thin', color: {argb:'000000'}},
+    right: {style:'thin', color: {argb:'000000'}}
+  };
+
+  const alignmentCenterStyle = {
+    vertical: 'middle',
+    horizontal: 'center'
+};
+
+
 
 // Funcion que reestructura arreglo para poder usarlo en frontend
 function restructureArray(array, parentId) {
@@ -324,24 +350,70 @@ async function funcEliminarXProyecto(idProyecto) {
 }
 
 async function descargarExcel(req,res,next){
-    const {EDT} = req.body;
+    const {componentes} = req.body;
 
     try{
-        const excelFilePath = await generarExcel(EDT,`tareas`);
+        const workbook = await generarExcel(componentes,`EDT`);
 
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
-
+        
         // Enviar el archivo
         await workbook.xlsx.write(res);
+        console.log("Se ha enviado el archivo excel EDT");
         res.end();
     }catch(error){
         next(error);
     }
 }
 
-async function generarExcel(EDT, nombreArchivo) {
-    
+async function generarExcel(componentes, nombreArchivo) {
+    try{
+        const workbook = new ExcelJS.Workbook();
+        const WSComponentes = workbook.addWorksheet('Componentes');
+        let filaActual = 1;
+
+        const header1 = ["EDT"];
+        const header2 = ["Codigo","Nombre","Descripcion","Fecha Inicio","Fecha Fin","Recursos","Hito Asociado","Observaciones"];
+        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header2,headerTitulo,borderStyle);
+
+        //Para revisar el excel creado durante la etapa de desarrollo, luego se debe borrar
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        const excelFilePath = path.join(destinationFolder, `${nombreArchivo}.xlsx`);
+
+        let nroComponente = 1;
+        for(const componente of componentes){
+            filaActual= await agregarComponenteAExcel(filaActual,WSComponentes, componente, `${nroComponente}`);
+            nroComponente++;   
+        }
+
+        excelJSController.ajustarAnchoColumnas(WSComponentes);
+        await workbook.xlsx.writeFile(excelFilePath);
+        return workbook;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function agregarComponenteAExcel(filaActual, WSComponentes, componente, cadenaNroComponente){
+    try {
+        let nroComponente = 1;
+        componente.fechaInicio = dateController.formatearFecha2D_MM_YYYY(componente.fechaInicio);
+        componente.fechaFin = dateController.formatearFecha2D_MM_YYYY(componente.fechaFin);
+        
+        WSComponentes.getRow(filaActual).values = [cadenaNroComponente,componente.nombre,componente.descripcion,componente.fechaInicio,componente.fechaFin,componente.recursos,componente.hito,componente.observaciones];
+        filaActual++;
+        if(componente.componentesHijos){
+            for(const componenteHijo of componente.componentesHijos){
+                filaActual = await agregarComponenteAExcel(filaActual,WSComponentes,componenteHijo,`${cadenaNroComponente}.${nroComponente}`);
+                nroComponente++;
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    return filaActual;
 }
 
 module.exports = {

@@ -5,11 +5,11 @@ Content-Type: application/json
 
 
 ###
-POST http://localhost:8080/api/proyecto/reporte/descargarExcelReporteEntregableXFileId HTTP/1.1
+POST http://localhost:8080/api/proyecto/reporte/descargarExcelReporteEntregableXIdArchivo HTTP/1.1
 Content-Type: application/json
 
 {
-  "fileId": "1_ykCgBxkLb4rZ0fjY5Ck2Tcoc0y5KKw3"
+  "idArchivo": 18
 }
 
 ###
