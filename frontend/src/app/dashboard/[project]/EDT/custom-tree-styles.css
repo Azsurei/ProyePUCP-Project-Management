@@ -1,0 +1,9 @@
+/* custom-tree-styles.css */
+.custom .node circle {
+    fill: #4a5568; /* Tailwind gray-700 */
+}
+
+.custom .link {
+    stroke: #2d3748; /* Tailwind gray-800 */
+    fill: none;
+}
