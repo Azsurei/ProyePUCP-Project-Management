@@ -129,7 +129,7 @@ async function descargarExcel(req, res, next) {
         
         //BORRAR EN PRODUCCION
         excelFilePath = path.join(destinationFolder, `Tareas.xlsx`);
-        XLSX.writeFile(workbook, excelFilePath);
+        await workbook.xlsx.writeFile(excelFilePath);
 
         await workbook.xlsx.write(res);
         res.status(200).end();

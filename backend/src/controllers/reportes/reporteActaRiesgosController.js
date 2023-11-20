@@ -114,8 +114,8 @@ async function descargarExcel(req,res,next){
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
         
         excelFilePath   =  path.join(destinationFolder,`Tareas.xlsx`);
-        XLXS.writeFile(workbook,excelFilePath);
-        
+        await workbook.xlsx.writeFile(excelFilePath);
+
         // Enviar el archivo
         await workbook.xlsx.write(res);
         res.status(200).end();
