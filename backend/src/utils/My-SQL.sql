@@ -1385,18 +1385,22 @@ CREATE TABLE Archivo(
 )
 ENGINE = InnoDB;
 
---Repositorio
+-- -Repositorio
 CREATE TABLE RepositorioDocumento(
 	idRepositorioDocumentos INT AUTO_INCREMENT PRIMARY KEY,
 	idHerramienta INT,
     idProyecto INT,
+    idArchivo INT,
     fechaCreacion DATE,
     activo TINYINT,
     FOREIGN KEY (idHerramienta) REFERENCES Herramienta(idHerramienta),
-    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto),
+    FOREIGN KEY (idArchivo) REFERENCES Archivo(idArchivo)
 )
 ENGINE = InnoDB;
 
+ALTER TABLE RepositorioDocumento ADD COLUMN idArchivo INT;
+ALTER TABLE RepositorioDocumento ADD FOREIGN KEY (idArchivo) REFERENCES Archivo(idArchivo);
 -----------------------
 -- Plan de Calidad
 -----------------------
