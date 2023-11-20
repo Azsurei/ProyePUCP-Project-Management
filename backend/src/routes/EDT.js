@@ -18,5 +18,5 @@ routerEDT.delete("/eliminarEDT",verifyToken, EDTController.eliminar);
 routerEDT.delete("/eliminarEDTXProyecto",verifyToken, EDTController.eliminarXProyecto);
 
 
-routerEDT.post("/descargarExcelEDT", verifyToken, EDTController.descargarExcel);
+routerEDT.post("/descargarExcelEDT", EDTController.descargarExcel);
 module.exports.routerEDT = routerEDT;
