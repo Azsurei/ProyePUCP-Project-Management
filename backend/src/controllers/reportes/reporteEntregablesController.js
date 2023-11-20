@@ -120,24 +120,15 @@ async function descargarExcel(req, res, next) {
 
         const fileContent = await fsp.readFile(fullPath, 'utf8');
         const jsonData = JSON.parse(fileContent);
-        const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
 
         //console.log(jsonData);
         workbook = await generarExcelEntregables(jsonData);
 
-        await workbook.xlsx.writeFile(excelFilePath);
-
-        res.download(excelFilePath, `${idArchivo}.xlxs`, async(err) => {
-            try {
-                // Eliminar el archivo temporal de forma asíncrona
-                //await fsp.unlink(tmpFilePath);
-            } catch (e) {
-                console.error("Error al eliminar el archivo temporal:", e.message);
-            }
-            if (err) {
-                next(err);
-            }
-        });
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
+        
+        await workbook.xlsx.write(res);
+        res.status(200).end();
     }catch(error){
         console.error("Error al exportar el reporte Excel:", error.message);
         next(error);

@@ -92,7 +92,7 @@ async function descargarExcel(req,res,next){
 
     try{
         const url = await fileController.getArchivo(idArchivo);
-        console.log(destinationFolder);
+        //console.log(destinationFolder);
 
         // Crear el nombre del archivo con el segmento de la URL
         let filename = `${idArchivo}.json`; // Asumiendo que es un archivo JSON
@@ -110,21 +110,14 @@ async function descargarExcel(req,res,next){
         //Con el id del archivo vamos a descargar el JSON
         //Pasamos ese JSON a la funcion de generar excel y este nos va a devolver el workbook
         workbook = await generarExcelPresupuesto(jsonData);
-        //Ese workbook se va a escribir en una ruta temporal
-        await workbook.xlsx.writeFile(excelFilePath);
+        
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
+
+        await workbook.xlsx.write(res);
         //Vamos a devolver ese workbook a front
-        res.download(excelFilePath , `${idArchivo}.xlxs`, async(err) => {
-            try {
-                // Eliminar el archivo temporal de forma asíncrona
-                //await fsp.unlink(fullPath);
-                //await fsp.unlink(excelFilePath);
-            } catch (e) {
-                console.error("Error al eliminar el archivo temporal:", e.message);
-            }
-            if (err) {
-                next(err);
-            }
-        });
+        console.log("Se ha enviado el archivo excel EDT");
+        res.end();
     }catch(error){
         console.error("Error al exportar el reporte Excel:", error.message);
         next(error);
