@@ -52,6 +52,7 @@ import { NotificationsContext, SessionContext } from "../../layout";
 import Link from "next/link";
 import { SearchIcon } from "public/icons/SearchIcon";
 import { saveAs } from "file-saver";
+import ListAdditionalFields from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -1845,6 +1846,8 @@ export default function Cronograma(props) {
                                     </div>
                                 )}
                             </div>
+
+                            <ListAdditionalFields editState={stateSecond !== 2}/>
 
                             {stateSecond !== 2 && (
                                 <div className="twoButtonsEnd pb-8">
