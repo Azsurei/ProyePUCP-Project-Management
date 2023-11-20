@@ -227,7 +227,7 @@ async function agregarEstimacionesCostoAExcel(lineasEstimacionCosto,WSEstimacion
 }
 
 async function subirJSON(req, res, next) {
-    const {idProyecto,nombre,presupuesto} = req.body;
+    const {idProyecto,nombre,presupuesto,idUsuarioCreador} = req.body;
     
     try {
         
@@ -247,8 +247,8 @@ async function subirJSON(req, res, next) {
         //Subir el archivo del path temporal a internet en este caso S3
         const idArchivo = await fileController.postArchivo(file2Upload);
 
-        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,13,nombre,idArchivo]);
+        const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?,?);`;
+        const [results] = await connection.query(query, [idProyecto,13,nombre,idArchivo,idUsuarioCreador]);
         const idReporte = results[0][0].idReporte;
 
         fs.unlinkSync(tmpFilePath);
