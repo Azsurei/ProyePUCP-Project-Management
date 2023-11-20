@@ -181,18 +181,20 @@ async function subirJSON(req, res, next) {
 
 async function obtenerJSON(req, res, next) {
     const {idArchivo} = req.params;
-    const destinationFolder = path.join(__dirname, '../../tmp');
-    console.log(destinationFolder);
-    try{
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,idArchivo,destinationFolder);
-        console.log(tmpFilePath);
 
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
-        const jsonData = JSON.parse(fileContent);
-        console.log(jsonData);
+    try{
+        const url = await fileController.getArchivo(idArchivo);
+
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        let fullPath = path.join(destinationFolder, filename);
+        
+        await fileController.descargarDesdeURL(url,fullPath);
+        
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
+        const entregables = JSON.parse(fileContent);
+        fs.unlinkSync(fullPath);
         res.status(200).json({
-            jsonData,
+            entregables,
             message: "Detalles del reporte recuperados con éxito"
         });
     }catch(error){

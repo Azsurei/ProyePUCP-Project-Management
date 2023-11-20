@@ -104,8 +104,6 @@ async function descargarExcel(req,res,next){
         
         const fileContent = await fsp.readFile(fullPath, 'utf8');
         const jsonData = JSON.parse(fileContent);
-        const excelFilePath = path.join(destinationFolder, `${idArchivo}.xlsx`);
-        console.log(excelFilePath);
         
         //Con el id del archivo vamos a descargar el JSON
         //Pasamos ese JSON a la funcion de generar excel y este nos va a devolver el workbook
@@ -115,7 +113,7 @@ async function descargarExcel(req,res,next){
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
 
         // Borrar en produccion
-        excelFilePath = path.join(destinationFolder, `Presupuesto.xlsx`);
+        const excelFilePath = path.join(destinationFolder, `Presupuesto.xlsx`);
         await workbook.xlsx.writeFile(excelFilePath);
 
         await workbook.xlsx.write(res);
@@ -264,14 +262,21 @@ async function subirJSON(req, res, next) {
 
 async function obtenerJSON(req,res,next){
     const {idArchivo} = req.params;
-    console.log(idArchivo);
+
     try{
-        //Descargamos de la S3 el archivo del JSON y lo leemos y lo parseamos a JSON
-        const jsonData = await fileController.funcGetJSONFile(idArchivo)
-        console.log(jsonData);
+        const url = await fileController.getArchivo(idArchivo);
+
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        let fullPath = path.join(destinationFolder, filename);
+        
+        await fileController.descargarDesdeURL(url,fullPath);
+        
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
+        const presupuesto = JSON.parse(fileContent);
+        fs.unlinkSync(fullPath);
         //Lo devolvemos
         res.status(200).json({
-            jsonData,
+            presupuesto,
             message: "Detalles del reporte recuperados con éxito"
         });
     }catch(error){
