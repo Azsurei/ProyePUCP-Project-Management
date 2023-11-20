@@ -114,6 +114,10 @@ async function descargarExcel(req,res,next){
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
 
+        // Borrar en produccion
+        excelFilePath = path.join(destinationFolder, `Presupuesto.xlsx`);
+        XLSX.writeFile(workbook, excelFilePath);
+
         await workbook.xlsx.write(res);
         //Vamos a devolver ese workbook a front
         console.log("Se ha enviado el archivo excel EDT");

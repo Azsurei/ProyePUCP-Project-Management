@@ -127,6 +127,10 @@ async function descargarExcel(req, res, next) {
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
         
+        //BORRAR EN PRODUCCION
+        excelFilePath = path.join(destinationFolder, `Tareas.xlsx`);
+        XLSX.writeFile(workbook, excelFilePath);
+
         await workbook.xlsx.write(res);
         res.status(200).end();
     }catch(error){
