@@ -84,7 +84,7 @@ export default function EDTVisualization({
                 <Tab key="tree" title="Vista arbol" className="montserrat text-blue-900">
                     {ListComps.length !== 0 && (
                         <p className="font-[Montserrat] text-lg font-medium text-slate-500">
-                            Observa la lista de arbol
+                            Personaliza e interactúa con el árbol de EDT del proyecto. Selecciona distintos niveles para aplicar colores y utiliza los controles de zoom para ajustar la vista.
                         </p>
                     )}
                     <div className="m-8">
