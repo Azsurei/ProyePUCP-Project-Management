@@ -18,7 +18,7 @@ async function funcCrear(idPlanCalidad, descripcion){
         [results]=await connection.query(query,[idPlanCalidad, descripcion]);
         idActividadControlCalidad = results[0][0].idActividadControlCalidad;
     } catch (error) {
-        nexy(error);
+        next(error);
     }
     return idActividadControlCalidad;
 }

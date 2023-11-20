@@ -15,10 +15,26 @@ Content-Type: application/json
     "idComponenteTags": null,
     "nombre": "sadg",
     "responsables": "sthsdt",
-    "fechaInicio": "2023-11-08T05:00:00.000Z",  
+    "fechaInicio": "2023-11-08T05:00:00.000Z",
     "fechaFin": "2023-11-24T05:00:00.000Z",
     "recursos": "recursos",
     "hito": "hito",
+    "entregables": [
+      {
+        "idEntregable": 64,
+        "nombre": "papeleta",
+        "idComponente": 96,
+        "activo": 1
+      }
+    ],
+    "criterios": [
+      {
+        "idComponenteCriterioDeAceptacion": 49,
+        "idComponenteEDT": 96,
+        "descripcion": "dfh",
+        "activo": 1
+      }
+    ],
     "componentesHijos": [
       {
         "idComponente": 97,
@@ -35,29 +51,27 @@ Content-Type: application/json
         "fechaFin": "2023-11-30T05:00:00.000Z",
         "recursos": "dfgn",
         "hito": "dfgn",
+        "entregables": [
+          {
+            "idEntregable": 65,
+            "nombre": "ddddd",
+            "idComponente": 97,
+            "activo": 1
+          }
+        ],
+        "criterios": [
+          {
+            "idComponenteCriterioDeAceptacion": 50,
+            "idComponenteEDT": 97,
+            "descripcion": "ascasc",
+            "activo": 1
+          }
+        ],
         "componentesHijos": null,
         "nextSon": "1.1.1"
       }
     ],
     "nextSon": "1.2"
-  },
-  {
-    "idComponente": 98,
-    "idElementoPadre": 1,
-    "idEDT": 101,
-    "descripcion": "asc",
-    "codigo": "2",
-    "observaciones": "acs",
-    "activo": 1,
-    "idComponenteTags": null,
-    "nombre": "otro componente",
-    "responsables": "responsables",
-    "fechaInicio": "2023-11-09T05:00:00.000Z",
-    "fechaFin": "2023-11-17T05:00:00.000Z",
-    "recursos": "asc",
-    "hito": "asc",
-    "componentesHijos": null,
-    "nextSon": "2.1"
   }
 ]
 }

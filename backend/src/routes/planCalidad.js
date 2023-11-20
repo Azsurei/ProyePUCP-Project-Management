@@ -12,6 +12,11 @@ routerPlanCalidad.post("/crearPlanCalidad", verifyToken, planCalidadController.c
 routerPlanCalidad.get("/listarPlanCalidad/:idProyecto", verifyToken, planCalidadController.listar);
 routerPlanCalidad.delete("/eliminarPlanCalidad", verifyToken, planCalidadController.eliminar);
 routerPlanCalidad.delete("/eliminarPlanCalidadXIdProyecto", verifyToken, planCalidadController.eliminarXProyecto);
+//nuevas Bruce
+routerPlanCalidad.post("/insertarPlanCalidad", verifyToken, planCalidadController.insertarPlanCalidad);
+routerPlanCalidad.get("/listarPlanCalidadXIdPlanCalidad/:idPlanCalidad", verifyToken, planCalidadController.listarXIdPlanCalidad);
+routerPlanCalidad.put("/modificarPlanCalidad", verifyToken, planCalidadController.modificarPlanCalidad);
+routerPlanCalidad.delete("/eliminarCamposDinamicos", verifyToken, planCalidadController.eliminarCamposDinamicos);
 
 // Estandares de Calidad
 routerPlanCalidad.post("/crearEstandarCalidad",verifyToken,estandarCalidadController.crear);

@@ -4365,7 +4365,8 @@ BEGIN
 	DECLARE _idPlanCalidad INT;
 	INSERT INTO PlanCalidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(15,_idProyecto,curdate(),1);
     SET _idPlanCalidad = @@last_insert_id;
-    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,15,_idPlanCalidad,1);
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)
+        VALUES(_idProyecto,15,_idPlanCalidad,1);
     SELECT _idPlanCalidad AS idPlanCalidad;
 END //
 
@@ -4422,6 +4423,27 @@ BEGIN
     WHERE idPlanCalidad = _idPlanCalidad 
     AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_ACTIVIDAD_CONTROL_CALIDAD;
+DELIMETER //
+CREATE PROCEDURE MODIFICAR_ACTIVIDAD_CONTROL_CALIDAD(
+    IN _idActividadControlCalidad INT,
+    IN _descripcion VARCHAR(400)
+)
+BEGIN
+    UPDATE ActividadControlCalidad SET descripcion = _descripcion 
+    WHERE idActividadControlCalidad = _idActividadControlCalidad;
+END //
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ACTIVIDAD_CONTROL_CALIDAD;
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ACTIVIDAD_CONTROL_CALIDAD(
+    IN _idActividadControlCalidad INT
+)
+BEGIN
+    UPDATE ActividadControlCalidad SET activo = 0 
+    WHERE idActividadControlCalidad = _idActividadControlCalidad;
+END //
 -------------------------
 -- Estandares de Calidad
 -------------------------
@@ -4451,6 +4473,26 @@ BEGIN
     AND activo=1;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_ESTANDAR_CALIDAD;
+DELIMETER //
+CREATE PROCEDURE MODIFICAR_ESTANDAR_CALIDAD(
+    IN _idEstandarCalidad INT,
+    IN _descripcion VARCHAR(400)
+)
+BEGIN
+    UPDATE EstandarCalidad SET descripcion = _descripcion 
+    WHERE idEstandarCalidad = _idEstandarCalidad;
+END //
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ESTANDAR_CALIDAD;
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ESTANDAR_CALIDAD(
+    IN _idEstandarCalidad INT
+)
+BEGIN
+    UPDATE EstandarCalidad SET activo = 0 WHERE idEstandarCalidad = _idEstandarCalidad;
+END //
+
 -------------------------
 -- Actividades de Prevencion
 -------------------------
@@ -4479,6 +4521,27 @@ BEGIN
     WHERE idPlanCalidad = _idPlanCalidad 
     AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_ACTIVIDAD_PREVENCION;
+DELIMETER //
+CREATE PROCEDURE MODIFICAR_ACTIVIDAD_PREVENCION(
+    IN _idActividadPrevencion INT,
+    IN _descripcion VARCHAR(400)
+)
+BEGIN
+    UPDATE ActividadPrevencion SET descripcion = _descripcion 
+    WHERE idActividadPrevencion = _idActividadPrevencion;
+END //
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ACTIVIDAD_PREVENCION;
+DELIMETER //
+CREATE PROCEDURE ELIMINAR_ACTIVIDAD_PREVENCION(
+    IN _idActividadPrevencion INT
+)
+BEGIN
+    UPDATE ActividadPrevencion SET activo = 0 
+    WHERE idActividadPrevencion = _idActividadPrevencion;
+END //
 
 -------------------------
 -- Metricas de Calidad
