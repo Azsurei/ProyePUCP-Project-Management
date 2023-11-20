@@ -265,7 +265,7 @@ async function obtenerJSON(req,res,next){
 
     try{
         const url = await fileController.getArchivo(idArchivo);
-
+        let filename = `${idArchivo}.json`;
         const destinationFolder = path.join(__dirname, '../../tmp');
         let fullPath = path.join(destinationFolder, filename);
         

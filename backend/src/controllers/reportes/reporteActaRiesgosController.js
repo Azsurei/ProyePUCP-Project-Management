@@ -42,6 +42,7 @@ async function obtenerJSON(req,res,next){
     try{
         const url = await fileController.getArchivo(idArchivo);
 
+        let filename = `${idArchivo}.json`;
         const destinationFolder = path.join(__dirname, '../../tmp');
         let fullPath = path.join(destinationFolder, filename);
         
@@ -69,7 +70,7 @@ async function subirJSON(req, res, next) {
         var tmpFilePath = generarPathRiesgos(riesgos,idProyecto);
         
         const file = fs.readFileSync(tmpFilePath);
-         let filename = `${idArchivo}.json`;
+        //let filename = `${idArchivo}.json`;
 
         const file2Upload = {
             buffer:file,
