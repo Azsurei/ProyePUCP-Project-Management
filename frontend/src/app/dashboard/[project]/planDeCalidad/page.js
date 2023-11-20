@@ -790,6 +790,9 @@ export default function PlanDeCalidad(props) {
             console.error("Error al realizar la solicitud DELETE:", error);
         });
 
+        setStandarsOriginales(standar);
+        setActivitiesOriginales(activity);  
+        setActivitiesControlOriginales(activityControl); 
     };
 
     return (
@@ -842,6 +845,9 @@ export default function PlanDeCalidad(props) {
                             onPress={() => {
                                 setEditMode(false);
                                 onSubmit();
+                                toast.success(
+                                    "Se han guardado los cambios exitosamente"
+                                );
                             }}
                         >
                             Guardar
