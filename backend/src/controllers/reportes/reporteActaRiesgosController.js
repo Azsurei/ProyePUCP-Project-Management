@@ -38,13 +38,18 @@ const borderStyle = {
 
 async function obtenerJSON(req,res,next){
     const {idArchivo} = req.params;
-    const destinationFolder = path.join(__dirname, '../../tmp');
+    
     try{
-        const authClient = await authGoogle.authorize();
-        const tmpFilePath = await authGoogle.downloadAndSaveFile(authClient,fileId,destinationFolder);
+        const url = await fileController.getArchivo(idArchivo);
 
-        const fileContent = await fsp.readFile(tmpFilePath, 'utf8');
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        let fullPath = path.join(destinationFolder, filename);
+        
+        await fileController.descargarDesdeURL(url,fullPath);
+        
+        const fileContent = await fsp.readFile(fullPath, 'utf8');
         const riesgos = JSON.parse(fileContent);
+        fs.unlinkSync(fullPath);
         res.status(200).json({
             riesgos,
             message: "Detalles del reporte recuperados con éxito"
@@ -64,7 +69,8 @@ async function subirJSON(req, res, next) {
         var tmpFilePath = generarPathRiesgos(riesgos,idProyecto);
         
         const file = fs.readFileSync(tmpFilePath);
-        
+         let filename = `${idArchivo}.json`;
+
         const file2Upload = {
             buffer:file,
             mimetype: 'application/json',
