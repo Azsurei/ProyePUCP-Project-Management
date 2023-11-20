@@ -25,6 +25,8 @@ import {
     ModalFooter,  
 } from "@nextui-org/react";
 import id from "date-fns/locale/id/index";
+import { set } from "date-fns";
+import ModalEliminateMetrica from "@/components/dashboardComps/projectComps/planDeCalidadComps/ModalEliminateMetrica";
 axios.defaults.withCredentials = true;
 
 export default function PlanDeCalidad(props) {
@@ -54,9 +56,30 @@ export default function PlanDeCalidad(props) {
     const [validFrecuencia, setValidFrecuencia] = useState(true);
     const [validResponsable, setValidResponsable] = useState(true);
     const [validLimitesControl, setValidLimitesControl] = useState(true);
-
+    const [dataIngresado, setDataIngresado] = useState(false);
+    const [idMetricaCalidad, setIdMetricaCalidad] = useState("");
+    const [modal, setModal] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
     console.log("El id del plan de calidad es:", idPlanCalidad);
+    const toggleModal = (task) => {
+        setSelectedTask(task);
+        setModal(!modal);
+        
+        console.log("Esta es la tarea", selectedTask);
+        console.log("modal", modal)
+    };
     const activeModal = () => {onOpen();};
+    const editModal = (data) => {
+        setIdMetricaCalidad(data.idMetricaCalidad);
+        setMetrica(data.descripcionMetrica);
+        setFuente(data.fuente);
+        setFrecuencia(data.frecuencia);
+        setResponsable(data.responsable);
+        setLimitesControl(data.limitesControl);
+        if(data.limitesControl !== ""){
+            onOpen();
+        }
+    };
     const [data, setData] = useState([]);
     // const data = [
     //     {
@@ -208,6 +231,7 @@ export default function PlanDeCalidad(props) {
                                 <button
                                     className=""
                                     type="button"
+                                    onClick={() => editModal(data)}
                                 >
                                     <img src="/icons/editar.svg" />
                                 </button>
@@ -216,6 +240,7 @@ export default function PlanDeCalidad(props) {
                                 <button
                                     className=""
                                     type="button"
+                                    onClick={() => toggleModal(data)}
                                 >
                                     <img src="/icons/eliminar.svg" />
                                 </button>
@@ -299,9 +324,13 @@ export default function PlanDeCalidad(props) {
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
     useEffect(() => {
+        setIsLoadingSmall(true);
         DataTable();
         setIsLoadingSmall(false);
     }, [idPlanCalidad]);
+    useEffect(() => {
+        DataTable();
+    }, [dataIngresado]);
 
     function addContainer1() {
         setStandars([
@@ -432,7 +461,6 @@ export default function PlanDeCalidad(props) {
         return { modifiedArray, deletedArray, addedArray };
     };
     function DataTable() {
-        setIsLoadingSmall(true);
         const fetchData = async () => {
             try {
                 // Realiza la solicitud HTTP al endpoint del router
@@ -450,7 +478,6 @@ export default function PlanDeCalidad(props) {
                     `Datos obtenidos exitosamente:`,
                     response.data.metricasCalidad
                 );
-                setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
@@ -460,7 +487,7 @@ export default function PlanDeCalidad(props) {
     }
     function ingresarMetrica() {
         return new Promise((resolve, reject) => {
-            setIsLoadingSmall(true);
+            
             const stringURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/planCalidad/crearMetricaCalidad";
@@ -483,6 +510,7 @@ export default function PlanDeCalidad(props) {
                         // Manejar la respuesta de la solicitud POST
                         console.log("Respuesta del servidor:", response.data);
                         console.log("Guardado de la metrica correcto");
+                        setIdMetricaCalidad("");
                         resolve(response);
                         // Realizar acciones adicionales si es necesario
                     })
@@ -495,13 +523,71 @@ export default function PlanDeCalidad(props) {
 
 
     }
+    function modificarMetrica() {
+        return new Promise((resolve, reject) => {
+            
+            const stringURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/planCalidad/modificarMetricaCalidad";
+                const putData = {
+                    idMetricaCalidad: idMetricaCalidad,
+                    descripcionMetrica: metrica,
+                    fuente: fuente,
+                    frecuencia: frecuencia,
+                    responsable: responsable,
+                    limitesControl: limitesControl,
+
+                };
+                console.log("El putData es :", putData);
+                axios
+                    .put(
+                        stringURL,
+                        putData
+                    )
+                    .then((response) => {
+                        // Manejar la respuesta de la solicitud POST
+                        console.log("Respuesta del servidor:", response.data);
+                        console.log("Modicado de la metrica correcto");
+                        setIdMetricaCalidad("");
+                        setMetrica("");
+                        setFuente("");
+                        setFrecuencia("");
+                        setResponsable("");
+                        setLimitesControl("");
+
+                        resolve(response);
+                        
+                        // Realizar acciones adicionales si es necesario
+                    })
+                    .catch((error) => {
+                        // Manejar errores si la solicitud POST falla
+                        console.error("Error al realizar la solicitud PUT:", error);
+                        reject(error);
+                    });
+        });
+
+
+    }
     const nuevaMetrica = () => {
         toast.promise(ingresarMetrica, {
             loading: "Registrando nuevo metrica...",
             success: (data) => {
+                setDataIngresado(!dataIngresado);
                 return "La metrica se agregó con éxito!";
             },
             error: "Error al agregar metrica",
+            position: "bottom-right",
+        });
+
+    };
+    const cambiarMetrica = () => {
+        toast.promise(modificarMetrica, {
+            loading: "Modificando nuevo metrica...",
+            success: (data) => {
+                setDataIngresado(!dataIngresado);
+                return "La metrica se modifico con éxito!";
+            },
+            error: "Error al modficar metrica",
             position: "bottom-right",
         });
 
@@ -742,7 +828,13 @@ export default function PlanDeCalidad(props) {
 
                                 
                                 try {
-                                    await nuevaMetrica();     
+                                    if(idMetricaCalidad === ""){
+                                        await nuevaMetrica();
+                                    } else {
+                                        console.log("cambiooo")
+                                        await cambiarMetrica();
+                                    }
+  
 
                                     
                                 } catch (error) {
@@ -836,6 +928,15 @@ export default function PlanDeCalidad(props) {
             }}
         </ModalContent>
       </Modal>
+        {modal && selectedTask && (
+                <ModalEliminateMetrica
+                    modal={modal} 
+                    toggle={() => toggleModal(selectedTask)}
+                    taskName={selectedTask.descripcionMetrica}
+                    idMetricaCalidad={selectedTask.idMetricaCalidad}
+                    refresh={DataTable}
+                />
+            )}
         </div>
     );
 }
