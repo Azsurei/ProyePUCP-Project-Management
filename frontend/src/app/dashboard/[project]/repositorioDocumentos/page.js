@@ -14,14 +14,19 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    User,
     Pagination,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { ExportIcon } from "@/../public/icons/ExportIcon";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 import { SmallLoadingScreen, HerramientasInfo } from "../layout";
@@ -47,7 +52,7 @@ const extensionOptions = [
     { name: ".xlsx", uid: "excel" },
     { name: ".pptx", uid: "powerpoint" },
 ];
-const templates = [
+const documents = [
     {
         id: 1,
         name: "Backlog estandar 2023",
@@ -127,15 +132,13 @@ const downloadDocument = async (projectId, idDocumento) => {
             });
     });
 };
-const uploadDocument = async (projectId, idDocumento, data) => {
+const uploadDocument = async (projectId, data) => {
     return new Promise((resolve, reject) => {
         axios
             .put(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/proyecto/repositorioDocumento/subirDocumento/` +
-                    projectId +
-                    `/` +
-                    idDocumento,
+                    projectId,
                 data
             )
             .then((response) => {
@@ -177,85 +180,85 @@ const repositorioDocumentos = (props) => {
     projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     setIsLoadingSmall(false);
 
+    // Variables de modales
+    const {
+        isOpen: isModalDeleteOpen,
+        onOpen: onModalDeleteOpen,
+        onOpenChange: onModalDeleteChange,
+    } = useDisclosure();
+
     // Variables y funciones de uso
-    const [repository, setRepository] = useState([]);
+    const [documentsd, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
-    
-    const handleGet = useCallback(
-        async (projectId) => {
-            setIsLoadingSmall(true);
-            try {
-                const repository = await getRepository(projectId);
-                console.log(repository);
-                setRepository(repository);
-            } catch (error) {
-                console.error(error);
-                toast.error("Error al obtener los datos del repositorio.");
-            } finally {
-                setIsLoadingSmall(false);
-            }
-        },
-    );
-    const handleDownload = useCallback(
-        async (projectId, idDocumento) => {
-            const toastId = toast("Sonner");
-            toast.loading("Descargando documento...", {
+
+    const handleGet = useCallback(async (projectId) => {
+        setIsLoadingSmall(true);
+        try {
+            const repository = await getRepository(projectId);
+            console.log(repository);
+            setDocuments(repository);
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al obtener los datos del repositorio.");
+        } finally {
+            setIsLoadingSmall(false);
+        }
+    });
+    const handleDownload = useCallback(async (projectId, idDocumento) => {
+        const toastId = toast("Sonner");
+        toast.loading("Descargando documento...", {
+            id: toastId,
+        });
+        try {
+            const document = await downloadDocument(projectId, idDocumento);
+            console.log(document);
+            toast.success("El documento se ha descargado exitosamente.", {
                 id: toastId,
             });
-            try {
-                const document = await downloadDocument(projectId, idDocumento);
-                console.log(document);
-                toast.success("El documento se ha descargado exitosamente.", {
-                    id: toastId,
-                });
-            } catch (error) {
-                console.error(error);
-                toast.error("Error al descargar el documento.", {
-                    id: toastId,
-                });
-            }
-        },
-    );
-    const handleUpload = useCallback(
-        async (projectId, idDocumento, data) => {
-            const toastId = toast("Sonner");
-            toast.loading("Subiendo documento...", {
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al descargar el documento.", {
                 id: toastId,
             });
-            try {
-                const document = await uploadDocument(projectId, idDocumento, data);
-                console.log(document);
-                toast.success("El documento se ha subido exitosamente.", {
-                    id: toastId,
-                });
-            } catch (error) {
-                console.error(error);
-                toast.error("Error al subir el documento.", {
-                    id: toastId,
-                });
-            }
-        },
-    );
-    const handleDelete = useCallback(
-        async (projectId, idDocumento) => {
-            const toastId = toast("Sonner");
-            toast.loading("Eliminando documento...", {
+        }
+    });
+    const handleUpload = useCallback(async (projectId) => {
+        const toastId = toast("Sonner");
+        const data = new FormData();
+        toast.loading("Subiendo documento...", {
+            id: toastId,
+        });
+        try {
+            const document = await uploadDocument(projectId, data);
+            console.log(document);
+            toast.success("El documento se ha subido exitosamente.", {
                 id: toastId,
             });
-            try {
-                const document = await deleteDocument(projectId, idDocumento);
-                console.log(document);
-                toast.success("El documento se ha eliminado exitosamente.", {
-                    id: toastId,
-                });
-            } catch (error) {
-                console.error(error);
-                toast.error("Error al eliminar el documento.", {
-                    id: toastId,
-                });
-            }
-        },
-    );
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al subir el documento.", {
+                id: toastId,
+            });
+        }
+    });
+    const handleDelete = useCallback(async (projectId, idDocumento) => {
+        const toastId = toast("Sonner");
+        toast.loading("Eliminando documento...", {
+            id: toastId,
+        });
+        try {
+            const document = await deleteDocument(projectId, idDocumento);
+            console.log(document);
+            toast.success("El documento se ha eliminado exitosamente.", {
+                id: toastId,
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al eliminar el documento.", {
+                id: toastId,
+            });
+        }
+    });
 
     useEffect(() => {
         handleGet(projectId);
@@ -273,29 +276,29 @@ const repositorioDocumentos = (props) => {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(templates.length / rowsPerPage);
+    const pages = Math.ceil(documents.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)
     const filteredItems = React.useMemo(() => {
-        let filteredTemplates = [...templates];
+        let filteredDocuments = [...documents];
 
         if (hasSearchFilter) {
-            filteredTemplates = filteredTemplates.filter((template) =>
-                template.name.toLowerCase().includes(filterValue.toLowerCase())
+            filteredDocuments = filteredDocuments.filter((document) =>
+                document.name.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
         if (
             extensionFilter !== "all" &&
             Array.from(extensionFilter).length !== toolsOptions.length
         ) {
-            filteredTemplates = filteredTemplates.filter((template) =>
-                Array.from(extensionFilter).includes(template.tools)
+            filteredDocuments = filteredDocuments.filter((document) =>
+                Array.from(extensionFilter).includes(document.tools)
             );
         }
 
-        return filteredTemplates;
-    }, [templates, filterValue, extensionFilter]);
+        return filteredDocuments;
+    }, [documents, filterValue, extensionFilter]);
 
     // Items de tabla paginados
     const items = React.useMemo(() => {
@@ -349,26 +352,36 @@ const repositorioDocumentos = (props) => {
     }, []);
 
     // Renderizado de contenidos de tabla (celdas, parte superior, y parte inferior)
-    const renderCell = React.useCallback((template, columnKey) => {
-        const cellValue = template[columnKey];
+    const renderCell = React.useCallback((document, columnKey) => {
+        const cellValue = document[columnKey];
 
         switch (columnKey) {
-            case "iconSrc":
-                return <img src={cellValue} alt="Icono de plantilla"></img>;
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem>Descargar</DropdownItem>
-                                <DropdownItem>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                    <div className="relative flex justify-start items-center gap-2">
+                        <Button
+                            isIconOnly
+                            variant="default"
+                            onPress={() => {
+                                handleDownload(projectId, document.id);
+                            }}
+                        >
+                            <ExportIcon />
+                        </Button>
+                        <Button
+                            isIconOnly
+                            variant="light"
+                            onPress={() => {
+                                setSelectedDocument(document);
+                                onModalDeleteOpen();
+                            }}
+                        >
+                            <img
+                                src="/icons/eliminar.svg"
+                                alt="Ver tarea"
+                                className="w-4/6 h-4/6"
+                            />
+                        </Button>
                     </div>
                 );
             default:
@@ -418,14 +431,20 @@ const repositorioDocumentos = (props) => {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="success" startContent={<PlusIcon />}>
+                        <Button
+                            color="success"
+                            startContent={<PlusIcon />}
+                            onPress={() => {
+                                handleUpload(projectId, 1, {});
+                            }}
+                        >
                             Subir documento
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {templates.length} documentos
+                        Total: {documents.length} documentos
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -445,7 +464,7 @@ const repositorioDocumentos = (props) => {
         filterValue,
         extensionFilter,
         onRowsPerPageChange,
-        templates.length,
+        documents.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -490,77 +509,148 @@ const repositorioDocumentos = (props) => {
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     return (
-        <div className="p-10">
-            <div className="space-x-4 mb-2">
-                <Breadcrumbs>
-                    <BreadcrumbsItem
-                        href="/dashboard"
-                        text={"Inicio"}
-                    ></BreadcrumbsItem>
-                    <BreadcrumbsItem
-                        href="/dashboard"
-                        text={"Proyectos"}
-                    ></BreadcrumbsItem>
-                    <BreadcrumbsItem
-                        href={"/dashboard/" + projectName + "=" + projectId}
-                        text={projectName}
-                    ></BreadcrumbsItem>
-                    <BreadcrumbsItem
-                        text={"Repositorio de documentos"}
-                    ></BreadcrumbsItem>
-                </Breadcrumbs>
-            </div>
-            <div className="flex flex-row space-x-4 mb-4">
-                <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
-                    Repositorio de documentos
-                </h2>
-            </div>
-            <Table
-                aria-label="Tabla de documentos"
-                isHeaderSticky
-                bottomContent={bottomContent}
-                bottomContentPlacement="outside"
-                classNames={{
-                    wrapper: "max-h-[382px]",
-                }}
-                selectedKeys={selectedKeys}
-                selectionMode="multiple"
-                sortDescriptor={sortDescriptor}
-                topContent={topContent}
-                topContentPlacement="outside"
-                onSelectionChange={setSelectedKeys}
-                onSortChange={setSortDescriptor}
-            >
-                <TableHeader columns={columns}>
-                    {(column) => (
-                        <TableColumn
-                            key={column.uid}
-                            align={
-                                column.uid === "actions" ? "center" : "start"
-                            }
-                            allowsSorting={column.sortable}
-                        >
-                            {column.name}
-                        </TableColumn>
-                    )}
-                </TableHeader>
-                <TableBody
-                    emptyContent={"Sin documentos registrados"}
-                    items={sortedItems}
+        <>
+            <div className="p-10">
+                <div className="space-x-4 mb-2">
+                    <Breadcrumbs>
+                        <BreadcrumbsItem
+                            href="/dashboard"
+                            text={"Inicio"}
+                        ></BreadcrumbsItem>
+                        <BreadcrumbsItem
+                            href="/dashboard"
+                            text={"Proyectos"}
+                        ></BreadcrumbsItem>
+                        <BreadcrumbsItem
+                            href={"/dashboard/" + projectName + "=" + projectId}
+                            text={projectName}
+                        ></BreadcrumbsItem>
+                        <BreadcrumbsItem
+                            text={"Repositorio de documentos"}
+                        ></BreadcrumbsItem>
+                    </Breadcrumbs>
+                </div>
+                <div className="flex flex-row space-x-4 mb-4">
+                    <h2 className="montserrat text-[#172B4D] font-bold text-2xl">
+                        Repositorio de documentos
+                    </h2>
+                </div>
+                <Table
+                    aria-label="Tabla de documentos"
+                    isHeaderSticky
+                    bottomContent={bottomContent}
+                    bottomContentPlacement="outside"
+                    classNames={{
+                        wrapper: "max-h-[382px]",
+                    }}
+                    selectedKeys={selectedKeys}
+                    selectionMode="multiple"
+                    sortDescriptor={sortDescriptor}
+                    topContent={topContent}
+                    topContentPlacement="outside"
+                    onSelectionChange={setSelectedKeys}
+                    onSortChange={setSortDescriptor}
                 >
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            {(columnKey) => (
-                                <TableCell>
-                                    {renderCell(item, columnKey)}
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-        </div>
+                    <TableHeader columns={columns}>
+                        {(column) => (
+                            <TableColumn
+                                key={column.uid}
+                                align={
+                                    column.uid === "actions"
+                                        ? "center"
+                                        : "start"
+                                }
+                                allowsSorting={column.sortable}
+                            >
+                                {column.name}
+                            </TableColumn>
+                        )}
+                    </TableHeader>
+                    <TableBody
+                        emptyContent={"Sin documentos registrados"}
+                        items={sortedItems}
+                    >
+                        {(item) => (
+                            <TableRow key={item.id}>
+                                {(columnKey) => (
+                                    <TableCell>
+                                        {renderCell(item, columnKey)}
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+
+            <ModalDeleteDocument
+                isOpen={isModalDeleteOpen}
+                onOpenChange={onModalDeleteChange}
+                handleDelete={handleDelete}
+                selectedDocument={selectedDocument}
+            />
+        </>
     );
 };
+
+function ModalDeleteDocument({
+    isOpen,
+    onOpenChange,
+    handleDelete,
+    selectedDocument,
+}) {
+    // Variables generales
+    const [isSending, setIsSending] = useState(false);
+
+    // Componente de modal
+    return (
+        <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            isDismissable={false}
+        >
+            <ModalContent>
+                {(onClose) => {
+                    const endDelete = async () => {
+                        setIsSending(true);
+                        await handleDelete(selectedDocument.id);
+                        setIsSending(false);
+                        onClose();
+                    };
+                    return (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Eliminar documento
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    ¿Seguro que desea eliminar este doocumento?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="default"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    color="danger"
+                                    variant="flat"
+                                    onPress={endDelete}
+                                    isLoading={isSending}
+                                    isDisabled={isSending}
+                                >
+                                    Eliminar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    );
+                }}
+            </ModalContent>
+        </Modal>
+    );
+}
 
 export default repositorioDocumentos;

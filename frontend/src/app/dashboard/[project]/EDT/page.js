@@ -5,15 +5,14 @@ import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps
 import ListElementsEDT from "@/components/dashboardComps/projectComps/EDTComps/ListElementsEDT";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
 import Link from "next/link";
+import React from 'react';
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 import EDTCompVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTCompVisualization";
-import { Spinner } from "@nextui-org/react";
 import { SmallLoadingScreen } from "../layout";
 axios.defaults.withCredentials = true;
-
 
 export default function EDT(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
