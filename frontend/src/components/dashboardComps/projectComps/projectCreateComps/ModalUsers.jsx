@@ -33,22 +33,29 @@ export default function ModalUser({
     excludedUsers,
     idProyecto,
     excludedUniqueUser,
-    isExcludedUniqueUser=false,
+    isExcludedUniqueUser = false,
 }) {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
+    const [listUsersOriginales, setListUsersOriginales] = useState([]);
 
     const onSearchChange = (value) => {
+        console.log("El valor del filtro es: ", value);
         setFilterValue(value);
+        const lowercasedValue = value.toLowerCase();
+        const filteredUsers = listUsersOriginales.filter(
+            (user) =>
+                user.nombres.toLowerCase().includes(lowercasedValue) ||
+                user.apellidos.toLowerCase().includes(lowercasedValue) ||
+                user.correoElectronico.toLowerCase().includes(lowercasedValue)
+        );
+        setListUsers(filteredUsers);
     };
 
     const [listUsersSelect, setlistUsersSelected] = useState([]);
 
     const addUserList = (user) => {
-        const newUserList = [
-            ...listUsersSelect,
-            user
-        ];
+        const newUserList = [...listUsersSelect, user];
         setlistUsersSelected(newUserList);
         console.log(newUserList);
     };
@@ -63,7 +70,9 @@ export default function ModalUser({
 
     const refreshList = () => {
         if (listAllUsers === false) {
-            const stringURL = process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
+            const stringURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/listarUsuariosXdProyecto/${idProyecto}`;
 
             axios
                 .get(stringURL)
@@ -79,7 +88,8 @@ export default function ModalUser({
                     // });
 
                     console.log(
-                        "se recibio el arreglo desde db: " + response.data.usuarios
+                        "se recibio el arreglo desde db: " +
+                            response.data.usuarios
                     );
                     console.log(
                         "arreglo a previo ya seleccionado: " + excludedUsers
@@ -99,6 +109,7 @@ export default function ModalUser({
                     );
 
                     setListUsers(filteredUsers);
+                    setListUsersOriginales(filteredUsers);
                     console.log(filteredUsers);
 
                     //setListUsers(usersArray);
@@ -109,7 +120,8 @@ export default function ModalUser({
                 });
         } else {
             const stringURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/usuario/listarUsuarios";
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/usuario/listarUsuarios";
             axios
                 .post(stringURL, {
                     nombreCorreo: filterValue,
@@ -126,7 +138,8 @@ export default function ModalUser({
                     // });
 
                     console.log(
-                        "se recibio el arreglo desde db: " + response.data.usuarios
+                        "se recibio el arreglo desde db: " +
+                            response.data.usuarios
                     );
                     console.log(
                         "arreglo a previo ya seleccionado: " + excludedUsers
@@ -141,6 +154,7 @@ export default function ModalUser({
                     );
 
                     setListUsers(filteredUsers);
+                    setListUsersOriginales(filteredUsers);
                     console.log(filteredUsers);
 
                     //setListUsers(usersArray);
@@ -152,15 +166,17 @@ export default function ModalUser({
         }
     };
 
-    //useEffect(() => {
-    //    refreshList();
-    //}, [filterValue]);
+    useEffect(() => {
+        refreshList();
+    }, []);
 
     return (
         <div className="popUp">
             <div className="overlay"></div>
             <div className="modalUser bg-mainModalColor">
-                <p className="buscarSup text-mainHeaders font-semibold">Buscar nuevo miembro</p>
+                <p className="buscarSup text-mainHeaders font-semibold">
+                    Buscar nuevo miembro
+                </p>
                 <div
                     style={{
                         display: "flex",
@@ -182,12 +198,12 @@ export default function ModalUser({
                             variant="faded"
                         />
                     </div>
-                    <Button
+{/*                     <Button
                         className="bg-indigo-950 dark:bg-primary-300 text-slate-50"
                         onClick={refreshList}
                     >
                         Buscar
-                    </Button>
+                    </Button> */}
                 </div>
 
                 <div className="divUsers">

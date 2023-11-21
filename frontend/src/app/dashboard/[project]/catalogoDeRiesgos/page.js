@@ -12,7 +12,7 @@ import {
     Button,
     Pagination,
     useDisclosure,
-    Tooltip
+    Tooltip,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
@@ -25,6 +25,7 @@ import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoR
 import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/RouteringCR";
 import ModalEliminateRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ModalEliminateRC";
 export default function catalogoDeRiesgos(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -322,18 +323,17 @@ export default function catalogoDeRiesgos(props) {
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddRiesgo"
-                        >
-                            <Link
-                                href={
+                            onPress={() => {
+                                router.push(
                                     "/dashboard/" +
-                                    projectName +
-                                    "=" +
-                                    projectId +
-                                    "/catalogoDeRiesgos/registerCR"
-                                }
-                            >
-                                Agregar
-                            </Link>
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/catalogoDeRiesgos/registerCR"
+                                );
+                            }}
+                        >
+                            Agregar
                         </Button>
                         <Button
                             color="primary"

@@ -3,7 +3,7 @@ import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/registerMC.cs
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { SmallLoadingScreen } from "../../layout";
-import { Textarea, Avatar, Button } from "@nextui-org/react";
+import { Textarea, Avatar, Button, Input } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
@@ -47,7 +47,7 @@ export default function MatrizComunicacionesUpdate(props) {
     const [selectedNameFormat, setSelectedNameFormat] = useState("");
     const [modal2, setModal2] = useState(false);
     const [selectedMiembrosList, setSelectedMiembrosList] = useState([]); //solo un objeto contiene
-    const isTextTooLong1 = sumilla.length > 400;
+    const isTextTooLong1 = sumilla.length > 130;
     const isTextTooLong2 = detail.length > 400;
     const isTextTooLong3 = groupReceiver.length > 400;
     const [matrizComunicaciones, setMatrizComunicaciones] = useState(null);
@@ -153,7 +153,7 @@ export default function MatrizComunicacionesUpdate(props) {
 
     function verifyFieldsExcessive() {
         return (
-            sumilla.length > 400 ||
+            sumilla.length > 130 ||
             detail.length > 400 ||
             groupReceiver.length > 400
         );
@@ -168,7 +168,9 @@ export default function MatrizComunicacionesUpdate(props) {
             idFormato: format,
             sumillaInformacion: sumilla,
             detalleInformacion: detail,
-            responsableDeComunicar: selectedMiembrosList[0].idUsuario,
+            responsableDeComunicar: selectedMiembrosList[0]
+                ? selectedMiembrosList[0].idUsuario
+                : null,
             grupoReceptor: groupReceiver,
         };
         console.log("Actualizado correctamente");
@@ -225,7 +227,8 @@ export default function MatrizComunicacionesUpdate(props) {
                     </div>
                 </div>
                 <div>
-                    <Textarea
+                    <Input
+                        isClearable
                         label="Sumilla de la información requerida"
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
@@ -234,11 +237,11 @@ export default function MatrizComunicacionesUpdate(props) {
                         className="custom-label"
                         value={sumilla}
                         onValueChange={setSumilla}
-                        maxLength="450"
+                        maxLength="135"
                         isInvalid={isTextTooLong1}
                         errorMessage={
                             isTextTooLong1
-                                ? "El texto debe ser como máximo de 400 caracteres."
+                                ? "El texto debe ser como máximo de 130 caracteres."
                                 : ""
                         }
                         {...(!editMode ? { isReadOnly: true } : {})}
