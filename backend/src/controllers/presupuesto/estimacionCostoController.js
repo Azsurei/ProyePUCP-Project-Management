@@ -112,6 +112,15 @@ async function eliminarLineaEstimacionCosto(req,res,next){
     }
 }
 
+async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fechaFin){
+    try{
+        const query = `CALL LISTAR_LINEA_ESTIMACION_COSTO_X_ID_PRESUPUESTO_FECHAS(?,?,?);`;
+        const [results] = await connection.query(query,[idPresupuesto,fechaIni,fechaFin]);
+        return results[0];
+    }catch(error){
+        console.log(error);
+    }
+}
 module.exports = {
     crear,
     crearLineaEstimacionCosto,
@@ -119,5 +128,6 @@ module.exports = {
     listarLineasXNombreFechas,
     listarLineasXIdPresupuesto,
     eliminarLineaEstimacionCosto,
-    funcListarLineasXIdPresupuesto
+    funcListarLineasXIdPresupuesto,
+    funcListarLineasFlujoCajaXIdPresupuesto
 };

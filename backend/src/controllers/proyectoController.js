@@ -101,6 +101,11 @@ async function crear(req, res, next) {
                     2,
                     0,
                     0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
                 ]);
                 const idPresupuesto = results4[0][0].idPresupuesto;
 
