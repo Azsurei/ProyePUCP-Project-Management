@@ -2,6 +2,8 @@ const connection = require("../../config/db");
 const excelJSController = require("../xlxs/excelJSController");
 const ExcelJS = require("exceljs");
 const path = require("path");
+const dateController = require("../dateController");
+
 const headerTitulo = {
     fill: {
         type: 'pattern',
@@ -177,6 +179,8 @@ async function generarExcel(tareas,nombreArchivo){
 async function agregarTareaAExcel(tarea,WSTareas,filaActual,cadenaTarea){
     try {
         let nroTarea = 1;
+        tarea.fechaInicio = dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
+        tarea.fechaFin = dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
         WSTareas.getRow(filaActual).values = [cadenaTarea,tarea.nombre,tarea.descripcion,tarea.horasPlaneadas,tarea.nombreEntregable,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado,`${tarea.porcentajeProgreso}%`];
         filaActual++;
         

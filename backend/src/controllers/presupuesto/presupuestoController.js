@@ -4,21 +4,35 @@ const egresoController = require("./egresoController");
 const estimacionCostoController = require("./estimacionCostoController");
 
 async function crear(req,res,next){
-    const {idProyecto,idMoneda,presupuestoInicial,cantidadMeses} = req.body;
+    const {idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV} = req.body;
     try {
-        const query = `CALL INSERTAR_PRESUPUESTO(?,?);`;
-        await connection.query(query,[idProyecto,idMoneda,presupuestoInicial,cantidadMeses]);
+        const idPresupuesto = await funcCrear(idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV);
         res.status(200).json({message: "Presupuesto creada"});
     } catch (error) {
         next(error);
     }
 }
 
-async function modificar(req,res,next){
-    const {idMoneda,presupuestoInicial,cantidadMeses,idPresupuesto} = req.body;
+async function funcCrear(idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV){
     try {
+        const query = `CALL INSERTAR_PRESUPUESTO(?,?,?,?,?,?,?,?);`;
+        //Modificar para soporter los cambios del reporte de estimaciones
+        //Los campos agregados se inicializaran en 0
+        const [results]=await connection.query(query,[idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV]);
+        console.log("Presupuesto creado");
+        return results[0][0].idPresupuesto;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function modificar(req,res,next){
+    const {idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,idPresupuesto} = req.body;
+    try {
+        //Modificar para soporter los cambios del reporte de estimaciones
+        //agregar los cambios en la bd y en el query
         const query = `CALL MODIFICAR_PRESUPUESTO(?,?,?,?);`;
-        await connection.query(query,[idMoneda,presupuestoInicial,cantidadMeses,idPresupuesto]);
+        await connection.query(query,[idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,idPresupuesto]);
         res.status(200).json({message: "Presupuesto modificado"});
     } catch (error) {
         next(error);
@@ -187,6 +201,7 @@ async function funcEliminarXProyecto(idProyecto) {
 
 module.exports = {
     crear,
+    funcCrear,
     modificar,
     listarLineasTodas,
     listarXIdPresupuesto,

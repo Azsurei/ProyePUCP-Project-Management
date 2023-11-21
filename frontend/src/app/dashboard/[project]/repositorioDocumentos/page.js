@@ -23,10 +23,10 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
-import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { ExportIcon } from "@/../public/icons/ExportIcon";
+import { DeleteDocumentIcon } from "public/icons/deleteDocument";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 
 import { SmallLoadingScreen, HerramientasInfo } from "../layout";
@@ -43,16 +43,13 @@ const columns = [
     { name: "Fecha de registro", uid: "fechaSubida", sortable: true },
     { name: "Acciones", uid: "actions" },
 ];
-const toolsOptions = [
-    { name: "Kanban", uid: "active" },
-    { name: "Acta de constitucion", uid: "paused" },
-    { name: "Matriz Responsabilidades", uid: "vacation" },
-];
 const extensionOptions = [
-    { name: ".docx", uid: "word" },
-    { name: ".xlsx", uid: "excel" },
-    { name: ".pptx", uid: "powerpoint" },
-    { name: ".pdf", uid: "pdf" },
+    { name: ".docx", uid: "application/docx" },
+    { name: ".xlsx", uid: "application/xlsx" },
+    { name: ".pptx", uid: "application/pptx" },
+    { name: ".pdf", uid: "application/pdf" },
+    { name: ".png", uid: "application/png" },
+    { name: "Otros", uid: "otros" },
 ];
 
 let projectId = 0;
@@ -61,6 +58,10 @@ let idRepositorioDocumentos = 0;
 // Funciones de APIs
 const getRepository = async (idRepositorioDocumentos) => {
     return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            reject(new Error("Tiempo de espera agotado"));
+        }, 10000); // 10 segundos de tiempo de espera
+
         axios
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -68,47 +69,56 @@ const getRepository = async (idRepositorioDocumentos) => {
                     idRepositorioDocumentos
             )
             .then((response) => {
+                clearTimeout(timeout);
                 console.log(response);
                 resolve(response.data.archivos);
             })
             .catch((error) => {
+                clearTimeout(timeout);
                 console.error("Error al obtener el repositorio: ", error);
                 reject(error);
             });
     });
 };
-const downloadDocument = async (idRepositorioDocumentos, idDocumento) => {
+const downloadDocument = async (idDocumento) => {
     return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            reject(new Error("Tiempo de espera agotado"));
+        }, 10000); // 10 segundos de tiempo de espera
+
         axios
             .get(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/proyecto/repositorioDocumento/getArchivo/` +
-                    idRepositorioDocumentos +
-                    `/` +
                     idDocumento
             )
             .then((response) => {
-                console.log(response);
-                resolve(response.data.documento);
+                clearTimeout(timeout);
+                resolve(response.data.url);
             })
             .catch((error) => {
+                clearTimeout(timeout);
                 console.error("Error al obtener el documento: ", error);
                 reject(error);
             });
     });
 };
-const uploadDocument = async (idRepositorioDocumentos, file) => {
+const uploadDocument = async (documento) => {
     return new Promise((resolve, reject) => {
         axios
             .put(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/repositorioDocumento/subirArchivo` +
-                    idRepositorioDocumentos,
-                file
+                    `/api/proyecto/repositorioDocumento/subirArchivo`,
+                documento,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
             )
             .then((response) => {
                 console.log(response);
-                resolve(response.data.documento);
+                resolve();
             })
             .catch((error) => {
                 console.error("Error al subir el documento: ", error);
@@ -116,15 +126,17 @@ const uploadDocument = async (idRepositorioDocumentos, file) => {
             });
     });
 };
-const deleteDocument = async (idRepositorioDocumentos, idDocumento) => {
+const deleteDocument = async (idDocumento) => {
     return new Promise((resolve, reject) => {
         axios
             .delete(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                    `/api/proyecto/repositorioDocumento/eliminarArchivo` +
-                    idRepositorioDocumentos +
-                    `/` +
-                    idDocumento
+                    `/api/proyecto/repositorioDocumento/eliminarArchivo`,
+                {
+                    data: {
+                        idArchivo: idDocumento,
+                    },
+                }
             )
             .then((response) => {
                 console.log(response);
@@ -157,7 +169,15 @@ const repositorioDocumentos = (props) => {
     } = useDisclosure();
 
     // Variables y funciones de uso
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState([
+        {
+            idArchivo: 1,
+            nombreReal: "Documento 1",
+            tipoArchivo: "application/pdf",
+            tamano: 106000,
+            fechaSubida: "2021-08-25T00:00:00.000Z",
+        },
+    ]);
     const [selectedDocument, setSelectedDocument] = useState(null);
 
     const handleGet = useCallback(async (idRepositorioDocumentos) => {
@@ -165,7 +185,10 @@ const repositorioDocumentos = (props) => {
         try {
             const repository = await getRepository(idRepositorioDocumentos);
             console.log(repository);
-            setDocuments(repository);
+            if(repository === undefined)
+                setDocuments([]);
+            else
+                setDocuments(repository);
         } catch (error) {
             console.error(error);
             toast.error("Error al obtener los datos del repositorio.");
@@ -173,40 +196,38 @@ const repositorioDocumentos = (props) => {
             setIsLoadingSmall(false);
         }
     });
-    const handleDownload = useCallback(
-        async (idRepositorioDocumentos, idDocumento) => {
-            const toastId = toast("Sonner");
-            toast.loading("Descargando documento...", {
+    const handleDownload = useCallback(async (idDocumento) => {
+        const toastId = toast("Sonner");
+        toast.loading("Descargando documento...", {
+            id: toastId,
+        });
+        try {
+            const document = await downloadDocument(idDocumento);
+            console.log(document);
+
+            // Crear un enlace de descarga y simular un clic
+            const link = document.createElement("a");
+            link.href = documentUrl;
+            link.download = "nombre_del_archivo";
+            link.click();
+
+            toast.success("El documento se ha descargado exitosamente.", {
                 id: toastId,
             });
-            try {
-                const document = await downloadDocument(
-                    idRepositorioDocumentos,
-                    idDocumento
-                );
-                console.log(document);
-                toast.success("El documento se ha descargado exitosamente.", {
-                    id: toastId,
-                });
-            } catch (error) {
-                console.error(error);
-                toast.error("Error al descargar el documento.", {
-                    id: toastId,
-                });
-            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al descargar el documento.", {
+                id: toastId,
+            });
         }
-    );
-    const handleUpload = useCallback(async (idRepositorioDocumentos, file) => {
+    });
+    const handleUpload = useCallback(async (documento) => {
         const toastId = toast("Sonner");
         toast.loading("Subiendo documento...", {
             id: toastId,
         });
         try {
-            const document = await uploadDocument(
-                idRepositorioDocumentos,
-                file
-            );
-            console.log(document);
+            await uploadDocument(documento);
             toast.success("El documento se ha subido exitosamente.", {
                 id: toastId,
             });
@@ -218,13 +239,16 @@ const repositorioDocumentos = (props) => {
             });
         }
     });
-    const handleDelete = useCallback(async (idRepositorioDocumentos, idDocumento) => {
+    const handleDelete = useCallback(async (idDocumento) => {
         const toastId = toast("Sonner");
         toast.loading("Eliminando documento...", {
             id: toastId,
         });
         try {
-            const document = await deleteDocument(idRepositorioDocumentos, idDocumento);
+            const document = await deleteDocument(
+                idRepositorioDocumentos,
+                idDocumento
+            );
             console.log(document);
             toast.success("El documento se ha eliminado exitosamente.", {
                 id: toastId,
@@ -239,8 +263,7 @@ const repositorioDocumentos = (props) => {
     });
 
     useEffect(() => {
-        // handleGet(idRepositorioDocumentos);
-        setIsLoadingSmall(false);
+        handleGet(idRepositorioDocumentos);
     }, []);
 
     // Estados generales (uso de tabla)
@@ -332,11 +355,28 @@ const repositorioDocumentos = (props) => {
         setPage(1);
     }, []);
 
+    // Funciones de conversion de datos
+    const convertBytesToMegabytes = React.useCallback((bytes) => {
+        return (bytes / (1024 * 1024)).toFixed(2);
+    }, []);
+
+    const convertTextToExtension = React.useCallback((text) => {
+        // convertir por ejemplo "application/docx" a ".docx modificando el texto, y le agregas el . adelante
+        if (text) return "." + text.substring(text.lastIndexOf("/") + 1);
+        else return "";
+    }, []);
+
     // Renderizado de contenidos de tabla (celdas, parte superior, y parte inferior)
     const renderCell = React.useCallback((document, columnKey) => {
         const cellValue = document[columnKey];
 
         switch (columnKey) {
+            case "tipoArchivo":
+                return convertTextToExtension(cellValue);
+            case "tamano":
+                return convertBytesToMegabytes(cellValue) + " MB";
+            case "fechaSubida":
+                return dbDateToDisplayDate(cellValue);
             case "actions":
                 return (
                     <div className="relative flex justify-start items-center gap-2">
@@ -344,7 +384,7 @@ const repositorioDocumentos = (props) => {
                             isIconOnly
                             variant="default"
                             onPress={() => {
-                                handleDownload(idRepositorioDocumentos, document.idArchivo);
+                                handleDownload(document.idArchivo);
                             }}
                         >
                             <ExportIcon />
@@ -357,11 +397,7 @@ const repositorioDocumentos = (props) => {
                                 onModalDeleteOpen();
                             }}
                         >
-                            <img
-                                src="/icons/eliminar.svg"
-                                alt="Ver tarea"
-                                className="w-4/6 h-4/6"
-                            />
+                            <DeleteDocumentIcon width="1.5em" height="auto" />
                         </Button>
                     </div>
                 );
@@ -419,8 +455,12 @@ const repositorioDocumentos = (props) => {
                                 const selectedFile = e.target.files[0];
                                 if (selectedFile) {
                                     const file = new FormData();
-                                    file.append("documento", selectedFile);
-                                    handleUpload(idRepositorioDocumentos, file);
+                                    file.append(
+                                        "idRepositorioDocumentos",
+                                        idRepositorioDocumentos
+                                    );
+                                    file.append("file", selectedFile);
+                                    handleUpload(file);
                                 }
                             }}
                             className="hidden"
@@ -553,11 +593,7 @@ const repositorioDocumentos = (props) => {
                         {(column) => (
                             <TableColumn
                                 key={column.uid}
-                                align={
-                                    column.uid === "actions"
-                                        ? "center"
-                                        : "start"
-                                }
+                                align={"center"}
                                 allowsSorting={column.sortable}
                             >
                                 {column.name}
@@ -611,7 +647,7 @@ function ModalDeleteDocument({
                 {(onClose) => {
                     const endDelete = async () => {
                         setIsSending(true);
-                        await handleDelete(idRepositorioDocumentos, document.idArchivo);
+                        await handleDelete(selectedDocument.idArchivo);
                         setIsSending(false);
                         onClose();
                     };

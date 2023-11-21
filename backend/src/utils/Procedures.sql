@@ -2353,17 +2353,23 @@ CREATE PROCEDURE INSERTAR_PRESUPUESTO(
 	IN  _idProyecto INT,
 	IN _idMoneda INT,
     IN _presupuestoInicial DECIMAL(10,2),
-    IN _cantidadMeses INT
+    IN _cantidadMeses INT,
+	IN _reservaContingencia DECIMAL(10,2),
+    IN _porcentajeReservaGestion DECIMAL(10,2),
+    IN _porcentajeGanancia DECIMAL(10,2),
+    IN _IGV DECIMAL (10,2)
 )
 BEGIN
 	DECLARE _idPresupuesto INT;
-	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,fechaCreacion,activo) 
-    VALUES(13,_idProyecto,2,NULL,NULL,curdate(),1);
+	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,fechaCreacion,activo) 
+    VALUES(13,_idProyecto,_idMoneda,_cantidadMeses,_presupuestoInicial,_reservaContingencia,_porcentajeReservaGestion,_porcentajeGanancia,_IGV,curdate(),1);
     SET _idPresupuesto = @@last_insert_id;
     INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo) VALUES(_idProyecto,13,_idPresupuesto,1);
     SELECT _idPresupuesto AS idPresupuesto;
 END$
 
+SELECT * FROM HerramientaXProyecto WHERE idProyecto = 150;
+SELECT * FROM Proyecto;
 SELECT * FROM Proyecto;
 CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(1);
 
@@ -2373,12 +2379,17 @@ CREATE PROCEDURE MODIFICAR_PRESUPUESTO(
     IN _idMoneda INT,
     IN _presupuestoInicial DECIMAL(10,2),
     IN _cantidadMeses INT,
+    IN _reservaContingencia DECIMAL(10,2),
+    IN _porcentajeReservaGestion DECIMAL(10,2),
+    IN _porcentajeGanancia DECIMAL(10,2),
+    IN _IGV DECIMAL (10,2),
     IN _idPresupuesto INT
 )
 BEGIN
     UPDATE Presupuesto 
-    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses,activo = 1
-    WHERE idPresupuesto = _idPresupuesto;
+    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses,reservaContingencia = _reservaContingencia,
+    porcentajeReservaGestion = _porcentajeReservaGestion, porcentajeGanancia = _porcentajeGanancia, IGV = _IGV
+    WHERE idPresupuesto = _idPresupuesto and activo =1;
     SELECT _idPresupuesto AS idPresupuesto;
 END$
 

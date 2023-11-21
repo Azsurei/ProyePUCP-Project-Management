@@ -12,6 +12,7 @@ const presupuestoController = require("../presupuesto/presupuestoController");
 const ingresoController = require("../presupuesto/ingresoController");
 const egresoController = require("../presupuesto/egresoController");
 const tipoIngresoController = require("../presupuesto/tipoIngresoController");
+const estimacionCostoController = require("../presupuesto/estimacionCostoController");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
@@ -359,6 +360,8 @@ async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngres
     }
 }
 
+
+
 async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaActual,cantidadMeses) {
     try {
 
@@ -425,6 +428,53 @@ async function agregarEgresosAExcelCaja(lineasEgresoOrdenadas, WSCaja, filaActua
     } catch (error) {
         console.log(error);
     }
+}
+
+async function crearExcelEstimacionCosto(req,res,next){
+    const {idPresupuesto} = req.body;
+
+    try {
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        const lineasEstimacionCosto = await estimacionCostoController.funcListarLineasXIdPresupuesto(idPresupuesto);
+
+        workbook = await funcCrearExcelEstimacionCosto(lineasEstimacionCosto);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcCrearExcelEstimacionCosto(lineasEstimacionCosto){
+    try {
+
+        let filaActual=1;
+        const workbook = new Exceljs.Workbook();
+        const WSEstimaciones = workbook.addWorksheet('Estimacion de costos');
+
+        const header1 = ["Partida","Cantidad de recurso","Tarifa","Tiempo requerido","Subtotal"];
+        filaActual = await excelJSController.agregaHeader(WSEstimaciones,filaActual,header1,headerTitulo,borderStyle);
+
+        filaActual = await agregarEstimacionCostoAExcel(lineasEstimacionCosto,WSEstimaciones,filaActual);
+
+        excelJSController.ajustarAnchoColumnas(WSCaja);
+        return workbook;
+    } catch (error) {
+        console.log(error);    
+    }
+
+}
+
+async function agregarEstimacionCostoAExcel(lineasEstimacionCosto,WSEstimaciones,filaActual){
+    try{
+        let i=1;
+        for(const linea of lineasEstimacionCosto){
+            WSEstimaciones.getRow(filaActual).values = [linea.descripcion,linea.cantidadRecurso,linea.tarifaUnitaria,linea.tiempoRequerido,linea.subtotal];
+            filaActual++;
+            i++;
+        }
+    }catch(error){
+        console.log(error);
+    }
+    return filaActual;
 }
 
 module.exports = {
