@@ -4,18 +4,25 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require('dotenv').config({ path: './../.env' });
-const socketIO = require("socket.io");
 const app = express();
 const port = 8080;
 
-const http = require("http");
-const server = http.createServer(app);
 
 const initSocket = require("./sockets");
 
-//Usamos el router de loggin
-//const routerProgramacion = require('../../routes/routerLogin').routerLoggin;
-//app.use('/api/loggin',routerProgramacion);
+//const http = require("http");
+//const server = http.createServer(app);
+const { readFileSync } = require("fs");
+const { createServer } = require("https");
+
+const server = createServer({
+    key: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/privkey.pem"),
+    cert: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/cert.pem")
+});
+
+const {io, connectedUsers} = initSocket(server);
+
+
 
 // Middleware para cookies
 app.use(cookieParser());
@@ -43,7 +50,6 @@ const startCronJob = require("./config/cronJobs");
 startCronJob();
 
 
-const {io, connectedUsers} = initSocket(server);
 
 //Empezar a escuchar en puerto 8080
 const PORT = process.env.SERVER_PORT || 8080;

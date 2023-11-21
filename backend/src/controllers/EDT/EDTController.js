@@ -134,13 +134,22 @@ async function listarEDT_X_IdProyecto(req, res) {
 }
 
 async function listarComponentesEDT_X_IdProyecto(req, res, next) {
-    console.log("Llegue a recibir solicitud listar EDT por proyecto");
     const idProyecto = req.params.idProyecto;
     const query = `CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
-        console.log(results[0]);
-        const arraySent = fullyRestructureArray(results[0]);
+        const listaComponentes = results[0];
+        for(const componente of listaComponentes){
+            const query2 = "CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(?)"
+            const [entregables] = await connection.query(query2, [componente.idComponente]);
+            componente.entregables = entregables[0];
+
+            const query3 = "CALL LISTAR_CRITERIO_X_IDCOMPONENTE(?)";
+            const [criterios] = await connection.query(query3, [componente.idComponente])
+            componente.criterios = criterios[0];
+        }
+
+        const arraySent = fullyRestructureArray(listaComponentes);
 
         res.status(200).json({
             componentesEDT: arraySent,

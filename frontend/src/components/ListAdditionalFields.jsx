@@ -1,41 +1,7 @@
 import { Button, Textarea } from "@nextui-org/react";
+import axios from "axios";
 import { useState } from "react";
 import { v4 } from "uuid";
-
-const mockData = [
-    {
-        idCampoAdicional: 1,
-        idLineaAsociada: 101,
-        idHerramienta: 123,
-        tipo: "textarea",
-        titulo: "Título del Campo 1",
-        descripcion: "Descripción detallada del Campo 1",
-    },
-    {
-        idCampoAdicional: 2,
-        idLineaAsociada: 102,
-        idHerramienta: 456,
-        tipo: "date",
-        titulo: "Título del Campo 2",
-        descripcion: "Descripción detallada del Campo 2",
-    },
-    {
-        idCampoAdicional: 3,
-        idLineaAsociada: 103,
-        idHerramienta: 789,
-        tipo: "textarea",
-        titulo: "Título del Campo 3",
-        descripcion: "Descripción detallada del Campo 3",
-    },
-    {
-        idCampoAdicional: 4,
-        idLineaAsociada: 104,
-        idHerramienta: 101,
-        tipo: "date",
-        titulo: "Título del Campo 4",
-        descripcion: "Descripción detallada del Campo 4",
-    },
-];
 
 function PlusIcon() {
     return (
@@ -116,13 +82,16 @@ function AdditionalField({ editState, field, deleteField }) {
 //main editor llamara a query con el parametro del id de la linea
 //trayendo los campos solo de ese id
 
-function ListAdditionalFields({ editState }) {
-    const [newFieldsList, setNewFieldsList] = useState([]);
-    const [deletedFieldsList, setDeletedFieldsList] = useState([]);
+function ListAdditionalFields({
+    editState,
+    baseFields,
+    addBaseField,
+    removeBaseField,
+}) {
 
     return (
         <div className="flex flex-col gap-2">
-            {mockData.map((field) => {
+            {baseFields.map((field) => {
                 return (
                     <AdditionalField
                         key={field.idCampoAdicional}
@@ -130,18 +99,6 @@ function ListAdditionalFields({ editState }) {
                         field={field}
                         deleteField={() => {
                             handleDeleteField(field.idCampoAdicional);
-                        }}
-                    />
-                );
-            })}
-            {newFieldsList.map((field) => {
-                return (
-                    <AdditionalField
-                        key={field.idNewField}
-                        editState={true}
-                        field={field}
-                        deleteField={() => {
-                            handleDeleteNewField(field.idNewField);
                         }}
                     />
                 );
@@ -163,30 +120,37 @@ function ListAdditionalFields({ editState }) {
         </div>
     );
 
-    function handleDeleteNewField(idNewField) {
-        const tempList = newFieldsList.filter(
-            (field) => field.idNewField !== idNewField
-        );
-        setNewFieldsList(tempList);
-    }
-
     function handleDeleteField(idCampo) {
-        const tempList = [...newFieldsList, idCampo];
-        setDeletedFieldsList(tempList);
-
-        //eliminar de lista recibida de db
+        removeBaseField(idCampo);
     }
 
     function handleAddNewField() {
-        const tempList = [
-            ...newFieldsList,
-            {
-                idNewField: v4(), //esto genera random ids que son basicamente imposibles de replicar
-                titulo: "Titulo del campo ",
-                descripcion: "Descripcion detallada del campo ",
-            },
-        ];
-        setNewFieldsList(tempList);
+        console.log("anadiendo campo")
+        const newField = {
+            idCampoAdicional: v4(), //esto genera random ids que son basicamente imposibles de replicar
+            titulo: "Titulo del campo ",
+            descripcion: "Descripcion detallada del campo ",
+        };
+
+        addBaseField(newField);
     }
 }
 export default ListAdditionalFields;
+
+export function getAdditionalFields(idLineaAsociada, idHerramienta){
+        
+}
+
+export function registerAdditionalFields(idLineaAsociada, idHerramienta, listFields, actionsAfter){
+    const url="laala";
+    axios.post(url,{
+        idLineaAsociada: idLineaAsociada,
+        idHerramienta: idHerramienta,
+        listaCamposAdicionales: listFields
+    }).then(function(response){
+        console.log(response);
+        actionsAfter();
+    }).catch(function(error){
+        console.log(error);
+    });
+};

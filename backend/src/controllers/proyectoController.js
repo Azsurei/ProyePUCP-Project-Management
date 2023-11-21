@@ -14,6 +14,7 @@ const actaReunionController = require("../controllers/actaReunion/actaReunionCon
 const equipoController = require("../controllers/equipo/equipoController");
 const presupuestoController = require("../controllers/presupuesto/presupuestoController");
 const planCalidadController = require("../controllers/planCalidad/planCalidadController");
+const repositorioDocumentoController = require("../controllers/repositorioDocumento/repositorioDocumentoController");
 
 async function crear(req, res, next) {
     const idUsuario = req.user.id; //del token
@@ -936,6 +937,17 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
                 await presupuestoController.eliminar(idHerramientaCreada);
             }
         }
+        
+        if (idHerramienta == 14) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await repositorioDocumentoController.eliminarXProyecto(idProyecto);
+            } else {
+                await repositorioDocumentoController.eliminar(idHerramientaCreada);
+            }
+        }
         if (idHerramienta == 15) {
             if (
                 idHerramientaCreada == null ||
@@ -1059,6 +1071,15 @@ async function agregarHerramientaAProyecto(req, res, next) {
             const [results1] = await connection.query(query1, [idProyecto]);
 
             idDeHerramientaCreada = null; //????????????????????????????????????????
+        }
+        if (idHerramienta === 14) {
+            // Repositorio de documentos
+            query = `CALL INSERTAR_REPOSTORIO_DOCUMENTOS(?);`;
+            const [results] = await connection.query(query, [
+                idProyecto,
+            ]);
+            const idRepositorioDocumentos = results[0][0].idRepositorioDocumentos;
+            idDeHerramientaCreada = idRepositorioDocumentos;
         }
         if (idHerramienta === 15) {
             // Repositorio de documentos
