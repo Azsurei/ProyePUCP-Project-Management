@@ -22,7 +22,6 @@ import {
 } from "@nextui-org/react";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
-import ListUsers from "./dashboardComps/projectComps/projectCreateComps/ListUsers";
 import ListUsersOne from "./ListUsersOne";
 
 export const UserCardsContextOne = React.createContext();
@@ -76,15 +75,6 @@ export default function ModalUsersOne({
                 .get(stringURL)
                 .then(function (response) {
                     console.log(response);
-                    // const usersArray = response.data.usuarios.map((user) => {
-                    //     return {
-                    //         id: user.idUsuario,
-                    //         name: user.nombres,
-                    //         lastName: user.apellidos,
-                    //         email: user.correoElectronico,
-                    //     };
-                    // });
-
                     console.log(
                         "se recibio el arreglo desde db: " + response.data.usuarios
                     );
@@ -159,10 +149,6 @@ export default function ModalUsersOne({
                 });
         }
     };
-
-    //useEffect(() => {
-    //    refreshList();
-    //}, [filterValue]);
 
     return (
         <div className="popUp">

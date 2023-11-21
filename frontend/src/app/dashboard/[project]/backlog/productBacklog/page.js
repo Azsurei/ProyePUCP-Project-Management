@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "../../layout";
 
 export default function ProductBacklog(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -300,12 +301,11 @@ export default function ProductBacklog(props) {
                 );
             case "NombreEstado":
                 return (
-                    (cellValue && (
+                    cellValue && (
                         <span className="p-1.5 text-sm uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">
-                        {cellValue}
-                    </span>
-                    ))
-
+                            {cellValue}
+                        </span>
+                    )
                 );
             case "color":
                 return null;
@@ -329,63 +329,21 @@ export default function ProductBacklog(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        {/* <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex .roboto">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto'] color-['#172B4D']"
-                                >
-                                    Herramienta
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={toolsFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setToolsFilter}
-                            >
-                                {toolsOptions.map((status) => (
-                                    <DropdownItem key={status.uid}>
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown> */}
-                        <Link
-                            href={
-                                "/dashboard/" +
-                                projectName +
-                                "=" +
-                                projectId +
-                                "/backlog/productBacklog/registerPB"
-                            }
-                        >
-                            <button
-                                className="btnBacklogPrimary sm:w-1 sm:h-1"
-                                type="button"
-                            >
-                                Añadir elemento
-                            </button>
-                        </Link>
                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
-                            className="btnBacklogExport"
+                            className="btnBacklogPrimary sm:w-1 sm:h-1"
+                            onPress={() => {
+                                router.push(
+                                    "/dashboard/" +
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/backlog/productBacklog/registerPB"
+                                );
+                            }}
                         >
-                            Exportar
-                        </Button>
-                        <Button
-                            color="danger"
-                            onClick={() => toggleModalAll()}
-                            endContent={<PlusIcon />}
-                            className="btnBacklogEliminar"
-                        >
-                            Eliminar
+                            Agregar
                         </Button>
                     </div>
                 </div>
@@ -463,56 +421,6 @@ export default function ProductBacklog(props) {
                 Backlog
             </div> */}
             <div className="backlog">
-                {/* <div className="titleBacklog"></div>
-                <div className="navigationBacklog">
-                    <div className="navigationBacklogIzquierda">
-                        <Link
-                            href="#tableroKanban"
-                            style={{ border: "1px red solid", height: "auto" }}
-                        >
-                            <button
-                                className="btnBacklog sm:w-1 sm:h-1"
-                                type="button"
-                            >
-                                Tablero Kanban
-                            </button>
-                        </Link>
-                        <Link href="#sprintBacklog">
-                            <button
-                                className="btnBacklog sm:w-1 sm:h-1"
-                                type="button"
-                            >
-                                Sprint Backlog
-                            </button>
-                        </Link>
-                        <Link href="#productBacklog">
-                            <button
-                                className="btnBacklogPrimary sm:w-1 sm:h-1"
-                                type="button"
-                            >
-                                Product Backlog
-                            </button>
-                        </Link>
-                    </div>
-                    <div className="navigationBacklogDerecha">
-                        <Link
-                            href={
-                                "/dashboard/" +
-                                projectName +
-                                "=" +
-                                projectId +
-                                "/backlog/productBacklog/registerPB"
-                            }
-                        >
-                            <button
-                                className="btnBacklogPrimary sm:w-1 sm:h-1"
-                                type="button"
-                            >
-                                Añadir elemento
-                            </button>
-                        </Link>
-                    </div>
-                </div> */}
                 <div className="mt-16">
                     <MyDynamicTable
                         label="Tabla Backlog"

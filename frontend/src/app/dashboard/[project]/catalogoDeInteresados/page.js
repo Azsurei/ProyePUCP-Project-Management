@@ -28,6 +28,7 @@ import RouteringInteresados from "@/components/dashboardComps/projectComps/catal
 import ModalEliminateInteresado from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ModalEliminateInteresado";
 
 export default function CatalogoDeInteresados(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -255,7 +256,7 @@ export default function CatalogoDeInteresados(props) {
                                         setRoutering(data, false);
                                     }}
                                 >
-                                    <img src="/icons/view.svg" />
+                                    <img src="/icons/view.svg"/>
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
@@ -305,20 +306,19 @@ export default function CatalogoDeInteresados(props) {
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddRiesgo"
-                        >
-                            <Link
-                                href={
+                            onPress={() => {
+                                router.push(
                                     "/dashboard/" +
-                                    projectName +
-                                    "=" +
-                                    projectId +
-                                    "/catalogoDeInteresados/registerCI"
-                                }
-                            >
-                                Agregar
-                            </Link>
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/catalogoDeInteresados/registerCI"
+                                );
+                            }}
+                        >
+                            Agregar
                         </Button>
-                        <Button
+                        {/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnRiesgosExport"
@@ -331,7 +331,7 @@ export default function CatalogoDeInteresados(props) {
                             className="btnRiesgosEliminar"
                         >
                             Eliminar
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
