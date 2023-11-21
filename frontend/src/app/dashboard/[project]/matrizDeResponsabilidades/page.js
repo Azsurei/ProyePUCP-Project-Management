@@ -899,7 +899,7 @@ export default function MatrizDeResponsabilidades(props) {
     };
 
     return (
-        <div className="px-[2rem] py-[1rem] ">
+        <div className="px-[2rem] py-[1rem]">
             <div className="px-[1rem] mt-[1rem]">
                 <Breadcrumbs>
                     <BreadcrumbsItem
@@ -926,27 +926,37 @@ export default function MatrizDeResponsabilidades(props) {
                     ></BreadcrumbsItem>
                 </Breadcrumbs>
             </div>
-            <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
-                <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white">
+            <div className="flex items-center justify-between my-[0.5rem] px-[1rem] gap-2">
+                <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white break-words">
                     Matriz de responsabilidades
                 </div>
-                <div className="flex gap-4">
-                    <Button
-                        color="secondary"
-                        startContent={<ContentPasteGoIcon />}
-                        onPress={onModalPlantillas}
-                    >
-                        Plantillas
-                    </Button>
-
-                    <Button
-                        color="secondary"
-                        startContent={<SaveAsIcon />}
-                        onPress={onSaveModalPlantilla}
-                    >
-                        Guardar Plantilla
-                    </Button>
-
+                <div className="flex gap-4 flex-wrap">
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button color="secondary">Plantillas</Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            variant="faded"
+                            aria-label="Dropdown menu with icons"
+                        >
+                            <DropdownItem
+                                key="verPlantillasMR"
+                                startContent={<ContentPasteGoIcon />}
+                                onPress={onModalPlantillas}
+                                color="secondary"   
+                            >
+                                Ver Plantillas
+                            </DropdownItem>
+                            <DropdownItem
+                                key="guardarPlantillasMR"
+                                startContent={<SaveAsIcon />}
+                                onPress={onSaveModalPlantilla}
+                                color="secondary"
+                            >
+                                Guardar Plantilla
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                     <Button
                         color="primary"
                         startContent={<SaveIcon />}
@@ -992,7 +1002,7 @@ export default function MatrizDeResponsabilidades(props) {
                         </TableBody>
                     </Table>
                     {rows.length === 0 && (
-                        <div className="text-center font-semibold">
+                        <div className="text-center font-medium">
                             <Link
                                 href={
                                     "/dashboard/" +
