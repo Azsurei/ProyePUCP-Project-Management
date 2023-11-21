@@ -28,13 +28,19 @@ export default function PopUpRolEquipo({
 
     const EliminateRoles = (rol) => {
         const isRolInUse = ListComps.some((equipo) => {
-            return equipo.participantes.some((participante) => participante.nombreRol === rol.nombreRol);
+            return equipo.participantes.some(
+                (participante) => participante.nombreRol === rol.nombreRol
+            );
         });
         if (isRolInUse) {
-            toast.error("No se puede eliminar el rol porque está en uso.",{ position: "bottom-left" });
+            toast.error("No se puede eliminar el rol porque está en uso.", {
+                position: "bottom-left",
+            });
         } else {
             setListRoles((prevRoles) => {
-                return prevRoles.filter((role) => role.idRolEquipo !== rol.idRolEquipo);
+                return prevRoles.filter(
+                    (role) => role.idRolEquipo !== rol.idRolEquipo
+                );
             });
         }
     };
@@ -89,7 +95,8 @@ export default function PopUpRolEquipo({
                                             newIdRol = generateId();
                                         } while (
                                             listRoles.some(
-                                                (rol) => rol.idRolEquipo === newIdRol
+                                                (rol) =>
+                                                    rol.idRolEquipo === newIdRol
                                             )
                                         );
 

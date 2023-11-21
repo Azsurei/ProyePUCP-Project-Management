@@ -7,7 +7,7 @@ import { useState, useEffect, useContext } from "react";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
-import {AddIconBlack} from "@/components/equipoComps/AddIconBlack";
+import { AddIconBlack } from "@/components/equipoComps/AddIconBlack";
 import ColorPicker from "@/components/dashboardComps/projectComps/matrizDeResponsabilidades/ColorPicker";
 import { Toaster, toast } from "sonner";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
@@ -85,6 +85,12 @@ export default function MatrizDeResponsabilidades(props) {
         isOpen: isOpenRol,
         onOpen: onOpenRol,
         onOpenChange: onOpenChangeRol,
+    } = useDisclosure();
+
+    const {
+        isOpen: isOpenListadoRol,
+        onOpen: onOpenListadoRol,
+        onOpenChange: onOpenChangeListadoRol,
     } = useDisclosure();
 
     const [letraRes, setLetraRes] = useState("");
@@ -566,20 +572,24 @@ export default function MatrizDeResponsabilidades(props) {
 
     const agregarRol = (onClose) => {
         if (nombreRolAdd.trim() === "") {
-            toast.error("Faltan completar campos",{ position: "bottom-left" });
+            toast.error("Faltan completar campos", { position: "bottom-left" });
             return;
         } else if (nombreRolAdd.length > 40) {
-            toast.error("Se excedió el límite de caractéres",{ position: "bottom-left" });
+            toast.error("Se excedió el límite de caractéres", {
+                position: "bottom-left",
+            });
             return;
         } else if (isRolExistente()) {
-            toast.error("El nombre del rol ya existe",{ position: "bottom-left" });
+            toast.error("El nombre del rol ya existe", {
+                position: "bottom-left",
+            });
             return;
         }
 
         setIsLoadingSmall(true);
         const urlAgregarRol =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/equipo/insertarRol"; 
+            "/api/proyecto/equipo/insertarRol";
 
         const newRol = {
             nombreRol: nombreRolAdd,
@@ -602,19 +612,23 @@ export default function MatrizDeResponsabilidades(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
-            }); 
+            });
         onClose();
     };
 
     const agregarResponsabilidad = (onClose) => {
         if (verifyFieldsEmpty()) {
-            toast.error("Faltan completar campos",{ position: "bottom-left" });
+            toast.error("Faltan completar campos", { position: "bottom-left" });
             return;
         } else if (verifyFieldsExcessive()) {
-            toast.error("Se excedió el límite de caractéres",{ position: "bottom-left" });
+            toast.error("Se excedió el límite de caractéres", {
+                position: "bottom-left",
+            });
             return;
         } else if (isResponsabilidadExistente()) {
-            toast.error("La letra o el nombre ya existen",{ position: "bottom-left" });
+            toast.error("La letra o el nombre ya existen", {
+                position: "bottom-left",
+            });
             return;
         }
         setIsLoadingSmall(true);
@@ -654,10 +668,12 @@ export default function MatrizDeResponsabilidades(props) {
 
     const actualizarResponsabilidad = (onClose) => {
         if (verifyFieldsEmptyUpdate()) {
-            toast.error("Faltan completar campos",{ position: "bottom-left" });
+            toast.error("Faltan completar campos", { position: "bottom-left" });
             return;
         } else if (verifyFieldsExcessiveUpdate()) {
-            toast.error("Se excedió el límite de caractéres",{ position: "bottom-left" });
+            toast.error("Se excedió el límite de caractéres", {
+                position: "bottom-left",
+            });
             return;
         }
         setIsLoadingSmall(true);
@@ -1019,18 +1035,27 @@ export default function MatrizDeResponsabilidades(props) {
                     </Dropdown>
                     <Dropdown>
                         <DropdownTrigger>
-                            <Button color="warning" className="text-white">Roles</Button>
+                            <Button color="warning" className="text-white">
+                                Roles
+                            </Button>
                         </DropdownTrigger>
                         <DropdownMenu
                             variant="faded"
                             aria-label="Dropdown menu with icons"
                         >
                             <DropdownItem
-                                key="verPlantillasMR"
+                                key="agregarRolMR"
                                 startContent={<AddIconBlack />}
                                 onPress={onOpenRol}
                             >
                                 Agregar rol
+                            </DropdownItem>
+                            <DropdownItem
+                                key="verRolesMR"
+                                startContent={<AddIconBlack />}
+                                onPress={onOpenListadoRol}
+                            >
+                                Eliminar rol
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
@@ -1542,6 +1567,96 @@ export default function MatrizDeResponsabilidades(props) {
                                     className="bg-indigo-950 text-slate-50"
                                     onPress={() => {
                                         agregarRol(onClose);
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            {/*Modal para el listado roles*/}
+            <Modal
+                isOpen={isOpenListadoRol}
+                onOpenChange={onOpenChangeListadoRol}
+                isDismissable={false}
+                scrollBehavior="inside"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Listado de roles
+                            </ModalHeader>
+                            <ModalBody>
+                                {roles.map((rol) => (
+                                    <div
+                                        key={rol.id}
+                                        className="flex items-center justify-between gap-2 mt-2 bg-[#f2f2f2] rounded-md p-2 dark:bg-[rgba(238,238,238,0.1)]"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <div className="break-words font-medium">
+                                                {rol.nombre}
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            {/* <Tooltip
+                                                showArrow={true}
+                                                content="Editar"
+                                            >
+                                                <img
+                                                    src="/icons/updateIconYellow.svg"
+                                                    alt="update"
+                                                    className="mb-4 cursor-pointer"
+                                                    onClick={() => {
+                                                        setNombreRolUpdate(
+                                                            rol.nombre
+                                                        );
+                                                        setIdRolUpdate(rol.id);
+                                                        onOpenUpdateRol();
+                                                    }}
+                                                />
+                                            </Tooltip> */}
+                                            {rol.nombre !== "Miembro" &&
+                                                rol.nombre != "Líder" && (
+                                                    <Tooltip
+                                                        showArrow={true}
+                                                        content="Eliminar"
+                                                    >
+                                                        <img
+                                                            src="/icons/icon-trash.svg"
+                                                            alt="delete"
+                                                            className="cursor-pointer"
+                                                            onClick={() => {
+                                                                setRolEliminar(
+                                                                    rol
+                                                                );
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setNombreRolAdd("");
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        //agregarRol(onClose);
                                     }}
                                 >
                                     Guardar
