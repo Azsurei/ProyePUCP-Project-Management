@@ -17,8 +17,8 @@ const { readFileSync } = require("fs");
 const { createServer } = require("https");
 
 const server = createServer({
-    key: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/privkey.pem "),
-    cert: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/cert.pem ")
+    key: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/privkey.pem"),
+    cert: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/cert.pem")
 });
 
 const {io, connectedUsers} = initSocket(server);
