@@ -1,5 +1,61 @@
 const connection = require("../../config/db");
 
+async function loginXCorreo(req, res, next) {
+    const { correoElectronico } = req.body;
+    console.log("Realizando verificación de si el usuario está en el sistema...");
+    const query = `CALL VERIFICAR_CUENTA_USUARIO_X_CORREO(?);`;
+    // Este procedure verifica si el usuario ha registrado una cuenta de Google
+    // mediante el sistema NO por Google.
+    // Si el usuario tiene una cuenta en el sistema con un correo que coincide con la 
+    // cuentaGoogle que intenta acceder tieneCuentaGoogle se actualiza a 1
+    try {
+        const [results] = await connection.query(query, [correoElectronico]);
+        const idUsuario = results[0][0].idUsuario;
+        const idRol = results[0][0].idRol;
+        if (idUsuario != 0) {
+            const user = {
+                id: idUsuario,
+                mail: correoElectronico,
+                rol: idRol,
+            };
+
+            //procesamos token
+            const token = jwt.sign(
+                {
+                    user,
+                },
+                secret,
+                { expiresIn: "3h" }
+            );
+
+            const serialized = cookie.serialize("tokenProyePUCP", token, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                path: "/",
+            });
+
+            res.setHeader("Set-Cookie", serialized);
+
+            user.token = token;
+            console.log(`El usuario ${idUsuario} se ha autenticado.`);
+            res.status(200).json(user);
+        } else {
+            console.log(`No se ha autenticado al usuario.`);
+            res.status(417).send("Nombre de usuario o contraseña incorrectos. O el correo no está en el sistema");
+        }
+        res.status(200).json({
+            usuarios: results[0],
+            message: "Usuarios obtenidos exitosamente",
+        });
+    } catch (error) {
+        console.error("Error en la autenticación:", error);
+        res.status(500).send("Error en la autenticación: " + error.message);
+        next(error);
+    }
+}
+
 async function listarUsuarios(req, res, next) {
     const { nombreCorreo } = req.body;
     //Insertar query aca
@@ -298,9 +354,25 @@ async function verificarNotificacionesPresupuesto(req, res, next){
     }
 }
 
+async function modificarDatos(req,res,next){
+    const {idUsuario, nombres, apellidos, fechaNacimiento, telefono, usuario} = req.body;
+    try {
+        const query = `CALL MODIFICAR_DATOS_USUARIO(?,?,?,?,?,?);`;
+        await connection.query(
+            query,[idUsuario, nombres, apellidos, fechaNacimiento, telefono, usuario]
+        );
+        console.log(`Usuario ${idUsuario} modificado`);
+        res.status(200).json({message: "Usuario"});
+    } catch (error) {
+        console.log("Error al Modificar datos de Usuario",error);
+        next(error);
+    }
+}
+
 
 
 module.exports = {
+    loginXCorreo,
     listarUsuarios,
     verInfoUsuario,
     verRolUsuarioEnProyecto,
@@ -313,5 +385,6 @@ module.exports = {
     actualizaNotificacionAR,
     modificaEstadoNotificacionXIdNotificacion,
     modificaEstadoNotificacionXIdUsuario,
-    verificarNotificacionesPresupuesto
+    verificarNotificacionesPresupuesto,
+    modificarDatos
 };

@@ -8,6 +8,8 @@ require('dotenv').config({ path: './../../.env' });
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET; 
 const usuarioController = require("../controllers/usuario/usuarioController");
+const { verifyToken } = require("../middleware/middlewares");
+
 routerAuth.get("/", (req, res) => {
     console.log("Llegue a autenticacion");
     res.send(JSON.stringify("LLEGUE A LOGGIN"));
@@ -65,7 +67,9 @@ routerAuth.post("/login", async (req, res) => {
     }
 });
 
-
+// Esta opcion es para cuando uno se registra por el sistema y
+// luego quiere entrar con Google
+routerAuth.post("/loginXCorreo", usuarioController.loginXCorreo);
 
 routerAuth.post("/loginImg", async (req, res) => {
     const { username, password, imgLink } = req.body;
@@ -173,5 +177,9 @@ routerAuth.get("/private", (req, res) => {
         res.status(401).send({ error: error.message });
     }
 });
+
+// Modificar. Este modificar no modifica ni el correo ni la contraseña
+routerAuth.put("/modificarUsuario", verifyToken, usuarioController.modificarDatos);
+
 
 module.exports.routerAuth = routerAuth;
