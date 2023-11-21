@@ -387,7 +387,7 @@ export default function SprintBacklog(props) {
             <div className="flex flex-col py-4 lg:px-8 gap-4 mt-4">
                 <div className="flex flex-row items-center justify-between">
                     <h3 className="montserrat text-[#172B4D] dark:text-white text-2xl font-semibold">
-                        Sprint actual
+                        Sprint activo
                     </h3>
                     {sprints.filter((sprint) => sprint.estado === 2).length ===
                         1 && (
