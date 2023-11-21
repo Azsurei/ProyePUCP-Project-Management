@@ -62,21 +62,6 @@
     cursor: pointer;
 }
 
-.UserCard.active {
-    /* background-color: #9bffb7; */
-    /* background-color: #0085FF;
-    color: white;
-
-    .titleUserName{
-        color: white;
-    }
-
-    .titleUserEmail{
-        color: white;
-    } */
-}
-
-
 .usrLeftIconNull{
     font-family: 'Montserrat';
     /* border: 1px lightgray solid; */
