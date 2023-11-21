@@ -4,12 +4,11 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require('dotenv').config({ path: './../.env' });
-const socketIO = require("socket.io");
 const app = express();
 const port = 8080;
 
 
-const initSocket = require("socket.js");
+const initSocket = require("./sockets");
 
 //const http = require("http");
 //const server = http.createServer(app);
