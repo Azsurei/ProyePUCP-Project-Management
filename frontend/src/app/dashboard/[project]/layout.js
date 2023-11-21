@@ -125,7 +125,7 @@ export default function RootLayout({ children, params }) {
                                 flex: "1",
                                 position: "relative",
                             }}
-                            className="h-[100%] bg-mainBackground"
+                            className="h-[100%] bg-mainBackground font-[Montserrat]"
                         >
                             {isLoadingSmall && (
                                 <div

@@ -33,6 +33,7 @@ import {
     ModalFooter,
     useDisclosure,
     Input,
+    Link,
 } from "@nextui-org/react";
 import { SessionContext } from "../../layout";
 
@@ -898,774 +899,767 @@ export default function MatrizDeResponsabilidades(props) {
     };
 
     return (
-            <div className="px-[2rem] py-[1rem]">
-                <div className="px-[1rem] mt-[1rem]">
-                    <Breadcrumbs>
-                        <BreadcrumbsItem
-                            href="/dashboard"
-                            text={"Inicio"}
-                        ></BreadcrumbsItem>
-                        <BreadcrumbsItem
-                            href="/dashboard"
-                            text={"Proyectos"}
-                        ></BreadcrumbsItem>
-                        <BreadcrumbsItem
-                            href={"/dashboard/" + projectName + "=" + projectId}
-                            text={projectName}
-                        ></BreadcrumbsItem>
-                        <BreadcrumbsItem
-                            href={
-                                "/dashboard/" +
-                                projectName +
-                                "=" +
-                                projectId +
-                                "/matrizDeResponsabilidades"
-                            }
-                            text={"Matriz de Responsabilidades"}
-                        ></BreadcrumbsItem>
-                    </Breadcrumbs>
+        <div className="px-[2rem] py-[1rem] ">
+            <div className="px-[1rem] mt-[1rem]">
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/matrizDeResponsabilidades"
+                        }
+                        text={"Matriz de Responsabilidades"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
+            </div>
+            <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
+                <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white">
+                    Matriz de responsabilidades
                 </div>
-                <div className="flex items-center justify-between my-[0.5rem] px-[1rem]">
-                    <div className="text-[#172B4D] font-semibold text-[2rem] dark:text-white">
-                        Matriz de responsabilidades
-                    </div>
-                    <div className="flex gap-4">
-                        <Button
-                            color="secondary"
-                            startContent={<ContentPasteGoIcon />}
-                            onPress={onModalPlantillas}
-                        >
-                            Plantillas
-                        </Button>
+                <div className="flex gap-4">
+                    <Button
+                        color="secondary"
+                        startContent={<ContentPasteGoIcon />}
+                        onPress={onModalPlantillas}
+                    >
+                        Plantillas
+                    </Button>
 
-                        <Button
-                            color="secondary"
-                            startContent={<SaveAsIcon />}
-                            onPress={onSaveModalPlantilla}
-                        >
-                            Guardar Plantilla
-                        </Button>
+                    <Button
+                        color="secondary"
+                        startContent={<SaveAsIcon />}
+                        onPress={onSaveModalPlantilla}
+                    >
+                        Guardar Plantilla
+                    </Button>
 
-                        <Button
-                            color="primary"
-                            startContent={<SaveIcon />}
-                            onPress={saveFunction}
-                        >
-                            Guardar
-                        </Button>
-                        <Button
-                            color="danger"
-                            startContent={<CrossWhite />}
-                            onPress={onOpenDelete}
-                        >
-                            Limpiar
-                        </Button>
-                    </div>
+                    <Button
+                        color="primary"
+                        startContent={<SaveIcon />}
+                        onPress={saveFunction}
+                    >
+                        Guardar
+                    </Button>
+                    <Button
+                        color="danger"
+                        startContent={<CrossWhite />}
+                        onPress={onOpenDelete}
+                    >
+                        Limpiar
+                    </Button>
                 </div>
-                <Table
-                    aria-label="Example table with custom cells"
-                    className="px-[1rem]"
-                >
-                    <TableHeader columns={columns}>
-                        {(column) => (
-                            <TableColumn
-                                key={column.uid}
-                                className="text-center text-[0.9rem]"
-                            >
-                                {column.name}
-                            </TableColumn>
-                        )}
-                    </TableHeader>
-                    <TableBody items={rows}>
-                        {(item) => (
-                            <TableRow key={item.id}>
-                                {(columnKey) => (
-                                    <TableCell className="text-center">
-                                        {renderCell(item, columnKey)}
-                                    </TableCell>
-                                )}
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-                <div className="mx-[1rem] ">
-                    <div className="my-[2rem] p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto rounded-large shadow-small w-full">
-                        <div className="text-[#172B4D] font-semibold text-[1.4rem] dark:text-white">
-                            Leyenda
-                        </div>
-                        <div className="grid grid-cols-12 gap-4 items-center">
-                            {responsabilidades.map((responsabilidad) => (
-                                <React.Fragment key={responsabilidad.id}>
-                                    <div
-                                        style={{
-                                            backgroundColor:
-                                                responsabilidad.color,
-                                        }}
-                                        className="col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px] py-1"
-                                    >
-                                        {responsabilidad.letra}
-                                    </div>
-                                    <div
-                                        style={{ color: responsabilidad.color }}
-                                        className="col-span-2 break-words font-medium"
-                                    >
-                                        {responsabilidad.nombre}
-                                    </div>
-                                    <div className="col-span-8 break-words">
-                                        {responsabilidad.descripcion}
-                                    </div>
-                                    <div className="col-span-1 flex gap-2">
-                                        <Tooltip
-                                            showArrow={true}
-                                            content="Editar"
-                                        >
-                                            <img
-                                                src="/icons/updateIconYellow.svg"
-                                                alt="update"
-                                                className="mb-4 cursor-pointer"
-                                                onClick={() => {
-                                                    setLetraUpdate(
-                                                        responsabilidad.letra
-                                                    );
-                                                    setNombreUpdate(
-                                                        responsabilidad.nombre
-                                                    );
-                                                    setDescripcionUpdate(
-                                                        responsabilidad.descripcion
-                                                    );
-                                                    setColorUpdate(
-                                                        responsabilidad.color
-                                                    );
-                                                    setIdUpdate(
-                                                        responsabilidad.id
-                                                    );
-                                                    onOpenUpdate();
-                                                }}
-                                            />
-                                        </Tooltip>
-                                        <Tooltip
-                                            showArrow={true}
-                                            content="Eliminar"
-                                        >
-                                            <img
-                                                src="/icons/icon-trash.svg"
-                                                alt="delete"
-                                                className="mb-4 cursor-pointer"
-                                                onClick={() => {
-                                                    setResponsabilidadEliminar(
-                                                        responsabilidad
-                                                    );
-                                                    onOpenDeleteRes();
-                                                }}
-                                            />
-                                        </Tooltip>
-                                    </div>
-                                </React.Fragment>
-                            ))}
-                        </div>
-                        <div className="flex items-center justify-center my-2">
-                            <Button
+            </div>
+            <div className="mx-[1rem] ">
+                <div className="my-[2rem] p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto rounded-large shadow-small w-full">
+                    <Table
+                        removeWrapper
+                        aria-label="Example table with custom cells"
+                    >
+                        <TableHeader columns={columns}>
+                            {(column) => (
+                                <TableColumn
+                                    key={column.uid}
+                                    className="text-center text-[0.9rem]"
+                                >
+                                    {column.name}
+                                </TableColumn>
+                            )}
+                        </TableHeader>
+                        <TableBody items={rows}>
+                            {(item) => (
+                                <TableRow key={item.id}>
+                                    {(columnKey) => (
+                                        <TableCell className="text-center">
+                                            {renderCell(item, columnKey)}
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                    {rows.length === 0 && (
+                        <div className="text-center font-semibold">
+                            <Link
+                                href={
+                                    "/dashboard/" +
+                                    projectName +
+                                    "=" +
+                                    projectId +
+                                    "/EDT"
+                                }
                                 color="warning"
-                                auto
-                                className="flex items-center justify-center gap-2 text-white text-[1.1rem]"
-                                startContent={<AddIcon />}
-                                onPress={onOpenAdd}
+                                underline="hover"
                             >
-                                Agregar responsabilidad
-                            </Button>
+                                Presione para agregar entregables
+                            </Link>
                         </div>
+                    )}
+                </div>
+            </div>
+            <div className="mx-[1rem] ">
+                <div className="my-[2rem] p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto rounded-large shadow-small w-full">
+                    <div className="text-[#172B4D] font-semibold text-[1.4rem] dark:text-white">
+                        Leyenda
+                    </div>
+                    <div className="grid grid-cols-12 gap-4 items-center">
+                        {responsabilidades.map((responsabilidad) => (
+                            <React.Fragment key={responsabilidad.id}>
+                                <div
+                                    style={{
+                                        backgroundColor: responsabilidad.color,
+                                    }}
+                                    className="col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px] py-1"
+                                >
+                                    {responsabilidad.letra}
+                                </div>
+                                <div
+                                    style={{ color: responsabilidad.color }}
+                                    className="col-span-2 break-words font-medium"
+                                >
+                                    {responsabilidad.nombre}
+                                </div>
+                                <div className="col-span-8 break-words">
+                                    {responsabilidad.descripcion}
+                                </div>
+                                <div className="col-span-1 flex gap-2">
+                                    <Tooltip showArrow={true} content="Editar">
+                                        <img
+                                            src="/icons/updateIconYellow.svg"
+                                            alt="update"
+                                            className="mb-4 cursor-pointer"
+                                            onClick={() => {
+                                                setLetraUpdate(
+                                                    responsabilidad.letra
+                                                );
+                                                setNombreUpdate(
+                                                    responsabilidad.nombre
+                                                );
+                                                setDescripcionUpdate(
+                                                    responsabilidad.descripcion
+                                                );
+                                                setColorUpdate(
+                                                    responsabilidad.color
+                                                );
+                                                setIdUpdate(responsabilidad.id);
+                                                onOpenUpdate();
+                                            }}
+                                        />
+                                    </Tooltip>
+                                    <Tooltip
+                                        showArrow={true}
+                                        content="Eliminar"
+                                    >
+                                        <img
+                                            src="/icons/icon-trash.svg"
+                                            alt="delete"
+                                            className="mb-4 cursor-pointer"
+                                            onClick={() => {
+                                                setResponsabilidadEliminar(
+                                                    responsabilidad
+                                                );
+                                                onOpenDeleteRes();
+                                            }}
+                                        />
+                                    </Tooltip>
+                                </div>
+                            </React.Fragment>
+                        ))}
+                    </div>
+                    <div className="flex items-center justify-center my-2">
+                        <Button
+                            color="warning"
+                            auto
+                            className="flex items-center justify-center gap-2 text-white text-[1.1rem]"
+                            startContent={<AddIcon />}
+                            onPress={onOpenAdd}
+                        >
+                            Agregar responsabilidad
+                        </Button>
                     </div>
                 </div>
+            </div>
+            <Modal
+                isOpen={isOpenDelete}
+                onOpenChange={onOpenChangeDelete}
+                isDismissable={false}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-red-500"}
+                            >
+                                Limpiar matriz de responsabilidades
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    ¿Seguro que quiere limpiar la matriz de
+                                    responsabilidades?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        limpiarTabla();
+                                        onClose();
+                                    }}
+                                >
+                                    Continuar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            {/*El otro modal*/}
+
+            {
                 <Modal
-                    isOpen={isOpenDelete}
-                    onOpenChange={onOpenChangeDelete}
-                    isDismissable={false}
+                    size="md"
+                    isOpen={isModalSavePlantilla}
+                    onOpenChange={onModaSavePlantillaChange}
                 >
                     <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader
-                                    className={
-                                        "flex flex-col gap-1 text-red-500"
+                        {(onClose) => {
+                            const finalizarModal = async () => {
+                                let Isvalid = true;
+
+                                if (nombrePlantilla === "") {
+                                    setValidNombrePlantilla(false);
+                                    Isvalid = false;
+                                }
+
+                                if (Isvalid === true) {
+                                    console.log(
+                                        "IdUsuario: " + sessionData.idUsuario
+                                    );
+                                    try {
+                                        await guardarPlantillaNueva();
+                                        setNombrePlantilla("");
+                                        setValidNombrePlantilla(true);
+                                        console.log("xd");
+                                    } catch (error) {
+                                        console.error(
+                                            "Error al Guardar Plantilla:",
+                                            error
+                                        );
                                     }
-                                >
-                                    Limpiar matriz de responsabilidades
-                                </ModalHeader>
-                                <ModalBody>
-                                    <p>
-                                        ¿Seguro que quiere limpiar la matriz de
-                                        responsabilidades?
-                                    </p>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button
-                                        color="danger"
-                                        variant="light"
-                                        onPress={onClose}
-                                    >
-                                        Cancelar
-                                    </Button>
-                                    <Button
-                                        className="bg-indigo-950 text-slate-50"
-                                        onPress={() => {
-                                            limpiarTabla();
-                                            onClose();
-                                        }}
-                                    >
-                                        Continuar
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
+
+                                    onClose();
+                                }
+                            };
+                            return (
+                                <>
+                                    <ModalHeader className="flex flex-col gap-1">
+                                        Guardado de Plantilla
+                                    </ModalHeader>
+                                    <ModalBody>
+                                        <p
+                                            style={{
+                                                color: "#494949",
+                                                fontSize: "16px",
+                                                fontStyle: "normal",
+                                                fontWeight: 400,
+                                            }}
+                                        >
+                                            Se guardarán los campos en una
+                                            plantilla para poder usarlos en
+                                            otros proyectos.
+                                        </p>
+
+                                        <Input
+                                            type="email"
+                                            variant={"underlined"}
+                                            label="Nombre Plantilla"
+                                            value={nombrePlantilla}
+                                            onValueChange={setNombrePlantilla}
+                                            isInvalid={!validNombrePlantilla}
+                                            onChange={() => {
+                                                setValidNombrePlantilla(true);
+                                            }}
+                                            errorMessage={
+                                                !validNombrePlantilla
+                                                    ? "Ingrese un nombre"
+                                                    : ""
+                                            }
+                                        />
+
+                                        <div></div>
+                                    </ModalBody>
+
+                                    <ModalFooter>
+                                        <Button
+                                            color="danger"
+                                            variant="light"
+                                            onClick={() => {
+                                                onClose(); // Cierra el modal
+                                                setNombrePlantilla("");
+                                                setValidNombrePlantilla(true);
+                                            }}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                        <Button
+                                            color="primary"
+                                            onClick={finalizarModal}
+                                        >
+                                            Guardar Plantilla
+                                        </Button>
+                                    </ModalFooter>
+                                </>
+                            );
+                        }}
                     </ModalContent>
                 </Modal>
-                {/*El otro modal*/}
+            }
 
-                {
-                    <Modal
-                        size="md"
-                        isOpen={isModalSavePlantilla}
-                        onOpenChange={onModaSavePlantillaChange}
-                    >
-                        <ModalContent>
-                            {(onClose) => {
-                                const finalizarModal = async () => {
-                                    let Isvalid = true;
+            {
+                <Modal
+                    size="lg"
+                    isOpen={isModalPlantillas}
+                    onOpenChange={onModalPlantillasChange}
+                >
+                    <ModalContent>
+                        {(onClose) => {
+                            const finalizarModalP = async () => {
+                                let Isvalid = true;
 
-                                    if (nombrePlantilla === "") {
-                                        setValidNombrePlantilla(false);
-                                        Isvalid = false;
-                                    }
+                                if (selectedPlantilla === null) {
+                                    setPlantillaElegida(false);
+                                    Isvalid = false;
+                                }
 
-                                    if (Isvalid === true) {
-                                        console.log(
-                                            "IdUsuario: " +
-                                                sessionData.idUsuario
-                                        );
-                                        try {
-                                            await guardarPlantillaNueva();
-                                            setNombrePlantilla("");
-                                            setValidNombrePlantilla(true);
-                                            console.log("xd");
-                                        } catch (error) {
-                                            console.error(
-                                                "Error al Guardar Plantilla:",
-                                                error
-                                            );
-                                        }
-
-                                        onClose();
-                                    }
-                                };
-                                return (
-                                    <>
-                                        <ModalHeader className="flex flex-col gap-1">
-                                            Guardado de Plantilla
-                                        </ModalHeader>
-                                        <ModalBody>
-                                            <p
-                                                style={{
-                                                    color: "#494949",
-                                                    fontSize: "16px",
-                                                    fontStyle: "normal",
-                                                    fontWeight: 400,
-                                                }}
-                                            >
-                                                Se guardarán los campos en una
-                                                plantilla para poder usarlos en
-                                                otros proyectos.
-                                            </p>
-
-                                            <Input
-                                                type="email"
-                                                variant={"underlined"}
-                                                label="Nombre Plantilla"
-                                                value={nombrePlantilla}
-                                                onValueChange={
-                                                    setNombrePlantilla
-                                                }
-                                                isInvalid={
-                                                    !validNombrePlantilla
-                                                }
-                                                onChange={() => {
-                                                    setValidNombrePlantilla(
-                                                        true
-                                                    );
-                                                }}
-                                                errorMessage={
-                                                    !validNombrePlantilla
-                                                        ? "Ingrese un nombre"
-                                                        : ""
-                                                }
-                                            />
-
-                                            <div></div>
-                                        </ModalBody>
-
-                                        <ModalFooter>
-                                            <Button
-                                                color="danger"
-                                                variant="light"
-                                                onClick={() => {
-                                                    onClose(); // Cierra el modal
-                                                    setNombrePlantilla("");
-                                                    setValidNombrePlantilla(
-                                                        true
-                                                    );
-                                                }}
-                                            >
-                                                Cancelar
-                                            </Button>
-                                            <Button
-                                                color="primary"
-                                                onClick={finalizarModal}
-                                            >
-                                                Guardar Plantilla
-                                            </Button>
-                                        </ModalFooter>
-                                    </>
-                                );
-                            }}
-                        </ModalContent>
-                    </Modal>
-                }
-
-                {
-                    <Modal
-                        size="lg"
-                        isOpen={isModalPlantillas}
-                        onOpenChange={onModalPlantillasChange}
-                    >
-                        <ModalContent>
-                            {(onClose) => {
-                                const finalizarModalP = async () => {
-                                    let Isvalid = true;
-
-                                    if (selectedPlantilla === null) {
+                                if (Isvalid === true) {
+                                    try {
+                                        await usarPlantilla();
                                         setPlantillaElegida(false);
-                                        Isvalid = false;
+                                    } catch (error) {
+                                        console.error(
+                                            "Error al Utilizar Plantilla:",
+                                            error
+                                        );
                                     }
+                                    onClose();
 
-                                    if (Isvalid === true) {
-                                        try {
-                                            await usarPlantilla();
-                                            setPlantillaElegida(false);
-                                        } catch (error) {
-                                            console.error(
-                                                "Error al Utilizar Plantilla:",
-                                                error
-                                            );
-                                        }
-                                        onClose();
+                                    DataTable(); // Llamada a fetchPlantillas después de usar la plantilla
 
-                                        DataTable(); // Llamada a fetchPlantillas después de usar la plantilla
+                                    setFilterValue("");
+                                } else {
+                                    setError("Seleccione una plantilla");
+                                }
+                            };
 
-                                        setFilterValue("");
-                                    } else {
-                                        setError("Seleccione una plantilla");
-                                    }
-                                };
-
-                                return (
-                                    <>
-                                        <ModalHeader className="flex flex-col gap-1">
-                                            Plantillas de Matriz de
-                                            Responsabilidad
-                                        </ModalHeader>
-                                        <ModalBody>
-                                            <div className="modal-body">
-                                                <div
+                            return (
+                                <>
+                                    <ModalHeader className="flex flex-col gap-1">
+                                        Plantillas de Matriz de Responsabilidad
+                                    </ModalHeader>
+                                    <ModalBody>
+                                        <div className="modal-body">
+                                            <div
+                                                style={{
+                                                    marginBottom: "25px",
+                                                }}
+                                            >
+                                                <p
                                                     style={{
-                                                        marginBottom: "25px",
+                                                        fontSize: "15px",
                                                     }}
                                                 >
-                                                    <p
-                                                        style={{
-                                                            fontSize: "15px",
-                                                        }}
-                                                    >
-                                                        Seleccione una plantilla
-                                                        para cargar los campos
-                                                    </p>
-                                                </div>
-
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "row",
-                                                        alignItems: "center",
-                                                        justifyContent:
-                                                            "space-between",
-                                                        width: "100%",
-                                                        gap: ".6rem",
-                                                        marginBottom: "25px",
-                                                    }}
-                                                >
-                                                    <div className="divBuscador">
-                                                        <Input
-                                                            isClearable
-                                                            className="w-full sm:max-w-[100%]"
-                                                            placeholder="Ingresa una plantilla..."
-                                                            startContent={
-                                                                <SearchIcon />
-                                                            }
-                                                            value={filterValue}
-                                                            onValueChange={
-                                                                onSearchChange
-                                                            }
-                                                            onClear={
-                                                                limpiarInput
-                                                            }
-                                                            variant="faded"
-                                                        />
-                                                    </div>
-                                                    <Button
-                                                        className="text-slate-50"
-                                                        color="primary"
-                                                        onClick={refreshList}
-                                                    >
-                                                        Buscar
-                                                    </Button>
-                                                </div>
-                                                <ul className="cardPlantillaMRList">
-                                                    {plantillas.map(
-                                                        (plantilla) => (
-                                                            <li
-                                                                key={
-                                                                    plantilla.idPlantillaMR
-                                                                }
-                                                            >
-                                                                <div
-                                                                    className={`cardPlantillaMR ${
-                                                                        selectedPlantilla &&
-                                                                        selectedPlantilla ===
-                                                                            plantilla
-                                                                            ? "selected"
-                                                                            : ""
-                                                                    }`}
-                                                                    onClick={() =>
-                                                                        handlePlantillaClick(
-                                                                            plantilla
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        plantilla.nombrePlantilla
-                                                                    }
-                                                                </div>
-                                                            </li>
-                                                        )
-                                                    )}
-                                                </ul>
+                                                    Seleccione una plantilla
+                                                    para cargar los campos
+                                                </p>
                                             </div>
-                                        </ModalBody>
 
-                                        <ModalFooter>
                                             <div
                                                 style={{
                                                     display: "flex",
+                                                    flexDirection: "row",
                                                     alignItems: "center",
-                                                    flex: 1,
+                                                    justifyContent:
+                                                        "space-between",
+                                                    width: "100%",
+                                                    gap: ".6rem",
+                                                    marginBottom: "25px",
                                                 }}
                                             >
-                                                {error && (
-                                                    <p
-                                                        style={{
-                                                            color: "red",
-                                                            fontSize: "14px",
-                                                        }}
-                                                    >
-                                                        {error}
-                                                    </p>
-                                                )}
+                                                <div className="divBuscador">
+                                                    <Input
+                                                        isClearable
+                                                        className="w-full sm:max-w-[100%]"
+                                                        placeholder="Ingresa una plantilla..."
+                                                        startContent={
+                                                            <SearchIcon />
+                                                        }
+                                                        value={filterValue}
+                                                        onValueChange={
+                                                            onSearchChange
+                                                        }
+                                                        onClear={limpiarInput}
+                                                        variant="faded"
+                                                    />
+                                                </div>
+                                                <Button
+                                                    className="text-slate-50"
+                                                    color="primary"
+                                                    onClick={refreshList}
+                                                >
+                                                    Buscar
+                                                </Button>
                                             </div>
+                                            <ul className="cardPlantillaMRList">
+                                                {plantillas.map((plantilla) => (
+                                                    <li
+                                                        key={
+                                                            plantilla.idPlantillaMR
+                                                        }
+                                                    >
+                                                        <div
+                                                            className={`cardPlantillaMR ${
+                                                                selectedPlantilla &&
+                                                                selectedPlantilla ===
+                                                                    plantilla
+                                                                    ? "selected"
+                                                                    : ""
+                                                            }`}
+                                                            onClick={() =>
+                                                                handlePlantillaClick(
+                                                                    plantilla
+                                                                )
+                                                            }
+                                                        >
+                                                            {
+                                                                plantilla.nombrePlantilla
+                                                            }
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </ModalBody>
 
-                                            <Button
-                                                color="danger"
-                                                variant="light"
-                                                onClick={() => {
-                                                    onClose(); // Cierra el modal
-                                                    setSelectedPlantilla(null);
-                                                    setError(null); // Establece error en null para desactivar el mensaje de error
-                                                    limpiarInput();
-                                                }}
-                                            >
-                                                Cancelar
-                                            </Button>
-                                            <Button
-                                                color="primary"
-                                                onClick={finalizarModalP}
-                                            >
-                                                Usar
-                                            </Button>
-                                        </ModalFooter>
-                                    </>
-                                );
-                            }}
-                        </ModalContent>
-                    </Modal>
-                }
-
-                <Modal
-                    isOpen={isOpenAdd}
-                    onOpenChange={onOpenChangeAdd}
-                    isDismissable={false}
-                    size="xl"
-                >
-                    <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader
-                                    className={
-                                        "flex flex-col gap-1 text-white-500"
-                                    }
-                                >
-                                    Nueva responsabilidad
-                                </ModalHeader>
-                                <ModalBody>
-                                    <div className="flex">
-                                        <Input
-                                            isClearable
-                                            autoFocus
-                                            label="Letra"
-                                            placeholder="A"
-                                            variant="bordered"
-                                            className="w-2/12 mr-4"
-                                            value={letraRes}
-                                            onValueChange={setLetraRes}
-                                            isInvalid={isTextTooLong1}
-                                            errorMessage={
-                                                isTextTooLong1
-                                                    ? "Máximo 2 caracteres."
-                                                    : ""
-                                            }
-                                            maxLength={3}
+                                    <ModalFooter>
+                                        <div
                                             style={{
-                                                textTransform: "uppercase",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                flex: 1,
                                             }}
-                                        />
-                                        <Input
-                                            isClearable
-                                            autoFocus
-                                            label="Nombre"
-                                            placeholder="Aprueba"
-                                            variant="bordered"
-                                            className="w-10/12"
-                                            isInvalid={isTextTooLong2}
-                                            errorMessage={
-                                                isTextTooLong2
-                                                    ? "Máximo 50 caracteres."
-                                                    : ""
-                                            }
-                                            maxLength={51}
-                                            value={nombreRes}
-                                            onValueChange={setNombreRes}
-                                        />
-                                    </div>
+                                        >
+                                            {error && (
+                                                <p
+                                                    style={{
+                                                        color: "red",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    {error}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <Button
+                                            color="danger"
+                                            variant="light"
+                                            onClick={() => {
+                                                onClose(); // Cierra el modal
+                                                setSelectedPlantilla(null);
+                                                setError(null); // Establece error en null para desactivar el mensaje de error
+                                                limpiarInput();
+                                            }}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                        <Button
+                                            color="primary"
+                                            onClick={finalizarModalP}
+                                        >
+                                            Usar
+                                        </Button>
+                                    </ModalFooter>
+                                </>
+                            );
+                        }}
+                    </ModalContent>
+                </Modal>
+            }
+
+            <Modal
+                isOpen={isOpenAdd}
+                onOpenChange={onOpenChangeAdd}
+                isDismissable={false}
+                size="xl"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Nueva responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
                                     <Input
                                         isClearable
                                         autoFocus
-                                        label="Descripción"
-                                        placeholder="Se encarga de aprobar y revisar tareas"
+                                        label="Letra"
+                                        placeholder="A"
                                         variant="bordered"
-                                        isInvalid={isTextTooLong3}
+                                        className="w-2/12 mr-4"
+                                        value={letraRes}
+                                        onValueChange={setLetraRes}
+                                        isInvalid={isTextTooLong1}
                                         errorMessage={
-                                            isTextTooLong3
-                                                ? "Máximo 100 caracteres."
+                                            isTextTooLong1
+                                                ? "Máximo 2 caracteres."
                                                 : ""
                                         }
-                                        maxLength={101}
-                                        value={descripcionRes}
-                                        onValueChange={setDescripcionRes}
+                                        maxLength={3}
+                                        style={{
+                                            textTransform: "uppercase",
+                                        }}
                                     />
-                                    <ColorPicker
-                                        value={colorRes}
-                                        onChangeColor={onChangeColor}
-                                    />
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button
-                                        color="danger"
-                                        variant="light"
-                                        onPress={() => {
-                                            setLetraRes("");
-                                            setNombreRes("");
-                                            setDescripcionRes("");
-                                            setColorRes("#000000");
-                                            onClose();
-                                        }}
-                                    >
-                                        Cancelar
-                                    </Button>
-                                    <Button
-                                        className="bg-indigo-950 text-slate-50"
-                                        onPress={() => {
-                                            agregarResponsabilidad(onClose);
-                                        }}
-                                    >
-                                        Guardar
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
-                <Modal
-                    isOpen={isOpenDeleteRes}
-                    onOpenChange={onOpenChangeDeleteRes}
-                    isDismissable={false}
-                >
-                    <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader
-                                    className={
-                                        "flex flex-col gap-1 text-red-500"
-                                    }
-                                >
-                                    Eliminar responsabilidad
-                                </ModalHeader>
-                                <ModalBody>
-                                    <p>
-                                        ¿Seguro que quiere eliminar la
-                                        responsabilidad?
-                                    </p>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button
-                                        color="danger"
-                                        variant="light"
-                                        onPress={onClose}
-                                    >
-                                        Cancelar
-                                    </Button>
-                                    <Button
-                                        className="bg-indigo-950 text-slate-50"
-                                        onPress={() => {
-                                            eliminarResponsabilidad(onClose);
-                                        }}
-                                    >
-                                        Continuar
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
-                <Modal
-                    isOpen={isOpenUpdate}
-                    onOpenChange={onOpenChangeUpdate}
-                    isDismissable={false}
-                    size="xl"
-                >
-                    <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader
-                                    className={
-                                        "flex flex-col gap-1 text-white-500"
-                                    }
-                                >
-                                    Actualizar responsabilidad
-                                </ModalHeader>
-                                <ModalBody>
-                                    <div className="flex">
-                                        <Input
-                                            isClearable
-                                            autoFocus
-                                            label="Letra"
-                                            placeholder="A"
-                                            variant="bordered"
-                                            className="w-2/12 mr-4"
-                                            value={letraUpdate}
-                                            onValueChange={setLetraUpdate}
-                                            isInvalid={isTextTooLong4}
-                                            errorMessage={
-                                                isTextTooLong4
-                                                    ? "Máximo 2 caracteres."
-                                                    : ""
-                                            }
-                                            maxLength={3}
-                                            style={{
-                                                textTransform: "uppercase",
-                                            }}
-                                        />
-                                        <Input
-                                            isClearable
-                                            autoFocus
-                                            label="Nombre"
-                                            placeholder="Aprueba"
-                                            variant="bordered"
-                                            className="w-10/12"
-                                            isInvalid={isTextTooLong5}
-                                            errorMessage={
-                                                isTextTooLong5
-                                                    ? "Máximo 50 caracteres."
-                                                    : ""
-                                            }
-                                            maxLength={51}
-                                            value={nombreUpdate}
-                                            onValueChange={setNombreUpdate}
-                                        />
-                                    </div>
                                     <Input
                                         isClearable
                                         autoFocus
-                                        label="Descripción"
-                                        placeholder="Se encarga de aprobar y revisar tareas"
+                                        label="Nombre"
+                                        placeholder="Aprueba"
                                         variant="bordered"
-                                        isInvalid={isTextTooLong6}
+                                        className="w-10/12"
+                                        isInvalid={isTextTooLong2}
                                         errorMessage={
-                                            isTextTooLong6
-                                                ? "Máximo 100 caracteres."
+                                            isTextTooLong2
+                                                ? "Máximo 50 caracteres."
                                                 : ""
                                         }
-                                        maxLength={101}
-                                        value={descripcionUpdate}
-                                        onValueChange={setDescripcionUpdate}
+                                        maxLength={51}
+                                        value={nombreRes}
+                                        onValueChange={setNombreRes}
                                     />
-                                    <ColorPicker
-                                        value={colorUpdate}
-                                        onChangeColor={onChangeColorUpdate}
+                                </div>
+                                <Input
+                                    isClearable
+                                    autoFocus
+                                    label="Descripción"
+                                    placeholder="Se encarga de aprobar y revisar tareas"
+                                    variant="bordered"
+                                    isInvalid={isTextTooLong3}
+                                    errorMessage={
+                                        isTextTooLong3
+                                            ? "Máximo 100 caracteres."
+                                            : ""
+                                    }
+                                    maxLength={101}
+                                    value={descripcionRes}
+                                    onValueChange={setDescripcionRes}
+                                />
+                                <ColorPicker
+                                    value={colorRes}
+                                    onChangeColor={onChangeColor}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setLetraRes("");
+                                        setNombreRes("");
+                                        setDescripcionRes("");
+                                        setColorRes("#000000");
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        agregarResponsabilidad(onClose);
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Modal
+                isOpen={isOpenDeleteRes}
+                onOpenChange={onOpenChangeDeleteRes}
+                isDismissable={false}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-red-500"}
+                            >
+                                Eliminar responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    ¿Seguro que quiere eliminar la
+                                    responsabilidad?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        eliminarResponsabilidad(onClose);
+                                    }}
+                                >
+                                    Continuar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Modal
+                isOpen={isOpenUpdate}
+                onOpenChange={onOpenChangeUpdate}
+                isDismissable={false}
+                size="xl"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Actualizar responsabilidad
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Letra"
+                                        placeholder="A"
+                                        variant="bordered"
+                                        className="w-2/12 mr-4"
+                                        value={letraUpdate}
+                                        onValueChange={setLetraUpdate}
+                                        isInvalid={isTextTooLong4}
+                                        errorMessage={
+                                            isTextTooLong4
+                                                ? "Máximo 2 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={3}
+                                        style={{
+                                            textTransform: "uppercase",
+                                        }}
                                     />
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button
-                                        color="danger"
-                                        variant="light"
-                                        onPress={() => {
-                                            setLetraUpdate("");
-                                            setNombreUpdate("");
-                                            setDescripcionUpdate("");
-                                            setColorUpdate("#000000");
-                                            setIdUpdate(null);
-                                            onClose();
-                                        }}
-                                    >
-                                        Cancelar
-                                    </Button>
-                                    <Button
-                                        className="bg-indigo-950 text-slate-50"
-                                        onPress={() => {
-                                            actualizarResponsabilidad(onClose);
-                                        }}
-                                    >
-                                        Guardar
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
-                <Toaster
-                    position="bottom-left"
-                    richColors
-                    theme={"light"}
-                    closeButton={true}
-                    toastOptions={{
-                        style: { fontSize: "1rem" },
-                    }}
-                />
-            </div>
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Nombre"
+                                        placeholder="Aprueba"
+                                        variant="bordered"
+                                        className="w-10/12"
+                                        isInvalid={isTextTooLong5}
+                                        errorMessage={
+                                            isTextTooLong5
+                                                ? "Máximo 50 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={51}
+                                        value={nombreUpdate}
+                                        onValueChange={setNombreUpdate}
+                                    />
+                                </div>
+                                <Input
+                                    isClearable
+                                    autoFocus
+                                    label="Descripción"
+                                    placeholder="Se encarga de aprobar y revisar tareas"
+                                    variant="bordered"
+                                    isInvalid={isTextTooLong6}
+                                    errorMessage={
+                                        isTextTooLong6
+                                            ? "Máximo 100 caracteres."
+                                            : ""
+                                    }
+                                    maxLength={101}
+                                    value={descripcionUpdate}
+                                    onValueChange={setDescripcionUpdate}
+                                />
+                                <ColorPicker
+                                    value={colorUpdate}
+                                    onChangeColor={onChangeColorUpdate}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setLetraUpdate("");
+                                        setNombreUpdate("");
+                                        setDescripcionUpdate("");
+                                        setColorUpdate("#000000");
+                                        setIdUpdate(null);
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        actualizarResponsabilidad(onClose);
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Toaster
+                position="bottom-left"
+                richColors
+                theme={"light"}
+                closeButton={true}
+                toastOptions={{
+                    style: { fontSize: "1rem" },
+                }}
+            />
+        </div>
     );
 }
