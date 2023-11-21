@@ -314,20 +314,12 @@ async function crearExcelCaja(req,res,next){
         const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + presupuesto.general.cantMeses);
         
         workbook = await funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas);
-        const excelFilePath = path.join(destinationFolder, `${idPresupuesto}.xlsx`);
-        await workbook.xlsx.writeFile(excelFilePath);
-        console.log(`Se creo el archivo ${excelFilePath}`);
-        res.download(excelFilePath , `${idPresupuesto}.xlxs`, async(err) => {
-            try {
-                // Eliminar el archivo temporal de forma asíncrona
-                //await fsp.unlink(excelFilePath);
-            } catch (e) {
-                console.error("Error al eliminar el archivo temporal:", e.message);
-            }
-            if (err) {
-                next(err);
-            }
-        });
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `tareas.xlsx`);
+        await workbook.xlsx.writeFile(path.join(destinationFolder, `ExcelCaja.xlsx`));
+        // Enviar el archivo
+        await workbook.xlsx.write(res);
+        res.end();
     } catch (error) {
         next(error);
     }
@@ -436,14 +428,26 @@ async function crearExcelEstimacionCosto(req,res,next){
     try {
         const destinationFolder = path.join(__dirname, '../../tmp');
         const lineasEstimacionCosto = await estimacionCostoController.funcListarLineasXIdPresupuesto(idPresupuesto);
-
-        workbook = await funcCrearExcelEstimacionCosto(lineasEstimacionCosto);
+        const general = await presupuestoController.funcListarXIdPresupuesto(idPresupuesto);
+        const presupuesto = {
+            general,
+            lineasEstimacionCosto
+        }
+        
+        workbook = await funcCrearExcelEstimacionCosto(presupuesto);
+        
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `tareas.xlsx`);
+        await workbook.xlsx.writeFile(path.join(destinationFolder, `EstimacionCosto.xlsx`));
+        // Enviar el archivo
+        await workbook.xlsx.write(res);
+        res.end();
     } catch (error) {
         next(error);
     }
 }
 
-async function funcCrearExcelEstimacionCosto(lineasEstimacionCosto){
+async function funcCrearExcelEstimacionCosto(presupuesto){
     try {
 
         let filaActual=1;
@@ -453,9 +457,9 @@ async function funcCrearExcelEstimacionCosto(lineasEstimacionCosto){
         const header1 = ["Partida","Cantidad de recurso","Tarifa","Tiempo requerido","Subtotal"];
         filaActual = await excelJSController.agregaHeader(WSEstimaciones,filaActual,header1,headerTitulo,borderStyle);
 
-        filaActual = await agregarEstimacionCostoAExcel(lineasEstimacionCosto,WSEstimaciones,filaActual);
+        filaActual = await agregarEstimacionCostoAExcel(presupuesto,WSEstimaciones,filaActual);
 
-        excelJSController.ajustarAnchoColumnas(WSCaja);
+        excelJSController.ajustarAnchoColumnas(WSEstimaciones);
         return workbook;
     } catch (error) {
         console.log(error);    
@@ -463,14 +467,82 @@ async function funcCrearExcelEstimacionCosto(lineasEstimacionCosto){
 
 }
 
-async function agregarEstimacionCostoAExcel(lineasEstimacionCosto,WSEstimaciones,filaActual){
+async function agregarEstimacionCostoAExcel(presupuesto,WSEstimaciones,filaActual){
+    
     try{
-        let i=1;
-        for(const linea of lineasEstimacionCosto){
+        let totalEstimacion = 0;
+        for(const linea of presupuesto.lineasEstimacionCosto){
             WSEstimaciones.getRow(filaActual).values = [linea.descripcion,linea.cantidadRecurso,linea.tarifaUnitaria,linea.tiempoRequerido,linea.subtotal];
             filaActual++;
-            i++;
+            totalEstimacion+=linea.subtotal;
         }
+
+        filaActual = await agregarResumenEstimacionCostoAExcel(presupuesto.general,WSEstimaciones,filaActual,totalEstimacion);
+    }catch(error){
+        console.log(error);
+    }
+    return filaActual;
+}
+
+async function agregarResumenEstimacionCostoAExcel(general,WSEstimaciones,filaActual,totalEstimacion){
+    try{
+        filaActual++;
+        let celdaEscogida;
+        const total = [null,null,null,"TOTAL",totalEstimacion];
+        WSEstimaciones.getRow(filaActual).values = total;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const reservaContingencia = [null,null,null,"Reserva de contingencia",general.reservaContingencia];
+        WSEstimaciones.getRow(filaActual).values = reservaContingencia;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        
+        filaActual++;
+
+        const lineaBaseDeCostos = [null,null,null,"Linea Base de Costos",totalEstimacion+general.reservaContingencia];
+        WSEstimaciones.getRow(filaActual).values = lineaBaseDeCostos;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const reservaGestion = [null,null,null,"Reserva de gestion","PV",general.porcentajeReservaGestion];
+        WSEstimaciones.getRow(filaActual).values = reservaGestion;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const presupuesto = [null,null,null,"Presupuesto",general.presupuestoInicial];
+        WSEstimaciones.getRow(filaActual).values = presupuesto;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const ganancia = [null,null,null,"Ganancia","PV",general.porcentajeGanancia];
+        WSEstimaciones.getRow(filaActual).values = ganancia;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const totalConGanancia = [null,null,null,"Total con ganancia",totalEstimacion+general.reservaContingencia+general.presupuestoInicial];
+        WSEstimaciones.getRow(filaActual).values = totalConGanancia;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const IGV = [null,null,null,"IGV","PV",general.IGV];
+        WSEstimaciones.getRow(filaActual).values = IGV;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
+        const totalFinal = [null,null,null,"Total",totalEstimacion+general.reservaContingencia+general.presupuestoInicial+general.IGV];
+        WSEstimaciones.getRow(filaActual).values = totalFinal;
+        celdaEscogida = WSEstimaciones.getCell(filaActual,5);
+        celdaEscogida.style = {...headerTitulo, border: borderStyle};
+        filaActual++;
+
     }catch(error){
         console.log(error);
     }
@@ -481,5 +553,6 @@ module.exports = {
     subirJSON,
     descargarExcel,
     obtenerJSON,
-    crearExcelCaja
+    crearExcelCaja,
+    crearExcelEstimacionCosto
 }

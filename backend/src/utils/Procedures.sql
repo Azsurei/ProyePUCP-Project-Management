@@ -2398,11 +2398,12 @@ DROP PROCEDURE IF EXISTS LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
-	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+	SELECT idPresupuesto,idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,fechaCreacion 
+    FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
 
-
-
+CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(37);
+select * from Usuario;
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
 DELIMITER $
 CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
