@@ -10,15 +10,9 @@ const port = 8080;
 
 const initSocket = require("./sockets");
 
-//const http = require("http");
-//const server = http.createServer(app);
+const https = require("http");
 const { readFileSync } = require("fs");
-const { createServer } = require("https");
-
-const server = createServer({
-    key: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/privkey.pem"),
-    cert: readFileSync("/etc/letsencrypt/live/proye.inf.pucp.edu.pe/cert.pem")
-});
+const server = https.Server(app);
 
 const {io, connectedUsers} = initSocket(server);
 
