@@ -205,6 +205,7 @@ module.exports = {
     modificar,
     listarLineasTodas,
     listarXIdPresupuesto,
+    funcListarXIdPresupuesto,
     listarLineasIngresoYEgresoXIdPresupuesto,
     obtenerPresupuesto,
     obtenerPresupuestoFlujoCaja,
