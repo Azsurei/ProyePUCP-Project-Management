@@ -1,7 +1,7 @@
-const socketIO = require("socket.io");
+const Server  = require("socket.io");
 
 const initSocket = (server) => {
-  const io = socketIO(server, {
+  const io = Server (server, {
     cors: {
       origin: process.env.SERVER_URL,
       methods: ["GET", "POST"],
