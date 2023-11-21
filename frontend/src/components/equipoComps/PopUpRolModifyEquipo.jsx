@@ -31,7 +31,7 @@ export default function PopUpRolEquipo({
             return equipo.participantes.some((participante) => participante.nombreRol === rol.nombreRol);
         });
         if (isRolInUse) {
-            toast.error("No se puede eliminar el rol porque está en uso.");
+            toast.error("No se puede eliminar el rol porque está en uso.",{ position: "bottom-left" });
         } else {
             setListRoles((prevRoles) => {
                 return prevRoles.filter((role) => role.idRolEquipo !== rol.idRolEquipo);
@@ -69,7 +69,8 @@ export default function PopUpRolEquipo({
                                 onClick={() => {
                                     if (newRolName.trim() === "") {
                                         toast.error(
-                                            "El nombre del rol no puede estar vacío."
+                                            "El nombre del rol no puede estar vacío.",
+                                            { position: "bottom-left" }
                                         );
                                     } else if (
                                         listRoles.some(
@@ -78,7 +79,8 @@ export default function PopUpRolEquipo({
                                         )
                                     ) {
                                         toast.error(
-                                            "El nombre del rol ya existe en la lista."
+                                            "El nombre del rol ya existe en la lista.",
+                                            { position: "bottom-left" }
                                         );
                                     } else {
                                         // Generar un nuevo idRol único
@@ -171,15 +173,6 @@ export default function PopUpRolEquipo({
                         </div>
                     </div>
                 </div>
-                <Toaster
-                    position="bottom-left"
-                    richColors
-                    theme={"light"}
-                    closeButton={true}
-                    toastOptions={{
-                        style: { fontSize: "1rem" },
-                    }}
-                />
             </div>
         )
     );

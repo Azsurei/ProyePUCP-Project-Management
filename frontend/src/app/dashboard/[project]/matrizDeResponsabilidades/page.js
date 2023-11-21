@@ -7,6 +7,7 @@ import { useState, useEffect, useContext } from "react";
 import { SaveIcon } from "@/components/equipoComps/SaveIcon";
 import { CrossWhite } from "@/components/equipoComps/CrossWhite";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
+import {AddIconBlack} from "@/components/equipoComps/AddIconBlack";
 import ColorPicker from "@/components/dashboardComps/projectComps/matrizDeResponsabilidades/ColorPicker";
 import { Toaster, toast } from "sonner";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
@@ -80,6 +81,12 @@ export default function MatrizDeResponsabilidades(props) {
         onOpenChange: onOpenChangeUpdate,
     } = useDisclosure();
 
+    const {
+        isOpen: isOpenRol,
+        onOpen: onOpenRol,
+        onOpenChange: onOpenChangeRol,
+    } = useDisclosure();
+
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
     const [descripcionRes, setDescripcionRes] = useState("");
@@ -89,12 +96,14 @@ export default function MatrizDeResponsabilidades(props) {
     const [descripcionUpdate, setDescripcionUpdate] = useState("");
     const [colorUpdate, setColorUpdate] = useState("#000000");
     const [idUpdate, setIdUpdate] = useState(null);
+    const [nombreRolAdd, setNombreRolAdd] = useState("");
     const isTextTooLong1 = letraRes.length > 2;
     const isTextTooLong2 = nombreRes.length > 50;
     const isTextTooLong3 = descripcionRes.length > 100;
     const isTextTooLong4 = letraUpdate.length > 2;
     const isTextTooLong5 = nombreUpdate.length > 50;
     const isTextTooLong6 = descripcionUpdate.length > 100;
+    const isTextTooLong7 = nombreRolAdd.lenght > 40;
     const [responsabilidadEliminar, setResponsabilidadEliminar] = useState({});
 
     const onChangeColor = (color) => {
@@ -547,15 +556,65 @@ export default function MatrizDeResponsabilidades(props) {
         );
     };
 
+    const isRolExistente = () => {
+        // Convierte todos los nombres existentes a minúsculas para asegurar la comparación insensible a mayúsculas
+        const nombresExistente = roles.map((rol) => rol.nombre.toLowerCase());
+
+        // Verifica si el nombre ya existe en el arreglo de roles
+        return nombresExistente.includes(nombreRolAdd.toLowerCase());
+    };
+
+    const agregarRol = (onClose) => {
+        if (nombreRolAdd.trim() === "") {
+            toast.error("Faltan completar campos",{ position: "bottom-left" });
+            return;
+        } else if (nombreRolAdd.length > 40) {
+            toast.error("Se excedió el límite de caractéres",{ position: "bottom-left" });
+            return;
+        } else if (isRolExistente()) {
+            toast.error("El nombre del rol ya existe",{ position: "bottom-left" });
+            return;
+        }
+
+        setIsLoadingSmall(true);
+        const urlAgregarRol =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/equipo/insertarRol"; 
+
+        const newRol = {
+            nombreRol: nombreRolAdd,
+            idProyecto: projectId,
+        };
+
+        console.log("El newRol es:", newRol);
+
+        axios
+            .post(urlAgregarRol, newRol)
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+
+                console.log("Respuesta del servidor (POST):", response.data);
+                console.log("Registro correcto (POST)");
+                // Realizar acciones adicionales si es necesario
+                setNombreRolAdd("");
+                setReList(!reList);
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud POST:", error);
+            }); 
+        onClose();
+    };
+
     const agregarResponsabilidad = (onClose) => {
         if (verifyFieldsEmpty()) {
-            toast.error("Faltan completar campos");
+            toast.error("Faltan completar campos",{ position: "bottom-left" });
             return;
         } else if (verifyFieldsExcessive()) {
-            toast.error("Se excedió el límite de caractéres");
+            toast.error("Se excedió el límite de caractéres",{ position: "bottom-left" });
             return;
         } else if (isResponsabilidadExistente()) {
-            toast.error("La letra o el nombre ya existen");
+            toast.error("La letra o el nombre ya existen",{ position: "bottom-left" });
             return;
         }
         setIsLoadingSmall(true);
@@ -595,10 +654,10 @@ export default function MatrizDeResponsabilidades(props) {
 
     const actualizarResponsabilidad = (onClose) => {
         if (verifyFieldsEmptyUpdate()) {
-            toast.error("Faltan completar campos");
+            toast.error("Faltan completar campos",{ position: "bottom-left" });
             return;
         } else if (verifyFieldsExcessiveUpdate()) {
-            toast.error("Se excedió el límite de caractéres");
+            toast.error("Se excedió el límite de caractéres",{ position: "bottom-left" });
             return;
         }
         setIsLoadingSmall(true);
@@ -646,7 +705,8 @@ export default function MatrizDeResponsabilidades(props) {
         if (isResponsabilidadUsed) {
             // Si alguna celda está utilizando la responsabilidad, muestra un mensaje de error
             toast.error(
-                "No puedes eliminar esta responsabilidad, ya que está siendo utilizada. Guarda tus cambios y vuelve a intentarlo."
+                "No puedes eliminar esta responsabilidad, ya que está siendo utilizada. Guarda tus cambios y vuelve a intentarlo.",
+                { position: "bottom-left" }
             );
         } else {
             setIsLoadingSmall(true);
@@ -943,7 +1003,7 @@ export default function MatrizDeResponsabilidades(props) {
                                 key="verPlantillasMR"
                                 startContent={<ContentPasteGoIcon />}
                                 onPress={onModalPlantillas}
-                                color="secondary"   
+                                color="secondary"
                             >
                                 Ver Plantillas
                             </DropdownItem>
@@ -954,6 +1014,23 @@ export default function MatrizDeResponsabilidades(props) {
                                 color="secondary"
                             >
                                 Guardar Plantilla
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button color="warning" className="text-white">Roles</Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            variant="faded"
+                            aria-label="Dropdown menu with icons"
+                        >
+                            <DropdownItem
+                                key="verPlantillasMR"
+                                startContent={<AddIconBlack />}
+                                onPress={onOpenRol}
+                            >
+                                Agregar rol
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
@@ -1415,6 +1492,65 @@ export default function MatrizDeResponsabilidades(props) {
                     </ModalContent>
                 </Modal>
             }
+            <Modal
+                isOpen={isOpenRol}
+                onOpenChange={onOpenChangeRol}
+                isDismissable={false}
+                size="xl"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Nuevo rol
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
+                                    <Input
+                                        isClearable
+                                        autoFocus
+                                        label="Nombre"
+                                        placeholder="Rol"
+                                        variant="bordered"
+                                        className="w-full"
+                                        isInvalid={isTextTooLong7}
+                                        errorMessage={
+                                            isTextTooLong7
+                                                ? "Máximo 40 caracteres."
+                                                : ""
+                                        }
+                                        maxLength={41}
+                                        value={nombreRolAdd}
+                                        onValueChange={setNombreRolAdd}
+                                    />
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setNombreRolAdd("");
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        agregarRol(onClose);
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
 
             <Modal
                 isOpen={isOpenAdd}
@@ -1661,15 +1797,6 @@ export default function MatrizDeResponsabilidades(props) {
                     )}
                 </ModalContent>
             </Modal>
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }
