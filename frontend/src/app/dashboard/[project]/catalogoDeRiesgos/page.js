@@ -335,7 +335,7 @@ export default function catalogoDeRiesgos(props) {
                         >
                             Agregar
                         </Button>
-                        <Button
+{/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnRiesgosExport"
@@ -348,7 +348,7 @@ export default function catalogoDeRiesgos(props) {
                             className="btnRiesgosEliminar"
                         >
                             Eliminar
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -382,9 +382,6 @@ export default function catalogoDeRiesgos(props) {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "Todos los items seleccionados"
-                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
                 </span>
                 <Pagination
                     isCompact

@@ -336,7 +336,7 @@ export default function CatalogoDeInteresados(props) {
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {data.length} de interesados
+                        Total: {data.length} interesados
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -364,9 +364,7 @@ export default function CatalogoDeInteresados(props) {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "Todos los items seleccionados"
-                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
+
                 </span>
                 <Pagination
                     isCompact

@@ -419,7 +419,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
             idImpacto: impact,
             nombreRiesgo: name,
             fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0].idUsuario,
+            duenoRiesgo: selectedMiembrosList[0]? selectedMiembrosList[0].idUsuario : null,
             detalleRiesgo: detail,
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
@@ -910,7 +910,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                                 <Modal
                                     nameButton="Descartar"
                                     textHeader="Descartar Actualización"
-                                    textBody="¿Seguro que quiere descartar la cactualización de la información?"
+                                    textBody="¿Seguro que quiere descartar la actualización de la información?"
                                     colorButton="w-36 bg-slate-100 text-black"
                                     oneButton={false}
                                     secondAction={() =>
