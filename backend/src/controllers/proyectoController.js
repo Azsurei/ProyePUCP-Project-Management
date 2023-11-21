@@ -1072,6 +1072,15 @@ async function agregarHerramientaAProyecto(req, res, next) {
 
             idDeHerramientaCreada = null; //????????????????????????????????????????
         }
+        if (idHerramienta === 14) {
+            // Repositorio de documentos
+            query = `CALL INSERTAR_REPOSTORIO_DOCUMENTOS(?);`;
+            const [results] = await connection.query(query, [
+                idProyecto,
+            ]);
+            const idRepositorioDocumentos = results[0][0].idRepositorioDocumentos;
+            idDeHerramientaCreada = idRepositorioDocumentos;
+        }
         if (idHerramienta === 15) {
             // Repositorio de documentos
             query = `CALL INSERTAR_PLAN_CALIDAD(?);`;
