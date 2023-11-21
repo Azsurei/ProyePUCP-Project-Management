@@ -77,16 +77,6 @@ async function eliminarArchivo(req,res,next){
     }
 }
 
-async function eliminarXProyecto(idProyecto){
-    console.log(`Procediendo: Eliminar repositorio de documento del Proyecto ${idProyecto}...`);
-    try {
-        const result = await funcEliminarXProyecto(idProyecto);
-        console.log(`Repositorio del documento de Proyecto ${idProyecto} eliminado.`);
-    } catch (error) {
-        console.log("ERROR 1 en repositorio de documento X Proyecto", error);
-    }
-}
-
 async function getArchivo(req,res,next){
     const { idArchivo } = req.params;
     const query = `CALL OBTENER_ARCHIVO(?);`;
@@ -113,9 +103,20 @@ async function getArchivo(req,res,next){
     }
 }
 
+
+async function eliminarXProyecto(idProyecto){
+    console.log(`Procediendo: Eliminar repositorio de documento del Proyecto ${idProyecto}...`);
+    try {
+        const result = await funcEliminarXProyecto(idProyecto);
+        console.log(`Repositorio del documento de Proyecto ${idProyecto} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en repositorio de documento X Proyecto", error);
+    }
+}
+
 async function funcEliminarXProyecto(idProyecto) {
     try {
-        const query = `CALL ELIMINAR_PRESUPUESTO_X_ID_PROYECTO(?);`;
+        const query = `CALL ELIMINAR_REPOSITORIODOCUMENTO_X_ID_PROYECTO(?);`;
         [results] = await connection.query(query,[idProyecto]);
     } catch (error) {
         console.log("ERROR 2 en repositorio de documento X Proyecto", error);

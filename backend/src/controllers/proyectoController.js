@@ -937,7 +937,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
                 await presupuestoController.eliminar(idHerramientaCreada);
             }
         }
-        /*
+        
         if (idHerramienta == 14) {
             if (
                 idHerramientaCreada == null ||
@@ -947,7 +947,7 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
             } else {
                 await repositorioDocumentoController.eliminar(idHerramientaCreada);
             }
-        }*/
+        }
         if (idHerramienta == 15) {
             if (
                 idHerramientaCreada == null ||

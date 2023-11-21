@@ -5528,11 +5528,11 @@ CREATE PROCEDURE ELIMINAR_REPOSITORIODOCUMENTO_X_ID_PROYECTO(
     IN _idProyecto INT
 )
 BEGIN
-	DECLARE _idRepositorioDocumentos INT;
-	INSERT INTO RepositorioDocumento(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(14,_idProyecto,curdate(),1);
-    SET _idRepositorioDocumentos = @@last_insert_id;
-    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,14,_idRepositorioDocumentos,1);
-    SELECT _idRepositorioDocumentos AS idRepositorioDocumentos;
+    UPDATE ArchivoXRepositorioDocumento SET activo = 0 
+    WHERE idRepositorioDocumentos IN (
+		SELECT idRepositorioDocumentos FROM RepositorioDocumento WHERE idProyecto = _idProyecto
+	);
+    UPDATE RepositorioDocumento SET activo = 0 WHERE idProyecto = _idProyecto;
 END$$
 DELIMITER ;
 
