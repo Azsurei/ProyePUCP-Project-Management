@@ -5522,3 +5522,76 @@ BEGIN
     SELECT _idRepositorioDocumentos AS idRepositorioDocumentos;
 END$$
 DELIMITER ;
+
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_REPOSITORIODOCUMENTO_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+	DECLARE _idRepositorioDocumentos INT;
+	INSERT INTO RepositorioDocumento(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(14,_idProyecto,curdate(),1);
+    SET _idRepositorioDocumentos = @@last_insert_id;
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,14,_idRepositorioDocumentos,1);
+    SELECT _idRepositorioDocumentos AS idRepositorioDocumentos;
+END$$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ARCHIVOS(
+    IN _nombreGenerado VARCHAR(200),
+    IN _nombre_real VARCHAR(500)
+)
+BEGIN
+    DECLARE _idArchivo INT;
+    /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
+    INSERT INTO Archivo (nombreGenerado, nombreReal) 
+    VALUES (_nombreGenerado, _nombre_real);
+    SET _idArchivo = @@last_insert_id;
+    SELECT _idArchivo AS idArchivo;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS_REPOSITORIO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ARCHIVOS_REPOSITORIO(
+    IN _idArchivo INT,
+    IN _idRepositorioDocumentos INT,
+    IN _tamano DOUBLE,
+    IN _tipoArchivo VARCHAR(500)
+)
+BEGIN
+    DECLARE _idArchivoXRepositorioDocumento INT;
+    INSERT INTO ArchivoXRepositorioDocumento (idArchivo, idRepositorioDocumentos, fechaSubida, tamano, tipoArchivo, activo) 
+    VALUES (_idArchivo, _idRepositorioDocumentos, NOW(), _tamano, _tipoArchivo, 1);
+    SET _idArchivoXRepositorioDocumento = @@last_insert_id;
+    SELECT _idArchivoXRepositorioDocumento AS idArchivoXRepositorioDocumento;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS LISTAR_ARCHIVOS_X_IDREPOSITORIO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ARCHIVOS_X_IDREPOSITORIO(
+    IN _idRepositorioDocumentos INT
+)
+BEGIN
+    SELECT a.nombreReal, ar.fechaSubida, ar.tamano, ar.tipoArchivo
+    FROM ArchivoXRepositorioDocumento AS ar
+    LEFT JOIN Archivo AS a ON ar.idArchivo = a.idArchivo
+    WHERE ar.idRepositorioDocumentos = _idRepositorioDocumentos
+    AND ar.activo = 1;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ARCHIVO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ARCHIVO_X_ID(
+    IN _idArchivo INT
+)
+BEGIN
+    UPDATE ArchivoXRepositorioDocumento 
+    SET activo = 0 
+    WHERE idArchivo = _idArchivo;
+END$
+DELIMITER ;
+

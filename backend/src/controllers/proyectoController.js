@@ -14,6 +14,7 @@ const actaReunionController = require("../controllers/actaReunion/actaReunionCon
 const equipoController = require("../controllers/equipo/equipoController");
 const presupuestoController = require("../controllers/presupuesto/presupuestoController");
 const planCalidadController = require("../controllers/planCalidad/planCalidadController");
+const repositorioDocumentoController = require("../controllers/repositorioDocumento/repositorioDocumentoController");
 
 async function crear(req, res, next) {
     const idUsuario = req.user.id; //del token
@@ -934,6 +935,16 @@ async function eliminarHerramientaDeProyecto(req, res, next) {
                 await presupuestoController.eliminarXProyecto(idProyecto);
             } else {
                 await presupuestoController.eliminar(idHerramientaCreada);
+            }
+        }
+        if (idHerramienta == 14) {
+            if (
+                idHerramientaCreada == null ||
+                idHerramientaCreada == undefined
+            ) {
+                await repositorioDocumentoController.eliminarXProyecto(idProyecto);
+            } else {
+                await repositorioDocumentoController.eliminar(idHerramientaCreada);
             }
         }
         if (idHerramienta == 15) {
