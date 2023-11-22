@@ -99,77 +99,93 @@ function Login() {
         const userObject = jwtDecode(response.credential);
         console.log(userObject);
 
-        //aqui ya tenemos correoElectronico y contra (sub). tambien given_name y family_name
         axios
-            .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`, {
-                username: userObject.email,
-                password: userObject.sub, //consideramos al sub (id) como contraseña en bd
-                imgLink: userObject.picture,
-            })
+            .post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginXCorreo`,
+                {
+                    correoElectronico: userObject.email,
+                }
+            )
             .then((response) => {
+                //usuario ya existe en bd, lo logeamos
                 router.push("/dashboard");
             })
             .catch(function (error) {
-                console.log("Error al verificar cuenta en bd", error);
+                //aqui ya tenemos correoElectronico y contra (sub). tambien given_name y family_name
+                axios
+                    .post(
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`,
+                        {
+                            username: userObject.email,
+                            password: userObject.sub, //consideramos al sub (id) como contraseña en bd
+                            imgLink: userObject.picture,
+                        }
+                    )
+                    .then((response) => {
+                        router.push("/dashboard");
+                    })
+                    .catch(function (error) {
+                        console.log("Error al verificar cuenta en bd", error);
 
-                if (error.response.status === 417) {
-                    //handleamos caso en que usuario no existe en bd para registrarlo automaticamente
-                    axios
-                        .post(
-                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,
-                            {
-                                nombres: userObject.given_name,
-                                apellidos: userObject.family_name,
-                                correoElectronico: userObject.email,
-                                password: userObject.sub,
-                                tieneCuentaGoogle: true,
-                            }
-                        )
-                        .then((response) => {
-                            //usuario registrado, ahora lo logeamos con el login
-                            console.log(response.data.message);
-
+                        if (error.response.status === 417) {
+                            //handleamos caso en que usuario no existe en bd para registrarlo automaticamente
                             axios
                                 .post(
-                                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`,
+                                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,
                                     {
-                                        username: userObject.email,
+                                        nombres: userObject.given_name,
+                                        apellidos: userObject.family_name,
+                                        correoElectronico: userObject.email,
                                         password: userObject.sub,
-                                        imgLink: userObject.picture,
+                                        tieneCuentaGoogle: true,
                                     }
                                 )
                                 .then((response) => {
-                                    router.push("/dashboard");
+                                    //usuario registrado, ahora lo logeamos con el login
+                                    console.log(response.data.message);
+
+                                    axios
+                                        .post(
+                                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/loginImg`,
+                                            {
+                                                username: userObject.email,
+                                                password: userObject.sub,
+                                                imgLink: userObject.picture,
+                                            }
+                                        )
+                                        .then((response) => {
+                                            router.push("/dashboard");
+                                        })
+                                        .catch(function (error) {
+                                            console.log(
+                                                "Error al verificar cuenta en bd LUEGO de registrar por primera vez",
+                                                error
+                                            );
+                                        });
                                 })
                                 .catch(function (error) {
                                     console.log(
-                                        "Error al verificar cuenta en bd LUEGO de registrar por primera vez",
+                                        "Error al registrar cuenta en bd",
                                         error
                                     );
                                 });
-                        })
-                        .catch(function (error) {
-                            console.log(
-                                "Error al registrar cuenta en bd",
-                                error
-                            );
-                        });
-                }
+                        }
+                    });
             });
     };
 
-     useEffect(() => {
-         google.accounts.id.initialize({
-             client_id:
-                 "152000739309-ljvv04nf75ck9pu4qj1mtf9a15g2kpve.apps.googleusercontent.com",
-             callback: handleCallbackResponse,
-         });
+    useEffect(() => {
+        google.accounts.id.initialize({
+            client_id:
+                "152000739309-ljvv04nf75ck9pu4qj1mtf9a15g2kpve.apps.googleusercontent.com",
+            callback: handleCallbackResponse,
+        });
 
-         google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-             theme: "outline",
-             size: "large",
-         });
-     }, []);
+        google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+            theme: "outline",
+            size: "large",
+        });
+    }, []);
 
     // Componente general
     return (
@@ -252,7 +268,9 @@ function Login() {
 
             <div className="flex flex-row w-full items-center">
                 <div className="flex-1 h-0.5 rounded-2xl bg-gray-300"></div>
-                <div className="font-['Roboto'] font-normal text-md px-4">O inicia sesión con</div>
+                <div className="font-['Roboto'] font-normal text-md px-4">
+                    O inicia sesión con
+                </div>
                 <div className="flex-1 h-0.5 rounded-2xl bg-gray-300"></div>
             </div>
 
@@ -275,7 +293,7 @@ function Login() {
                     <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
                         ¿Olvidó la contraseña?
                     </span>
-                </Link> 
+                </Link>
                 <Link href="/register">
                     <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
                         Regístrate
