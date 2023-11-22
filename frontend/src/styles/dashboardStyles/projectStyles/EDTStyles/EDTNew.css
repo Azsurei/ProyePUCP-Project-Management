@@ -65,17 +65,6 @@
 
 
 
-.EDTNew .NewEDTSection .FirstCardContainer .FirstRightCont{
-    flex: 1;
-    padding: 1rem 1rem;   
-}
-
-.EDTNew .NewEDTSection .FirstCardContainer .FirstRightCont p{
-    font-family: 'Montserrat';
-    /* color: #172B4D; */
-    font-weight: 500;
-}
-
 
 .EDTNew .NewEDTSection .SecondCardContainer{
     padding: 1rem 1rem;

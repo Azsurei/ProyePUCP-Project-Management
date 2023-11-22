@@ -34,23 +34,20 @@ function CardSelectTools(props) {
         onOpenChange: onModalFechachange,
     } = useDisclosure();
     
-	const [isSelected, setIsSelected] = useState(false);
     
 	const { addToolToList, removeToolInList } = useContext(ToolCardsContext);
 
 	const handleSelectedOn = () => {
 		addToolToList(props.herramientaObject);
-		setIsSelected(true)
 	}
 
 	const handleSelectedOff = () => {
 		removeToolInList(props.herramientaObject);
-		setIsSelected(false)
 	}
     const showPlantillaButton = ["Autoevaluacion", "Acta de constitucion"].includes(props.name);
 
     return (
-        <li className={isSelected || mustBeSelectedTools.includes(props.id) ? "ToolCard active" : "ToolCard"} onClick={props.onClick}>
+        <li className={props.isSelected || mustBeSelectedTools.includes(props.id) ? "ToolCard active" : "ToolCard"} onClick={props.onClick}>
             <p className="titleTool">{props.name}</p>
 
             <div className="descriptionTool">
@@ -60,16 +57,16 @@ function CardSelectTools(props) {
             <div className="buttonContatinerTool">
                 
 
-                {isSelected != true && !mustBeSelectedTools.includes(props.id) &&<Button  onPress={handleSelectedOn} startContent={<PlusIcon/>} className="buttonOneTool">Agregar</Button>}
+                {props.isSelected != true && !mustBeSelectedTools.includes(props.id) &&<Button  onPress={handleSelectedOn} startContent={<PlusIcon/>} className="buttonOneTool">Agregar</Button>}
                            
-				{isSelected && !mustBeSelectedTools.includes(props.id) && <Button  onPress={handleSelectedOff} startContent={<ClearTwoToneIcon/>} className="buttonOneTool2">Eliminar</Button>}
+				{props.isSelected && !mustBeSelectedTools.includes(props.id) && <Button  onPress={handleSelectedOff} startContent={<ClearTwoToneIcon/>} className="buttonOneTool2">Eliminar</Button>}
                 {mustBeSelectedTools.includes(props.id) && <Button isDisabled className="buttonOneTool2">Seleccionado</Button>}
             </div>
         </li>
     );
 }
 
-export default function ListTools(addToolToList, removeToolInList, props) {
+export default function ListTools({listHerramientas}) {
 
     const router = useRouter();
 
@@ -117,8 +114,7 @@ export default function ListTools(addToolToList, removeToolInList, props) {
                             name={component.nombre}
                             description={component.descripcion}
                             herramientaObject = {component}
-                            addToolToList={addToolToList}
-                            removeToolInList={removeToolInList}
+                            isSelected={listHerramientas.some(tool => tool.idHerramienta === component.idHerramienta)}
                         ></CardSelectTools>
                     );
                 })}

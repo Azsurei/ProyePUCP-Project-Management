@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useContext, useEffect, useState } from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListEditableInput from "./ListEditableInput";
@@ -7,9 +7,10 @@ import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTNew.css";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 import axios from "axios";
-import { Textarea } from "@nextui-org/react";
+import { Button, Textarea } from "@nextui-org/react";
 import { HerramientasInfo } from "@/app/dashboard/[project]/layout";
 import { Toaster, toast } from "sonner";
+import DateInput from "@/components/DateInput";
 axios.defaults.withCredentials = true;
 
 export default function EDTNewVisualization({
@@ -19,6 +20,10 @@ export default function EDTNewVisualization({
     codeNewComponent,
     idElementoPadre,
 }) {
+    const [screenMode, setScreenMode] = useState(1);
+    //1 es visualizacion
+    //2 es edicion
+
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
     const [validName, setValidName] = useState(true);
@@ -216,15 +221,103 @@ export default function EDTNewVisualization({
                 );
 
                 setListEntregablesBD(entregablesArray);
-                console.log("ENTREGABLES => " + JSON.stringify(entregablesArray,null,2));
-
+                console.log(
+                    "ENTREGABLES => " +
+                        JSON.stringify(entregablesArray, null, 2)
+                );
             })
             .catch(function (error) {
                 console.log(error);
             });
-    },[]);
+            
+
+
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // console.log("Procediendo sacar informacion del componente");
+        // axios
+        //     .post(
+        //         process.env.NEXT_PUBLIC_BACKEND_URL +
+        //             "/api/proyecto/EDT/verInfoComponenteEDT",
+        //         {
+        //             idComponente: idComponentToSee,
+        //         }
+        //     )
+        //     .then(function (response) {
+        //         console.log(response);
+
+        //         const { component, criteriosAceptacion, entregables } =
+        //             response.data.componenteEDT;
+
+        //         setInComponentName(component.nombre);
+        //         setInCodigoComponente(component.codigo);
+
+        //         if (component.fechaInicio !== null) {
+        //             const dateObject = new Date(component.fechaInicio);
+        //             const dateString = dateObject.toLocaleDateString();
+        //             const parts = dateString.split("/");
+        //             if (parts[0].length === 1) {
+        //                 parts[0] = "0" + parts[0];
+        //             }
+        //             const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        //             console.log("NUEVA FECHA INICIO:" + formattedDate);
+        //             setInFechaInicio(formattedDate);
+        //         } else {
+        //             setInFechaInicio("");
+        //         }
+        //         if (component.fechaFin !== null) {
+        //             const dateObject1 = new Date(component.fechaFin);
+        //             const dateString1 = dateObject1.toLocaleDateString();
+        //             const parts1 = dateString1.split("/");
+        //             if (parts1[0].length === 1) {
+        //                 parts1[0] = "0" + parts1[0];
+        //             }
+        //             const formattedDate1 = `${parts1[2]}-${parts1[1]}-${parts1[0]}`;
+        //             console.log("NUEVA FECHA FIN:" + formattedDate1);
+        //             setInFechaFin(formattedDate1);
+        //         } else {
+        //             setInFechaFin("");
+        //         }
+
+        //         setInResponsables(component.responsables);
+        //         setInDescripcion(component.descripcion);
+        //         setInRecursos(component.recursos);
+        //         setInHito(component.hito);
+        //         setInObservaciones(component.observaciones);
+
+        //         setBaseComponentData(component);
+
+        //         setListEntregables(
+        //             entregables.map((component, index) => {
+        //                 return {
+        //                     index: index + 1,
+        //                     data: component.nombre,
+        //                 };
+        //             })
+        //         );
+
+        //         setListCriterios(
+        //             criteriosAceptacion.map((component, index) => {
+        //                 return {
+        //                     index: index + 1,
+        //                     data: component.descripcion,
+        //                 };
+        //             })
+        //         );
+
+        //         console.log(
+        //             "haz conseguido la informacion de dicho componente con exito"
+        //         );
+
+        //         //setIsLoadingSmall(false);
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
+    }, []);
 
     const missingTextMsg = "Este campo no puede estar vacio";
+    const twTitle = "text-mainHeaders text-xl font-semibold";
+    const twSubtitle = "text-mainHeaders font-medium ";
 
     return (
         <div className="EDTNew">
@@ -242,91 +335,93 @@ export default function EDTNewVisualization({
                 Crear nuevo componente
             </HeaderWithButtonsSamePage>
 
-            <div className="EDTNewResponsiveContainer text-mainHeaders font-medium">
-                <div className="NewEDTSection text-mainHeaders font-medium">
-                    <p className="Header text-mainHeaders font-medium">
-                        Informacion basica
-                    </p>
-                    <div className="FirstCardContainer text-mainHeaders font-medium">
-                        <div className="FirstLeftCont text-mainHeaders font-medium">
-                            <div className="flex flex-row gap-1">
-                                <p>Nombre del componente</p>
-                                <p className="text-red-500 font-semibold">*</p>
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-col">
+                    <p className={twTitle}>Informacion basica</p>
+                    <div className="px-4 py-2">
+                        <div className="flex flex-row gap-5">
+                            <div className="flex flex-col max-w-[80px]">
+                                <p className={twSubtitle}>Codigo</p>
+                                <Textarea
+                                    readOnly={true}
+                                    variant={"flat"}
+                                    labelPlacement="outside"
+                                    placeholder=""
+                                    className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                    value={codeNewComponent}
+                                    minRows={1}
+                                    size="sm"
+                                />
                             </div>
-                            {/* <textarea
-                                rows="1"
-                                id="inputBoxGeneric"
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInComponentName(e.target.value);
-                                }}
-                            /> */}
-                            <Textarea
-                                isInvalid={!validName}
-                                errorMessage={!validName ? missingTextMsg : ""}
-                                variant={"bordered"}
-                                labelPlacement="outside"
-                                placeholder="Escribe aquí"
-                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                                value={inComponentName}
-                                onValueChange={setInComponentName}
-                                minRows={1}
-                                size="sm"
-                            />
-                            {/* <p>Tipo de componente</p>
-                            <p>FASE</p> */}
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                }}
-                            >
-                                <p>Codigo</p>
-                                {/* <img
-                                    src="/icons/icon-info.svg"
-                                    alt="help"
-                                ></img> */}
+                            <div className="flex flex-col flex-1">
+                                <div className="flex flex-row gap-1">
+                                    <p className={twSubtitle}>
+                                        Nombre del componente
+                                    </p>
+                                    <p className="text-red-500 font-semibold">
+                                        *
+                                    </p>
+                                </div>
+                                <Textarea
+                                    isInvalid={!validName}
+                                    errorMessage={
+                                        !validName ? missingTextMsg : ""
+                                    }
+                                    variant={"bordered"}
+                                    labelPlacement="outside"
+                                    placeholder="Escribe aquí"
+                                    className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                    value={inComponentName}
+                                    onValueChange={setInComponentName}
+                                    minRows={1}
+                                    size="sm"
+                                />
                             </div>
-                            <input
-                                type="text"
-                                value={codeNewComponent}
-                                readOnly={true}
-                            ></input>
                         </div>
-                        <div className="FirstRightCont">
-                            <div className="flex flex-row gap-1">
-                                <p>Fecha de inicio</p>
-                                <p className="text-red-500 font-semibold">*</p>
+                        <div className="flex flex-row gap-3">
+                            <div className="flex flex-col">
+                                <div className="flex flex-row gap-1">
+                                    <p className={twSubtitle}>
+                                        Fecha de inicio
+                                    </p>
+                                    <p className="text-red-500 font-semibold">
+                                        *
+                                    </p>
+                                </div>
+                                <DateInput
+                                    //value={fechaInicio}
+                                    isEditable={true}
+                                    className={""}
+                                    isInvalid={false}
+                                    onChangeHandler={(e) => {
+                                        setInFechaInicio(e.target.value);
+                                    }}
+                                ></DateInput>
                             </div>
-                            <input
-                                type="date"
-                                id="inputBoxGeneric"
-                                className="EDTNewDatepickerInicio"
-                                name="datepicker"
-                                onChange={(e) => {
-                                    setInFechaInicio(e.target.value);
-                                }}
-                            ></input>
-                            <div className="flex flex-row gap-1">
-                                <p>Fecha de fin</p>
-                                <p className="text-red-500 font-semibold">*</p>
+                            <div className="flex flex-col">
+                                <div className="flex flex-row gap-1">
+                                    <p className={twSubtitle}>Fecha de fin</p>
+                                    <p className="text-red-500 font-semibold">
+                                        *
+                                    </p>
+                                </div>
+                                <DateInput
+                                    //value={fechaInicio}
+                                    isEditable={true}
+                                    className={""}
+                                    isInvalid={false}
+                                    onChangeHandler={(e) => {
+                                        setInFechaFin(e.target.value);
+                                    }}
+                                ></DateInput>
                             </div>
-                            <input
-                                type="date"
-                                id="inputBoxGeneric"
-                                className="EDTNewDatepickerFin"
-                                name="datepicker"
-                                onChange={(e) => {
-                                    setInFechaFin(e.target.value);
-                                }}
-                            ></input>
-                            <p>Responsables</p>
-                            <textarea
-                                rows="1"
-                                id="inputBoxGeneric"
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Responsables</p>
+                            <Textarea
+                                variant="bordered"
+                                minRows={1}
                                 placeholder="Escribe aquí"
-                                maxLength="70"
                                 onChange={(e) => {
                                     setInResponsables(e.target.value);
                                 }}
@@ -335,112 +430,77 @@ export default function EDTNewVisualization({
                     </div>
                 </div>
 
-                <div className="NewEDTSection">
-                    <p className="Header">Detalles del componente</p>
-                    <div className="SecondCardContainer">
-                        <p>Descripcion detallada</p>
-                        {/* <textarea
-                            rows="1"
-                            id="inputBoxGeneric"
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInDescripcion(e.target.value);
-                            }}
-                        /> */}
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inDescripcion}
-                            onValueChange={setInDescripcion}
-                            minRows={1}
-                            size="sm"
-                        />
-                        <p>Recursos</p>
-                        {/* <textarea
-                            rows="1"
-                            id="inputBoxGeneric"
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInRecursos(e.target.value);
-                            }}
-                        /> */}
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inRecursos}
-                            onValueChange={setInRecursos}
-                            minRows={1}
-                            size="sm"
-                        />
-                        <p>Hito asociado</p>
-                        {/* <textarea
-                            rows="1"
-                            id="inputBoxGeneric"
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInHito(e.target.value);
-                            }}
-                        /> */}
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inHito}
-                            onValueChange={setInHito}
-                            minRows={1}
-                            size="sm"
-                        />
-                        <p>Observaciones</p>
-                        {/* <textarea
-                            rows="1"
-                            id="inputBoxGeneric"
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInObservaciones(e.target.value);
-                            }}
-                        /> */}
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inObservaciones}
-                            onValueChange={setInObservaciones}
-                            minRows={1}
-                            size="sm"
-                        />
+                <div className="flex flex-col">
+                    <p className={twTitle}>Detalles del componente</p>
+                    <div className="px-4 py-2">
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Descripcion detallada</p>
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inDescripcion}
+                                onValueChange={setInDescripcion}
+                                minRows={1}
+                                size="sm"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Recursos</p>
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inRecursos}
+                                onValueChange={setInRecursos}
+                                minRows={1}
+                                size="sm"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Hito asociado</p>
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inHito}
+                                onValueChange={setInHito}
+                                minRows={1}
+                                size="sm"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Observaciones</p>
+                            <Textarea
+                                variant={"bordered"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inObservaciones}
+                                onValueChange={setInObservaciones}
+                                minRows={1}
+                                size="sm"
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="EDTNewResponsiveContainer">
-                <div className="NewEDTSection">
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignContent: "center",
-                        }}
-                    >
-                        <p className="Header">Entregables</p>
-                        <button
+                <div className="flex flex-col">
+                    <div className="flex flex-row gap-2 items-center">
+                        <p className={twTitle}>Entregables</p>
+                        <Button
+                            className="bg-F0AE19 text-white font-semibold"
                             onClick={handleAddEntregable}
-                            className="btnEDTAnadir"
+                            size="sm"
                         >
                             Anadir entregable
-                        </button>
+                        </Button>
                     </div>
 
-                    <div className="ThirdCardContainer">
+                    <div className="px-4 py-2">
                         <ListEditableInput
                             ListInputs={listEntregables}
                             typeName="Entregable"
@@ -452,24 +512,19 @@ export default function EDTNewVisualization({
                     </div>
                 </div>
 
-                <div className="NewEDTSection">
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignContent: "center",
-                        }}
-                    >
-                        <p className="Header">Criterios de aceptacion</p>
-                        <button
+                <div className="flex flex-col">
+                    <div className="flex flex-row gap-2 items-center">
+                        <p className={twTitle}>Criterios de aceptacion</p>
+                        <Button
+                            className="bg-F0AE19 text-white font-semibold"
+                            size="sm"
                             onClick={handleAddCriterio}
-                            className="btnEDTAnadir"
                         >
                             Anadir criterio
-                        </button>
+                        </Button>
                     </div>
 
-                    <div className="FourthCardContainer">
+                    <div className="px-4 py-2">
                         <ListEditableInput
                             ListInputs={listCriterios}
                             typeName="Criterio"
@@ -481,7 +536,6 @@ export default function EDTNewVisualization({
                     </div>
                 </div>
             </div>
-
             <div className="twoButtons">
                 <Modal
                     nameButton="Descartar"
@@ -509,9 +563,16 @@ export default function EDTNewVisualization({
                             toast.error("Faltan completar campos obligatorios");
                             return false;
                         } else {
-                            for(const entregable of listEntregables){
-                                if(listEntregablesBD.some(entr => entr.nombre?.includes(entregable.data))){
-                                    toast.warning("Entregable ya registrado, intenta otro nombre");
+                            for (const entregable of listEntregables) {
+                                if (
+                                    entregable.data !== "" &&
+                                    listEntregablesBD.some((entr) =>
+                                        entr.nombre?.includes(entregable.data)
+                                    )
+                                ) {
+                                    toast.warning(
+                                        "Entregable ya registrado, intenta otro nombre"
+                                    );
                                     return false;
                                 }
                             }
@@ -521,7 +582,6 @@ export default function EDTNewVisualization({
                     }}
                 />
             </div>
-            <Toaster richColors position="bottom-left" />
         </div>
     );
 

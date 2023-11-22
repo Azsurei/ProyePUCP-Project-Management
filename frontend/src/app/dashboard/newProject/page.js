@@ -378,6 +378,9 @@ export default function newProject() {
                 <div className="infoBox">
                     {estadoProgress === 1 && (
                         <CardCreateProject
+                            nameProject = {nameProject}
+                            fechaInicio={fechaInicio}
+                            fechaFin={fechaFin}
                             handleChangesNombre={handleChangeProjectName}
                             handleChangesFechaInicio={handleChangesFechaInicio}
                             handleChangesFechaFin={handleChangesFechaFin}
@@ -388,7 +391,7 @@ export default function newProject() {
                         <ToolCardsContext.Provider
                             value={{ addToolToList, removeToolInList }}
                         >
-                            <ListTools></ListTools>
+                            <ListTools listHerramientas={listHerramientas}></ListTools>
                         </ToolCardsContext.Provider>
                     )}
                     {estadoProgress === 3 && (
