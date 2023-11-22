@@ -1,4 +1,10 @@
 const connection = require("../../config/db");
+const cookie = require("cookie");
+require('dotenv').config({ path: './../../.env' });
+
+//de jsonwebtokens
+const jwt = require("jsonwebtoken");
+const secret = process.env.JWT_SECRET; 
 
 async function loginXCorreo(req, res, next) {
     const { correoElectronico } = req.body;
@@ -45,10 +51,12 @@ async function loginXCorreo(req, res, next) {
             console.log(`No se ha autenticado al usuario.`);
             res.status(417).send("Nombre de usuario o contraseña incorrectos. O el correo no está en el sistema");
         }
+        /*
         res.status(200).json({
             usuarios: results[0],
             message: "Usuarios obtenidos exitosamente",
         });
+        */
     } catch (error) {
         console.error("Error en la autenticación:", error);
         res.status(500).send("Error en la autenticación: " + error.message);
