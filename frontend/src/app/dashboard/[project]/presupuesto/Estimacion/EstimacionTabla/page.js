@@ -124,7 +124,6 @@ useEffect(() => {
           }
 
           console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
-          console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
       } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
       }
@@ -230,6 +229,54 @@ function convertirTarifa(tarifa, idMoneda) {
     }
 }
 
+async function updatePorcentaje() {
+      return new Promise((resolve, reject) => {
+        setIsLoadingSmall(true);
+        const stringUrlmodificaPresupuesto =
+          process.env.NEXT_PUBLIC_BACKEND_URL +
+          `/api/proyecto/presupuesto/modificarPorcentasjesPresupuestoXIdPresupuesto`;
+
+        console.log(`Esta es el id presupuesto:`, stringUrlmodificaPresupuesto);
+
+        const data = {
+          idPresupuesto: presupuestoId,
+          reservaContingencia: parseFloat(pReserva),
+          porcentajeReservaGestion: parseFloat(pGestion / 100),
+          porcentajeGanancia: parseFloat(pGanancia / 100),
+          IGV: parseFloat(pIGV / 100)
+        };
+
+
+        axios
+          .put(stringUrlmodificaPresupuesto, data)
+          .then((response) => {
+            console.log(response.data.message);
+            console.log("Porcentajes SI Modificado");
+            resolve(response);
+          })
+          .catch((error) => {
+            console.error("Error al modificar el presupuesto:", error);
+            reject(error);
+          });
+  });
+}
+
+
+
+
+
+const actualizarPorcentanjes = () => {
+  toast.promise(updatePorcentaje, {
+      loading: "Actualizando presupuesto...",
+      success: (data) => {
+          return "El presupuesto se actualizó con éxito!";
+      },
+      error: "Error al actualizar presupuesto",
+      position: "bottom-right",
+  });
+
+};
+
     return (
         <div className="mainDivPresupuesto">
         <Toaster 
@@ -277,7 +324,21 @@ function convertirTarifa(tarifa, idMoneda) {
                       setReserva(pReserva);
                       setIGV(pIGV);
                       setGanancia(pGanancia);
+
+
+                      //await actualizarPorcentanjes();
+
+                      try {
+                          actualizarPorcentanjes();     
+
+                          
+                      } catch (error) {
+                          console.error('Error al registrar porcentajes:', error);
+                      }
+
                       onClose();
+                      setIsLoadingSmall(false);
+
 
                     }
 

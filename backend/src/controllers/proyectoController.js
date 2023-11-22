@@ -95,11 +95,10 @@ async function crear(req, res, next) {
                 const [results3] = await connection.query(query, [idProyecto]);
                 const idCronograma = results3[0][0].idCronograma;
 
-                query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
+                query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?,?,?,?,?)";
                 const [results4] = await connection.query(query, [
                     idProyecto,
                     2,
-                    0,
                     0,
                     0,
                     0,
