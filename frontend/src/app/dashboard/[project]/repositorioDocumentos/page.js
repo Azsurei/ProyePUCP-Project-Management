@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, {
+    useState,
+    useEffect,
+    useCallback,
+    useContext,
+    createElement,
+} from "react";
 import {
     Table,
     TableHeader,
@@ -140,7 +146,7 @@ const deleteDocument = async (idDocumento) => {
             )
             .then((response) => {
                 console.log(response);
-                resolve(response.data.documento);
+                resolve();
             })
             .catch((error) => {
                 console.error("Error al eliminar el documento: ", error);
@@ -185,10 +191,8 @@ const repositorioDocumentos = (props) => {
         try {
             const repository = await getRepository(idRepositorioDocumentos);
             console.log(repository);
-            if(repository === undefined)
-                setDocuments([]);
-            else
-                setDocuments(repository);
+            if (repository === undefined) setDocuments([]);
+            else setDocuments(repository);
         } catch (error) {
             console.error(error);
             toast.error("Error al obtener los datos del repositorio.");

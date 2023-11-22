@@ -20,7 +20,7 @@ const s3 = new S3Client({
 
 async function subirArchivo(req,res,next){
     console.log(req.file);
-    const{idRepositorioDocumentos} = req.body;
+    const{idRepositorioDocumentos, extension} = req.body;
     const fileName = randomName();
     const params={
         Bucket: bucketName,
@@ -35,7 +35,7 @@ async function subirArchivo(req,res,next){
         await s3.send(command);
         const [results] = await connection.query(query, [fileName, req.file.originalname]);
         const idArchivo = results[0][0].idArchivo;
-        const [results1] = await connection.query(query1, [idArchivo, idRepositorioDocumentos, req.file.size, req.file.mimetype]);
+        const [results1] = await connection.query(query1, [idArchivo, idRepositorioDocumentos, req.file.size, extension]);
         const idArchivoXRepositorioDocumento = results1[0][0].idArchivoXRepositorioDocumento;
         res.status(200).json({
             idArchivo,
