@@ -35,6 +35,7 @@ import axios from "axios";
 import { set } from "date-fns";
 import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
 import { Toaster, toast } from "sonner";
+import { DeleteDocumentIcon } from "@/../public/icons/deleteDocument";
 
 
 const columns = [
@@ -296,21 +297,18 @@ export default function MyTemplates() {
         switch (columnKey) {
             case "acciones":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                
-                                <DropdownItem onPress={()=>{
-                                    onOpen();
-                                    setPlantillaSeleccionada(template);
-                                    }}>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                    <div className="relative flex justify-start items-center gap-2">
+
+                        <Button
+                            isIconOnly
+                            variant="light"
+                            onPress={() => {
+                                onOpen();
+                                setPlantillaSeleccionada(template);
+                            }}
+                        >
+                            <DeleteDocumentIcon width="1.5em" height="auto" />
+                        </Button>
                     </div>
                 );
 
@@ -374,6 +372,8 @@ export default function MyTemplates() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
+
+                        
 
                     </div>
                 </div>
