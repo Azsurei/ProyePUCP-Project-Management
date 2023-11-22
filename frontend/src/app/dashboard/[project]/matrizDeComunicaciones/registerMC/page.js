@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/registerMC.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar, Input } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
@@ -10,6 +10,7 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -32,6 +33,10 @@ export default function MatrizComunicacionesRegister(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idMatrizComunicaciones = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 8
+    ).idHerramientaCreada;
     const router = useRouter();
     const [sumilla, setSumilla] = useState("");
     const [detail, setDetail] = useState("");
@@ -44,6 +49,7 @@ export default function MatrizComunicacionesRegister(props) {
     const isTextTooLong1 = sumilla.length > 130;
     const isTextTooLong2 = detail.length > 400;
     const isTextTooLong3 = groupReceiver.length > 400;
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -129,6 +135,10 @@ export default function MatrizComunicacionesRegister(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
+            registerAdditionalFields(listAdditionalFields, idMatrizComunicaciones, 6, 1, (response)=>{
+                console.log("response", response)
+                
+});
     };
 
     return (
@@ -298,6 +308,14 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+                </div>
+                <ListAdditionalFields 
+                    editState={true}
+                    baseFields={listAdditionalFields}
+                    setBaseFields={setListAdditionalFields}
+                />
                 <div className="containerBottomMC">
                     <div className="twoButtonsMC">
                         <div className="buttonContainerMC">

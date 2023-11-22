@@ -51,6 +51,10 @@ async function crear(req, res, next) {
         console.log(`Se creo el proyecto ${idProyecto} con exito!`);
         //Recordar, este query crea el proyecto y asigna al usuario de creacion como el Jefe de proyecto en tabla UsuarioXRolXProyecto
         console.log("==========================test=================");
+        const queryMiemrbo = `CALL INSERTAR_ROL_MIEMBRO_LIDER(?);`;
+        const [results1] = await connection.query(queryMiemrbo, [
+            idProyecto,
+        ]);
 
         try {
             //sirve para registrar en la tabla HerramientaXProyecto, de esta reconoceremos facilmente que herramientas se deben mostrar listas a uso en el proyecto
@@ -95,11 +99,10 @@ async function crear(req, res, next) {
                 const [results3] = await connection.query(query, [idProyecto]);
                 const idCronograma = results3[0][0].idCronograma;
 
-                query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?)";
+                query = "CALL INSERTAR_PRESUPUESTO(?,?,?,?,?,?,?,?)";
                 const [results4] = await connection.query(query, [
                     idProyecto,
                     2,
-                    0,
                     0,
                     0,
                     0,
@@ -221,7 +224,7 @@ async function crear(req, res, next) {
                             "Llegue a recibir solicitud insertar equipo"
                         );
                         const query = `CALL INSERTAR_HERRAMIENTA_X_PROYECTO(?,?,?);`;
-                        const query1 = `CALL INSERTAR_ROL_MIEMBRO_LIDER(?);`;
+                        //const query1 = `CALL INSERTAR_ROL_MIEMBRO_LIDER(?);`;
                         const [results] = await connection.query(query, [
                             idProyecto,
                             12,
@@ -229,9 +232,10 @@ async function crear(req, res, next) {
                         ]);
                         const idEquipo = results[0][0].idEquipo;
                         console.log(`Se creo el equipo${idEquipo}!`);
+                        /*
                         const [results1] = await connection.query(query1, [
                             idProyecto,
-                        ]);
+                        ]);*/
                     }
 
                     // if (herramienta.idHerramienta === 13) {

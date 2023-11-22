@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerCR.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import {HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,6 +15,7 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -23,6 +24,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idCatalogoDeRiesgos = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 5
+    ).idHerramientaCreada;
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
@@ -61,6 +66,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoRiesgos, setCatalogoRiesgos] = useState(null);
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
 
     useEffect(() => {
         if (catalogoRiesgos && catalogoRiesgos.riesgo) {
@@ -120,6 +126,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
             console.log("Terminó de cargar los datos");
             setSignal(true);
         }
+        getAdditionalFields(idCatalogoDeRiesgos, 5, setListAdditionalFields, (response)=>{
+            console.log("response", response)
+            setIsLoadingSmall(false)
+            });
     }, [catalogoRiesgos]);
 
     useEffect(() => {
@@ -494,6 +504,10 @@ export default function CatalogoDeRiesgosUpdate(props) {
             .catch((error) => {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
+            });
+            registerAdditionalFields(listAdditionalFields, idCatalogoDeRiesgos, 5, 1, (response)=>{
+                                                                                    console.log("response", response)
+                                                                                    
             });
     };
 
@@ -903,6 +917,14 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         </div>
                     )}
                 </div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+                </div>
+                <ListAdditionalFields 
+                    editState={editMode}
+                    baseFields={listAdditionalFields}
+                    setBaseFields={setListAdditionalFields}
+                />
                 <div className="containerBottomCR">
                     {editMode && (
                         <div className="twoButtonsCR">

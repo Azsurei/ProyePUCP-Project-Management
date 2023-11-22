@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/catalogoDeInteresadosStyles/registerCI.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Input, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import ContainerRequirementsCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerRequirementsCI";
 import ContainerStrategiesCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerStrategiesCI";
 import MailIcon from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/MailIcon";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
@@ -21,6 +22,10 @@ export default function CatalogoDeInteresadosRegister(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idCatalogoDeInteresados = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 6
+    ).idHerramientaCreada;
     const router = useRouter();
     const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState("");
@@ -53,6 +58,7 @@ export default function CatalogoDeInteresadosRegister(props) {
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoInteresados, setCatalogoInteresados] = useState(null);
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
 
     useEffect(() => {
         if (
@@ -103,6 +109,10 @@ export default function CatalogoDeInteresadosRegister(props) {
             console.log("Terminó de cargar los datos");
             setIsLoadingSmall(false);
         }
+        getAdditionalFields(idCatalogoDeInteresados, 6, setListAdditionalFields, (response)=>{
+            console.log("response", response)
+            setIsLoadingSmall(false)
+            });
     }, [catalogoInteresados]);
 
     useEffect(() => {
@@ -396,6 +406,11 @@ export default function CatalogoDeInteresadosRegister(props) {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
             });
+
+                registerAdditionalFields(listAdditionalFields, idCatalogoDeInteresados, 6, 1, (response)=>{
+                    console.log("response", response)
+                    
+});
     };
 
     return (
@@ -700,6 +715,14 @@ export default function CatalogoDeInteresadosRegister(props) {
                         </div>
                     )}
                 </div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+                </div>
+                <ListAdditionalFields 
+                    editState={editMode}
+                    baseFields={listAdditionalFields}
+                    setBaseFields={setListAdditionalFields}
+                />
                 <div className="containerBottomCI">
                     {editMode === true && (
                         <div className="twoButtonsCI">

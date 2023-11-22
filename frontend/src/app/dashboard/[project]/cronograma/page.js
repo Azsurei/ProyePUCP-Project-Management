@@ -52,7 +52,9 @@ import { NotificationsContext, SessionContext } from "../../layout";
 import Link from "next/link";
 import { SearchIcon } from "public/icons/SearchIcon";
 import { saveAs } from "file-saver";
-import ListAdditionalFields from "@/components/ListAdditionalFields";
+import ListAdditionalFields, {
+    registerAdditionalFields,
+} from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -629,42 +631,58 @@ export default function Cronograma(props) {
                 .then(function (response) {
                     console.log(response.data.message);
                     const nuevoIdTarea = response.data.idTarea;
-                    //actualizamos lista de tareas
 
-                    const tareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                        projectId;
-                    axios
-                        .get(tareasURL)
-                        .then(function (response) {
+                    console.log(JSON.stringify(taskAdditionalFields, null, 2));
+                    registerAdditionalFields(
+                        taskAdditionalFields,
+                        nuevoIdTarea,
+                        4,
+                        1,
+                        (response) => {
+                            console.log("respuesta tras insertar campos");
                             console.log(response);
-                            setListTareas(response.data.tareasOrdenadas);
-                            console.log(response.data.tareasOrdenadas);
 
-                            //! No es realmente necesario un await ya que solo es una notificacion, no hay problema.
-                            for (const usuario of selectedUsers) {
-                                if (
-                                    usuario.idUsuario !== sessionData.idUsuario
-                                ) {
-                                    sendNotification(
-                                        usuario.idUsuario,
-                                        1,
-                                        nuevoIdTarea
+                            //actualizamos lista de tareas
+                            console.log("se inserto correctamente?");
+                            const tareasURL =
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                                projectId;
+                            axios
+                                .get(tareasURL)
+                                .then(function (response) {
+                                    console.log(response);
+                                    setListTareas(
+                                        response.data.tareasOrdenadas
                                     );
-                                    console.log(
-                                        "mandando notificacion a " +
-                                            usuario.idUsuario
-                                    );
-                                }
-                            }
+                                    console.log(response.data.tareasOrdenadas);
 
-                            resolve(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                            reject(error);
-                        });
+                                    //! No es realmente necesario un await ya que solo es una notificacion, no hay problema.
+                                    for (const usuario of selectedUsers) {
+                                        if (
+                                            usuario.idUsuario !==
+                                            sessionData.idUsuario
+                                        ) {
+                                            sendNotification(
+                                                usuario.idUsuario,
+                                                1,
+                                                nuevoIdTarea
+                                            );
+                                            console.log(
+                                                "mandando notificacion a " +
+                                                    usuario.idUsuario
+                                            );
+                                        }
+                                    }
+
+                                    resolve(response);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    reject(error);
+                                });
+                        }
+                    );
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -758,25 +776,37 @@ export default function Cronograma(props) {
                 .put(editURL, objToEdit)
                 .then(function (response) {
                     console.log(response.data.message);
-                    //actualizamos lista de tareas
-
-                    const tareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                        projectId;
-                    axios
-                        .get(tareasURL)
-                        .then(function (response) {
+                    registerAdditionalFields(
+                        taskAdditionalFields,
+                        idTareaToEdit,
+                        4,
+                        1,
+                        (response) => {
                             console.log(response);
-                            setListTareas(response.data.tareasOrdenadas);
-                            console.log(response.data.tareasOrdenadas);
 
-                            resolve(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                            reject(error);
-                        });
+                            //actualizamos lista de tareas
+
+                            const tareasURL =
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                                projectId;
+                            axios
+                                .get(tareasURL)
+                                .then(function (response) {
+                                    console.log(response);
+                                    setListTareas(
+                                        response.data.tareasOrdenadas
+                                    );
+                                    console.log(response.data.tareasOrdenadas);
+
+                                    resolve(response);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    reject(error);
+                                });
+                        }
+                    );
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -1858,19 +1888,11 @@ export default function Cronograma(props) {
                                 )}
                             </div>
 
+                            <p className="font-semibold text-xl">Campos adicionales</p>
                             <ListAdditionalFields
                                 editState={stateSecond !== 2}
                                 baseFields={taskAdditionalFields}
-                                addBaseField={(field) => {
-                                    console.log("recibi " + JSON.stringify(field,null,2))
-                                    const tempList = [...taskAdditionalFields,field];
-                                    console.log("NUEVA LISTA " + JSON.stringify(tempList,null,2))
-                                    setTaskAdditionalFields(tempList);
-                                }}
-                                removeBaseField={(fieldId)=>{
-                                    const tempList = taskAdditionalFields.filter(field => field.idCampoAdicional !== fieldId);
-                                    setTaskAdditionalFields(tempList);
-                                }}
+                                setBaseFields={setTaskAdditionalFields}
                             />
 
                             {stateSecond !== 2 && (

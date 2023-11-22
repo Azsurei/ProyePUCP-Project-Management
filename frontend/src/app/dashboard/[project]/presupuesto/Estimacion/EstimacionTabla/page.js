@@ -35,6 +35,8 @@ import {
 import {ExportIcon} from "@/../public/icons/ExportIcon";
 import BuildIcon from '@mui/icons-material/Build';
 import { set } from "date-fns";
+import { saveAs } from "file-saver";
+
 
 export default function EstimacionTabla(props) {
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -124,7 +126,6 @@ useEffect(() => {
           }
 
           console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
-          console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
       } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
       }
@@ -137,8 +138,27 @@ useEffect(() => {
               .then(response => {
                   const presupuesto = response.data.presupuesto;
                   const moneda = presupuesto.idMoneda;
+
+                  //Porcentajes
+                  const ReservaContingencia=presupuesto.reservaContingencia;
+                  const PorcentajeReservaGestion=presupuesto.porcentajeReservaGestion;
+                  const PorcentajeGanancia=presupuesto.porcentajeGanancia;
+                  const Igv=presupuesto.IGV;
+
+
+                  setReserva(ReservaContingencia);
+                  setGestion(PorcentajeReservaGestion);
+                  setGanancia(PorcentajeGanancia);
+                  setIGV(Igv);
+
+
                   setMonedaPresupuesto(moneda);
-                  console.log("Moneda Presupuesto:" + moneda);
+                  console.log("Reserva Contingencia:" + ReservaContingencia);
+                  console.log("Reserva Gestion:" + PorcentajeReservaGestion);
+                  console.log("Reserva Ganancia:" + PorcentajeGanancia);
+                  console.log("Reserva Igv:" + Igv);
+
+
               })
               .catch(error => {
                   console.error("Error al llamar a la API:", error);
@@ -203,15 +223,15 @@ const invoiceReserva = parseFloat(Reserva) ;
 
 const invoiceLineaBase = invoiceSubtotal + invoiceReserva;
 
-const invoiceGestion = Gestion/100 * invoiceLineaBase;
+const invoiceGestion = Gestion * invoiceLineaBase;
 
 const invoicePresupuesto= invoiceLineaBase + invoiceGestion;
 
-const invoiceGanancia = Ganancia/100 * invoicePresupuesto;
+const invoiceGanancia = Ganancia * invoicePresupuesto;
 
 const invoiceTotalGanancia= invoicePresupuesto + invoiceGanancia;
 
-const invoiceIGV= IGV/100 * invoiceTotalGanancia;
+const invoiceIGV= IGV * invoiceTotalGanancia;
 
 const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
@@ -229,6 +249,102 @@ function convertirTarifa(tarifa, idMoneda) {
       
     }
 }
+
+async function updatePorcentaje() {
+      return new Promise((resolve, reject) => {
+        setIsLoadingSmall(true);
+        const stringUrlmodificaPresupuesto =
+          process.env.NEXT_PUBLIC_BACKEND_URL +
+          `/api/proyecto/presupuesto/modificarPorcentasjesPresupuestoXIdPresupuesto`;
+
+        console.log(`Esta es el id presupuesto:`, stringUrlmodificaPresupuesto);
+
+        const data = {
+          idPresupuesto: presupuestoId,
+          reservaContingencia: parseFloat(pReserva),
+          porcentajeReservaGestion: parseFloat(pGestion / 100),
+          porcentajeGanancia: parseFloat(pGanancia / 100),
+          IGV: parseFloat(pIGV / 100)
+        };
+
+
+        axios
+          .put(stringUrlmodificaPresupuesto, data)
+          .then((response) => {
+            console.log(response.data.message);
+            console.log("Porcentajes SI Modificado");
+            resolve(response);
+          })
+          .catch((error) => {
+            console.error("Error al modificar el presupuesto:", error);
+            reject(error);
+          });
+  });
+}
+
+
+
+
+
+const actualizarPorcentanjes = () => {
+  toast.promise(updatePorcentaje, {
+      loading: "Actualizando presupuesto...",
+      success: (data) => {
+          return "El presupuesto se actualizó con éxito!";
+      },
+      error: "Error al actualizar presupuesto",
+      position: "bottom-right",
+  });
+
+};
+
+
+async function handlerExport() {
+  try {
+      const exportURL =
+          process.env.NEXT_PUBLIC_BACKEND_URL +
+          "/api/proyecto/reporte/crearExcelFlujoEstimacionCosto";
+
+      const response = await axios.post(
+          exportURL,
+          {
+            idPresupuesto: presupuestoId,
+          },
+          {
+              responseType: "blob", // Important for binary data
+          }
+      );
+
+      setTimeout(() => {
+          const today = new Date();
+
+          let day = today.getDate();
+          let month = today.getMonth() + 1;
+          let year = today.getFullYear();
+
+          day = day < 10 ? "0" + day : day;
+          month = month < 10 ? "0" + month : month;
+
+          // Create the formatted date string
+          let formattedDate = `${day}_${month}_${year}`;
+
+          const fileName =
+              projectName.split(" ").join("") +
+              "_" +
+              formattedDate +
+              ".xlsx";
+          console.log(fileName);
+          saveAs(response.data, fileName);
+
+          toast.success("Se exporto la Estimación de Costos con exito");
+      }, 500);
+  } catch (error) {
+      toast.error("Error al exportar la Estimación de Costos");
+      console.log(error);
+  }
+}
+
+
 
     return (
         <div className="mainDivPresupuesto">
@@ -277,7 +393,21 @@ function convertirTarifa(tarifa, idMoneda) {
                       setReserva(pReserva);
                       setIGV(pIGV);
                       setGanancia(pGanancia);
+
+
+                      //await actualizarPorcentanjes();
+
+                      try {
+                          actualizarPorcentanjes();     
+
+                          
+                      } catch (error) {
+                          console.error('Error al registrar porcentajes:', error);
+                      }
+
                       onClose();
+                      setIsLoadingSmall(false);
+
 
                     }
 
@@ -338,7 +468,7 @@ function convertirTarifa(tarifa, idMoneda) {
                         }}>
 
                           <Input
-                            value={pReserva}
+                            value={Reserva}
                             onValueChange={setpReserva}
                             labelPlacement="outside"
                             isInvalid={!validReserva}
@@ -353,7 +483,7 @@ function convertirTarifa(tarifa, idMoneda) {
                           />
                           
                           <Input
-                            value={pGestion}
+                            value={Gestion*100}
                             onValueChange={setpGestion}
                             labelPlacement="outside"
                             isInvalid={!validGestion}
@@ -408,7 +538,7 @@ function convertirTarifa(tarifa, idMoneda) {
                         }}>
                           
                           <Input
-                            value={pGanancia}
+                            value={Ganancia*100}
                             onValueChange={setpGanancia}
                             labelPlacement="outside"
                             isInvalid={!validGanancia}
@@ -423,7 +553,7 @@ function convertirTarifa(tarifa, idMoneda) {
                           />
 
                           <Input
-                            value={pIGV}
+                            value={IGV*100}
                             onValueChange={setpIGV}
                             labelPlacement="outside"
                             isInvalid={!validIGV}
@@ -517,7 +647,12 @@ function convertirTarifa(tarifa, idMoneda) {
                         </Button> 
                     </Link>
 
-                    <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
+                    <Button color="primary" startContent={<ExportIcon />} 
+                        onPress={async () => {
+                          await handlerExport();
+                      }}
+                    
+                    className="btnExportPresupuesto">
                       Exportar
                     </Button> 
                 
@@ -590,7 +725,7 @@ function convertirTarifa(tarifa, idMoneda) {
 
               <TableRow>
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Reserva de Gestión</TableCell>
-                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Gestion*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Gestion*100).toFixed(0)} %`}</TableCell>
 
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceGestion)}</TableCell>
@@ -606,7 +741,7 @@ function convertirTarifa(tarifa, idMoneda) {
               {Ganancia>0 &&
               <TableRow>
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Ganancia</TableCell>
-                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Ganancia*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Ganancia*100).toFixed(0)} %`}</TableCell>
 
                 <TableCell colSpan={2}
                 className="text-gray-800 text-sm not-italic font-bold" align="right">{ccyFormat(invoiceGanancia)}</TableCell>
@@ -627,7 +762,7 @@ function convertirTarifa(tarifa, idMoneda) {
               {IGV>0 &&
                 <TableRow>
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">IGV</TableCell>
-                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(IGV*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(IGV*100).toFixed(0)} %`}</TableCell>
 
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceIGV)}</TableCell>

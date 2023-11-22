@@ -95,11 +95,11 @@ export default function Historial(props) {
                 axios.get(stringURLListarPresupuesto)
                     .then(response => {
                         const presupuesto = response.data.presupuesto;
-                        if (presupuesto[0] && ( parseFloat(presupuesto[0].presupuestoInicial) === 0.00 || presupuesto[0].presupuestoInicial === null)) {
+                        if (presupuesto && ( parseFloat(presupuesto.presupuestoInicial) === 0.00 || presupuesto.presupuestoInicial === null)) {
                             console.log("Presupuesto Nuevo");
                             onOpen();
                         } else {
-                            console.log(presupuesto[0].presupuestoInicial);
+                            console.log(presupuesto.presupuestoInicial);
                             console.log("Si tiene presupuesto inicial");
                         }
                     })
@@ -125,8 +125,8 @@ export default function Historial(props) {
 
                     const proyecto = response.data.infoProyecto;
 
-                    const fechaInicio = new Date(proyecto[0].fechaInicio);
-                    const fechaFin = new Date(proyecto[0].fechaFin);
+                    const fechaInicio = new Date(proyecto.fechaInicio);
+                    const fechaFin = new Date(proyecto.fechaFin);
 
                     console.log("Fecha Inicio"+fechaInicio);
                     console.log("Fecha Fin"+fechaFin);

@@ -11,6 +11,10 @@ import {
     useDisclosure,
     Input,
     Button,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
   } from "@nextui-org/react";
 import React, { useState, useEffect, useReducer, useContext, createContext } from "react";
 import { usePathname } from "next/navigation";
@@ -483,15 +487,32 @@ export default function RootLayout({ children, params }) {
             {isKanbanPage &&
             <div style={{ display: 'flex', marginLeft: 'auto' ,gap:'20px'}}>
             
-                    <Button onPress={onModalverPlantillas} color="primary" startContent={<ContentPasteGoIcon />}>
-
-                        Plantillas
-                    </Button>
-
-                    
-                    <Button onPress={onModalSavePLantilla} color="primary" startContent={<SaveAsIcon />}>
-                        Guardar Plantilla
-                    </Button>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button color="secondary">Plantillas</Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            variant="faded"
+                            aria-label="Dropdown menu with icons"
+                        >
+                            <DropdownItem
+                                key="verPlantillaKB"
+                                startContent={<ContentPasteGoIcon />}
+                                onPress={onModalverPlantillas}
+                                color="secondary"
+                            >
+                                Ver Plantillas
+                            </DropdownItem>
+                            <DropdownItem
+                                key="guardarPlantillasKB"
+                                startContent={<SaveAsIcon />}
+                                onPress={onModalSavePLantilla}
+                                color="secondary"
+                            >
+                                Guardar Plantilla
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
 
                 
             </div>

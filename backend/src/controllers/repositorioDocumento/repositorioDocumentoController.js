@@ -20,7 +20,7 @@ const s3 = new S3Client({
 
 async function subirArchivo(req,res,next){
     console.log(req.file);
-    const{idRepositorioDocumentos} = req.body;
+    const{idRepositorioDocumentos, extension} = req.body;
     const fileName = randomName();
     const params={
         Bucket: bucketName,
@@ -35,7 +35,7 @@ async function subirArchivo(req,res,next){
         await s3.send(command);
         const [results] = await connection.query(query, [fileName, req.file.originalname]);
         const idArchivo = results[0][0].idArchivo;
-        const [results1] = await connection.query(query1, [idArchivo, idRepositorioDocumentos, req.file.size, req.file.mimetype]);
+        const [results1] = await connection.query(query1, [idArchivo, idRepositorioDocumentos, req.file.size, extension]);
         const idArchivoXRepositorioDocumento = results1[0][0].idArchivoXRepositorioDocumento;
         res.status(200).json({
             idArchivo,
@@ -52,7 +52,7 @@ async function listarArchivos(req,res,next){
     const query = `CALL LISTAR_ARCHIVOS_X_IDREPOSITORIO(?);`;
     try {
         const [results] = await connection.query(query, [idRepositorioDocumentos]);
-        const archivos = results[0][0];
+        const archivos = results[0];
         res.status(200).json({
             archivos,
             message: "Archivos listados"
@@ -64,12 +64,11 @@ async function listarArchivos(req,res,next){
 
 async function eliminarArchivo(req,res,next){
     const{idArchivo} = req.body;
+    console.log(idArchivo);
     const query = `CALL ELIMINAR_ARCHIVO_X_ID(?);`;
     try {
         const [results] = await connection.query(query, [idArchivo]);
-        const archivos = results[0][0];
         res.status(200).json({
-            archivos,
             message: "Archivo eliminado"
         });
     } catch (error) {

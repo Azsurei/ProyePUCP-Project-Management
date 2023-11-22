@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/MComunicationStyles/registerMC.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar, Button, Input } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
@@ -10,6 +10,7 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -34,6 +35,10 @@ export default function MatrizComunicacionesUpdate(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idMatrizComunicaciones = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 8
+    ).idHerramientaCreada;
     const router = useRouter();
     const [editMode, setEditMode] = useState(false);
     const [sumilla, setSumilla] = useState("");
@@ -51,6 +56,7 @@ export default function MatrizComunicacionesUpdate(props) {
     const isTextTooLong2 = detail.length > 400;
     const isTextTooLong3 = groupReceiver.length > 400;
     const [matrizComunicaciones, setMatrizComunicaciones] = useState(null);
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
 
     useEffect(() => {
         if (matrizComunicaciones && matrizComunicaciones.comunicacion) {
@@ -79,6 +85,10 @@ export default function MatrizComunicacionesUpdate(props) {
             //setIsLoading(false);
             setIsLoadingSmall(false);
         }
+        getAdditionalFields(idMatrizComunicaciones, 6, setListAdditionalFields, (response)=>{
+            console.log("response", response)
+            setIsLoadingSmall(false)
+            });
     }, [matrizComunicaciones]);
 
     useEffect(() => {
@@ -191,6 +201,10 @@ export default function MatrizComunicacionesUpdate(props) {
                 // Manejar errores si la solicitud PUT falla
                 console.error("Error al realizar la solicitud PUT:", error);
             });
+            registerAdditionalFields(listAdditionalFields, idMatrizComunicaciones, 6, 1, (response)=>{
+                console.log("response", response)
+                
+});
     };
 
     return (
@@ -396,6 +410,14 @@ export default function MatrizComunicacionesUpdate(props) {
                         {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+                </div>
+                <ListAdditionalFields 
+                    editState={editMode}
+                    baseFields={listAdditionalFields}
+                    setBaseFields={setListAdditionalFields}
+                />
                 <div className="containerBottomMC">
                     {editMode === true && (
                         <div className="twoButtonsMC">

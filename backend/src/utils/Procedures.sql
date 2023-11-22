@@ -5619,7 +5619,7 @@ CREATE PROCEDURE LISTAR_ARCHIVOS_X_IDREPOSITORIO(
     IN _idRepositorioDocumentos INT
 )
 BEGIN
-    SELECT a.nombreReal, ar.fechaSubida, ar.tamano, ar.tipoArchivo
+    SELECT a.idArchivo, a.nombreReal, ar.fechaSubida, ar.tamano, ar.tipoArchivo
     FROM ArchivoXRepositorioDocumento AS ar
     LEFT JOIN Archivo AS a ON ar.idArchivo = a.idArchivo
     WHERE ar.idRepositorioDocumentos = _idRepositorioDocumentos

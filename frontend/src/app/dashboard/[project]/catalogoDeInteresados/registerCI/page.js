@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/catalogoDeInteresadosStyles/registerCI.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Input, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import ContainerRequirementsCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerRequirementsCI";
 import ContainerStrategiesCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerStrategiesCI";
 import MailIcon from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/MailIcon";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
@@ -19,6 +20,10 @@ export default function CatalogoDeInteresadosRegister(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idCatalogoDeInteresados = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 6
+    ).idHerramientaCreada;
     const router = useRouter();
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
@@ -42,6 +47,7 @@ export default function CatalogoDeInteresadosRegister(props) {
     const isTextTooLong7 = phone.length > 100;
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -176,6 +182,10 @@ export default function CatalogoDeInteresadosRegister(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
+            registerAdditionalFields(listAdditionalFields, idCatalogoDeInteresados, 6, 1, (response)=>{
+                console.log("response", response)
+                
+});
     };
 
     return (
@@ -441,6 +451,14 @@ export default function CatalogoDeInteresadosRegister(props) {
                         </div>
                     </div>
                 </div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+                </div>
+                <ListAdditionalFields 
+                    editState={true}
+                    baseFields={listAdditionalFields}
+                    setBaseFields={setListAdditionalFields}
+                />
                 <div className="containerBottomCI">
                     <div className="twoButtonsCI">
                         <div className="buttonContainerCI">
