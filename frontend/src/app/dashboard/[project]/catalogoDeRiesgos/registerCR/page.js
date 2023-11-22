@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerCR.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -23,6 +24,10 @@ export default function CatalogoDeRiesgosRegister(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { herramientasInfo } = useContext(HerramientasInfo);
+    const idCatalogoDeRiesgos = herramientasInfo.find(
+        (herramienta) => herramienta.idHerramienta === 5
+    ).idHerramientaCreada;
     const router = useRouter();
     const [name, setName] = useState("");
     const [detail, setDetail] = useState("");
@@ -49,6 +54,7 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [fieldsExcessive, setFieldsExcessive] = useState(false);
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
 
     useEffect(() => {
         // Obtener la fecha actual
@@ -252,6 +258,10 @@ export default function CatalogoDeRiesgosRegister(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
+            registerAdditionalFields(listAdditionalFields, idCatalogoDeRiesgos, 5, 1, (response)=>{
+                console.log("response", response)
+                
+});
     };
 
     return (
@@ -614,6 +624,14 @@ export default function CatalogoDeRiesgosRegister(props) {
                         </div>
                     </div>
                 </div>
+                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+                </div>
+                <ListAdditionalFields
+                    editState={true} 
+                    baseFields={listAdditionalFields}
+                    setBaseFields={setListAdditionalFields}
+                />
                 <div className="containerBottomCR">
                     <div className="twoButtonsCR">
                         <div className="buttonContainerCR">
