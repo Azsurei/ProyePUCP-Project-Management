@@ -106,7 +106,7 @@ const downloadDocument = async (idDocumento) => {
 const uploadDocument = async (documento) => {
     return new Promise((resolve, reject) => {
         axios
-            .put(
+            .post(
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                     `/api/proyecto/repositorioDocumento/subirArchivo`,
                 documento,
