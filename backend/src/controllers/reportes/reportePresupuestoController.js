@@ -4,8 +4,6 @@ const Exceljs = require('exceljs');
 const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
-const xlsxController = require("../xlxs/xlxsController");
-const authGoogle = require("../authGoogle/authGoogle");
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require("../files/fileController");
 const presupuestoController = require("../presupuesto/presupuestoController");
@@ -13,6 +11,7 @@ const ingresoController = require("../presupuesto/ingresoController");
 const egresoController = require("../presupuesto/egresoController");
 const tipoIngresoController = require("../presupuesto/tipoIngresoController");
 const estimacionCostoController = require("../presupuesto/estimacionCostoController");
+const monedaController = require("../presupuesto/monedaController");
 //import multer from "multer";
 
 //const storage = multer.memoryStorage();
@@ -305,8 +304,9 @@ async function crearExcelCaja(req,res,next){
         
         const fechaCreacion = new Date(presupuesto.general.fechaCreacion);
         const mesActual = fechaCreacion.getUTCMonth() + 1;
-        const lineasIngresoOrdenadas = await ingresoController.ordenarLineasIngreso(presupuesto.lineasIngreso,mesActual,presupuesto.general.cantidadMeses);
-        const lineasEgresoOrdenadas = await egresoController.ordenarLineasEgreso(presupuesto.lineasEgreso,mesActual,presupuesto.general.cantidadMeses);
+        const monedas = await monedaController.funcListarTodas();
+        const lineasIngresoOrdenadas = await ingresoController.ordenarLineasIngreso(presupuesto.lineasIngreso,mesActual,presupuesto.general.cantidadMeses,presupuesto.general.idMoneda,monedas);
+        const lineasEgresoOrdenadas = await egresoController.ordenarLineasEgreso(presupuesto.lineasEgreso,mesActual,presupuesto.general.cantidadMeses,presupuesto.general.idMoneda,monedas);
         const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + presupuesto.general.cantMeses);
         
         workbook = await funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas);
@@ -324,7 +324,6 @@ async function crearExcelCaja(req,res,next){
 
 async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas){
     try {
-
         let filaActual=1;
         const workbook = new Exceljs.Workbook();
         const WSCaja = workbook.addWorksheet('Caja');
@@ -336,8 +335,8 @@ async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngres
         [filaActual, totalIngresos] = await agregarIngresosAExcelCaja(lineasIngresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //ImprimirEgresos
         [filaActual, totalEgresos] = await agregarEgresosAExcelCaja(lineasEgresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
+        
         //Imprimir acumulado
-
         let resultados = new Array(presupuesto.general.cantidadMeses+1).fill(0);
         resultados[0] = "Acumulado";
         for(let i=1;i<=presupuesto.general.cantidadMeses;i++){
@@ -384,7 +383,7 @@ async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaAct
         filaActual++;
         
         const tiposIngreso = await tipoIngresoController.funcListarTodos();
-        
+
         for(const lineaMes of lineasIngresoOrdenadas){
             let filaArray = [tiposIngreso[i].descripcion]; // Asume que quieres etiquetar cada fila con "Tipo n"
             filaArray.push(...lineaMes);
@@ -494,10 +493,15 @@ async function funcCrearExcelEstimacionCosto(presupuesto){
 }
 
 async function agregarEstimacionCostoAExcel(presupuesto,WSEstimaciones,filaActual){
-    
+    const monedas = await monedaController.funcListarTodas();
     try{
         let totalEstimacion = 0;
         for(const linea of presupuesto.lineasEstimacionCosto){
+            if(linea.idMoneda!=presupuesto.general.idMoneda){
+                const cambioMoneda = monedas[row.idMoneda-1].tipoCambio;
+                linea.tarifaUnitariia = cambioMoneda*linea.tarifaUnitaria;
+                linea.subtotal = cambioMoneda*linea.subtotal;
+            }
             WSEstimaciones.getRow(filaActual).values = [linea.descripcion,linea.cantidadRecurso,linea.tarifaUnitaria,linea.tiempoRequerido,linea.subtotal];
             filaActual++;
             totalEstimacion+=linea.subtotal;

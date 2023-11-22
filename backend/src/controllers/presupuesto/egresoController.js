@@ -110,7 +110,7 @@ async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fe
     }
 }
 
-async function ordenarLineasEgreso(lineasEgreso, mesActual, mesesMostrados) {
+async function ordenarLineasEgreso(lineasEgreso, mesActual, mesesMostrados,idMoneda,monedas) {
     // Crear una matriz, inicializando cada fila con la descripción y luego llenándola con ceros
     let matrizEgresos = lineasEgreso.map(egreso => [egreso.descripcion].concat(new Array(mesesMostrados).fill(0)));
 
@@ -122,6 +122,10 @@ async function ordenarLineasEgreso(lineasEgreso, mesActual, mesesMostrados) {
 
             // Asegúrate de ajustar el índice para los meses, ya que el primer elemento es la descripción
             if (mesRelativo >= 0 && mesRelativo < mesesMostrados) {
+                if(egreso.idMoneda != idMoneda){
+                    const cambioMoneda = monedas[egreso.idMoneda-1].tipoCambio;
+                    egreso.costoReal = egreso.costoReal * cambioMoneda;
+                }
                 matrizEgresos[indexEgreso][mesRelativo + 1] += parseFloat(egreso.costoReal);
             }
         });
