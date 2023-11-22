@@ -40,10 +40,13 @@ function DeleteIcon() {
     );
 }
 
-function AdditionalField({ editState, field, deleteField }) {
-    const [fieldTitle, setFieldTitle] = useState(field.titulo);
-    const [fieldText, setFieldText] = useState(field.descripcion);
-
+function AdditionalField({
+    editState,
+    field,
+    deleteField,
+    onTitleChange,
+    onDescriptionChange,
+}) {
     return (
         <div className="flex flex-col gap-0 p-3 border border-slate-200 rounded-lg shadow-md">
             {editState ? (
@@ -51,8 +54,10 @@ function AdditionalField({ editState, field, deleteField }) {
                     <Textarea
                         variant="bordered"
                         minRows={1}
-                        value={fieldTitle}
-                        onValueChange={setFieldTitle}
+                        value={field.titulo}
+                        onChange={(e) => {
+                            onTitleChange(e.target.value);
+                        }}
                         classNames={{ input: "text-lg font-medium" }}
                     />
                     <div
@@ -63,14 +68,16 @@ function AdditionalField({ editState, field, deleteField }) {
                     </div>
                 </div>
             ) : (
-                <p className="font-medium text-lg">{fieldTitle}</p>
+                <p className="font-medium text-lg">{field.titulo}</p>
             )}
             <Textarea
                 variant={editState === true ? "bordered" : "flat"}
                 readOnly={!editState}
                 minRows={2}
-                value={fieldText}
-                onValueChange={setFieldText}
+                value={field.descripcion}
+                onChange={(e) => {
+                    onDescriptionChange(e.target.value);
+                }}
             />
         </div>
     );
@@ -82,27 +89,37 @@ function AdditionalField({ editState, field, deleteField }) {
 //main editor llamara a query con el parametro del id de la linea
 //trayendo los campos solo de ese id
 
-function ListAdditionalFields({
-    editState,
-    baseFields,
-    addBaseField,
-    removeBaseField,
-}) {
-
+function ListAdditionalFields({ editState, baseFields, setBaseFields }) {
     return (
         <div className="flex flex-col gap-2">
-            {baseFields.map((field) => {
-                return (
-                    <AdditionalField
-                        key={field.idCampoAdicional}
-                        editState={editState === null ? false : editState}
-                        field={field}
-                        deleteField={() => {
-                            handleDeleteField(field.idCampoAdicional);
-                        }}
-                    />
-                );
-            })}
+            {baseFields.length === 0 ? (
+                <div className="pt-6 flex justify-center text-[#b3b3b3] ">No ha creado campos adicionales</div>
+            ) : (
+                baseFields.map((field) => {
+                    return (
+                        <AdditionalField
+                            key={field.idCampoAdicional}
+                            editState={editState === null ? false : editState}
+                            field={field}
+                            deleteField={() => {
+                                handleDeleteField(field.idCampoAdicional);
+                            }}
+                            onTitleChange={(newTitle) => {
+                                handleTitleChange(
+                                    field.idCampoAdicional,
+                                    newTitle
+                                );
+                            }}
+                            onDescriptionChange={(newDescription) => {
+                                handleDescriptionChange(
+                                    field.idCampoAdicional,
+                                    newDescription
+                                );
+                            }}
+                        />
+                    );
+                })
+            )}
             {editState === true ? (
                 <div className="flex flex-row justify-center py-6">
                     <Button
@@ -120,37 +137,92 @@ function ListAdditionalFields({
         </div>
     );
 
+    function handleDescriptionChange(idCampo, newDescription) {
+        const updatedList = baseFields.map((field) => {
+            if (field.idCampoAdicional === idCampo) {
+                return { ...field, descripcion: newDescription };
+            }
+            return field;
+        });
+        setBaseFields(updatedList);
+    }
+
+    function handleTitleChange(idCampo, newTitle) {
+        const updatedList = baseFields.map((field) => {
+            if (field.idCampoAdicional === idCampo) {
+                return { ...field, titulo: newTitle };
+            }
+            return field;
+        });
+        setBaseFields(updatedList);
+    }
+
     function handleDeleteField(idCampo) {
-        removeBaseField(idCampo);
+        const tempList = baseFields.filter(
+            (field) => field.idCampoAdicional !== idCampo
+        );
+        setBaseFields(tempList);
     }
 
     function handleAddNewField() {
-        console.log("anadiendo campo")
         const newField = {
             idCampoAdicional: v4(), //esto genera random ids que son basicamente imposibles de replicar
             titulo: "Titulo del campo ",
             descripcion: "Descripcion detallada del campo ",
         };
+        const tempList = [...baseFields, newField];
 
-        addBaseField(newField);
+        setBaseFields(tempList);
     }
 }
 export default ListAdditionalFields;
 
-export function getAdditionalFields(idLineaAsociada, idHerramienta){
-        
+
+export function getAdditionalFields(
+    idLineaAsociada,
+    idHerramienta,
+    setList,
+    actionsAfter
+) {
+    const url =
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+        "/api/proyecto/camposAdicionales/listarCamposAdicionales";
+    axios
+        .post(url, {
+            idLineaAsociada: idLineaAsociada,
+            idHerramienta: idHerramienta,
+        })
+        .then(function (response) {
+            console.log(response);
+            setList(response.data.camposAdicionales);
+            actionsAfter(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }
 
-export function registerAdditionalFields(idLineaAsociada, idHerramienta, listFields, actionsAfter){
-    const url="laala";
-    axios.post(url,{
-        idLineaAsociada: idLineaAsociada,
-        idHerramienta: idHerramienta,
-        listaCamposAdicionales: listFields
-    }).then(function(response){
-        console.log(response);
-        actionsAfter();
-    }).catch(function(error){
-        console.log(error);
-    });
-};
+export function registerAdditionalFields(
+    listFields,
+    idLineaAsociada,
+    idHerramienta,
+    tipoInput,
+    actionsAfter
+) {
+    const url =
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+        "/api/proyecto/camposAdicionales/registrarCamposAdicionales";
+    axios
+        .post(url, {
+            listaCampos: listFields,
+            idLineaAsociada: idLineaAsociada,
+            idHerramienta: idHerramienta,
+            tipoInput: tipoInput,
+        })
+        .then(function (response) {
+            actionsAfter(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}

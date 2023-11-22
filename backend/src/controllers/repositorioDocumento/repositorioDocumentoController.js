@@ -52,7 +52,7 @@ async function listarArchivos(req,res,next){
     const query = `CALL LISTAR_ARCHIVOS_X_IDREPOSITORIO(?);`;
     try {
         const [results] = await connection.query(query, [idRepositorioDocumentos]);
-        const archivos = results[0][0];
+        const archivos = results[0];
         res.status(200).json({
             archivos,
             message: "Archivos listados"
