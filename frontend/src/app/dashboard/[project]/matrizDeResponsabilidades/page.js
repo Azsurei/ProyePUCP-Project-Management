@@ -93,6 +93,12 @@ export default function MatrizDeResponsabilidades(props) {
         onOpenChange: onOpenChangeListadoRol,
     } = useDisclosure();
 
+    const {
+        isOpen: isOpenEliminarRol,
+        onOpen: onOpenEliminarRol,
+        onOpenChange: onOpenChangeEliminarRol,
+    } = useDisclosure();
+
     const [letraRes, setLetraRes] = useState("");
     const [nombreRes, setNombreRes] = useState("");
     const [descripcionRes, setDescripcionRes] = useState("");
@@ -111,6 +117,7 @@ export default function MatrizDeResponsabilidades(props) {
     const isTextTooLong6 = descripcionUpdate.length > 100;
     const isTextTooLong7 = nombreRolAdd.lenght > 40;
     const [responsabilidadEliminar, setResponsabilidadEliminar] = useState({});
+    const [rolEliminar, setRolEliminar] = useState({});
 
     const onChangeColor = (color) => {
         setColorRes(color);
@@ -761,6 +768,37 @@ export default function MatrizDeResponsabilidades(props) {
         onClose();
     };
 
+    const eliminarRolFunction = (onClose) => {
+        setIsLoadingSmall(true);
+        const urlEliminarRol =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/equipo/eliminarRol";
+
+        const deleteData = {
+            idRolEquipo: rolEliminar.id,
+        };
+
+        console.log("El deleteData es:", deleteData);
+
+        axios
+            .delete(urlEliminarRol, {
+                data: deleteData,
+            })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud DELETE
+                console.log("Respuesta del servidor (DELETE):", response.data);
+                console.log("Eliminación correcta (DELETE)");
+                // Realizar acciones adicionales si es necesario
+                setReList(!reList);
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud DELETE falla
+                console.error("Error al realizar la solicitud DELETE:", error);
+            });
+
+        onClose();
+    };
+
     //obtener idUsuario
     const { sessionData } = useContext(SessionContext);
     useEffect(() => {
@@ -1045,14 +1083,14 @@ export default function MatrizDeResponsabilidades(props) {
                         >
                             <DropdownItem
                                 key="agregarRolMR"
-                                startContent={<AddIconBlack />}
+                                startContent={<AddIconBlack/>}
                                 onPress={onOpenRol}
                             >
                                 Agregar rol
                             </DropdownItem>
                             <DropdownItem
                                 key="verRolesMR"
-                                startContent={<AddIconBlack />}
+                                startContent={<AddIconBlack/>}
                                 onPress={onOpenListadoRol}
                             >
                                 Eliminar rol
@@ -1634,6 +1672,7 @@ export default function MatrizDeResponsabilidades(props) {
                                                                 setRolEliminar(
                                                                     rol
                                                                 );
+                                                                onOpenEliminarRol();
                                                             }}
                                                         />
                                                     </Tooltip>
@@ -1657,6 +1696,51 @@ export default function MatrizDeResponsabilidades(props) {
                                     className="bg-indigo-950 text-slate-50"
                                     onPress={() => {
                                         //agregarRol(onClose);
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            {/*Confirmacion de eliminacion*/}
+
+            <Modal
+                isOpen={isOpenEliminarRol}
+                onOpenChange={onOpenChangeEliminarRol}
+                isDismissable={false}
+                size="xl"
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader
+                                className={"flex flex-col gap-1 text-white-500"}
+                            >
+                                Eliminar rol
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="flex">
+                                    ¿Está seguro de eliminar el rol?
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={() => {
+                                        setRolEliminar({});
+                                        onClose();
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        eliminarRolFunction(onClose);
                                     }}
                                 >
                                     Guardar

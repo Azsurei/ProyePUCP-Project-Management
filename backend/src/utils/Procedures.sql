@@ -3505,8 +3505,8 @@ CREATE PROCEDURE ELIMINAR_ROL_EQUIPO(
     IN _idRolEquipo INT
 )
 BEGIN
-	UPDATE RolesEquipo
-    SET estado = 0
+	UPDATE RolEquipo
+    SET activo = 0
     WHERE idRolEquipo = _idRolEquipo;
 END$
 
