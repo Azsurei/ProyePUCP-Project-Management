@@ -361,8 +361,12 @@ async function modificarDatos(req,res,next){
         await connection.query(
             query,[idUsuario, nombres, apellidos, fechaNacimiento, telefono, usuario]
         );
+        const modificaciones = nombres+"/"+apellidos+"/"+fechaNacimiento+"/"+telefono+"/"+usuario;
         console.log(`Usuario ${idUsuario} modificado`);
-        res.status(200).json({message: "Usuario"});
+        res.status(200).json({
+            usuario: modificaciones,
+            message: "Usuario modificado exitosamente"
+        });
     } catch (error) {
         console.log("Error al Modificar datos de Usuario",error);
         next(error);

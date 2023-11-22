@@ -25,3 +25,16 @@ Content-Type:  application/json
 {
     "correoElectronico": "pruebaCorreo@gmail.com"
 }
+
+###
+PUT http://localhost:8080/api/auth/modificarUsuario
+Content-Type:  application/json
+
+{
+    "idUsuario": 137,
+    "nombres": "UsuarioPruebaEE",
+    "apellidos": "PruebaEE",
+    "fechaNacimiento": "1990-05-15",
+    "telefono": "999123452",
+    "usuario": "ElPruebas"
+}
