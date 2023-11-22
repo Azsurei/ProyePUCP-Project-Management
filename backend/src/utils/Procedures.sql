@@ -5112,6 +5112,16 @@ BEGIN
 END$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS ELIMINAR_GRUPO_PROYECTOS_X_ID_GRUPO_PROYECTOS;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_GRUPO_PROYECTOS_X_ID_GRUPO_PROYECTOS(
+	IN _idGrupoDeProyecto INT
+)
+BEGIN
+	UPDATE GrupoDeProyecto SET activo = 0 
+    WHERE idGrupoDeProyecto = _idGrupoDeProyecto AND activo = 1;
+END$
+
 
 /*   ELIMINAR HERRAMIENTAS X ID_PROYECTO 
         Esto es para los proyectos antiguos que no tenian idHerramientaCreada o 

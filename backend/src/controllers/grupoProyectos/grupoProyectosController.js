@@ -204,9 +204,26 @@ async function listarDatosProyectosXGrupo(req, res, next) {
     }
 }
 
+async function eliminar(req, res, next) {
+    const { idGrupoDeProyecto } = req.body;
+    try {
+        const query = `CALL ELIMINAR_GRUPO_PROYECTOS_X_ID_GRUPO_PROYECTOS(?);`;
+        await connection.query(query, [idGrupoDeProyecto]);
+        console.log(`Grupo de Proyectos ${idGrupoDeProyecto} eliminado`);    
+        res.status(200).json({
+            message: "Grupo de Proyectos eliminado exitosamente"
+        });
+    } catch (error) {
+        console.log("Error en la eliminacion ",error);
+        res.status(500).send("Error en la eliminacion: " + error.message);
+        next(error);
+    }
+}
+
 module.exports = {
     insertarGrupoProyectos,
     listarGruposProyecto,
     listarProyectosXGrupo,
     listarDatosProyectosXGrupo,
+    eliminar
 };
