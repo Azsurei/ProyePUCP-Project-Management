@@ -246,23 +246,6 @@ export default function catalogoDeRiesgos(props) {
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-2">
-                        {/* <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem onClick={() => 
-                                    setRoutering(data)
-                                }>
-                                
-                                        Editar 
-                                </DropdownItem>
-
-                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown> */}
                         <div className="flex">
                             <Tooltip content="Visualizar" color="primary">
                                 <button

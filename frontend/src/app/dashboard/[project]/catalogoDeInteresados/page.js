@@ -229,28 +229,11 @@ export default function CatalogoDeInteresados(props) {
         switch (columnKey) {
             case "actions":
                 return (
-                    <div className="relative flex justify-center items-center gap-2">
-                        {/* <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem onClick={() => 
-                                    setRoutering(data)
-                                }>
-                                
-                                        Editar 
-                                </DropdownItem>
-
-                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown> */}
-                        <div className="flex items-center">
+                    <div className=" flex justify-center items-center gap-2 min-w-[24px] min-h-[24px]">
+                        <div className="flex min-w-[24px] min-h-[24px]">
                             <Tooltip content="Visualizar" color="primary">
                                 <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8 min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data, false);
@@ -262,7 +245,7 @@ export default function CatalogoDeInteresados(props) {
                             </Tooltip>
                             <Tooltip content="Editar" color="warning">
                                 <button
-                                    className=""
+                                    className="min-w-[24px] min-h-[24]"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data, true);
@@ -273,7 +256,7 @@ export default function CatalogoDeInteresados(props) {
                             </Tooltip>
                             <Tooltip content="Eliminar" color="danger">
                                 <button
-                                    className=""
+                                    className="min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => toggleModal(data)}
                                 >
