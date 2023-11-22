@@ -64,12 +64,11 @@ async function listarArchivos(req,res,next){
 
 async function eliminarArchivo(req,res,next){
     const{idArchivo} = req.body;
+    console.log(idArchivo);
     const query = `CALL ELIMINAR_ARCHIVO_X_ID(?);`;
     try {
         const [results] = await connection.query(query, [idArchivo]);
-        const archivos = results[0][0];
         res.status(200).json({
-            archivos,
             message: "Archivo eliminado"
         });
     } catch (error) {
