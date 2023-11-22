@@ -251,7 +251,6 @@ const repositorioDocumentos = (props) => {
         });
         try {
             const document = await deleteDocument(
-                idRepositorioDocumentos,
                 idDocumento
             );
             console.log(document);
