@@ -44,17 +44,17 @@ axios.defaults.withCredentials = true;
 
 const columns = [
     { name: "Nombre", uid: "nombreReal", sortable: true },
-    { name: "Extension", uid: "tipoArchivo", sortable: true },
+    { name: "Extension", uid: "extension", sortable: true },
     { name: "Tamaño", uid: "tamano", sortable: true },
     { name: "Fecha de registro", uid: "fechaSubida", sortable: true },
     { name: "Acciones", uid: "actions" },
 ];
 const extensionOptions = [
-    { name: ".docx", uid: "application/docx" },
-    { name: ".xlsx", uid: "application/xlsx" },
-    { name: ".pptx", uid: "application/pptx" },
-    { name: ".pdf", uid: "application/pdf" },
-    { name: ".png", uid: "application/png" },
+    { name: ".docx", uid: "docx" },
+    { name: ".xlsx", uid: "xlsx" },
+    { name: ".pptx", uid: "pptx" },
+    { name: ".pdf", uid: "pdf" },
+    { name: ".png", uid: "png" },
     { name: "Otros", uid: "otros" },
 ];
 
@@ -180,6 +180,7 @@ const repositorioDocumentos = (props) => {
             idArchivo: 1,
             nombreReal: "Documento 1",
             tipoArchivo: "application/pdf",
+            extension: "pdf",
             tamano: 106000,
             fechaSubida: "2021-08-25T00:00:00.000Z",
         },
@@ -333,18 +334,15 @@ const repositorioDocumentos = (props) => {
             setPage(page + 1);
         }
     }, [page, pages]);
-
     const onPreviousPage = React.useCallback(() => {
         if (page > 1) {
             setPage(page - 1);
         }
     }, [page]);
-
     const onRowsPerPageChange = React.useCallback((e) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
-
     const onSearchChange = React.useCallback((value) => {
         if (value) {
             setFilterValue(value);
@@ -353,7 +351,6 @@ const repositorioDocumentos = (props) => {
             setFilterValue("");
         }
     }, []);
-
     const onClear = React.useCallback(() => {
         setFilterValue("");
         setPage(1);
@@ -363,11 +360,8 @@ const repositorioDocumentos = (props) => {
     const convertBytesToMegabytes = React.useCallback((bytes) => {
         return (bytes / (1024 * 1024)).toFixed(2);
     }, []);
-
-    const convertTextToExtension = React.useCallback((text) => {
-        // convertir por ejemplo "application/docx" a ".docx modificando el texto, y le agregas el . adelante
-        if (text) return "." + text.substring(text.lastIndexOf("/") + 1);
-        else return "";
+    const convertBytesToKilobytes = React.useCallback((bytes) => {
+        return (bytes / 1024).toFixed(2);
     }, []);
 
     // Renderizado de contenidos de tabla (celdas, parte superior, y parte inferior)
@@ -375,10 +369,16 @@ const repositorioDocumentos = (props) => {
         const cellValue = document[columnKey];
 
         switch (columnKey) {
-            case "tipoArchivo":
-                return convertTextToExtension(cellValue);
+            case "nombreReal":
+                return cellValue.substring(0, cellValue.lastIndexOf("."));
+            case "extension":
+                return "." + cellValue;
             case "tamano":
-                return convertBytesToMegabytes(cellValue) + " MB";
+                if (cellValue >= 1024 * 1024)
+                    return convertBytesToMegabytes(cellValue) + " MB";
+                else if (cellValue >= 1024)
+                    return convertBytesToKilobytes(cellValue) + " KB";
+                else return cellValue + " B";
             case "fechaSubida":
                 return dbDateToDisplayDate(cellValue);
             case "actions":
@@ -462,6 +462,14 @@ const repositorioDocumentos = (props) => {
                                     file.append(
                                         "idRepositorioDocumentos",
                                         idRepositorioDocumentos
+                                    );
+                                    file.append(
+                                        "extension",
+                                        selectedFile.name.substring(
+                                            selectedFile.name.lastIndexOf(
+                                                "."
+                                            ) + 1
+                                        )
                                     );
                                     file.append("file", selectedFile);
                                     handleUpload(file);
