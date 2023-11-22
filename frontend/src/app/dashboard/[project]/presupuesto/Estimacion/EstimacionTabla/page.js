@@ -136,8 +136,27 @@ useEffect(() => {
               .then(response => {
                   const presupuesto = response.data.presupuesto;
                   const moneda = presupuesto.idMoneda;
+
+                  //Porcentajes
+                  const ReservaContingencia=presupuesto.reservaContingencia;
+                  const PorcentajeReservaGestion=presupuesto.porcentajeReservaGestion;
+                  const PorcentajeGanancia=presupuesto.porcentajeGanancia;
+                  const Igv=presupuesto.IGV;
+
+
+                  setReserva(ReservaContingencia);
+                  setGestion(PorcentajeReservaGestion);
+                  setGanancia(PorcentajeGanancia);
+                  setIGV(Igv);
+
+
                   setMonedaPresupuesto(moneda);
-                  console.log("Moneda Presupuesto:" + moneda);
+                  console.log("Reserva Contingencia:" + ReservaContingencia);
+                  console.log("Reserva Gestion:" + PorcentajeReservaGestion);
+                  console.log("Reserva Ganancia:" + PorcentajeGanancia);
+                  console.log("Reserva Igv:" + Igv);
+
+
               })
               .catch(error => {
                   console.error("Error al llamar a la API:", error);
@@ -202,15 +221,15 @@ const invoiceReserva = parseFloat(Reserva) ;
 
 const invoiceLineaBase = invoiceSubtotal + invoiceReserva;
 
-const invoiceGestion = Gestion/100 * invoiceLineaBase;
+const invoiceGestion = Gestion * invoiceLineaBase;
 
 const invoicePresupuesto= invoiceLineaBase + invoiceGestion;
 
-const invoiceGanancia = Ganancia/100 * invoicePresupuesto;
+const invoiceGanancia = Ganancia * invoicePresupuesto;
 
 const invoiceTotalGanancia= invoicePresupuesto + invoiceGanancia;
 
-const invoiceIGV= IGV/100 * invoiceTotalGanancia;
+const invoiceIGV= IGV * invoiceTotalGanancia;
 
 const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
@@ -399,7 +418,7 @@ const actualizarPorcentanjes = () => {
                         }}>
 
                           <Input
-                            value={pReserva}
+                            value={Reserva}
                             onValueChange={setpReserva}
                             labelPlacement="outside"
                             isInvalid={!validReserva}
@@ -414,7 +433,7 @@ const actualizarPorcentanjes = () => {
                           />
                           
                           <Input
-                            value={pGestion}
+                            value={Gestion*100}
                             onValueChange={setpGestion}
                             labelPlacement="outside"
                             isInvalid={!validGestion}
@@ -469,7 +488,7 @@ const actualizarPorcentanjes = () => {
                         }}>
                           
                           <Input
-                            value={pGanancia}
+                            value={Ganancia*100}
                             onValueChange={setpGanancia}
                             labelPlacement="outside"
                             isInvalid={!validGanancia}
@@ -484,7 +503,7 @@ const actualizarPorcentanjes = () => {
                           />
 
                           <Input
-                            value={pIGV}
+                            value={IGV*100}
                             onValueChange={setpIGV}
                             labelPlacement="outside"
                             isInvalid={!validIGV}
@@ -651,7 +670,7 @@ const actualizarPorcentanjes = () => {
 
               <TableRow>
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Reserva de Gestión</TableCell>
-                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Gestion*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Gestion*100).toFixed(0)} %`}</TableCell>
 
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceGestion)}</TableCell>
@@ -667,7 +686,7 @@ const actualizarPorcentanjes = () => {
               {Ganancia>0 &&
               <TableRow>
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">Ganancia</TableCell>
-                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Ganancia*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(Ganancia*100).toFixed(0)} %`}</TableCell>
 
                 <TableCell colSpan={2}
                 className="text-gray-800 text-sm not-italic font-bold" align="right">{ccyFormat(invoiceGanancia)}</TableCell>
@@ -688,7 +707,7 @@ const actualizarPorcentanjes = () => {
               {IGV>0 &&
                 <TableRow>
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2} align="right">IGV</TableCell>
-                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(IGV*1).toFixed(0)} %`}</TableCell>
+                <TableCell className="text-gray-800 text-sm not-italic font-bold" align="right">{`${(IGV*100).toFixed(0)} %`}</TableCell>
 
                 <TableCell className="text-gray-800 text-sm not-italic font-bold" colSpan={2}
                 align="right">{ccyFormat(invoiceIGV)}</TableCell>
