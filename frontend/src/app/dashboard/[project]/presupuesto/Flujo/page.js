@@ -16,6 +16,8 @@ axios.defaults.withCredentials = true;
 import EditIcon from '@mui/icons-material/Edit';
 import HistoryIcon from '@mui/icons-material/History';
 import { SmallLoadingScreen } from "../../layout";
+import { saveAs } from "file-saver";
+
 import {
     Input,
     DropdownTrigger,
@@ -305,6 +307,53 @@ for (let i = 0; i < mesesMostrados.length; i++) {
   accumulatedTotals[i] = monthlyTotalIncome - monthlyTotalExpenses;
 }
 
+
+async function handlerExport() {
+  try {
+      const exportURL =
+          process.env.NEXT_PUBLIC_BACKEND_URL +
+          "/api/proyecto/reporte/crearExcelCaja";
+
+      const response = await axios.post(
+          exportURL,
+          {
+            idPresupuesto: presupuestoId,
+            fechaIni: new Date("1995-12-17T03:24:00"),
+            fechaFin: new Date("2040-12-17T03:24:00"),
+          },
+          {
+              responseType: "blob", // Important for binary data
+          }
+      );
+
+      setTimeout(() => {
+          const today = new Date();
+
+          let day = today.getDate();
+          let month = today.getMonth() + 1;
+          let year = today.getFullYear();
+
+          day = day < 10 ? "0" + day : day;
+          month = month < 10 ? "0" + month : month;
+
+          // Create the formatted date string
+          let formattedDate = `${day}_${month}_${year}`;
+
+          const fileName =
+              projectName.split(" ").join("") +
+              "_" +
+              formattedDate +
+              ".xlsx";
+          console.log(fileName);
+          saveAs(response.data, fileName);
+          toast.success("Se exporto el Flujo de Caja con exito");
+      }, 500);
+  } catch (error) {
+      toast.error("Error al exportar el Flujo de Caja");
+      console.log(error);
+  }
+}
+
 return (
         <div className="mainDivPresupuesto">
 
@@ -347,7 +396,12 @@ return (
                         </Button> 
                     </Link>
 
-                    <Button color="primary" startContent={<ExportIcon />} className="btnExportPresupuesto">
+                    <Button color="primary" startContent={<ExportIcon />} 
+                        onPress={async () => {
+                          await handlerExport();
+                      }}
+                    
+                    className="btnExportPresupuesto">
                       Exportar
                     </Button> 
                 
