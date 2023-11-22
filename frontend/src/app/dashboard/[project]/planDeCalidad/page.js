@@ -27,6 +27,7 @@ import {
 import id from "date-fns/locale/id/index";
 import { set } from "date-fns";
 import ModalEliminateMetrica from "@/components/dashboardComps/projectComps/planDeCalidadComps/ModalEliminateMetrica";
+import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
 export default function PlanDeCalidad(props) {
@@ -67,6 +68,7 @@ export default function PlanDeCalidad(props) {
     const [modal, setModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [planCalidad, setPlanCalidad] = useState(null);
+    const [listAdditionalFields, setListAdditionalFields] = useState([]);
     //console.log("El id del plan de calidad es:", idPlanCalidad);
     const toggleModal = (task) => {
         setSelectedTask(task);
@@ -384,7 +386,10 @@ export default function PlanDeCalidad(props) {
             setActivitiesControlOriginales(activitiesControlActualizados);
             setQuantity3(activitiesControlActualizados.length);
             console.log("Terminó de cargar los datos");
-            setIsLoadingSmall(false);
+            getAdditionalFields(idPlanCalidad, 15, setListAdditionalFields, (response)=>{
+                                                                                console.log("response", response)
+                                                                                setIsLoadingSmall(false)
+                                                                                });
         }
     }, [planCalidad]);
 
@@ -795,9 +800,17 @@ export default function PlanDeCalidad(props) {
             console.error("Error al realizar la solicitud DELETE:", error);
         });
 
-        setStandarsOriginales(standar);
-        setActivitiesOriginales(activity);  
-        setActivitiesControlOriginales(activityControl); 
+        registerAdditionalFields(listAdditionalFields, idPlanCalidad, 15, 1, (response)=>{
+            setStandarsOriginales(standar);
+            setActivitiesOriginales(activity);  
+            setActivitiesControlOriginales(activityControl); 
+                                                                                console.log("response", response)
+                                                                                
+        });
+
+        // setStandarsOriginales(standar);
+        // setActivitiesOriginales(activity);  
+        // setActivitiesControlOriginales(activityControl); 
     };
 
     return (
@@ -996,7 +1009,16 @@ export default function PlanDeCalidad(props) {
                     renderCell={renderCell}
                     idKey="idMetricaCalidad"
                 />
+                
             </div>
+            <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
+                    Campos Adicionales
+            </div>
+            <ListAdditionalFields 
+                editState={editMode}
+                baseFields={listAdditionalFields}
+                setBaseFields={setListAdditionalFields}
+            />
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
