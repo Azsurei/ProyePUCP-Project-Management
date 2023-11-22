@@ -132,11 +132,11 @@ useEffect(() => {
       if (flag === 1) {
           // Aquí encadenamos el segundo axios
           const stringURLListarPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/presupuesto/listarPresupuesto/" + idHerramientaCreada;
-
+          console.log("URL:" + stringURLListarPresupuesto);
           axios.get(stringURLListarPresupuesto)
               .then(response => {
                   const presupuesto = response.data.presupuesto;
-                  const moneda = presupuesto[0].idMoneda;
+                  const moneda = presupuesto.idMoneda;
                   setMonedaPresupuesto(moneda);
                   console.log("Moneda Presupuesto:" + moneda);
               })
@@ -217,7 +217,6 @@ const invoiceTotal=invoiceIGV+invoicePresupuesto;
 
 
 function convertirTarifa(tarifa, idMoneda) {
-  console.log("Moneda Presu: xd"+ MonedaPresupuesto);
     //Dolares
     if(MonedaPresupuesto===1){
       if(idMoneda===2){

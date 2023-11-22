@@ -170,7 +170,7 @@ export default function EstimacionCosto(props) {
                     tiempoRequerido:mesesRequerido,
                     cantidadRecurso: cantRecurso,
                     subtotal:parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
-                    fechaInicio:fecha,
+                    fechaInicio:new Date().toISOString(),
                 })
         
                 .then(function (response) {
@@ -556,7 +556,6 @@ export default function EstimacionCosto(props) {
                                 }
 
 
-
                                 if(descripcionLinea===""){
                                     setValidDescription(false);
                                     Isvalid = false;
@@ -571,10 +570,6 @@ export default function EstimacionCosto(props) {
                                     setValidTipoMoneda(true);
                                 }
 
-                                if(fecha===""){
-                                    setValidFecha(false);
-                                    Isvalid = false;
-                                }
 
 
                                 if(Isvalid === true){
@@ -759,10 +754,7 @@ export default function EstimacionCosto(props) {
                                                 />                     
 
 
-
                                         </div>                  
-
-
 
 
                                         
@@ -800,16 +792,7 @@ export default function EstimacionCosto(props) {
                                                 marginTop: "0.5rem",
                                             }}
                                             >
-                                            <p
-                                                style={{
-                                                color: "#44546F",
-                                                fontSize: "16px",
-                                                fontStyle: "normal",
-                                                fontWeight: 300,
-                                                }}
-                                            >
-                                                Fecha Inicio
-                                            </p>
+  
 
                                             <p
                                                 style={{
@@ -834,10 +817,7 @@ export default function EstimacionCosto(props) {
                                             }}>
 
                                                 
-                                                <input type="date" id="inputFechaPresupuesto" name="datepicker" 
-                                                style={{ width: '18rem' }}
 
-                                                onChange={handleChangeFecha}/>
 
                                                 <Input
                                                     isReadOnly

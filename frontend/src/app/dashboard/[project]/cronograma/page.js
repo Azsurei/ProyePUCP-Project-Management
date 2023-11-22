@@ -52,6 +52,7 @@ import { NotificationsContext, SessionContext } from "../../layout";
 import Link from "next/link";
 import { SearchIcon } from "public/icons/SearchIcon";
 import { saveAs } from "file-saver";
+import ListAdditionalFields from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
 export default function Cronograma(props) {
@@ -176,6 +177,8 @@ export default function Cronograma(props) {
     const [validSelectedSubteamUsers, setValidSelectedSubteamUsers] =
         useState(true);
 
+    const [taskAdditionalFields, setTaskAdditionalFields] = useState([]);
+
     const twStyle1 = "font-medium text-lg text-mainHeaders";
 
     const handlerGoToNew = () => {
@@ -261,6 +264,8 @@ export default function Cronograma(props) {
             setTabSelected("subteams");
         }
 
+        setTaskAdditionalFields(tarea.camposAdicionales);
+
         setValidName(true);
         setValidDescripcion(true);
         setValidFechas(true);
@@ -294,6 +299,8 @@ export default function Cronograma(props) {
         setSelectedUsers([]);
         setSelectedUsersOriginal([]);
         setTabSelected("users");
+
+        setTaskAdditionalFields([]);
 
         setValidName(true);
         setValidDescripcion(true);
@@ -429,6 +436,8 @@ export default function Cronograma(props) {
 
             setTabSelected("subteams");
         }
+
+        setTaskAdditionalFields(tarea.camposAdicionales);
 
         setValidName(true);
         setValidDescripcion(true);
@@ -937,7 +946,10 @@ export default function Cronograma(props) {
                 let formattedDate = `${day}_${month}_${year}`;
 
                 const fileName =
-                    projectName.split(" ").join("") + "_" + formattedDate + ".xlsx";
+                    projectName.split(" ").join("") +
+                    "_" +
+                    formattedDate +
+                    ".xlsx";
                 console.log(fileName);
                 saveAs(response.data, fileName);
 
@@ -1845,6 +1857,21 @@ export default function Cronograma(props) {
                                     </div>
                                 )}
                             </div>
+
+                            <ListAdditionalFields
+                                editState={stateSecond !== 2}
+                                baseFields={taskAdditionalFields}
+                                addBaseField={(field) => {
+                                    console.log("recibi " + JSON.stringify(field,null,2))
+                                    const tempList = [...taskAdditionalFields,field];
+                                    console.log("NUEVA LISTA " + JSON.stringify(tempList,null,2))
+                                    setTaskAdditionalFields(tempList);
+                                }}
+                                removeBaseField={(fieldId)=>{
+                                    const tempList = taskAdditionalFields.filter(field => field.idCampoAdicional !== fieldId);
+                                    setTaskAdditionalFields(tempList);
+                                }}
+                            />
 
                             {stateSecond !== 2 && (
                                 <div className="twoButtonsEnd pb-8">

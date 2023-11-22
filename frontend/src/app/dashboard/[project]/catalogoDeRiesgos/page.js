@@ -12,7 +12,7 @@ import {
     Button,
     Pagination,
     useDisclosure,
-    Tooltip
+    Tooltip,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
@@ -25,6 +25,7 @@ import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoR
 import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/RouteringCR";
 import ModalEliminateRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ModalEliminateRC";
 export default function catalogoDeRiesgos(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -245,23 +246,6 @@ export default function catalogoDeRiesgos(props) {
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-2">
-                        {/* <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem onClick={() => 
-                                    setRoutering(data)
-                                }>
-                                
-                                        Editar 
-                                </DropdownItem>
-
-                                <DropdownItem onClick={() => toggleModal(data)}>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown> */}
                         <div className="flex">
                             <Tooltip content="Visualizar" color="primary">
                                 <button
@@ -322,20 +306,19 @@ export default function catalogoDeRiesgos(props) {
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddRiesgo"
-                        >
-                            <Link
-                                href={
+                            onPress={() => {
+                                router.push(
                                     "/dashboard/" +
-                                    projectName +
-                                    "=" +
-                                    projectId +
-                                    "/catalogoDeRiesgos/registerCR"
-                                }
-                            >
-                                Agregar
-                            </Link>
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/catalogoDeRiesgos/registerCR"
+                                );
+                            }}
+                        >
+                            Agregar
                         </Button>
-                        <Button
+{/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnRiesgosExport"
@@ -348,7 +331,7 @@ export default function catalogoDeRiesgos(props) {
                             className="btnRiesgosEliminar"
                         >
                             Eliminar
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -382,9 +365,6 @@ export default function catalogoDeRiesgos(props) {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "Todos los items seleccionados"
-                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
                 </span>
                 <Pagination
                     isCompact

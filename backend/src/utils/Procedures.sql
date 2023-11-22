@@ -67,6 +67,26 @@ END$
 
 CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE('pruebaCorreo@gmail.com');
 
+DROP PROCEDURE IF EXISTS MODIFICAR_DATOS_USUARIO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_DATOS_USUARIO(
+	IN _idUsuario INT,
+    IN _nombres VARCHAR(200),
+    IN _apellidos VARCHAR(200),
+    IN _fechaNacimiento DATE,
+    IN _telefono VARCHAR(10),
+    IN _usuario VARCHAR(200)
+)
+BEGIN
+	UPDATE Usuario 
+    SET nombres = _nombres, 
+		apellidos = _apellidos, 
+        fechaNacimiento = _fechaNacimiento, 
+        telefono = _telefono, 
+        usuario =_usuario
+    WHERE idUsuario = _idUsuario AND activo = 1;
+END$
+
 #########################################################
 ## Proyecto
 #########################################################
@@ -2353,17 +2373,23 @@ CREATE PROCEDURE INSERTAR_PRESUPUESTO(
 	IN  _idProyecto INT,
 	IN _idMoneda INT,
     IN _presupuestoInicial DECIMAL(10,2),
-    IN _cantidadMeses INT
+    IN _cantidadMeses INT,
+	IN _reservaContingencia DECIMAL(10,2),
+    IN _porcentajeReservaGestion DECIMAL(10,2),
+    IN _porcentajeGanancia DECIMAL(10,2),
+    IN _IGV DECIMAL (10,2)
 )
 BEGIN
 	DECLARE _idPresupuesto INT;
-	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,fechaCreacion,activo) 
-    VALUES(13,_idProyecto,2,NULL,NULL,curdate(),1);
+	INSERT INTO Presupuesto(idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,fechaCreacion,activo) 
+    VALUES(13,_idProyecto,_idMoneda,_cantidadMeses,_presupuestoInicial,_reservaContingencia,_porcentajeReservaGestion,_porcentajeGanancia,_IGV,curdate(),1);
     SET _idPresupuesto = @@last_insert_id;
     INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo) VALUES(_idProyecto,13,_idPresupuesto,1);
     SELECT _idPresupuesto AS idPresupuesto;
 END$
 
+SELECT * FROM HerramientaXProyecto WHERE idProyecto = 150;
+SELECT * FROM Proyecto;
 SELECT * FROM Proyecto;
 CALL LISTAR_HERRAMIENTAS_X_PROYECTO_X_ID_PROYECTO(1);
 
@@ -2373,12 +2399,17 @@ CREATE PROCEDURE MODIFICAR_PRESUPUESTO(
     IN _idMoneda INT,
     IN _presupuestoInicial DECIMAL(10,2),
     IN _cantidadMeses INT,
+    IN _reservaContingencia DECIMAL(10,2),
+    IN _porcentajeReservaGestion DECIMAL(10,2),
+    IN _porcentajeGanancia DECIMAL(10,2),
+    IN _IGV DECIMAL (10,2),
     IN _idPresupuesto INT
 )
 BEGIN
     UPDATE Presupuesto 
-    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses,activo = 1
-    WHERE idPresupuesto = _idPresupuesto;
+    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses,reservaContingencia = _reservaContingencia,
+    porcentajeReservaGestion = _porcentajeReservaGestion, porcentajeGanancia = _porcentajeGanancia, IGV = _IGV
+    WHERE idPresupuesto = _idPresupuesto and activo =1;
     SELECT _idPresupuesto AS idPresupuesto;
 END$
 
@@ -2387,11 +2418,12 @@ DROP PROCEDURE IF EXISTS LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(IN _idPresupuesto INT)
 BEGIN
-	SELECT * FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
+	SELECT idPresupuesto,idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,fechaCreacion 
+    FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
 
-
-
+CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(37);
+select * from Usuario;
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
 DELIMITER $
 CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
@@ -4365,7 +4397,8 @@ BEGIN
 	DECLARE _idPlanCalidad INT;
 	INSERT INTO PlanCalidad(idHerramienta,idProyecto,fechaCreacion,activo) VALUES(15,_idProyecto,curdate(),1);
     SET _idPlanCalidad = @@last_insert_id;
-    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)VALUES(_idProyecto,15,_idPlanCalidad,1);
+    INSERT INTO HerramientaXProyecto(idProyecto,idHerramienta,idHerramientaCreada,activo)
+        VALUES(_idProyecto,15,_idPlanCalidad,1);
     SELECT _idPlanCalidad AS idPlanCalidad;
 END //
 
@@ -4422,6 +4455,27 @@ BEGIN
     WHERE idPlanCalidad = _idPlanCalidad 
     AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_ACTIVIDAD_CONTROL_CALIDAD;
+DELIMETER //
+CREATE PROCEDURE MODIFICAR_ACTIVIDAD_CONTROL_CALIDAD(
+    IN _idActividadControlCalidad INT,
+    IN _descripcion VARCHAR(400)
+)
+BEGIN
+    UPDATE ActividadControlCalidad SET descripcion = _descripcion 
+    WHERE idActividadControlCalidad = _idActividadControlCalidad;
+END //
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ACTIVIDAD_CONTROL_CALIDAD;
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ACTIVIDAD_CONTROL_CALIDAD(
+    IN _idActividadControlCalidad INT
+)
+BEGIN
+    UPDATE ActividadControlCalidad SET activo = 0 
+    WHERE idActividadControlCalidad = _idActividadControlCalidad;
+END //
 -------------------------
 -- Estandares de Calidad
 -------------------------
@@ -4451,6 +4505,26 @@ BEGIN
     AND activo=1;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_ESTANDAR_CALIDAD;
+DELIMETER //
+CREATE PROCEDURE MODIFICAR_ESTANDAR_CALIDAD(
+    IN _idEstandarCalidad INT,
+    IN _descripcion VARCHAR(400)
+)
+BEGIN
+    UPDATE EstandarCalidad SET descripcion = _descripcion 
+    WHERE idEstandarCalidad = _idEstandarCalidad;
+END //
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ESTANDAR_CALIDAD;
+DELIMITER //
+CREATE PROCEDURE ELIMINAR_ESTANDAR_CALIDAD(
+    IN _idEstandarCalidad INT
+)
+BEGIN
+    UPDATE EstandarCalidad SET activo = 0 WHERE idEstandarCalidad = _idEstandarCalidad;
+END //
+
 -------------------------
 -- Actividades de Prevencion
 -------------------------
@@ -4479,6 +4553,27 @@ BEGIN
     WHERE idPlanCalidad = _idPlanCalidad 
     AND activo=1;
 END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_ACTIVIDAD_PREVENCION;
+DELIMETER //
+CREATE PROCEDURE MODIFICAR_ACTIVIDAD_PREVENCION(
+    IN _idActividadPrevencion INT,
+    IN _descripcion VARCHAR(400)
+)
+BEGIN
+    UPDATE ActividadPrevencion SET descripcion = _descripcion 
+    WHERE idActividadPrevencion = _idActividadPrevencion;
+END //
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ACTIVIDAD_PREVENCION;
+DELIMETER //
+CREATE PROCEDURE ELIMINAR_ACTIVIDAD_PREVENCION(
+    IN _idActividadPrevencion INT
+)
+BEGIN
+    UPDATE ActividadPrevencion SET activo = 0 
+    WHERE idActividadPrevencion = _idActividadPrevencion;
+END //
 
 -------------------------
 -- Metricas de Calidad
@@ -5459,3 +5554,76 @@ BEGIN
     SELECT _idRepositorioDocumentos AS idRepositorioDocumentos;
 END$$
 DELIMITER ;
+
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_REPOSITORIODOCUMENTO_X_ID_PROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    UPDATE ArchivoXRepositorioDocumento SET activo = 0 
+    WHERE idRepositorioDocumentos IN (
+		SELECT idRepositorioDocumentos FROM RepositorioDocumento WHERE idProyecto = _idProyecto
+	);
+    UPDATE RepositorioDocumento SET activo = 0 WHERE idProyecto = _idProyecto;
+END$$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ARCHIVOS(
+    IN _nombreGenerado VARCHAR(200),
+    IN _nombre_real VARCHAR(500)
+)
+BEGIN
+    DECLARE _idArchivo INT;
+    /* Inserting a new record into the table using the provided parameters and the generated 'activo' value */
+    INSERT INTO Archivo (nombreGenerado, nombreReal) 
+    VALUES (_nombreGenerado, _nombre_real);
+    SET _idArchivo = @@last_insert_id;
+    SELECT _idArchivo AS idArchivo;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS INSERTAR_ARCHIVOS_REPOSITORIO;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ARCHIVOS_REPOSITORIO(
+    IN _idArchivo INT,
+    IN _idRepositorioDocumentos INT,
+    IN _tamano DOUBLE,
+    IN _tipoArchivo VARCHAR(500)
+)
+BEGIN
+    DECLARE _idArchivoXRepositorioDocumento INT;
+    INSERT INTO ArchivoXRepositorioDocumento (idArchivo, idRepositorioDocumentos, fechaSubida, tamano, tipoArchivo, activo) 
+    VALUES (_idArchivo, _idRepositorioDocumentos, NOW(), _tamano, _tipoArchivo, 1);
+    SET _idArchivoXRepositorioDocumento = @@last_insert_id;
+    SELECT _idArchivoXRepositorioDocumento AS idArchivoXRepositorioDocumento;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS LISTAR_ARCHIVOS_X_IDREPOSITORIO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_ARCHIVOS_X_IDREPOSITORIO(
+    IN _idRepositorioDocumentos INT
+)
+BEGIN
+    SELECT a.nombreReal, ar.fechaSubida, ar.tamano, ar.tipoArchivo
+    FROM ArchivoXRepositorioDocumento AS ar
+    LEFT JOIN Archivo AS a ON ar.idArchivo = a.idArchivo
+    WHERE ar.idRepositorioDocumentos = _idRepositorioDocumentos
+    AND ar.activo = 1;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_ARCHIVO_X_ID;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ARCHIVO_X_ID(
+    IN _idArchivo INT
+)
+BEGIN
+    UPDATE ArchivoXRepositorioDocumento 
+    SET activo = 0 
+    WHERE idArchivo = _idArchivo;
+END$
+DELIMITER ;
+

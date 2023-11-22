@@ -30,6 +30,7 @@ import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunica
 import RouteringRegisterMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringRegisterMC";
 import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 export default function MatrizDeComunicaciones(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -45,7 +46,6 @@ export default function MatrizDeComunicaciones(props) {
     const [data, setData] = useState([]);
     const [objectMC, setObjectMC] = useState(null);
     const [navegate, setNavegate] = useState(false);
-    const [navegateRegister, setNavegateRegister] = useState(false);
     const [idMatriz, setIdMatriz] = useState(null);
     const [edit, setEdit] = useState(null);
     function DataTable() {
@@ -91,9 +91,7 @@ export default function MatrizDeComunicaciones(props) {
         setNavegate(!navegate);
         setEdit(isEdit);
     };
-    const setRouteringRegisterMC = () => {
-        setNavegateRegister(!navegateRegister);
-    };
+
     const columns = [
         {
             name: "Informacion Requerida",
@@ -340,46 +338,23 @@ export default function MatrizDeComunicaciones(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        {/* <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex .roboto">
-                                
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={toolsFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setToolsFilter}
-                            >
-                                {toolsOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                    >
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown> */}
                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddComunicacion"
-                            onClick={() => setRouteringRegisterMC()}
-                        >
-                            <Link
-                                href={
+                            onPress={() => {
+                                router.push(
                                     "/dashboard/" +
-                                    projectName +
-                                    "=" +
-                                    projectId +
-                                    "/matrizDeComunicaciones/registerMC"
-                                }
-                            >
-                                Agregar
-                            </Link>
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/matrizDeComunicaciones/registerMC"
+                                );
+                            }}
+                        >
+                            Agregar
                         </Button>
-                        <Button
+                        {/* <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnComunicacionExport"
@@ -392,7 +367,7 @@ export default function MatrizDeComunicaciones(props) {
                             className="btnComunicacionEliminar"
                         >
                             Eliminar
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -426,9 +401,6 @@ export default function MatrizDeComunicaciones(props) {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "Todos los items seleccionados"
-                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
                 </span>
                 <Pagination
                     isCompact
@@ -501,12 +473,6 @@ export default function MatrizDeComunicaciones(props) {
                     proy_id={projectId}
                     idMC={objectMC.idComunicacion}
                     isEdit={edit}
-                />
-            )}
-            {navegateRegister && (
-                <RouteringRegisterMC
-                    proy_name={projectName}
-                    proy_id={projectId}
                 />
             )}
         </div>

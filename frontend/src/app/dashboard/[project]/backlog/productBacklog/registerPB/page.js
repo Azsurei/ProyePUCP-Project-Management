@@ -8,7 +8,7 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
-import { Spinner, Avatar } from "@nextui-org/react";
+import { Spinner, Avatar, Button } from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
@@ -276,8 +276,17 @@ export default function ProductBacklogRegister(props) {
                 Backlog / Registrar elemento
             </div> */}
             <div className="backlogRegisterPB">
-                <div className="titleBacklogRegisterPB dark:text-white">
+                {/* <div className="titleBacklogRegisterPB dark:text-white">
                     Registrar nuevo elemento en el Backlog
+                </div> */}
+                <div className="flex flex-row justify-between items-center">
+                    <div className="titleBacklogRegisterPB dark:text-white">
+                        Registrar nuevo elemento en el Backlog
+                    </div>
+                    <Button color="warning" className="text-white" onClick={()=>toggleModal()}>
+                        Agregar Epica
+                    </Button>
+
                 </div>
                 <div>
                     <DescriptionRequeriment
@@ -302,7 +311,7 @@ export default function ProductBacklogRegister(props) {
                                 reloadData={reloadData}
                                 initialName="Seleccione una épica"
                             />
-                            <button
+                            {/* <button
                                 className="w-20 h-20"
                                 type="button"
                                 onClick={() => toggleModal()}
@@ -311,7 +320,7 @@ export default function ProductBacklogRegister(props) {
                                     src="/icons/btnEditImagen.svg"
                                     alt="Descripción de la imagen"
                                 />
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                     <div className="date containerCombo">

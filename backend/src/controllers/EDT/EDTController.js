@@ -134,13 +134,22 @@ async function listarEDT_X_IdProyecto(req, res) {
 }
 
 async function listarComponentesEDT_X_IdProyecto(req, res, next) {
-    console.log("Llegue a recibir solicitud listar EDT por proyecto");
     const idProyecto = req.params.idProyecto;
     const query = `CALL LISTAR_COMPONENTES_EDT_X_ID_PROYECTO(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
-        console.log(results[0]);
-        const arraySent = fullyRestructureArray(results[0]);
+        const listaComponentes = results[0];
+        for(const componente of listaComponentes){
+            const query2 = "CALL LISTAR_ENTREGABLE_X_IDCOMPONENTE(?)"
+            const [entregables] = await connection.query(query2, [componente.idComponente]);
+            componente.entregables = entregables[0];
+
+            const query3 = "CALL LISTAR_CRITERIO_X_IDCOMPONENTE(?)";
+            const [criterios] = await connection.query(query3, [componente.idComponente])
+            componente.criterios = criterios[0];
+        }
+
+        const arraySent = fullyRestructureArray(listaComponentes);
 
         res.status(200).json({
             componentesEDT: arraySent,
@@ -374,10 +383,14 @@ async function generarExcel(componentes, nombreArchivo) {
         let filaActual = 1;
 
         const header1 = ["EDT"];
-        const header2 = ["Codigo","Nombre","Descripcion","Fecha Inicio","Fecha Fin","Recursos","Hito Asociado","Observaciones"];
         filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header1,headerTitulo,borderStyle);
-        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header2,headerTitulo,borderStyle);
-
+        WSComponentes.mergeCells(filaActual-1, 1, filaActual-1, 8);
+        const mergedCell = WSComponentes.getCell(filaActual-1, 1);
+        mergedCell.style = {
+            ...mergedCell.style, // Mantén los estilos previos
+            alignment: alignmentCenterStyle
+        };
+        filaActual++;
         //Para revisar el excel creado durante la etapa de desarrollo, luego se debe borrar
         const destinationFolder = path.join(__dirname, '../../tmp');
         const excelFilePath = path.join(destinationFolder, `${nombreArchivo}.xlsx`);
@@ -397,20 +410,71 @@ async function generarExcel(componentes, nombreArchivo) {
 }
 
 async function agregarComponenteAExcel(filaActual, WSComponentes, componente, cadenaNroComponente){
+    const header1 = ["Codigo","Nombre","Descripcion","Fecha Inicio","Fecha Fin","Recursos","Hito Asociado","Observaciones"];
+    filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header1,headerTitulo,borderStyle);
+
     try {
         let nroComponente = 1;
         componente.fechaInicio = dateController.formatearFecha2D_MM_YYYY(componente.fechaInicio);
         componente.fechaFin = dateController.formatearFecha2D_MM_YYYY(componente.fechaFin);
         
         WSComponentes.getRow(filaActual).values = [cadenaNroComponente,componente.nombre,componente.descripcion,componente.fechaInicio,componente.fechaFin,componente.recursos,componente.hito,componente.observaciones];
-        filaActual++;
+        filaActual+=2;
+        
+        if(componente.entregables){
+            filaActual = await agregarEntregablesAExcel(filaActual,WSComponentes,componente.entregables);
+            filaActual++;
+        }
+        if(componente.criterios){
+            
+            filaActual = await agregarCriterios(filaActual,WSComponentes,componente.criterios);
+            filaActual++;
+        }
+
         if(componente.componentesHijos){
             for(const componenteHijo of componente.componentesHijos){
                 filaActual = await agregarComponenteAExcel(filaActual,WSComponentes,componenteHijo,`${cadenaNroComponente}.${nroComponente}`);
                 nroComponente++;
             }
         }
+        
     } catch (error) {
+        console.log(error);
+    }
+    return filaActual;
+}
+
+async function agregarEntregablesAExcel(filaActual,WSComponentes,entregables){
+    try {
+        const header1 = ["Entregables"];
+        const header2 = ["Codigo","Descripcion"];
+        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header2,headerTitulo,borderStyle);
+        let nroEntregable = 1;
+        for(const entregable of entregables){
+            WSComponentes.getRow(filaActual).values = [nroEntregable,entregable.nombre];
+            filaActual++;
+            nroEntregable++;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    return filaActual;
+}
+
+async function agregarCriterios(filaActual,WSComponentes,criterios){
+    try{
+        const header1 = ["Criterios de Aceptacion"];
+        const header2 = ["Codigo","Descripcion"];
+        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSComponentes, filaActual, header2,headerTitulo,borderStyle);
+        let nroCriterio = 1;
+        for(const criterio of criterios){
+            WSComponentes.getRow(filaActual).values = [nroCriterio,criterio.descripcion];
+            filaActual++;
+            nroCriterio++;
+        }
+    }catch(error){
         console.log(error);
     }
     return filaActual;

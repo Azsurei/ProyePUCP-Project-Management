@@ -319,12 +319,15 @@ async function listarXIdProyecto(req, res, next) {
                 tarea.usuarios = usuarios[0];
                 tarea.equipo = null;
             }
+
+            const queryC = "CALL LISTAR_CAMPO_ADICIONAL_X_ID_LINEA_ID_HERRAMIENTA(?,?);"
+            const [fields] = await connection.query(queryC, [tarea.idTarea, 4]);
+
+            tarea.camposAdicionales = fields[0];
         }
-        console.log("==========TAREAS==========");
-        console.log(JSON.stringify(tareas,null,2));
+
+
         const tareasConPosteriores = await repositionPosteriores(tareas);
-        console.log("==========TAREAS CON POSTERIORES==========");
-        console.log(JSON.stringify(tareasConPosteriores,null,2));
         const tareasOrdenadas = await structureData(tareasConPosteriores);
         res.status(200).json({
             tareasOrdenadas,

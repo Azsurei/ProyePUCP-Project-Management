@@ -1,6 +1,6 @@
 
 ###
-GET http://localhost:8080/api/proyecto/reporte/obtenerJSONReporteEntregableXFileId/1nOpP03eSsiSEkidUm6_fP-nhsSjweNbx HTTP/1.1
+GET http://localhost:8080/api/proyecto/reporte/obtenerJSONReporteEntregableXIdArchivo/25 HTTP/1.1
 Content-Type: application/json
 
 

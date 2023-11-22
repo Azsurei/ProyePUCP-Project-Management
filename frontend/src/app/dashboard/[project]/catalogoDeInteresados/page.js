@@ -28,6 +28,7 @@ import RouteringInteresados from "@/components/dashboardComps/projectComps/catal
 import ModalEliminateInteresado from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ModalEliminateInteresado";
 
 export default function CatalogoDeInteresados(props) {
+    const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -228,23 +229,23 @@ export default function CatalogoDeInteresados(props) {
         switch (columnKey) {
             case "actions":
                 return (
-                    <div className="relative flex justify-center items-center gap-2">
-                        <div className="flex items-center">
+                    <div className=" flex justify-center items-center gap-2 min-w-[24px] min-h-[24px]">
+                        <div className="flex min-w-[24px] min-h-[24px]">
                             <Tooltip content="Visualizar" color="primary">
                                 <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8 min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data, false);
                                     }}
                                 >
-                                    <img src="/icons/view.svg" />
+                                    <img src="/icons/view.svg"/>
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
                             <Tooltip content="Editar" color="warning">
                                 <button
-                                    className=""
+                                    className="min-w-[24px] min-h-[24]"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data, true);
@@ -255,7 +256,7 @@ export default function CatalogoDeInteresados(props) {
                             </Tooltip>
                             <Tooltip content="Eliminar" color="danger">
                                 <button
-                                    className=""
+                                    className="min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => toggleModal(data)}
                                 >
@@ -288,20 +289,19 @@ export default function CatalogoDeInteresados(props) {
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddRiesgo"
-                        >
-                            <Link
-                                href={
+                            onPress={() => {
+                                router.push(
                                     "/dashboard/" +
-                                    projectName +
-                                    "=" +
-                                    projectId +
-                                    "/catalogoDeInteresados/registerCI"
-                                }
-                            >
-                                Agregar
-                            </Link>
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/catalogoDeInteresados/registerCI"
+                                );
+                            }}
+                        >
+                            Agregar
                         </Button>
-                        <Button
+                        {/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnRiesgosExport"
@@ -314,12 +314,12 @@ export default function CatalogoDeInteresados(props) {
                             className="btnRiesgosEliminar"
                         >
                             Eliminar
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {data.length} de interesados
+                        Total: {data.length} interesados
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -347,9 +347,7 @@ export default function CatalogoDeInteresados(props) {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "Todos los items seleccionados"
-                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
+
                 </span>
                 <Pagination
                     isCompact

@@ -687,11 +687,13 @@ export default function Equipo(props) {
                                                     );
                                                     setRolesOriginales(roles);
                                                     toast.success(
-                                                        "Se ha modificado exitosamente"
+                                                        "Se ha modificado exitosamente",
+                                                        { position: "bottom-left" }
                                                     );
                                                 } else {
                                                     toast.error(
-                                                        "Solo puede haber máximo un líder"
+                                                        "Solo puede haber máximo un líder",
+                                                        { position: "bottom-left" }
                                                     );
                                                 }
                                             }}
@@ -917,15 +919,6 @@ export default function Equipo(props) {
                     )}
                 </div>
             )}
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
         </div>
     );
 }
