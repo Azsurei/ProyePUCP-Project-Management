@@ -158,18 +158,18 @@ function Login() {
             });
     };
 
-    // useEffect(() => {
-    //     google.accounts.id.initialize({
-    //         client_id:
-    //             "152000739309-ljvv04nf75ck9pu4qj1mtf9a15g2kpve.apps.googleusercontent.com",
-    //         callback: handleCallbackResponse,
-    //     });
+     useEffect(() => {
+         google.accounts.id.initialize({
+             client_id:
+                 "152000739309-ljvv04nf75ck9pu4qj1mtf9a15g2kpve.apps.googleusercontent.com",
+             callback: handleCallbackResponse,
+         });
 
-    //     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-    //         theme: "outline",
-    //         size: "large",
-    //     });
-    // }, []);
+         google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+             theme: "outline",
+             size: "large",
+         });
+     }, []);
 
     // Componente general
     return (
