@@ -2432,7 +2432,7 @@ BEGIN
 	SELECT idPresupuesto,idHerramienta,idProyecto,idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,fechaCreacion 
     FROM Presupuesto WHERE idPresupuesto = _idPresupuesto AND activo = 1;
 END$
-
+SELECT * FROM Presupuesto;
 CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(37);
 select * from Usuario
 UPDATE Usuario SET Privilegios_idPrivilegios = 2 WHERE idUsuario = 141;
@@ -2444,7 +2444,7 @@ CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
     IN _fechaFin DATE
 )
 BEGIN
-    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion,l.idIngresoTipo
+    SELECT l.idLineaIngreso, l.monto, l.descripcion, l.cantidad, l.fechaTransaccion,l.idIngresoTipo,l.idMoneda
     FROM LineaIngreso l 
     WHERE l.idPresupuesto = _idPresupuesto 
       AND l.fechaTransaccion BETWEEN _fechaInicial AND _fechaFin 
@@ -2465,7 +2465,7 @@ CREATE PROCEDURE LISTAR_LINEA_EGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
     IN _fechaFin DATE
 )
 BEGIN
-    SELECT le.idLineaEgreso, le.costoReal, le.cantidad, le.descripcion, le.fechaRegistro 
+    SELECT le.idLineaEgreso, le.costoReal, le.cantidad, le.descripcion, le.fechaRegistro,le.idMoneda
     FROM LineaEgreso le 
     WHERE le.idPresupuesto = _idPresupuesto 
       AND le.fechaRegistro BETWEEN _fechaInicial AND _fechaFin 

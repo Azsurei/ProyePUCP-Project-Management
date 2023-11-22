@@ -43,8 +43,6 @@ async function modificar(req,res,next){
 async function modificarPorcentajes(req,res,next){
     const {idPresupuesto,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV} = req.body;
     try {
-        //Modificar para soporter los cambios del reporte de estimaciones
-        //agregar los cambios en la bd y en el query
         const query = `CALL MODIFICAR_PORCENTAJES_PRESUPUESTO(?,?,?,?,?);`;
         await connection.query(query,[idPresupuesto,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV]);
         console.log(`Porcentajes, IGV y reserva del presupuesto ${idPresupuesto}modificado`);

@@ -1,5 +1,7 @@
 const connection = require("../../config/db");
 
+const monedaController = require("./monedaController");
+
 async function crear(req,res,next){
     const {idPresupuesto,subtotal} = req.body;
     try {
@@ -113,7 +115,7 @@ async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fe
 
 }
 
-async function ordenarLineasIngreso(lineasIngreso, mesActual, cantidadMeses) {
+async function ordenarLineasIngreso(lineasIngreso, mesActual, cantidadMeses,idMoneda,monedas) {
     const ingresosPorTipo = [];
 
     // Inicializa los arrays para cada tipo de ingreso (1-4).
@@ -131,6 +133,11 @@ async function ordenarLineasIngreso(lineasIngreso, mesActual, cantidadMeses) {
             // Asegúrate de que idTipo esté en el rango de 0 a 3 (para tipos de ingreso 1-4).
             // Asegúrate de que el mesReal esté dentro del rango de la matriz.
             if (idTipo >= 0 && idTipo < 4 && mesReal >= 0 && mesReal < cantidadMeses) {
+                // Convierte el monto a la moneda del presupuesto
+                if(row.idMoneda !== idMoneda){
+                    const cambioMoneda = monedas[row.idMoneda-1].tipoCambio;
+                    row.monto = row.monto * cambioMoneda;
+                }
                 ingresosPorTipo[idTipo][mesReal] += row.monto;
             }
         });
