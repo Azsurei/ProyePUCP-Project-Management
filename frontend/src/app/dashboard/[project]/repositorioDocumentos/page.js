@@ -44,7 +44,7 @@ axios.defaults.withCredentials = true;
 
 const columns = [
     { name: "Nombre", uid: "nombreReal", sortable: true },
-    { name: "Extension", uid: "extension", sortable: true },
+    { name: "Extension", uid: "tipoArchivo", sortable: true },
     { name: "Tamaño", uid: "tamano", sortable: true },
     { name: "Fecha de registro", uid: "fechaSubida", sortable: true },
     { name: "Acciones", uid: "actions" },
@@ -100,6 +100,8 @@ const downloadDocument = async (idDocumento) => {
             )
             .then((response) => {
                 clearTimeout(timeout);
+                console.log(response);
+                console.log(response.data.url);
                 resolve(response.data.url);
             })
             .catch((error) => {
@@ -180,7 +182,6 @@ const repositorioDocumentos = (props) => {
             idArchivo: 1,
             nombreReal: "Documento 1",
             tipoArchivo: "application/pdf",
-            extension: "pdf",
             tamano: 106000,
             fechaSubida: "2021-08-25T00:00:00.000Z",
         },
@@ -207,12 +208,10 @@ const repositorioDocumentos = (props) => {
             id: toastId,
         });
         try {
-            const document = await downloadDocument(idDocumento);
-            console.log(document);
+            const url = await downloadDocument(idDocumento);
+            console.log(url);
 
-            // Crear un enlace de descarga y simular un clic
-            const link = document.createElement("a");
-            link.href = documentUrl;
+            link.href = url;
             link.download = "nombre_del_archivo";
             link.click();
 
@@ -250,9 +249,7 @@ const repositorioDocumentos = (props) => {
             id: toastId,
         });
         try {
-            const document = await deleteDocument(
-                idDocumento
-            );
+            const document = await deleteDocument(idDocumento);
             console.log(document);
             toast.success("El documento se ha eliminado exitosamente.", {
                 id: toastId,
@@ -370,7 +367,7 @@ const repositorioDocumentos = (props) => {
         switch (columnKey) {
             case "nombreReal":
                 return cellValue.substring(0, cellValue.lastIndexOf("."));
-            case "extension":
+            case "tipoArchivo":
                 return "." + cellValue;
             case "tamano":
                 if (cellValue >= 1024 * 1024)
@@ -465,9 +462,8 @@ const repositorioDocumentos = (props) => {
                                     file.append(
                                         "extension",
                                         selectedFile.name.substring(
-                                            selectedFile.name.lastIndexOf(
-                                                "."
-                                            ) + 1
+                                            selectedFile.name.lastIndexOf(".") +
+                                                1
                                         )
                                     );
                                     file.append("file", selectedFile);
