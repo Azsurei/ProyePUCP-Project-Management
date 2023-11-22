@@ -460,8 +460,21 @@ export default function ProductBacklogUpdate(props) {
             </div> */}
             <div className="backlogRegisterPB">
                 <div className="flex justify-between items-center">
+                    {/* <div className="titleBacklogRegisterPB dark:text-white">
+                        Editar elemento en el Backlog
+                    </div> */}
+                    <div className="flex flex-row justify-between items-center">
                     <div className="titleBacklogRegisterPB dark:text-white">
                         Editar elemento en el Backlog
+                    </div>
+                    {editMode && (
+                        <Button color="warning" className="text-white" onClick={()=>toggleModal()}>
+                            Agregar Epica
+                        </Button>
+                    )
+                    }
+
+
                     </div>
                     <div>
                         {!editMode && (

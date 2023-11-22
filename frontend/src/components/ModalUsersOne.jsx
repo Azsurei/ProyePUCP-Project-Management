@@ -38,6 +38,7 @@ export default function ModalUsersOne({
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
     const [listUsersOriginales, setListUsersOriginales] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const onSearchChange = (value) => {
         console.log("El valor del filtro es: ", value);
@@ -76,6 +77,7 @@ export default function ModalUsersOne({
     };
 
     const refreshList = () => {
+        setIsLoaded(false);
         if (listAllUsers === false) {
             const stringURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -109,7 +111,7 @@ export default function ModalUsersOne({
                     setListUsers(filteredUsers);
                     setListUsersOriginales(filteredUsers);
                     console.log(filteredUsers);
-
+                    setIsLoaded(true);
                     //setListUsers(usersArray);
                     //console.log(usersArray);
                 })
@@ -155,7 +157,7 @@ export default function ModalUsersOne({
                     setListUsers(filteredUsers);
                     setListUsersOriginales(filteredUsers);
                     console.log(filteredUsers);
-
+                    setIsLoaded(true);
                     //setListUsers(usersArray);
                     //console.log(usersArray);
                 })
@@ -197,7 +199,7 @@ export default function ModalUsersOne({
                             variant="faded"
                         />
                     </div>
-{/*                     <Button
+                    {/*                     <Button
                         className="bg-indigo-950 dark:bg-primary-300 text-slate-50"
                         onClick={refreshList}
                     >
@@ -209,7 +211,7 @@ export default function ModalUsersOne({
                     <UserCardsContextOne.Provider
                         value={{ addUserList, removeUserInList }}
                     >
-                        <ListUsersOne lista={listUsers}></ListUsersOne>
+                        <ListUsersOne lista={listUsers} isLoaded={isLoaded}></ListUsersOne>
                     </UserCardsContextOne.Provider>
                 </div>
                 <div className="endButtons">

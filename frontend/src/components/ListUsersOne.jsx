@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/ListUsers.css";
 import { UserCardsContextOne } from "./ModalUsersOne";
-import { Avatar } from "@nextui-org/react";
+import { Avatar, CircularProgress } from "@nextui-org/react";
 
 axios.defaults.withCredentials = true;
 
@@ -14,7 +14,11 @@ function CardUser({ usuarioObject, isSelected, onSelection }) {
 
     return (
         <li
-            className={(isSelected ? "UserCard bg-green-300 dark:bg-success-300 active hover:bg-green-300" : "UserCard dark:hover:bg-slate-700 hover:bg-slate-100 bg-mainBackground ") }
+            className={
+                isSelected
+                    ? "UserCard bg-green-300 dark:bg-success-300 active hover:bg-green-300"
+                    : "UserCard dark:hover:bg-slate-700 hover:bg-slate-100 bg-mainBackground "
+            }
             onClick={onSelection}
         >
             {/* <img
@@ -59,11 +63,10 @@ export default function ListUsersOne(props) {
 
     const [selectedUser, setSelectedUser] = useState(null); //contiene el id del seleccionado
 
-    if (props.lista.length === 0) {
-        return (
-            <p className="noResultsMessage">No se encontraron resultados.</p>
-        );
+    if (props.isLoaded === false) {
+        return <CircularProgress size="lg" aria-label="Loading..." />;
     }
+
     return (
         <ul className="ListUsersProject">
             {props.lista.map((component) => {

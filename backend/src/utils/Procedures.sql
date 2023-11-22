@@ -67,6 +67,26 @@ END$
 
 CALL VERIFICAR_SI_CORREO_ES_DE_GOOGLE('pruebaCorreo@gmail.com');
 
+DROP PROCEDURE IF EXISTS MODIFICAR_DATOS_USUARIO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_DATOS_USUARIO(
+	IN _idUsuario INT,
+    IN _nombres VARCHAR(200),
+    IN _apellidos VARCHAR(200),
+    IN _fechaNacimiento DATE,
+    IN _telefono VARCHAR(10),
+    IN _usuario VARCHAR(200)
+)
+BEGIN
+	UPDATE Usuario 
+    SET nombres = _nombres, 
+		apellidos = _apellidos, 
+        fechaNacimiento = _fechaNacimiento, 
+        telefono = _telefono, 
+        usuario =_usuario
+    WHERE idUsuario = _idUsuario AND activo = 1;
+END$
+
 #########################################################
 ## Proyecto
 #########################################################
@@ -3497,8 +3517,8 @@ CREATE PROCEDURE ELIMINAR_ROL_EQUIPO(
     IN _idRolEquipo INT
 )
 BEGIN
-	UPDATE RolesEquipo
-    SET estado = 0
+	UPDATE RolEquipo
+    SET activo = 0
     WHERE idRolEquipo = _idRolEquipo;
 END$
 

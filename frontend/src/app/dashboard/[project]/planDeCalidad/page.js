@@ -236,31 +236,36 @@ export default function PlanDeCalidad(props) {
                 return (
                     <div className="relative flex justify-center items-center gap-2">
                         <div className="flex">
-                            <Tooltip content="Editar" color="warning">
-                                <button
-                                    className=""
-                                    type="button"
-                                    onClick={() => editModal(data)}
-                                >
-                                    <img src="/icons/editar.svg" />
-                                </button>
-                            </Tooltip>
-                            <Tooltip content="Eliminar" color="danger">
-                                <button
-                                    className=""
-                                    type="button"
-                                    onClick={() => toggleModal(data)}
-                                >
-                                    <img src="/icons/eliminar.svg" />
-                                </button>
-                            </Tooltip>
+                            {editMode === true && (
+                                <>
+                                    <Tooltip content="Editar" color="warning">
+                                        <button
+                                            className=""
+                                            type="button"
+                                            onClick={() => editModal(data)}
+                                        >
+                                            <img src="/icons/editar.svg" />
+                                        </button>
+                                    </Tooltip>
+                                    <Tooltip content="Eliminar" color="danger">
+                                        <button
+                                            className=""
+                                            type="button"
+                                            onClick={() => toggleModal(data)}
+                                        >
+                                            <img src="/icons/eliminar.svg" />
+                                        </button>
+                                    </Tooltip>
+                                </>
+                            )}
+
                         </div>
                     </div>
                 );
             default:
                 return cellValue;
         }
-    }, []);
+    }, [editMode]);
 
     const topContent = React.useMemo(() => {
         return (
@@ -407,7 +412,7 @@ export default function PlanDeCalidad(props) {
 
     useEffect(() => {
         DataTable();
-    }, [dataIngresado]);
+    }, [dataIngresado, editMode]);
 
     function addContainer1() {
         setStandars([

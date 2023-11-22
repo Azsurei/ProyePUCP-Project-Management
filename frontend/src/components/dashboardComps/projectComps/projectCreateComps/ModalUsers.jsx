@@ -38,6 +38,7 @@ export default function ModalUser({
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
     const [listUsersOriginales, setListUsersOriginales] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const onSearchChange = (value) => {
         console.log("El valor del filtro es: ", value);
@@ -69,6 +70,7 @@ export default function ModalUser({
     };
 
     const refreshList = () => {
+        setIsLoaded(false);
         if (listAllUsers === false) {
             const stringURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -111,7 +113,7 @@ export default function ModalUser({
                     setListUsers(filteredUsers);
                     setListUsersOriginales(filteredUsers);
                     console.log(filteredUsers);
-
+                    setIsLoaded(true);
                     //setListUsers(usersArray);
                     //console.log(usersArray);
                 })
@@ -156,7 +158,7 @@ export default function ModalUser({
                     setListUsers(filteredUsers);
                     setListUsersOriginales(filteredUsers);
                     console.log(filteredUsers);
-
+                    setIsLoaded(true);
                     //setListUsers(usersArray);
                     //console.log(usersArray);
                 })
@@ -175,7 +177,7 @@ export default function ModalUser({
             <div className="overlay"></div>
             <div className="modalUser bg-mainModalColor">
                 <p className="buscarSup text-mainHeaders font-semibold">
-                    Buscar nuevo miembro
+                    Buscar nuevos miembros
                 </p>
                 <div
                     style={{
@@ -191,7 +193,7 @@ export default function ModalUser({
                         <Input
                             isClearable
                             className="w-full sm:max-w-[100%]"
-                            placeholder="Ingresa un miembro..."
+                            placeholder="Busque por nombres o correo"
                             startContent={<SearchIcon />}
                             value={filterValue}
                             onValueChange={onSearchChange}
@@ -210,7 +212,7 @@ export default function ModalUser({
                     <UserCardsContextNormal.Provider
                         value={{ addUserList, removeUserInList }}
                     >
-                        <ListUsers lista={listUsers}></ListUsers>
+                        <ListUsers lista={listUsers} isLoaded={isLoaded}></ListUsers>
                     </UserCardsContextNormal.Provider>
                 </div>
                 <div className="endButtons">

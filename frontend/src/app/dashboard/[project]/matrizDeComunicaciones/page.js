@@ -401,9 +401,6 @@ export default function MatrizDeComunicaciones(props) {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
                 <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "Todos los items seleccionados"
-                        : `${selectedKeys.size} de ${filteredItems.length} seleccionados`}
                 </span>
                 <Pagination
                     isCompact
