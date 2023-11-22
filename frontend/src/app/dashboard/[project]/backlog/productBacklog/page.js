@@ -329,33 +329,6 @@ export default function ProductBacklog(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        {/* <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex .roboto">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                    className="font-['Roboto'] color-['#172B4D']"
-                                >
-                                    Herramienta
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={toolsFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setToolsFilter}
-                            >
-                                {toolsOptions.map((status) => (
-                                    <DropdownItem key={status.uid}>
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown> */}
                         <Link
                             href={
                                 "/dashboard/" +
