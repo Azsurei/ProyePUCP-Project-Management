@@ -15,6 +15,7 @@ routerPresupuesto.post("/insertarPresupuesto",verifyToken, presupuestoController
 routerPresupuesto.get("/listarPresupuesto/:idPresupuesto",verifyToken, presupuestoController.listarXIdPresupuesto);
 routerPresupuesto.get("/listarLineasTodasXIdPresupuesto/:idPresupuesto",verifyToken, presupuestoController.listarLineasTodas);
 routerPresupuesto.put("/modificarPresupuesto",verifyToken, presupuestoController.modificar);
+routerPresupuesto.put("/modificarPorcentasjesPresupuestoXIdPresupuesto",verifyToken, presupuestoController.modificarPorcentajes);
 routerPresupuesto.get("/obtenerPresupuesto/:idPresupuesto",verifyToken, presupuestoController.obtenerPresupuesto);
 routerPresupuesto.delete("/eliminarPresupuesto", verifyToken, presupuestoController.eliminar);
 routerPresupuesto.delete("/eliminarPresupuestoXProyecto", verifyToken, presupuestoController.eliminarXProyecto);

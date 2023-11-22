@@ -230,9 +230,6 @@ async function subirJSON(req, res, next) {
     
     try {
         
-        console.log("Hola servidor");
-        //let workbook = await probandoExcelPresupuesto(presupuesto);
-        //Generamos el path temporal
         var tmpFilePath = generarPathPresupuesto(presupuesto,idProyecto);
 
         //Escribir el archivo en el path temporal
@@ -263,7 +260,6 @@ async function subirJSON(req, res, next) {
 
 async function obtenerJSON(req,res,next){
     const {idArchivo} = req.params;
-
     try{
         const url = await fileController.getArchivo(idArchivo);
         let filename = `${idArchivo}.json`;
@@ -335,14 +331,25 @@ async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngres
         // Crear header
         let totalIngresos = 0;
         let totalEgresos = 0;
+        filaActual = await agregarHeaderMeses(WSCaja,filaActual,presupuesto.general.cantidadMeses);
         // Imprimir Ingresos
         [filaActual, totalIngresos] = await agregarIngresosAExcelCaja(lineasIngresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //ImprimirEgresos
         [filaActual, totalEgresos] = await agregarEgresosAExcelCaja(lineasEgresoOrdenadas,WSCaja,filaActual,presupuesto.general.cantidadMeses);
         //Imprimir acumulado
-        WSCaja.getRow(filaActual).values = ["Acumulado",totalIngresos-totalEgresos];
-        let celdaAcumulado = WSCaja.getCell(filaActual,1);
-        celdaAcumulado.style = {...headerTitulo, border: borderStyle};
+
+        let resultados = new Array(presupuesto.general.cantidadMeses+1).fill(0);
+        resultados[0] = "Acumulado";
+        for(let i=1;i<=presupuesto.general.cantidadMeses;i++){
+            resultados[i] = totalIngresos[i-1]-totalEgresos[i-1];
+        }
+        WSCaja.getRow(filaActual).values = resultados;
+        const fila = WSCaja.getRow(filaActual);
+        let cantidadMeses = presupuesto.general.cantidadMeses;
+        cantidadMeses++;
+        for (let col = 2; col <= cantidadMeses; col++) {
+            fila.getCell(col).style = {...headerTitulo, border: borderStyle};
+        }
         filaActual++;
 
         excelJSController.ajustarAnchoColumnas(WSCaja);
@@ -352,6 +359,19 @@ async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngres
     }
 }
 
+async function agregarHeaderMeses(WSCaja,filaActual,cantidadMeses){
+    try{
+        const fila = WSCaja.getRow(filaActual);
+        for (let col = 2; col <= cantidadMeses+1; col++) {
+            fila.getCell(col).value = `Mes ${col-1}`;
+        }
+        filaActual++;
+    }catch(error){
+        console.log(error);
+    }
+    return filaActual;
+}
+
 
 
 async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaActual,cantidadMeses) {
@@ -359,7 +379,7 @@ async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaAct
 
         let i = 0;
         let sumasPorMes = new Array(cantidadMeses).fill(0); // Inicializa el array para las sumas por mes
-    
+        
         WSCaja.getRow(filaActual).values = ["Ingresos(*)"];
         filaActual++;
         
@@ -379,8 +399,11 @@ async function agregarIngresosAExcelCaja(lineasIngresoOrdenadas, WSCaja, filaAct
         }
     
         WSCaja.getRow(filaActual).values = ["Total Ingresos", ...sumasPorMes];
-        let celdaTotalIngresos = WSCaja.getCell(filaActual, 1);
-        celdaTotalIngresos.style = {...headerTitulo, border: borderStyle};
+        const fila = WSCaja.getRow(filaActual);
+        cantidadMeses++;
+        for (let col = 2; col <= cantidadMeses; col++) {
+            fila.getCell(col).style = {...headerTitulo, border: borderStyle};
+        }
         filaActual++;
     
         return [filaActual, sumasPorMes]; // Retornar también el array de sumas por mes
@@ -412,8 +435,11 @@ async function agregarEgresosAExcelCaja(lineasEgresoOrdenadas, WSCaja, filaActua
         }
 
         WSCaja.getRow(filaActual).values = ["Total Egresos", ...sumasPorMes];
-        let celdaTotalEgresos = WSCaja.getCell(filaActual,1);
-        celdaTotalEgresos.style = {...headerTitulo, border: borderStyle};
+        const fila = WSCaja.getRow(filaActual);
+        cantidadMeses++;
+        for (let col = 2; col <= cantidadMeses; col++) {
+            fila.getCell(col).style = {...headerTitulo, border: borderStyle};
+        }
         filaActual++;
 
         return [filaActual, sumasPorMes];
