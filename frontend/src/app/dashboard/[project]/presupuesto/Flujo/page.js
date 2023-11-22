@@ -85,14 +85,14 @@ useEffect(() => {
               .then(response => {
                   const presupuesto = response.data.presupuesto;
 
-                  const fechaCreacionString = presupuesto[0].fechaCreacion;
+                  const fechaCreacionString = presupuesto.fechaCreacion;
                   const fechaCreacion = new Date(fechaCreacionString);
 
                   const mes = fechaCreacion.getUTCMonth() + 1;
-                  setcantMeses(presupuesto[0].cantidadMeses);
+                  setcantMeses(presupuesto.cantidadMeses);
                   setmesActual(mes);
 
-                  const moneda = presupuesto[0].idMoneda;
+                  const moneda = presupuesto.idMoneda;
                   setMonedaPresupuesto(moneda);
                   console.log("Moneda Presupuesto:" + moneda);
                   

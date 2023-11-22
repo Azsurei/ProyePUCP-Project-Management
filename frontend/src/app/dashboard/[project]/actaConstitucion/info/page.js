@@ -26,6 +26,10 @@ import {
     useDisclosure,
     Button as NextUIButton,
     CircularProgress,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import {Input} from "@nextui-org/react";
 
@@ -782,30 +786,33 @@ export default function Info(props) {
             {!isEditActive ? (
                 <ButtonPanel margin="10px 0 15px" align="right">
 
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={onSaveModalPlantilla}
-                    >
-                        <div>
-                            <SaveAsIcon />
-                            <div>Guardar Plantilla</div>
-                        </div>
-                    </Button>
-                    
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={onModalPlantillas}
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <NextUIButton color="secondary">Plantillas</NextUIButton>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            variant="faded"
+                            aria-label="Dropdown menu with icons"
+                        >
+                            <DropdownItem
+                                key="verPlantillasAC"
+                                startContent={<ContentPasteGoIcon />}
+                                onPress={onModalPlantillas}
+                                color="secondary"
+                            >
+                                Ver Plantillas
+                            </DropdownItem>
+                            <DropdownItem
+                                key="guardarPlantillasAC"
+                                startContent={<SaveAsIcon />}
+                                onPress={onSaveModalPlantilla}
+                                color="secondary"
+                            >
+                                Guardar Plantilla
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
 
-                    >
-                        <div>
-                            <ContentPasteGoIcon />
-                            <div>Plantillas</div>
-                        </div>
-                    </Button>
 
                     <Button
                         appearance="primary"
