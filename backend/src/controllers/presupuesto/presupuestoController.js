@@ -27,12 +27,27 @@ async function funcCrear(idProyecto,idMoneda,presupuestoInicial,cantidadMeses,re
 }
 
 async function modificar(req,res,next){
-    const {idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,idPresupuesto} = req.body;
+    const {idMoneda,presupuestoInicial,cantidadMeses,idPresupuesto} = req.body;
     try {
         //Modificar para soporter los cambios del reporte de estimaciones
         //agregar los cambios en la bd y en el query
         const query = `CALL MODIFICAR_PRESUPUESTO(?,?,?,?);`;
-        await connection.query(query,[idMoneda,presupuestoInicial,cantidadMeses,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV,idPresupuesto]);
+        await connection.query(query,[idMoneda,presupuestoInicial,cantidadMeses,idPresupuesto]);
+        res.status(200).json({message: "Presupuesto modificado"});
+    } catch (error) {
+        next(error);
+    }
+}
+
+//Esto incluye la reserva de contingencia y el IGV
+async function modificarPorcentajes(req,res,next){
+    const {idPresupuesto,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV} = req.body;
+    try {
+        //Modificar para soporter los cambios del reporte de estimaciones
+        //agregar los cambios en la bd y en el query
+        const query = `CALL MODIFICAR_PORCENTAJES_PRESUPUESTO(?,?,?,?,?);`;
+        await connection.query(query,[idPresupuesto,reservaContingencia,porcentajeReservaGestion,porcentajeGanancia,IGV]);
+        console.log(`Porcentajes, IGV y reserva del presupuesto ${idPresupuesto}modificado`);
         res.status(200).json({message: "Presupuesto modificado"});
     } catch (error) {
         next(error);
@@ -203,6 +218,7 @@ module.exports = {
     crear,
     funcCrear,
     modificar,
+    modificarPorcentajes,
     listarLineasTodas,
     listarXIdPresupuesto,
     funcListarXIdPresupuesto,

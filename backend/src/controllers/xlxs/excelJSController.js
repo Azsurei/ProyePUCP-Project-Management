@@ -5,7 +5,7 @@ async function convertISOToDate(ISOString) {
     const year = date.getUTCFullYear();
   
     return `${day}/${month}/${year}`;
-  }
+}
 
 async function agregaHeader(WS,filaActual,header,style,borderStyle){
     WS.getRow(filaActual).values = header;

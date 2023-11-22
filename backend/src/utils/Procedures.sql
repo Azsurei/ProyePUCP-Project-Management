@@ -2399,16 +2399,27 @@ CREATE PROCEDURE MODIFICAR_PRESUPUESTO(
     IN _idMoneda INT,
     IN _presupuestoInicial DECIMAL(10,2),
     IN _cantidadMeses INT,
-    IN _reservaContingencia DECIMAL(10,2),
-    IN _porcentajeReservaGestion DECIMAL(10,2),
-    IN _porcentajeGanancia DECIMAL(10,2),
-    IN _IGV DECIMAL (10,2),
     IN _idPresupuesto INT
 )
 BEGIN
     UPDATE Presupuesto 
-    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses,reservaContingencia = _reservaContingencia,
-    porcentajeReservaGestion = _porcentajeReservaGestion, porcentajeGanancia = _porcentajeGanancia, IGV = _IGV
+    SET idMoneda = _idMoneda, presupuestoInicial = _presupuestoInicial, cantidadMeses = _cantidadMeses
+    WHERE idPresupuesto = _idPresupuesto and activo =1;
+    SELECT _idPresupuesto AS idPresupuesto;
+END$
+
+DROP PROCEDURE IF EXISTS MODIFICAR_PORCENTAJES_PRESUPUESTO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PORCENTAJES_PRESUPUESTO(
+    IN _idPresupuesto INT,
+    IN reservaContingencia DECIMAL(10,2),
+    IN porcentajeReservaGestion DECIMAL(10,2),
+    IN porcentajeGanancia DECIMAL(10,2),
+    IN _IGV DECIMAL(10,2)
+)
+BEGIN
+    UPDATE Presupuesto 
+    SET reservaContingencia = _reservaContingencia, porcentajeReservaGestion = _porcentajeReservaGestion, porcentajeGanancia = _porcentajeGanancia,IGV = _IGV
     WHERE idPresupuesto = _idPresupuesto and activo =1;
     SELECT _idPresupuesto AS idPresupuesto;
 END$
@@ -2423,7 +2434,8 @@ BEGIN
 END$
 
 CALL LISTAR_PRESUPUESTO_X_ID_PRESUPUESTO(37);
-select * from Usuario;
+select * from Usuario
+UPDATE Usuario SET Privilegios_idPrivilegios = 2 WHERE idUsuario = 141;
 DROP PROCEDURE IF EXISTS LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS;
 DELIMITER $
 CREATE PROCEDURE LISTAR_LINEA_INGRESO_FC_X_ID_PRESUPUESTO_FECHAS(
