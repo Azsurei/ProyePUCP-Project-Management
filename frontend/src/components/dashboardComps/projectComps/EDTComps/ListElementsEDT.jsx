@@ -29,18 +29,29 @@ function CardEDT({ showElimConfirm, ...props }) {
     return (
         <div>
             <li className="border border-gray-300 rounded-md shadow-sm flex flex-row justify-between items-center p-5">
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row  flex-1 gap-2">
                     {/* <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p> */}
+                    
+                    <div className="w-1/3 flex gap-1 items-center">
                     {props.childList !== null ? (
                         <div
+                            className="hover:scale-125 transition-transform duration-75 ease-in"
                             onClick={toggleChildList}
                         >
                             <img src="/icons/chevron-down.svg" />
                         </div>
                     ) : null}
-                    <div className="flex-1 flex gap-1">
-                        <p className="cardNum">{props.levelCounter}.</p>
-                        <p className="cardName">{props.name}</p>
+                        <p className="text-black ">{props.levelCounter}.</p>
+                        <p className="text-black ">{props.name}</p>
+                    </div>
+
+                    <div className="flex flex-row gap-10 flex-2 text-black">
+                        <div className="flex flex-col items-center ">
+                            <p className="font-normal">23/23/23</p>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <p className="font-normal">23/23/23</p>
+                        </div>
                     </div>
                 </div>
 

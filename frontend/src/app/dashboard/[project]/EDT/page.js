@@ -69,6 +69,7 @@ export default function EDT(props) {
             refreshComponentsEDT();
             setScreenState(1);
         } else if (screenState === 3) {
+            setIsLoadingSmall(true);
             setListComps([]);
             refreshComponentsEDT();
             setScreenState(1);
