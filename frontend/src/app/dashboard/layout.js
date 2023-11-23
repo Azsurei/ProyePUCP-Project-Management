@@ -56,7 +56,7 @@ export default function RootLayout({ children }) {
 
                         //console.log("le estoy mandando el id " + userData)
                         socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
-                            path: '/socket/',
+                            path: '/socket',
                             withCredentials: true,
                             "Access-Control-Allow-Credentials" : true,
                             query: {
