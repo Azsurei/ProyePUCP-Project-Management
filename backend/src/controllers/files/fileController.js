@@ -86,6 +86,7 @@ async function getArchivo(idArchivo){
     try {
         const [results] = await connection.query(query, [idArchivo]);
         const file = results[0][0];
+        console.log(results[0][0]);
         console.log(file.nombreGenerado);
         // Create a presigned URL for the file
         const command = getSignedUrl(
