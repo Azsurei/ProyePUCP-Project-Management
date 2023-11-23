@@ -171,15 +171,7 @@ const repositorioDocumentos = (props) => {
     } = useDisclosure();
 
     // Variables y funciones de uso
-    const [documents, setDocuments] = useState([
-        {
-            idArchivo: 1,
-            nombreReal: "Documento 1",
-            tipoArchivo: "application/pdf",
-            tamano: 106000,
-            fechaSubida: "2021-08-25T00:00:00.000Z",
-        },
-    ]);
+    const [documents, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
 
     const handleGet = useCallback(async (idRepositorioDocumentos) => {
@@ -298,6 +290,7 @@ const repositorioDocumentos = (props) => {
             extensionFilter !== "all" &&
             Array.from(extensionFilter).length !== extensionOptions.length
         ) {
+            
             filteredDocuments = filteredDocuments.filter((document) =>
                 Array.from(extensionFilter).includes(document.tipoArchivo)
             );
@@ -490,6 +483,10 @@ const repositorioDocumentos = (props) => {
                         >
                             Subir documento
                         </Button>
+                        <div className="roboto text-xs text-default-500 flex flex-col justify-center items-center whitespace-nowrap">
+                            <span>Max.</span>
+                            <span>50 MB</span>
+                        </div>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
