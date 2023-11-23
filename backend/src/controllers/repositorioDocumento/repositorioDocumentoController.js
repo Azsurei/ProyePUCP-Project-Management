@@ -26,7 +26,8 @@ async function subirArchivo(req,res,next){
         Bucket: bucketName,
         Key: fileName,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype
+        ContentType: req.file.mimetype,
+        ContentDisposition: `attachment; filename="${req.file.originalname}"`
     }
     const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
     const query1 = `CALL INSERTAR_ARCHIVOS_REPOSITORIO(?,?,?,?);`;
