@@ -95,9 +95,8 @@ function reporteTareas(props) {
                     console.log(
                         JSON.stringify(response.data.tareasOrdenadas, null, 2)
                     );
-                    console.log(response);
-                    //asignar listTableGenData
 
+                    //asignar listTableGenData
                     const notStartedTasksG = countTasksWithStatus(
                         response.data.tareasOrdenadas,
                         1
@@ -115,10 +114,6 @@ function reporteTareas(props) {
                         4
                     );
 
-                    console.log("1 => " + notStartedTasksG);
-                    console.log("2 => " + inProgressTasksG);
-                    console.log("3 => " + delayedTasksG);
-                    console.log("4 => " + finishedTasksG);
 
                     setListTableGenData({
                         labels: [
@@ -147,136 +142,7 @@ function reporteTareas(props) {
                         ],
                     });
 
-                    axios
-                        .get(
-                            process.env.NEXT_PUBLIC_BACKEND_URL +
-                                `/api/proyecto/backlog/listarSprintsXIdBacklogcronograma/` +
-                                herramientasInfo.find(
-                                    (herramienta) =>
-                                        herramienta.idHerramienta === 1
-                                ).idHerramientaCreada + //id backlog
-                                `/` +
-                                herramientasInfo.find(
-                                    (herramienta) =>
-                                        herramienta.idHerramienta === 4
-                                ).idHerramientaCreada //id cronograma
-                        )
-                        .then((response) => {
-                            console.log(response);
-
-                            const sprintLabels = response.data.sprints
-                                .filter((sprint) => sprint.idSprint !== 0)
-                                .map((sprint) => {
-                                    return sprint.nombre;
-                                });
-
-                            console.log(
-                                "SPRINT LABELS => " +
-                                    JSON.stringify(sprintLabels, null, 2)
-                            );
-
-                            const sprintTasksData = response.data.sprints
-                                .filter((sprint) => sprint.idSprint !== 0)
-                                .map((sprint) => {
-                                    let notStartedTasks;
-                                    let inProgressTasks;
-                                    let delayedTasks;
-                                    let finishedTasks;
-
-                                    notStartedTasks = sprint.tareas.filter(
-                                        (tarea) => tarea.idTareaEstado === 1
-                                    ).length;
-                                    inProgressTasks = sprint.tareas.filter(
-                                        (tarea) => tarea.idTareaEstado === 2
-                                    ).length;
-                                    delayedTasks = sprint.tareas.filter(
-                                        (tarea) => tarea.idTareaEstado === 3
-                                    ).length;
-                                    finishedTasks = sprint.tareas.filter(
-                                        (tarea) => tarea.idTareaEstado === 4
-                                    ).length;
-
-                                    return {
-                                        notStartedTasks,
-                                        inProgressTasks,
-                                        delayedTasks,
-                                        finishedTasks,
-                                    };
-                                });
-                            console.log(
-                                "SPRINT TASK DATA => " +
-                                    JSON.stringify(sprintTasksData, null, 2)
-                            );
-
-                            setListSprintData({
-                                sprintLabels,
-                                sprintTasksData,
-                            });
-
-                            //primer dataset contiene las tareas en estado = 1, todas del mismo color
-                            setListSprintData({
-                                labels: sprintLabels,
-                                datasets: [
-                                    {
-                                        label: "No iniciado",
-                                        data: sprintTasksData.map((sprint) => {
-                                            return sprint.notStartedTasks;
-                                        }),
-                                        backgroundColor: [
-                                            "rgb(63, 63, 70)",
-                                            "rgb(63, 63, 70)",
-                                            "rgb(63, 63, 70)",
-                                            "rgb(63, 63, 70)",
-                                        ],
-                                    },
-                                    {
-                                        label: "En progreso",
-                                        data: sprintTasksData.map((sprint) => {
-                                            return sprint.inProgressTasks;
-                                        }),
-                                        backgroundColor: [
-                                            "rgb(0, 112, 240)",
-                                            "rgb(0, 112, 240)",
-                                            "rgb(0, 112, 240)",
-                                            "rgb(0, 112, 240)",
-                                        ],
-                                    },
-                                    {
-                                        label: "Atrasado",
-                                        data: sprintTasksData.map((sprint) => {
-                                            return sprint.delayedTasks;
-                                        }),
-                                        backgroundColor: [
-                                            "rgb(245, 165, 36)",
-                                            "rgb(245, 165, 36)",
-                                            "rgb(245, 165, 36)",
-                                            "rgb(245, 165, 36)",
-                                        ],
-                                    },
-                                    {
-                                        label: "Finalizado",
-                                        data: sprintTasksData.map((sprint) => {
-                                            return sprint.finishedTasks;
-                                        }),
-                                        backgroundColor: [
-                                            "rgb(24, 201, 100)",
-                                            "rgb(24, 201, 100)",
-                                            "rgb(24, 201, 100)",
-                                            "rgb(24, 201, 100)",
-                                        ],
-                                    },
-                                ],
-                            });
-
-                            setIsLoadingSmall(false);
-                        })
-                        .catch((error) => {
-                            console.error(
-                                "Error al obtener los datos de sprints: ",
-                                error
-                            );
-                            toast.error("Error al cargar reporte con sprints");
-                        });
+                    setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -1368,6 +1234,9 @@ function reporteTareas(props) {
                     <Button
                         color="warning"
                         className="text-white font-semibold"
+                        onPress={()=>{
+                            handleSaveReport();
+                        }}
                     >
                         Guardar reporte
                     </Button>
@@ -1436,6 +1305,14 @@ function reporteTareas(props) {
             </div>
         </div>
     );
+
+    function handleSaveReport(){
+        const jsonToPrint = {
+            listTareas: listTareas
+        }
+
+        console.log(JSON.stringify(jsonToPrint,null,2));
+    }
 
     function handleSetSelectedTask(task) {
         console.log(" SELECCIONAD LA TAREA " + JSON.stringify(task, null, 2));

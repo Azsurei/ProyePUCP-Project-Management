@@ -6,7 +6,7 @@ import { OpenMenuContext } from "./EDTVisualization";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-function CardEDT({ showElimConfirm, ...props }) {
+function CardEDT({ showElimConfirm, objComponent, ...props }) {
     const iconRef = useRef(null);
     const [openChilds, setOpenChilds] = useState(false);
     const [openMoreInfo, setOpenMoreInfo] = useState(false);
@@ -18,81 +18,98 @@ function CardEDT({ showElimConfirm, ...props }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const toggleChildList = () => {
-        if(openChilds=== true){
+        if (openChilds === true) {
             setOpenChilds(false);
-        }
-        else{
+        } else {
             setOpenChilds(true);
         }
-    }
+    };
 
     return (
         <div>
             <li className="border border-gray-300 rounded-md shadow-sm flex flex-row justify-between items-center p-5">
                 <div className="flex flex-row  flex-1 gap-2">
                     {/* <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p> */}
-                    
-                    <div className="w-1/3 flex gap-1 items-center">
-                    {props.childList !== null ? (
-                        <div
-                            className="hover:scale-125 transition-transform duration-75 ease-in"
-                            onClick={toggleChildList}
-                        >
-                            <img src="/icons/chevron-down.svg" />
-                        </div>
-                    ) : null}
+
+                    <div className="w-1/3 flex gap-1 items-center ">
+                        {props.childList !== null ? (
+                            <div
+                                className="hover:scale-125 transition-transform duration-75 ease-in"
+                                onClick={toggleChildList}
+                            >
+                                <img src="/icons/chevron-down.svg" />
+                            </div>
+                        ) : null}
                         <p className="text-black ">{props.levelCounter}.</p>
                         <p className="text-black ">{props.name}</p>
                     </div>
 
-                    <div className="flex flex-row gap-10 flex-2 text-black">
-                        <div className="flex flex-col items-center ">
-                            <p className="font-normal">23/23/23</p>
+                    <div className="flex flex-row text-black flex-1 justify-between  items-center">
+                        <div className="flex flex-row gap-10 items-center">
+                            <div className="flex flex-row gap-2 items-center ">
+                                <Chip variant="flat" color="primary" className="text-md">
+                                    {dbDateToDisplayDate(
+                                        objComponent.fechaInicio
+                                    )}
+                                </Chip>
+                                <p>-</p>
+                                <Chip variant="flat" color="success" className="text-md">
+                                {dbDateToDisplayDate(objComponent.fechaFin)}
+                                </Chip>
+                            </div>
                         </div>
-                        <div className="flex flex-col items-center">
-                            <p className="font-normal">23/23/23</p>
-                        </div>
+
+                        <Dropdown aria-label="droMenTareasMain">
+                            <DropdownTrigger aria-label="droMenTareasTrigger">
+                                <Button
+                                    size="md"
+                                    radius="sm"
+                                    variant="flat"
+                                    color="default"
+                                    className="ButtonMore"
+                                >
+                                    <p className="lblVerOpciones">
+                                        Ver opciones
+                                    </p>
+                                    {/* <VerticalDotsIcon className="icnVerOpciones text-black-300" /> */}
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="droMenTareas"
+                                onAction={(key) => {
+                                    if (key === "add") {
+                                        handlerGoToNew(props.nextSon, props.id);
+                                    }
+                                    if (key === "view") {
+                                        handleVerDetalle(props.id);
+                                    }
+                                    if (key === "delete") {
+                                        showElimConfirm(
+                                            props.id,
+                                            props.levelCounter
+                                        );
+                                    }
+                                }}
+                            >
+                                <DropdownItem key={"add"}>
+                                    Agregar subcomponente
+                                </DropdownItem>
+                                <DropdownItem key={"view"}>
+                                    Ver detalle
+                                </DropdownItem>
+
+                                <DropdownItem key={"edit"}>Editar</DropdownItem>
+                                <DropdownItem
+                                    key={"delete"}
+                                    color="danger"
+                                    className="text-danger"
+                                >
+                                    Eliminar
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                 </div>
-
-                <Dropdown>
-                    <DropdownTrigger>
-                        {/* <Button variant="bordered">Open Menu</Button> */}
-                        <div className="buttonsContainer">
-                            <img
-                                src="/icons/icon-seeMore.svg"
-                                alt="More"
-                                className="iconSeeMore"
-                                //ref={iconRef}
-                                //onClick={(e) => handleOpenMore(e, props.id)}
-                            />
-                        </div>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                        aria-label="Static Actions"
-                        onAction={(key) => {
-                            if (key === "add") {
-                                handlerGoToNew(props.nextSon, props.id);
-                            }
-                            if (key === "view") {
-                                handleVerDetalle(props.id);
-                            }
-                            if (key === "delete") {
-                                showElimConfirm(props.id, props.levelCounter);
-                            }
-                        }}
-                    >
-                        <DropdownItem key="view">Ver detalle</DropdownItem>
-                        <DropdownItem key="add">Agregar Hijo</DropdownItem>
-                        <DropdownItem
-                            key="delete"
-                            className="text-danger"
-                            color="danger"
-                        >
-                            Eliminar
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
             </li>
 
             <Collapse isOpened={openChilds}>
@@ -119,9 +136,12 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
+    Chip,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { Collapse } from "react-collapse";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 
 export default function ListElementsEDT(props) {
     const router = useRouter();
@@ -168,7 +188,7 @@ export default function ListElementsEDT(props) {
 
     return (
         <ul
-            className="ListElementsEDT"
+            className="flex flex-col gap-2 mt-2"
             style={{ marginLeft: props.initialMargin }}
         >
             {ListComps.map((component) => {
@@ -177,6 +197,7 @@ export default function ListElementsEDT(props) {
                         key={component.idComponente}
                         id={component.idComponente}
                         name={component.nombre}
+                        objComponent={component}
                         nextSon={component.nextSon}
                         levelCounter={component.codigo}
                         levelName="FASE"

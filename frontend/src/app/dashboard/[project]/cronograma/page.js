@@ -987,6 +987,7 @@ export default function Cronograma(props) {
                 toast.success("Se exporto el cronograma con exito");
             }, 500);
         } catch (error) {
+            setIsExportLoading(false);
             toast.error("Error al exportar tu cronograma");
             console.log(error);
         }
