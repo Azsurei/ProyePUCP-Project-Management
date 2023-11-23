@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-    useState,
-    useEffect,
-    useCallback,
-    useContext,
-    createElement,
-} from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
     Table,
     TableHeader,
@@ -202,17 +196,19 @@ const repositorioDocumentos = (props) => {
             setIsLoadingSmall(false);
         }
     });
-    const handleDownload = useCallback(async (idDocumento) => {
+    const handleDownload = useCallback(async (nombreDocumento, idDocumento) => {
         const toastId = toast("Sonner");
         toast.loading("Descargando documento...", {
             id: toastId,
         });
+        const link = document.createElement("a");
         try {
             const url = await downloadDocument(idDocumento);
             console.log(url);
 
             link.href = url;
-            link.download = "nombre_del_archivo";
+            link.download = nombreDocumento;
+            document.body.appendChild(link);
             link.click();
 
             toast.success("El documento se ha descargado exitosamente.", {
@@ -223,6 +219,10 @@ const repositorioDocumentos = (props) => {
             toast.error("Error al descargar el documento.", {
                 id: toastId,
             });
+        } finally {
+            if (link.parentNode) {
+                link.parentNode.removeChild(link);
+            }
         }
     });
     const handleUpload = useCallback(async (documento) => {
@@ -266,6 +266,7 @@ const repositorioDocumentos = (props) => {
     useEffect(() => {
         handleGet(idRepositorioDocumentos);
     }, []);
+    console.log(selectedDocument);
 
     // Estados generales (uso de tabla)
     const [filterValue, setFilterValue] = React.useState("");
@@ -384,7 +385,11 @@ const repositorioDocumentos = (props) => {
                             isIconOnly
                             variant="default"
                             onPress={() => {
-                                handleDownload(document.idArchivo);
+                                setSelectedDocument(document);
+                                handleDownload(
+                                    document.nombreReal,
+                                    document.idArchivo
+                                );
                             }}
                         >
                             <ExportIcon />
