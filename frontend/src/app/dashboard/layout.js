@@ -56,6 +56,8 @@ export default function RootLayout({ children }) {
 
                         //console.log("le estoy mandando el id " + userData)
                         socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
+                            withCredentials: true,
+                            "Access-Control-Allow-Credentials" : true,
                             query: {
                                 idUsuario: user_data.idUsuario,
                                 nombresUsuario: user_data.nombres,
@@ -94,7 +96,7 @@ export default function RootLayout({ children }) {
                         setIsLoading(false);
 
                         return () => {
-                            socket.disconnect();
+                            socketRef.current.disconnect();
                         };
                     })
                     .catch(function (error) {
