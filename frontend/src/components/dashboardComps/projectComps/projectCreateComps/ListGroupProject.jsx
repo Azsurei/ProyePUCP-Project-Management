@@ -13,6 +13,8 @@ import RouteringReporteGrupo from "./RouteringReporteGrupo";
 import { MenuIcon } from "@/../public/icons/MenuIcon";
 import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { DeleteDocumentIcon } from "public/icons/deleteDocument";
+import ModalEliminateGroup from "./ModalEliminateGroup";
 axios.defaults.withCredentials = true;
 function GroupCard(props) {
     const fechaTransaccion = new Date(props.fechaCreacion);
@@ -26,15 +28,20 @@ function GroupCard(props) {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [idGrupo, setIdGrupo] = useState("");
     const [navegate, setNavegate] = useState(false);
+    const [modal, setModal] = useState(false);
     const setRoutering = (objectID) => {
         setIdGrupo(objectID);
         setNavegate(!navegate);
+    };
+    const toggleModal = () => {
+
+        setModal(!modal);
     };
     const handleModal = (list) => {
         onOpen();
         
     };
-    const DataProyectos = async () => {
+    function DataProyectos() {
         const fetchData = async () => {
             try {
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
@@ -105,6 +112,16 @@ function GroupCard(props) {
                       >
                         Crear Reporte
                       </DropdownItem>
+                      <DropdownItem
+                        key="eliminar"
+                        className="text-danger"
+                        color="danger"
+                        description="Elimina este grupo de proyectos"
+                        startContent={<DeleteDocumentIcon/>}
+                        onPress={() => toggleModal()}
+                        >
+                            Eliminar Grupo
+                        </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
             </div>
@@ -180,6 +197,14 @@ function GroupCard(props) {
                 idGrupoProyecto={idGrupo}
                 />
             )}
+            {modal && (
+                <ModalEliminateGroup
+                    modal={modal}
+                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                    idGrupoProyecto={idGrupoProyecto}
+                    refresh={props.refresh}
+                />
+            )}
         </>
         
     );
@@ -196,18 +221,18 @@ export default function ListGroupProject(props) {
     const [isLoading, setIsLoading] = useState(true); //loading screen seteada por defecto
     const [ListComps, setListComps] = useState([]);
 
-    useEffect(() => {
+    const fetchData = () => {
         let gruposArray;
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/grupoProyectos/listarGruposProyecto/" + sessionData.idUsuario;
-
+    
         axios
             .get(stringURL)
             .then(function (response) {
                 console.log(response);
                 gruposArray = response.data.grupos;
-
+    
                 gruposArray = gruposArray.map((grupos) => {
                     return {
                         id: grupos.idGrupoDeProyecto,
@@ -216,7 +241,7 @@ export default function ListGroupProject(props) {
                         usuuario: grupos.idUsuario,
                     };
                 });
-
+    
                 setListComps(gruposArray);
                 console.log(gruposArray);
                 setIsLoading(false);
@@ -224,6 +249,10 @@ export default function ListGroupProject(props) {
             .catch(function (error) {
                 console.log(error);
             });
+    };
+    
+    useEffect(() => {
+        fetchData();
     }, []);
 
     const filteredProjects = ListComps.filter((component) => {
@@ -231,7 +260,7 @@ export default function ListGroupProject(props) {
         return projectName.includes(filterValue.toLowerCase());
     });
     return (
-        <ul className="ListProject">
+        <ul className="text-xl font-montserrat font-semibold flex flex-wrap justify-start gap-16 mt-16">
             {filteredProjects.map((component) => {
                 return (
                                         <GroupCard
@@ -246,6 +275,7 @@ export default function ListGroupProject(props) {
                                             // setSession(updSessionData);
                                             // handleClick(component.id, component.name);
                                         }}
+                                        refresh={fetchData}
                                     ></GroupCard>   
                 );
             })}
