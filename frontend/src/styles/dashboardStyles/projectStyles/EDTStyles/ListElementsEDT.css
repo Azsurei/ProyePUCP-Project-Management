@@ -92,3 +92,7 @@ con media query*/
     padding: .6rem 2rem; 
     transition: padding 0.25s ease-in;
 }
+
+.ReactCollapse--collapse {
+    transition: height 250ms;
+}

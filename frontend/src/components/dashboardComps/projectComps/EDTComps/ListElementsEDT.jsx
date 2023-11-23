@@ -7,9 +7,6 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 function CardEDT({ showElimConfirm, ...props }) {
-    let hasChilds;
-    props.childList === null ? (hasChilds = false) : (hasChilds = true);
-
     const iconRef = useRef(null);
     const [openChilds, setOpenChilds] = useState(false);
     const [openMoreInfo, setOpenMoreInfo] = useState(false);
@@ -18,39 +15,34 @@ function CardEDT({ showElimConfirm, ...props }) {
     const { openMenuId, toggleMenu, handlerGoToNew, handleVerDetalle } =
         useContext(OpenMenuContext);
 
-    const handleClick = () => {
-        if (hasChilds === true) setOpenChilds(!openChilds);
-    };
-
-    const handleOpenMore = (e, id) => {
-        e.stopPropagation();
-        toggleMenu(id);
-
-        const iconRect = iconRef.current.getBoundingClientRect();
-        setMenuPosition({
-            top: iconRect.bottom + window.scrollY,
-            left: iconRect.left + window.scrollX - 100 + 32,
-        });
-
-        setOpenMoreInfo(!openMoreInfo);
-    };
-
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const toggleChildList = () => {
+        if(openChilds=== true){
+            setOpenChilds(false);
+        }
+        else{
+            setOpenChilds(true);
+        }
+    }
 
     return (
         <div>
-            <li
-                className={openChilds === true ? "CardEDT active bg-mainBackground hover:bg-[#dadada] dark:hover:bg-[rgba(238,238,238,0.1)]" : "CardEDT bg-mainBackground hover:bg-[#dadada] dark:hover:bg-[rgba(238,238,238,0.1)]"}
-                onClick={handleClick}
-            >
-                <div className="leftContainer">
+            <li className="border border-gray-300 rounded-md shadow-sm flex flex-row justify-between items-center p-5">
+                <div className="flex flex-row gap-2">
                     {/* <p className="cardTag" style={{backgroundColor: props.levelColor}}>{props.levelName}</p> */}
-                    <div className="titleContainer">
+                    {props.childList !== null ? (
+                        <div
+                            onClick={toggleChildList}
+                        >
+                            <img src="/icons/chevron-down.svg" />
+                        </div>
+                    ) : null}
+                    <div className="flex-1 flex gap-1">
                         <p className="cardNum">{props.levelCounter}.</p>
                         <p className="cardName">{props.name}</p>
                     </div>
                 </div>
-
 
                 <Dropdown>
                     <DropdownTrigger>
@@ -90,15 +82,16 @@ function CardEDT({ showElimConfirm, ...props }) {
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
-
-                
             </li>
-            {hasChilds && openChilds && (
-                <ListElementsEDT
-                    listData={props.childList}
-                    initialMargin={30}
-                ></ListElementsEDT>
-            )}
+
+            <Collapse isOpened={openChilds}>
+                {props.childList !== null && (
+                    <ListElementsEDT
+                        listData={props.childList}
+                        initialMargin={30}
+                    ></ListElementsEDT>
+                )}
+            </Collapse>
         </div>
     );
 }
@@ -117,6 +110,7 @@ import {
     DropdownItem,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { Collapse } from "react-collapse";
 
 export default function ListElementsEDT(props) {
     const router = useRouter();
@@ -142,7 +136,8 @@ export default function ListElementsEDT(props) {
         console.log("Procediendo con insertar el componente");
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/eliminarComponenteEDT",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/EDT/eliminarComponenteEDT",
                 {
                     idComponente: idAEliminar,
                     codigo: codAEliminar,

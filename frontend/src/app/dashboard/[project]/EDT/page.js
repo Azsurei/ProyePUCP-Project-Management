@@ -5,13 +5,15 @@ import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps
 import ListElementsEDT from "@/components/dashboardComps/projectComps/EDTComps/ListElementsEDT";
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDT.css";
 import Link from "next/link";
-import React from 'react';
+import React from "react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import EDTVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import EDTNewVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTNewVisualization";
 import EDTCompVisualization from "@/components/dashboardComps/projectComps/EDTComps/EDTCompVisualization";
 import { SmallLoadingScreen } from "../layout";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 export default function EDT(props) {
@@ -19,7 +21,6 @@ export default function EDT(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
 
     const [screenState, setScreenState] = useState(1);
     const [ListComps, setListComps] = useState([]);
@@ -32,7 +33,8 @@ export default function EDT(props) {
     function refreshComponentsEDT() {
         console.log("rerendering ListComps");
         const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/" +
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/EDT/" +
             projectId +
             "/listarComponentesEDTXIdProyecto";
 
@@ -40,22 +42,28 @@ export default function EDT(props) {
             .get(stringURL)
             .then(function (response) {
                 const componentsArray = response.data.componentesEDT;
-                console.log(JSON.stringify(componentsArray,null,2));
+                console.log(JSON.stringify(componentsArray, null, 2));
                 setListComps(componentsArray);
 
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
+                setIsLoadingSmall(false);
+                toast.error("Error al ver lista de componentes");
             });
     }
 
-    useEffect(refreshComponentsEDT, []);
+    useEffect(()=>{
+        setIsLoadingSmall(true);
+        refreshComponentsEDT();
+    }, []);
 
     const handleScreenChange = () => {
         if (screenState === 1) {
             setScreenState(2);
         } else if (screenState === 2) {
+            setIsLoadingSmall(true);
             setListComps([]);
             //Refrescamos lista antes de  continuar
             refreshComponentsEDT();
@@ -78,6 +86,8 @@ export default function EDT(props) {
         setIdComponentToSee(idComp);
         setScreenState(3);
     };
+
+    const router = useRouter();
 
     //#######################################################
 

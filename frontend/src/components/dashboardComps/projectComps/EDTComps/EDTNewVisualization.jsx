@@ -59,6 +59,8 @@ export default function EDTNewVisualization({
         { index: 1, data: "" },
     ]);
 
+    const [isRegistering, setIsRegistering] = useState(false);
+
     const [datosComponente, setDatosComponente] = useState(null);
 
     const handleChangeTipoComponente = (e) => {
@@ -160,42 +162,47 @@ export default function EDTNewVisualization({
         // Otros parámetros de la solicitud, como los datos JSON, deben agregarse aquí
     };
 
-    const handleComponentRegister = () => {
+    const handleComponentRegister = async () => {
+        setIsRegistering(true);
         console.log("Procediendo con insertar el componente");
-        axios
-            .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/EDT/" +
-                    projectId +
-                    "/insertarComponenteEDT",
-                {
-                    idElementoPadre: idElementoPadre,
-                    idProyecto: projectId,
-                    descripcion: inDescripcion,
-                    codigo: inCodigoComponente,
-                    observaciones: inObservaciones,
-                    nombre: inComponentName,
-                    responsables: inResponsables,
-                    fechaInicio: inFechaInicio,
-                    fechaFin: inFechaFin,
-                    recursos: inRecursos,
-                    hito: inHito,
-                    criterioAceptacion: listCriterios,
-                    entregables: listEntregables,
-                }
-            )
-            .then(function (response) {
-                console.log(response);
-                console.log(
-                    "creo que se inserto tu componente, reza para que todo este en laa bd"
-                );
 
-                //cambiamos a la otra paginaa
-                handlerReturn();
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        const registerURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/EDT/" +
+            projectId +
+            "/insertarComponenteEDT";
+
+        const objToSend = {
+            idElementoPadre: idElementoPadre,
+            idProyecto: projectId,
+            descripcion: inDescripcion,
+            codigo: inCodigoComponente,
+            observaciones: inObservaciones,
+            nombre: inComponentName,
+            responsables: inResponsables,
+            fechaInicio: inFechaInicio,
+            fechaFin: inFechaFin,
+            recursos: inRecursos,
+            hito: inHito,
+            criterioAceptacion: listCriterios,
+            entregables: listEntregables,
+        };
+
+        try {
+            const response = await axios.post(registerURL, objToSend);
+
+            console.log(response);
+            toast.success("Componente registrado con exito");
+
+            //cambiamos a la otra paginaa
+            setIsRegistering(false);
+            handlerReturn();
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al registrar componente");
+            setIsRegistering(false);
+            handlerReturn();
+        }
     };
 
     const [listEntregablesBD, setListEntregablesBD] = useState([]);
@@ -229,10 +236,8 @@ export default function EDTNewVisualization({
             .catch(function (error) {
                 console.log(error);
             });
-            
 
-
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // console.log("Procediendo sacar informacion del componente");
         // axios
         //     .post(
@@ -551,9 +556,11 @@ export default function EDTNewVisualization({
                     textBody="¿Seguro que quiere desea registrar el componente?"
                     colorButton="w-36 bg-blue-950 text-white"
                     oneButton={false}
-                    secondAction={() => {
-                        handleComponentRegister();
+                    isLoading={isRegistering}
+                    secondAction={async () => {
+                        await handleComponentRegister();
                     }}
+                    closeSecondActionState={true}
                     verifyFunction={() => {
                         if (
                             inComponentName === "" ||
