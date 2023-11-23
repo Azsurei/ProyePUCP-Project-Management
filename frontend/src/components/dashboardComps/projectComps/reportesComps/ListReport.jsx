@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { SessionContext } from "@/app/dashboard/layout";
-import { Avatar, Chip } from "@nextui-org/react";
+import { Avatar, Chip, Tooltip } from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 import { BudgetIcon } from "@/../public/icons/BudgetIcon";
 import { TaskIcon } from "@/../public/icons/TaskIcon";
@@ -17,6 +17,7 @@ import { AdvanceProject } from "@/../public/icons/AdvanceProject";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
 
 function ReporteCard({ report, onClick }) {
+    console.log("Herramienta reporte", report.idHerramienta);
     const colorOptions = {
         Presupuesto: "success",
         EDT: "warning",
@@ -34,7 +35,9 @@ function ReporteCard({ report, onClick }) {
             <div className="flex flex-col justify-between">
                 <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-row items-center gap-2">
-                        <p className="font-semibold text-lg">{report.nombre}</p>
+                        <Tooltip content={report.nombre}>
+                        <p className="font-semibold text-lg" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100px' }}>{report.nombre}</p>
+                        </Tooltip>
                         <Chip
                             className="capitalize mt-1 mb-1"
                             size="md"
@@ -67,7 +70,10 @@ function ReporteCard({ report, onClick }) {
                     {/* {props.tipo === "Presupuesto" && (
                             <BudgetIcon />
                         )} */}
+                    {report.idHerramienta === 1 && <Cronograma />}
                     {report.idHerramienta === 2 && <TaskIcon />}
+                    {report.idHerramienta === 13 && <BudgetIcon />}
+                    {report.idHerramienta === 5 && <Risks />}
                     {/* {props.tipo === "Cronograma" && (
                             <Cronograma />
                         )}
@@ -141,7 +147,7 @@ export default function ListReport({ listReportes, handleViewReport }) {
     ];
 
     return (
-        <ul className="ListReport">
+        <ul className="text-xl font-montserrat font-semibold flex flex-wrap justify-start gap-16 mt-8">
             {listReportes.map((report) => {
                 return (
                     <ReporteCard
