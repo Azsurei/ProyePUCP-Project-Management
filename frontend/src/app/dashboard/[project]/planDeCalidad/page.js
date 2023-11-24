@@ -70,6 +70,26 @@ export default function PlanDeCalidad(props) {
     const [planCalidad, setPlanCalidad] = useState(null);
     const [listAdditionalFields, setListAdditionalFields] = useState([]);
     //console.log("El id del plan de calidad es:", idPlanCalidad);
+
+    function PlusIcon2() {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.8}
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+            </svg>
+        );
+    }
+
     const toggleModal = (task) => {
         setSelectedTask(task);
         setModal(!modal);
@@ -899,12 +919,13 @@ export default function PlanDeCalidad(props) {
                     ))
                 )}
                 {editMode === true && (
-                    <div className="flex justify-end">
+                    <div className="flex justify-center">
                         <div className="flex gap-10 p-4">
                             <Button
                                 onClick={addContainer1}
-                                className="bg-yellow-500 border-2 border-yellow-500 h-10 text-white text-sm font-semibold w-28 cursor-pointer outline-none"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon2 />}
                             >
                                 Agregar
                             </Button>
@@ -938,12 +959,13 @@ export default function PlanDeCalidad(props) {
                     ))
                 )}
                 {editMode === true && (
-                    <div className="flex justify-end">
+                    <div className="flex justify-center">
                         <div className="flex gap-10 p-4">
                             <Button
                                 onClick={addContainer2}
-                                className="bg-yellow-500 border-2 border-yellow-500 h-10 text-white text-sm font-semibold w-28 cursor-pointer outline-none"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon2 />}
                             >
                                 Agregar
                             </Button>
@@ -979,12 +1001,13 @@ export default function PlanDeCalidad(props) {
                     ))
                 )}
                 {editMode === true && (
-                    <div className="flex justify-end">
+                    <div className="flex justify-center">
                         <div className="flex gap-10 p-4">
                             <Button
                                 onClick={addContainer3}
-                                className="bg-yellow-500 border-2 border-yellow-500 h-10 text-white text-sm font-semibold w-28 cursor-pointer outline-none"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon2 />}
                             >
                                 Agregar
                             </Button>
