@@ -323,7 +323,7 @@ export default function MatrizComunicacionesRegister(props) {
                 </div>
                 {/*6*/}
                 <div>
-                    <div className="flex items-center text-[16px] font-semibold">
+                    <div className="flex items-center text-[16px] font-semibold mb-1">
                         Campos Adicionales
                     </div>
                     <ListAdditionalFields

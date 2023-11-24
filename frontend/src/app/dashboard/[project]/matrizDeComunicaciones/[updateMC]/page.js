@@ -255,7 +255,7 @@ export default function MatrizComunicacionesUpdate(props) {
                 </div>
                 <div>
                     <Input
-                        isClearable
+                        {...(!editMode ? { isClearable: false } : {})}
                         label="Sumilla de la información requerida"
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
@@ -424,7 +424,7 @@ export default function MatrizComunicacionesUpdate(props) {
                     />
                 </div>
                 <div>
-                    <div className="flex items-center text-[16px] font-semibold">
+                    <div className="flex items-center text-[16px] font-semibold mb-1">
                         Campos Adicionales
                     </div>
                     <ListAdditionalFields
