@@ -40,6 +40,7 @@ import { SmallLoadingScreen } from "../../layout";
 import { set } from "date-fns";
 import { tr } from "date-fns/locale";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export default function EstimacionCosto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -399,8 +400,8 @@ export default function EstimacionCosto(props) {
                     <div className="buttonContainer">
 
                         <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion/EstimacionTabla"}>
-                            <Button  color="primary" startContent={<VisibilityIcon />} className="btnFiltro">
-                                Ver Tabla
+                            <Button  color="primary" startContent={<AssessmentIcon />} className="btnTablaEstimacion">
+                                Tabla Estimacion
                             </Button>
                         </Link>
 
