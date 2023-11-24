@@ -126,7 +126,7 @@ export default function RootLayout({ children }) {
             });
     }
 
-    async function sendNotification(idDestinatario, tipo, idLineaAsociada) {
+    async function sendNotification(idDestinatario, tipo, idLineaAsociada, idProyecto) {
         try {
             const newURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -136,6 +136,7 @@ export default function RootLayout({ children }) {
                 idUsuario: idDestinatario,
                 tipo: tipo,
                 idLineaAsociada: idLineaAsociada,
+                idProyecto: idProyecto
             });
 
             const targetUserId = idDestinatario; // Replace with the actual target user's idUsuario

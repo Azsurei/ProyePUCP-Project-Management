@@ -1,8 +1,8 @@
 "use client";
 
 import { useContext, useEffect, useMemo, useState } from "react";
-import { SmallLoadingScreen } from "../layout";
-import { SessionContext } from "../../layout";
+import { ProjectInfo, SmallLoadingScreen } from "../layout";
+import { NotificationsContext, SessionContext } from "../../layout";
 import axios from "axios";
 
 import {
@@ -107,8 +107,9 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                 setInitialEvaluations(evaluaciones);
                 setUsersEvaluation(evaluaciones);
 
-                autoEvaluacion.fechaInicio = autoEvaluacion.fechaInicio.split('T')[0];
-                autoEvaluacion.fechaFin = autoEvaluacion.fechaFin.split('T')[0];
+                autoEvaluacion.fechaInicio =
+                    autoEvaluacion.fechaInicio.split("T")[0];
+                autoEvaluacion.fechaFin = autoEvaluacion.fechaFin.split("T")[0];
                 setAutoEvaluation(autoEvaluacion);
             } else if (response.status === 204) {
                 setStatusForm("empty");
@@ -328,11 +329,11 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         </h3>
                         <p className="flex flex-col sm:flex-row gap-3">
                             <span className="font-semibold">
-                                {"Fecha de inicio: "} 
+                                {"Fecha de inicio: "}
                             </span>
                             {autoEvaluation.fechaInicio}
                             <span className="font-semibold">
-                                {"Fecha de fin: "} 
+                                {"Fecha de fin: "}
                             </span>
                             {autoEvaluation.fechaFin}
                         </p>
@@ -374,6 +375,9 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
     );
 }
 function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
+    const { sendNotification } = useContext(NotificationsContext);
+    const { projectInfo } = useContext(ProjectInfo);
+
     // Variables globales
     const [evaluaciones, setEvaluaciones] = useState([]);
     const [evaluacion, setEvaluacion] = useState(null);
@@ -475,6 +479,17 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                 )
                 .then((response) => {
                     console.log(response);
+                    console.log("autoevalucion fue lanzada");
+
+                    //lanzamos notificacion a todos los usuarios del proyecto
+                    console.log(JSON.stringify(projectInfo, null, 2));
+                    for (const usuario of projectInfo.miembros) {
+                        sendNotification(usuario.idUsuario, 6, idAutoEvaluacionXProyecto, projectId);
+                        console.log(
+                            "mandando notificacion de autoevaluacion a  " + usuario.idUsuario
+                        );
+                    }
+
                     resolve();
                 })
                 .catch((error) => {
@@ -559,7 +574,7 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                     reject(error);
                 });
         });
-    }            
+    }
 
     const handleView = async (idAutoEvaluacionXProyecto) => {
         try {
@@ -623,7 +638,9 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                                 ) : null
                             )
                         ) : (
-                            <p className="p-4">No hay observaciones enviadas.</p>
+                            <p className="p-4">
+                                No hay observaciones enviadas.
+                            </p>
                         )}
                     </div>
                 </CardBody>

@@ -235,11 +235,11 @@ async function verificarSiCorreoEsDeGoogle(req, res, next) {
 
 
 async function enviarNotificacion(req, res, next) {
-    const { idUsuario, tipo, idLineaAsociada } = req.body;
+    const { idUsuario, tipo, idLineaAsociada, idProyecto } = req.body;
     console.log("enviando mensaje a usuario " + idUsuario);
     try {
-        const query = `CALL INSERTAR_NOTIFICACION(?,?,?);`;
-        const [results] = await connection.query(query, [idUsuario, tipo, idLineaAsociada]);
+        const query = `CALL INSERTAR_NOTIFICACION(?,?,?,?);`;
+        const [results] = await connection.query(query, [idUsuario, tipo, idLineaAsociada, idProyecto]);
         
         res.status(200).json({
             message: "Se envio notificacion correctamente",
