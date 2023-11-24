@@ -1,5 +1,5 @@
 // components/TreeGraphComponent.jsx
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { Tree } from 'react-d3-tree';
 import { TwitterPicker } from 'react-color';
 import {
@@ -14,15 +14,6 @@ import {
 import {ChevronRight, ChevronLeft, ZoomIn, ZoomOut} from 'react-feather';
 import {OpenMenuContext} from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import axios from "axios";
-
-const cardStyle = {
-    backgroundColor: 'white',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    padding: '10px',
-    marginBottom: '10px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-};
 
 const levelColors = [
     "#FF0000", // Bright Red
@@ -52,46 +43,46 @@ const truncateString = (str, num) => {
     return str.slice(0, num) + '...';
 };
 
+const buildTree = (nodeData, depth = 0, selectedLevelColors) => {
+    const nodeName = `${nodeData.codigo}. ${truncateString(nodeData.nombre, 15)}`;
+    let node = {
+        id: nodeData.idComponente,
+        codigo: nodeData.codigo,
+        name: nodeName,
+        nextSon: nodeData.nextSon,
+        depth,
+        children: nodeData.componentesHijos?.map(child => buildTree(child, depth + 1, selectedLevelColors)) || []
+    };
+    return node;
+};
+
+const convertDataToTree = (inputData, colors) => {
+    let parentNode = {
+        id: 0,
+        codigo: "0",
+        name: inputData.projectName,
+        depth: 0,
+        nextSon: "0",
+        children: inputData.data.map(item => buildTree(item, 1, colors))
+    };
+    return parentNode;
+};
+
+
 const TreeGraphComponent = ({ projectName, data }) => {
 
     const { openMenuId, toggleMenu, handlerGoToNew, handleVerDetalle } =
         useContext(OpenMenuContext);
 
-    const convertDataToTree = (inputData, colors) => {
-        const buildTree = (nodeData, depth = 0) => {
-            const nodeName = `${nodeData.codigo}. ${truncateString(nodeData.nombre, 15)}`;
-            let node = {
-                id: nodeData.idComponente,
-                codigo: nodeData.codigo,
-                name: nodeName,
-                nextSon: nodeData.nextSon,
-                depth,
-                children: nodeData.componentesHijos?.map(child => buildTree(child, depth + 1)) || []
-            };
-            return node;
-        };
 
-        // Initial parent node
-        let parentNode = {
-            id: 0,
-            codigo: "0",
-            name: projectName,
-            depth: 0,
-            nextSon: "0",
-            children: inputData.map(item => buildTree(item, 1))
-        };
-        return parentNode;
-    };
 
-    const [treeData, setTreeData] = useState(() => convertDataToTree(data, levelColors));
+    //const [treeData, setTreeData] = useState(() => convertDataToTree(data, levelColors));
     const [zoomLevel, setZoomLevel] = useState(1);
     const [selectedLevel, setSelectedLevel] = useState('0');
     const [selectedLevelColors, setSelectedLevelColors] = useState(levelColors);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
 
-    useEffect(() => {
-        setTreeData(convertDataToTree(data, selectedLevelColors));
-    }, [data, selectedLevelColors]);
+    const memoizedTreeData = useMemo(() => convertDataToTree({ projectName, data }, selectedLevelColors), [data, selectedLevelColors]);
 
     // Handle color change for levels
     const handleChangeComplete = (color) => {
@@ -110,17 +101,13 @@ const TreeGraphComponent = ({ projectName, data }) => {
     const treeTranslateX = isControlsCollapsed ? 200 : 400;
     const collapseButtonPositionX = '10px';
 
-    const toggleControls = () => {
-        setIsControlsCollapsed(!isControlsCollapsed);
-    };
+    const handleZoomIn = useCallback(() => {
+        setZoomLevel(zoom => zoom * 1.2);
+    }, []);
 
-    const handleZoomIn = () => {
-        setZoomLevel(zoom => zoom * 1.2); // 20% zoom in
-    };
-
-    const handleZoomOut = () => {
-        setZoomLevel(zoom => zoom / 1.2); // 20% zoom out
-    };
+    const handleZoomOut = useCallback(() => {
+        setZoomLevel(zoom => zoom / 1.2);
+    }, []);
 
     const handleLevelChange = (value) => {
         setSelectedLevel(value);
@@ -376,7 +363,7 @@ const TreeGraphComponent = ({ projectName, data }) => {
                 </Button>
                 */}
                 <Tree
-                    data={treeData}
+                    data={memoizedTreeData}
                     orientation="vertical"
                     pathFunc="straight"
                     translate={{ x: treeTranslateX, y: 100 }} // Adjust tree position
