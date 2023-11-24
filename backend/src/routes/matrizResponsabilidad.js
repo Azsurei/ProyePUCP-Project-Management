@@ -19,4 +19,6 @@ routerMatrizResponsabilidad.put("/actualizarEntregables",matrizResponsabilidadCo
 routerMatrizResponsabilidad.post("/insertarEntregableXResponsabilidadXRol",matrizResponsabilidadController.insertarEntregableXResponsabilidadXRol);
 routerMatrizResponsabilidad.get("/listarEntregablesXProyecto/:idProyecto",matrizResponsabilidadController.listarEntregablesXProyecto);
 
+
+routerMatrizResponsabilidad.get("/listarParticipantes/:idEquipo",matrizResponsabilidadController.listarParticipantes);
 module.exports.routerMatrizResponsabilidad = routerMatrizResponsabilidad;

@@ -389,10 +389,38 @@ async function handlerExport() {
                     }
 
                     if(Isvalid === true){
-                      setGestion(pGestion);
-                      setReserva(pReserva);
-                      setIGV(pIGV);
-                      setGanancia(pGanancia);
+
+                      if(pGestion>0){
+                        setGestion(pGestion/100);
+                      }else{
+                        setpGestion(Gestion);
+                      }
+                      
+                      if(pReserva>0){
+                        setReserva(pReserva);
+
+                      }
+                      else{
+                        setpReserva(Reserva);
+
+                      }
+
+                      if(pReserva>0){
+                        setIGV(pIGV/100);
+
+                      }
+                      else{
+                        setpIGV(IGV);
+                      }
+
+
+                      if(pGanancia>0){
+                        setGanancia(pGanancia/100);
+
+                      }
+                      else{
+                        setpGanancia(Ganancia);
+                      }
 
 
                       //await actualizarPorcentanjes();
@@ -468,7 +496,7 @@ async function handlerExport() {
                         }}>
 
                           <Input
-                            value={Reserva}
+                            defaultValue={Reserva}
                             onValueChange={setpReserva}
                             labelPlacement="outside"
                             isInvalid={!validReserva}
@@ -483,7 +511,7 @@ async function handlerExport() {
                           />
                           
                           <Input
-                            value={Gestion*100}
+                            defaultValue={Gestion*100}
                             onValueChange={setpGestion}
                             labelPlacement="outside"
                             isInvalid={!validGestion}
@@ -538,7 +566,7 @@ async function handlerExport() {
                         }}>
                           
                           <Input
-                            value={Ganancia*100}
+                            defaultValue={Ganancia*100}
                             onValueChange={setpGanancia}
                             labelPlacement="outside"
                             isInvalid={!validGanancia}
@@ -553,7 +581,7 @@ async function handlerExport() {
                           />
 
                           <Input
-                            value={IGV*100}
+                            defaultValue={(IGV * 100).toFixed(0)}
                             onValueChange={setpIGV}
                             labelPlacement="outside"
                             isInvalid={!validIGV}

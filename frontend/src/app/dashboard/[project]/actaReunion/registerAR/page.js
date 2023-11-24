@@ -504,7 +504,7 @@ export default function crearActaReunion(props) {
                 const nuevoIdLineaAR = response.data.idLineaActaReunion;
                 for(const usuario of selectedMiembrosList){
                     if(usuario.idUsuario !== sessionData.idUsuario){
-                        sendNotification(usuario.idUsuario,3,nuevoIdLineaAR);
+                        sendNotification(usuario.idUsuario,3,nuevoIdLineaAR,projectId);
                         console.log("Mandando notificacion a " + usuario.idUsuario);
                     }
                 }

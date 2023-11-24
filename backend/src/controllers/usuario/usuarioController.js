@@ -235,11 +235,11 @@ async function verificarSiCorreoEsDeGoogle(req, res, next) {
 
 
 async function enviarNotificacion(req, res, next) {
-    const { idUsuario, tipo, idLineaAsociada } = req.body;
+    const { idUsuario, tipo, idLineaAsociada, idProyecto } = req.body;
     console.log("enviando mensaje a usuario " + idUsuario);
     try {
-        const query = `CALL INSERTAR_NOTIFICACION(?,?,?);`;
-        const [results] = await connection.query(query, [idUsuario, tipo, idLineaAsociada]);
+        const query = `CALL INSERTAR_NOTIFICACION(?,?,?,?);`;
+        const [results] = await connection.query(query, [idUsuario, tipo, idLineaAsociada, idProyecto]);
         
         res.status(200).json({
             message: "Se envio notificacion correctamente",
@@ -381,6 +381,23 @@ async function modificarDatos(req,res,next){
     }
 }
 
+async function modificarPreferenciaNotificacionPresupuesto(req,res,next){
+    const {idUsuario, newAmount} = req.body;
+    try {
+        const query = `CALL MODIFICAR_PREFERENCIA_PRESUPUESTO_X_ID_USUARIO(?,?);`;
+        await connection.query(
+            query,[idUsuario, newAmount]
+        );
+
+        res.status(200).json({
+            message: "Preferencia modificada exitosamente"
+        });
+    } catch (error) {
+        console.log("Error al Modificar preferencia de Usuario",error);
+        next(error);
+    }
+}
+
 
 
 module.exports = {
@@ -398,5 +415,6 @@ module.exports = {
     modificaEstadoNotificacionXIdNotificacion,
     modificaEstadoNotificacionXIdUsuario,
     verificarNotificacionesPresupuesto,
-    modificarDatos
+    modificarDatos,
+    modificarPreferenciaNotificacionPresupuesto
 };

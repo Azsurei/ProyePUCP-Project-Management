@@ -88,7 +88,7 @@ async function actualizarAutoEvaluacion(req,res,next){
 }
 
 async function crearAutoEvaluacion(req,res,next){
-    const {idProyecto,nombre, criterio1, criterio2, criterio3, criterio4, fechaInicio, fechaFin} = req.body;
+    const {idProyecto,nombre, criterios, fechaInicio, fechaFin} = req.body;
     try {
         //Creamos una AutoEvaluacion en la tabla AutoEvaluacionXProyecto 
         const query = `CALL INSERTAR_AUTOEVALUACION_X_IDPROYECTO(?,?,?,?);`;
@@ -105,8 +105,10 @@ async function crearAutoEvaluacion(req,res,next){
                 const query2 = `CALL INSERTAR_USUARIO_EVALUACION(?,?,?);`;
                 const results2 = await connection.query(query2,[idAutoEvaluacionXProyecto,usuarioEvualador.idUsuario,usuarioEvaluado.idUsuario]);
                 const idUsuarioEvaluacion = results2[0][0][0].idUsuarioEvaluacion;
-                const query3 = `CALL INSERTAR_CRITERIO_AUTOEVALUACION(?,?,?,?,?);`;
-                const results3 = await connection.query(query3,[idUsuarioEvaluacion,criterio1,criterio2,criterio3,criterio4]);
+                const query3 = `CALL INSERTAR_UN_CRITERIO_AUTOEVALUACION(?,?);`;
+                for(const criterio of criterios){
+                    const results3 = await connection.query(query3,[idUsuarioEvaluacion,criterio.nombre]);
+                }
             }
         }
         res.status(200).json({

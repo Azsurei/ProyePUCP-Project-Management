@@ -91,10 +91,42 @@ function reporteTareas(props) {
             axios
                 .get(tareasURL)
                 .then(function (response) {
-                    setListTareas(response.data.tareasOrdenadas);
-                    console.log(
-                        JSON.stringify(response.data.tareasOrdenadas, null, 2)
-                    );
+                    function remapearProgresosTarea(tarea) {
+                        const updatedUsers = tarea.usuarios.map((user) => {
+                            const progresoDeUsuario = tarea.progresos.filter(
+                                (progress) =>
+                                    progress.idUsuario === user.idUsuario
+                            );
+                            return {
+                                ...user,
+                                progresoDeUsuario,
+                            };
+                        });
+
+                        return {
+                            ...tarea,
+                            usuarios: updatedUsers,
+                        };
+                    }
+
+                    function recorrerTareas(tareas) {
+                        tareas.forEach((tarea) => {
+                            const nuevaTarea = remapearProgresosTarea(tarea);
+                            tareas[tareas.indexOf(tarea)] = nuevaTarea;
+
+                            if (
+                                tarea.tareasHijas.length > 0
+                            ) {
+                                recorrerTareas(tarea.tareasHijas,);
+                            }
+                        });
+                        return tareas;
+                    }
+
+                    const nuevasTareas = recorrerTareas(response.data.tareasOrdenadas);
+                    console.log(JSON.stringify(nuevasTareas, null, 2)) ; 
+
+                    setListTareas(nuevasTareas);
 
                     //asignar listTableGenData
                     const notStartedTasksG = countTasksWithStatus(
@@ -113,7 +145,6 @@ function reporteTareas(props) {
                         response.data.tareasOrdenadas,
                         4
                     );
-
 
                     setListTableGenData({
                         labels: [
@@ -1234,7 +1265,7 @@ function reporteTareas(props) {
                     <Button
                         color="warning"
                         className="text-white font-semibold"
-                        onPress={()=>{
+                        onPress={() => {
                             handleSaveReport();
                         }}
                     >
@@ -1306,12 +1337,12 @@ function reporteTareas(props) {
         </div>
     );
 
-    function handleSaveReport(){
+    function handleSaveReport() {
         const jsonToPrint = {
-            listTareas: listTareas
-        }
+            listTareas: listTareas,
+        };
 
-        console.log(JSON.stringify(jsonToPrint,null,2));
+        console.log(JSON.stringify(jsonToPrint, null, 2));
     }
 
     function handleSetSelectedTask(task) {
