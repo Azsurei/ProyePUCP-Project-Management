@@ -5,7 +5,7 @@ const reporteEntregablesController = require("../controllers/reportes/reporteEnt
 const reportePresupuestoController = require("../controllers/reportes/reportePresupuestoController");
 const reporteController = require("../controllers/reportes/reporteController");
 const reporteActaRiesgosController = require("../controllers/reportes/reporteActaRiesgosController");
-
+const reporteTareasController = require("../controllers/reportes/reporteTareasController");
 //Reportes
 routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.listarReportesXIdProyecto);
 
@@ -25,5 +25,11 @@ routerReporte.get("/traerInformacionReporteEntregable/:idProyecto",reporteEntreg
 routerReporte.post("/subirReporteRiesgosJSON",reporteActaRiesgosController.subirJSON);
 routerReporte.post("/descargarExcelReporteRiesgosXIdArchivo",reporteActaRiesgosController.descargarExcel);
 routerReporte.get("/obtenerJSONReporteRiesgoXIdArchivo/:idArchivo",reporteActaRiesgosController.obtenerJSON);
+
+//Reporte de tareas
+routerReporte.post("/subirReporteTareasJSON",reporteTareasController.subirJSON);
+routerReporte.post("/descargarExcelReporteTareasXIdArchivo",reporteTareasController.descargarExcel);
+routerReporte.get("/obtenerJSONReporteTareasXIdArchivo/:idArchivo",reporteTareasController.obtenerJSON);
+routerReporte.post("/probarExcelTareas",reporteTareasController.probarExcelTareas);
 
 module.exports.routerReporte = routerReporte;
