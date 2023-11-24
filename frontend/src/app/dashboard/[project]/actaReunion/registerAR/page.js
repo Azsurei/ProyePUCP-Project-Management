@@ -5,7 +5,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -144,6 +144,7 @@ export default function crearActaReunion(props) {
     // Router. Helps you to move between pages
 
     const router = useRouter();
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const { sessionData } = useContext(SessionContext);
     const { sendNotification } = useContext(NotificationsContext);
 
@@ -336,9 +337,9 @@ export default function crearActaReunion(props) {
     const [convocante, setConvocante] = useState(datosUsuario);
 
     // For convocante to have datosUsuario
-    useEffect(() => {
-        setConvocante(datosUsuario);
-    }, [datosUsuario]);
+    // useEffect(() => {
+    //     setConvocante(datosUsuario);
+    // }, [datosUsuario]);
 
     // Modal1: Choose convenor. Modal2: Choose participants
     const [modal1, setModal1] = useState(false);
@@ -392,32 +393,32 @@ export default function crearActaReunion(props) {
 
     const [idActa, setidActa] = useState(null);
 
-    useEffect(() => {
-        setIsLoadingSmall(true);
-        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
-        axios
-            .get(stringURL)
-            .then(
-                ({
-                    data: {
-                        data: { idActaReunion },
-                    },
-                }) => {
-                    console.log(
-                        "Listando ActasReunion. Respuesta del servidor:",
-                        idActaReunion
-                    );
-                    console.log(projectId);
-                    setidActa(idActaReunion);
-                }
-            )
-            .catch((error) => {
-                console.error("Error fetching meeting record ID:", error);
-            })
-            .finally(() => {
-                setIsLoadingSmall(false);
-            });
-    }, [setIsLoadingSmall, projectId]);
+    // useEffect(() => {
+    //     setIsLoadingSmall(true);
+    //     const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
+    //     axios
+    //         .get(stringURL)
+    //         .then(
+    //             ({
+    //                 data: {
+    //                     data: { idActaReunion },
+    //                 },
+    //             }) => {
+    //                 console.log(
+    //                     "Listando ActasReunion. Respuesta del servidor:",
+    //                     idActaReunion
+    //                 );
+    //                 console.log(projectId);
+    //                 setidActa(idActaReunion);
+    //             }
+    //         )
+    //         .catch((error) => {
+    //             console.error("Error fetching meeting record ID:", error);
+    //         })
+    //         .finally(() => {
+    //             setIsLoadingSmall(false);
+    //         });
+    // }, [setIsLoadingSmall, projectId]);
 
     // *********************************************************************************************
     // Creating a Meeting Record Line
@@ -535,6 +536,10 @@ export default function crearActaReunion(props) {
     const [isModalConvocanteOpen, setIsModalConvocanteOpen] = useState(false);
 
     const twTitle = "text-lg font-semibold text-mainHeaders  mb-1";
+
+    useEffect(()=>{
+        setIsLoadingSmall(false);
+    },[]);
 
     // *********************************************************************************************
     // Page
@@ -922,7 +927,7 @@ export default function crearActaReunion(props) {
                     para registrar tus actas de reunión
                 </p>
 
-                <div className="flex flex-col gap-2 ">
+                <div className="flex flex-col gap-2">
                     <div className="flex flex-col">
                         <p className={twTitle}>Nombre de reunión</p>
                         <Input
@@ -1053,10 +1058,10 @@ export default function crearActaReunion(props) {
             setIsLoading(true);
             const file = new FormData();
             file.append("file", meetingFile);
-            file.append("idActaReunion", idActa);
+            file.append("idActaReunion", herramientasInfo.find(herramienta => herramienta.idHerramienta === 11).idHerramientaCreada);
             file.append("nombreReunion", meetingName === "" ? "Reunion sin nombre" : meetingName);
             file.append("fechaReunion", meetingDate === "" ? null : meetingDate);
-            file.append("horaReunion", meetingDate === "" ? null : meetingDate);
+            file.append("horaReunion", meetingTime === "" ? null : meetingTime);
             file.append(
                 "idConvocante",
                 meetingConvocante.length !== 0
