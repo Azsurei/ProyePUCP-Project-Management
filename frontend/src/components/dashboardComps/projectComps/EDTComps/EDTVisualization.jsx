@@ -160,10 +160,7 @@ export default function EDTVisualization({
                 >
                     {ListComps.length !== 0 && (
                         <p className="font-[Montserrat] text-lg font-medium text-slate-500">
-                            Personaliza e interactúa con el árbol de EDT del
-                            proyecto. Selecciona distintos niveles para aplicar
-                            colores y utiliza los controles de zoom para ajustar
-                            la vista.
+                            Interactua con el arbol de EDT y realice zoom con los controles.
                         </p>
                     )}
                     <div className="m-8">

@@ -236,7 +236,7 @@ export default function ActaReunion(props) {
     return (
         <div className="border min-h-full p-[2.5rem]">
             <HeaderWithButtons
-                haveReturn={true}
+                haveReturn={false}
                 haveAddNew={true}
                 hrefToReturn={actualHref}
                 hrefForButton={newHref}
@@ -289,25 +289,57 @@ export default function ActaReunion(props) {
                             key={meeting.idLineaActaReunion}
                             className="border border-gray-300 p-4 rounded-md shadow-sm flex flex-row items-center"
                         >
-                            <div className="flex flex-col max-w-[50%]">
+                            <div className="flex flex-col w-[50%] max-w-[50%] gap-0">
                                 <p className="font-semibold text-lg truncate">
                                     {meeting.nombreReunion}
                                 </p>
-                                <p className="truncate">Motivo: {meeting.motivo}</p>
                                 <p className="truncate">
-                                    Convocada por:{" "}
-                                    {meeting.nombres + " " + meeting.apellidos}
+                                    <span className="font-medium">Motivo:</span>{" "}
+                                    {meeting.motivo}
                                 </p>
-                                <p className="truncate">Archivo: <span className="underline font-medium text-primary cursor-pointer">Nombre Test</span></p>
+                                <div className="flex flex-row items-center gap-2">
+                                    <p className="truncate font-medium">
+                                        Convocada por:{" "}
+                                    </p>
+                                    <div className="flex flex-row items-center gap-2 truncate">
+                                        <Avatar
+                                            src={meeting.imgLink}
+                                            size="sm"
+                                        />
+                                        <p>{meeting.nombres}</p>
+                                    </div>
+                                </div>
+                                <p className="truncate font-medium">
+                                    Archivo:{" "}
+                                    <span className="underline font-medium text-primary cursor-pointer" onClick={()=>{
+                                        downloadFile(meeting.idArchivo, meeting.nombreArchivo);
+                                    }}>
+                                        {meeting.nombreArchivo}
+                                    </span>
+                                </p>
                             </div>
-                            <div className="flex flex-row  gap-4 flex-1 justify-center">
+                            <div className="flex flex-row  gap-4 flex-1 justify-start">
                                 <div className="flex flex-col items-center">
-                                    <p className="font-semibold text-md">Fecha de reunion:</p>
-                                    <p>{meeting.fechaReunion === "0000-00-00" ? "Sin fecha registrada " : dbDateToDisplayDate(meeting.fechaReunion)}</p>
+                                    <p className="font-semibold text-md">
+                                        Fecha de reunion:
+                                    </p>
+                                    <p>
+                                        {meeting.fechaReunion === "0000-00-00"
+                                            ? "Sin fecha registrada "
+                                            : dbDateToDisplayDate(
+                                                  meeting.fechaReunion
+                                              )}
+                                    </p>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <p className="font-semibold text-md">Hora registrada:</p>
-                                    <p>{meeting.horaReunion === "00:00:00" ? "Sin hora registrada " : meeting.horaReunion}</p>
+                                    <p className="font-semibold text-md">
+                                        Hora registrada:
+                                    </p>
+                                    <p>
+                                        {meeting.horaReunion === "00:00:00"
+                                            ? "Sin hora registrada "
+                                            : meeting.horaReunion}
+                                    </p>
                                 </div>
                             </div>
                             <Button>Ver opciones</Button>
@@ -317,4 +349,43 @@ export default function ActaReunion(props) {
             </div>
         </div>
     );
+
+    function downloadDocument(idArchivo, nombreDocumento) {
+        return new Promise((resolve, reject) => {
+            const downloadURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/files/descargarArchivo/` +
+                idArchivo;
+
+            axios
+                .get(downloadURL)
+                .then((response) => {
+                    console.log(response);
+
+                    if (response.data.url) {
+                        const link = document.createElement("a");
+                        link.href = response.data.url;
+                        link.download = nombreDocumento;
+                        document.body.appendChild(link);
+                        link.click();
+                        resolve("success");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al descargar documento: ", error);
+                    reject(error);
+                });
+        });
+    }
+
+    function downloadFile(idArchivo, nombreDocumento) {
+        toast.promise(downloadDocument(idArchivo, nombreDocumento), {
+            loading: "Descargando archivo...",
+            success: (data) => {
+                return "Archivo descargado con exito";
+            },
+            error: "Error al descargar archivo",
+            position: "bottom-right",
+        });
+    }
 }
