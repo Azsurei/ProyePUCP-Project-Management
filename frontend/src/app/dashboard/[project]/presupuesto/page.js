@@ -567,7 +567,7 @@ export default function Historial(props) {
 
                     <div className="buttonContainer">
 
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Flujo"}>
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/FlujoProyectado"}>
                             <Button  color="primary" startContent={<TimelineIcon />} className="btnFlujoPro">
                                 Flujo Proyectado
                             </Button>
