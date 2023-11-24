@@ -44,6 +44,35 @@ const s3 = new S3Client({
         console.log(error);
     }
 }
+
+async function descargarArchivo(req, res, next) {
+    const { idArchivo } = req.params;
+    const query = `CALL OBTENER_ARCHIVO(?);`;
+    try {
+        const [results] = await connection.query(query, [idArchivo]);
+        const file = results[0][0];
+        console.log(file.nombreGenerado);
+        const command = getSignedUrl(
+            s3,
+            new GetObjectCommand({
+                Bucket: bucketName,
+                Key: file.nombreGenerado,
+            }),
+            { expiresIn: 3600 } // URL expiration time in seconds
+        );
+        const url = await command;
+        const nombreOriginal = file.nombreReal;
+        res.setHeader('Content-Disposition', `attachment; filename="${nombreOriginal}"`);
+        
+        res.status(200).json({
+            url,
+            message: "Archivo obtenido"
+        });
+    } catch (error) {
+        console.error("Error generating signed URL:", error);
+    }
+}
+
 async function postFile(req,res,next){
     console.log(req.file);
     const fileName = randomName();
@@ -192,6 +221,7 @@ async function descargarDesdeURL(url, rutaDestino) {
 
 module.exports = {
     subirArchivo,
+    descargarArchivo,
     postFile,
     getFile,
     postArchivo,
