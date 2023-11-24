@@ -25,6 +25,7 @@ import { Toaster, toast } from "sonner";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
 import { Avatar, Progress } from "@nextui-org/react";
 import Link from "next/link";
+import { saveAs } from "file-saver";
 
 axios.defaults.withCredentials = true;
 
@@ -529,12 +530,36 @@ export default function Equipo(props) {
                     responseType: "blob", // Important for binary data
                 }
             );
+            setTimeout(() => {
+                const today = new Date();
+
+                let day = today.getDate();
+                let month = today.getMonth() + 1;
+                let year = today.getFullYear();
+
+                day = day < 10 ? "0" + day : day;
+                month = month < 10 ? "0" + month : month;
+
+                // Create the formatted date string
+                let formattedDate = `${day}_${month}_${year}`;
+
+                const fileName =
+                    projectName.split(" ").join("") +
+                    "_" +
+                    formattedDate +
+                    ".xlsx";
+                console.log(fileName);
+                saveAs(response.data, fileName);
+                toast.success("Se exporto el Flujo de Caja con exito");
+            }, 500);
         } catch (error) {
             //setIsExportLoading(false);
-            toast.error("Error al exportar tu lista de participantes en el equipo");
+            toast.error(
+                "Error al exportar tu lista de participantes en el equipo"
+            );
             console.log(error);
         }
-    };
+    }
 
     return (
         <div className="containerTeamsPage">
