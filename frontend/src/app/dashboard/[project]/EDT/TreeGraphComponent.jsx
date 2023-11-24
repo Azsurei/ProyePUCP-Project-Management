@@ -1,10 +1,19 @@
 // components/TreeGraphComponent.jsx
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Tree } from 'react-d3-tree';
 import { TwitterPicker } from 'react-color';
-import {Button, Select, SelectItem} from "@nextui-org/react";
-import styles from './custom-tree-styles.css';
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger, Modal, ModalBody,
+    ModalContent, ModalFooter, ModalHeader,
+    useDisclosure,
+} from "@nextui-org/react";
 import {ChevronRight, ChevronLeft, ZoomIn, ZoomOut} from 'react-feather';
+import {OpenMenuContext} from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
+import axios from "axios";
 
 // Define a list of colors for the nodes at different depths
 const levelColors = [
@@ -36,84 +45,19 @@ const truncateString = (str, num) => {
     return str.slice(0, num) + '...';
 };
 
-/*
-// Update the buildTree function to pass along the depth of each node
-const buildTree = (nodeData, depth = 0) => {
-    const nodeName = truncateString(`${nodeData.codigo}. ${nodeData.descripcion}`, 15);
-    const fill = levelColors[nodeData.depth] || defaultColor;
+const TreeGraphComponent = ({ projectName, data }) => {
 
-    // Create the node structure with a depth property
-    let node = {
-        name: nodeName,
-        depth,
-        attributes: {
-            id: nodeData.id,
-            codigo: nodeData.codigo,
-            descripcion: nodeData.descripcion,
-        },
-    };
-
-    // If there are children, recursively build the subtree
-    if (nodeData.componentesHijos && nodeData.componentesHijos.length > 0) {
-        node.children = nodeData.componentesHijos.map(child => buildTree(child, depth + 1));
-    }
-
-    return node;
-};
-
-// Function to initiate the tree with a parent node
-const convertDataToTree = (data) => {
-    // Initial parent node
-    const parentNode = {
-        name: 'Proyecto', // or any other root name
-        depth: 0,
-        children: []
-    };
-
-    // For each element in the data array, create a child node
-    data.forEach(item => {
-        parentNode.children.push(buildTree(item, 1)); // Start with depth 1 for children
-    });
-
-    return parentNode; // This is the full tree
-};
-*/
-const handleNodeClick = (nodeDatum) => {
-    // Your logic here
-    console.log('Node clicked', nodeDatum);
-};
-
-// Button component for zoom
-const ZoomButton = ({ onClick, text }) => (
-    <Button
-        onClick={onClick}
-        style={{
-            margin: '4px',
-            padding: '8px 16px', // Increased padding
-            fontSize: '18px', // Increased font size
-            cursor: 'pointer',
-            borderRadius: '4px', // Optional: rounded corners
-            border: 'none',
-            backgroundColor: '#f0f0f0', // Optional: background color
-            // Add additional styling as needed
-        }}
-    >
-        {text === "+"? <ZoomIn/> : <ZoomOut/>}
-    </Button>
-);
-
-
-
-
-const TreeGraphComponent = ({ data }) => {
-
-    // Function to update the tree data with the current colors
+    const { openMenuId, toggleMenu, handlerGoToNew, handleVerDetalle } =
+        useContext(OpenMenuContext);
 
     const convertDataToTree = (inputData, colors) => {
         const buildTree = (nodeData, depth = 0) => {
             const nodeName = `${nodeData.codigo}. ${truncateString(nodeData.nombre, 15)}`;
             let node = {
+                id: nodeData.idComponente,
+                codigo: nodeData.codigo,
                 name: nodeName,
+                nextSon: nodeData.nextSon,
                 depth,
                 children: nodeData.componentesHijos?.map(child => buildTree(child, depth + 1)) || []
             };
@@ -122,8 +66,11 @@ const TreeGraphComponent = ({ data }) => {
 
         // Initial parent node
         let parentNode = {
-            name: 'Proyecto',
+            id: 0,
+            codigo: "0",
+            name: projectName,
             depth: 0,
+            nextSon: "0",
             children: inputData.map(item => buildTree(item, 1))
         };
         return parentNode;
@@ -174,42 +121,127 @@ const TreeGraphComponent = ({ data }) => {
     };
 
     const renderCustomNodeElement = ({ nodeDatum, toggleNode }) => {
-        // Get the color based on the depth of the node.
         const fill = selectedLevelColors[nodeDatum.depth] || defaultColor;
-
-        // Calculate width and height of the node based on the text length
-        const CHAR_WIDTH = 10; // Width per character
+        const CHAR_WIDTH = 10;
         const textLength = nodeDatum.name.length * CHAR_WIDTH;
-        const rectWidth = Math.max(100, textLength + 20); // Minimum width
-        const rectHeight = 40; // Height
+        const rectWidth = Math.max(100, textLength + 20);
+        const rectHeight = 40;
 
-        return (
-            <g>
-                {/* Rectangle for the node with a border */}
+        if (nodeDatum.id > 0) {
+            return (
+                <Dropdown>
+                    <DropdownTrigger>
+                        <g onClick={toggleNode}>
+                            <rect
+                                width={rectWidth}
+                                height={rectHeight}
+                                x={-rectWidth / 2}
+                                y={-rectHeight / 2}
+                                fill={fill}
+                                stroke="#000"
+                                strokeWidth="2"
+                            />
+                            <text
+                                fill="#fff"
+                                x="0"
+                                y="5"
+                                textAnchor="middle"
+                                alignmentBaseline="middle"
+                                style={{fontSize: '14px', fontFamily: 'Montserrat, Arial, Helvetica, sans-serif'}}
+                            >
+                                {nodeDatum.name}
+                            </text>
+                        </g>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                        aria-label="droMenTareas"
+                        onAction={(key) => {
+                            if (key === "add") {
+                                handlerGoToNew(nodeDatum.nextSon, nodeDatum.id);
+                            }
+                            if (key === "view") {
+                                handleVerDetalle(nodeDatum.id);
+                            }
+                            if (key === "delete") {
+                                mostrarModalConfirmacion(
+                                    nodeDatum.id,
+                                    nodeDatum.codigo
+                                );
+                            }
+                        }}
+                    >
+                        <DropdownItem key={"add"}>Agregar subcomponente</DropdownItem>
+                        <DropdownItem key={"view"}>Ver detalle</DropdownItem>
+                        <DropdownItem
+                            key={"delete"}
+                            color="danger"
+                            className="text-danger"
+                        >
+                            Eliminar
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            );
+        }else{
+            return (
+            <g onClick={toggleNode}>
                 <rect
                     width={rectWidth}
                     height={rectHeight}
                     x={-rectWidth / 2}
                     y={-rectHeight / 2}
                     fill={fill}
-                    stroke="#000" // Border color set to black
-                    strokeWidth="2" // Border width
-                    onClick={toggleNode}
+                    stroke="#000"
+                    strokeWidth="2"
                 />
-
-                {/* Text label centered in the rectangle */}
                 <text
-                    fill="#fff" // Text color set to white
+                    fill="#fff"
                     x="0"
-                    y="5" // Adjust this value to better center the text vertically
+                    y="5"
                     textAnchor="middle"
-                    alignmentBaseline="middle" // Ensure the text is centered vertically
-                    style={{ fontSize: '14px', fontFamily: 'Montserrat, Arial, Helvetica, sans-serif' }}
+                    alignmentBaseline="middle"
+                    style={{fontSize: '14px', fontFamily: 'Montserrat, Arial, Helvetica, sans-serif'}}
                 >
                     {nodeDatum.name}
                 </text>
             </g>
-        );
+            );
+        }
+    };
+
+    // Modal logic
+    const [modal, setModal] = useState(false);
+    const [idAEliminar, setIdAEliminar] = useState(null);
+    const [codAEliminar, setCodAEliminar] = useState(null);
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const mostrarModalConfirmacion = (idComp, codComp) => {
+        setIdAEliminar(idComp);
+        setCodAEliminar(codComp);
+        onOpen();
+    };
+
+    const confirmarModalEliminacion = () => {
+        console.log("Procediendo con insertar el componente");
+        axios
+            .post(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/EDT/eliminarComponenteEDT",
+                {
+                    idComponente: idAEliminar,
+                    codigo: codAEliminar,
+                }
+            )
+            .then(function (response) {
+                console.log(response);
+                //props.refreshComponentsEDT;
+                window.location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
     };
 
     return (
@@ -249,8 +281,12 @@ const TreeGraphComponent = ({ data }) => {
                             alignItems: 'center', // Center the buttons horizontally
                             marginBottom: '20px', // Space between zoom controls and color picker
                         }}>
-                            <ZoomButton onClick={handleZoomIn} text="+" />
-                            <ZoomButton onClick={handleZoomOut} text="-" />
+                            <Button auto flat onClick={handleZoomIn}>
+                                <ZoomIn />
+                            </Button>
+                            <Button auto flat onClick={handleZoomOut}>
+                                <ZoomOut />
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -283,6 +319,42 @@ const TreeGraphComponent = ({ data }) => {
                     collapsible={false}
                 />
             </div>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1 text-red-500">
+                                {"Eliminar componente"}
+                            </ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    {
+                                        "¿Seguro que quiere eliminar este componente de su EDT?"
+                                    }
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Cerrar
+                                </Button>
+
+                                <Button
+                                    className="bg-indigo-950 text-slate-50"
+                                    onPress={() => {
+                                        confirmarModalEliminacion();
+                                    }}
+                                >
+                                    Continuar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

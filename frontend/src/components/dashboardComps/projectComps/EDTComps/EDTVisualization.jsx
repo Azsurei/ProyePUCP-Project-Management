@@ -167,7 +167,16 @@ export default function EDTVisualization({
                         </p>
                     )}
                     <div className="m-8">
-                        <TreeGraphComponent data={ListComps} />
+                        <OpenMenuContext.Provider
+                            value={{
+                                openMenuId,
+                                toggleMenu,
+                                handlerGoToNew,
+                                handleVerDetalle,
+                            }}
+                        >
+                            <TreeGraphComponent projectName={projectName} data={ListComps} />
+                        </OpenMenuContext.Provider>
                     </div>
                 </Tab>
             </Tabs>
