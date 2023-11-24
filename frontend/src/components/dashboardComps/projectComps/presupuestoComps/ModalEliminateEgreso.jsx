@@ -57,12 +57,17 @@ export default function ModalEliminateEgreso({ modal, toggle, taskName , idLinea
                 <>
                   <ModalHeader className="flex flex-col gap-1">¿Estás seguro que desea eliminar el siguiente egreso?</ModalHeader>
                   <ModalBody>
-                  <input
+                  {/* <input
                     type="text"
                     className="input-field"
                     defaultValue={taskName} // Cambiar de value a defaultValue
                     readOnly
-                  ></input>
+                  ></input> */}
+                    <Input
+                    isDisabled
+                    className="w-full sm:max-w-[100%]"
+                    defaultValue={taskName}
+                    />
     
                     
                   </ModalBody>
