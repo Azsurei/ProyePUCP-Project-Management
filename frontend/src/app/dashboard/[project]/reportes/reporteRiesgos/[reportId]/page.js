@@ -86,8 +86,8 @@ export default function ReporteRiesgos(props) {
                 const response = await axios.get(stringURL);
 
                 // Actualiza el estado 'data' con los datos recibidos
-                setJson(response.data.jsonData);
-                setData(response.data.jsonData.riesgos);
+                setJson(response.data);
+                setData(response.data.riesgos);
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.jsonData
