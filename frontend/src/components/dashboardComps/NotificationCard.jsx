@@ -155,6 +155,9 @@ function NotificationCard({ type, campoAdicional, notifObj, handleDelete }) {
                     if(type === 1){
                         router.push("/dashboard/" + notifObj.nombreProyecto + "=" + notifObj.idProyecto + "/cronograma?search=" + campoAdicional);
                     }
+                    if(type === 2){
+                        router.push("/dashboard/" + notifObj.nombreProyecto + "=" + notifObj.idProyecto + "/presupuesto");
+                    }
                     if(type === 6){
                         router.push("/dashboard/" + notifObj.nombreProyecto + "=" + notifObj.idProyecto + "/autoevaluacionEquipo")
                     }

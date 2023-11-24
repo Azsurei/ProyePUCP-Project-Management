@@ -16,6 +16,8 @@ routerUsuario.post("/actualizaNotificacionAR", verifyToken, usuarioController.ac
 routerUsuario.post("/modificaEstadoNotificacionXIdNotificacion", verifyToken, usuarioController.modificaEstadoNotificacionXIdNotificacion );
 routerUsuario.post("/modificaEstadoNotificacionXIdUsuario", verifyToken, usuarioController.modificaEstadoNotificacionXIdUsuario );
 
+routerUsuario.post("/modificarPreferenciaNotificacionPresupuesto", verifyToken, usuarioController.modificarPreferenciaNotificacionPresupuesto );
+
 routerUsuario.post("/verificarNotificacionesPresupuesto",verifyToken,usuarioController.verificarNotificacionesPresupuesto);
 
 module.exports.routerUsuario = routerUsuario;

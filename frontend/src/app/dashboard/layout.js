@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
                 user_data.rolNameInProject = null;
 
                 console.log(
-                    "INFO DEL USUARIO LOGEADO : " + JSON.stringify(user_data)
+                    "INFO DEL USUARIO LOGEADO : " + JSON.stringify(user_data,null,2)
                 );
 
                 setSessionData(user_data);

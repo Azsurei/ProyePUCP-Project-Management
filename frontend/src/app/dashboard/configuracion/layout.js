@@ -34,8 +34,8 @@ function SettingsLayout({children, params}) {
 
                 <Divider className="px-[50px]"></Divider>
 
-                <div className="flex flex-row w-[100%] h-[100%] space-x-8 overflow-hidden">
-                    <div className="flex flex-col h-[100%] w-[20%] space-y-1">
+                <div className="flex flex-row w-[100%] h-[100%] space-x-8 overflow-hidden ">
+                    <div className="flex flex-col h-[100%] w-[20%] min-w-[20%] space-y-1 ">
                         {/* ************************ */}
                         <Link
                             className={
@@ -57,58 +57,23 @@ function SettingsLayout({children, params}) {
                         </Link>
                         <Link
                             className={
-                                pathname === baseUrlString + "/usuarios"
+                                pathname === baseUrlString + "/notificaciones"
                                     ? btnStyleActive
                                     : btnStyle
                             }
-                            href={baseUrlString + "/usuarios"}
+                            href={baseUrlString + "/notificaciones"}
                         >
                             <p
                                 className={
-                                    pathname === baseUrlString + "/usuarios"
+                                    pathname === baseUrlString + "/notificaciones"
                                         ? ""
                                         : twStyle1
                                 }
                             >
-                                Usuarios
+                                Notificaciones
                             </p>
                         </Link>
-                        <Link
-                            className={
-                                pathname === baseUrlString + "/herramientas"
-                                    ? btnStyleActive
-                                    : btnStyle
-                            }
-                            href={baseUrlString + "/herramientas"}
-                        >
-                            <p
-                                className={
-                                    pathname === baseUrlString + "/herramientas"
-                                        ? ""
-                                        : twStyle1
-                                }
-                            >
-                                Herramientas
-                            </p>
-                        </Link>
-                        <Link
-                            className={
-                                pathname === baseUrlString + "/eliminar"
-                                    ? btnStyleActive
-                                    : btnStyle
-                            }
-                            href={baseUrlString + "/eliminar"}
-                        >
-                            <p
-                                className={
-                                    pathname === baseUrlString + "/eliminar"
-                                        ? ""
-                                        : twStyle1
-                                }
-                            >
-                                Eliminar
-                            </p>
-                        </Link>
+                        
                     </div>
 
                     {children}
