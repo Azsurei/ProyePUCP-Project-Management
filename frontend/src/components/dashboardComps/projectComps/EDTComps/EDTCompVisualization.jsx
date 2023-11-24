@@ -8,6 +8,7 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import axios from "axios";
 import { Textarea } from "@nextui-org/react";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
+import DateInput from "@/components/DateInput";
 axios.defaults.withCredentials = true;
 
 export default function EDTCompVisualization({
@@ -139,7 +140,8 @@ export default function EDTCompVisualization({
         );
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/modificarComponenteEDT",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/EDT/modificarComponenteEDT",
                 {
                     idComponenteEDT: idComponentToSee,
                     descripcion: inDescripcion,
@@ -168,7 +170,8 @@ export default function EDTCompVisualization({
         console.log("Procediendo sacar informacion del componente");
         axios
             .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/EDT/verInfoComponenteEDT",
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/EDT/verInfoComponenteEDT",
                 {
                     idComponente: idComponentToSee,
                 }
@@ -246,6 +249,9 @@ export default function EDTCompVisualization({
             });
     }, []);
 
+    const twTitle = "text-mainHeaders text-xl font-semibold";
+    const twSubtitle = "text-mainHeaders font-medium ";
+
     return (
         <div className="EDTNew">
             <div
@@ -285,118 +291,91 @@ export default function EDTCompVisualization({
                 )}
             </div>
 
-            <div className="EDTNewResponsiveContainer">
-                <div className="NewEDTSection">
-                    <p className="Header">Informacion basica</p>
-                    <div className="FirstCardContainer">
-                        <div className="FirstLeftCont">
-                            <p>Nombre del componente</p>
-                            {/* <textarea
-                                rows="1"
-                                className={
-                                    estadoEditar
-                                        ? "inputBoxGeneric editable"
-                                        : "inputBoxGeneric nonEditable"
-                                }
-                                readOnly={!estadoEditar}
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInComponentName(e.target.value);
-                                }}
-                                value={inComponentName}
-                            /> */}
-                            <Textarea
-                                variant={"bordered"}
-                                labelPlacement="outside"
-                                placeholder="Escribe aquí"
-                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                                value={inComponentName}
-                                onValueChange={setInComponentName}
-                                minRows={1}
-                                size="sm"
-                                readOnly={!estadoEditar}
-                            />
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                }}
-                            >
-                                <p>Codigo</p>
-                                {/* <img
-                                    src="/icons/icon-info.svg"
-                                    alt="help"
-                                ></img> */}
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-col">
+                    <p className={twTitle}>Informacion basica</p>
+                    <div className="px-4 py-2">
+                        <div className="flex flex-row gap-5">
+                            <div className="flex flex-col max-w-[80px]">
+                                <p className={twSubtitle}>Codigo</p>
+                                <Textarea
+                                    readOnly={true}
+                                    variant={"flat"}
+                                    labelPlacement="outside"
+                                    className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                    value={inCodigoComponente}
+                                    minRows={1}
+                                    size="sm"
+                                />
                             </div>
-                            {/* <textarea
-                                rows="1"
-                                className="inputBoxGeneric nonEditable"
-                                readOnly={true}
-                                value={inCodigoComponente}
-                            ></textarea> */}
-                            <Textarea
-                                variant={"bordered"}
-                                labelPlacement="outside"
-                                placeholder="Escribe aquí"
-                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                                value={inCodigoComponente}
-                                minRows={1}
-                                size="sm"
-                                readOnly={true}
-                            />
+                            <div className="flex flex-col flex-1">
+                                <div className="flex flex-row gap-1">
+                                    <p className={twSubtitle}>
+                                        Nombre del componente
+                                    </p>
+                                    <p className="text-red-500 font-semibold">
+                                        *
+                                    </p>
+                                </div>
+                                <Textarea
+                                    variant={estadoEditar ? "bordered" : "flat"}
+                                    labelPlacement="outside"
+                                    placeholder="Escribe aquí"
+                                    className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                    value={inComponentName}
+                                    onValueChange={setInComponentName}
+                                    minRows={1}
+                                    size="sm"
+                                    readOnly={!estadoEditar}
+                                />
+                            </div>
                         </div>
-                        <div className="FirstRightCont">
-                            <p>Fecha de inicio</p>
-                            <input
-                                type="date"
-                                className={
-                                    estadoEditar
-                                        ? "inputBoxGeneric editable"
-                                        : "inputBoxGeneric nonEditable"
-                                }
-                                readOnly={!estadoEditar}
-                                name="datepicker"
-                                onChange={(e) => {
-                                    setInFechaInicio(e.target.value);
-                                }}
-                                value={inFechaInicio}
-                            ></input>
-                            <p>Fecha de fin</p>
-                            <input
-                                type="date"
-                                className={
-                                    estadoEditar
-                                        ? "inputBoxGeneric editable"
-                                        : "inputBoxGeneric nonEditable"
-                                }
-                                readOnly={!estadoEditar}
-                                name="datepicker"
-                                onChange={(e) => {
-                                    setInFechaFin(e.target.value);
-                                }}
-                                value={inFechaFin}
-                            ></input>
-                            <p>Responsables</p>
-                            {/* <textarea
-                                rows="1"
-                                className={
-                                    estadoEditar
-                                        ? "inputBoxGeneric editable"
-                                        : "inputBoxGeneric nonEditable"
-                                }
-                                readOnly={!estadoEditar}
-                                placeholder="Escribe aquí"
-                                maxLength="70"
-                                onChange={(e) => {
-                                    setInResponsables(e.target.value);
-                                }}
-                                value={inResponsables}
-                            /> */}
+
+                        <div className="flex flex-row gap-3">
+                            <div className="flex flex-col">
+                                <div className="flex flex-row gap-1">
+                                    <p className={twSubtitle}>
+                                        Fecha de inicio
+                                    </p>
+                                    <p className="text-red-500 font-semibold">
+                                        *
+                                    </p>
+                                </div>
+
+                                <DateInput
+                                    isEditable={estadoEditar}
+                                    className={""}
+                                    isInvalid={false}
+                                    value={inFechaInicio}
+                                    onChangeHandler={(e) => {
+                                        setInFechaInicio(e.target.value);
+                                    }}
+                                ></DateInput>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <div className="flex flex-row gap-1">
+                                    <p className={twSubtitle}>Fecha de fin</p>
+                                    <p className="text-red-500 font-semibold">
+                                        *
+                                    </p>
+                                </div>
+                                <DateInput
+                                    isEditable={estadoEditar}
+                                    className={""}
+                                    isInvalid={false}
+                                    value={inFechaFin}
+                                    onChangeHandler={(e) => {
+                                        setInFechaFin(e.target.value);
+                                    }}
+                                ></DateInput>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Responsables</p>
                             <Textarea
-                                variant={"bordered"}
+                                variant={estadoEditar ? "bordered" : "flat"}
                                 labelPlacement="outside"
-                                placeholder="Escribe aquí"
                                 className="col-span-12 md:col-span-6 mb-6 md:mb-0"
                                 value={inResponsables}
                                 onValueChange={setInResponsables}
@@ -408,144 +387,74 @@ export default function EDTCompVisualization({
                     </div>
                 </div>
 
-                <div className="NewEDTSection">
-                    <p className="Header">Detalles del componente</p>
-                    <div className="SecondCardContainer">
-                        <p>Descripcion detallada</p>
-                        {/* <textarea
-                            rows="1"
-                            className={
-                                estadoEditar
-                                    ? "inputBoxGeneric editable"
-                                    : "inputBoxGeneric nonEditable"
-                            }
-                            readOnly={!estadoEditar}
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInDescripcion(e.target.value);
-                            }}
-                            value={inDescripcion}
-                        /> */}
-
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inDescripcion}
-                            onValueChange={setInDescripcion}
-                            minRows={1}
-                            size="sm"
-                            readOnly={!estadoEditar}
-                        />
-                        <p>Recursos</p>
-                        {/* <textarea
-                            rows="1"
-                            className={
-                                estadoEditar
-                                    ? "inputBoxGeneric editable"
-                                    : "inputBoxGeneric nonEditable"
-                            }
-                            readOnly={!estadoEditar}
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInRecursos(e.target.value);
-                            }}
-                            value={inRecursos}
-                        /> */}
-
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inRecursos}
-                            onValueChange={setInRecursos}
-                            minRows={1}
-                            size="sm"
-                            readOnly={!estadoEditar}
-                        />
-                        <p>Hito asociado</p>
-                        {/* <textarea
-                            rows="1"
-                            className={
-                                estadoEditar
-                                    ? "inputBoxGeneric editable"
-                                    : "inputBoxGeneric nonEditable"
-                            }
-                            readOnly={!estadoEditar}
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInHito(e.target.value);
-                            }}
-                            value={inHito}
-                        /> */}
-
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inHito}
-                            onValueChange={setInHito}
-                            minRows={1}
-                            size="sm"
-                            readOnly={!estadoEditar}
-                        />
-                        <p>Observaciones</p>
-                        {/* <textarea
-                            rows="1"
-                            className={
-                                estadoEditar
-                                    ? "inputBoxGeneric editable"
-                                    : "inputBoxGeneric nonEditable"
-                            }
-                            readOnly={!estadoEditar}
-                            placeholder="Escribe aquí"
-                            maxLength="70"
-                            onChange={(e) => {
-                                setInObservaciones(e.target.value);
-                            }}
-                            value={inObservaciones}
-                        /> */}
-
-                        <Textarea
-                            variant={"bordered"}
-                            labelPlacement="outside"
-                            placeholder="Escribe aquí"
-                            className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                            value={inObservaciones}
-                            onValueChange={setInObservaciones}
-                            minRows={1}
-                            size="sm"
-                            readOnly={!estadoEditar}
-                        />
+                <div className="flex flex-col">
+                    <p className={twTitle}>Detalles del componente</p>
+                    <div className="px-4 py-2">
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Descripcion detallada</p>
+                            <Textarea
+                                variant={estadoEditar ? "bordered" : "flat"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inDescripcion}
+                                onValueChange={setInDescripcion}
+                                minRows={1}
+                                size="sm"
+                                readOnly={!estadoEditar}
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Recursos</p>
+                            <Textarea
+                                variant={estadoEditar ? "bordered" : "flat"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inRecursos}
+                                onValueChange={setInRecursos}
+                                minRows={1}
+                                size="sm"
+                                readOnly={!estadoEditar}
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Hito asociado</p>
+                            <Textarea
+                                variant={estadoEditar ? "bordered" : "flat"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inHito}
+                                onValueChange={setInHito}
+                                minRows={1}
+                                size="sm"
+                                readOnly={!estadoEditar}
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <p className={twSubtitle}>Observaciones</p>
+                            <Textarea
+                                variant={estadoEditar ? "bordered" : "flat"}
+                                labelPlacement="outside"
+                                placeholder="Escribe aquí"
+                                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                                value={inObservaciones}
+                                onValueChange={setInObservaciones}
+                                minRows={1}
+                                size="sm"
+                                readOnly={!estadoEditar}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="EDTNewResponsiveContainer">
-                <div className="NewEDTSection">
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignContent: "center",
-                        }}
-                    >
-                        <p className="Header">Entregables</p>
-                        {/* <button
-                            onClick={handleAddEntregable}
-                            className="btnEDTAnadir"
-                        >
-                            Anadir entregable
-                        </button> */}
+                <div className="flex flex-col">
+                    <div className="flex flex-row gap-2 items-center">
+                        <p className={twTitle}>Entregables</p>
                     </div>
 
-                    <div className="ThirdCardContainer">
+                    <div className="px-4 py-2">
                         <ListEditableInput
                             ListInputs={listEntregables}
                             typeName="Entregable"
@@ -557,24 +466,12 @@ export default function EDTCompVisualization({
                     </div>
                 </div>
 
-                <div className="NewEDTSection">
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignContent: "center",
-                        }}
-                    >
-                        <p className="Header">Criterios de aceptacion</p>
-                        {/* <button
-                            onClick={handleAddCriterio}
-                            className="btnEDTAnadir"
-                        >
-                            Anadir criterio
-                        </button> */}
+                <div className="flex flex-col">
+                    <div className="flex flex-row gap-2 items-center">
+                        <p className={twTitle}>Criterios de aceptacion</p>
                     </div>
 
-                    <div className="FourthCardContainer">
+                    <div className="px-4 py-2">
                         <ListEditableInput
                             ListInputs={listCriterios}
                             typeName="Criterio"

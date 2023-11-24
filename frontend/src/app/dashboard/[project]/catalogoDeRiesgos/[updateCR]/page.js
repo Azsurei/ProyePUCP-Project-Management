@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerCR.css";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import {HerramientasInfo, SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,7 +15,10 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
-import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
+import ListAdditionalFields, {
+    getAdditionalFields,
+    registerAdditionalFields,
+} from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -67,6 +70,25 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const [quantity2, setQuantity2] = useState(0);
     const [catalogoRiesgos, setCatalogoRiesgos] = useState(null);
     const [listAdditionalFields, setListAdditionalFields] = useState([]);
+
+    function PlusIcon() {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.8}
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+            </svg>
+        );
+    }
 
     useEffect(() => {
         if (catalogoRiesgos && catalogoRiesgos.riesgo) {
@@ -126,10 +148,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
             console.log("Terminó de cargar los datos");
             setSignal(true);
         }
-        getAdditionalFields(idCatalogoDeRiesgos, 5, setListAdditionalFields, (response)=>{
-            console.log("response", response)
-            setIsLoadingSmall(false)
-            });
+        getAdditionalFields(
+            idCatalogoDeRiesgos,
+            5,
+            setListAdditionalFields,
+            (response) => {
+                console.log("response", response);
+                setIsLoadingSmall(false);
+            }
+        );
     }, [catalogoRiesgos]);
 
     useEffect(() => {
@@ -429,7 +456,9 @@ export default function CatalogoDeRiesgosUpdate(props) {
             idImpacto: impact,
             nombreRiesgo: name,
             fechaIdentificacion: fechaInicio,
-            duenoRiesgo: selectedMiembrosList[0]? selectedMiembrosList[0].idUsuario : null,
+            duenoRiesgo: selectedMiembrosList[0]
+                ? selectedMiembrosList[0].idUsuario
+                : null,
             detalleRiesgo: detail,
             causaRiesgo: cause,
             impactoRiesgo: impactDetail,
@@ -505,10 +534,15 @@ export default function CatalogoDeRiesgosUpdate(props) {
                 // Manejar errores si la solicitud DELETE falla
                 console.error("Error al realizar la solicitud DELETE:", error);
             });
-            registerAdditionalFields(listAdditionalFields, idCatalogoDeRiesgos, 5, 1, (response)=>{
-                                                                                    console.log("response", response)
-                                                                                    
-            });
+        registerAdditionalFields(
+            listAdditionalFields,
+            idCatalogoDeRiesgos,
+            5,
+            1,
+            (response) => {
+                console.log("response", response);
+            }
+        );
     };
 
     return (
@@ -866,13 +900,14 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     {editMode && (
                         <div className="twoButtonsCR">
                             <div className="buttonContainerCR">
-                                <button
+                                <Button
                                     onClick={addContainer1}
-                                    className="buttonTitleCR"
-                                    type="button"
+                                    color="warning"
+                                    className="font-semibold text-white"
+                                    endContent={<PlusIcon />}
                                 >
                                     Agregar
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}
@@ -906,28 +941,31 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     {editMode && (
                         <div className="twoButtonsCR">
                             <div className="buttonContainerCR">
-                                <button
+                                <Button
                                     onClick={addContainer2}
-                                    className="buttonTitleCR"
-                                    type="button"
+                                    color="warning"
+                                    className="font-semibold text-white"
+                                    endContent={<PlusIcon />}
                                 >
                                     Agregar
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}
                 </div>
-                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
-                    Campos Adicionales
+                <div>
+                    <div className="flex items-center text-[16px] font-semibold mb-1">
+                        Campos Adicionales
+                    </div>
+                    <ListAdditionalFields
+                        editState={editMode}
+                        baseFields={listAdditionalFields}
+                        setBaseFields={setListAdditionalFields}
+                    />
                 </div>
-                <ListAdditionalFields 
-                    editState={editMode}
-                    baseFields={listAdditionalFields}
-                    setBaseFields={setListAdditionalFields}
-                />
                 <div className="containerBottomCR">
                     {editMode && (
-                        <div className="twoButtonsCR">
+                        <div className="flex justify-end flex-1">
                             <div className="buttonContainerCR">
                                 <Modal
                                     nameButton="Descartar"

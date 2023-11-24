@@ -179,7 +179,7 @@ routerAuth.get("/private", (req, res) => {
 });
 
 // Modificar. Este modificar no modifica ni el correo ni la contraseña
-routerAuth.put("/modificarUsuario", verifyToken, usuarioController.modificarDatos);
+routerAuth.put("/modificarUsuario", usuarioController.modificarDatos);
 
 
 module.exports.routerAuth = routerAuth;

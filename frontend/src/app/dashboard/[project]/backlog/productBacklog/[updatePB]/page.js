@@ -68,6 +68,25 @@ export default function ProductBacklogUpdate(props) {
     const [reloadData, setReloadData] = useState(false);
     const [reloading, setReloading] = useState(true);
 
+    function PlusIcon() {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.8}
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+            </svg>
+        );
+    }
+
     // Esta función se llama cuando deseas recargar los datos
     const handleReloadData = () => {
         setReloadData(true);
@@ -459,44 +478,41 @@ export default function ProductBacklogUpdate(props) {
                 Backlog / Registrar elemento
             </div> */}
             <div className="backlogRegisterPB">
-                <div className="flex justify-between items-center">
-                    {/* <div className="titleBacklogRegisterPB dark:text-white">
+                {/* <div className="titleBacklogRegisterPB dark:text-white">
                         Editar elemento en el Backlog
                     </div> */}
-                    <div className="flex flex-row justify-between items-center">
+                <div className="flex flex-row justify-between items-center">
                     <div className="titleBacklogRegisterPB dark:text-white">
                         Editar elemento en el Backlog
                     </div>
                     {editMode && (
-                        <Button color="warning" className="text-white" onClick={()=>toggleModal()}>
+                        <Button
+                            color="warning"
+                            className="text-white"
+                            onClick={() => toggleModal()}
+                        >
                             Agregar Epica
                         </Button>
-                    )
-                    }
-
-
-                    </div>
-                    <div>
-                        {!editMode && (
-                            <Button
-                                color="primary"
-                                onPress={() => {
-                                    setIsLoadingSmall(true);
-                                    router.push(
-                                        "/dashboard/" +
-                                            projectName +
-                                            "=" +
-                                            projectId +
-                                            "/backlog/productBacklog/" +
-                                            props.params.updatePB +
-                                            "=edit"
-                                    );
-                                }}
-                            >
-                                Editar
-                            </Button>
-                        )}
-                    </div>
+                    )}
+                    {!editMode && (
+                        <Button
+                            color="primary"
+                            onPress={() => {
+                                setIsLoadingSmall(true);
+                                router.push(
+                                    "/dashboard/" +
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/backlog/productBacklog/" +
+                                        props.params.updatePB +
+                                        "=edit"
+                                );
+                            }}
+                        >
+                            Editar
+                        </Button>
+                    )}
                 </div>
                 <div>
                     <DescriptionRequeriment
@@ -657,13 +673,14 @@ export default function ProductBacklogUpdate(props) {
                     {editMode && (
                         <div className="twoButtons">
                             <div className="buttonContainer">
-                                <button
+                                <Button
                                     onClick={addContainer}
-                                    className="buttonTitle"
-                                    type="button"
+                                    color="warning"
+                                    className="font-semibold text-white"
+                                    endContent={<PlusIcon />}
                                 >
                                     Agregar
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}
@@ -695,13 +712,14 @@ export default function ProductBacklogUpdate(props) {
                     {editMode && (
                         <div className="twoButtons">
                             <div className="buttonContainer">
-                                <button
+                                <Button
                                     onClick={addContainer1}
-                                    className="buttonTitle"
-                                    type="button"
+                                    color="warning"
+                                    className="font-semibold text-white"
+                                    endContent={<PlusIcon />}
                                 >
                                     Agregar
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}
@@ -709,7 +727,7 @@ export default function ProductBacklogUpdate(props) {
 
                 <div className="containerBottom">
                     {editMode && (
-                        <div className="twoButtons1">
+                        <div className="flex justify-end flex-1">
                             <div className="buttonContainer">
                                 <Modal
                                     nameButton="Descartar"

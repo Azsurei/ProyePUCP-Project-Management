@@ -7,6 +7,7 @@ const initSocket = (server) => {
       methods: ["GET", "POST"],
       credentials: true
     },
+    path: '/socket'
   });
 
   const connectedUsers = new Map();

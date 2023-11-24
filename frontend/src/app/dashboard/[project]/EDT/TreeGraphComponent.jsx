@@ -111,7 +111,7 @@ const TreeGraphComponent = ({ data }) => {
 
     const convertDataToTree = (inputData, colors) => {
         const buildTree = (nodeData, depth = 0) => {
-            const nodeName = `${nodeData.codigo}. ${truncateString(nodeData.descripcion, 15)}`;
+            const nodeName = `${nodeData.codigo}. ${truncateString(nodeData.nombre, 15)}`;
             let node = {
                 name: nodeName,
                 depth,
@@ -251,28 +251,6 @@ const TreeGraphComponent = ({ data }) => {
                         }}>
                             <ZoomButton onClick={handleZoomIn} text="+" />
                             <ZoomButton onClick={handleZoomOut} text="-" />
-                        </div>
-
-                        {/* Color Picker and Level Selector */}
-                        <div style={{ width: '100%' }}> {/* Set the width to fill the container */}
-                            <Select
-                                label="Nivel Seleccionado"
-                                placeholder="Seleccione un nivel"
-                                value={selectedLevel}
-                                onChange={(e) => handleLevelChange(e)}
-                                fullWidth // Make select fill the width of its parent
-                            >
-                                {levelItems.map((item) => (
-                                    <SelectItem key={item.value} value={item.value}>
-                                        {item.label}
-                                    </SelectItem>
-                                ))}
-                            </Select>
-                            <TwitterPicker
-                                color={selectedLevelColors[parseInt(selectedLevel, 10)]}
-                                onChangeComplete={(color) => handleChangeComplete(color)}
-                            />
-
                         </div>
                     </div>
                 )}

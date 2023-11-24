@@ -7,7 +7,7 @@ import { Textarea, Avatar } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
-import { Input } from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
 import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/ButtonIconLabel";
 import ModalUsersOne from "@/components/ModalUsersOne";
@@ -15,7 +15,10 @@ import ModalUser from "@/components/dashboardComps/projectComps/projectCreateCom
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ContainerContingencyPlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerContingencyPlans";
 import ContainerResponsePlans from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ContainerResponsePlans";
-import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
+import ListAdditionalFields, {
+    getAdditionalFields,
+    registerAdditionalFields,
+} from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -55,6 +58,25 @@ export default function CatalogoDeRiesgosRegister(props) {
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [listAdditionalFields, setListAdditionalFields] = useState([]);
+
+    function PlusIcon() {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.8}
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+            </svg>
+        );
+    }
 
     useEffect(() => {
         // Obtener la fecha actual
@@ -258,10 +280,15 @@ export default function CatalogoDeRiesgosRegister(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
-            registerAdditionalFields(listAdditionalFields, idCatalogoDeRiesgos, 5, 1, (response)=>{
-                console.log("response", response)
-                
-});
+        registerAdditionalFields(
+            listAdditionalFields,
+            idCatalogoDeRiesgos,
+            5,
+            1,
+            (response) => {
+                console.log("response", response);
+            }
+        );
     };
 
     return (
@@ -454,9 +481,7 @@ export default function CatalogoDeRiesgosRegister(props) {
                     </div>
                 </div>
                 <div className="titleButtonCR">
-                    <h4 style={{ fontWeight: 600 }}>
-                        Responsables del riesgo
-                    </h4>
+                    <h4 style={{ fontWeight: 600 }}>Responsables del riesgo</h4>
                 </div>
                 <div className="containerResponsables">
                     <ButtonIconLabel
@@ -577,13 +602,14 @@ export default function CatalogoDeRiesgosRegister(props) {
                     )}
                     <div className="twoButtonsCR">
                         <div className="buttonContainerCR">
-                            <button
+                            <Button
                                 onClick={addContainer1}
-                                className="buttonTitleCR"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon />}
                             >
                                 Agregar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -614,26 +640,29 @@ export default function CatalogoDeRiesgosRegister(props) {
                     )}
                     <div className="twoButtonsCR">
                         <div className="buttonContainerCR">
-                            <button
+                            <Button
                                 onClick={addContainer2}
-                                className="buttonTitleCR"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon />}
                             >
                                 Agregar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
-                    Campos Adicionales
+                <div>
+                <div className="flex items-center text-[16px] font-semibold mb-1">
+                        Campos Adicionales
+                    </div>
+                    <ListAdditionalFields
+                        editState={true}
+                        baseFields={listAdditionalFields}
+                        setBaseFields={setListAdditionalFields}
+                    />
                 </div>
-                <ListAdditionalFields
-                    editState={true} 
-                    baseFields={listAdditionalFields}
-                    setBaseFields={setListAdditionalFields}
-                />
                 <div className="containerBottomCR">
-                    <div className="twoButtonsCR">
+                    <div className="flex justify-end flex-1">
                         <div className="buttonContainerCR">
                             <Modal
                                 nameButton="Descartar"

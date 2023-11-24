@@ -8,7 +8,7 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import { useEffect, useState } from "react";
 import MyCombobox from "@/components/ComboBox";
 import axios from "axios";
-import { Spinner, Avatar, Button } from "@nextui-org/react";
+import { Spinner, Avatar, Button} from "@nextui-org/react";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import { useRouter } from "next/navigation";
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
@@ -68,6 +68,25 @@ export default function ProductBacklogRegister(props) {
     const [modal, setModal] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [reloading, setReloading] = useState(true);
+
+    function PlusIcon() {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.8}
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+            </svg>
+        );
+    }
 
     // Esta función se llama cuando deseas recargar los datos
     const handleReloadData = () => {
@@ -443,13 +462,14 @@ export default function ProductBacklogRegister(props) {
                     )}
                     <div className="twoButtons">
                         <div className="buttonContainer">
-                            <button
+                            <Button
                                 onClick={addContainer}
-                                className="buttonTitle"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon />}
                             >
                                 Agregar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -476,18 +496,19 @@ export default function ProductBacklogRegister(props) {
                     )}
                     <div className="twoButtons">
                         <div className="buttonContainer">
-                            <button
+                            <Button
                                 onClick={addContainer1}
-                                className="buttonTitle"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon />}
                             >
                                 Agregar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
                 <div className="containerBottom">
-                    <div className="twoButtons1">
+                    <div className="flex justify-end flex-1">
                         <div className="buttonContainer">
                             <Modal
                                 nameButton="Descartar"

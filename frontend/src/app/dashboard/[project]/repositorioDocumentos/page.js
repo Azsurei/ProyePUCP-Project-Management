@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-    useState,
-    useEffect,
-    useCallback,
-    useContext,
-    createElement,
-} from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
     Table,
     TableHeader,
@@ -44,7 +38,7 @@ axios.defaults.withCredentials = true;
 
 const columns = [
     { name: "Nombre", uid: "nombreReal", sortable: true },
-    { name: "Extension", uid: "extension", sortable: true },
+    { name: "Extension", uid: "tipoArchivo", sortable: true },
     { name: "Tamaño", uid: "tamano", sortable: true },
     { name: "Fecha de registro", uid: "fechaSubida", sortable: true },
     { name: "Acciones", uid: "actions" },
@@ -100,6 +94,8 @@ const downloadDocument = async (idDocumento) => {
             )
             .then((response) => {
                 clearTimeout(timeout);
+                console.log(response);
+                console.log(response.data.url);
                 resolve(response.data.url);
             })
             .catch((error) => {
@@ -175,16 +171,7 @@ const repositorioDocumentos = (props) => {
     } = useDisclosure();
 
     // Variables y funciones de uso
-    const [documents, setDocuments] = useState([
-        {
-            idArchivo: 1,
-            nombreReal: "Documento 1",
-            tipoArchivo: "application/pdf",
-            extension: "pdf",
-            tamano: 106000,
-            fechaSubida: "2021-08-25T00:00:00.000Z",
-        },
-    ]);
+    const [documents, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
 
     const handleGet = useCallback(async (idRepositorioDocumentos) => {
@@ -201,19 +188,19 @@ const repositorioDocumentos = (props) => {
             setIsLoadingSmall(false);
         }
     });
-    const handleDownload = useCallback(async (idDocumento) => {
+    const handleDownload = useCallback(async (nombreDocumento, idDocumento) => {
         const toastId = toast("Sonner");
         toast.loading("Descargando documento...", {
             id: toastId,
         });
+        const link = document.createElement("a");
         try {
-            const document = await downloadDocument(idDocumento);
-            console.log(document);
+            const url = await downloadDocument(idDocumento);
+            console.log(url);
 
-            // Crear un enlace de descarga y simular un clic
-            const link = document.createElement("a");
-            link.href = documentUrl;
-            link.download = "nombre_del_archivo";
+            link.href = url;
+            link.download = nombreDocumento;
+            document.body.appendChild(link);
             link.click();
 
             toast.success("El documento se ha descargado exitosamente.", {
@@ -224,6 +211,10 @@ const repositorioDocumentos = (props) => {
             toast.error("Error al descargar el documento.", {
                 id: toastId,
             });
+        } finally {
+            if (link.parentNode) {
+                link.parentNode.removeChild(link);
+            }
         }
     });
     const handleUpload = useCallback(async (documento) => {
@@ -250,9 +241,7 @@ const repositorioDocumentos = (props) => {
             id: toastId,
         });
         try {
-            const document = await deleteDocument(
-                idDocumento
-            );
+            const document = await deleteDocument(idDocumento);
             console.log(document);
             toast.success("El documento se ha eliminado exitosamente.", {
                 id: toastId,
@@ -269,6 +258,7 @@ const repositorioDocumentos = (props) => {
     useEffect(() => {
         handleGet(idRepositorioDocumentos);
     }, []);
+    console.log(selectedDocument);
 
     // Estados generales (uso de tabla)
     const [filterValue, setFilterValue] = React.useState("");
@@ -300,9 +290,24 @@ const repositorioDocumentos = (props) => {
             extensionFilter !== "all" &&
             Array.from(extensionFilter).length !== extensionOptions.length
         ) {
-            filteredDocuments = filteredDocuments.filter((document) =>
-                Array.from(extensionFilter).includes(document.tipoArchivo)
-            );
+            if (Array.from(extensionFilter).includes("otros")) {
+                filteredDocuments = filteredDocuments.filter(
+                    (document) =>
+                        !extensionOptions
+                            .filter(
+                                (option) =>
+                                    !Array.from(extensionFilter).includes(
+                                        option.uid
+                                    )
+                            )
+                            .map((option) => option.uid)
+                            .includes(document.tipoArchivo)
+                );
+            } else {
+                filteredDocuments = filteredDocuments.filter((document) =>
+                    Array.from(extensionFilter).includes(document.tipoArchivo)
+                );
+            }
         }
 
         return filteredDocuments;
@@ -370,7 +375,7 @@ const repositorioDocumentos = (props) => {
         switch (columnKey) {
             case "nombreReal":
                 return cellValue.substring(0, cellValue.lastIndexOf("."));
-            case "extension":
+            case "tipoArchivo":
                 return "." + cellValue;
             case "tamano":
                 if (cellValue >= 1024 * 1024)
@@ -387,7 +392,11 @@ const repositorioDocumentos = (props) => {
                             isIconOnly
                             variant="default"
                             onPress={() => {
-                                handleDownload(document.idArchivo);
+                                setSelectedDocument(document);
+                                handleDownload(
+                                    document.nombreReal,
+                                    document.idArchivo
+                                );
                             }}
                         >
                             <ExportIcon />
@@ -465,9 +474,8 @@ const repositorioDocumentos = (props) => {
                                     file.append(
                                         "extension",
                                         selectedFile.name.substring(
-                                            selectedFile.name.lastIndexOf(
-                                                "."
-                                            ) + 1
+                                            selectedFile.name.lastIndexOf(".") +
+                                                1
                                         )
                                     );
                                     file.append("file", selectedFile);
@@ -489,6 +497,10 @@ const repositorioDocumentos = (props) => {
                         >
                             Subir documento
                         </Button>
+                        <div className="roboto text-xs text-default-500 flex flex-col justify-center items-center whitespace-nowrap">
+                            <span>Max.</span>
+                            <span>50 MB</span>
+                        </div>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

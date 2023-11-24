@@ -11,7 +11,10 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import ContainerRequirementsCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerRequirementsCI";
 import ContainerStrategiesCI from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ContainerStrategiesCI";
 import MailIcon from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/MailIcon";
-import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
+import ListAdditionalFields, {
+    getAdditionalFields,
+    registerAdditionalFields,
+} from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
@@ -48,6 +51,25 @@ export default function CatalogoDeInteresadosRegister(props) {
     const [quantity1, setQuantity1] = useState(0);
     const [quantity2, setQuantity2] = useState(0);
     const [listAdditionalFields, setListAdditionalFields] = useState([]);
+
+    function PlusIcon() {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.8}
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+            </svg>
+        );
+    }
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -182,10 +204,15 @@ export default function CatalogoDeInteresadosRegister(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
-            registerAdditionalFields(listAdditionalFields, idCatalogoDeInteresados, 6, 1, (response)=>{
-                console.log("response", response)
-                
-});
+        registerAdditionalFields(
+            listAdditionalFields,
+            idCatalogoDeInteresados,
+            6,
+            1,
+            (response) => {
+                console.log("response", response);
+            }
+        );
     };
 
     return (
@@ -412,8 +439,9 @@ export default function CatalogoDeInteresadosRegister(props) {
                         <div className="buttonContainerCI">
                             <Button
                                 onClick={addContainer1}
-                                className="buttonTitleCI"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon />}
                             >
                                 Agregar
                             </Button>
@@ -443,24 +471,27 @@ export default function CatalogoDeInteresadosRegister(props) {
                         <div className="buttonContainerCI">
                             <Button
                                 onClick={addContainer2}
-                                className="buttonTitleCI2"
-                                type="button"
+                                color="warning"
+                                className="font-semibold text-white"
+                                endContent={<PlusIcon />}
                             >
                                 Agregar
                             </Button>
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
-                    Campos Adicionales
+                <div>
+                    <div className="flex items-center text-[16px] font-semibold mb-1">
+                        Campos Adicionales
+                    </div>
+                    <ListAdditionalFields
+                        editState={true}
+                        baseFields={listAdditionalFields}
+                        setBaseFields={setListAdditionalFields}
+                    />
                 </div>
-                <ListAdditionalFields 
-                    editState={true}
-                    baseFields={listAdditionalFields}
-                    setBaseFields={setListAdditionalFields}
-                />
                 <div className="containerBottomCI">
-                    <div className="twoButtonsCI">
+                    <div className="flex justify-end flex-1">
                         <div className="buttonContainerCI">
                             <Modal
                                 nameButton="Descartar"
@@ -496,12 +527,9 @@ export default function CatalogoDeInteresadosRegister(props) {
                                         verifyFieldsEmpty() &&
                                         !verifyFieldsExcessive()
                                     ) {
-                                        toast.error(
-                                            "Faltan completar campos",
-                                            {
-                                                position: "bottom-left",
-                                            }
-                                        );
+                                        toast.error("Faltan completar campos", {
+                                            position: "bottom-left",
+                                        });
                                         return false;
                                     } else if (
                                         verifyFieldsExcessive() &&

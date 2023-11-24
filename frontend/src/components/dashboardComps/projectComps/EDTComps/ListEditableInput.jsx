@@ -31,7 +31,7 @@ function EditableInput(props) {
                     isInvalid={false}
                     //errorMessage="Este campo no puede estar vacio"
                     key={"bordered"}
-                    variant={"bordered"}
+                    variant={props.beEditable === true ? "bordered" : "flat"}
                     labelPlacement="outside"
                     placeholder="Escribe aquí"
                     className="col-span-12 md:col-span-6 mb-6 md:mb-0"
