@@ -191,6 +191,29 @@ async function actualizarEntregables(req, res, next) {
         next(error);
     }
 }
+async function listarParticipantes(req, res, next) {
+    const { idProyecto } = req.params;
+    const query = `CALL LISTAR_EQUIPO_X_IDPROYECTO(?);`;
+    try {
+        const [results] = await connection.query(query, [idProyecto]);
+        const equipos = results[0];
+        for (const equipo of equipos) {
+            const query1 = `CALL LISTAR_PARTICIPANTES_X_IDEQUIPO(?);`;
+            const [participantes] = await connection.query(query1, [
+                equipo.idEquipo,
+            ]);
+            equipo.participantes = participantes[0];
+        }
+        res.status(200).json({
+            equipos,
+            message: "Equipos obtenidos exitosamente",
+        });
+        console.log("Se listaron los equipos correctamente");
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 
 
 module.exports = {
@@ -205,5 +228,6 @@ module.exports = {
     listarEntregables,
     insertarEntregableXResponsabilidadXRol,
     actualizarEntregables,
-    listarEntregablesXProyecto
+    listarEntregablesXProyecto,
+    listarParticipantes
 };

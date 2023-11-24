@@ -41,6 +41,7 @@ export default function Reportes(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const urlPrueba = "http://localhost:8080/api/proyecto/reporte/listarReportesXIdProyecto/156"
     const [filterValue, setFilterValue] = React.useState("");
     const [toolsFilter, setToolsFilter] = React.useState("all");
     const onSearchChange = (value) => {
@@ -251,10 +252,19 @@ export default function Reportes(props) {
                         <div className="mt-5 ">
                             <ListReport
                                 listReportes={listReportes}
-                                handleViewReport={(idReporte, fileId) => {
+                                handleViewReport={(idReporte, fileId, idHerramienta) => {
                                     if(fileId !== null){
                                         console.log("abriendo de file id");
-                                        router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
+                                        if(idHerramienta === 2){
+                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
+                                        } else if (idHerramienta === 4){
+                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteTareas/" + fileId);
+                                        } else if (idHerramienta === 13){
+                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reportePresupuestos/" + fileId);
+                                        } else if (idHerramienta === 5){
+                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteRiesgos/" + fileId);
+                                        }
+                                        // router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
                                     }
                                     else{
                                         toast.error("Error al cargar reporte");

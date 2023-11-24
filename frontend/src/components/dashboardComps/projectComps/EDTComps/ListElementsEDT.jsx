@@ -97,8 +97,6 @@ function CardEDT({ showElimConfirm, objComponent, ...props }) {
                                 <DropdownItem key={"view"}>
                                     Ver detalle
                                 </DropdownItem>
-
-                                <DropdownItem key={"edit"}>Editar</DropdownItem>
                                 <DropdownItem
                                     key={"delete"}
                                     color="danger"

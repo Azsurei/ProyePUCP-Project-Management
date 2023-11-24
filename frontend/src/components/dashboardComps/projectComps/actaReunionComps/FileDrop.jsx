@@ -53,7 +53,7 @@ const fileIconsMap = [
     },
 ];
 
-function FileDrop() {
+function FileDrop({setFile}) {
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [fileName, setFileName] = useState("");
     const [fileType, setFileType] = useState(null);
@@ -90,6 +90,7 @@ function FileDrop() {
                                 if (allowedTypes.includes(files[0].type)) {
                                     setFileName(files[0].name);
                                     setIsFileUploaded(true);
+                                    setFile(files[0]);
 
                                     if (files[0].type === allowedTypes[0]) {
                                         setFileType(2);
@@ -113,9 +114,9 @@ function FileDrop() {
                                     toast.error(
                                         "Tipo de archivo invalido"
                                     );
-                                    // Clear the input field
                                     setFileName("");
                                     setIsFileUploaded(false);
+                                    setFile(null);
                                     document.querySelector(
                                         ".uploadFileField"
                                     ).value = "";

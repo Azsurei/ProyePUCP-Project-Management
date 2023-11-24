@@ -740,7 +740,18 @@ async function verInfoProyecto(req, res, next) {
     let query = `CALL VER_INFO_PROYECTO_X_ID_PROYECTO(?);`;
     try {
         const [results] = await connection.query(query, [idProyecto]);
-        const infoProyecto = results[0];
+        let infoProyecto = results[0][0];
+
+        const query2 = `CALL LISTAR_USUARIOS_X_ROL_X_PROYECTO(?,?);`;
+        const [results2] = await connection.query(query2, [3, idProyecto]);
+        const miembrosInfo = results2[0];
+
+        console.log(JSON.stringify(miembrosInfo,null,2));
+        console.log("============================= FIN DE MIEMBROS ===================");
+
+        infoProyecto.miembros = miembrosInfo;
+
+        console.log(JSON.stringify(infoProyecto,null,2));
 
         res.status(200).json({
             infoProyecto,

@@ -80,14 +80,14 @@ export default function ReporteRiesgos(props) {
                 // Realiza la solicitud HTTP al endpoint del router
                 const stringURL =
                     process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/reporte/obtenerJSONReportePresupuestoXIdArchivo/" +
-                    idArchivo;
+                    "/api/proyecto/reporte/obtenerJSONReporteRiesgoXIdArchivo/" +
+                    reportID;
                 console.log("URL: ", stringURL);
                 const response = await axios.get(stringURL);
 
                 // Actualiza el estado 'data' con los datos recibidos
-                setJson(response.data.jsonData);
-                setData(response.data.jsonData.riesgos);
+                setJson(response.data);
+                setData(response.data.riesgos);
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.jsonData

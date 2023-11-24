@@ -1,8 +1,8 @@
 "use client";
 
 import { useContext, useEffect, useMemo, useState } from "react";
-import { SmallLoadingScreen } from "../layout";
-import { SessionContext } from "../../layout";
+import { ProjectInfo, SmallLoadingScreen } from "../layout";
+import { NotificationsContext, SessionContext } from "../../layout";
 import axios from "axios";
 
 import {
@@ -24,6 +24,7 @@ import {
     Chip,
 } from "@nextui-org/react";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import { DeleteDocumentIcon } from "@/../public/icons/deleteDocument";
 import { Toaster, toast } from "sonner";
 
 axios.defaults.withCredentials = true;
@@ -107,8 +108,9 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                 setInitialEvaluations(evaluaciones);
                 setUsersEvaluation(evaluaciones);
 
-                autoEvaluacion.fechaInicio = autoEvaluacion.fechaInicio.split('T')[0];
-                autoEvaluacion.fechaFin = autoEvaluacion.fechaFin.split('T')[0];
+                autoEvaluacion.fechaInicio =
+                    autoEvaluacion.fechaInicio.split("T")[0];
+                autoEvaluacion.fechaFin = autoEvaluacion.fechaFin.split("T")[0];
                 setAutoEvaluation(autoEvaluacion);
             } else if (response.status === 204) {
                 setStatusForm("empty");
@@ -221,7 +223,7 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         {member.nombreEvaluado} {member.apellidoEvaluado}
                     </h3>
                 </CardHeader>
-                <CardBody className="bg-[#EAEAEA]">
+                <CardBody className="bg-[#EAEAEA] dark:bg-[#1F1F1F]">
                     <div className="flex flex-col gap-6 mb-6">
                         <h4 className="montserrat font-semibold">
                             Criterios de evaluación:
@@ -328,11 +330,11 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         </h3>
                         <p className="flex flex-col sm:flex-row gap-3">
                             <span className="font-semibold">
-                                {"Fecha de inicio: "} 
+                                {"Fecha de inicio: "}
                             </span>
                             {autoEvaluation.fechaInicio}
                             <span className="font-semibold">
-                                {"Fecha de fin: "} 
+                                {"Fecha de fin: "}
                             </span>
                             {autoEvaluation.fechaFin}
                         </p>
@@ -374,6 +376,9 @@ function MemberInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
     );
 }
 function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
+    const { sendNotification } = useContext(NotificationsContext);
+    const { projectInfo } = useContext(ProjectInfo);
+
     // Variables globales
     const [evaluaciones, setEvaluaciones] = useState([]);
     const [evaluacion, setEvaluacion] = useState(null);
@@ -418,6 +423,9 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
         getEvaluations();
     }, []);
 
+    console.log(evaluaciones);
+    console.log(evaluacion);
+
     // Manejo de creación de autoevaluacion
     function createEvaluation(newEvaluation) {
         return new Promise((resolve, reject) => {
@@ -428,10 +436,7 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                     {
                         idProyecto: projectId,
                         nombre: newEvaluation.nombreEvaluacion,
-                        criterio1: newEvaluation.criterio1,
-                        criterio2: newEvaluation.criterio2,
-                        criterio3: newEvaluation.criterio3,
-                        criterio4: newEvaluation.criterio4,
+                        criterios: newEvaluation.criterios,
                         fechaInicio: newEvaluation.fechaInicio,
                         fechaFin: newEvaluation.fechaFin,
                     }
@@ -475,6 +480,23 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                 )
                 .then((response) => {
                     console.log(response);
+                    console.log("autoevalucion fue lanzada");
+
+                    //lanzamos notificacion a todos los usuarios del proyecto
+                    console.log(JSON.stringify(projectInfo, null, 2));
+                    for (const usuario of projectInfo.miembros) {
+                        sendNotification(
+                            usuario.idUsuario,
+                            6,
+                            idAutoEvaluacionXProyecto,
+                            projectId
+                        );
+                        console.log(
+                            "mandando notificacion de autoevaluacion a  " +
+                                usuario.idUsuario
+                        );
+                    }
+
                     resolve();
                 })
                 .catch((error) => {
@@ -559,7 +581,7 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                     reject(error);
                 });
         });
-    }            
+    }
 
     const handleView = async (idAutoEvaluacionXProyecto) => {
         try {
@@ -586,23 +608,43 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         {member.nombres} {member.apellidos}
                     </h3>
                 </CardHeader>
-                <CardBody className="bg-[#EAEAEA]">
+                <CardBody className="bg-[#EAEAEA] dark:bg-[#1F1F1F]">
                     <div className="flex flex-col gap-6 mb-6">
                         <h4 className="montserrat font-semibold">
                             Criterios de evaluación:
                         </h4>
-                        {member.notas.map((criterio) => (
-                            <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
-                                <div>
-                                    <label className="w-full font-medium break-words">
-                                        {criterio.criterio}:
-                                    </label>
-                                    <p className="w-full font-normal break-words">
-                                        {criterio.Promedio} / 5
-                                    </p>
-                                </div>
+                        <div className="flex flex-row items-center">
+                            <div className="flex flex-col gap-4 flex-[6]">
+                                {member.notas.map((criterio) => (
+                                    <div className="flex flex-row flex-wrap xl:flex-nowrap justify-between montserrat ml-8">
+                                        <div>
+                                            <label className="w-full font-medium break-words">
+                                                {criterio.criterio}:
+                                            </label>
+                                            <p className="w-full font-normal break-words">
+                                                {criterio.Promedio.toFixed(2)} /
+                                                5
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                            <div className="flex-[4]">
+                                <label className="w-full font-medium break-words">
+                                    Puntaje final:
+                                </label>
+                                <p className="w-full font-normal break-words">
+                                    {member.notas
+                                        .reduce(
+                                            (acc, nota) => acc + nota.Promedio,
+                                            0
+                                        )
+                                        .toFixed(2)
+                                        .toString()}{" "}
+                                    / {member.notas.length * 5}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex flex-col">
                         <h4 className="montserrat font-semibold">
@@ -623,7 +665,9 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                                 ) : null
                             )
                         ) : (
-                            <p className="p-4">No hay observaciones enviadas.</p>
+                            <p className="p-4">
+                                No hay observaciones enviadas.
+                            </p>
                         )}
                     </div>
                 </CardBody>
@@ -647,7 +691,10 @@ function ManagerInterfaceEvaluation({ projectId, userId, setIsLoadingSmall }) {
                         </Button>
                     </div>
                     {evaluacion.map((user) => (
-                        <div key={user.idUsuarioEvaluado} className="w-full">
+                        <div
+                            key={user.idUsuarioEvaluado}
+                            className="w-full flex flex-col mb-4"
+                        >
                             {cardResultEvaluation(user)}
                         </div>
                     ))}
@@ -947,10 +994,12 @@ function ModalCrearEvaluacionProyecto({ isOpen, onOpenChange, handleCreate }) {
         nombreEvaluacion: "",
         fechaInicio: "",
         fechaFin: "",
-        criterio1: "",
-        criterio2: "",
-        criterio3: "",
-        criterio4: "",
+        criterios: [
+            {
+                idCriterioEvaluacion: 1,
+                nombre: "",
+            },
+        ],
     });
     const [statusForm, setStatusForm] = useState("init"); // "init", "valid", "sending"
     const [errorForm, setErrorForm] = useState(null);
@@ -985,17 +1034,17 @@ function ModalCrearEvaluacionProyecto({ isOpen, onOpenChange, handleCreate }) {
             evaluacion.nombreEvaluacion.trim() !== "" &&
             evaluacion.fechaInicio.trim() !== "" &&
             evaluacion.fechaFin.trim() !== "" &&
-            evaluacion.criterio1.trim() !== "" &&
-            evaluacion.criterio2.trim() !== "" &&
-            evaluacion.criterio3.trim() !== "" &&
-            evaluacion.criterio4.trim() !== "" &&
+            evaluacion.criterios.every((criterio) => criterio.nombre !== "") &&
             !errorFechas
         ) {
             setStatusForm("valid");
         } else {
             setStatusForm("init");
         }
+        console.log(evaluacion);
     }, [evaluacion]);
+
+    console.log(evaluacion);
 
     // Funciones adicionaes
     const clearForm = () => {
@@ -1003,10 +1052,43 @@ function ModalCrearEvaluacionProyecto({ isOpen, onOpenChange, handleCreate }) {
             nombreEvaluacion: "",
             fechaInicio: "",
             fechaFin: "",
-            criterio1: "",
-            criterio2: "",
-            criterio3: "",
-            criterio4: "",
+            criterios: [
+                {
+                    idCriterioEvaluacion: 1,
+                    nombre: "",
+                },
+            ],
+        });
+    };
+    const addCriterio = () => {
+        const nuevoCriterio = {
+            idCriterioEvaluacion: evaluacion.criterios.length + 1,
+            nombre: "",
+        };
+
+        setEvaluacion((prevEvaluacion) => ({
+            ...prevEvaluacion,
+            criterios: [...prevEvaluacion.criterios, nuevoCriterio],
+        }));
+    };
+    const removeCriterio = (index) => {
+        setEvaluacion((prevEvaluacion) => {
+            const nuevosCriterios = prevEvaluacion.criterios.filter(
+                (_, i) => i !== index
+            );
+
+            // Reasignar IDs
+            const criteriosActualizados = nuevosCriterios.map(
+                (criterio, i) => ({
+                    idCriterioEvaluacion: i + 1,
+                    nombre: criterio.nombre,
+                })
+            );
+
+            return {
+                ...prevEvaluacion,
+                criterios: criteriosActualizados,
+            };
         });
     };
 
@@ -1042,7 +1124,7 @@ function ModalCrearEvaluacionProyecto({ isOpen, onOpenChange, handleCreate }) {
                             <ModalHeader className="flex flex-col gap-1.5">
                                 Registrar autoevaluación
                             </ModalHeader>
-                            <ModalBody>
+                            <ModalBody className="justify-start">
                                 <Input
                                     autoFocus
                                     name="nombreEvaluacion"
@@ -1064,70 +1146,84 @@ function ModalCrearEvaluacionProyecto({ isOpen, onOpenChange, handleCreate }) {
                                 <label className="text-sm font-medium after:content-['*'] after:text-danger after:ml-0.5">
                                     Criterios de autoevaluación
                                 </label>
-                                <Input
-                                    name="criterio1"
-                                    label="Criterio 1"
-                                    placeholder="Ej. Dominio técnico"
-                                    type="text"
-                                    value={evaluacion.criterio1}
-                                    onChange={(e) =>
-                                        setEvaluacion((prevEvaluacion) => ({
-                                            ...prevEvaluacion,
-                                            criterio1: e.target.value,
-                                        }))
-                                    }
-                                    variant="bordered"
-                                    radius="sm"
-                                    isRequired={true}
-                                />
-                                <Input
-                                    name="criterio2"
-                                    label="Criterio 2"
-                                    placeholder="Ej. Compromiso con los trabajos"
-                                    type="text"
-                                    value={evaluacion.criterio2}
-                                    onChange={(e) =>
-                                        setEvaluacion((prevEvaluacion) => ({
-                                            ...prevEvaluacion,
-                                            criterio2: e.target.value,
-                                        }))
-                                    }
-                                    variant="bordered"
-                                    radius="sm"
-                                    isRequired={true}
-                                />
-                                <Input
-                                    name="criterio3"
-                                    label="Criterio 3"
-                                    placeholder="Ej. Comunicación con los compañeros"
-                                    type="text"
-                                    value={evaluacion.criterio3}
-                                    onChange={(e) =>
-                                        setEvaluacion((prevEvaluacion) => ({
-                                            ...prevEvaluacion,
-                                            criterio3: e.target.value,
-                                        }))
-                                    }
-                                    variant="bordered"
-                                    radius="sm"
-                                    isRequired={true}
-                                />
-                                <Input
-                                    name="criterio4"
-                                    label="Criterio 4"
-                                    placeholder="Ej. Comprensión de proyecto"
-                                    type="text"
-                                    value={evaluacion.criterio4}
-                                    onChange={(e) =>
-                                        setEvaluacion((prevEvaluacion) => ({
-                                            ...prevEvaluacion,
-                                            criterio4: e.target.value,
-                                        }))
-                                    }
-                                    variant="bordered"
-                                    radius="sm"
-                                    isRequired={true}
-                                />
+                                <>
+                                    {evaluacion.criterios.map(
+                                        (criterio, index) => (
+                                            <div
+                                                key={`criterio_${index}`}
+                                                className="flex flex-row items-center gap-2"
+                                            >
+                                                <Input
+                                                    name={`Criterio ${index}`}
+                                                    label={`Criterio ${
+                                                        index + 1
+                                                    }`}
+                                                    placeholder={`Ej. Criterio ${
+                                                        index + 1
+                                                    }`}
+                                                    type="text"
+                                                    value={criterio.nombre}
+                                                    onChange={(e) =>
+                                                        setEvaluacion(
+                                                            (
+                                                                prevEvaluacion
+                                                            ) => ({
+                                                                ...prevEvaluacion,
+                                                                criterios:
+                                                                    prevEvaluacion.criterios.map(
+                                                                        (
+                                                                            prevCriterio,
+                                                                            prevIndex
+                                                                        ) => {
+                                                                            if (
+                                                                                prevIndex ===
+                                                                                index
+                                                                            ) {
+                                                                                return {
+                                                                                    ...prevCriterio,
+                                                                                    nombre: e
+                                                                                        .target
+                                                                                        .value,
+                                                                                };
+                                                                            }
+                                                                            return prevCriterio;
+                                                                        }
+                                                                    ),
+                                                            })
+                                                        )
+                                                    }
+                                                    variant="bordered"
+                                                    radius="sm"
+                                                    isRequired={true}
+                                                />
+                                                <Button
+                                                    isIconOnly={true}
+                                                    color="danger"
+                                                    onPress={() =>
+                                                        removeCriterio(index)
+                                                    }
+                                                    fullWidth={false}
+                                                    isDisabled={
+                                                        evaluacion.criterios
+                                                            .length === 1
+                                                    }
+                                                >
+                                                    <DeleteDocumentIcon />
+                                                </Button>
+                                            </div>
+                                        )
+                                    )}
+                                </>
+                                <div>
+                                    <Button
+                                        color="default"
+                                        variant="flat"
+                                        onPress={addCriterio}
+                                        fullWidth={false}
+                                    >
+                                        Agregar criterio
+                                    </Button>
+                                </div>
                                 <div className="flex flex-col items-start gap-1.5">
                                     <label className="text-sm font-medium after:content-['*'] after:text-danger after:ml-0.5">
                                         Fecha Inicio

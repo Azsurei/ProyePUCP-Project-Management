@@ -9,7 +9,8 @@ import {
     inputDateToDisplayDate,
 } from "@/common/dateFunctions";
 import { Spinner } from "@nextui-org/react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function TimeIcon() {
     return (
@@ -105,28 +106,62 @@ function TrashIcon() {
     );
 }
 
-function NotificationCard({ type, campoAdicional, handleDelete }) {
-    const [isLoading, setIsLoading] = useState(false);
-    const msgTxtTask =
-        'Te han asignado una nueva tarea "' + campoAdicional + '". ';
-    const msgTxtMoney = "Estas por superar el limite de presupuesto. ";
-    const msgActa =
-        "Tienes una nueva reunion agendada el " +
-        inputDateToDisplayDate(campoAdicional) +
-        ". ";
-    const msgTxtTaskAlert = "Se acerca la fecha de entrega de 1 tarea ";
+function OtherGroup() {
     return (
-        <div className="border dark:border-slate-600 flex flex-row items-center px-2 py-3 rounded-md gap-2 cursor-pointer shadow-sm">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-7 h-7 min-w-7 min-h-7"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+            />
+        </svg>
+    );
+}
+
+function NotificationCard({ type, campoAdicional, notifObj, handleDelete }) {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
+    return (
+        <div className="border dark:border-slate-600 flex flex-row items-center px-2 py-3 rounded-md gap-2 shadow-sm">
             {type === 1 && <TaskIcon />}
             {type === 2 && <MoneyIcon />}
             {type === 3 && <GroupIcon />}
             {type === 4 && <TimeIcon />}
+            {type === 6 && <OtherGroup />}
             <div className="font-medium font-[Montserrat] flex-1">
-                {type === 1 && msgTxtTask}
-                {type === 2 && msgTxtMoney}
-                {type === 3 && msgActa}
-                {type === 4 && msgTxtTaskAlert}
-                <span className="text-primary underline">Ver mas</span>
+                {type === 1 &&
+                    'Te han asignado una nueva tarea "' +
+                        campoAdicional +
+                        '". '}
+                {type === 2 && "Estas por superar el limite de presupuesto. "}
+                {type === 3 &&
+                    "Tienes una nueva reunion agendada el " +
+                        dbDateToDisplayDate(campoAdicional) +
+                        ". "}
+                {type === 4 && "Se acerca la fecha de entrega de 1 tarea "}
+                {type === 6 &&
+                    "Nueva autoevaluacion disponible hasta el " +
+                        dbDateToDisplayDate(campoAdicional) +
+                        ". "}
+                <span className="text-primary underline cursor-pointer" onClick={()=>{
+                    if(type === 1){
+                        router.push("/dashboard/" + notifObj.nombreProyecto + "=" + notifObj.idProyecto + "/cronograma?search=" + campoAdicional);
+                    }
+                    if(type === 2){
+                        router.push("/dashboard/" + notifObj.nombreProyecto + "=" + notifObj.idProyecto + "/presupuesto");
+                    }
+                    if(type === 6){
+                        router.push("/dashboard/" + notifObj.nombreProyecto + "=" + notifObj.idProyecto + "/autoevaluacionEquipo")
+                    }
+                }}>Ver mas</span>
             </div>
             {isLoading === false && (
                 <div

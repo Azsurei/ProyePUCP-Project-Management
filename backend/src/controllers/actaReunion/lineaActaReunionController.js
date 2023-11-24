@@ -4,11 +4,14 @@ const participanteXReunionController = require("./participanteXReunionController
 const comentarioReunionController = require("./comentarioReunionController");
 const acuerdoController = require("./acuerdoController");
 const responsableAcuerdoController = require("./responsableAcuerdoController");
+const fileController = require("../files/fileController");
 
 async function crear(req,res,next){
-    const {idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios} = req.body;
+    console.log(req.file);
+    const {idActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo,temas,participantes,comentarios} = req.body;
     try {
-        const idLineaActaReunion = await funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios);
+        const idArchivo = await fileController.subirArchivo(req.file);
+        const idLineaActaReunion = await funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,idArchivo,motivo,temas,participantes,comentarios);
         console.log(`Linea acta reunion ${idLineaActaReunion} creada`)
         res.status(200).json({
             idLineaActaReunion,
@@ -98,11 +101,11 @@ async function modificar(req,res,next){
 }
 
 
-async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios){
+async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,idArchivo, motivo,temas,participantes,comentarios){
 
     try {
-        const query = `CALL INSERTAR_LINEA_ACTA_REUNION(?,?,?,?,?,?);`;
-        [results] = await connection.query(query,[idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo]);
+        const query = `CALL INSERTAR_LINEA_ACTA_REUNION(?,?,?,?,?,?,?);`;
+        [results] = await connection.query(query,[idActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,idArchivo,motivo]);
         const idLineaActaReunion = results[0][0].idLineaActaReunion;
 
         console.log(idLineaActaReunion,results[0][0]);

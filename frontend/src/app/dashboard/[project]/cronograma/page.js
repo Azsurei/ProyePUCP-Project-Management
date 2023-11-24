@@ -11,6 +11,7 @@ import {
     Avatar,
     Checkbox,
     CheckboxGroup,
+    Chip,
     Input,
     Select,
     SelectItem,
@@ -33,7 +34,7 @@ import { Toaster, toast } from "sonner";
 import axios from "axios";
 import { SmallLoadingScreen } from "../layout";
 import BtnToModal from "@/components/BtnToModal";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { resolve } from "styled-jsx/css";
 import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
@@ -57,7 +58,48 @@ import ListAdditionalFields, {
 } from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
+function TrashIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            className="w-6 h-6"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+            />
+        </svg>
+    );
+}
+
+function InfoIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+            />
+        </svg>
+    );
+}
+
 export default function Cronograma(props) {
+
+    const searchParams = useSearchParams();
+    const search = searchParams.get('search')
+
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { sendNotification } = useContext(NotificationsContext);
@@ -180,6 +222,8 @@ export default function Cronograma(props) {
         useState(true);
 
     const [taskAdditionalFields, setTaskAdditionalFields] = useState([]);
+
+    const [dependencies, setDependencies] = useState([]);
 
     const twStyle1 = "font-medium text-lg text-mainHeaders";
 
@@ -666,7 +710,8 @@ export default function Cronograma(props) {
                                             sendNotification(
                                                 usuario.idUsuario,
                                                 1,
-                                                nuevoIdTarea
+                                                nuevoIdTarea,
+                                                projectId
                                             );
                                             console.log(
                                                 "mandando notificacion a " +
@@ -942,7 +987,7 @@ export default function Cronograma(props) {
     //     }
     // }, [selectedSubteam]);
 
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState(search !== null ? search : "");
     const [isExportLoading, setIsExportLoading] = useState(false);
 
     async function handlerExport() {
@@ -1023,6 +1068,23 @@ export default function Cronograma(props) {
             return false;
         }
     }
+
+    useEffect(() => {
+        if (fechaInicio !== "") {
+            if (dependencies.length !== 0) {
+                toast.info("Se eliminaron las dependencias", {
+                    position: "top-center",
+                });
+            }
+            setDependencies([]);
+        }
+    }, [fechaInicio]);
+
+    useEffect(() => {
+        if (dependencies.length !== 0) {
+            setFechaInicio("");
+        }
+    }, [dependencies]);
 
     return (
         <div className="cronogramaDiv bg-mainBackground">
@@ -1151,6 +1213,9 @@ export default function Cronograma(props) {
                         onOpenChange={onModalPosteriorChange}
                         addTareaPosterior={addTareaPosterior}
                         startDate={fechaFin}
+                        projectId={projectId}
+                        dependencies={dependencies}
+                        setDependencies={setDependencies}
                     ></ModalPosterior>
 
                     <ModalRegisterProgress
@@ -1322,39 +1387,6 @@ export default function Cronograma(props) {
                                     />
                                 </div>
                                 <div className="contEstado">
-                                    {/* <p>Estado</p>
-                                <Select
-                                    //variant="bordered"
-                                    isDisabled={stateSecond === 2 ? true : false}
-                                    aria-label="cbo-lbl"
-                                    label=""
-                                    placeholder="Selecciona"
-                                    labelPlacement="outside"
-                                    classNames={{ trigger: "h-10" }}
-                                    size="sm"
-                                    color={
-                                        colorDropbox[parseInt(tareaEstado, 10) - 1]
-                                    }
-                                    onChange={(e) => {
-                                        // const state = {
-                                        //     id: dropBoxItems.find(item => item.itemKey === e.target.value).id,
-                                        //     itemKey: e.target.value
-                                        // }
-                                        setTareaEstado([e.target.value]);
-                                        console.log(tareaEstado);
-                                    }}
-                                    selectedKeys={tareaEstado}
-                                >
-                                    {dropBoxItems.map((items) => (
-                                        <SelectItem
-                                            key={items.itemKey}
-                                            value={items.itemKey}
-                                            color={items.color}
-                                        >
-                                            {items.texto}
-                                        </SelectItem>
-                                    ))}
-                                </Select> */}
                                     <p className={twStyle1}>Horas asignadas</p>
                                     <Input
                                         variant={
@@ -1529,24 +1561,12 @@ export default function Cronograma(props) {
 
                             <div className="containerPosteriores mt-3">
                                 <div className="posterioresHeader">
-                                    <p className={twStyle1}>
-                                        Tareas posteriores
-                                    </p>
+                                    <p className={twStyle1}>Dependencias</p>
                                     {stateSecond !== 2 && (
                                         <div
                                             className="btnToPopUp bg-mainSidebar"
                                             onClick={() => {
-                                                if (fechaFin !== "") {
-                                                    onModalPosteriorOpen();
-                                                } else {
-                                                    toast.warning(
-                                                        "Primero añade una fecha de fin a la tarea",
-                                                        {
-                                                            position:
-                                                                "top-center",
-                                                        }
-                                                    );
-                                                }
+                                                onModalPosteriorOpen();
                                             }}
                                         >
                                             <p>Añadir</p>
@@ -1554,93 +1574,93 @@ export default function Cronograma(props) {
                                     )}
                                 </div>
                                 <p className="text-sm">
-                                    Esta tarea sera asignada a los mismos
-                                    usuarios que la tarea previa y su fecha de
-                                    inicio sera en la fecha fin de la previa.
+                                    Esta tarea no iniciara hasta que las
+                                    dependencias finalicen
                                 </p>
                                 <div className="posterioresViewContainer bg-mainSidebar">
-                                    {listPosteriores.length === 0 && (
+                                    {dependencies.length === 0 && (
                                         <p className="noUsersMsg">
-                                            No ha creado tareas posteriores
+                                            No ha agregado dependencias
                                         </p>
                                     )}
-                                    {listPosteriores.map((tPost, index) => {
+                                    {dependencies.map((task) => {
                                         return (
-                                            // <div
-                                            //     className="cardTareasPosteriores bg-mainBackground"
-                                            //     key={index}
-                                            // >
-                                            //     <div className="flex flex-row justify-between">
-                                            //         <p>
-                                            //             {tPost.sumillaTarea}
-                                            //             {" | Concluirá el "}
-                                            //             {inputDateToDisplayDate(
-                                            //                 tPost.fechaFin
-                                            //             )}
-                                            //         </p>
-
-                                            //         {stateSecond !== 2 && (
-                                            //             <img
-                                            //                 src="/icons/icon-crossBlack.svg"
-                                            //                 onClick={() => {
-                                            //                     removeTareaPosterior(
-                                            //                         index + 1
-                                            //                     );
-                                            //                 }}
-                                            //             ></img>
-                                            //         )}
-                                            //     </div>
-
-                                            //     <p className="pl-5">
-                                            //         {"Descripción: " +
-                                            //             tPost.descripcion}
-                                            //     </p>
-                                            // </div>
                                             <div
-                                                key={index}
-                                                className="
-                                            cardTareasPosteriores
-                                            bg-mainBackground
-                                            flex
-                                            flex-row
-                                            items-center
-                                            space-x-4
-                                            "
+                                                className={
+                                                    "border-2 dark:border-gray-500 bg-white dark:bg-black rounded-md flex flex-row p-3 items-center gap-1 w-full"
+                                                }
+                                                key={task.idTarea}
                                             >
-                                                <div className="flex flex-col flex-1">
-                                                    <p className="text-large font-medium">
-                                                        {tPost.sumillaTarea}
-                                                    </p>
+                                                <div className="flex flex-col gap-1 w-1/2 overflow-hidden">
+                                                    <div className="flex flex-row gap-1">
+                                                        <p className="truncate text-lg">
+                                                            {task.sumillaTarea}
+                                                        </p>
+                                                        <Chip
+                                                            variant="flat"
+                                                            color={
+                                                                task.colorTareaEstado
+                                                            }
+                                                        >
+                                                            {
+                                                                task.nombreTareaEstado
+                                                            }
+                                                        </Chip>
+                                                    </div>
                                                     <p className="pl-2">
-                                                        {tPost.descripcion}
+                                                        <span className="font-medium">
+                                                            Descripcion:{" "}
+                                                        </span>
+                                                        {task.descripcion}
                                                     </p>
                                                 </div>
 
-                                                <div className="flex flex-col flex-1 justify-start items-start">
-                                                    <p className="text-large font-medium">
-                                                        Fecha fin
-                                                    </p>
-                                                    <p>
-                                                        {inputDateToDisplayDate(
-                                                            tPost.fechaFin
-                                                        )}
-                                                    </p>
+                                                <div className="flex flex-col items-start flex-1">
+                                                    <div className="flex flex-col items-center">
+                                                        <p className="font-medium">
+                                                            Fecha de fin
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {dbDateToDisplayDate(
+                                                                task.fechaFin
+                                                            )}
+                                                        </p>
+                                                    </div>
                                                 </div>
 
-                                                {stateSecond !== 2 && (
-                                                    <CrossIcon
-                                                        handlerOnClick={() => {
-                                                            removeTareaPosterior(
-                                                                index + 1
-                                                            );
-                                                        }}
-                                                    ></CrossIcon>
-                                                )}
+                                                <div
+                                                    className="stroke-gray-400 hover:stroke-white rounded-lg hover:bg-red-500 p-1 cursor-pointer mr-2"
+                                                    onClick={() => {
+                                                        console.log(
+                                                            "eliminando tarea con id: " +
+                                                                task.idTarea
+                                                        );
+                                                        setDependencies(
+                                                            dependencies.filter(
+                                                                (tarea) =>
+                                                                    tarea.idTarea !==
+                                                                    task.idTarea
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    <TrashIcon />
+                                                </div>
                                             </div>
                                         );
                                     })}
                                 </div>
                             </div>
+
+                            {dependencies.length !== 0 ? (
+                                <div className=" flex justify-center gap-1 mt-2 text-warning">
+                                    <InfoIcon />
+                                    <p>
+                                        Al tener dependencias esta tarea ya no
+                                        tendra una fecha de inicio
+                                    </p>
+                                </div>
+                            ) : null}
 
                             <p
                                 className={twStyle1}
@@ -1889,7 +1909,9 @@ export default function Cronograma(props) {
                                 )}
                             </div>
 
-                            <p className="font-semibold text-xl">Campos adicionales</p>
+                            <p className="font-semibold text-xl">
+                                Campos adicionales
+                            </p>
                             <ListAdditionalFields
                                 editState={stateSecond !== 2}
                                 baseFields={taskAdditionalFields}
@@ -1949,33 +1971,66 @@ export default function Cronograma(props) {
                                                 setValidName(false);
                                                 allValid = false;
                                             }
-                                            if (tareaDescripcion === "") {
-                                                setValidDescripcion(false);
-                                                allValid = false;
+                                            if (dependencies.length === 0) {
+                                                if (fechaFin <= fechaInicio) {
+                                                    setValidFechas("isFalse");
+                                                    allValid = false;
+                                                }
+                                                if (
+                                                    fechaInicio === "" ||
+                                                    fechaFin === ""
+                                                ) {
+                                                    setValidFechas("isEmpty");
+                                                    allValid = false;
+                                                }
+                                            } else {
+                                                if (fechaFin === "") {
+                                                    setValidFechas("isFalse");
+                                                    allValid = false;
+                                                } else {
+                                                    const maxFechaFin =
+                                                        dependencies.reduce(
+                                                            (
+                                                                maxFecha,
+                                                                currentTask
+                                                            ) => {
+                                                                const currentFechaFin =
+                                                                    currentTask.fechaFin; // Convert to timestamp for comparison
+
+                                                                // If maxFecha is null or the current fechaFin is greater, update maxFecha
+                                                                if (
+                                                                    maxFecha ===
+                                                                        null ||
+                                                                    currentFechaFin >
+                                                                        maxFecha
+                                                                ) {
+                                                                    return currentFechaFin;
+                                                                }
+                                                                return maxFecha;
+                                                            },
+                                                            null
+                                                        );
+                                                    if (
+                                                        fechaFin <= maxFechaFin
+                                                    ) {
+                                                        toast.error(
+                                                            "La fecha fin no puede ser menor a las dependencias",
+                                                            {
+                                                                position:
+                                                                    "top-center",
+                                                            }
+                                                        );
+                                                        allValid = false;
+                                                    }
+                                                }
                                             }
-                                            if (fechaFin <= fechaInicio) {
-                                                setValidFechas("isFalse");
-                                                allValid = false;
-                                            }
-                                            if (
-                                                fechaInicio === "" ||
-                                                fechaFin === ""
-                                            ) {
-                                                setValidFechas("isEmpty");
-                                                allValid = false;
-                                            }
+
                                             if (tareaEntregable.size === 0) {
                                                 console.log(tareaEntregable);
                                                 setValidEntregable(false);
                                                 allValid = false;
                                             }
-                                            if (
-                                                selectedSubteam === null &&
-                                                selectedUsers.length === 0
-                                            ) {
-                                                setValidAsigned(false);
-                                                allValid = false;
-                                            }
+                                            
                                             if (
                                                 selectedSubteam === null &&
                                                 selectedUsers.length !== 0

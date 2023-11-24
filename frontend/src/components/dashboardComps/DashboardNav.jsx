@@ -138,6 +138,10 @@ function DashboardNav({
             });
     };
 
+    useEffect(()=>{
+        console.log(JSON.stringify(notifications,null,2));
+    },[]);
+
     return (
         <nav className="DashboardNav bg-mainBackground">
             {/* <img
@@ -261,6 +265,7 @@ function DashboardNav({
                                                         campoAdicional={
                                                             notif.campoAdicional
                                                         }
+                                                        notifObj={notif}
                                                         handleDelete={() => {
                                                             handleDeleteNotification(
                                                                 notif.idNotificacion
