@@ -10,7 +10,10 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
+import ListAdditionalFields, {
+    getAdditionalFields,
+    registerAdditionalFields,
+} from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -135,10 +138,15 @@ export default function MatrizComunicacionesRegister(props) {
                 // Manejar errores si la solicitud POST falla
                 console.error("Error al realizar la solicitud POST:", error);
             });
-            registerAdditionalFields(listAdditionalFields, idMatrizComunicaciones, 6, 1, (response)=>{
-                console.log("response", response)
-                
-});
+        registerAdditionalFields(
+            listAdditionalFields,
+            idMatrizComunicaciones,
+            6,
+            1,
+            (response) => {
+                console.log("response", response);
+            }
+        );
     };
 
     return (
@@ -148,9 +156,11 @@ export default function MatrizComunicacionesRegister(props) {
                 Comunicaciones/ Registrar elemento
             </div>
             <div className="backlogRegisterMC">
+                {/*1*/}
                 <div className="titleBacklogRegisterMC dark:text-white">
                     Crear nueva información requerida
                 </div>
+                {/*2*/}
                 <div>
                     <Input
                         isClearable
@@ -171,6 +181,7 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
+                {/*3*/}
                 <div className="comboMC">
                     <div className="containerComboMC">
                         <IconLabel
@@ -271,6 +282,7 @@ export default function MatrizComunicacionesRegister(props) {
                         )}
                     </div>
                 </div>
+                {/*4*/}
                 <div>
                     <Textarea
                         label="Detalle de la información requerida"
@@ -290,6 +302,7 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
+                {/*5*/}
                 <div>
                     <Textarea
                         label="Grupo receptor"
@@ -308,14 +321,18 @@ export default function MatrizComunicacionesRegister(props) {
                         }
                     />
                 </div>
-                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
-                    Campos Adicionales
+                {/*6*/}
+                <div>
+                    <div className="flex items-center text-[16px] font-semibold">
+                        Campos Adicionales
+                    </div>
+                    <ListAdditionalFields
+                        editState={true}
+                        baseFields={listAdditionalFields}
+                        setBaseFields={setListAdditionalFields}
+                    />
                 </div>
-                <ListAdditionalFields 
-                    editState={true}
-                    baseFields={listAdditionalFields}
-                    setBaseFields={setListAdditionalFields}
-                />
+                {/*7*/}
                 <div className="containerBottomMC">
                     <div className="twoButtonsMC">
                         <div className="buttonContainerMC">
