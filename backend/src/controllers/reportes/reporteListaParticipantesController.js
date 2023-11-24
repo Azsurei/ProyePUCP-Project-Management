@@ -1,4 +1,8 @@
 
+const ExcelJS = require('exceljs');
+const path = require('path');
+const excelJSController = require("../xlxs/excelJSController");
+
 async function crearExcel(req,res,next){
     try {
         const {participantes} = req.body;
@@ -23,13 +27,15 @@ async function generarExcel(listaParcipantes, nombreArchivo) {
         const workbook = new ExcelJS.Workbook();
         const WSParticipantes = workbook.addWorksheet('Lista de parcipantes');
         let filaActual = 1;
+
+        
         for(const participante of listaParcipantes){
             filaActual = await agregarParticipanteAExcel(participante, WSParticipantes, filaActual);
         }
         const destinationFolder = path.join(__dirname, '../../tmp');
         const excelFilePath = path.join(destinationFolder, `${nombreArchivo}.xlsx`);
 
-        excelJSController.ajustarAnchoColumnas(WSComponentes);
+        excelJSController.ajustarAnchoColumnas(WSParticipantes);
         await workbook.xlsx.writeFile(excelFilePath);
         return workbook;
     }catch(error){
@@ -39,7 +45,7 @@ async function generarExcel(listaParcipantes, nombreArchivo) {
 
 async function agregarParticipanteAExcel(participante, WSParticipantes, filaActual){
     try {
-        WSParticipantes.getRow(filaActual).values = [participante.nombres,participante.apellidos,participante.correoElectronico,participante.nombreRol];
+        WSParticipantes.getRow(filaActual).values = [`${participante.nombres} + participante.apellidos`,participante.correoElectronico,participante.nombreRol];
         filaActual++;
 
     } catch (error) {
