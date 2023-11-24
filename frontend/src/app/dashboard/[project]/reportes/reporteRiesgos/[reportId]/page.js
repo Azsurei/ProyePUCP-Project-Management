@@ -81,7 +81,7 @@ export default function ReporteRiesgos(props) {
                 const stringURL =
                     process.env.NEXT_PUBLIC_BACKEND_URL +
                     "/api/proyecto/reporte/obtenerJSONReporteRiesgoXIdArchivo/" +
-                    idArchivo;
+                    reportID;
                 console.log("URL: ", stringURL);
                 const response = await axios.get(stringURL);
 

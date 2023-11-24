@@ -154,10 +154,24 @@ export default function ReportePresupuestos(props) {
 
               // Actualiza el estado 'data' con los datos recibidos
               // setJson(response.data.jsonData);
-              setPresupuestoReporte(response.data.presupuesto.general);
-              setLineasIngreso(response.data.presupuesto.lineasPresupuesto.lineasIngreso);
-              setLineasEgreso(response.data.presupuesto.lineasPresupuesto.lineasEgreso);
-              setLineasEstimacion(response.data.presupuesto.lineasPresupuesto.lineasEstimacionCosto);
+              // setPresupuestoReporte(response.data.presupuesto.general);
+              // setLineasIngreso(response.data.presupuesto.lineasPresupuesto.lineasIngreso);
+              // setLineasEgreso(response.data.presupuesto.lineasPresupuesto.lineasEgreso);
+              // setLineasEstimacion(response.data.presupuesto.lineasPresupuesto.lineasEstimacionCosto);
+              const {
+                presupuesto: {
+                  general,
+                  lineasPresupuesto: {
+                    lineasIngreso,
+                    lineasEgreso,
+                    lineasEstimacionCosto,
+                  },
+                },
+              } = response.data;
+              setPresupuestoReporte(general);
+              setLineasIngreso(lineasIngreso);
+              setLineasEgreso(lineasEgreso);
+              setLineasEstimacion(lineasEstimacionCosto);
               console.log(
                   `Datos obtenidos exitosamente:`,
                   response.data.jsonData
