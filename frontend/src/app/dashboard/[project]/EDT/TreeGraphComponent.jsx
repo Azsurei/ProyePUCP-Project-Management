@@ -365,7 +365,7 @@ const TreeGraphComponent = ({ projectName, data }) => {
                 <Tree
                     data={memoizedTreeData}
                     orientation="vertical"
-                    pathFunc="straight"
+                    pathFunc="step"
                     translate={{ x: treeTranslateX, y: 100 }} // Adjust tree position
                     scaleExtent={{ min: 0.1, max: 4 }}
                     zoom={zoomLevel}
