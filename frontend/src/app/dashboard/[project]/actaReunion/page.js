@@ -22,6 +22,7 @@ import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
 
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
@@ -41,7 +42,7 @@ export default function ActaReunion(props) {
                 const idActa = herramientasInfo.find(
                     (herramienta) => herramienta.idHerramienta === 11
                 ).idHerramientaCreada;
-                if(idActa === null) router.push("/404");
+                if (idActa === null) router.push("/404");
 
                 const resultado = await axios.get(
                     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarLineaActaReunionXIdActaReunion/${idActa}`
@@ -282,13 +283,34 @@ export default function ActaReunion(props) {
                 )
             } */}
             <div className="flex flex-col gap-2 mt-3">
-                {listaMock.map((meeting) => {
+                {reuniones.map((meeting) => {
                     return (
                         <div
                             key={meeting.idLineaActaReunion}
-                            className="border border-gray-300 p-4 rounded-md shadow-sm"
+                            className="border border-gray-300 p-4 rounded-md shadow-sm flex flex-row items-center"
                         >
-                            <p>{meeting.nombreReunion}</p>
+                            <div className="flex flex-col max-w-[50%]">
+                                <p className="font-semibold text-lg truncate">
+                                    {meeting.nombreReunion}
+                                </p>
+                                <p className="truncate">Motivo: {meeting.motivo}</p>
+                                <p className="truncate">
+                                    Convocada por:{" "}
+                                    {meeting.nombres + " " + meeting.apellidos}
+                                </p>
+                                <p className="truncate">Archivo: <span className="underline font-medium text-primary cursor-pointer">Nombre Test</span></p>
+                            </div>
+                            <div className="flex flex-row  gap-4 flex-1 justify-center">
+                                <div className="flex flex-col items-center">
+                                    <p className="font-semibold text-md">Fecha de reunion:</p>
+                                    <p>{meeting.fechaReunion === "0000-00-00" ? "Sin fecha registrada " : dbDateToDisplayDate(meeting.fechaReunion)}</p>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <p className="font-semibold text-md">Hora registrada:</p>
+                                    <p>{meeting.horaReunion === "00:00:00" ? "Sin hora registrada " : meeting.horaReunion}</p>
+                                </div>
+                            </div>
+                            <Button>Ver opciones</Button>
                         </div>
                     );
                 })}
