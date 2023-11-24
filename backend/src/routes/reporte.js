@@ -6,6 +6,7 @@ const reportePresupuestoController = require("../controllers/reportes/reportePre
 const reporteController = require("../controllers/reportes/reporteController");
 const reporteActaRiesgosController = require("../controllers/reportes/reporteActaRiesgosController");
 const reporteTareasController = require("../controllers/reportes/reporteTareasController");
+const reporteListaParcipiantesController = require("../controllers/reportes/reporteListaParticipantesController");
 //Reportes
 routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.listarReportesXIdProyecto);
 
@@ -15,6 +16,7 @@ routerReporte.post("/descargarExcelPresupuestoXIdArchivo",reportePresupuestoCont
 routerReporte.get("/obtenerJSONReportePresupuestoXIdArchivo/:idArchivo",reportePresupuestoController.obtenerJSON);
 routerReporte.post("/crearExcelCaja",reportePresupuestoController.crearExcelCaja);
 routerReporte.post("/crearExcelFlujoEstimacionCosto",reportePresupuestoController.crearExcelEstimacionCosto);
+
 //Reporte entregables
 routerReporte.post("/subirReporteEntregableJSON",reporteEntregablesController.subirJSON);
 routerReporte.post("/descargarExcelReporteEntregableXIdArchivo",reporteEntregablesController.descargarExcel);
@@ -31,5 +33,10 @@ routerReporte.post("/subirReporteTareasJSON",reporteTareasController.subirJSON);
 routerReporte.post("/descargarExcelReporteTareasXIdArchivo",reporteTareasController.descargarExcel);
 routerReporte.get("/obtenerJSONReporteTareasXIdArchivo/:idArchivo",reporteTareasController.obtenerJSON);
 routerReporte.post("/probarExcelTareas",reporteTareasController.probarExcelTareas);
+
+
+//Lista de participantes
+routerReporte.post("/crearExcelListaParticipantes",reporteListaParcipiantesController.crearExcel);
+
 
 module.exports.routerReporte = routerReporte;
