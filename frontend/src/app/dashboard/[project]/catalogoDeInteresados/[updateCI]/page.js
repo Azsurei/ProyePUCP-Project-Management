@@ -761,7 +761,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                 </div>
                 <div className="containerBottomCI">
                     {editMode === true && (
-                        <div className="twoButtonsCI">
+                        <div className="flex justify-end flex-1">
                             <div className="buttonContainerCI">
                                 <Modal
                                     nameButton="Descartar"
