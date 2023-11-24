@@ -556,6 +556,7 @@ function ReporteEntregables(props) {
             axios
                 .get(listURL)
                 .then(function (response) {
+                    console.log(" ====== json esta aqui ======");
                     console.log(response);
                     if(response.data.entregables){
                         //setListEntregables(response.data.entregables);
