@@ -19,6 +19,7 @@ import {
     Avatar,
     AvatarGroup,
     Tooltip,
+    useDisclosure,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
@@ -29,6 +30,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import MyDynamicTable from "@/components/DynamicTable";
 import PieChart from "@/components/PieChart";
 import BarGraphic from "@/components/BarGraphic";
+import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 axios.defaults.withCredentials = true;
 export default function ReporteRiesgos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
@@ -44,14 +46,21 @@ export default function ReporteRiesgos(props) {
     const [isNewReport, setIsNewReport] = useState(false);
     const [json, setJson] = useState(null);
      const [data, setData] = useState([]);
+     const [vistaReporte, setVistaReporte] = useState(false);
+     const {
+        isOpen: isModalSaveOpen,
+        onOpen: onModalSaveOpen,
+        onOpenChange: onModalSaveOpenChange,
+    } = useDisclosure();
+      
     useEffect(() => {
         setIsLoadingSmall(false);
         setIsClient(true);
     } , []);
-    const guardarReporte = async () => {
+    async function guardarReporte(reportName){
         const postData = {
           idProyecto: projectId,
-          nombre: projectName,
+          nombre: reportName,
           riesgos: data.map(({ planContigencia, planRespuesta, ...rest }) => rest),
 
       };
@@ -66,6 +75,7 @@ export default function ReporteRiesgos(props) {
               // Manejar la respuesta de la solicitud POST
               console.log("Respuesta del servidor:", response.data);
               console.log("Guardado del reporte correcto");
+              router.back();
               // Realizar acciones adicionales si es necesario
           })
           .catch((error) => {
@@ -92,6 +102,7 @@ export default function ReporteRiesgos(props) {
                     `Datos obtenidos exitosamente:`,
                     response.data.jsonData
                 );
+                setVistaReporte(true);
                 setIsLoadingSmall(false);
             } catch (error) {
                 console.error("Error al obtener datos:", error);
@@ -112,7 +123,9 @@ export default function ReporteRiesgos(props) {
             // Actualiza el estado 'data' con los datos recibidos
             // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
             setData(response.data.riesgos);
+            setVistaReporte(true);
             setIsLoadingSmall(false);
+            
             console.log(`Esta es la data:`, data);
             console.log(`Datos obtenidos exitosamente:`, response.data.riesgos);
           } catch (error) {
@@ -126,6 +139,7 @@ export default function ReporteRiesgos(props) {
     //     DataTable();
     // }, [projectId]);
     useEffect(() => {
+        let reporteValido = true;
         setIsLoadingSmall(true);
         if(reportID === "nuevoReporte"){
             DataTable();
@@ -134,7 +148,38 @@ export default function ReporteRiesgos(props) {
             sacarInformacionReporte();
             setIsNewReport(false);
         }
-        
+        if (!Array.isArray(data)) {
+            console.error("Data is not an array");
+            setVistaReporte(false);
+            reporteValido = false;
+            return;
+        }
+    
+        // Check if data is empty
+        if (data.length === 0) {
+            console.error("Hola");
+            setVistaReporte(false);
+            reporteValido = false;
+            console.log("Reporte invalido");
+            return;
+        }
+    
+        data.forEach((riesgo) => {
+            console.log("Probabilidad:", riesgo.nombreProbabilidad);
+            console.log("Impacto:", riesgo.nombreImpacto);
+    
+            if (riesgo.nombreProbabilidad === null && riesgo.nombreImpacto === null) {
+                console.log("Reporte invalido");
+                setVistaReporte(false);
+                reporteValido = false;
+                return;
+            }
+        });
+    
+        if (reporteValido) {
+            setVistaReporte(true);
+            console.log("Reporte valido");
+        }
         setIsClient(true);
     }, [projectId]);
     const onSearchChange = React.useCallback((value) => {
@@ -306,9 +351,11 @@ export default function ReporteRiesgos(props) {
       };
       
       data.forEach(linea => {
-        console.log(linea.nombreImpacto);
-        impactoCounts[linea.nombreImpacto]++;
-        console.log(impactoCounts);
+        if(vistaReporte) {
+            console.log(linea.nombreImpacto);
+            impactoCounts[linea.nombreImpacto]++;
+            console.log(impactoCounts);
+        }
       });
       
       const series = Object.values(impactoCounts);
@@ -356,10 +403,13 @@ export default function ReporteRiesgos(props) {
       // Iterate over the data and fill the arrays based on dates and probabilities
       data.forEach(item => {
         const dateIndex = uniqueDates.indexOf(item.fechaIdentificacion);
-        if (dateIndex !== -1) {
-          const probCategory = item.nombreProbabilidad;
-          categorizedData[probCategory][dateIndex]++;
+        if(item.nombreProbabilidad !== null) {
+            if (dateIndex !== -1) {
+                const probCategory = item.nombreProbabilidad;
+                categorizedData[probCategory][dateIndex]++;
+              }
         }
+
       });
       
       // Now you have categorizedData object containing arrays for each probability category
@@ -689,7 +739,7 @@ export default function ReporteRiesgos(props) {
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
     return (
         <>
-        {isClient && (
+        {vistaReporte && (
             <div className="divHistorialReportes">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
@@ -705,7 +755,7 @@ export default function ReporteRiesgos(props) {
                             Reporte de Riesgos
                     </div>
                         {isNewReport && (
-                                    <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
+                                    <Button color="warning" className="text-white" onClick={()=>onModalSaveOpen()}>
                                         Guardar reporte
                                     </Button>
                                 )}
@@ -763,7 +813,16 @@ export default function ReporteRiesgos(props) {
                 </div>
             </div>
         )}
-
+        <ModalSave
+                isOpen={isModalSaveOpen}
+                onOpenChange={onModalSaveOpenChange}
+                guardarReporte={async (name) => {
+                    return await guardarReporte(name);
+                }}
+            />
+                {!vistaReporte && (
+          <div>No hay reporte</div>
+        )}
         </>
     );
 };
