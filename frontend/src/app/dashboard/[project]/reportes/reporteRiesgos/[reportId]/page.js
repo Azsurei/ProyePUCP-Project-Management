@@ -32,6 +32,7 @@ import PieChart from "@/components/PieChart";
 import BarGraphic from "@/components/BarGraphic";
 import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 import { useRouter } from "next/navigation";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 export default function ReporteRiesgos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
