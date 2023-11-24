@@ -67,7 +67,7 @@ async function subirJSON(req, res, next) {
     try {
 
 
-        var tmpFilePath = generarPathRiesgos(riesgos,idProyecto);
+        var tmpFilePath = await generarPathRiesgos(riesgos,idProyecto);
         
         const file = fs.readFileSync(tmpFilePath);
         //let filename = `${idArchivo}.json`;
@@ -237,7 +237,7 @@ async function agregarResponsablesAExcel(responsables,WSRiesgos,filaActual){
 }
 
 
-function generarPathRiesgos(riesgos,idReporte){
+async function generarPathRiesgos(riesgos,idReporte){
     var tmpFilePath;
     try {
         tmpFilePath = `./tmp/riesgos-${idReporte}.json`;

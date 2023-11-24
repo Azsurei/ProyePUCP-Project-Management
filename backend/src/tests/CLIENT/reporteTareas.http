@@ -1,0 +1,568 @@
+###
+POST http://localhost:8080/api/proyecto/reporte/probarExcelTareas
+Content-Type: application/json
+
+{
+  "tareas": [
+    {
+      "idTarea": 418,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "asc",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-11T05:00:00.000Z",
+      "fechaFin": "2023-11-24T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 2,
+      "fechaUltimaModificacionEstado": "2023-11-22T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 80,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": []
+        },
+        {
+          "idUsuario": 93,
+          "nombres": "Diego Gustavo",
+          "apellidos": "Veramendi Malpartida",
+          "correoElectronico": "veramendi.diego@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJPVGYJZsx94AqeoVQXBVraWBlIpH3CHnmPRQ7nIooe9PA=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": [
+        {
+          "idTarea": 421,
+          "idEquipo": null,
+          "idPadre": 418,
+          "idTareaAnterior": null,
+          "sumillaTarea": "bgbg",
+          "descripcion": "bgbgbg",
+          "fechaInicio": "2023-11-22T05:00:00.000Z",
+          "fechaFin": "2023-11-29T05:00:00.000Z",
+          "cantSubTareas": 0,
+          "cantPosteriores": 0,
+          "horasPlaneadas": 0,
+          "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+          "idTareaEstado": 2,
+          "nombreTareaEstado": "En progreso",
+          "colorTareaEstado": "primary",
+          "esPosterior": 0,
+          "idEntregable": 83,
+          "porcentajeProgreso": 0,
+          "usuarios": [
+            {
+              "idUsuario": 132,
+              "nombres": "CHRISTIAN SEBASTIAN",
+              "apellidos": "CHIRA MALLQUI",
+              "correoElectronico": "s.chira@pucp.edu.pe",
+              "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJIe497b9iwVshhqsRLw5wG-D38RwfgS8xx0gyn0siNoE8=s96-c",
+              "progresoDeUsuario": []
+            }
+          ],
+          "equipo": null,
+          "progresos": [],
+          "tareasPosteriores": [],
+          "tareasHijas": []
+        }
+      ]
+    },
+    {
+      "idTarea": 419,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "aaaaaaaaaaaaaaaa",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-09T05:00:00.000Z",
+      "fechaFin": "2023-11-29T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-22T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 80,
+      "porcentajeProgreso": 43,
+      "usuarios": [
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": [
+            {
+              "idRegistroProgreso": 37,
+              "idTarea": 419,
+              "idUsuario": 95,
+              "descripcion": "progreso",
+              "porcentajeRegistrado": 43,
+              "fechaRegistro": "2023-11-23T05:00:00.000Z",
+              "horaRegistro": null,
+              "activo": 1,
+              "nombres": "RENZO GABRIEL",
+              "apellidos": "PINTO QUIROZ",
+              "correoElectronico": "a20201491@pucp.edu.pe",
+              "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c"
+            }
+          ]
+        },
+        {
+          "idUsuario": 93,
+          "nombres": "Diego Gustavo",
+          "apellidos": "Veramendi Malpartida",
+          "correoElectronico": "veramendi.diego@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJPVGYJZsx94AqeoVQXBVraWBlIpH3CHnmPRQ7nIooe9PA=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [
+        {
+          "idRegistroProgreso": 37,
+          "idTarea": 419,
+          "idUsuario": 95,
+          "descripcion": "progreso",
+          "porcentajeRegistrado": 43,
+          "fechaRegistro": "2023-11-23T05:00:00.000Z",
+          "horaRegistro": null,
+          "activo": 1,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c"
+        }
+      ],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 420,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "bbb",
+      "descripcion": "bbbb",
+      "fechaInicio": "2023-11-08T05:00:00.000Z",
+      "fechaFin": "2023-11-22T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-22T05:00:00.000Z",
+      "idTareaEstado": 3,
+      "nombreTareaEstado": "Atrasado",
+      "colorTareaEstado": "warning",
+      "esPosterior": 0,
+      "idEntregable": null,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 124,
+          "nombres": "GABRIEL OMAR",
+          "apellidos": "DURAN RUIZ",
+          "correoElectronico": "a20203371@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocITUYDksM0tCrocZRIRPugJ4Fbaob9nn4e7FuDcSlD4=s96-c",
+          "progresoDeUsuario": []
+        },
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 422,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "NOTIF VICTOR",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-17T05:00:00.000Z",
+      "fechaFin": "2023-11-25T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 80,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 106,
+          "nombres": "AUGUSTO VICTOR",
+          "apellidos": "TONG YANG",
+          "correoElectronico": "avtong@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLtn0bclifD_j7WYksh4aE1ggmgqiO6mE_PMbd5yUMO=s96-c",
+          "progresoDeUsuario": []
+        },
+        {
+          "idUsuario": 102,
+          "nombres": "DIEGO JAVIER KITAROU",
+          "apellidos": "IWASAKI MOREYRA",
+          "correoElectronico": "a20201540@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLYSPcY7AgM2lE2tTdbHWQaD0gMitigp0VlNDaw7sZ4lA=s96-c",
+          "progresoDeUsuario": []
+        },
+        {
+          "idUsuario": 101,
+          "nombres": "BRANDO LEONARDO",
+          "apellidos": "ROJAS ROMERO",
+          "correoElectronico": "a20191088@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJuYBGK6dYubtirEeG47L0vkWKWqNj0I4kiP3gBJRP5CjY=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 423,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "Prueba",
+      "descripcion": "aaa",
+      "fechaInicio": "2023-11-23T05:00:00.000Z",
+      "fechaFin": "2023-11-24T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 2,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 80,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 424,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "as",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-08T05:00:00.000Z",
+      "fechaFin": "2023-11-22T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 3,
+      "nombreTareaEstado": "Atrasado",
+      "colorTareaEstado": "warning",
+      "esPosterior": 0,
+      "idEntregable": 82,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 425,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "asc",
+      "descripcion": "sss",
+      "fechaInicio": "2023-11-17T05:00:00.000Z",
+      "fechaFin": "2023-11-29T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 82,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 106,
+          "nombres": "AUGUSTO VICTOR",
+          "apellidos": "TONG YANG",
+          "correoElectronico": "avtong@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLtn0bclifD_j7WYksh4aE1ggmgqiO6mE_PMbd5yUMO=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 426,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "aaa",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-10T05:00:00.000Z",
+      "fechaFin": "2023-11-22T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 3,
+      "nombreTareaEstado": "Atrasado",
+      "colorTareaEstado": "warning",
+      "esPosterior": 0,
+      "idEntregable": 82,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 102,
+          "nombres": "DIEGO JAVIER KITAROU",
+          "apellidos": "IWASAKI MOREYRA",
+          "correoElectronico": "a20201540@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLYSPcY7AgM2lE2tTdbHWQaD0gMitigp0VlNDaw7sZ4lA=s96-c",
+          "progresoDeUsuario": []
+        },
+        {
+          "idUsuario": 106,
+          "nombres": "AUGUSTO VICTOR",
+          "apellidos": "TONG YANG",
+          "correoElectronico": "avtong@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLtn0bclifD_j7WYksh4aE1ggmgqiO6mE_PMbd5yUMO=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 427,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "aaaa",
+      "descripcion": "aaa",
+      "fechaInicio": "2023-11-23T05:00:00.000Z",
+      "fechaFin": "2023-11-24T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 80,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 428,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "asccccc",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-16T05:00:00.000Z",
+      "fechaFin": "2023-11-30T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 82,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 106,
+          "nombres": "AUGUSTO VICTOR",
+          "apellidos": "TONG YANG",
+          "correoElectronico": "avtong@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLtn0bclifD_j7WYksh4aE1ggmgqiO6mE_PMbd5yUMO=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 429,
+      "idEquipo": null,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "prueba 123",
+      "descripcion": "aaa",
+      "fechaInicio": "2023-11-23T05:00:00.000Z",
+      "fechaFin": "2023-11-24T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 1,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 2,
+      "nombreTareaEstado": "En progreso",
+      "colorTareaEstado": "primary",
+      "esPosterior": 0,
+      "idEntregable": 81,
+      "porcentajeProgreso": 0,
+      "usuarios": [
+        {
+          "idUsuario": 95,
+          "nombres": "RENZO GABRIEL",
+          "apellidos": "PINTO QUIROZ",
+          "correoElectronico": "a20201491@pucp.edu.pe",
+          "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
+          "progresoDeUsuario": []
+        }
+      ],
+      "equipo": null,
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    },
+    {
+      "idTarea": 430,
+      "idEquipo": 129,
+      "idPadre": null,
+      "idTareaAnterior": null,
+      "sumillaTarea": "asc",
+      "descripcion": "asc",
+      "fechaInicio": "2023-11-10T05:00:00.000Z",
+      "fechaFin": "2023-11-23T05:00:00.000Z",
+      "cantSubTareas": 0,
+      "cantPosteriores": 0,
+      "horasPlaneadas": 0,
+      "fechaUltimaModificacionEstado": "2023-11-23T05:00:00.000Z",
+      "idTareaEstado": 3,
+      "nombreTareaEstado": "Atrasado",
+      "colorTareaEstado": "warning",
+      "esPosterior": 0,
+      "idEntregable": 82,
+      "porcentajeProgreso": 0,
+      "equipo": {
+        "idEquipo": 129,
+        "idProyecto": 244,
+        "nombre": "Los dibugods",
+        "fechaCreacion": "2023-11-21T05:00:00.000Z",
+        "activo": 1,
+        "participantes": [
+          {
+            "idUsuario": 134,
+            "nombres": "Diego",
+            "apellidos": "Veramendi Malpartida",
+            "correoElectronico": "v.dvm.dvm@gmail.com",
+            "activo": 1,
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocLDgSU5Bn-uSVGv5CrZtZZHcAVS-F05WlJ_Y5ZS_leGfH0=s96-c",
+            "idRolEquipo": 142,
+            "nombreRol": "Líder"
+          },
+          {
+            "idUsuario": 97,
+            "nombres": "BRUCE ANTHONY",
+            "apellidos": "ESTRADA MELGAREJO",
+            "correoElectronico": "a20203298@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJfDJJnt4CClfOWItoYOykKhkSPpobVB82pkxKw7MAIOQ=s96-c",
+            "idRolEquipo": 143,
+            "nombreRol": "Miembro"
+          },
+          {
+            "idUsuario": 124,
+            "nombres": "GABRIEL OMAR",
+            "apellidos": "DURAN RUIZ",
+            "correoElectronico": "a20203371@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocITUYDksM0tCrocZRIRPugJ4Fbaob9nn4e7FuDcSlD4=s96-c",
+            "idRolEquipo": 146,
+            "nombreRol": "Prueba"
+          },
+          {
+            "idUsuario": 132,
+            "nombres": "CHRISTIAN SEBASTIAN",
+            "apellidos": "CHIRA MALLQUI",
+            "correoElectronico": "s.chira@pucp.edu.pe",
+            "activo": 1,
+            "imgLink": "https://lh3.googleusercontent.com/a/ACg8ocJIe497b9iwVshhqsRLw5wG-D38RwfgS8xx0gyn0siNoE8=s96-c",
+            "idRolEquipo": 146,
+            "nombreRol": "Prueba"
+          }
+        ]
+      },
+      "usuarios": [],
+      "progresos": [],
+      "tareasPosteriores": [],
+      "tareasHijas": []
+    }
+  ]
+}
