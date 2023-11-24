@@ -5,6 +5,9 @@ const path = require('path');
 const Exceljs = require('exceljs');
 const excelJSController = require("../xlxs/excelJSController");
 const dateController = require("../dateController");
+const connection = require("../../config/db");
+
+
 const headerTitulo = {
     fill: {
         type: 'pattern',
