@@ -290,10 +290,24 @@ const repositorioDocumentos = (props) => {
             extensionFilter !== "all" &&
             Array.from(extensionFilter).length !== extensionOptions.length
         ) {
-            
-            filteredDocuments = filteredDocuments.filter((document) =>
-                Array.from(extensionFilter).includes(document.tipoArchivo)
-            );
+            if (Array.from(extensionFilter).includes("otros")) {
+                filteredDocuments = filteredDocuments.filter(
+                    (document) =>
+                        !extensionOptions
+                            .filter(
+                                (option) =>
+                                    !Array.from(extensionFilter).includes(
+                                        option.uid
+                                    )
+                            )
+                            .map((option) => option.uid)
+                            .includes(document.tipoArchivo)
+                );
+            } else {
+                filteredDocuments = filteredDocuments.filter((document) =>
+                    Array.from(extensionFilter).includes(document.tipoArchivo)
+                );
+            }
         }
 
         return filteredDocuments;
