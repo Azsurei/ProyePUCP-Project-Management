@@ -31,11 +31,13 @@ import MyDynamicTable from "@/components/DynamicTable";
 import PieChart from "@/components/PieChart";
 import BarGraphic from "@/components/BarGraphic";
 import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 export default function ReporteRiesgos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const router = useRouter();
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [filterValue, setFilterValue] = React.useState("");
     const [isClient, setIsClient] = useState(false);
