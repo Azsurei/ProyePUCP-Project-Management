@@ -93,7 +93,7 @@ function ListAdditionalFields({ editState, baseFields, setBaseFields }) {
     return (
         <div className="flex flex-col gap-2">
             {baseFields.length === 0 ? (
-                <div className="pt-6 flex justify-center text-[#b3b3b3] ">No ha creado campos adicionales</div>
+                <div className="pt-4 flex justify-center text-[#b3b3b3] ">No ha creado campos adicionales</div>
             ) : (
                 baseFields.map((field) => {
                     return (
@@ -167,8 +167,8 @@ function ListAdditionalFields({ editState, baseFields, setBaseFields }) {
     function handleAddNewField() {
         const newField = {
             idCampoAdicional: v4(), //esto genera random ids que son basicamente imposibles de replicar
-            titulo: "Titulo del campo ",
-            descripcion: "Descripcion detallada del campo ",
+            titulo: "Título del campo ",
+            descripcion: "Descripción detallada del campo ",
         };
         const tempList = [...baseFields, newField];
 

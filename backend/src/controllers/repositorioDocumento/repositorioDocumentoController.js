@@ -26,7 +26,8 @@ async function subirArchivo(req,res,next){
         Bucket: bucketName,
         Key: fileName,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype
+        ContentType: req.file.mimetype,
+        ContentDisposition: `attachment; filename="${req.file.originalname}"`
     }
     const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
     const query1 = `CALL INSERTAR_ARCHIVOS_REPOSITORIO(?,?,?,?);`;
@@ -76,14 +77,13 @@ async function eliminarArchivo(req,res,next){
     }
 }
 
-async function getArchivo(req,res,next){
+async function getArchivo(req, res, next) {
     const { idArchivo } = req.params;
     const query = `CALL OBTENER_ARCHIVO(?);`;
     try {
         const [results] = await connection.query(query, [idArchivo]);
         const file = results[0][0];
         console.log(file.nombreGenerado);
-        // Create a presigned URL for the file
         const command = getSignedUrl(
             s3,
             new GetObjectCommand({
@@ -93,6 +93,9 @@ async function getArchivo(req,res,next){
             { expiresIn: 3600 } // URL expiration time in seconds
         );
         const url = await command;
+        const nombreOriginal = file.nombreReal;
+        res.setHeader('Content-Disposition', `attachment; filename="${nombreOriginal}"`);
+        
         res.status(200).json({
             url,
             message: "Archivo obtenido"
@@ -101,6 +104,7 @@ async function getArchivo(req,res,next){
         console.error("Error generating signed URL:", error);
     }
 }
+
 
 
 async function eliminarXProyecto(idProyecto){

@@ -19,30 +19,41 @@ export default function ModalComponent({
     secondAction,
     textColor,
     verifyFunction,
-    closeSecondActionState=false
+    closeSecondActionState = false,
+    isLoading = false,
 }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const verifyFirst = () => {
-        if (typeof verifyFunction === 'function') {
+        if (typeof verifyFunction === "function") {
             if (verifyFunction()) {
                 onOpen();
             }
         } else {
             onOpen();
         }
-    }
+    };
 
     return (
         <>
             <Button onPress={verifyFirst} className={`${colorButton}`}>
                 {nameButton}
             </Button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                isDismissable={false}
+            >
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className={"flex flex-col gap-1 text-"+textColor+"-500"}>
+                            <ModalHeader
+                                className={
+                                    "flex flex-col gap-1 text-" +
+                                    textColor +
+                                    "-500"
+                                }
+                            >
                                 {textHeader}
                             </ModalHeader>
                             <ModalBody>
@@ -51,6 +62,7 @@ export default function ModalComponent({
                             <ModalFooter>
                                 {!oneButton && (
                                     <Button
+                                        isDisabled={isLoading}
                                         color="danger"
                                         variant="light"
                                         onPress={onClose}
@@ -59,10 +71,11 @@ export default function ModalComponent({
                                     </Button>
                                 )}
                                 <Button
+                                    isLoading={isLoading}
                                     className="bg-indigo-950 text-slate-50"
-                                    onPress={()=>{
-                                        secondAction();
-                                        if(closeSecondActionState){
+                                    onPress={async () => {
+                                        await secondAction();
+                                        if (closeSecondActionState) {
                                             onClose();
                                         }
                                     }}

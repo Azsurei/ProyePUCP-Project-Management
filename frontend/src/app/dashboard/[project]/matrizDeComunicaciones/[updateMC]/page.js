@@ -10,7 +10,10 @@ import ButtonIconLabel from "@/components/dashboardComps/projectComps/matrizComu
 import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import ModalUsersOne from "@/components/ModalUsersOne";
-import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
+import ListAdditionalFields, {
+    getAdditionalFields,
+    registerAdditionalFields,
+} from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -85,10 +88,15 @@ export default function MatrizComunicacionesUpdate(props) {
             //setIsLoading(false);
             setIsLoadingSmall(false);
         }
-        getAdditionalFields(idMatrizComunicaciones, 6, setListAdditionalFields, (response)=>{
-            console.log("response", response)
-            setIsLoadingSmall(false)
-            });
+        getAdditionalFields(
+            idMatrizComunicaciones,
+            6,
+            setListAdditionalFields,
+            (response) => {
+                console.log("response", response);
+                setIsLoadingSmall(false);
+            }
+        );
     }, [matrizComunicaciones]);
 
     useEffect(() => {
@@ -201,10 +209,15 @@ export default function MatrizComunicacionesUpdate(props) {
                 // Manejar errores si la solicitud PUT falla
                 console.error("Error al realizar la solicitud PUT:", error);
             });
-            registerAdditionalFields(listAdditionalFields, idMatrizComunicaciones, 6, 1, (response)=>{
-                console.log("response", response)
-                
-});
+        registerAdditionalFields(
+            listAdditionalFields,
+            idMatrizComunicaciones,
+            6,
+            1,
+            (response) => {
+                console.log("response", response);
+            }
+        );
     };
 
     return (
@@ -242,7 +255,7 @@ export default function MatrizComunicacionesUpdate(props) {
                 </div>
                 <div>
                     <Input
-                        isClearable
+                        {...(!editMode ? { isClearable: false } : {})}
                         label="Sumilla de la información requerida"
                         variant={editMode ? "bordered" : "flat"}
                         labelPlacement="outside"
@@ -410,14 +423,16 @@ export default function MatrizComunicacionesUpdate(props) {
                         {...(!editMode ? { isReadOnly: true } : {})}
                     />
                 </div>
-                <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
-                    Campos Adicionales
+                <div>
+                    <div className="flex items-center text-[16px] font-semibold mb-1">
+                        Campos Adicionales
+                    </div>
+                    <ListAdditionalFields
+                        editState={editMode}
+                        baseFields={listAdditionalFields}
+                        setBaseFields={setListAdditionalFields}
+                    />
                 </div>
-                <ListAdditionalFields 
-                    editState={editMode}
-                    baseFields={listAdditionalFields}
-                    setBaseFields={setListAdditionalFields}
-                />
                 <div className="containerBottomMC">
                     {editMode === true && (
                         <div className="twoButtonsMC">

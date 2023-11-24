@@ -10,7 +10,7 @@ function TasksGraphicView({ chartGeneralData }) {
         <div className="flex-1 flex flex-col relative">
             <div className="flex flex-row gap-3 items-center">
                 <p className="font-semibold text-2xl text-mainHeaders flex-none">
-                    Grafico de culminacion por sprints
+                    Grafico de estado de tareas
                 </p>
             </div>
 

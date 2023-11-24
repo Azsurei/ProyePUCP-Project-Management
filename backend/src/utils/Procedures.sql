@@ -3396,6 +3396,19 @@ BEGIN
     SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
 END$
 
+DROP PROCEDURE IF EXISTS INSERTAR_UN_CRITERIO_AUTOEVALUACION;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_UN_CRITERIO_AUTOEVALUACION(
+    IN _idUsuarioEvaluacion INT,
+    IN _criterio VARCHAR(500)
+)
+BEGIN
+	DECLARE _idCriterioEvaluacion INT;
+	INSERT INTO CriterioEvaluacion(idUsuarioEvaluacion,criterio,nota,activo) 
+    VALUES(_idUsuarioEvaluacion,_criterio,0,1);
+    SELECT _idUsuarioEvaluacion AS idUsuarioEvaluacion;
+END$
+
 DROP PROCEDURE IF EXISTS LISTAR_AUTOEVALUACION_X_USUARIO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_AUTOEVALUACION_X_USUARIO(
