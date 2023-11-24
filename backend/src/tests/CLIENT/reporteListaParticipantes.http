@@ -3,6 +3,7 @@ POST http://localhost:8080/api/proyecto/reporte/crearExcelListaParticipantes HTT
 Content-Type: application/json
 
 {
+
   "nombreEquipo": "When eres",
   "participantes": [
     {
