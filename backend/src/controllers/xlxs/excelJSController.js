@@ -17,6 +17,7 @@ async function agregaHeader(WS,filaActual,header,style,borderStyle){
 }
 
 function ajustarAnchoColumnas(WSRiesgos) {
+  if(WSRiesgos.columnCount > 0){
     WSRiesgos.columns.forEach(column => {
       let maxLength = 0;
       column.eachCell({ includeEmpty: true }, cell => {
@@ -28,6 +29,7 @@ function ajustarAnchoColumnas(WSRiesgos) {
       column.width = maxLength < 10 ? 10 : maxLength + 2; // Establece un mínimo y agrega un poco de espacio extra
     });
   }
+}
 
 module.exports = {
     agregaHeader,
