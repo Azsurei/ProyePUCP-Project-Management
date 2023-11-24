@@ -15,6 +15,7 @@ import {
     CardFooter,
     Chip,
     Divider,
+    useDisclosure,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import BarGraphic from "@/components/BarGraphic";
@@ -22,9 +23,12 @@ import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
 import { set } from "date-fns";
 import axios from "axios";
 import { id } from "date-fns/esm/locale";
+import { useRouter } from "next/navigation";
+import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 axios.defaults.withCredentials = true;
 export default function ReportePresupuestos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
+    const router = useRouter();
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -46,11 +50,16 @@ export default function ReportePresupuestos(props) {
     const reportID = props.params.reportId;
     const [isNewReport, setIsNewReport] = useState(false);
     const [json, setJson] = useState(null);
+    const {
+      isOpen: isModalSaveOpen,
+      onOpen: onModalSaveOpen,
+      onOpenChange: onModalSaveOpenChange,
+  } = useDisclosure();
     
-    const guardarReporte = async () => {
+  async function guardarReporte(reportName){
       const postData = {
         idProyecto: projectId,
-        nombre: projectName,
+        nombre: reportName,
         presupuesto:  {
           general: {
             idPresupuesto: idPresupuesto,
@@ -84,6 +93,7 @@ export default function ReportePresupuestos(props) {
             // Manejar la respuesta de la solicitud POST
             console.log("Respuesta del servidor:", response.data);
             console.log("Guardado del reporte correcto");
+            router.back();
             // Realizar acciones adicionales si es necesario
         })
         .catch((error) => {
@@ -176,6 +186,7 @@ export default function ReportePresupuestos(props) {
                   `Datos obtenidos exitosamente:`,
                   response.data.jsonData
               );
+              setVistaReporte(true);
               setIsLoadingSmall(false);
           } catch (error) {
               console.error("Error al obtener datos:", error);
@@ -295,7 +306,7 @@ export default function ReportePresupuestos(props) {
                                     Reporte de Presupuesto
                                 </div>
                                 {isNewReport && (
-                                    <Button color="warning" className="text-white" onClick={()=>guardarReporte()}>
+                                    <Button color="warning" className="text-white" onClick={()=>onModalSaveOpen()}>
                                         Guardar reporte
                                     </Button>
                                 )}
@@ -407,6 +418,13 @@ export default function ReportePresupuestos(props) {
                     </div>
                 </div>
         )}
+        <ModalSave
+                isOpen={isModalSaveOpen}
+                onOpenChange={onModalSaveOpenChange}
+                guardarReporte={async (name) => {
+                    return await guardarReporte(name);
+                }}
+            />
         {!vistaReporte && (
           <div>No hay reporte</div>
         )}
