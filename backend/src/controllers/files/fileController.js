@@ -23,7 +23,27 @@ const s3 = new S3Client({
     */
   })
 
-
+  async function subirArchivo(file){
+    const fileName = randomName();
+    const params={
+        Bucket: bucketName,
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        ContentDisposition: `attachment; filename="${file.originalname}"`
+    }
+    const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
+    try {
+        const command = new PutObjectCommand(params);
+        await s3.send(command);
+        const [results] = await connection.query(query, [fileName, file.originalname]);
+        const idArchivo = results[0][0].idArchivo;
+        console.log(`Archivo ${idArchivo} insertado`);
+        return idArchivo;
+    } catch (error) {
+        console.log(error);
+    }
+}
 async function postFile(req,res,next){
     console.log(req.file);
     const fileName = randomName();
@@ -171,6 +191,7 @@ async function descargarDesdeURL(url, rutaDestino) {
 }
 
 module.exports = {
+    subirArchivo,
     postFile,
     getFile,
     postArchivo,
