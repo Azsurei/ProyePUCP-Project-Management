@@ -25,6 +25,7 @@ import { Toaster, toast } from "sonner";
 import { AddIcon } from "@/components/equipoComps/AddIcon";
 import { Avatar, Progress } from "@nextui-org/react";
 import Link from "next/link";
+import { saveAs } from "file-saver";
 
 axios.defaults.withCredentials = true;
 
@@ -494,6 +495,72 @@ export default function Equipo(props) {
             });
     };
 
+    async function handlerExport() {
+        const simplifiedParticipants = selectedTeam.participantes.map(
+            (participante) => ({
+                nombres: participante.nombres,
+                apellidos: participante.apellidos,
+                correoElectronico: participante.correoElectronico,
+                nombreRol: participante.nombreRol,
+            })
+        );
+
+        //console.log("Objeto simplificado:", simplifiedParticipants);
+        //console.log("El selected team es:", selectedTeam.nombre);
+        //crear un nuebo objeto con el nombre del equipo y el simplifiedParticipants
+        const data = {
+            nombreEquipo: selectedTeam.nombre,
+            participantes: simplifiedParticipants,
+        };
+        const formattedData = JSON.stringify(data, null, 2);
+        //console.log("El data es:", formattedData);
+
+        try {
+            //setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/crearExcelListaParticipantes";
+
+            const response = await axios.post(
+                exportURL,
+                {
+                    participantes: simplifiedParticipants,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+            setTimeout(() => {
+                const today = new Date();
+
+                let day = today.getDate();
+                let month = today.getMonth() + 1;
+                let year = today.getFullYear();
+
+                day = day < 10 ? "0" + day : day;
+                month = month < 10 ? "0" + month : month;
+
+                // Create the formatted date string
+                let formattedDate = `${day}_${month}_${year}`;
+
+                const fileName =
+                    projectName.split(" ").join("") +
+                    "_" +
+                    formattedDate +
+                    ".xlsx";
+                console.log(fileName);
+                saveAs(response.data, fileName);
+                toast.success("Se exporto el Flujo de Caja con exito");
+            }, 500);
+        } catch (error) {
+            //setIsExportLoading(false);
+            toast.error(
+                "Error al exportar tu lista de participantes en el equipo"
+            );
+            console.log(error);
+        }
+    }
+
     return (
         <div className="containerTeamsPage">
             {screenState === 0 && (
@@ -688,12 +755,18 @@ export default function Equipo(props) {
                                                     setRolesOriginales(roles);
                                                     toast.success(
                                                         "Se ha modificado exitosamente",
-                                                        { position: "bottom-left" }
+                                                        {
+                                                            position:
+                                                                "bottom-left",
+                                                        }
                                                     );
                                                 } else {
                                                     toast.error(
                                                         "Solo puede haber máximo un líder",
-                                                        { position: "bottom-left" }
+                                                        {
+                                                            position:
+                                                                "bottom-left",
+                                                        }
                                                     );
                                                 }
                                             }}
@@ -728,15 +801,8 @@ export default function Equipo(props) {
                                             color="success"
                                             startContent={<ExportIcon />}
                                             className="text-white"
-                                            onPress={()=>{
-                                                const simplifiedParticipants = selectedTeam.participantes.map(participante => ({
-                                                    nombres: participante.nombres,
-                                                    apellidos: participante.apellidos,
-                                                    correoElectronico: participante.correoElectronico,
-                                                    nombreRol: participante.nombreRol,
-                                                }));
-                                            
-                                                console.log("Objeto simplificado:", simplifiedParticipants);
+                                            onPress={async () => {
+                                                await handlerExport();
                                             }}
                                         >
                                             Exportar

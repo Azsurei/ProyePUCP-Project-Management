@@ -49,7 +49,7 @@ import { set } from "date-fns";
 import { is } from "date-fns/locale";
 import { Today } from "@mui/icons-material";
 import { differenceInMonths } from 'date-fns';
-
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 export default function Historial(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -567,11 +567,18 @@ export default function Historial(props) {
 
                     <div className="buttonContainer">
 
-                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Flujo"}>
-                            <Button  color="primary" startContent={<AssessmentIcon />} className="btnAddIngreso">
-                                Flujo de Caja
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/FlujoProyectado"}>
+                            <Button  color="primary" startContent={<TimelineIcon />} className="btnFlujoPro">
+                                Flujo Proyectado
                             </Button>
                         </Link>
+
+                        <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Flujo"}>
+                            <Button  color="primary" startContent={<AssessmentIcon />} className="btnAddIngreso">
+                                Flujo Real
+                            </Button>
+                        </Link>
+
                         <Button  onPress={onModalFecha} color="primary" startContent={<TuneIcon />} className="btnFiltro">
                             Filtrar
                         </Button>

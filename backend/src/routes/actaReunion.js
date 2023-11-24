@@ -9,13 +9,17 @@ const lineaActaReunionController = require("../controllers/actaReunion/lineaActa
 const participantesXReunionController = require("../controllers/actaReunion/participanteXReunionController");
 const responsableAcuerdoController = require("../controllers/actaReunion/responsableAcuerdoController");
 
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({storage:storage});
+
 routerActaReunion.post("/crearActaReunion", verifyToken, actaReunionController.crear);
 routerActaReunion.get("/listarActaReunionXIdProyecto/:idProyecto", verifyToken, actaReunionController.listarXIdProyecto);
 routerActaReunion.delete("/eliminarActaReunion",verifyToken,actaReunionController.eliminar);
 routerActaReunion.delete("/eliminarActaReunionXProyecto",verifyToken,actaReunionController.eliminarXProyecto);
 
 // Linea Acta Reunion
-routerActaReunion.post("/crearLineaActaReunion",verifyToken,lineaActaReunionController.crear);
+routerActaReunion.post("/crearLineaActaReunion",upload.single('file'),verifyToken,lineaActaReunionController.crear);
 routerActaReunion.get("/listarLineaActaReunionXIdActaReunion/:idActaReunion",verifyToken,lineaActaReunionController.listarXIdActaReunion);
 routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion", verifyToken,lineaActaReunionController.listarXIdLineaActaReunion);
 routerActaReunion.put("/modificarLineaActaReunion",verifyToken,lineaActaReunionController.modificar);

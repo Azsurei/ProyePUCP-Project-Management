@@ -5,7 +5,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 
 import GeneralLoadingScreen from "@/components/GeneralLoadingScreen";
-import { SmallLoadingScreen } from "../../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -20,6 +20,7 @@ import {
     SelectItem,
     Tabs,
     Tab,
+    Textarea,
 } from "@nextui-org/react";
 
 import ModalUsersOne from "@/components/ModalUsersOne";
@@ -37,8 +38,28 @@ import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/I
 import FileDrop from "@/components/dashboardComps/projectComps/actaReunionComps/FileDrop";
 import { Toaster, toast } from "sonner";
 import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
+import { SearchIcon } from "public/icons/SearchIcon";
 
 axios.defaults.withCredentials = true;
+
+function DownloadIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+            />
+        </svg>
+    );
+}
 
 function EditableItem({
     item,
@@ -123,9 +144,9 @@ export default function crearActaReunion(props) {
     // Router. Helps you to move between pages
 
     const router = useRouter();
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const { sessionData } = useContext(SessionContext);
-    const { sendNotification } =
-        useContext(NotificationsContext);
+    const { sendNotification } = useContext(NotificationsContext);
 
     // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -309,25 +330,6 @@ export default function crearActaReunion(props) {
         idUsuarioRolProyecto: 0,
     });
 
-    useEffect(() => {
-        const stringURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/usuario/verInfoUsuario";
-
-        axios
-            .get(stringURL)
-            .then(function (response) {
-                const userData = response.data.usuario[0];
-                console.log(userData);
-                console.log("el nombre del usuario es ", userData.nombres);
-                console.log("el apellido del usuario es ", userData.apellidos);
-                setDatosUsuario(userData);
-
-                setIsLoading(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, []);
 
     // *********************************************************************************************
     // About Convenor and Metting Members
@@ -335,9 +337,9 @@ export default function crearActaReunion(props) {
     const [convocante, setConvocante] = useState(datosUsuario);
 
     // For convocante to have datosUsuario
-    useEffect(() => {
-        setConvocante(datosUsuario);
-    }, [datosUsuario]);
+    // useEffect(() => {
+    //     setConvocante(datosUsuario);
+    // }, [datosUsuario]);
 
     // Modal1: Choose convenor. Modal2: Choose participants
     const [modal1, setModal1] = useState(false);
@@ -387,36 +389,36 @@ export default function crearActaReunion(props) {
         console.log(newMembrsList);
     };
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [idActa, setidActa] = useState(null);
 
-    useEffect(() => {
-        setIsLoadingSmall(true);
-        const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
-        axios
-            .get(stringURL)
-            .then(
-                ({
-                    data: {
-                        data: { idActaReunion },
-                    },
-                }) => {
-                    console.log(
-                        "Listando ActasReunion. Respuesta del servidor:",
-                        idActaReunion
-                    );
-                    console.log(projectId);
-                    setidActa(idActaReunion);
-                }
-            )
-            .catch((error) => {
-                console.error("Error fetching meeting record ID:", error);
-            })
-            .finally(() => {
-                setIsLoadingSmall(false);
-            });
-    }, [setIsLoadingSmall, projectId]);
+    // useEffect(() => {
+    //     setIsLoadingSmall(true);
+    //     const stringURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/proyecto/actaReunion/listarActaReunionXIdProyecto/${projectId}`;
+    //     axios
+    //         .get(stringURL)
+    //         .then(
+    //             ({
+    //                 data: {
+    //                     data: { idActaReunion },
+    //                 },
+    //             }) => {
+    //                 console.log(
+    //                     "Listando ActasReunion. Respuesta del servidor:",
+    //                     idActaReunion
+    //                 );
+    //                 console.log(projectId);
+    //                 setidActa(idActaReunion);
+    //             }
+    //         )
+    //         .catch((error) => {
+    //             console.error("Error fetching meeting record ID:", error);
+    //         })
+    //         .finally(() => {
+    //             setIsLoadingSmall(false);
+    //         });
+    // }, [setIsLoadingSmall, projectId]);
 
     // *********************************************************************************************
     // Creating a Meeting Record Line
@@ -502,10 +504,17 @@ export default function crearActaReunion(props) {
                 console.log(response);
                 console.log("Conexion correcta");
                 const nuevoIdLineaAR = response.data.idLineaActaReunion;
-                for(const usuario of selectedMiembrosList){
-                    if(usuario.idUsuario !== sessionData.idUsuario){
-                        sendNotification(usuario.idUsuario,3,nuevoIdLineaAR,projectId);
-                        console.log("Mandando notificacion a " + usuario.idUsuario);
+                for (const usuario of selectedMiembrosList) {
+                    if (usuario.idUsuario !== sessionData.idUsuario) {
+                        sendNotification(
+                            usuario.idUsuario,
+                            3,
+                            nuevoIdLineaAR,
+                            projectId
+                        );
+                        console.log(
+                            "Mandando notificacion a " + usuario.idUsuario
+                        );
                     }
                 }
             })
@@ -517,12 +526,26 @@ export default function crearActaReunion(props) {
     const [tabSelected, setTabSelected] = useState("form");
     const [fileIsUploaded, setFileIsUploaded] = useState(false);
 
+    const [meetingName, setMeetingName] = useState("");
+    const [meetingDate, setMeetingDate] = useState("");
+    const [meetingTime, setMeetingTime] = useState("");
+    const [meetingMotive, setMeetingMotive] = useState("");
+    const [meetingConvocante, setMeetingConvocante] = useState([]);
+    const [meetingFile, setMeetingFile] = useState(null);
+
+    const [isModalConvocanteOpen, setIsModalConvocanteOpen] = useState(false);
+
+    const twTitle = "text-lg font-semibold text-mainHeaders  mb-1";
+
+    useEffect(()=>{
+        setIsLoadingSmall(false);
+    },[]);
+
     // *********************************************************************************************
     // Page
     // *********************************************************************************************
     return (
-        <div className="newMeetingArticle">
-            <Spacer y={4}></Spacer>
+        <div className="p-[2.5rem] min-h-full">
             <HeaderWithButtons
                 haveReturn={true}
                 haveAddNew={false}
@@ -550,7 +573,7 @@ export default function crearActaReunion(props) {
                 Crear Acta de Reunion
             </HeaderWithButtons>
 
-            <Tabs
+            {/* <Tabs
                 color={"primary"}
                 aria-label="Tabs colors"
                 radius="full"
@@ -563,9 +586,10 @@ export default function crearActaReunion(props) {
             >
                 <Tab key="form" title="Por formulario" />
                 <Tab key="file" title="Por archivo" />
-            </Tabs>
+            </Tabs> 
+            */}
 
-            {tabSelected === "form" && (
+            {/*tabSelected === "form" && (
                 <div>
                     <div className="body m-5 mt-5">
                         <div className="mainInfo">
@@ -697,7 +721,6 @@ export default function crearActaReunion(props) {
                                 </div>
                                 <div className="py-0 mt-0 ml-2">
                                     <p>Lista de Miembros</p>
-                                    {/**** Selector de Miembros ***** */}
                                     <div className="SelectedUsersContainer">
                                         <div
                                             className="containerToPopUpUsrSearch"
@@ -767,7 +790,7 @@ export default function crearActaReunion(props) {
                                             isExcludedUniqueUser={true}
                                         ></ModalUser>
                                     )}
-                                    {/* Fin del selector de miembros */}
+                                    
                                 </div>
                                 <div></div>
                             </div>
@@ -896,47 +919,176 @@ export default function crearActaReunion(props) {
                         </div>
                     </div>
                 </div>
-            )}
+            )*/}
 
-            {tabSelected === "file" && (
-                <div className="mt-3 px-2 flex flex-col gap-1">
-                    <p className="text-lg text-slate-500">
-                        Con esta opcion podras usar nuestra plantilla (o la
-                        tuya) para registrar tus actas de reunión
-                    </p>
-                    <FileDrop />
-                    <div className="twoButtons1">
-                        <div className="buttonContainer">
-                            <Modal
-                                nameButton="Guardar"
-                                textHeader="Registrar Acta de Reunión"
-                                textBody="¿Seguro que quiere registrar el Acta de Reunión?"
-                                colorButton="w-36 bg-blue-950 text-white font-semibold"
-                                oneButton={false}
-                                secondAction={() => {
-                                    resetConvocante();
-                                    createMeeting();
-                                    router.push(previousUrl);
-                                }}
-                                textColor="blue"
-                                verifyFunction={() => {
-                                    if (fileIsUploaded === true) {
-                                        return true;
-                                    } else {
-                                        toast.warning("Debe subir un archivo");
-                                    }
-                                }}
+            <div className="flex flex-col gap-4">
+                <p className="text-md text-slate-500 ">
+                    Con esta opcion podras usar nuestra plantilla (o la tuya)
+                    para registrar tus actas de reunión
+                </p>
+
+                <div className="flex flex-col gap-2">
+                    <div className="flex flex-col">
+                        <p className={twTitle}>Nombre de reunión</p>
+                        <Input
+                            variant="bordered"
+                            value={meetingName}
+                            onValueChange={setMeetingName}
+                            placeholder="Escribe aquí"
+                        />
+                    </div>
+                    <div className="flex flex-row gap-2">
+                        <div className="flex flex-col w-full">
+                            <p className={twTitle}>Fecha de reunion</p>
+                            <Input
+                                variant="bordered"
+                                type="date"
+                                value={meetingDate}
+                                onValueChange={setMeetingDate}
+                                placeholder="Escribe aquí"
+                            />
+                        </div>
+                        <div className="flex flex-col w-full">
+                            <p className={twTitle}>Hora planificada</p>
+                            <Input
+                                variant="bordered"
+                                type="time"
+                                value={meetingTime}
+                                onValueChange={setMeetingTime}
+                                placeholder="Escribe aquí"
                             />
                         </div>
                     </div>
+                    <div className="flex flex-col">
+                        <p className={twTitle}>Motivo</p>
+                        <Input
+                            variant="bordered"
+                            value={meetingMotive}
+                            onValueChange={setMeetingMotive}
+                            placeholder="Escribe aquí"
+                        />
+                    </div>
+                    <div className="flex flex-col  gap-2">
+                        <div className="flex flex-row items-center gap-2">
+                            <p className={twTitle}>Convocante</p>
+                            <Button
+                                color="primary"
+                                className="font-medium text-white py-0"
+                                endContent={<SearchIcon />}
+                                size="md"
+                                onPress={() => setIsModalConvocanteOpen(true)}
+                            >
+                                Buscar
+                            </Button>
+                        </div>
+                        {meetingConvocante.length === 0 ? (
+                            <div className="flex justify-start py-4 text-slate-400">
+                                Agrega un convocante
+                            </div>
+                        ) : (
+                            <CardSelectedUser
+                                isEditable={true}
+                                usuarioObject={meetingConvocante[0]}
+                                removeHandler={() => {
+                                    setMeetingConvocante([]);
+                                }}
+                            />
+                        )}
+                    </div>
                 </div>
+
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-row items-center gap-2">
+                        <p className={twTitle}>Archivo de reunión</p>
+                        <Button
+                            className="text-white font-medium"
+                            color="primary"
+                            startContent={<DownloadIcon />}
+                        >
+                            Descarga plantilla aqui
+                        </Button>
+                    </div>
+                    <FileDrop setFile={setMeetingFile} />
+                    <div className="flex justify-end mt-2">
+                        <Modal
+                            nameButton="Guardar"
+                            textHeader="Registrar Acta de Reunión"
+                            textBody="¿Seguro que quiere registrar el Acta de Reunión?"
+                            colorButton="w-36 bg-blue-950 text-white"
+                            oneButton={false}
+                            isLoading={isLoading}
+                            secondAction={async () => {
+                                console.log(meetingFile);
+                                await registerMeeting();
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                if (meetingFile !== null) {
+                                    return true;
+                                } else {
+                                    toast.warning("Debe subir un archivo");
+                                }
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {isModalConvocanteOpen && (
+                <ModalUsersOne
+                    idProyecto={projectId}
+                    listAllUsers={false}
+                    handlerModalClose={() => {
+                        setIsModalConvocanteOpen(false);
+                    }}
+                    handlerModalFinished={(user) => {
+                        setMeetingConvocante(user);
+                        setIsModalConvocanteOpen(false);
+                    }}
+                    excludedUsers={[]}
+                    excludedUniqueUser={[]}
+                    isExcludedUniqueUser={true}
+                />
             )}
-            <Toaster
-                position="bottom-left"
-                richColors
-                theme={"light"}
-                closeButton={true}
-            />
         </div>
     );
+
+    async function registerMeeting() {
+        try {
+            setIsLoading(true);
+            const file = new FormData();
+            file.append("file", meetingFile);
+            file.append("idActaReunion", herramientasInfo.find(herramienta => herramienta.idHerramienta === 11).idHerramientaCreada);
+            file.append("nombreReunion", meetingName === "" ? "Reunion sin nombre" : meetingName);
+            file.append("fechaReunion", meetingDate === "" ? null : meetingDate);
+            file.append("horaReunion", meetingTime === "" ? null : meetingTime);
+            file.append(
+                "idConvocante",
+                meetingConvocante.length !== 0
+                    ? meetingConvocante[0].idUsuario
+                    : 0
+            );
+            file.append("motivo", meetingMotive === "" ? "Sin motivo" : meetingMotive);
+            file.append("temas", []);
+            file.append("participantes", []);
+            file.append("comentarios", []);
+            const newURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/actaReunion/crearLineaActaReunion`;
+
+            await axios.post(newURL, file, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            console.log("se subio el archivo con exito");
+            toast.success("Se registró la reunión exitosamente");
+            setIsLoading(false);
+            router.push("/dashboard/" + projectName + "=" + projectId + "/actaReunion");
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al registrar reunión");
+        }
+    }
 }

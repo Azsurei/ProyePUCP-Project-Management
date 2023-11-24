@@ -154,6 +154,28 @@
     opacity: 0.8;
 }
 
+.btnFlujoPro{
+
+    border-radius: 10px;
+    background-color: #F0AE19;
+    border: #F0AE19 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 170px;
+    color: white;
+    margin-left: auto;
+
+
+}
+
+.btnFlujoPro:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+
+
 
 .btnEditarEstimacion{
     border-radius: 10px;
@@ -226,6 +248,23 @@
     opacity: 0.8;
 }
 
+.btnTablaEstimacion{
+    border-radius: 10px;
+    background-color: #1962F0;
+    border: #1962F0 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 167px;
+    color: white;
+    margin-left: auto;
+
+}
+
+.btnTablaEstimacion:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
 
 .divFiltroPresupuesto{
 

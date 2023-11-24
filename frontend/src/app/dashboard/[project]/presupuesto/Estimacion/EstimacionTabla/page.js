@@ -637,7 +637,7 @@ async function handlerExport() {
             <BreadcrumbsItem href="/dashboard" text="Proyectos" />
             <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
             <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId+"/Estimacion"}  text="Estimación"/>
-            <BreadcrumbsItem href="" text="Lista Estimación" />
+            <BreadcrumbsItem href="" text="Tabla Estimación" />
 
         </Breadcrumbs>
 
@@ -688,7 +688,7 @@ async function handlerExport() {
                 
             </div>
 
-            <div className="subtitlePresupuesto">Estimacion de Costos </div>
+            <div className="subtitlePresupuesto">Estimación de Costos </div>
             
         <TableContainer component={Paper} >
           <Table sx={{ minWidth: 700 }} aria-label="spanning table">
