@@ -154,7 +154,7 @@ export default function ListReport({ listReportes, handleViewReport }) {
                         key={report.idReporteXProyecto}
                         report={report}
                         onClick={() => {
-                            handleViewReport(report.idReporteXProyecto, report.fileId);
+                            handleViewReport(report.idReporteXProyecto, report.fileId, report.idHerramienta);
                         }}
                     ></ReporteCard>
                 );
