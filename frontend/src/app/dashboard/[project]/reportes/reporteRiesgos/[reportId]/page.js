@@ -39,6 +39,7 @@ export default function ReporteRiesgos(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const router = useRouter();
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const { sessionData } = useContext(SessionContext);
     const [filterValue, setFilterValue] = React.useState("");
     const [isClient, setIsClient] = useState(false);
     const {herramientasInfo} = useContext(HerramientasInfo);
@@ -64,7 +65,7 @@ export default function ReporteRiesgos(props) {
           idProyecto: projectId,
           nombre: reportName,
           riesgos: data.map(({ planContigencia, planRespuesta, ...rest }) => rest),
-
+          idUsuarioCreador: sessionData.idUsuario,
       };
       console.log("El postData es :", postData);
       axios

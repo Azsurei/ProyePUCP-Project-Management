@@ -32,6 +32,7 @@ export default function ReportePresupuestos(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const { sessionData } = useContext(SessionContext);
     const [filterValue, setFilterValue] = React.useState("");
     const [isClient, setIsClient] = useState(false);
     const {herramientasInfo} = useContext(HerramientasInfo);
@@ -80,6 +81,7 @@ export default function ReportePresupuestos(props) {
             lineasEstimacionCosto: lineasEstimacion,
           }
         },
+        idUsuarioCreador: sessionData.idUsuario,
        
     };
     console.log("El postData es :", postData);
