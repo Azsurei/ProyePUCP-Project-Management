@@ -834,7 +834,7 @@ export default function PlanDeCalidad(props) {
     };
 
     return (
-        <div className="flex-1 font-[Montserrat] flex flex-col w-full h-auto pl-8 pr-8 gap-4">
+        <div className="flex-1 font-[Montserrat] flex flex-col w-full h-auto pl-8 pr-8 gap-4 mb-5">
             <div className="flex items-center w-full pt-4">
                 <Breadcrumbs>
                     <BreadcrumbsItem
