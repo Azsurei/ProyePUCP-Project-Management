@@ -728,6 +728,16 @@ export default function Equipo(props) {
                                             color="success"
                                             startContent={<ExportIcon />}
                                             className="text-white"
+                                            onPress={()=>{
+                                                const simplifiedParticipants = selectedTeam.participantes.map(participante => ({
+                                                    nombres: participante.nombres,
+                                                    apellidos: participante.apellidos,
+                                                    correoElectronico: participante.correoElectronico,
+                                                    nombreRol: participante.nombreRol,
+                                                }));
+                                            
+                                                console.log("Objeto simplificado:", simplifiedParticipants);
+                                            }}
                                         >
                                             Exportar
                                         </Button>
