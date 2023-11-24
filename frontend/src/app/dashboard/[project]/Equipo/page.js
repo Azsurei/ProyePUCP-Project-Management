@@ -494,6 +494,48 @@ export default function Equipo(props) {
             });
     };
 
+    async function handlerExport() {
+        const simplifiedParticipants = selectedTeam.participantes.map(
+            (participante) => ({
+                nombres: participante.nombres,
+                apellidos: participante.apellidos,
+                correoElectronico: participante.correoElectronico,
+                nombreRol: participante.nombreRol,
+            })
+        );
+
+        //console.log("Objeto simplificado:", simplifiedParticipants);
+        //console.log("El selected team es:", selectedTeam.nombre);
+        //crear un nuebo objeto con el nombre del equipo y el simplifiedParticipants
+        const data = {
+            nombreEquipo: selectedTeam.nombre,
+            participantes: simplifiedParticipants,
+        };
+        const formattedData = JSON.stringify(data, null, 2);
+        //console.log("El data es:", formattedData);
+
+        try {
+            //setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/crearExcelListaParticipantes";
+
+            const response = await axios.post(
+                exportURL,
+                {
+                    participantes: simplifiedParticipants,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+        } catch (error) {
+            //setIsExportLoading(false);
+            toast.error("Error al exportar tu lista de participantes en el equipo");
+            console.log(error);
+        }
+    };
+
     return (
         <div className="containerTeamsPage">
             {screenState === 0 && (
@@ -688,12 +730,18 @@ export default function Equipo(props) {
                                                     setRolesOriginales(roles);
                                                     toast.success(
                                                         "Se ha modificado exitosamente",
-                                                        { position: "bottom-left" }
+                                                        {
+                                                            position:
+                                                                "bottom-left",
+                                                        }
                                                     );
                                                 } else {
                                                     toast.error(
                                                         "Solo puede haber máximo un líder",
-                                                        { position: "bottom-left" }
+                                                        {
+                                                            position:
+                                                                "bottom-left",
+                                                        }
                                                     );
                                                 }
                                             }}
@@ -728,15 +776,8 @@ export default function Equipo(props) {
                                             color="success"
                                             startContent={<ExportIcon />}
                                             className="text-white"
-                                            onPress={()=>{
-                                                const simplifiedParticipants = selectedTeam.participantes.map(participante => ({
-                                                    nombres: participante.nombres,
-                                                    apellidos: participante.apellidos,
-                                                    correoElectronico: participante.correoElectronico,
-                                                    nombreRol: participante.nombreRol,
-                                                }));
-                                            
-                                                console.log("Objeto simplificado:", simplifiedParticipants);
+                                            onPress={async () => {
+                                                await handlerExport();
                                             }}
                                         >
                                             Exportar
