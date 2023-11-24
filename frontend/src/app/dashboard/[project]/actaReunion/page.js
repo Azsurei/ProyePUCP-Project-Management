@@ -354,7 +354,7 @@ export default function ActaReunion(props) {
         return new Promise((resolve, reject) => {
             const downloadURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
-                `/api/files/getFile/` +
+                `/api/files/descargarArchivo/` +
                 idArchivo;
 
             axios
