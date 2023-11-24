@@ -7,7 +7,7 @@ import {
     Dropdown,
     DropdownItem,
     DropdownMenu,
-    DropdownTrigger, Modal, ModalBody,
+    DropdownTrigger, Input, Modal, ModalBody,
     ModalContent, ModalFooter, ModalHeader,
     useDisclosure,
 } from "@nextui-org/react";
@@ -15,18 +15,26 @@ import {ChevronRight, ChevronLeft, ZoomIn, ZoomOut} from 'react-feather';
 import {OpenMenuContext} from "@/components/dashboardComps/projectComps/EDTComps/EDTVisualization";
 import axios from "axios";
 
-// Define a list of colors for the nodes at different depths
+const cardStyle = {
+    backgroundColor: 'white',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    padding: '10px',
+    marginBottom: '10px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
 const levelColors = [
-    "#FFD700", // Gold
-    "#FF8C00", // DarkOrange
-    "#FF6347", // Tomato
-    "#FF4500", // OrangeRed
-    "#FF1493", // DeepPink
-    "#DB7093", // PaleVioletRed
-    "#B0C4DE", // LightSteelBlue
-    "#7B68EE", // MediumSlateBlue
-    "#6A5ACD", // SlateBlue
-    "#483D8B", // DarkSlateBlue
+    "#FF0000", // Bright Red
+    "#00FF00", // Lime Green
+    "#0000FF", // Bright Blue
+    "#FFD700", // Deep Yellow
+    "#FF69B4", // Hot Pink
+    "#4169E1", // Royal Blue
+    "#006400", // Dark Green
+    "#FFA500", // Orange
+    "#9400D3", // Dark Violet
+    "#00FFFF", // Cyan
 ];
 
 // This array will represent levels for the dropdown
@@ -34,7 +42,6 @@ const levelItems = levelColors.map((color, index) => ({
     label: `Nivel ${index + 1}`,
     value: index.toString(), // The value should be a string
 }));
-
 
 const defaultColor = "#20B2AA"; // LightSeaGreen for default
 
@@ -82,7 +89,6 @@ const TreeGraphComponent = ({ projectName, data }) => {
     const [selectedLevelColors, setSelectedLevelColors] = useState(levelColors);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
 
-    // Use useEffect to update the treeData when selectedLevelColors or data changes
     useEffect(() => {
         setTreeData(convertDataToTree(data, selectedLevelColors));
     }, [data, selectedLevelColors]);
@@ -101,8 +107,8 @@ const TreeGraphComponent = ({ projectName, data }) => {
 
         setSelectedLevelColors(newColors);
     };
-    const treeTranslateX = isControlsCollapsed ? 200 : 400; // Increase by 100px
-    const collapseButtonPositionX = '10px'; // Decrease by 100px
+    const treeTranslateX = isControlsCollapsed ? 200 : 400;
+    const collapseButtonPositionX = '10px';
 
     const toggleControls = () => {
         setIsControlsCollapsed(!isControlsCollapsed);
@@ -210,7 +216,6 @@ const TreeGraphComponent = ({ projectName, data }) => {
     };
 
     // Modal logic
-    const [modal, setModal] = useState(false);
     const [idAEliminar, setIdAEliminar] = useState(null);
     const [codAEliminar, setCodAEliminar] = useState(null);
 
@@ -235,7 +240,6 @@ const TreeGraphComponent = ({ projectName, data }) => {
             )
             .then(function (response) {
                 console.log(response);
-                //props.refreshComponentsEDT;
                 window.location.reload();
             })
             .catch(function (error) {
@@ -244,20 +248,61 @@ const TreeGraphComponent = ({ projectName, data }) => {
 
     };
 
+/*
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredNodes, setFilteredNodes] = useState([]);
+
+
+    const filterTreeData = (tree, query) => {
+
+        console.log(node);
+        const nodeMatchesQuery = (node) => node.nombre.toLowerCase().includes(query.toLowerCase());
+
+        let matches = [];
+
+        if (node.children) {
+            node.children = node.children
+                .map(child => {
+                    const result = filterTreeData(child, query);
+                    if (result) matches.push(...result);
+                    return result ? child : null;
+                })
+                .filter(child => child !== null);
+        }
+
+        if (nodeMatchesQuery(node)) {
+            matches.push(node);
+        }
+
+        return matches.length > 0 ? matches : null;
+    };
+
+    useEffect(() => {
+
+        let filteredMatches = [];
+        if (searchQuery) {
+            const results = filterTreeData(treeData, searchQuery);
+            if (results) filteredMatches = results;
+        }
+        setFilteredNodes(filteredMatches);
+
+        setTreeData(convertDataToTree(data, selectedLevelColors));
+    }, [searchQuery, data, selectedLevelColors]);
+*/
     return (
         <div id="treeWrapper" style={{
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
-            height: '100vh',
-            border: '2px solid #ccc', // Add a border to the main div
+            height: '80vh',
+            border: '2px solid #ccc',
             borderRadius: '8px',
             overflow: 'hidden',
             position: 'relative',
         }}>
 
             <div style={{
-                display: isControlsCollapsed ? 'none' : 'flex',
+                display: isControlsCollapsed ? 'flex' : 'none',
                 flexDirection: 'column',
                 borderRight: '2px solid #ccc',
                 padding: '10px',
@@ -265,35 +310,57 @@ const TreeGraphComponent = ({ projectName, data }) => {
                 transition: 'min-width 0.3s ease',
                 overflow: 'hidden',
             }}>
-                {!isControlsCollapsed && (
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center', // Center the child elements
-                        borderRight: '2px solid #ccc',
-                        padding: '10px',
-                        minWidth: '250px',
-                    }}>
-                        {/* Zoom controls */}
-                        <div className="zoom-controls" style={{
-                            display: 'flex',
-                            flexDirection: 'column', // Stack the buttons vertically
-                            alignItems: 'center', // Center the buttons horizontally
-                            marginBottom: '20px', // Space between zoom controls and color picker
-                        }}>
-                            <Button auto flat onClick={handleZoomIn}>
-                                <ZoomIn />
-                            </Button>
-                            <Button auto flat onClick={handleZoomOut}>
-                                <ZoomOut />
-                            </Button>
+                {/*
+                <Input
+                    label="Búsqueda"
+                    placeholder="Ingrese nombre del componente"
+                    value={searchQuery}
+                    onValueChange={setSearchQuery}
+                />
+
+                <div>
+                    {filteredNodes.map(node => (
+                        <div key={node.id} style={cardStyle} className="node-card">
+                            <p className="text-black ">{node.name}</p>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button>Ver opciones</Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    aria-label="droMenTareas"
+                                    onAction={(key) => {
+                                        if (key === "add") {
+                                            handlerGoToNew(nodeDatum.nextSon, nodeDatum.id);
+                                        }
+                                        if (key === "view") {
+                                            handleVerDetalle(nodeDatum.id);
+                                        }
+                                        if (key === "delete") {
+                                            mostrarModalConfirmacion(
+                                                nodeDatum.id,
+                                                nodeDatum.codigo
+                                            );
+                                        }
+                                    }}
+                                >
+                                    <DropdownItem key={"add"}>Agregar subcomponente</DropdownItem>
+                                    <DropdownItem key={"view"}>Ver detalle</DropdownItem>
+                                    <DropdownItem
+                                        key={"delete"}
+                                        color="danger"
+                                        className="text-danger"
+                                    >
+                                        Eliminar
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
-                    </div>
-                )}
+                    ))}
+                </div> */}
             </div>
             <div style={{ flexGrow: 1, overflow: 'auto', position: 'relative' }}>
                 {/* Toggle button */}
-                <Button
+                {/*<Button
                     auto
                     flat
                     onClick={toggleControls}
@@ -307,7 +374,7 @@ const TreeGraphComponent = ({ projectName, data }) => {
                 >
                     {isControlsCollapsed ? <ChevronRight size={28} /> : <ChevronLeft size={28} />}
                 </Button>
-
+                */}
                 <Tree
                     data={treeData}
                     orientation="vertical"
@@ -318,6 +385,28 @@ const TreeGraphComponent = ({ projectName, data }) => {
                     renderCustomNodeElement={renderCustomNodeElement}
                     collapsible={false}
                 />
+
+                <div className="zoom-controls" style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    zIndex: 10,
+                }}>
+                    <Button
+                        auto
+                        flat
+                        onClick={handleZoomIn}
+                        style={{ marginRight: '10px' }}
+                    >
+                        <ZoomIn />
+                    </Button>
+                    <Button auto flat onClick={handleZoomOut}>
+                        <ZoomOut />
+                    </Button>
+                </div>
             </div>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
