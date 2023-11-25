@@ -488,7 +488,7 @@ return (
             mesIndex <cantMeses
             ? MonedaPresupuesto === estimacion.idMoneda
               ? (parseFloat(estimacion.cantidadRecurso*estimacion.tarifaUnitaria).toFixed(2))
-              : (convertirTarifa(estimacion.tarifaUnitaria*estimacion.CantidadRecurso, estimacion.idMoneda).toFixed(2))
+              : (convertirTarifa(estimacion.tarifaUnitaria*estimacion.cantidadRecurso, estimacion.idMoneda).toFixed(2))
             : 0            
           }
         </TableCell>
