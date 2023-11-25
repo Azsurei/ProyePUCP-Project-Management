@@ -313,7 +313,7 @@ async function handlerExport() {
   try {
       const exportURL =
           process.env.NEXT_PUBLIC_BACKEND_URL +
-          "/api/proyecto/reporte/crearExcelCaja";
+          "/api/proyecto/reporte/crearExcelCajaEgresos";
 
       const response = await axios.post(
           exportURL,

@@ -272,9 +272,8 @@ function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
   const totalEgresosPorMes = Array.from({ length: mesesMostrados.length }, () => 0);
 
   lineaEgreso.forEach((egreso) => {
-    const fechaGasto = new Date(egreso.fechaRegistro);
-    const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
-    const montoReal = parseFloat(egreso.costoReal);
+      var i=0;
+      
 
     if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
       totalEgresosPorMes[mesReal - 1] += MonedaPresupuesto === egreso.idMoneda
@@ -314,14 +313,12 @@ async function handlerExport() {
   try {
       const exportURL =
           process.env.NEXT_PUBLIC_BACKEND_URL +
-          "/api/proyecto/reporte/crearExcelCaja";
+          "/api/proyecto/reporte/crearExcelCajaEstimacion";
 
       const response = await axios.post(
           exportURL,
           {
             idPresupuesto: presupuestoId,
-            fechaIni: new Date("1995-12-17T03:24:00"),
-            fechaFin: new Date("2040-12-17T03:24:00"),
           },
           {
               responseType: "blob", // Important for binary data
