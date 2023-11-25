@@ -466,6 +466,10 @@ const repositorioDocumentos = (props) => {
                             onChange={(e) => {
                                 const selectedFile = e.target.files[0];
                                 if (selectedFile) {
+                                    if(selectedFile.size > 52428800){
+                                        toast.error("El tamaño del archivo no puede ser mayor a 50 MB.");
+                                        return;
+                                    }
                                     const file = new FormData();
                                     file.append(
                                         "idRepositorioDocumentos",

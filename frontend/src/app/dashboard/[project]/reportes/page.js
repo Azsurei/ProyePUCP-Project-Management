@@ -265,8 +265,7 @@ export default function Reportes(props) {
                                             router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteRiesgos/" + fileId);
                                         }
                                         // router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
-                                    }
-                                    else{
+                                    } else{
                                         toast.error("Error al cargar reporte");
                                     }
                                 }}

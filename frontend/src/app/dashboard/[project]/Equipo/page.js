@@ -525,6 +525,7 @@ export default function Equipo(props) {
                 exportURL,
                 {
                     participantes: simplifiedParticipants,
+                    nombreEquipo: selectedTeam.nombre,
                 },
                 {
                     responseType: "blob", // Important for binary data

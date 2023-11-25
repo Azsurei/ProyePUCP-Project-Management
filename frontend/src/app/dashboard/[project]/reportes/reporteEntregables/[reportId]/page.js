@@ -559,7 +559,18 @@ function ReporteEntregables(props) {
                     console.log(" ====== json esta aqui ======");
                     console.log(response);
                     if(response.data.entregables){
-                        //setListEntregables(response.data.entregables);
+                        setListEntregables(response.data.entregables);
+                        setSelectedEntregable(
+                            response.data.entregables[0].idEntregable
+                        );
+                        setListTareas(response.data.entregables[0].tareasEntregable);
+                        getEntregableStatistics(response.data.entregables[0]);
+
+                        setEntregableName(response.data.entregables[0].nombre);
+                        setEntregableComponentName(response.data.entregables[0].ComponenteEDTNombre);
+                        setEntregableDescripcion(response.data.entregables[0].descripcion);
+                        setEntregableFechaInicio(response.data.entregables[0].fechaInicio);
+                        setEntregableFechaFin(response.data.entregables[0].fechaFin);
                     }
                 })
                 .catch(function (error) {
@@ -567,16 +578,16 @@ function ReporteEntregables(props) {
                     toast.error("Error de conexion al generar reporte");
                 });
 
-            setListEntregables(mockObj);
-            setSelectedEntregable(mockObj[0].idEntregable);
+            // setListEntregables(mockObj);
+            // setSelectedEntregable(mockObj[0].idEntregable);
 
-            setListTareas(mockObj[0].tareasEntregable);
-            getEntregableStatistics(mockObj[0]);
-            setEntregableName(mockObj[0].nombre);
-            setEntregableComponentName(mockObj[0].ComponenteEDTNombre);
-            setEntregableDescripcion(mockObj[0].descripcion);
-            setEntregableFechaInicio(mockObj[0].fechaInicio);
-            setEntregableFechaFin(mockObj[0].fechaFin);
+            // setListTareas(mockObj[0].tareasEntregable);
+            // getEntregableStatistics(mockObj[0]);
+            // setEntregableName(mockObj[0].nombre);
+            // setEntregableComponentName(mockObj[0].ComponenteEDTNombre);
+            // setEntregableDescripcion(mockObj[0].descripcion);
+            // setEntregableFechaInicio(mockObj[0].fechaInicio);
+            // setEntregableFechaFin(mockObj[0].fechaFin);
 
             setIsLoadingSmall(false);
         } else {
