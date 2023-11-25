@@ -37,6 +37,7 @@ import {
 import {ExportIcon} from "@/../public/icons/ExportIcon";
 import BuildIcon from '@mui/icons-material/Build';
 import { set } from "date-fns";
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export default function EstimacionTabla(props) {
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -391,6 +392,12 @@ return (
                 
                 <div className="buttonContainerEstimacionTabla">
 
+                    <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Flujo"}>
+                        <Button  color="primary" startContent={<AssessmentIcon />} className="btnAddIngreso">
+                            Flujo Real
+                        </Button>
+                    </Link>
+
                     <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                         <Button color="primary" startContent={<HistoryIcon />} className="btnEditarEstimacion">
                             Historial
@@ -481,7 +488,7 @@ return (
             mesIndex <cantMeses
             ? MonedaPresupuesto === estimacion.idMoneda
               ? (parseFloat(estimacion.cantidadRecurso*estimacion.tarifaUnitaria).toFixed(2))
-              : (convertirTarifa(estimacion.tarifaUnitaria, estimacion.idMoneda).toFixed(2))
+              : (convertirTarifa(estimacion.tarifaUnitaria*estimacion.CantidadRecurso, estimacion.idMoneda).toFixed(2))
             : 0            
           }
         </TableCell>

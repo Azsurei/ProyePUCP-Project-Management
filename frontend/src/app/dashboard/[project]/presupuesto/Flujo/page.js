@@ -17,6 +17,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import HistoryIcon from '@mui/icons-material/History';
 import { SmallLoadingScreen } from "../../layout";
 import { saveAs } from "file-saver";
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 import {
     Input,
@@ -362,7 +363,7 @@ return (
             <BreadcrumbsItem href="/dashboard" text="Proyectos" />
             <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId}  text={projectName}/>
             <BreadcrumbsItem href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}  text="Presupuesto"/>
-            <BreadcrumbsItem href="" text="Flujo" />
+            <BreadcrumbsItem href="" text="Flujo Real"/>
 
         </Breadcrumbs>
 
@@ -389,6 +390,12 @@ return (
 
                 
                 <div className="buttonContainerEstimacionTabla">
+
+                    <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/FlujoProyectado"}>
+                          <Button  color="primary" startContent={<TimelineIcon />} className="btnFlujoPro">
+                              Flujo Proyectado
+                          </Button>
+                    </Link>
 
                     <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                         <Button color="primary" startContent={<HistoryIcon />} className="btnEditarEstimacion">
