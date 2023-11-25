@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useContext, useEffect } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../layout";
+import { SessionContext } from "../../../layout";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -29,6 +30,8 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 
+import { ChangeIcon } from "@/../public/icons/Change";
+import { EyeIcon } from "@/../public/icons/Eye";
 import ModalNewTask from "@/components/dashboardComps/projectComps/kanbanComps/ModalNewTask";
 import ModalTaskView from "@/components/dashboardComps/projectComps/kanbanComps/ModalTaskView";
 
@@ -206,6 +209,7 @@ const insertTask = async (newTask) => {
 export default function SprintBacklog(props) {
     // Variables de proyecto global
     const router = useRouter();
+    const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
     idBacklog = herramientasInfo.find(
@@ -259,6 +263,7 @@ export default function SprintBacklog(props) {
     const [selectedSprint, setSelectedSprint] = useState(null);
     const [selectedTask, setSelectedTask] = useState(null);
     const [flagOpeningModal, setFlagOpeningModal] = useState(0); // [0, 1]
+    const [editingAccess, setEditingAccess] = useState(true); // [true, false]
 
     // Funciones principales
     const handleGet = async () => {
@@ -377,9 +382,14 @@ export default function SprintBacklog(props) {
             setStatusInterface("inactive");
         }
     }, [sprints]);
-
-    console.log(sprints);
-    console.log("IDs: ", idBacklog, idCronograma);
+    useEffect(() => {
+        if (sessionData) {
+            setEditingAccess(
+                sessionData.rolInProject === 3 // 3 === Miembro
+                || sessionData.rolInProject === 1 // 1 === Jefe de proyecto
+            );
+        }
+    }, [sessionData]);
 
     // Componente
     return (
@@ -520,6 +530,7 @@ export default function SprintBacklog(props) {
                                 setFlagOpeningModal(1);
                                 onModalTaskCreateOpen();
                             }}
+                            isDisabled={editingAccess === false}
                         >
                             Crear Tarea
                         </Button>
@@ -527,6 +538,7 @@ export default function SprintBacklog(props) {
                             radius="sm"
                             className="bg-[#172B4D] text-white text-md"
                             onPress={onModalCreateOpen}
+                            isDisabled={editingAccess === false}
                         >
                             Crear Sprint
                         </Button>
@@ -577,22 +589,20 @@ export default function SprintBacklog(props) {
                                                         }
                                                         onModalEditOpen();
                                                     }}
+                                                    isDisabled={editingAccess === false}
                                                 >
                                                     Editar Sprint
                                                 </Button>
                                                 <Button
                                                     radius="sm"
                                                     className="roboto bg-[#172B4D] text-white text-md"
-                                                    isDisabled={
-                                                        statusInterface ===
-                                                        "active"
-                                                    }
                                                     onPress={() => {
                                                         setIdSelectedSprint(
                                                             sprint.idSprint
                                                         );
                                                         onModalInitOpen();
                                                     }}
+                                                    isDisabled={editingAccess === false}
                                                 >
                                                     Iniciar Sprint
                                                 </Button>
@@ -645,6 +655,7 @@ export default function SprintBacklog(props) {
                                     key={sprint.id}
                                     aria-label={sprint.nombre}
                                     title={sprint.nombre}
+                                    subtitle={`Pila de tareas sin sprints asignados. Las tareas inicialmente creadas se inicializarán aquí.`}
                                     className="montserrat font-semibold p-1"
                                 >
                                     <div className="flex flex-col gap-4 px-10 mb-4 items-center">
@@ -734,6 +745,7 @@ export default function SprintBacklog(props) {
                                                         }
                                                         onModalEditOpen();
                                                     }}
+                                                    isDisabled={editingAccess === false}
                                                 >
                                                     Editar Sprint
                                                 </Button>
@@ -872,11 +884,7 @@ function CardTask(props) {
                         onModalTaskViewOpen();
                     }}
                 >
-                    <img
-                        src="/icons/eye.svg"
-                        alt="Ver tarea"
-                        className="w-4/6 h-4/6"
-                    />
+                    <EyeIcon className="w-4/6 h-4/6" />
                 </Button>
                 {sprints && (
                     <DropdownTask
@@ -892,8 +900,19 @@ function CardTask(props) {
 }
 function DropdownTask(props) {
     const { idTarea, idSprintActual, sprints, changeSprint } = props;
+    const { sessionData } = useContext(SessionContext);
+    const [editingAccess, setEditingAccess] = useState(true); // [true, false]
     const unfinishedSprints = sprints.filter((sprint) => sprint.estado !== 3);
 
+    useEffect(() => {
+        if (sessionData) {
+            setEditingAccess(
+                sessionData.rolInProject === 3 // 3 === Miembro
+                || sessionData.rolInProject === 1 // 1 === Jefe de proyecto
+            );
+        }
+    }, [sessionData]);
+    
     return (
         <div className="relative flex justify-end items-center gap-2">
             <Dropdown
@@ -901,12 +920,12 @@ function DropdownTask(props) {
                 className="bg-background border-1 border-default-200"
             >
                 <DropdownTrigger>
-                    <Button isIconOnly variant="light">
-                        <img
-                            src="/icons/changeSprint.svg"
-                            alt="Alternar de Sprint"
-                            className="w-4/6 h-4/6"
-                        />
+                    <Button 
+                        isIconOnly 
+                        variant="light"
+                        isDisabled={editingAccess === false}
+                    >
+                        <ChangeIcon className="w-3/6 h-3/6" />
                     </Button>
                 </DropdownTrigger>
                 <DropdownMenu disabledKeys={[idSprintActual.toString()]}>
