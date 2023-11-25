@@ -14,7 +14,8 @@ routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.li
 routerReporte.post("/subirReportePresupuestoJSON", reportePresupuestoController.subirJSON);
 routerReporte.post("/descargarExcelPresupuestoXIdArchivo",reportePresupuestoController.descargarExcel);
 routerReporte.get("/obtenerJSONReportePresupuestoXIdArchivo/:idArchivo",reportePresupuestoController.obtenerJSON);
-routerReporte.post("/crearExcelCaja",reportePresupuestoController.crearExcelCaja);
+routerReporte.post("/crearExcelCajaEgresos",reportePresupuestoController.crearExcelCajaEgresos);
+routerReporte.post("/crearExcelCajaEstimacion",reportePresupuestoController.crearExcelCajaEstimacion);
 routerReporte.post("/crearExcelFlujoEstimacionCosto",reportePresupuestoController.crearExcelEstimacionCosto);
 
 //Reporte entregables

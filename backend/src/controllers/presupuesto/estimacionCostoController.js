@@ -121,6 +121,34 @@ async function funcListarLineasFlujoCajaXIdPresupuesto(idPresupuesto,fechaIni,fe
         console.log(error);
     }
 }
+
+async function ordenarLineasEstimacionCosto(lineasEstimacion,mesActual,mesesMostrados,idMoneda,monedas){
+    try {
+        const matrizEstimacion = lineasEstimacion.map(estimacion => [estimacion.descripcion].concat(new Array(mesesMostrados).fill(0)));
+        lineasEstimacion.forEach((estimacion, indexEstimacion) => {
+            const fechaGasto = new Date(estimacion.fechaInicio);
+            const mesGasto = fechaGasto.getUTCMonth() + 1;
+            const mesRelativo = mesGasto - mesActual;
+
+            // Asegúrate de ajustar el índice para los meses, ya que el primer elemento es la descripción
+            if (mesRelativo >= 0 && mesRelativo < mesesMostrados) {
+                let monto = estimacion.tarifaUnitaria*estimacion.cantidadRecurso;
+                if(estimacion.idMoneda != idMoneda){
+                    const cambioMoneda = monedas[estimacion.idMoneda-1].tipoCambio;
+                    monto = monto * cambioMoneda;
+                }
+                for (let i = 0; i < estimacion.tiempoRequerido; i++) {
+                    if (mesRelativo + i < mesesMostrados) {
+                        matrizEstimacion[indexEstimacion][mesRelativo + 1 + i] += parseFloat(monto);
+                    }
+                }            }
+        });
+        return matrizEstimacion;
+    } catch (error) {
+        console.log(error);   
+    }
+}
+
 module.exports = {
     crear,
     crearLineaEstimacionCosto,
@@ -129,5 +157,6 @@ module.exports = {
     listarLineasXIdPresupuesto,
     eliminarLineaEstimacionCosto,
     funcListarLineasXIdPresupuesto,
-    funcListarLineasFlujoCajaXIdPresupuesto
+    funcListarLineasFlujoCajaXIdPresupuesto,
+    ordenarLineasEstimacionCosto
 };

@@ -78,7 +78,7 @@ async function funcListarXIdPresupuesto(idPresupuesto){
     return presupuesto;
 }
 
-async function obtenerPresupuestoFlujoCaja(idPresupuesto,fechaIni,fechaFin){
+async function obtenerPresupuestoFlujoCajaEgreso(idPresupuesto,fechaIni,fechaFin){
     try {
         const general = await funcListarXIdPresupuesto(idPresupuesto);
         
@@ -222,7 +222,7 @@ module.exports = {
     funcListarXIdPresupuesto,
     listarLineasIngresoYEgresoXIdPresupuesto,
     obtenerPresupuesto,
-    obtenerPresupuestoFlujoCaja,
+    obtenerPresupuestoFlujoCajaEgreso,
     eliminar,
     eliminarXProyecto
 };
