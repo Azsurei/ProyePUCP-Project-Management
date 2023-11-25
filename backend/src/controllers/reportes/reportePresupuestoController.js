@@ -296,11 +296,11 @@ function generarPathPresupuesto(presupuesto,idReporte){
 
 
 
-async function crearExcelCaja(req,res,next){
+async function crearExcelCajaEgresos(req,res,next){
     const {idPresupuesto,fechaIni,fechaFin} = req.body;
     const destinationFolder = path.join(__dirname, '../../tmp');
     try {
-        const presupuesto = await presupuestoController.obtenerPresupuestoFlujoCaja(idPresupuesto,fechaIni,fechaFin);
+        const presupuesto = await presupuestoController.obtenerPresupuestoFlujoCajaEgreso(idPresupuesto,fechaIni,fechaFin);
         
         const fechaCreacion = new Date(presupuesto.general.fechaCreacion);
         const mesActual = fechaCreacion.getUTCMonth() + 1;
@@ -309,7 +309,7 @@ async function crearExcelCaja(req,res,next){
         const lineasEgresoOrdenadas = await egresoController.ordenarLineasEgreso(presupuesto.lineasEgreso,mesActual,presupuesto.general.cantidadMeses,presupuesto.general.idMoneda,monedas);
         const mesesMostrados = meses.slice(mesActual - 1, mesActual - 1 + presupuesto.general.cantMeses);
         
-        workbook = await funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas);
+        workbook = await funcCrearExcelCajaEgresos(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=' + `tareas.xlsx`);
         await workbook.xlsx.writeFile(path.join(destinationFolder, `ExcelCaja.xlsx`));
@@ -322,7 +322,7 @@ async function crearExcelCaja(req,res,next){
 }
 
 
-async function funcCrearExcelCaja(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas){
+async function funcCrearExcelCajaEgresos(presupuesto,lineasEgresoOrdenadas,lineasIngresoOrdenadas){
     try {
         let filaActual=1;
         const workbook = new Exceljs.Workbook();
@@ -579,10 +579,108 @@ async function agregarResumenEstimacionCostoAExcel(general,WSEstimaciones,filaAc
     return filaActual;
 }
 
+async function crearExcelCajaEstimacion(req,res,next){
+    try {
+        const {idPresupuesto} = req.body;
+        const destinationFolder = path.join(__dirname, '../../tmp');
+        const general = await presupuestoController.funcListarXIdPresupuesto(idPresupuesto);
+        const lineasIngreso = await ingresoController.funcListarLineasXIdPresupuesto(idPresupuesto);
+        const lineasEstimacionCosto = await estimacionCostoController.funcListarLineasXIdPresupuesto(idPresupuesto);
+        const fechaCreacion = new Date(general.fechaCreacion);
+        const mesActual = fechaCreacion.getUTCMonth() + 1;
+        const monedas = await monedaController.funcListarTodas();
+        const lineasIngresoOrdenadas = await ingresoController.ordenarLineasIngreso(lineasIngreso,mesActual,general.cantidadMeses,general.idMoneda,monedas);
+        const lineasEstimacionCostoOrdenadas = await estimacionCostoController.ordenarLineasEstimacionCosto(lineasEstimacionCosto,mesActual,general.cantidadMeses,general.idMoneda,monedas);
+    
+        workbook = await funcCrearExcelCajaEstimacion(general,lineasIngresoOrdenadas,lineasEstimacionCostoOrdenadas);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + `ExcelCajaEstimacion.xlsx`);
+        await workbook.xlsx.writeFile(path.join(destinationFolder, `ExcelCajaEstimacion.xlsx`));
+        // Enviar el archivo
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function funcCrearExcelCajaEstimacion(general,lineasIngresoOrdenadas,lineasEstimacionCostoOrdenadas){
+    try{
+        let filaActual=1;
+        const workbook = new Exceljs.Workbook();
+        const WSCaja = workbook.addWorksheet('Caja Estimacion de Costos');
+        let totalIngresos = 0;
+        let totalEstimacion = 0;
+        console.log(lineasEstimacionCostoOrdenadas);
+        filaActual = await agregarHeaderMeses(WSCaja,filaActual,general.cantidadMeses);
+        // Imprimir Ingresos
+        [filaActual, totalIngresos] = await agregarIngresosAExcelCaja(lineasIngresoOrdenadas,WSCaja,filaActual,general.cantidadMeses);
+        [filaActual, totalEstimacion] = await agregarEstimacionesAExcelCaja(lineasEstimacionCostoOrdenadas,WSCaja,filaActual,general.cantidadMeses);
+    
+        let resultados = new Array(general.cantidadMeses+1).fill(0);
+        resultados[0] = "Acumulado";
+        for(let i=1;i<=general.cantidadMeses;i++){
+            resultados[i] = totalIngresos[i-1]-totalEstimacion[i-1];
+        }
+        WSCaja.getRow(filaActual).values = resultados;
+        const fila = WSCaja.getRow(filaActual);
+        let cantidadMeses = general.cantidadMeses;
+        cantidadMeses++;
+        for (let col = 2; col <= cantidadMeses; col++) {
+            fila.getCell(col).style = {...headerTitulo, border: borderStyle};
+        }
+        filaActual++;
+
+        excelJSController.ajustarAnchoColumnas(WSCaja);
+        return workbook;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function agregarEstimacionesAExcelCaja(lineasEstimacionCostoOrdenadas, WSCaja, filaActual,cantidadMeses) {
+    try {
+
+        let i = 0;
+        let sumasPorMes = new Array(cantidadMeses).fill(0); // Inicializa el array para las sumas por mes
+
+        WSCaja.getRow(filaActual).values = ["Estimacion (*)"];
+        filaActual++;
+        console.log(lineasEstimacionCostoOrdenadas);
+        for(const lineaMes of lineasEstimacionCostoOrdenadas){
+            let filaArray = lineaMes;
+            WSCaja.getRow(filaActual).values = filaArray;
+
+            // Sumar los ingresos de cada mes a sumasPorMes
+            lineaMes.forEach((subtotal, mesIndex) => {
+                if(mesIndex!=0){
+                    sumasPorMes[mesIndex-1] += subtotal;
+                }
+            });
+            i++;
+            filaActual++;
+        }
+
+        WSCaja.getRow(filaActual).values = ["Total Estimaciones", ...sumasPorMes];
+        const fila = WSCaja.getRow(filaActual);
+        cantidadMeses++;
+        for (let col = 2; col <= cantidadMeses; col++) {
+            fila.getCell(col).style = {...headerTitulo, border: borderStyle};
+        }
+        filaActual++;
+
+        return [filaActual, sumasPorMes];
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+
 module.exports = {
     subirJSON,
     descargarExcel,
     obtenerJSON,
-    crearExcelCaja,
+    crearExcelCajaEgresos,
+    crearExcelCajaEstimacion,
     crearExcelEstimacionCosto
 }
