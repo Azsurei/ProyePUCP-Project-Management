@@ -222,10 +222,10 @@ function ModalNewTask({
                                 cantPosteriores: 0,
                                 horasPlaneadas: taskHorasAsignadas,
                                 usuarios: taskUsers, //veriifcar posible error
-                                subTareas: null,
-                                tareasPosteriores: null,
+                                tareasPosteriores: [],
                                 idEntregable: parseInt(taskEntregable[0], 10),
                                 idColumnaKanban: currentColumn,
+                                dependencias: []
                             };
 
                             insertTask(objTareaNueva);

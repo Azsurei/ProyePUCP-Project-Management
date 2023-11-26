@@ -20,6 +20,7 @@ async function crear(req, res, next) {
         tareasPosteriores,
         idEntregable,
         idColumnaKanban,
+        dependencias
     } = req.body;
 
     try {
@@ -46,7 +47,14 @@ async function crear(req, res, next) {
             idTarea
         );
 
-        await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
+        //await insertarTareasPosteriores(tareasPosteriores, idTarea, req.body);
+
+        const query2 = "CALL INSERTAR_TAREA_DEPENDENCIA(?,?);"
+        for(const tarea of dependencias){
+            const [results] = await connection.query(query2, [idTarea, tarea.idTarea]);
+            console.log(`Depdendencia de tarea ${idTarea} en tarea ${tarea.idTarea} creada`);
+        }
+
         console.log(`Tarea ${idTarea} creada`);
         res.status(200).json({ 
             idTarea: idTarea,
@@ -324,11 +332,17 @@ async function listarXIdProyecto(req, res, next) {
             const [fields] = await connection.query(queryC, [tarea.idTarea, 4]);
 
             tarea.camposAdicionales = fields[0];
+
+            const queryD = "CALL LISTAR_DEPENDENCIAS_TAREA_X_ID_TAREA(?);"
+            const [dependencias] = await connection.query(queryD, [tarea.idTarea]);
+            tarea.dependencias = dependencias[0];
+
+            tarea.tareasPosteriores = [];
         }
 
 
-        const tareasConPosteriores = await repositionPosteriores(tareas);
-        const tareasOrdenadas = await structureData(tareasConPosteriores);
+        //const tareasConPosteriores = await repositionPosteriores(tareas);
+        const tareasOrdenadas = await structureData(tareas);
         res.status(200).json({
             tareasOrdenadas,
             message: "Tareas listadas correctamente",
@@ -646,6 +660,59 @@ async function listarXIdProyectoConProgresos(req, res, next) {
     }
 }
 
+
+async function verificarAccesoEdicion(req, res, next){
+    const {idTarea, idUsuario} = req.body;
+    try{
+        const query = "CALL INSERTAR_EDICION_TAREA(?,?);"
+        const [resultado] = await connection.query(query,[idTarea,idUsuario]);
+        let usuarioEditando = resultado[0][0];
+
+        console.log("DATA DE BD ========================");
+        console.log(JSON.stringify(usuarioEditando));
+
+        let resultadoAcceso = 0;
+        if(usuarioEditando.resultadoAcceso === 0){
+            //esta ocupado, te devuelvo data de usuario que lo esta ocupando
+            resultadoAcceso = 0;
+        }
+        else{
+            //no esta ocupado, puedes editar
+            resultadoAcceso = 1;
+            usuarioEditando = null;
+        }
+
+        console.log("Resultado de acceso: ======================");
+        console.log(resultadoAcceso);
+        console.log("Usuario editando: ======================");
+        console.log(usuarioEditando);
+
+        res.status(200).json({
+            resultadoAcceso: resultadoAcceso,
+            usuarioEditando: usuarioEditando,
+            message: "Puedes editar"
+        })
+    }catch(e){
+        next(e);
+    }
+}
+
+async function salirEdicionTarea(req, res, next){
+    const {idTarea} = req.body;
+    try{
+        const query = "CALL SALIR_EDICION_TAREA(?);"
+        const [resultado] = await connection.query(query,[idTarea]);
+
+        res.status(200).json({
+            message: "Se limpio el slot de edicion en la tarea"
+        })
+    }catch(e){
+        next(e);
+    }
+}
+
+
+
 module.exports = {
     crear,
     listarXIdProyecto,
@@ -659,4 +726,6 @@ module.exports = {
     funcModificarTareaIdSprint,
     registrarProgreso,
     listarXIdProyectoConProgresos,
+    verificarAccesoEdicion,
+    salirEdicionTarea
 };

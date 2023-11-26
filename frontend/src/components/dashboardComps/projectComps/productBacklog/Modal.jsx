@@ -43,6 +43,11 @@ export default function ModalComponent({
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 isDismissable={false}
+                classNames={
+                    {
+                        closeButton: "hidden",
+                    }
+                }
             >
                 <ModalContent>
                     {(onClose) => (

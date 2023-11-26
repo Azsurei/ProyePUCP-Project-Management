@@ -12,6 +12,7 @@ import {
 import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import { Collapse } from "react-collapse";
 import { useState } from "react";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
 
 function CardTarea({
     tarea,
@@ -24,12 +25,12 @@ function CardTarea({
 }) {
     const tieneHijos = true;
 
-    const formattedStartDate = new Date(tarea.fechaInicio);
-    const formattedEndDate = new Date(tarea.fechaFin);
+    const formattedStartDate = dbDateToDisplayDate(tarea.fechaInicio);
+    const formattedEndDate = dbDateToDisplayDate(tarea.fechaFin);
     const duracion =
-        formattedStartDate.toLocaleDateString() +
+        (formattedStartDate === "" ? "Dependiente" : formattedStartDate) +
         " - " +
-        formattedEndDate.toLocaleDateString();
+        formattedEndDate;
 
     const [hijosIsOpen, setHijosIsOpen] = useState(false);
 

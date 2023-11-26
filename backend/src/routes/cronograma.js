@@ -17,11 +17,13 @@ routerCronograma.post("/listarCronograma", cronogramaController.listar);
 //Sprint
 
 //Tarea
-routerCronograma.post("/insertarTarea", tareaController.crear);
-routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);
+routerCronograma.post("/insertarTarea", tareaController.crear); //modificado para soportar dependencias bien
+routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);    //! pendiente
+
+
 routerCronograma.put("/actualizarIdSprintXTarea",tareaController.modificarIdSprintDeTareas);
 
-routerCronograma.get("/listarTareasXidProyecto/:idProyecto", tareaController.listarXIdProyecto);
+routerCronograma.get("/listarTareasXidProyecto/:idProyecto", tareaController.listarXIdProyecto);    //!pendiente
 routerCronograma.get("/listarEntregablesXidProyecto/:idProyecto", cronogramaController.listarEntregablesXidProyecto);
 
 routerCronograma.post("/descargarExcelCronogramaTareas", cronogramaController.descargarExcel);
@@ -35,6 +37,11 @@ routerCronograma.post("/registrarProgresoTarea", tareaController.registrarProgre
 
 //Listado con progresos asociados
 routerCronograma.get("/listarTareasXidProyectoConProgresosDetallados/:idProyecto", tareaController.listarXIdProyectoConProgresos);
+
+
+//Sobre permisos de edicion
+routerCronograma.post("/verificarAccesoEdicion", tareaController.verificarAccesoEdicion);
+routerCronograma.post("/salirEdicionTarea", tareaController.salirEdicionTarea);
 
 
 

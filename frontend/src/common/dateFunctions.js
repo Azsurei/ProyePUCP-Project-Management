@@ -1,5 +1,8 @@
 //  2023-10-25T05:00:00.000Z a 25/10/2023
 export function dbDateToDisplayDate(dbDate) {
+    if(dbDate === "0000-00-00"){
+        return "";
+    }
     const formattedDate = new Date(dbDate);
     // return formattedDate.toLocaleDateString();
     //return formattedDate.toISOString().split("T")[0];
@@ -12,6 +15,9 @@ export function dbDateToDisplayDate(dbDate) {
 
 //  2023-10-25T05:00:00.000Z a 2023-10-25
 export function dbDateToInputDate(dbDate) {
+    if(dbDate === "0000-00-00"){
+        return "";
+    }
     const fecha = new Date(dbDate);
 
     // const year = fecha.getFullYear();

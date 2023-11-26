@@ -226,3 +226,27 @@ export function registerAdditionalFields(
             console.log(error);
         });
 }
+
+export async function AsyncRegisterAdditionalFields(
+    listFields,
+    idLineaAsociada,
+    idHerramienta,
+    tipoInput,
+    actionsAfter
+){
+    try{
+        const url =
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+        "/api/proyecto/camposAdicionales/registrarCamposAdicionales";
+        const response = await axios.post(url, {
+            listaCampos: listFields,
+            idLineaAsociada: idLineaAsociada,
+            idHerramienta: idHerramienta,
+            tipoInput: tipoInput,
+        });
+
+        await actionsAfter(response);
+    }catch(e){
+        console.log(error);
+    }
+}
