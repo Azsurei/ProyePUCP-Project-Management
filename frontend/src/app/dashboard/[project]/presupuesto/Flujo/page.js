@@ -74,8 +74,7 @@ useEffect(() => {
                 break; // Puedes salir del bucle si has encontrado la herramienta
             }
         }
-          console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
-          console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
+
         } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
         }
@@ -96,9 +95,7 @@ useEffect(() => {
                   setmesActual(mes);
 
                   const moneda = presupuesto.idMoneda;
-                  setMonedaPresupuesto(moneda);
-                  console.log("Moneda Presupuesto:" + moneda);
-                  
+                  setMonedaPresupuesto(moneda);                  
               })
               .catch(error => {
                   console.error("Error al llamar a la API:", error);
@@ -128,14 +125,12 @@ const DataTable = async () => {
             const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasIngresoXIdPresupuesto/${presupuestoId}`);
             const dataIngreso = response.data.lineasIngreso;
             setLineaIngreso(dataIngreso);
-            console.log(`Datos obtenidos exitosamente:`, dataIngreso);
             
 
             const responseEgreso = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/proyecto/presupuesto/listarLineasEgresoXIdPresupuesto/${presupuestoId}`);
             
             const dataEgreso = responseEgreso.data.lineasEgreso;
             setLineaEgreso(dataEgreso);
-            console.log('Líneas de Egreso obtenidas exitosamente:', dataEgreso);
 
           } catch (error) {
             console.error('Error al obtener las líneas de ingreso o egreso:', error);
@@ -194,7 +189,6 @@ useEffect(() => {
 
         const monedaId1 = monedasData.find((moneda) => moneda.idMoneda === 1);
         setTipoCambioDolar(monedaId1.tipoCambio);
-        console.log("Tipo de Cambio:" + monedaId1.tipoCambio);
       } catch (error) {
         console.error("Error al obtener las plantillas:", error);
       }
@@ -241,10 +235,6 @@ lineaIngreso.forEach((row) => {
       : convertirTarifa(row.monto, row.idMoneda);
 
 
-  if (idTipo === 1) {
-    console.log(ingresosPorTipo[idTipo][mesReal]);
-  }
-
 });
 
 function obtenerDescripcionPorTipo(idIngresoTipo) {
@@ -275,6 +265,9 @@ function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
     const fechaGasto = new Date(egreso.fechaRegistro);
     const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
     const montoReal = parseFloat(egreso.costoReal);
+
+    console.log("Mes"+mesesMostrados.length);
+    console.log("MesReal"+mesReal);
 
     if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
       totalEgresosPorMes[mesReal - 1] += MonedaPresupuesto === egreso.idMoneda
@@ -345,7 +338,6 @@ async function handlerExport() {
               "_" +
               formattedDate +
               ".xlsx";
-          console.log(fileName);
           saveAs(response.data, fileName);
           toast.success("Se exporto el Flujo de Caja con exito");
       }, 500);
