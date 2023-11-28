@@ -235,8 +235,8 @@ export default function KanbanBoard({ projectName, projectId }) {
                 <div
                     className={
                         columns.length !== 0
-                            ? "flex gap-4 flex-1 absolute top-[20px] bottom-[0px]"
-                            : "flex gap-1 flex-1 absolute top-[20px] bottom-[0px]"
+                            ? "flex gap-4 flex-1 absolute top-[20px] bottom-[10px]"
+                            : "flex gap-1 flex-1 absolute top-[20px] bottom-[10px]"
                     }
                 >
                     <div className="flex gap-8 h-full min-h-full">
@@ -339,7 +339,6 @@ export default function KanbanBoard({ projectName, projectId }) {
                     insertTask(task);
                 }}
             />
-            <Toaster richColors position="top-center"></Toaster>
         </div>
     );
 
