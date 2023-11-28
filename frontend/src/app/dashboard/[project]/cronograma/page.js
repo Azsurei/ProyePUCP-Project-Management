@@ -27,7 +27,7 @@ import { Toaster, toast } from "sonner";
 import axios from "axios";
 import { HerramientasInfo, SmallLoadingScreen } from "../layout";
 import BtnToModal from "@/components/BtnToModal";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { resolve } from "styled-jsx/css";
 import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
@@ -51,7 +51,6 @@ import ListAdditionalFields, {
     registerAdditionalFields,
 } from "@/components/ListAdditionalFields";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
-import { accessEdition, exitEdition } from "@/common/accessEdition";
 axios.defaults.withCredentials = true;
 
 function TrashIcon() {
@@ -98,7 +97,8 @@ export default function Cronograma(props) {
     const { herramientasInfo } = useContext(HerramientasInfo);
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const { sendNotification } = useContext(NotificationsContext);
+    const { sendNotification, accessEdition, exitEdition } = useContext(NotificationsContext);
+
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -431,7 +431,7 @@ export default function Cronograma(props) {
     }
 
     const handleEdit = (tarea) => {
-        accessEdition(tarea.idTarea, 4, sessionData.idUsuario, () => {
+        accessEdition(tarea.idTarea, 4, sessionData, () => {
 
             console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
             setIdTareaToEdit(tarea.idTarea);
@@ -1381,7 +1381,9 @@ export default function Cronograma(props) {
                                         size="md"
                                         radius="sm"
                                         onClick={() => {
-                                            setStateSecond(3);
+                                            accessEdition(idTareaToEdit,4,sessionData,()=>{
+                                                setStateSecond(3);
+                                            });
                                         }}
                                         className="bg-F0AE19 h-[35px] mb-1 w-[115px]"
                                         startContent={<UpdateIcon />}
