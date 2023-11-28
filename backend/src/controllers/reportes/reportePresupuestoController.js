@@ -315,6 +315,7 @@ async function crearExcelCajaEgresos(req,res,next){
         await workbook.xlsx.writeFile(path.join(destinationFolder, `ExcelCaja.xlsx`));
         // Enviar el archivo
         await workbook.xlsx.write(res);
+        console.log(`Excel caja de egresos enviado`);
         res.end();
     } catch (error) {
         next(error);
@@ -466,6 +467,7 @@ async function crearExcelEstimacionCosto(req,res,next){
         await workbook.xlsx.writeFile(path.join(destinationFolder, `EstimacionCosto.xlsx`));
         // Enviar el archivo
         await workbook.xlsx.write(res);
+        console.log(`Excel de estimacion de costo enviado`);
         res.end();
     } catch (error) {
         next(error);
@@ -498,7 +500,7 @@ async function agregarEstimacionCostoAExcel(presupuesto,WSEstimaciones,filaActua
         let totalEstimacion = 0;
         for(const linea of presupuesto.lineasEstimacionCosto){
             if(linea.idMoneda!=presupuesto.general.idMoneda){
-                const cambioMoneda = monedas[row.idMoneda-1].tipoCambio;
+                const cambioMoneda = monedas[linea.idMoneda-1].tipoCambio;
                 linea.tarifaUnitariia = cambioMoneda*linea.tarifaUnitaria;
                 linea.subtotal = cambioMoneda*linea.subtotal;
             }
@@ -598,6 +600,7 @@ async function crearExcelCajaEstimacion(req,res,next){
         await workbook.xlsx.writeFile(path.join(destinationFolder, `ExcelCajaEstimacion.xlsx`));
         // Enviar el archivo
         await workbook.xlsx.write(res);
+        console.log(`Excel caja de estimacion de costo enviado`);
         res.end();
     } catch (error) {
         next(error);
