@@ -24,6 +24,7 @@ async function crear(req, res, next) {
     } = req.body;
 
     try {
+
         const idTarea = await insertarTarea(
             idCronograma,
             idTareaEstado,

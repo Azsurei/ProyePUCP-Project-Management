@@ -17,20 +17,20 @@ export default function RootLayout({ children }) {
     const [sessionData, setSessionData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const pathname = usePathname();
-    useEffect(() => {
-        if (sessionData !== null) {
-            try {
-                socketRef.current.emit("exit_all_edition_by_user", {
-                    idUser: sessionData.idUsuario,
-                });
+    // const pathname = usePathname();
+    // useEffect(() => {
+    //     if (sessionData !== null) {
+    //         try {
+    //             socketRef.current.emit("exit_all_edition_by_user", {
+    //                 idUser: sessionData.idUsuario,
+    //             });
 
-                console.log("Se borro toda ocupacion de edicion del usuario");
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }, [pathname]);
+    //             console.log("Se borro toda ocupacion de edicion del usuario");
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // }, [pathname]);
 
     const socketRef = useRef(null);
 
@@ -208,71 +208,71 @@ export default function RootLayout({ children }) {
         sessionData,
         afterFunction
     ) {
-        try {
-            if (idHerramienta === 1) {
-            }
-            if (idHerramienta === 4) {
-                await socketRef.current.emit(
-                    "access_task_edition",
-                    {
-                        idTarea: idLinea,
-                        userData: sessionData,
-                    },
-                    (response) => {
-                        if (response.error) {
-                            console.error(error);
-                            //if the code reaches this part, it means theres been an error an it should redirect it to
-                            //console.error("Error al solicitar acceso de edicion: ", error);
-                        } else {
-                            console.log(response);
-                            const { accessGranted, userOcupying } = response;
-                            if (accessGranted) {
-                                console.log("Se le dio acceso");
+        // try {
+        //     if (idHerramienta === 1) {
+        //     }
+        //     if (idHerramienta === 4) {
+        //         await socketRef.current.emit(
+        //             "access_task_edition",
+        //             {
+        //                 idTarea: idLinea,
+        //                 userData: sessionData,
+        //             },
+        //             (response) => {
+        //                 if (response.error) {
+        //                     console.error(error);
+        //                     //if the code reaches this part, it means theres been an error an it should redirect it to
+        //                     //console.error("Error al solicitar acceso de edicion: ", error);
+        //                 } else {
+        //                     console.log(response);
+        //                     const { accessGranted, userOcupying } = response;
+        //                     if (accessGranted) {
+        //                         console.log("Se le dio acceso");
                                 afterFunction();
-                            } else {
-                                console.log(
-                                    "No se le dio acceso, la esta ocupando " +
-                                        userOcupying.nombres
-                                );
-                                toast.info(
-                                    userOcupying.nombres +
-                                        " esta editando esta tarea"
-                                );
-                            }
-                        }
-                    }
-                );
-            }
+        //                     } else {
+        //                         console.log(
+        //                             "No se le dio acceso, la esta ocupando " +
+        //                                 userOcupying.nombres
+        //                         );
+        //                         toast.info(
+        //                             userOcupying.nombres +
+        //                                 " esta editando esta tarea"
+        //                         );
+        //                     }
+        //                 }
+        //             }
+        //         );
+        //     }
 
-            console.log("Proceso de solicitar acceso termino con exito");
-        } catch (error) {
-            console.error("Error al solicitar acceso de edicion: ", error);
-        }
+        //     console.log("Proceso de solicitar acceso termino con exito");
+        // } catch (error) {
+        //     console.error("Error al solicitar acceso de edicion: ", error);
+        // }
     }
 
     async function exitEdition(idLinea, idHerramienta, afterFunction) {
-        try {
-            if (idHerramienta === 4) {
-                await socketRef.current.emit(
-                    "exit_task_edition",
-                    { idTarea: idLinea },
-                    (response) => {
-                        if (response.error) {
-                            console.log(error);
-                        } else {
-                            console.log(response);
-                            const { status, message } = response;
-                            if (status === 200) {
-                                console.log("Se salio de la edicion con exito");
+        // try {
+        //     if (idHerramienta === 4) {
+        //         await socketRef.current.emit(
+        //             "exit_task_edition",
+        //             { idTarea: idLinea },
+        //             (response) => {
+        //                 if (response.error) {
+        //                     console.log(error);
+        //                 } else {
+        //                     console.log(response);
+        //                     const { status, message } = response;
+        //                     if (status === 200) {
+        //                         console.log("Se salio de la edicion con exito");
                                 afterFunction();
-                            }
-                        }
-                    }
-                );
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        //                     }
+        //                 }
+        //             }
+        //         );
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        // }
     }
 
     function handleDeleteNotification(idNotificacion) {
