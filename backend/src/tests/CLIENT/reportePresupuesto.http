@@ -86,7 +86,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/api/proyecto/reporte/crearExcelCaja HTTP/1.1
+POST http://localhost:8080/api/proyecto/reporte/crearExcelCajaEgresos HTTP/1.1
 Content-Type: application/json
 
 {
@@ -101,7 +101,7 @@ POST http://localhost:8080/api/proyecto/reporte/crearExcelFlujoEstimacionCosto H
 Content-Type: application/json
 
 {
-  "idPresupuesto": 37,
+  "idPresupuesto": 69,
   "fechaIni": "2023-01-01",
   "fechaFin": "2023-12-31"
 }
