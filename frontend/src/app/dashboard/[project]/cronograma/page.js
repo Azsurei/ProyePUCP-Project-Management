@@ -15,26 +15,19 @@ import {
     Input,
     Select,
     SelectItem,
+    Spinner,
     Tab,
     Tabs,
     Textarea,
 } from "@nextui-org/react";
 
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
-} from "@nextui-org/react";
+import { Button, useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
 
 import axios from "axios";
-import { SmallLoadingScreen } from "../layout";
+import { HerramientasInfo, SmallLoadingScreen } from "../layout";
 import BtnToModal from "@/components/BtnToModal";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { resolve } from "styled-jsx/css";
 import ListTareas from "@/components/dashboardComps/projectComps/cronogramaComps/ListTareas";
@@ -54,8 +47,10 @@ import Link from "next/link";
 import { SearchIcon } from "public/icons/SearchIcon";
 import { saveAs } from "file-saver";
 import ListAdditionalFields, {
+    AsyncRegisterAdditionalFields,
     registerAdditionalFields,
 } from "@/components/ListAdditionalFields";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 axios.defaults.withCredentials = true;
 
 function TrashIcon() {
@@ -96,13 +91,14 @@ function InfoIcon() {
 }
 
 export default function Cronograma(props) {
-
     const searchParams = useSearchParams();
-    const search = searchParams.get('search')
+    const search = searchParams.get("search");
 
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const { sendNotification } = useContext(NotificationsContext);
+    const { sendNotification, accessEdition, exitEdition } = useContext(NotificationsContext);
+
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -245,6 +241,8 @@ export default function Cronograma(props) {
         setSelectedUsers([]);
         setTabSelected("users");
 
+        setDependencies([]);
+
         setValidName(true);
         setValidDescripcion(true);
         setValidFechas(true);
@@ -310,6 +308,8 @@ export default function Cronograma(props) {
             setTabSelected("subteams");
         }
 
+        setDependencies(tarea.dependencias);
+
         setTaskAdditionalFields(tarea.camposAdicionales);
 
         setValidName(true);
@@ -345,6 +345,8 @@ export default function Cronograma(props) {
         setSelectedUsers([]);
         setSelectedUsersOriginal([]);
         setTabSelected("users");
+
+        setDependencies([]);
 
         setTaskAdditionalFields([]);
 
@@ -429,71 +431,140 @@ export default function Cronograma(props) {
     }
 
     const handleEdit = (tarea) => {
-        console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
-        setIdTareaToEdit(tarea.idTarea);
-        setTareaPadre(tarea.idPadre);
-        setTareaName(tarea.sumillaTarea);
-        setTareaDescripcion(tarea.descripcion);
+        accessEdition(tarea.idTarea, 4, sessionData, () => {
 
-        setTareaEstado([String(tarea.idTareaEstado)]);
-        console.log(
-            "seteando al idTareaEstado = " +
-                tarea.idTareaEstado +
-                " / " +
-                String(tarea.idTareaEstado)
-        );
+            console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
+            setIdTareaToEdit(tarea.idTarea);
+            setTareaPadre(tarea.idPadre);
+            setTareaName(tarea.sumillaTarea);
+            setTareaDescripcion(tarea.descripcion);
 
-        console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
-        console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
+            setTareaEstado([String(tarea.idTareaEstado)]);
+            console.log(
+                "seteando al idTareaEstado = " +
+                    tarea.idTareaEstado +
+                    " / " +
+                    String(tarea.idTareaEstado)
+            );
 
-        setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
-        setFechaFin(dbDateToInputDate(tarea.fechaFin));
+            console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
+            console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
 
-        console.log("TRAYENDO TAREA CON ENTREGABLE " + tarea.idEntregable);
-        if (tarea.idEntregable === null) {
-            setTareaEntregable(new Set([]));
-        } else {
-            setTareaEntregable(new Set([tarea.idEntregable.toString()]));
-        }
+            setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
+            setFechaFin(dbDateToInputDate(tarea.fechaFin));
 
-        setListPosteriores(tarea.tareasPosteriores);
-        setListPosterioresOriginal(tarea.tareasPosteriores);
-        for (const task of tarea.tareasPosteriores) {
-            task.fechaFin = dbDateToInputDate(task.fechaFin);
-        }
-
-        if (tarea.idEquipo === null) {
-            setSelectedUsers(tarea.usuarios);
-            setSelectedUsersOriginal(tarea.usuarios);
-            setSelectedSubteam(null);
-            //setSelectedSubteamUsers([]);
-            setTabSelected("users");
-        } else {
-            setSelectedSubteam(tarea.equipo);
-            setSelectedUsers([]);
-            setSelectedUsersOriginal([]);
-
-            let newUsrLst = [];
-            for (const user of tarea.usuarios) {
-                newUsrLst.push(user.idUsuario);
+            console.log("TRAYENDO TAREA CON ENTREGABLE " + tarea.idEntregable);
+            if (tarea.idEntregable === null) {
+                setTareaEntregable(new Set([]));
+            } else {
+                setTareaEntregable(new Set([tarea.idEntregable.toString()]));
             }
-            //setSelectedSubteamUsers(newUsrLst);
+
+            setListPosteriores(tarea.tareasPosteriores);
+            setListPosterioresOriginal(tarea.tareasPosteriores);
+            for (const task of tarea.tareasPosteriores) {
+                task.fechaFin = dbDateToInputDate(task.fechaFin);
+            }
+
+            if (tarea.idEquipo === null) {
+                setSelectedUsers(tarea.usuarios);
+                setSelectedUsersOriginal(tarea.usuarios);
+                setSelectedSubteam(null);
+                //setSelectedSubteamUsers([]);
+                setTabSelected("users");
+            } else {
+                setSelectedSubteam(tarea.equipo);
+                setSelectedUsers([]);
+                setSelectedUsersOriginal([]);
+
+                let newUsrLst = [];
+                for (const user of tarea.usuarios) {
+                    newUsrLst.push(user.idUsuario);
+                }
+                //setSelectedSubteamUsers(newUsrLst);
+                setValidSelectedSubteamUsers(true);
+
+                setTabSelected("subteams");
+            }
+
+            setTaskAdditionalFields(tarea.camposAdicionales);
+
+            setValidName(true);
+            setValidDescripcion(true);
+            setValidFechas(true);
+            setValidAsigned(true);
             setValidSelectedSubteamUsers(true);
+            setValidEntregable(true);
 
-            setTabSelected("subteams");
-        }
+            setStateSecond(3);
+            setToggleNew(true);
+        });
 
-        setTaskAdditionalFields(tarea.camposAdicionales);
+        // console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
+        // setIdTareaToEdit(tarea.idTarea);
+        // setTareaPadre(tarea.idPadre);
+        // setTareaName(tarea.sumillaTarea);
+        // setTareaDescripcion(tarea.descripcion);
 
-        setValidName(true);
-        setValidDescripcion(true);
-        setValidFechas(true);
-        setValidAsigned(true);
-        setValidSelectedSubteamUsers(true);
-        setValidEntregable(true);
+        // setTareaEstado([String(tarea.idTareaEstado)]);
+        // console.log(
+        //     "seteando al idTareaEstado = " +
+        //         tarea.idTareaEstado +
+        //         " / " +
+        //         String(tarea.idTareaEstado)
+        // );
 
-        setStateSecond(3);
-        setToggleNew(true);
+        // console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
+        // console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
+
+        // setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
+        // setFechaFin(dbDateToInputDate(tarea.fechaFin));
+
+        // console.log("TRAYENDO TAREA CON ENTREGABLE " + tarea.idEntregable);
+        // if (tarea.idEntregable === null) {
+        //     setTareaEntregable(new Set([]));
+        // } else {
+        //     setTareaEntregable(new Set([tarea.idEntregable.toString()]));
+        // }
+
+        // setListPosteriores(tarea.tareasPosteriores);
+        // setListPosterioresOriginal(tarea.tareasPosteriores);
+        // for (const task of tarea.tareasPosteriores) {
+        //     task.fechaFin = dbDateToInputDate(task.fechaFin);
+        // }
+
+        // if (tarea.idEquipo === null) {
+        //     setSelectedUsers(tarea.usuarios);
+        //     setSelectedUsersOriginal(tarea.usuarios);
+        //     setSelectedSubteam(null);
+        //     //setSelectedSubteamUsers([]);
+        //     setTabSelected("users");
+        // } else {
+        //     setSelectedSubteam(tarea.equipo);
+        //     setSelectedUsers([]);
+        //     setSelectedUsersOriginal([]);
+
+        //     let newUsrLst = [];
+        //     for (const user of tarea.usuarios) {
+        //         newUsrLst.push(user.idUsuario);
+        //     }
+        //     //setSelectedSubteamUsers(newUsrLst);
+        //     setValidSelectedSubteamUsers(true);
+
+        //     setTabSelected("subteams");
+        // }
+
+        // setTaskAdditionalFields(tarea.camposAdicionales);
+
+        // setValidName(true);
+        // setValidDescripcion(true);
+        // setValidFechas(true);
+        // setValidAsigned(true);
+        // setValidSelectedSubteamUsers(true);
+        // setValidEntregable(true);
+
+        // setStateSecond(3);
+        // setToggleNew(true);
     };
 
     const handleDelete = (tarea) => {
@@ -641,6 +712,86 @@ export default function Cronograma(props) {
             });
     };
 
+    const [isRegisterLoading, setIsRegisterLoading] = useState(false);
+
+    async function registrarTareaModal() {
+        try {
+            setIsRegisterLoading(true);
+            const objTareaNueva = {
+                idCronograma: cronogramaId,
+                idTareaEstado: 1, //No iniciado
+                idSubGrupo:
+                    selectedSubteam === null ? null : selectedSubteam.idEquipo,
+                idPadre: tareaPadre !== null ? tareaPadre.idTarea : null,
+                idTareaAnterior: null,
+                idSprint: 0,
+                sumillaTarea: tareaName,
+                descripcion: tareaDescripcion,
+                fechaInicio: fechaInicio,
+                fechaFin: fechaFin,
+                cantSubtareas: 0,
+                cantPosteriores: 0,
+                horasPlaneadas: tareaHorasAsignadas,
+                usuarios: selectedUsers, //veriifcar posible error
+                tareasPosteriores: [],
+                idEntregable: parseInt(tareaEntregable.currentKey),
+                idColumnaKanban: 0,
+                dependencias: dependencies,
+            };
+            console.log(objTareaNueva);
+
+            const newURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/cronograma/insertarTarea";
+
+            const response = await axios.post(newURL, objTareaNueva);
+
+            console.log(response.data.message);
+            const nuevoIdTarea = response.data.idTarea;
+            console.log(JSON.stringify(taskAdditionalFields, null, 2));
+
+            const res = await AsyncRegisterAdditionalFields(
+                taskAdditionalFields,
+                nuevoIdTarea,
+                4,
+                1,
+                async (response) => {
+                    console.log("respuesta tras insertar campos");
+                    console.log(response);
+
+                    const tareasURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+                        projectId;
+                    const response2 = await axios.get(tareasURL);
+                    console.log(response2);
+                    setListTareas(response2.data.tareasOrdenadas);
+                    console.log(response2.data.tareasOrdenadas);
+
+                    for (const usuario of selectedUsers) {
+                        if (usuario.idUsuario !== sessionData.idUsuario) {
+                            sendNotification(
+                                usuario.idUsuario,
+                                1,
+                                nuevoIdTarea,
+                                projectId
+                            );
+                            console.log(
+                                "mandando notificacion a " + usuario.idUsuario
+                            );
+                        }
+                    }
+
+                    setIsRegisterLoading(false);
+                    setToggleNew(false);
+                }
+            );
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al registrar la tarea");
+        }
+    }
+
     function promiseRegistrarTarea() {
         return new Promise((resolve, reject) => {
             setToggleNew(false);
@@ -660,10 +811,10 @@ export default function Cronograma(props) {
                 cantPosteriores: 0,
                 horasPlaneadas: tareaHorasAsignadas,
                 usuarios: selectedUsers, //veriifcar posible error
-                subTareas: null,
-                tareasPosteriores: listPosteriores,
+                tareasPosteriores: [],
                 idEntregable: parseInt(tareaEntregable.currentKey),
                 idColumnaKanban: 0,
+                dependencias: dependencies,
             };
             console.log(objTareaNueva);
 
@@ -719,7 +870,6 @@ export default function Cronograma(props) {
                                             );
                                         }
                                     }
-
                                     resolve(response);
                                 })
                                 .catch(function (error) {
@@ -890,75 +1040,52 @@ export default function Cronograma(props) {
     };
 
     const [mustDefineDates, setMustDefineDates] = useState(false);
+
+    const [isListLoading, setIsListLoading] = useState(false);
     useEffect(() => {
-        setIsLoadingSmall(true);
-        const stringURL =
+        setIsLoadingSmall(false);
+        setIsListLoading(true);
+
+        setCronogramaId(
+            herramientasInfo.find((h) => h.idHerramienta === 4)
+                .idHerramientaCreada
+        );
+
+        const tareasURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/cronograma/listarCronograma";
-
+            "/api/proyecto/cronograma/listarTareasXidProyecto/" +
+            projectId;
         axios
-            .post(stringURL, { idProyecto: projectId })
+            .get(tareasURL)
             .then(function (response) {
-                const cronogramaData = response.data.cronograma;
-                console.log(cronogramaData);
-                setCronogramaId(cronogramaData.idCronograma);
-                if (
-                    // cronogramaData.fechaInicio === null ||
-                    // cronogramaData.fechaFin === null ||
-                    false
-                ) {
-                    //setModalFirstTime(true);
-                    //onOpen();
-                    setIsLoadingSmall(false);
-                    setMustDefineDates(true);
-                } else {
-                    const tareasURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL +
-                        "/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                        projectId;
-                    axios
-                        .get(tareasURL)
-                        .then(function (response) {
-                            setListTareas(response.data.tareasOrdenadas);
-                            console.log(
-                                JSON.stringify(
-                                    response.data.tareasOrdenadas,
-                                    null,
-                                    2
-                                )
-                            );
+                setListTareas(response.data.tareasOrdenadas);
+                console.log(
+                    JSON.stringify(response.data.tareasOrdenadas, null, 2)
+                );
 
-                            const entregablesURL =
-                                process.env.NEXT_PUBLIC_BACKEND_URL +
-                                "/api/proyecto/cronograma/listarEntregablesXidProyecto/" +
-                                projectId; //PENDIENTE REVISAR SI FUNCIONA
-                            axios
-                                .get(entregablesURL)
-                                .then(function (response) {
-                                    const entregablesArray =
-                                        response.data.entregables.map(
-                                            (entregable) => {
-                                                return {
-                                                    ...entregable,
-                                                    idEntregableString:
-                                                        entregable.idEntregable.toString(),
-                                                };
-                                            }
-                                        );
-                                    setListEntregables(entregablesArray);
+                const entregablesURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/cronograma/listarEntregablesXidProyecto/" +
+                    projectId; //PENDIENTE REVISAR SI FUNCIONA
+                axios
+                    .get(entregablesURL)
+                    .then(function (response) {
+                        const entregablesArray = response.data.entregables.map(
+                            (entregable) => {
+                                return {
+                                    ...entregable,
+                                    idEntregableString:
+                                        entregable.idEntregable.toString(),
+                                };
+                            }
+                        );
+                        setListEntregables(entregablesArray);
 
-                                    setIsLoadingSmall(false);
-                                })
-                                .catch(function (error) {
-                                    console.log(error);
-                                });
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                }
-
-                //setIsLoadingSmall(false);
+                        setIsListLoading(false);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             })
             .catch(function (error) {
                 console.log(error);
@@ -987,7 +1114,9 @@ export default function Cronograma(props) {
     //     }
     // }, [selectedSubteam]);
 
-    const [searchValue, setSearchValue] = useState(search !== null ? search : "");
+    const [searchValue, setSearchValue] = useState(
+        search !== null ? search : ""
+    );
     const [isExportLoading, setIsExportLoading] = useState(false);
 
     async function handlerExport() {
@@ -1088,107 +1217,6 @@ export default function Cronograma(props) {
 
     return (
         <div className="cronogramaDiv bg-mainBackground">
-            {/* {
-                <Modal
-                    onOpenChange={onOpenChange}
-                    isDismissable={false}
-                    isOpen={isOpen}
-                    classNames={{
-                        header: "pb-0",
-                        body: "pt-0 pb-0",
-                    }}
-                >
-                    <ModalContent>
-                        {(onClose) => {
-                            const cerrarModal = () => {
-                                crearCronogramaYContinuar();
-                                onClose();
-                            };
-                            return (
-                                <>
-                                    <ModalHeader className="flex flex-col gap-1">
-                                        Crea tu cronograma!
-                                    </ModalHeader>
-                                    <ModalBody>
-                                        <div className="modalMainContainer">
-                                            <p className="modalDescr">
-                                                Empieza definiendo algunas
-                                                fechas
-                                            </p>
-                                            <div className="fechasCrearCronograma">
-                                                <div className="fechaCrearLeft">
-                                                    <p>Fecha inicio</p>
-                                                    <DateInput
-                                                        isEditable={true}
-                                                        className={""}
-                                                        onChangeHandler={(
-                                                            e
-                                                        ) => {
-                                                            setFirstFechaInicio(
-                                                                e.target.value
-                                                            );
-                                                        }}
-                                                    ></DateInput>
-                                                </div>
-                                                <div className="fechaCrearRight">
-                                                    <p>Fecha fin</p>
-                                                    <DateInput
-                                                        isEditable={true}
-                                                        className={""}
-                                                        onChangeHandler={(
-                                                            e
-                                                        ) => {
-                                                            setFirstFechaFin(
-                                                                e.target.value
-                                                            );
-                                                        }}
-                                                    ></DateInput>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <Button
-                                            color="danger"
-                                            variant="light"
-                                            onPress={volverMainDashboard}
-                                        >
-                                            Close
-                                        </Button>
-                                        <Button
-                                            color="primary"
-                                            onPress={cerrarModal}
-                                        >
-                                            Action
-                                        </Button>
-                                    </ModalFooter>
-                                </>
-                            );
-                        }}
-                    </ModalContent>
-                </Modal>
-            } */}
-
-            {/* {mustDefineDates === true && (
-                <div className="flex flex-col w-full h-full justify-center items-center gap-3">
-                    <p className="text-2xl font-medium font-[Montserrat]">
-                        Para entrar a cronograma, debe definir las fechas del
-                        proyecto
-                    </p>
-                    <Link
-                        href={
-                            "/dashboard/" +
-                            projectName +
-                            "=" +
-                            projectId +
-                            "/settings/general"
-                        }
-                        
-                    >
-                        <Button className="font-[Montserrat] bg-primary text-white font-medium" size="lg">Ir a configuracion de proyecto</Button>
-                    </Link>
-                </div>
-            )} */}
             {true && (
                 <>
                     <ModalSubequipos
@@ -1241,67 +1269,82 @@ export default function Cronograma(props) {
                                 handlerExport={async () => {
                                     await handlerExport();
                                 }}
+                                isExportDisabled={
+                                    isListLoading === true ||
+                                    listTareas.length === 0
+                                }
+                                isAddNewDisabled={isListLoading === true}
                             >
                                 Cronograma
                             </HeaderWithButtonsSamePage>
 
-                            {/* <AgendaTable listTareas={listTareas}></AgendaTable> */}
-
-                            {listTareas.length === 0 && (
-                                <div className="w-[100%] h-[70vh] flex justify-center items-center flex-col gap-3">
-                                    <p className="m-0 font-medium">
-                                        Tu calendario no cuenta con tareas por
-                                        el momento
-                                    </p>
-                                    <img
-                                        src="/images/empty-calendar.png"
-                                        className="h-[20%]  m-0"
-                                    />
+                            {isListLoading === true && (
+                                <div className="border flex-1 flex justify-center items-center">
+                                    <Spinner size="lg" />
                                 </div>
                             )}
-                            {listTareas.length !== 0 && (
-                                <div className="pb-[60px]">
-                                    <div className="flex flex-row">
-                                        <Input
-                                            isClearable
-                                            className="w-full"
-                                            placeholder="Buscar por nombre..."
-                                            startContent={<SearchIcon />}
-                                            value={searchValue}
-                                            onClear={() => {
-                                                setSearchValue("");
-                                            }}
-                                            onValueChange={setSearchValue}
-                                            variant="faded"
+
+                            {listTareas.length === 0 &&
+                                isListLoading === false && (
+                                    <div className="w-[100%] h-[70vh] flex justify-center items-center flex-col gap-3">
+                                        <p className="m-0 font-medium">
+                                            Tu calendario no cuenta con tareas
+                                            por el momento
+                                        </p>
+                                        <img
+                                            src="/images/empty-calendar.png"
+                                            className="h-[20%]  m-0"
                                         />
                                     </div>
-                                    <div
-                                        className="flex flex-row py-[.4rem] px-[1rem] 
+                                )}
+                            {listTareas.length !== 0 &&
+                                isListLoading === false && (
+                                    <div className="pb-[60px]">
+                                        <div className="flex flex-row">
+                                            <Input
+                                                isClearable
+                                                className="w-full"
+                                                placeholder="Buscar por nombre..."
+                                                startContent={<SearchIcon />}
+                                                value={searchValue}
+                                                onClear={() => {
+                                                    setSearchValue("");
+                                                }}
+                                                onValueChange={setSearchValue}
+                                                variant="faded"
+                                            />
+                                        </div>
+                                        <div
+                                            className="flex flex-row py-[.4rem] px-[1rem] 
                                 bg-mainSidebar rounded-xl text-sm tracking-wider 
                                 items-center mt-5 mb-2 text-[#a1a1aa]"
-                                    >
-                                        <p className="flex-1">NOMBRE</p>
-                                        <p className="w-[30%] flex justify-center">
-                                            ASIGNADOS
-                                        </p>
-                                        <p className="w-[19.5%]">ESTADOS</p>
-                                        <p className="w-[27%]">FECHAS</p>
+                                        >
+                                            <p className="flex-1">NOMBRE</p>
+                                            <p className="w-[30%] flex justify-center">
+                                                ASIGNADOS
+                                            </p>
+                                            <p className="w-[19.5%]">ESTADOS</p>
+                                            <p className="w-[27%]">FECHAS</p>
+                                        </div>
+                                        <ListTareas
+                                            listTareas={listTareas.filter(
+                                                (tarea) =>
+                                                    filterTasks(
+                                                        tarea,
+                                                        searchValue
+                                                    )
+                                            )}
+                                            leftMargin={"0px"}
+                                            handleVerDetalle={handleVerDetalle}
+                                            handleAddNewSon={handleAddNewSon}
+                                            handleRegisterProgress={
+                                                handleRegisterProgress
+                                            }
+                                            handleEdit={handleEdit}
+                                            handleDelete={handleDelete}
+                                        ></ListTareas>
                                     </div>
-                                    <ListTareas
-                                        listTareas={listTareas.filter((tarea) =>
-                                            filterTasks(tarea, searchValue)
-                                        )}
-                                        leftMargin={"0px"}
-                                        handleVerDetalle={handleVerDetalle}
-                                        handleAddNewSon={handleAddNewSon}
-                                        handleRegisterProgress={
-                                            handleRegisterProgress
-                                        }
-                                        handleEdit={handleEdit}
-                                        handleDelete={handleDelete}
-                                    ></ListTareas>
-                                </div>
-                            )}
+                                )}
                         </div>
                     </div>
 
@@ -1338,7 +1381,9 @@ export default function Cronograma(props) {
                                         size="md"
                                         radius="sm"
                                         onClick={() => {
-                                            setStateSecond(3);
+                                            accessEdition(idTareaToEdit,4,sessionData,()=>{
+                                                setStateSecond(3);
+                                            });
                                         }}
                                         className="bg-F0AE19 h-[35px] mb-1 w-[115px]"
                                         startContent={<UpdateIcon />}
@@ -1920,7 +1965,7 @@ export default function Cronograma(props) {
 
                             {stateSecond !== 2 && (
                                 <div className="twoButtonsEnd pb-8">
-                                    <BtnToModal
+                                    <Modal
                                         nameButton="Descartar"
                                         textHeader={
                                             stateSecond === 3
@@ -1932,17 +1977,28 @@ export default function Cronograma(props) {
                                                 ? "¿Seguro que quiere descartar la actualizacion de esta tarea?"
                                                 : "¿Seguro que quiere descartar el registro de esta tarea?"
                                         }
-                                        headerColor="red"
+                                        textColor="red"
                                         colorButton="w-36 bg-slate-100 text-black"
                                         oneButton={false}
                                         leftBtnText="Cancelar"
                                         rightBtnText="Confirmar"
-                                        doBeforeClosing={() => {
-                                            setToggleNew(false);
+                                        //isLoading={isLoading}
+                                        closeSecondActionState={true}
+                                        secondAction={() => {
+                                            if (stateSecond === 3) {
+                                                exitEdition(
+                                                    idTareaToEdit,
+                                                    4,
+                                                    () => {
+                                                        setToggleNew(false);
+                                                    }
+                                                );
+                                            } else {
+                                                setToggleNew(false);
+                                            }
                                         }}
-                                        //verifyFunction = {}       sin verificacion
                                     />
-                                    <BtnToModal
+                                    <Modal
                                         nameButton="Aceptar"
                                         textHeader="Registrar Tarea"
                                         textBody={
@@ -1955,12 +2011,15 @@ export default function Cronograma(props) {
                                         oneButton={false}
                                         leftBtnText="Cancelar"
                                         rightBtnText="Confirmar"
-                                        doBeforeClosing={() => {
+                                        closeSecondActionState={true}
+                                        isLoading={isRegisterLoading}
+                                        secondAction={async () => {
                                             if (
                                                 stateSecond === 1 ||
                                                 stateSecond === 4
                                             ) {
-                                                registrarTarea();
+                                                //registrarTarea();
+                                                await registrarTareaModal();
                                             } else if (stateSecond === 3) {
                                                 editarTarea();
                                             }
@@ -2030,7 +2089,7 @@ export default function Cronograma(props) {
                                                 setValidEntregable(false);
                                                 allValid = false;
                                             }
-                                            
+
                                             if (
                                                 selectedSubteam === null &&
                                                 selectedUsers.length !== 0

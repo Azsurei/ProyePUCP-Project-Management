@@ -300,6 +300,7 @@ const actualizarPorcentanjes = () => {
 
 
 async function handlerExport() {
+  console.log(presupuestoId);
   try {
       const exportURL =
           process.env.NEXT_PUBLIC_BACKEND_URL +

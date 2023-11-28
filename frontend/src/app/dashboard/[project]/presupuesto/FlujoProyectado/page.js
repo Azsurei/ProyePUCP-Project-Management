@@ -37,6 +37,7 @@ import {
 import {ExportIcon} from "@/../public/icons/ExportIcon";
 import BuildIcon from '@mui/icons-material/Build';
 import { set } from "date-fns";
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export default function EstimacionTabla(props) {
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -74,7 +75,6 @@ useEffect(() => {
             }
         }
           console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
-          console.log(`Datos obtenidos exitosamente:`, response.data.presupuesto);
         } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
         }
@@ -140,9 +140,6 @@ const DataTable = async () => {
             const dataEstimacion=responseEstimacion.data.lineasEstimacionCosto;
             setLineaEstimacion(dataEstimacion);
 
-            console.log(`Datos obtenidos exitosamente:`, dataEstimacion);
-
-
           } catch (error) {
             console.error('Error al obtener las líneas de ingreso o egreso:', error);
           }
@@ -197,7 +194,6 @@ useEffect(() => {
 
         const monedaId1 = monedasData.find((moneda) => moneda.idMoneda === 1);
         setTipoCambioDolar(monedaId1.tipoCambio);
-        console.log("Tipo de Cambio:" + monedaId1.tipoCambio);
       } catch (error) {
         console.error("Error al obtener las plantillas:", error);
       }
@@ -267,25 +263,26 @@ const descripcionTipo = {
 };
 
 
-function calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual) {
+function calcularTotalesPorMes(lineaEstimacion, mesesMostrados, mesActual) {
   const totalEgresosPorMes = Array.from({ length: mesesMostrados.length }, () => 0);
 
-  lineaEgreso.forEach((egreso) => {
-    const fechaGasto = new Date(egreso.fechaRegistro);
-    const mesReal = fechaGasto.getUTCMonth() + 1 - mesActual + 1;
-    const montoReal = parseFloat(egreso.costoReal);
-
-    if (mesReal >= 1 && mesReal <= mesesMostrados.length) {
-      totalEgresosPorMes[mesReal - 1] += MonedaPresupuesto === egreso.idMoneda
-      ? egreso.costoReal
-      : convertirTarifa(egreso.costoReal, egreso.idMoneda);;
-    }
-  });
+  lineaEstimacion.forEach((linea) => {
+      var i;
+      console.log("tiempo requerido: "+linea.tiempoRequerido);
+      for(i=0;i<linea.tiempoRequerido;i++){
+        totalEgresosPorMes[i]+= MonedaPresupuesto === linea.idMoneda
+        ? (parseFloat(linea.cantidadRecurso*linea.tarifaUnitaria))
+        : (convertirTarifa(linea.tarifaUnitaria*linea.cantidadRecurso, linea.idMoneda));
+      }
+  
+  }
+  
+  );
 
   return totalEgresosPorMes;
 }
 
-const totalEgresosPorMes = calcularTotalesPorMes(lineaEgreso, mesesMostrados, mesActual);
+const totalEgresosPorMes = calcularTotalesPorMes(lineaEstimacion, mesesMostrados, mesActual);
 
 const accumulatedTotals = Array.from({ length: mesesMostrados.length }, () => 0);
 
@@ -313,14 +310,12 @@ async function handlerExport() {
   try {
       const exportURL =
           process.env.NEXT_PUBLIC_BACKEND_URL +
-          "/api/proyecto/reporte/crearExcelCaja";
+          "/api/proyecto/reporte/crearExcelCajaEstimacion";
 
       const response = await axios.post(
           exportURL,
           {
             idPresupuesto: presupuestoId,
-            fechaIni: new Date("1995-12-17T03:24:00"),
-            fechaFin: new Date("2040-12-17T03:24:00"),
           },
           {
               responseType: "blob", // Important for binary data
@@ -345,7 +340,6 @@ async function handlerExport() {
               "_" +
               formattedDate +
               ".xlsx";
-          console.log(fileName);
           saveAs(response.data, fileName);
           toast.success("Se exporto el Flujo de Caja con exito");
       }, 500);
@@ -390,6 +384,12 @@ return (
 
                 
                 <div className="buttonContainerEstimacionTabla">
+
+                    <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Flujo"}>
+                        <Button  color="primary" startContent={<AssessmentIcon />} className="btnAddIngreso">
+                            Flujo Real
+                        </Button>
+                    </Link>
 
                     <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto"}>
                         <Button color="primary" startContent={<HistoryIcon />} className="btnEditarEstimacion">
@@ -473,7 +473,6 @@ return (
     <TableCell>{estimacion.descripcion}</TableCell>
     {mesesMostrados.map((mes, mesIndex) => {
       const cantMeses = estimacion.tiempoRequerido;
-      console.log(cantMeses);
       return (
         <TableCell key={mesIndex} align="left">
           {
@@ -481,7 +480,7 @@ return (
             mesIndex <cantMeses
             ? MonedaPresupuesto === estimacion.idMoneda
               ? (parseFloat(estimacion.cantidadRecurso*estimacion.tarifaUnitaria).toFixed(2))
-              : (convertirTarifa(estimacion.tarifaUnitaria, estimacion.idMoneda).toFixed(2))
+              : (convertirTarifa(estimacion.tarifaUnitaria*estimacion.cantidadRecurso, estimacion.idMoneda).toFixed(2))
             : 0            
           }
         </TableCell>
@@ -494,7 +493,7 @@ return (
   <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" align="left">Total Egresos Estimados</TableCell>
   {totalEgresosPorMes.map((total, index) => (
     <TableCell className="text-gray-800 text-sm not-italic font-extrabold bg-gray-200" key={index} align="left">
-      {total !== 0 ? total.toFixed(2) : "0"}
+      {total !== 0 ? parseFloat(total).toFixed(2) : "0"}
 
     </TableCell>
   ))}

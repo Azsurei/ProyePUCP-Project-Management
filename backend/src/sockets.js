@@ -12,6 +12,8 @@ const initSocket = (server) => {
 
   const connectedUsers = new Map();
 
+  const editedTasks = new Map();
+
   io.on("connection", (socket) => {
     const idUsuario = socket.handshake.query.idUsuario;
     const nombreUsuario = socket.handshake.query.nombresUsuario;
@@ -71,8 +73,73 @@ const initSocket = (server) => {
     });
 
 
+    socket.on("access_task_edition", (data, callback) =>{
+        console.log("recibi solicitud para acceder a la edicion de una tarea");
+        const { idTarea, userData } = data;
+        console.log("idTarea => " + idTarea);
+        console.log("userData => " + JSON.stringify(userData,null,2));
+        console.log("callback => ", callback);
+        const userOcupyingTask = editedTasks.get(parseInt(idTarea));
+
+        let accessGranted = false;
+        let userOcupying = null;
+
+        if (userOcupyingTask) {
+            accessGranted = false;
+            userOcupying = userOcupyingTask;
+        } else {
+            //No esta ocupada, por la que la ocupamos por el usuario que la solicito
+            editedTasks.set(parseInt(idTarea), userData);
+
+            accessGranted = true;
+            userOcupying = null;
+        }
+
+        console.log("Mira el arreglo de tareas ocupadas");
+        console.log(editedTasks);
+    
+        callback({
+            accessGranted: accessGranted,
+            userOcupying: userOcupying,
+        });
+    })
+
+    socket.on("exit_task_edition", (data, callback) => {
+        console.log("recibi solicitud para salir de la edicion de una tarea");
+        const { idTarea } = data;
+
+        editedTasks.delete(parseInt(idTarea));
+        callback({
+            status: 200,
+            message: "Salio de la edicion con exito"
+        });
+    })
+
+    socket.on("exit_all_edition_by_user", (data) => {
+        const { idUser } = data;
+
+        //esto se debe hacer para todo editable donde se desea salir de edicion
+
+
+        //para tareas
+        for (let [key, value] of editedTasks.entries()) {
+            if (value.idUsuario === parseInt(idUser)) {
+                editedTasks.delete(key);
+            }
+        };
+    });
+
+
     socket.on("disconnect", () => {
-        connectedUsers.delete(idUsuario);
+        connectedUsers.delete(parseInt(idUsuario));
+
+        for (let [key, value] of editedTasks.entries()) {
+            if (value.idUsuario === parseInt(idUsuario)) {
+                editedTasks.delete(key);
+                console.log("Ya no hay un usuario editando la tarea " + key);
+            }
+        };
+
         console.log(
             `User disconnected: ${socket.id} with idUsuario = ${idUsuario}`
         );

@@ -75,6 +75,8 @@ export default function HeaderWithButtonsSamePage({
     haveExport = false,
     isExportLoading = false,
     handlerExport,
+    isExportDisabled = false,
+    isAddNewDisabled = false,
 }) {
     return (
         <div id="HeaderWithButtons">
@@ -102,6 +104,7 @@ export default function HeaderWithButtonsSamePage({
                             startContent={!isExportLoading && <ExportIcon />}
                             onPress={()=>{handlerExport()}}
                             isLoading={isExportLoading}
+                            isDisabled={isExportDisabled}
                         >
                             Exportar
                         </Button>
@@ -112,6 +115,7 @@ export default function HeaderWithButtonsSamePage({
                             //className="ButtonAddNew"
                             className="bg-F0AE19 text-white font-semibold"
                             startContent={<PlusIcon/>}
+                            isDisabled={isAddNewDisabled}
                         >
                             {btnText}
                         </Button>
