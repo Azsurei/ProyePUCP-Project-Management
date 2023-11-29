@@ -20,11 +20,15 @@ import { useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
 import ModalNewTask from "./ModalNewTask";
 import { useRouter } from "next/navigation";
-import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
+import {
+    HerramientasInfo,
+    SmallLoadingScreen,
+} from "@/app/dashboard/[project]/layout";
 import { FlagRefreshContext } from "@/app/dashboard/[project]/backlog/layout";
 axios.defaults.withCredentials = true;
 
 export default function KanbanBoard({ projectName, projectId }) {
+    const { herramientasInfo } = useContext(HerramientasInfo);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { flagRefresh, setFlagRefresh } = useContext(FlagRefreshContext);
 
@@ -78,7 +82,11 @@ export default function KanbanBoard({ projectName, projectId }) {
             const stringURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/kanban/listarColumnasYTareas/" +
-                projectId;
+                projectId +
+                "/" +
+                herramientasInfo.find(
+                    (herramienta) => herramienta.idHerramienta === 4
+                ).idHerramientaCreada;
             axios
                 .get(stringURL)
                 .then(function (response) {
@@ -86,16 +94,37 @@ export default function KanbanBoard({ projectName, projectId }) {
 
                     //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
                     const columnTareas = {
-                        idColumnaKanban: 0,
+                        idColumnaKanban: 1,
                         idProyecto: parseInt(projectId),
                         nombre: `Tareas`,
                         posicion: 0,
                         activo: 1,
                     };
 
+                    const columnInProgress = {
+                        idColumnaKanban: 2,
+                        idProyecto: parseInt(projectId),
+                        nombre: "En proceso",
+                        posicion: 1,
+                        activo: 1,
+                    };
+
+                    const columnFinished = {
+                        idColumnaKanban: 4,
+                        idProyecto: parseInt(projectId),
+                        nombre: "Finalizadas",
+                        posicion: response.data.data.columnas.length + 2,
+                        activo: 1,
+                    };
+
                     //siempre va a recibir columnas y tareas por orden de posicion
                     //setColumns([columnTareas, ...response.data.data.columnas]);
-                    setColumns([columnTareas, ...response.data.data.columnas]);
+                    setColumns([
+                        columnTareas,
+                        columnInProgress,
+                        ...response.data.data.columnas,
+                        columnFinished,
+                    ]);
 
                     function compareKanbanElements(a, b) {
                         if (a.idColumnaKanban < b.idColumnaKanban) {
@@ -135,7 +164,11 @@ export default function KanbanBoard({ projectName, projectId }) {
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/kanban/listarColumnasYTareas/" +
-            projectId;
+            projectId +
+            "/" +
+            herramientasInfo.find(
+                (herramienta) => herramienta.idHerramienta === 4
+            ).idHerramientaCreada;
         axios
             .get(stringURL)
             .then(function (response) {
@@ -145,7 +178,7 @@ export default function KanbanBoard({ projectName, projectId }) {
                 const columnTareas = {
                     idColumnaKanban: 1,
                     idProyecto: parseInt(projectId),
-                    nombre: `Tareas`,
+                    nombre: `No iniciadas`,
                     posicion: 0,
                     activo: 1,
                 };
@@ -153,22 +186,27 @@ export default function KanbanBoard({ projectName, projectId }) {
                 const columnInProgress = {
                     idColumnaKanban: 2,
                     idProyecto: parseInt(projectId),
-                    nombre: 'En proceso',
+                    nombre: "En proceso",
                     posicion: 1,
-                    activo: 1
-                }
+                    activo: 1,
+                };
 
                 const columnFinished = {
                     idColumnaKanban: 4,
                     idProyecto: parseInt(projectId),
-                    nombre: 'Finalizadas',
+                    nombre: "Finalizadas",
                     posicion: response.data.data.columnas.length + 2,
-                    activo: 1
-                }
+                    activo: 1,
+                };
 
                 //siempre va a recibir columnas y tareas por orden de posicion
                 //setColumns([columnTareas, ...response.data.data.columnas]);
-                setColumns([columnTareas, columnInProgress, ...response.data.data.columnas, columnFinished]);
+                setColumns([
+                    columnTareas,
+                    columnInProgress,
+                    ...response.data.data.columnas,
+                    columnFinished,
+                ]);
 
                 function compareKanbanElements(a, b) {
                     if (a.idColumnaKanban < b.idColumnaKanban) {
@@ -310,9 +348,16 @@ export default function KanbanBoard({ projectName, projectId }) {
                 isOpen={isOpenViewTask}
                 onOpenChange={onOpenChangeViewTask}
                 currentTask={currentTaskViewing}
-                goToTaskDetail={(idTarea) => {
+                goToTaskDetail={(idTarea, nombreTarea) => {
                     console.log("redireccionando a tarea");
-                    router.push('/dashboard/' + projectName + '=' + projectId + '/cronograma');
+                    router.push(
+                        "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/cronograma?search=" +
+                            nombreTarea
+                    );
                 }}
             />
 
@@ -398,22 +443,49 @@ export default function KanbanBoard({ projectName, projectId }) {
                     const stringURL =
                         process.env.NEXT_PUBLIC_BACKEND_URL +
                         "/api/proyecto/kanban/listarColumnasYTareas/" +
-                        projectId;
+                        projectId +
+                        "/" +
+                        herramientasInfo.find(
+                            (herramienta) => herramienta.idHerramienta === 4
+                        ).idHerramientaCreada;
                     axios
                         .get(stringURL)
                         .then(function (response) {
+                            console.log(response.data.data);
+
                             //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
                             const columnTareas = {
-                                idColumnaKanban: 0,
+                                idColumnaKanban: 1,
                                 idProyecto: parseInt(projectId),
-                                nombre: `Tareas`,
+                                nombre: `No iniciadas`,
                                 posicion: 0,
                                 activo: 1,
                             };
 
+                            const columnInProgress = {
+                                idColumnaKanban: 2,
+                                idProyecto: parseInt(projectId),
+                                nombre: "En proceso",
+                                posicion: 1,
+                                activo: 1,
+                            };
+
+                            const columnFinished = {
+                                idColumnaKanban: 4,
+                                idProyecto: parseInt(projectId),
+                                nombre: "Finalizadas",
+                                posicion:
+                                    response.data.data.columnas.length + 2,
+                                activo: 1,
+                            };
+
+                            //siempre va a recibir columnas y tareas por orden de posicion
+                            //setColumns([columnTareas, ...response.data.data.columnas]);
                             setColumns([
                                 columnTareas,
+                                columnInProgress,
                                 ...response.data.data.columnas,
+                                columnFinished,
                             ]);
 
                             function compareKanbanElements(a, b) {
@@ -487,7 +559,14 @@ export default function KanbanBoard({ projectName, projectId }) {
                     posicion: columns.length - 1,
                     activo: 1,
                 };
-                setColumns([...columns, columnToAdd]);
+
+                const insertIndex = columns.length - 1;
+
+                // Create a new array with the new column inserted at the specified index
+                const updatedColumns = [...columns];
+                updatedColumns.splice(insertIndex, 0, columnToAdd);
+
+                setColumns(updatedColumns);
 
                 const str =
                     "Columna " +
@@ -510,14 +589,13 @@ export default function KanbanBoard({ projectName, projectId }) {
         deleteColumnDB(id, name);
 
         //sacamos el max posicionKanban de columna 0.
-        const tareasCol0 = tasks.filter((task) => task.idColumnaKanban === 0);
+        const tareasCol0 = tasks.filter((task) => task.idColumnaKanban === 2);
         let lastPosicionKanban;
         if (tareasCol0.length !== 0) {
             lastPosicionKanban =
                 tareasCol0[tareasCol0.length - 1].posicionKanban; //+1 para empezar en el siguiente
             console.log("Empezaremos en " + lastPosicionKanban);
-        }
-        else{
+        } else {
             lastPosicionKanban = -1;
         }
 
@@ -527,13 +605,13 @@ export default function KanbanBoard({ projectName, projectId }) {
                 registerTaskPositionChange(
                     task.idTarea,
                     lastPosicionKanban,
-                    0,
+                    2,
                     task.sumillaTarea
                 );
                 return {
                     ...task,
                     posicionKanban: lastPosicionKanban,
-                    idColumnaKanban: 0,
+                    idColumnaKanban: 2,
                 };
             }
             return task;
@@ -606,6 +684,8 @@ export default function KanbanBoard({ projectName, projectId }) {
                 );
 
                 if (overColumnIndex === 0) return columns;
+                if (overColumnIndex === 1) return columns;
+                if (overColumnIndex === columns.length - 1) return columns;
 
                 console.log("entrando...");
                 const newArray = arrayMove(

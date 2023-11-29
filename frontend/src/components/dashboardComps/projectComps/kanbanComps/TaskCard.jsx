@@ -35,10 +35,7 @@ function TaskCard({ task, deleteTask, updateTask, openViewTask }) {
         setMouseIsOver(false);
     };
 
-    useEffect(() => {
-        console.log("DATA TASK");
-        console.log(task);
-    }, []);
+    
 
     if (isDragging) {
         return (

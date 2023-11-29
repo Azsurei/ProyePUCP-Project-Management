@@ -14,10 +14,11 @@ async function listarColumnas(idProyecto) {
     }
 }
 
-async function listarTareasTodasSinPosteriores(idProyecto) {
+async function listarTareasTodasSinPosteriores(idCronograma) {
     try {
-        const query = `CALL LISTAR_TAREAS_SIN_POSTERIORES_X_ID_PROYECTO(?);`;
-        const [resultsTareas] = await connection.query(query, [idProyecto]);
+        //const query = `CALL LISTAR_TAREAS_SIN_POSTERIORES_X_ID_PROYECTO(?);`;
+        const query = `CALL LISTAR_TAREAS_ULTIMO_NIVEL_X_ID_CRONOGRAMA(?);`;
+        const [resultsTareas] = await connection.query(query, [idCronograma]);
         tareas = resultsTareas[0];
 
         for(const tarea of tareas){
@@ -33,10 +34,10 @@ async function listarTareasTodasSinPosteriores(idProyecto) {
 }
 
 async function listarColumnasYTareas(req, res, next) {
-    const { idProyecto } = req.params;
+    const { idProyecto, idCronograma } = req.params;
     try {
         const columnas = await listarColumnas(idProyecto);
-        const tareas = await listarTareasTodasSinPosteriores(idProyecto);
+        const tareas = await listarTareasTodasSinPosteriores(idCronograma);
         const data = {
             columnas,
             tareas,

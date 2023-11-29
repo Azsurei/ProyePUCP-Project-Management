@@ -86,7 +86,7 @@ function ModalTaskView({ isOpen, onOpenChange, currentTask, goToTaskDetail }) {
                                 </div>
                                 <Button
                                     color="warning"
-                                    className="max-h-[40px] text-white h-[40px]"
+                                    className="max-h-[40px] text-white h-[40px] font-medium font-[Montserrat]"
                                     isLoading={isButtonLoading}
                                     onPress={() => {
                                         setIsButtonLoading(true);
@@ -107,7 +107,8 @@ function ModalTaskView({ isOpen, onOpenChange, currentTask, goToTaskDetail }) {
                                                 toast.dismiss(tId);
                                                 setIsButtonLoading(false);
                                                 goToTaskDetail(
-                                                    currentTask.idTarea
+                                                    currentTask.idTarea,
+                                                    currentTask.sumillaTarea
                                                 );
                                             }
                                         }, 2000);
@@ -265,6 +266,7 @@ function ModalTaskView({ isOpen, onOpenChange, currentTask, goToTaskDetail }) {
                                 <Button
                                     color="primary"
                                     onPress={finalizarModal}
+                                    className="font-medium font-[Montserrat]"
                                 >
                                     Cerrar
                                 </Button>
