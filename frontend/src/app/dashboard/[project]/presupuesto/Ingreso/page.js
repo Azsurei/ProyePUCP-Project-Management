@@ -443,13 +443,7 @@ export default function Ingresos(props) {
     return (
         //Presupuesto/Ingreso
         <div className="mainDivPresupuesto">
-            <Toaster
-                richColors
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
+
 
             <Breadcrumbs>
                 <BreadcrumbsItem href="/" text="Inicio" />

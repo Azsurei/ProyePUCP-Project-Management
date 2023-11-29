@@ -153,7 +153,6 @@ export default function EstimacionCostoList(props) {
     const router = useRouter();
 
     const { lista, refresh , isEdit , isSelected, changeMoneda, valueMoneda} = props;
-    console.log("listaEstimaciones", lista);
     if (props.lista.length === 0) {
         return (
             <p className="noResultsMessage">No se encontraron resultados.</p>
