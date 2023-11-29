@@ -40,7 +40,7 @@ import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 import { set } from "date-fns";
-import { NotificationsContext } from "@/app/dashboard/layout";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 export const UserCardsContextOne = React.createContext();
 
 export default function Egresos(props) {
@@ -57,6 +57,11 @@ export default function Egresos(props) {
         `/api/proyecto/presupuesto/listarMonedasTodas`;
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
+
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
+
 
     let idHerramientaCreada;
     let flag = 0;
@@ -631,15 +636,21 @@ export default function Egresos(props) {
                             Filtrar
                         </Button>
 
-                        <Button
-                            onPress={onModalCrear}
-                            color="primary"
-                            startContent={<AssignmentIcon />}
-                            isDisabled={!cardSelected}
-                            className="btnAddEgreso"
-                        >
-                            Registrar Egreso
-                        </Button>
+
+
+                        {rol !== 2 && (
+                                <Button
+                                onPress={onModalCrear}
+                                color="primary"
+                                startContent={<AssignmentIcon />}
+                                isDisabled={!cardSelected}
+                                className="btnAddEgreso"
+                            >
+                                Registrar Egreso
+                                </Button>
+                            )
+                        }
+
                     </div>
                 </div>
 

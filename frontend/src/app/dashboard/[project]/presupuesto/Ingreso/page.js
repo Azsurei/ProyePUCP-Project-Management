@@ -44,13 +44,18 @@ import TuneIcon from "@mui/icons-material/Tune";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { set } from "date-fns";
-import { NotificationsContext } from "@/app/dashboard/layout";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 
 export default function Ingresos(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
     const { sendNotification, sendNotificationOnlySocket, relistNotification } =
         useContext(NotificationsContext);
+
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
+
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -569,14 +574,21 @@ export default function Ingresos(props) {
                             Filtrar
                         </Button>
 
-                        <Button
-                            onPress={onModalCrear}
-                            color="primary"
-                            startContent={<PlusIcon />}
-                            className="btnAddIngreso"
-                        >
-                            Agregar
-                        </Button>
+                        
+                        {rol !== 2 && (
+                                <Button
+                                onPress={onModalCrear}
+                                color="primary"
+                                startContent={<PlusIcon />}
+                                className="btnAddIngreso"
+                            >
+                                Agregar
+                            </Button>
+                            )
+                        }
+
+                        
+
                     </div>
                 </div>
                 <div className="divListaIngreso">

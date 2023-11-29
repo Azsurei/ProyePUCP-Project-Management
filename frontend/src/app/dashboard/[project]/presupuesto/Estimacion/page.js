@@ -41,6 +41,7 @@ import { set } from "date-fns";
 import { tr } from "date-fns/locale";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 
 export default function EstimacionCosto(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -53,6 +54,11 @@ export default function EstimacionCosto(props) {
     const [isSelected, setIsSelected] = useState(false);
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
+
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -409,9 +415,14 @@ export default function EstimacionCosto(props) {
                             Filtrar
                         </Button>
 
-                        <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
-                            Agregar
-                        </Button>
+
+                        {rol !== 2 && (
+                            <Button onPress={onModalCrear} color="primary" startContent={<PlusIcon />} className="btnAddIngreso">
+                                Agregar
+                            </Button>
+                            )
+                        }
+
                        
                         </div>
                     </div>

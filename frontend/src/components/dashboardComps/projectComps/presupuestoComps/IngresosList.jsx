@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext,useEffect, useState } from "react";
 import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -7,6 +7,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
 import ModalEliminateIngreso from "./ModalEliminateIngreso";
 import EditIngreso from "./EditIngreso";
 import { set } from "date-fns";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 
 
 axios.defaults.withCredentials = true;
@@ -38,6 +39,10 @@ function CardIngresos({
         setModal2(!modal2);
         console.log("Esta es la linea", selectedLinea);
     };
+
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
 
     const imageIngresoOptions = {
         "Efectivo": "/icons/icon-Efectivo.svg",
@@ -85,14 +90,23 @@ function CardIngresos({
                     <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoIngreso"}>{monedaSymbol} {montoAdapt}</p>
                     <p className="titleHoraIngreso">{IngresoObject.descripcionIngresoTipo}</p>
                 </div>
-                <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
+
+                {rol !== 2 && (
+                    <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
                     <button className="" type="button" onClick={()=>toggleModal2(IngresoObject)}>
                         <img src="/icons/editar.svg"/>
                     </button>
                     <button className="" type="button" onClick={() => toggleModal(IngresoObject)}>
                         <img src="/icons/eliminar.svg"/>
                     </button>
-                </div>
+                    </div>
+                    )
+                }
+
+
+
+
+
             </div>
             {modal1 && selectedTask && (
                 <ModalEliminateIngreso

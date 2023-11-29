@@ -6,6 +6,8 @@ import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
 import ModalEliminateEgreso from "./ModalEliminateEgreso";
 import EditEgreso from "./EditEgreso";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
+
 axios.defaults.withCredentials = true;
 
 function CardEgreso({
@@ -33,6 +35,10 @@ function CardEgreso({
         setModal2(!modal2);
         console.log("Esta es la linea", selectedLinea);
     };
+
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
 
     const imageEgresoOptions = {
         "Licencia de Software": "/icons/icon-licencia.svg",
@@ -76,14 +82,22 @@ function CardEgreso({
                     <p className={isEgreso ? "titleMontoEgresoHistorial" : "titleMontoEgresoHistorial"}>{monedaSymbol} {costoAdapt}</p>
                     {/* <p className="titleHoraIngreso">{horaEgreso}</p> */}
                 </div>
-                <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                    <button className="" type="button" onClick={() => toggleModal2(EgresoObject)}>
-                        <img src="/icons/editar.svg"/>
-                    </button>
-                    <button className="" type="button" onClick={() => toggleModal(EgresoObject)}>
-                        <img src="/icons/eliminar.svg"/>
-                    </button>
-                </div>
+
+                {rol !== 2 && (
+                    <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
+                        <button className="" type="button" onClick={() => toggleModal2(EgresoObject)}>
+                            <img src="/icons/editar.svg"/>
+                        </button>
+                        <button className="" type="button" onClick={() => toggleModal(EgresoObject)}>
+                            <img src="/icons/eliminar.svg"/>
+                        </button>
+                    </div>
+                    )
+                }
+
+
+
+
             </div>
             {modal1 && selectedTask && (
                 <ModalEliminateEgreso

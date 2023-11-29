@@ -16,6 +16,8 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 import EditIcon from '@mui/icons-material/Edit';
 import { SmallLoadingScreen } from "../../../layout";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
+import CalculateIcon from '@mui/icons-material/Calculate';
 import {
     Input,
     DropdownTrigger,
@@ -39,6 +41,12 @@ import { saveAs } from "file-saver";
 
 
 export default function EstimacionTabla(props) {
+
+const { sessionData } = useContext(SessionContext);
+const userId = sessionData.idUsuario.toString();
+const rol = sessionData.rolInProject;
+
+
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
 
@@ -351,13 +359,6 @@ async function handlerExport() {
 
     return (
         <div className="mainDivPresupuesto">
-        <Toaster 
-            richColors 
-            closeButton={true}
-            toastOptions={{
-                style: { fontSize: "1rem" },
-            }}
-        />
 
         <Modal size="md" isOpen={isModalConfigurarOpen} onOpenChange={onModalConfigurarChange}>
               <ModalContent>
@@ -651,13 +652,18 @@ async function handlerExport() {
                 
                 <div className="buttonContainerEstimacionTabla">
 
-                    <Button onPress={ondModalConfigurar} color="primary" startContent={<BuildIcon />} className="btnEditEstimacion">
-                      Configurar
-                    </Button> 
+
+                  {rol !== 2 && (
+                      <Button onPress={ondModalConfigurar} color="primary" startContent={<BuildIcon />} className="btnEditEstimacion">
+                        Configurar
+                      </Button> 
+                      )
+                  }
+
 
                     <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
-                        <Button color="primary" startContent={<EditIcon />} className="btnEditarEstimacion">
-                            Editar
+                        <Button color="primary" startContent={<CalculateIcon />} className="btnEditEstimacionSup">
+                            Estimaciones
                         </Button> 
                     </Link>
 

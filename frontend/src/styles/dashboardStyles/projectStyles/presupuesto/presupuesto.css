@@ -177,6 +177,24 @@
 
 
 
+.btnEditEstimacionSup{
+    border-radius: 10px;
+    background-color: #1962F0;
+    border: #1962F0 1px solid;
+    font-size: 0.8rem;
+    font-weight: 600;
+    height: 36px;
+    width: 160px;
+    color: white;
+    margin-left: auto;
+
+}
+
+.btnEditEstimacionSup:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
 .btnEditarEstimacion{
     border-radius: 10px;
     background-color: #1962F0;
@@ -184,7 +202,7 @@
     font-size: 0.8rem;
     font-weight: 600;
     height: 36px;
-    width: 130px;
+    width: 140px;
     color: white;
     margin-left: auto;
 
@@ -194,6 +212,7 @@
     cursor: pointer;
     opacity: 0.8;
 }
+
 
 .btnEditEstimacion{
 
