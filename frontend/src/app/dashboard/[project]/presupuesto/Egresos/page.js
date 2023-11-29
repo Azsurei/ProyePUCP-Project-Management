@@ -249,7 +249,7 @@ export default function Egresos(props) {
                                 idLineaEstimacionCosto:
                                     dataLineaEstimacion.idLineaEstimacion,
 
-                                descripcion: descripcionLinea,
+                                descripcion: dataLineaEstimacion.descripcion,
                                 costoReal: parseFloat(
                                     dataLineaEstimacion.tarifaUnitaria *
                                         cantRecurso
@@ -843,8 +843,7 @@ export default function Egresos(props) {
                             }
 
                             if (descripcionLinea === "") {
-                                setValidDescription(false);
-                                Isvalid = false;
+                                setdescripcionLinea(dataLineaEstimacion.descripcion);
                             }
 
                             if (fecha === "") {
@@ -893,7 +892,7 @@ export default function Egresos(props) {
 
                                     <div className="modalAddIngreso">
                                         <Input
-                                            isDisabled
+                                            isReadOnly
                                             type="number"
                                             value={
                                                 dataLineaEstimacion.tarifaUnitaria
@@ -918,12 +917,11 @@ export default function Egresos(props) {
 
                                     <div className="modalAddIngreso">
                                         <Textarea
-                                            label=""
+                                            isReadOnly
+
                                             isInvalid={!validDescription}
-                                            errorMessage={
-                                                !validDescription
-                                                    ? msgEmptyField
-                                                    : ""
+                                            defaultValue={
+                                                dataLineaEstimacion.descripcion
                                             }
                                             maxLength={35}
                                             variant={"bordered"}
@@ -931,10 +929,6 @@ export default function Egresos(props) {
                                             placeholder="Escriba aquí..."
                                             className="max-w-x"
                                             maxRows="2"
-                                            onValueChange={setdescripcionLinea}
-                                            onChange={() => {
-                                                setValidDescription(true);
-                                            }}
                                         />
                                     </div>
 
