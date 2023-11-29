@@ -84,7 +84,7 @@ function ColumnContainer({
                 {...attributes}
                 {...listeners}
                 onClick={() => {
-                    if(column.idColumnaKanban !== 0 ){
+                    if(column.idColumnaKanban !== 1 || column.idColumnaKanban !== 2 || column.idColumnaKanban !== 4){
                         setEditMode(true);
                     }
                 }}
@@ -150,7 +150,7 @@ function ColumnContainer({
                         />
                     )}
                 </div>
-                {column.idColumnaKanban !== 0 && (
+                {column.idColumnaKanban !== 1 && column.idColumnaKanban !== 2 && column.idColumnaKanban !== 4 && (
                     <button
                         onClick={() => {
                             deleteColumn(column.idColumnaKanban, column.nombre);

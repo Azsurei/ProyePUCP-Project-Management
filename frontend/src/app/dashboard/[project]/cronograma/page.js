@@ -97,8 +97,8 @@ export default function Cronograma(props) {
     const { herramientasInfo } = useContext(HerramientasInfo);
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const { sendNotification, accessEdition, exitEdition } = useContext(NotificationsContext);
-
+    const { sendNotification, accessEdition, exitEdition } =
+        useContext(NotificationsContext);
 
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -432,7 +432,6 @@ export default function Cronograma(props) {
 
     const handleEdit = (tarea) => {
         accessEdition(tarea.idTarea, 4, sessionData, () => {
-
             console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
             setIdTareaToEdit(tarea.idTarea);
             setTareaPadre(tarea.idPadre);
@@ -694,8 +693,16 @@ export default function Cronograma(props) {
                                             };
                                         }
                                     );
-
-                                setListEntregables(entregablesArray);
+                                const sinEntregable = {
+                                    idEntregable: 0,
+                                    nombre: "Sin entregable asociado",
+                                    idComponente: 0,
+                                    activo: 1,
+                                };
+                                setListEntregables([
+                                    sinEntregable,
+                                    ...entregablesArray,
+                                ]);
 
                                 setIsLoadingSmall(false);
                             })
@@ -717,6 +724,21 @@ export default function Cronograma(props) {
     async function registrarTareaModal() {
         try {
             setIsRegisterLoading(true);
+
+            console.log("SOBRE ENTREGABLE");
+            const arrayEntregable = Array.from(tareaEntregable);
+            console.log(arrayEntregable);
+
+            let idEntregable = 0;
+            if(arrayEntregable.length === 0){
+                console.log("No se mando entregable, asignando sin entregable");
+                idEntregable = 0;
+            }
+            else{
+                console.log("Asignando entregable " + arrayEntregable[0]);
+                idEntregable = parseInt(arrayEntregable[0]);
+            }
+
             const objTareaNueva = {
                 idCronograma: cronogramaId,
                 idTareaEstado: 1, //No iniciado
@@ -734,8 +756,8 @@ export default function Cronograma(props) {
                 horasPlaneadas: tareaHorasAsignadas,
                 usuarios: selectedUsers, //veriifcar posible error
                 tareasPosteriores: [],
-                idEntregable: parseInt(tareaEntregable.currentKey),
-                idColumnaKanban: 0,
+                idEntregable: idEntregable,
+                idColumnaKanban: 1, //siempre empezara en no iniciado
                 dependencias: dependencies,
             };
             console.log(objTareaNueva);
@@ -929,19 +951,27 @@ export default function Cronograma(props) {
                 );
             });
 
-            console.log("Usuarios eliminados:", deletedUsers);
-            console.log("Usuarios agregados:", addedUsers);
-
             //sobre tareas posteriores agregadas
             console.log(
                 "LISTA DE POSTERIORES : " +
                     JSON.stringify(listPosteriores, null, 2)
             );
 
-            //como conseguimos los nuevos? nuevaLista - listaOriginal
+
 
             console.log("SOBRE ENTREGABLE");
-            console.log(tareaEntregable);
+            const arrayEntregable = Array.from(tareaEntregable);
+            console.log(arrayEntregable);
+
+            let idEntregable = 0;
+            if(arrayEntregable.length === 0){
+                console.log("No se mando entregable, asignando sin entregable");
+                idEntregable = 0;
+            }
+            else{
+                console.log("Asignando entregable " + arrayEntregable[0]);
+                idEntregable = parseInt(arrayEntregable[0]);
+            }
 
             const objToEdit = {
                 idCronograma: cronogramaId,
@@ -957,7 +987,7 @@ export default function Cronograma(props) {
                 tareasPosterioresEliminadas: listPosterioresOriginal,
                 usuariosAgregados: selectedUsers, //al final se barren todos los antiguos xde, se deben agregar todos dnv
                 usuariosEliminados: deletedUsers,
-                idEntregable: parseInt(tareaEntregable.currentKey),
+                idEntregable: idEntregable,
             };
 
             console.log(
@@ -1079,7 +1109,17 @@ export default function Cronograma(props) {
                                 };
                             }
                         );
-                        setListEntregables(entregablesArray);
+                        const sinEntregable = {
+                            idEntregable: 0,
+                            idEntregableString: '0',
+                            nombre: "Sin entregable asociado",
+                            idComponente: 0,
+                            activo: 1,
+                        };
+                        setListEntregables([
+                            sinEntregable,
+                            ...entregablesArray,
+                        ]);
 
                         setIsListLoading(false);
                     })
@@ -1381,9 +1421,14 @@ export default function Cronograma(props) {
                                         size="md"
                                         radius="sm"
                                         onClick={() => {
-                                            accessEdition(idTareaToEdit,4,sessionData,()=>{
-                                                setStateSecond(3);
-                                            });
+                                            accessEdition(
+                                                idTareaToEdit,
+                                                4,
+                                                sessionData,
+                                                () => {
+                                                    setStateSecond(3);
+                                                }
+                                            );
                                         }}
                                         className="bg-F0AE19 h-[35px] mb-1 w-[115px]"
                                         startContent={<UpdateIcon />}
@@ -1402,6 +1447,9 @@ export default function Cronograma(props) {
 
                             <div className="contFirstRow">
                                 <div className="contNombre">
+                                    <p onClick={()=>{
+                                        console.log(tareaEntregable);
+                                    }}>Ver entregable</p>
                                     <p className={twStyle1}>Nombre de tarea</p>
 
                                     <Textarea
@@ -2084,11 +2132,11 @@ export default function Cronograma(props) {
                                                 }
                                             }
 
-                                            if (tareaEntregable.size === 0) {
-                                                console.log(tareaEntregable);
-                                                setValidEntregable(false);
-                                                allValid = false;
-                                            }
+                                            // if (tareaEntregable.size === 0) {
+                                            //     console.log(tareaEntregable);
+                                            //     setValidEntregable(false);
+                                            //     allValid = false;
+                                            // }
 
                                             if (
                                                 selectedSubteam === null &&

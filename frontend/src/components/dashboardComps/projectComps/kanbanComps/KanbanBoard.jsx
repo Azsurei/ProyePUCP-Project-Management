@@ -143,16 +143,32 @@ export default function KanbanBoard({ projectName, projectId }) {
 
                 //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
                 const columnTareas = {
-                    idColumnaKanban: 0,
+                    idColumnaKanban: 1,
                     idProyecto: parseInt(projectId),
                     nombre: `Tareas`,
                     posicion: 0,
                     activo: 1,
                 };
 
+                const columnInProgress = {
+                    idColumnaKanban: 2,
+                    idProyecto: parseInt(projectId),
+                    nombre: 'En proceso',
+                    posicion: 1,
+                    activo: 1
+                }
+
+                const columnFinished = {
+                    idColumnaKanban: 4,
+                    idProyecto: parseInt(projectId),
+                    nombre: 'Finalizadas',
+                    posicion: response.data.data.columnas.length + 2,
+                    activo: 1
+                }
+
                 //siempre va a recibir columnas y tareas por orden de posicion
                 //setColumns([columnTareas, ...response.data.data.columnas]);
-                setColumns([columnTareas, ...response.data.data.columnas]);
+                setColumns([columnTareas, columnInProgress, ...response.data.data.columnas, columnFinished]);
 
                 function compareKanbanElements(a, b) {
                     if (a.idColumnaKanban < b.idColumnaKanban) {
@@ -201,31 +217,6 @@ export default function KanbanBoard({ projectName, projectId }) {
             py-[20px]
             "
         >
-            {/* <p
-                className="w-[100px]"
-                onClick={() => {
-                    console.log("COLUMNAS: " + JSON.stringify(columns));
-                    console.log("TAREAS: " + JSON.stringify(tasks));
-                    for (const column of columns) {
-                        console.log(
-                            "TAREAS DE COL " +
-                                column.idColumnaKanban +
-                                " => " +
-                                JSON.stringify(
-                                    tasks.filter(
-                                        (task) =>
-                                            task.idColumnaKanban ===
-                                            column.idColumnaKanban
-                                    ),
-                                    null,
-                                    2
-                                )
-                        );
-                    }
-                }}
-            >
-                {"Click me"}
-            </p> */}
             <DndContext
                 sensors={sensors}
                 onDragStart={onDragStart}

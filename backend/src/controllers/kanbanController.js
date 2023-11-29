@@ -141,6 +141,8 @@ async function listarInfoTarea(req, res, next) {
         const [results] = await connection.query(query, [idTarea]);
         const tareaData = results[0][0];
 
+        console.log(JSON.stringify(tareaData,null,2));
+
         if(tareaData == null){
             console.log("No se encontro la tarea con id: " + idTarea);
         }
@@ -168,6 +170,11 @@ async function listarInfoTarea(req, res, next) {
             }
             tareaData.equipo = null;
         }
+
+        if(tareaData.nombreEntregable === null){
+            tareaData.nombreEntregable = "Sin entregable asociado";
+        }
+        
 
         res.status(200).json({
             tareaData: tareaData,
