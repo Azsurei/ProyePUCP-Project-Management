@@ -697,7 +697,7 @@ async function handlerExport() {
             </TableHead>
             <TableBody>
             {lineasEstimacion.map((row) => {
-
+              console.log(row);
               return (
                 <TableRow key={row.descripcion}>
                   <TableCell className="text-gray-800 text-sm not-italic font-medium" >{row.descripcion}</TableCell>

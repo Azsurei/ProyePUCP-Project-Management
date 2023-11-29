@@ -116,6 +116,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
             cantidadRecurso: cantRecurso,
             subtotal: parseFloat(monto * cantRecurso * mesesRequerido).toFixed(2),
             fechaInicio: new Date().toISOString(),
+            tiempoRequerido:mesesRequerido,
           };
           console.log("Actualizado correctamente");
           console.log(putData);
