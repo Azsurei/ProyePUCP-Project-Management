@@ -614,7 +614,7 @@ async function funcCrearExcelCajaEstimacion(general,lineasIngresoOrdenadas,linea
         const WSCaja = workbook.addWorksheet('Caja Estimacion de Costos');
         let totalIngresos = 0;
         let totalEstimacion = 0;
-        console.log(lineasEstimacionCostoOrdenadas);
+        //console.log(lineasEstimacionCostoOrdenadas);
         filaActual = await agregarHeaderMeses(WSCaja,filaActual,general.cantidadMeses);
         // Imprimir Ingresos
         [filaActual, totalIngresos] = await agregarIngresosAExcelCaja(lineasIngresoOrdenadas,WSCaja,filaActual,general.cantidadMeses);
