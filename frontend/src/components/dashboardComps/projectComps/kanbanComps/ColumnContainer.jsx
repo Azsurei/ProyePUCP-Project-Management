@@ -81,10 +81,17 @@ function ColumnContainer({
         >
             {/****************Column title **************/}
             <div
-                {...attributes}
-                {...listeners}
+                {...(column.idColumnaKanban !== 1 &&
+                column.idColumnaKanban !== 2 &&
+                column.idColumnaKanban !== 4
+                    ? { ...attributes, ...listeners }
+                    : {})}
                 onClick={() => {
-                    if(column.idColumnaKanban !== 0 ){
+                    if (
+                        column.idColumnaKanban !== 1 &&
+                        column.idColumnaKanban !== 2 &&
+                        column.idColumnaKanban !== 4
+                    ) {
                         setEditMode(true);
                     }
                 }}
@@ -120,7 +127,7 @@ function ColumnContainer({
                     >
                         {tasks.length}
                     </div>
-                    {!editMode && column.nombre}
+                    {!editMode && <p>{column.nombre}</p>}
                     {editMode && (
                         <input
                             className="ColumnContainer bg-white dark:bg-black focus:border-rose-500 border rounded outline-none px-2"
@@ -150,12 +157,17 @@ function ColumnContainer({
                         />
                     )}
                 </div>
-                {column.idColumnaKanban !== 0 && (
-                    <button
-                        onClick={() => {
-                            deleteColumn(column.idColumnaKanban, column.nombre);
-                        }}
-                        className="
+                {column.idColumnaKanban !== 1 &&
+                    column.idColumnaKanban !== 2 &&
+                    column.idColumnaKanban !== 4 && (
+                        <button
+                            onClick={() => {
+                                deleteColumn(
+                                    column.idColumnaKanban,
+                                    column.nombre
+                                );
+                            }}
+                            className="
                         bg-columnBackgroundColor
                         stroke-gray-500
                         transition-colors duration-75
@@ -164,10 +176,10 @@ function ColumnContainer({
                         rounded
                         px-1
                         py-1"
-                    >
-                        <TrashIcon />
-                    </button>
-                )}
+                        >
+                            <TrashIcon />
+                        </button>
+                    )}
             </div>
 
             {/****************Main content **************/}
@@ -186,15 +198,17 @@ function ColumnContainer({
             </div>
 
             {/****************Main footer **************/}
-            <button
-                className="ColumnContainer flex gap-2 items-center border-columnBackgroundColor border-4 rounded-md p-4
+            {column.idColumnaKanban !== 4 ? (
+                <button
+                    className="ColumnContainer flex gap-2 items-center border-columnBackgroundColor border-4 rounded-md p-4
                  hover:text-primary hover:bg-taskBackgroundColor"
-                onClick={() => {
-                    createTask(column.idColumnaKanban);
-                }}
-            >
-                <PlusIcon /> Añadir tarea
-            </button>
+                    onClick={() => {
+                        createTask(column.idColumnaKanban);
+                    }}
+                >
+                    <PlusIcon /> Añadir tarea
+                </button>
+            ) : null}
         </div>
     );
 }

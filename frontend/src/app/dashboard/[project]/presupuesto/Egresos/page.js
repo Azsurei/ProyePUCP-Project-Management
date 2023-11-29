@@ -40,7 +40,7 @@ import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EstimacionCostoList from "@/components/dashboardComps/projectComps/presupuestoComps/EstimacionCostoList";
 import { set } from "date-fns";
-import { NotificationsContext } from "@/app/dashboard/layout";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 export const UserCardsContextOne = React.createContext();
 
 export default function Egresos(props) {
@@ -57,6 +57,11 @@ export default function Egresos(props) {
         `/api/proyecto/presupuesto/listarMonedasTodas`;
     const [presupuestoId, setPresupuestoId] = useState("");
     //const router=userRouter();
+
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
+
 
     let idHerramientaCreada;
     let flag = 0;
@@ -244,7 +249,7 @@ export default function Egresos(props) {
                                 idLineaEstimacionCosto:
                                     dataLineaEstimacion.idLineaEstimacion,
 
-                                descripcion: descripcionLinea,
+                                descripcion: dataLineaEstimacion.descripcion,
                                 costoReal: parseFloat(
                                     dataLineaEstimacion.tarifaUnitaria *
                                         cantRecurso
@@ -511,13 +516,6 @@ export default function Egresos(props) {
     return (
         //Presupuesto/Egreso
         <div className="mainDivPresupuesto">
-            <Toaster
-                richColors
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-            />
 
             <Breadcrumbs>
                 <BreadcrumbsItem href="/" text="Inicio" />
@@ -638,15 +636,21 @@ export default function Egresos(props) {
                             Filtrar
                         </Button>
 
-                        <Button
-                            onPress={onModalCrear}
-                            color="primary"
-                            startContent={<AssignmentIcon />}
-                            isDisabled={!cardSelected}
-                            className="btnAddEgreso"
-                        >
-                            Registrar Egreso
-                        </Button>
+
+
+                        {rol !== 2 && (
+                                <Button
+                                onPress={onModalCrear}
+                                color="primary"
+                                startContent={<AssignmentIcon />}
+                                isDisabled={!cardSelected}
+                                className="btnAddEgreso"
+                            >
+                                Registrar Egreso
+                                </Button>
+                            )
+                        }
+
                     </div>
                 </div>
 
@@ -839,8 +843,7 @@ export default function Egresos(props) {
                             }
 
                             if (descripcionLinea === "") {
-                                setValidDescription(false);
-                                Isvalid = false;
+                                setdescripcionLinea(dataLineaEstimacion.descripcion);
                             }
 
                             if (fecha === "") {
@@ -889,7 +892,7 @@ export default function Egresos(props) {
 
                                     <div className="modalAddIngreso">
                                         <Input
-                                            isDisabled
+                                            isReadOnly
                                             type="number"
                                             value={
                                                 dataLineaEstimacion.tarifaUnitaria
@@ -914,12 +917,11 @@ export default function Egresos(props) {
 
                                     <div className="modalAddIngreso">
                                         <Textarea
-                                            label=""
+                                            isReadOnly
+
                                             isInvalid={!validDescription}
-                                            errorMessage={
-                                                !validDescription
-                                                    ? msgEmptyField
-                                                    : ""
+                                            defaultValue={
+                                                dataLineaEstimacion.descripcion
                                             }
                                             maxLength={35}
                                             variant={"bordered"}
@@ -927,10 +929,6 @@ export default function Egresos(props) {
                                             placeholder="Escriba aquí..."
                                             className="max-w-x"
                                             maxRows="2"
-                                            onValueChange={setdescripcionLinea}
-                                            onChange={() => {
-                                                setValidDescription(true);
-                                            }}
                                         />
                                     </div>
 

@@ -16,6 +16,8 @@ import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 import EditIcon from '@mui/icons-material/Edit';
 import { SmallLoadingScreen } from "../../../layout";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
+import CalculateIcon from '@mui/icons-material/Calculate';
 import {
     Input,
     DropdownTrigger,
@@ -39,6 +41,12 @@ import { saveAs } from "file-saver";
 
 
 export default function EstimacionTabla(props) {
+
+const { sessionData } = useContext(SessionContext);
+const userId = sessionData.idUsuario.toString();
+const rol = sessionData.rolInProject;
+
+
 const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
 
 
@@ -93,7 +101,6 @@ useEffect(() => {
 
         const monedaId1 = monedasData.find((moneda) => moneda.idMoneda === 1);
         setTipoCambioDolar(monedaId1.tipoCambio);
-        console.log("Tipo de Cambio:" + monedaId1.tipoCambio);
       } catch (error) {
         console.error("Error al obtener las plantillas:", error);
       }
@@ -124,8 +131,6 @@ useEffect(() => {
                   break;
               }
           }
-
-          console.log(`Esta es el id presupuesto:`, idHerramientaCreada);
       } catch (error) {
           console.error('Error al obtener el presupuesto:', error);
       }
@@ -133,7 +138,6 @@ useEffect(() => {
       if (flag === 1) {
           // Aquí encadenamos el segundo axios
           const stringURLListarPresupuesto = process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/presupuesto/listarPresupuesto/" + idHerramientaCreada;
-          console.log("URL:" + stringURLListarPresupuesto);
           axios.get(stringURLListarPresupuesto)
               .then(response => {
                   const presupuesto = response.data.presupuesto;
@@ -153,10 +157,7 @@ useEffect(() => {
 
 
                   setMonedaPresupuesto(moneda);
-                  console.log("Reserva Contingencia:" + ReservaContingencia);
-                  console.log("Reserva Gestion:" + PorcentajeReservaGestion);
-                  console.log("Reserva Ganancia:" + PorcentajeGanancia);
-                  console.log("Reserva Igv:" + Igv);
+
 
 
               })
@@ -205,8 +206,6 @@ const [lineasEstimacion, setLineasEstimacion] = useState([]);
               const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/presupuesto/listarLineasEstimacionCostoXIdPresupuesto/${presupuestoId}`);
               const data = response.data.lineasEstimacionCosto;
               setLineasEstimacion(data);
-              console.log(`Esta es la data:`, data);
-                console.log(`Datos obtenidos exitosamente:`, response.data.lineasEstimacionCosto);
             } catch (error) {
               console.error('Error al obtener las líneas de ingreso:', error);
             }
@@ -255,11 +254,9 @@ async function updatePorcentaje() {
         setIsLoadingSmall(true);
         const stringUrlmodificaPresupuesto =
           process.env.NEXT_PUBLIC_BACKEND_URL +
-          `/api/proyecto/presupuesto/modificarPorcentasjesPresupuestoXIdPresupuesto`;
-
-        console.log(`Esta es el id presupuesto:`, stringUrlmodificaPresupuesto);
-
-        const data = {
+          `/api/proyecto/presupuesto/modificarPorcentasjesPresupuestoXIdPresupuesto`;        
+        
+        let data = {
           idPresupuesto: presupuestoId,
           reservaContingencia: parseFloat(pReserva),
           porcentajeReservaGestion: parseFloat(pGestion / 100),
@@ -267,12 +264,26 @@ async function updatePorcentaje() {
           IGV: parseFloat(pIGV / 100)
         };
 
+        const replacements = {
+          reservaContingencia: Reserva,
+          porcentajeReservaGestion: Gestion,
+          porcentajeGanancia: Ganancia,
+          IGV: IGV
+        };
+
+        for (const key in data) {
+          if (data.hasOwnProperty(key) && data[key] <= 0.00) {
+              data[key] = replacements[key];
+          }
+        }
+    
+
+        console.log(data);
 
         axios
           .put(stringUrlmodificaPresupuesto, data)
           .then((response) => {
             console.log(response.data.message);
-            console.log("Porcentajes SI Modificado");
             resolve(response);
           })
           .catch((error) => {
@@ -334,7 +345,6 @@ async function handlerExport() {
               "_" +
               formattedDate +
               ".xlsx";
-          console.log(fileName);
           saveAs(response.data, fileName);
 
           toast.success("Se exporto la Estimación de Costos con exito");
@@ -349,13 +359,6 @@ async function handlerExport() {
 
     return (
         <div className="mainDivPresupuesto">
-        <Toaster 
-            richColors 
-            closeButton={true}
-            toastOptions={{
-                style: { fontSize: "1rem" },
-            }}
-        />
 
         <Modal size="md" isOpen={isModalConfigurarOpen} onOpenChange={onModalConfigurarChange}>
               <ModalContent>
@@ -393,38 +396,21 @@ async function handlerExport() {
 
                       if(pGestion>0){
                         setGestion(pGestion/100);
-                      }else{
-                        setpGestion(Gestion);
                       }
                       
                       if(pReserva>0){
                         setReserva(pReserva);
-
                       }
-                      else{
-                        setpReserva(Reserva);
-
-                      }
-
-                      if(pReserva>0){
+                     
+                      if(pIGV>0){
                         setIGV(pIGV/100);
 
                       }
-                      else{
-                        setpIGV(IGV);
-                      }
-
 
                       if(pGanancia>0){
                         setGanancia(pGanancia/100);
-
-                      }
-                      else{
-                        setpGanancia(Ganancia);
                       }
 
-
-                      //await actualizarPorcentanjes();
 
                       try {
                           actualizarPorcentanjes();     
@@ -666,13 +652,18 @@ async function handlerExport() {
                 
                 <div className="buttonContainerEstimacionTabla">
 
-                    <Button onPress={ondModalConfigurar} color="primary" startContent={<BuildIcon />} className="btnEditEstimacion">
-                      Configurar
-                    </Button> 
+
+                  {rol !== 2 && (
+                      <Button onPress={ondModalConfigurar} color="primary" startContent={<BuildIcon />} className="btnEditEstimacion">
+                        Configurar
+                      </Button> 
+                      )
+                  }
+
 
                     <Link href={"/dashboard/"+projectName+"="+projectId+"/presupuesto/Estimacion"}>
-                        <Button color="primary" startContent={<EditIcon />} className="btnEditarEstimacion">
-                            Editar
+                        <Button color="primary" startContent={<CalculateIcon />} className="btnEditEstimacionSup">
+                            Estimaciones
                         </Button> 
                     </Link>
 
@@ -706,7 +697,7 @@ async function handlerExport() {
             </TableHead>
             <TableBody>
             {lineasEstimacion.map((row) => {
-
+              console.log(row);
               return (
                 <TableRow key={row.descripcion}>
                   <TableCell className="text-gray-800 text-sm not-italic font-medium" >{row.descripcion}</TableCell>

@@ -7,6 +7,7 @@ import "@/styles/dashboardStyles/projectStyles/presupuesto/ingresosList.css";
 import ModalEliminateEstimacion from "./ModalEliminateEstimaciones";
 import EditIngreso from "./EditIngreso";
 import EditEstimacion from "./EditEstimacion";
+import { NotificationsContext, SessionContext } from "@/app/dashboard/layout";
 
 axios.defaults.withCredentials = true;
 
@@ -43,19 +44,11 @@ function CardEstimacionCosto({
         console.log("Esta es la linea", selectedLinea);
     };
 
-    // const handleCardSelect = () => {
-    //     if (onSelect) {
-    //         if (isSelected) {
-    //             setIsSelected(false);
-    //             onSelect(null);
-    //             console.log("deseleccionado");
-    //         } else {
-    //             setIsSelected(!isSelected);
-    //         onSelect(EstimacionObject);
-    //         }
-            
-    //     }
-    // };
+    const { sessionData } = useContext(SessionContext);
+    const userId = sessionData.idUsuario.toString();
+    const rol = sessionData.rolInProject;
+
+
     const handleCardSelect = () => {
         if (onSelect && canSelect) {
             setIsSelected(!isSelected); // Cambiar el estado isSelected
@@ -108,7 +101,9 @@ function CardEstimacionCosto({
                     <p className="titleHoraIngreso">Subtotal: {monedaSymbol} {subtotalAdapt}</p>
                 </div>
                 <div className="flex" style={{ marginTop: "12px", marginLeft: "15px" }}>
-                {isEdit && (
+
+
+                {rol !== 2 && isEdit && (
                     <>
                     <button className="" type="button" onClick={() => toggleModal2(EstimacionObject)}>
                         <img src="/icons/editar.svg" />
@@ -153,7 +148,6 @@ export default function EstimacionCostoList(props) {
     const router = useRouter();
 
     const { lista, refresh , isEdit , isSelected, changeMoneda, valueMoneda} = props;
-    console.log("listaEstimaciones", lista);
     if (props.lista.length === 0) {
         return (
             <p className="noResultsMessage">No se encontraron resultados.</p>

@@ -14,10 +14,11 @@ async function listarColumnas(idProyecto) {
     }
 }
 
-async function listarTareasTodasSinPosteriores(idProyecto) {
+async function listarTareasTodasSinPosteriores(idCronograma) {
     try {
-        const query = `CALL LISTAR_TAREAS_SIN_POSTERIORES_X_ID_PROYECTO(?);`;
-        const [resultsTareas] = await connection.query(query, [idProyecto]);
+        //const query = `CALL LISTAR_TAREAS_SIN_POSTERIORES_X_ID_PROYECTO(?);`;
+        const query = `CALL LISTAR_TAREAS_ULTIMO_NIVEL_X_ID_CRONOGRAMA(?);`;
+        const [resultsTareas] = await connection.query(query, [idCronograma]);
         tareas = resultsTareas[0];
 
         for(const tarea of tareas){
@@ -33,10 +34,10 @@ async function listarTareasTodasSinPosteriores(idProyecto) {
 }
 
 async function listarColumnasYTareas(req, res, next) {
-    const { idProyecto } = req.params;
+    const { idProyecto, idCronograma } = req.params;
     try {
         const columnas = await listarColumnas(idProyecto);
-        const tareas = await listarTareasTodasSinPosteriores(idProyecto);
+        const tareas = await listarTareasTodasSinPosteriores(idCronograma);
         const data = {
             columnas,
             tareas,
@@ -141,6 +142,8 @@ async function listarInfoTarea(req, res, next) {
         const [results] = await connection.query(query, [idTarea]);
         const tareaData = results[0][0];
 
+        console.log(JSON.stringify(tareaData,null,2));
+
         if(tareaData == null){
             console.log("No se encontro la tarea con id: " + idTarea);
         }
@@ -168,6 +171,11 @@ async function listarInfoTarea(req, res, next) {
             }
             tareaData.equipo = null;
         }
+
+        if(tareaData.nombreEntregable === null){
+            tareaData.nombreEntregable = "Sin entregable asociado";
+        }
+        
 
         res.status(200).json({
             tareaData: tareaData,

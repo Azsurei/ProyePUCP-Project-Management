@@ -6,6 +6,8 @@ import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import MyCombobox from "@/components/ComboBox";
 import { Select, SelectItem, Textarea } from "@nextui-org/react";
 import axios from "axios";
+import { Toaster, toast } from "sonner";
+
 axios.defaults.withCredentials = true;
 export default function EditEstimacion({modal, idLineaEstimacion, descripcionEstimacionCosto, tarifaEstimacion, estimacionCosto, cantidadRecurso, mesesEstimacion, idMonedaEstimacion, fechaInicio, subtotalEstimacion, refresh}) {
     const [selectedTipoMoneda, setSelectedTipoMoneda] = useState("");
@@ -104,42 +106,72 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
         console.log("EditIngreso", subtotalEstimacion);
     }, []); 
     const onSubmit = () => {
-        console.log("Que data estoy enviando:", estimacionCosto);
-        const putData = {
+        return new Promise((resolve, reject) => {
+          console.log("Que data estoy enviando:", estimacionCosto);
+          const putData = {
             idLineaEstimacionCosto: idLineaEstimacion,
             idMoneda: selectedTipoMoneda,
             descripcion: descripcionLinea,
             tarifaUnitaria: monto,
             cantidadRecurso: cantRecurso,
-            subtotal: parseFloat(monto*cantRecurso*mesesRequerido).toFixed(2),
-            fechaInicio: fecha,
-        };
-        console.log("Actualizado correctamente");
-        console.log(putData);
-        axios.put(
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/presupuesto/modificarLineaEstimacionCosto",
-                putData
-            )
-            .then((response) => {
-                // Manejar la respuesta de la solicitud PUT
-                console.log("Respuesta del servidor:", response.data);
-                console.log("Actualización correcta");
-                const handleRefresh = async () => {
-                    refresh();
-                    console.log("refreshed");
-                  };
-                  handleRefresh();
-                // Realizar acciones adicionales si es necesario
-            })
-            .catch((error) => {
-                // Manejar errores si la solicitud PUT falla
-                console.error("Error al realizar la solicitud PUT:", error);
+            subtotal: parseFloat(monto * cantRecurso * mesesRequerido).toFixed(2),
+            fechaInicio: new Date().toISOString(),
+            tiempoRequerido:mesesRequerido,
+          };
+          console.log("Actualizado correctamente");
+          console.log(putData);
+          
+          axios.put(
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/proyecto/presupuesto/modificarLineaEstimacionCosto",
+            putData
+          )
+          .then((response) => {
+            // Resolve the promise with the response data
+            console.log("Respuesta del servidor:", response.data);
+            console.log("Actualización correcta");
+            const handleRefresh = async () => {
+              refresh();
+              console.log("refreshed");
+            };
+            handleRefresh();
+            resolve(response.data);
+          })
+          .catch((error) => {
+            // Reject the promise with the error
+            console.error("Error al realizar la solicitud PUT:", error);
+            reject(error);
+          });
+        });
+      };
+      
+
+
+    const editarLineaEstimacion = async () => {
+        try {
+            toast.promise(onSubmit, {
+                loading: "Editando Estimación...",
+                success: (data) => {
+                    //DataTable();
+                    return "La estimación se edutó con éxito!";
+                    
+                },
+                error: "Error al editar estimación",
+                position: "bottom-right",
             });
             
-        
+        } catch (error) {
+            throw error; // Lanza el error para que se propague
+        } 
     };
     return (
         <div>
+             <Toaster 
+                    richColors 
+                    closeButton={true}
+                    toastOptions={{
+                        style: { fontSize: "1rem" },
+                    }}
+                />
             {startModal && (
                             <Modal hideCloseButton={false} size='md' isOpen={isModalCrearOpen} onOpenChange={onModalCrearChange} isDismissable={false} >
                             <ModalContent >
@@ -411,16 +443,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                             marginTop: "0.5rem",
                                                         }}
                                                         >
-                                                        <p
-                                                            style={{
-                                                            color: "#44546F",
-                                                            fontSize: "16px",
-                                                            fontStyle: "normal",
-                                                            fontWeight: 300,
-                                                            }}
-                                                        >
-                                                            Fecha Inicio
-                                                        </p>
+                                                
             
                                                         <p
                                                             style={{
@@ -444,11 +467,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                             gap: "2.5rem"
                                                         }}>
             
-                                                            
-                                                            <input type="date" id="inputFechaPresupuesto" name="datepicker" 
-                                                            style={{ width: '18rem' }}
-            
-                                                            onChange={handleChangeFecha} defaultValue={fecha}/>
+                                            
             
                                                             <Input
                                                                 isReadOnly
@@ -511,7 +530,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                     <Button
                                                         color="primary"
                                                         onPress={() => {
-                                                            onSubmit();
+                                                            editarLineaEstimacion();
                                                             onClose();
                                                         }}
                                                         
