@@ -507,7 +507,7 @@ return (
       align="left"
       className={`text-gray-800 text-sm not-italic font-extrabold bg-gray-200 ${total > 0 ? 'text-green-600 text-base not-italic font-extrabold bg-gray-200' : total < 0 ? 'text-red-500 text-base not-italic font-extrabold bg-gray-200' : ''}`}
     >
-      {total}
+      {total.toFixed(2)}
     </TableCell>
   ))}
 </TableRow>
