@@ -539,7 +539,7 @@ async function agregarResumenEstimacionCostoAExcel(general,WSEstimaciones,filaAc
         celdaEscogida.style = {...headerTitulo, border: borderStyle};
         filaActual++;
 
-        const reservaGestion = [null,null,null,"Reserva de gestion","PV",general.porcentajeReservaGestion];
+        const reservaGestion = [null,null,null,"Reserva de gestion",(totalEstimacion+general.reservaContingencia)*general.porcentajeReservaGestion,`${general.porcentajeReservaGestion*100}%`];
         WSEstimaciones.getRow(filaActual).values = reservaGestion;
         celdaEscogida = WSEstimaciones.getCell(filaActual,5);
         celdaEscogida.style = {...headerTitulo, border: borderStyle};
@@ -551,19 +551,20 @@ async function agregarResumenEstimacionCostoAExcel(general,WSEstimaciones,filaAc
         celdaEscogida.style = {...headerTitulo, border: borderStyle};
         filaActual++;
 
-        const ganancia = [null,null,null,"Ganancia","PV",general.porcentajeGanancia];
+        const ganancia = [null,null,null,"Ganancia",general.presupuestoInicial*general.porcentajeGanancia,`${general.porcentajeGanancia*100}%`];
         WSEstimaciones.getRow(filaActual).values = ganancia;
         celdaEscogida = WSEstimaciones.getCell(filaActual,5);
         celdaEscogida.style = {...headerTitulo, border: borderStyle};
         filaActual++;
 
-        const totalConGanancia = [null,null,null,"Total con ganancia",totalEstimacion+general.reservaContingencia+general.presupuestoInicial];
+        let totGanancia = totalEstimacion+general.reservaContingencia+general.presupuestoInicial;
+        const totalConGanancia = [null,null,null,"Total con ganancia",totGanancia];
         WSEstimaciones.getRow(filaActual).values = totalConGanancia;
         celdaEscogida = WSEstimaciones.getCell(filaActual,5);
         celdaEscogida.style = {...headerTitulo, border: borderStyle};
         filaActual++;
 
-        const IGV = [null,null,null,"IGV","PV",general.IGV];
+        const IGV = [null,null,null,"IGV",totGanancia*general.IGV,`${general.IGV*100}%`];
         WSEstimaciones.getRow(filaActual).values = IGV;
         celdaEscogida = WSEstimaciones.getCell(filaActual,5);
         celdaEscogida.style = {...headerTitulo, border: borderStyle};
