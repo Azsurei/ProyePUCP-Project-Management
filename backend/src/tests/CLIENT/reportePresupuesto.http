@@ -101,7 +101,7 @@ POST http://localhost:8080/api/proyecto/reporte/crearExcelFlujoEstimacionCosto H
 Content-Type: application/json
 
 {
-  "idPresupuesto": 69,
+  "idPresupuesto": 93,
   "fechaIni": "2023-01-01",
   "fechaFin": "2023-12-31"
 }
