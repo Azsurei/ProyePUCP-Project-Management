@@ -47,8 +47,23 @@ export default function Dashboard() {
         //debe ser 2
 
         const [listPrivUsers, setListPrivUsers] = useState([]);
+        const [listPrivUsersOriginales, setListPrivUsersOriginales] = useState([]);
         const [userSearchValue, setUserSearchValue] = useState("");
         const [modalSearchUser, setModalSearchUser] = useState(false);
+
+        const onSearchChangeUsuario = (value) => {
+            console.log("El valor del filtro es: ", value);
+            setUserSearchValue(value);
+            const lowercasedValue = value.toLowerCase();
+            const filteredUsers = listPrivUsersOriginales.filter(
+                (user) =>
+                    user.nombres.toLowerCase().includes(lowercasedValue) ||
+                    user.apellidos.toLowerCase().includes(lowercasedValue) ||
+                    user.correoElectronico.toLowerCase().includes(lowercasedValue) ||
+                    `${user.nombres} ${user.apellidos}`.toLowerCase().includes(lowercasedValue)
+            );
+            setListPrivUsers(filteredUsers);
+        };
 
         const toggleModal = () => {
             setModalSearchUser(!modalSearchUser);
@@ -154,6 +169,7 @@ export default function Dashboard() {
                 .then((response) => {
                     console.log(response);
                     setListPrivUsers(response.data.usuariosPriv);
+                    setListPrivUsersOriginales(response.data.usuariosPriv);
                 })
 
                 .catch(function (error) {
@@ -222,7 +238,7 @@ export default function Dashboard() {
                             placeholder="Buscar Usuario..."
                             startContent={<SearchIcon />}
                             value={userSearchValue}
-                            onValueChange={setUserSearchValue}
+                            onValueChange={onSearchChangeUsuario}
                             variant="faded"
                             color="white"
                         />
