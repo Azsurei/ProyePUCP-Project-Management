@@ -5,6 +5,7 @@ import "@/styles/dashboardStyles/projectStyles/projectCreateStyles/projectMenu.c
 import ListProject from "@/components/dashboardComps/projectComps/projectCreateComps/ListProject";
 import axios from "axios";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
+import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { Toaster, toast } from "sonner";
 
@@ -26,6 +27,7 @@ import {
     Chip,
     User,
     Pagination,
+    Tooltip,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import CardSelectedUser from "@/components/CardSelectedUser";
@@ -36,8 +38,7 @@ export default function Dashboard() {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
 
-    const {sessionData} = useContext(SessionContext);
-    
+    const { sessionData } = useContext(SessionContext);
 
     const onSearchChange = (value) => {
         setFilterValue(value);
@@ -47,7 +48,9 @@ export default function Dashboard() {
         //debe ser 2
 
         const [listPrivUsers, setListPrivUsers] = useState([]);
-        const [listPrivUsersOriginales, setListPrivUsersOriginales] = useState([]);
+        const [listPrivUsersOriginales, setListPrivUsersOriginales] = useState(
+            []
+        );
         const [userSearchValue, setUserSearchValue] = useState("");
         const [modalSearchUser, setModalSearchUser] = useState(false);
 
@@ -59,8 +62,12 @@ export default function Dashboard() {
                 (user) =>
                     user.nombres.toLowerCase().includes(lowercasedValue) ||
                     user.apellidos.toLowerCase().includes(lowercasedValue) ||
-                    user.correoElectronico.toLowerCase().includes(lowercasedValue) ||
-                    `${user.nombres} ${user.apellidos}`.toLowerCase().includes(lowercasedValue)
+                    user.correoElectronico
+                        .toLowerCase()
+                        .includes(lowercasedValue) ||
+                    `${user.nombres} ${user.apellidos}`
+                        .toLowerCase()
+                        .includes(lowercasedValue)
             );
             setListPrivUsers(filteredUsers);
         };
@@ -72,7 +79,8 @@ export default function Dashboard() {
         function promiseCambiar_A_Alumno(usuario) {
             return new Promise((resolve, reject) => {
                 const stringURL =
-                    process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/cambiarPrivilegioUsuario";
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/admin/cambiarPrivilegioUsuario";
                 axios
                     .put(stringURL, {
                         idUsuario: usuario.idUsuario,
@@ -111,7 +119,8 @@ export default function Dashboard() {
             return new Promise((resolve, reject) => {
                 for (const usuario of listSelected) {
                     const stringURL =
-                        process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/cambiarPrivilegioUsuario";
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/admin/cambiarPrivilegioUsuario";
                     axios
                         .put(stringURL, {
                             idUsuario: usuario.idUsuario,
@@ -163,7 +172,8 @@ export default function Dashboard() {
 
         useEffect(() => {
             const stringURL =
-                process.env.NEXT_PUBLIC_BACKEND_URL+"/api/admin/listarUsuariosConPrivilegios";
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/admin/listarUsuariosConPrivilegios";
             axios
                 .get(stringURL)
                 .then((response) => {
@@ -178,6 +188,80 @@ export default function Dashboard() {
                         error
                     );
                 });
+        }, []);
+
+        const [page, setPage] = React.useState(1);
+        const rowsPerPage = 5;
+
+        const pages = Math.ceil(listPrivUsers.length / rowsPerPage);
+
+        const items = React.useMemo(() => {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            return listPrivUsers.slice(start, end);
+        }, [page, listPrivUsers]);
+
+        const columns = [
+            { name: "Nombre", uid: "nombres" },
+            { name: "Permisos para creación de proyecto", uid: "permiso" },
+            { name: "ACTIONS", uid: "actions" },
+        ];
+
+        const statusColorMap = ["warning", "danger", "success"];
+
+        const renderCell = React.useCallback((user, columnKey) => {
+            const cellValue = user[columnKey];
+
+            switch (columnKey) {
+                case "nombres":
+                    return (
+                        <User
+                            avatarProps={{ radius: "lg", src: user.imgLink }}
+                            description={user.correoElectronico}
+                            name={cellValue + " " + user.apellidos}
+                        >
+                            {user.email}
+                        </User>
+                    );
+                case "permiso":
+                    return (
+                        <Chip
+                            className="capitalize"
+                            color={
+                                statusColorMap[user.Privilegios_idPrivilegios]
+                            }
+                            size="sm"
+                            variant="flat"
+                        >
+                            {user.Privilegios_idPrivilegios === 2
+                                ? "Sí cuenta"
+                                : "No cuenta"}
+                        </Chip>
+                    );
+                case "actions":
+                    return (
+                        <div className="relative flex items-center gap-2">
+                            <Tooltip content="Details">
+                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                    uwu
+                                </span>
+                            </Tooltip>
+                            <Tooltip content="Edit user">
+                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                    uwu
+                                </span>
+                            </Tooltip>
+                            <Tooltip color="danger" content="Delete user">
+                                <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                                    uwu
+                                </span>
+                            </Tooltip>
+                        </div>
+                    );
+                default:
+                    return cellValue;
+            }
         }, []);
 
         return (
@@ -243,7 +327,7 @@ export default function Dashboard() {
                             color="white"
                         />
 
-                        <div className="flex flex-col space-y-[.5rem] pb-[4.5rem]">
+                        {/*                         <div className="flex flex-col space-y-[.5rem] pb-[4.5rem]">
                             {listPrivUsers.map((usuario) => (
                                 <CardSelectedUser
                                     key={usuario.idUsuario}
@@ -252,7 +336,45 @@ export default function Dashboard() {
                                     removeHandler={removeHandler}
                                 ></CardSelectedUser>
                             ))}
-                        </div>
+                        </div> */}
+                        <Table
+                            aria-label="Tabla de usuarios"
+                            bottomContent={
+                                <div className="flex w-full justify-center">
+                                    <Pagination
+                                        isCompact
+                                        showControls
+                                        showShadow
+                                        color="primary"
+                                        page={page}
+                                        total={pages}
+                                        onChange={(page) => setPage(page)}
+                                    />
+                                </div>
+                            }
+                            classNames={{
+                                wrapper: "min-h-[222px]",
+                            }}
+                        >
+                            <TableHeader columns={columns}>
+                                {(column) => (
+                                    <TableColumn key={column.uid}>
+                                        {column.name}
+                                    </TableColumn>
+                                )}
+                            </TableHeader>
+                            <TableBody items={items}>
+                                {(item) => (
+                                    <TableRow key={item.idUsuario}>
+                                        {(columnKey) => (
+                                            <TableCell>
+                                                {renderCell(item, columnKey)}
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
                     </div>
                 </div>
 
@@ -304,7 +426,7 @@ export default function Dashboard() {
                     />
                 </div>
 
-                 {sessionData.Privilegios_idPrivilegios === 2 && ( 
+                {sessionData.Privilegios_idPrivilegios === 2 && (
                     <div className="contentDer">
                         <p className="textProject">
                             ¿Tienes ya la idea ganadora?
@@ -321,10 +443,13 @@ export default function Dashboard() {
                             </Link>
                         </div>
                     </div>
-                )} 
+                )}
             </div>
 
-            <ListProject filterValue={filterValue} onSearchChange={onSearchChange}></ListProject>
+            <ListProject
+                filterValue={filterValue}
+                onSearchChange={onSearchChange}
+            ></ListProject>
         </div>
     );
 }
