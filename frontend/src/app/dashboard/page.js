@@ -165,7 +165,7 @@ export default function Dashboard() {
         }, []);
 
         return (
-            <div className="border border-red-500 w-[100%] flex justify-center">
+            <div className="w-[100%] flex justify-center">
                 <div className="w-[90%] p-[2.5rem] flex flex-col space-y-[1rem]">
                     <div>
                         <p
