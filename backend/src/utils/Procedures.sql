@@ -499,6 +499,25 @@ BEGIN
     FROM GrupoDeProyecto gp, Proyecto p WHERE gp.idGrupoDeProyecto = p.idGrupoDeProyecto AND p.idProyecto = _idProyecto AND p.activo =1;
 END$
 
+DROP PROCEDURE IF EXISTS MODIFICAR_GRUPO_DE_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_GRUPO_DE_PROYECTO(
+	IN _idGrupoDeProyecto INT,
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+	UPDATE GrupoDeProyecto 
+    SET nombre = _nombre
+    WHERE idGrupoDeProyecto = _idGrupoDeProyecto AND activo = 1;
+END$
+
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PROYECTO_DE_GRUPO_PROYECTO(
+	IN _idProyecto INT
+)
+BEGIN
+	UPDATE ProyectoXGrupoDeProyecto SET activo = 0 WHERE idProyecto = _idProyecto;
+END$
 
 DROP PROCEDURE LISTAR_HISTORIA_DE_USUARIO_DETALLES;
 
@@ -5093,6 +5112,15 @@ SELECT * FROM Tarea;
 CALL LISTAR_REPORTES_X_ID_PROYECTO(178);
 SELECT * FROM Archivo;
 SELECT * FROM ReporteXProyecto;
+
+DROP PROCEDURE IF EXISTS ELIMINAR_REPORTE_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_REPORTE_PROYECTO(
+	IN _idReporteXProyecto INT
+)
+BEGIN
+	UPDATE ReporteXProyecto SET activo = 0 WHERE idReporteXProyecto = _idReporteXProyecto;
+END$
 
 DROP PROCEDURE IF EXISTS ACTUALIZAR_FILE_ID;
 DELIMITER $

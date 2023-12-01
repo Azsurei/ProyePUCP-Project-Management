@@ -204,6 +204,38 @@ async function listarDatosProyectosXGrupo(req, res, next) {
     }
 }
 
+async function modificar(req,res,next){
+    const {idGrupoDeProyecto, nombre, proyectosAgregados, proyectosEliminados} = req.body;
+
+    const listProyectosAgregados = proyectosAgregados.map((proyect) => {
+        return parseInt(proyect);
+    });
+    const listProyectosEliminados = proyectosEliminados.map((proyect) => {
+        return parseInt(proyect);
+    });
+
+    try {
+        const query = `CALL MODIFICAR_GRUPO_DE_PROYECTO(?,?);`;
+        const query1 = `CALL INSERTAR_PROYECTO_EN_GRUPO(?,?);`;
+        const query2 = `CALL ELIMINAR_PROYECTO_DE_GRUPO_PROYECTO(?);`;
+        await connection.query(query,[idGrupoDeProyecto, nombre]);
+        // Para agregar nuevos Proyectos al grupo
+        for (let proyecto of listProyectosAgregados) {
+            await connection.query(query1, [proyecto, idGrupoDeProyecto]);
+        }
+        // Para eliminar Proyectos del grupo
+        for (let proyecto of listProyectosEliminados) {
+            await connection.query(query2, [proyecto]);
+        }
+
+        console.log(`Grupo De Proyectos ${idGrupoDeProyecto} modificado`);
+        res.status(200).json({message: "Grupo De Proyectos modificado"});
+    } catch (error) {
+        console.log("Error al Modificar Grupo De Proyectos",error);
+        next(error);
+    }
+}
+
 async function eliminar(req, res, next) {
     const { idGrupoDeProyecto } = req.body;
     try {
@@ -225,5 +257,6 @@ module.exports = {
     listarGruposProyecto,
     listarProyectosXGrupo,
     listarDatosProyectosXGrupo,
+    modificar,
     eliminar
 };
