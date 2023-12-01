@@ -48,7 +48,8 @@ export default function ModalUser({
             (user) =>
                 user.nombres.toLowerCase().includes(lowercasedValue) ||
                 user.apellidos.toLowerCase().includes(lowercasedValue) ||
-                user.correoElectronico.toLowerCase().includes(lowercasedValue)
+                user.correoElectronico.toLowerCase().includes(lowercasedValue) ||
+                `${user.nombres} ${user.apellidos}`.toLowerCase().includes(lowercasedValue)
         );
         setListUsers(filteredUsers);
     };
