@@ -92,6 +92,7 @@ Content-Type: application/json
 
 {
   "idProyecto": 244,
-  "fechaInicio": "2023-12-01",
-  "fechaFin": "2023-12-15"
+  "nombre": "Prueba Actualizar",
+  "fechaInicio": "2023-11-01",
+  "fechaFin": "2023-12-30"
 }
