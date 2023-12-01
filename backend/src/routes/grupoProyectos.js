@@ -7,7 +7,7 @@ const { verify } = require("jsonwebtoken");
 routerGrupoProyectos.post("/insertarGrupoProyectos", verifyToken, grupoProyectosController.insertarGrupoProyectos);
 routerGrupoProyectos.get("/listarGruposProyecto/:idUsuario", verifyToken, grupoProyectosController.listarGruposProyecto);
 routerGrupoProyectos.get("/listarProyectosXGrupo/:idGrupoProyecto", verifyToken, grupoProyectosController.listarProyectosXGrupo);
-routerGrupoProyectos.put("/modificarGrupoProyectos",verify, grupoProyectosController.modificar);
+routerGrupoProyectos.put("/modificarGrupoProyectos", grupoProyectosController.modificar);
 routerGrupoProyectos.delete("/eliminarGrupoProyectos", verifyToken, grupoProyectosController.eliminar);
 routerGrupoProyectos.get("/listarDatosProyectosXGrupo/:idGrupoProyecto", grupoProyectosController.listarDatosProyectosXGrupo);
 module.exports.routerGrupoProyectos = routerGrupoProyectos;
