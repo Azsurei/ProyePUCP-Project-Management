@@ -80,6 +80,7 @@ function Login() {
     const handleSubmit = async () => {
         setStatusForm("submitting");
         try {
+            console.log("El usuario y contraseña es", email," ", password);
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
                 {
