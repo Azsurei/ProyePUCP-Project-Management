@@ -8,7 +8,7 @@ routerAdmin.get("/listarUsuariosConPrivilegios",async(req,res)=>{
     console.log("Llegue a recibir solicitud de listar usuarios con privilegios");
 
     const query = `
-        CALL LISTAR_USUARIOS_CON_PRIVILEGIOS();
+        CALL LISTAR_USUARIOS();
     `;
     try {
         const [results] = await connection.query(query, []);

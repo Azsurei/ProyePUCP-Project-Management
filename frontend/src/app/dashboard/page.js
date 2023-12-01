@@ -205,7 +205,6 @@ export default function Dashboard() {
         const columns = [
             { name: "Nombre", uid: "nombres" },
             { name: "Permisos para creación de proyecto", uid: "permiso" },
-            { name: "ACTIONS", uid: "actions" },
         ];
 
         const statusColorMap = ["warning", "danger", "success"];
@@ -227,7 +226,6 @@ export default function Dashboard() {
                 case "permiso":
                     return (
                         <Chip
-                            className="capitalize"
                             color={
                                 statusColorMap[user.Privilegios_idPrivilegios]
                             }
@@ -238,26 +236,6 @@ export default function Dashboard() {
                                 ? "Sí cuenta"
                                 : "No cuenta"}
                         </Chip>
-                    );
-                case "actions":
-                    return (
-                        <div className="relative flex items-center gap-2">
-                            <Tooltip content="Details">
-                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                    uwu
-                                </span>
-                            </Tooltip>
-                            <Tooltip content="Edit user">
-                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                    uwu
-                                </span>
-                            </Tooltip>
-                            <Tooltip color="danger" content="Delete user">
-                                <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                    uwu
-                                </span>
-                            </Tooltip>
-                        </div>
                     );
                 default:
                     return cellValue;
@@ -274,6 +252,7 @@ export default function Dashboard() {
                                 fontSize: "3rem",
                                 fontWeight: 600,
                                 lineHeight: "40px",
+                                marginBottom: "1rem",
                             }}
                         >
                             Bienvenido Superadmin!
@@ -303,17 +282,16 @@ export default function Dashboard() {
                                     lineHeight: "40px",
                                 }}
                             >
-                                Lista de usuarios con permisos de Creacion de
-                                Proyecto:{" "}
+                                Lista de usuarios:
                             </p>
-                            <Button
+{/*                             <Button
                                 className="h-[35px] bg-172B4D text-white font-semibold"
                                 onPress={() => {
                                     setModalSearchUser(true);
                                 }}
                             >
                                 Añadir usuario
-                            </Button>
+                            </Button> */}
                         </div>
 
                         <Input
