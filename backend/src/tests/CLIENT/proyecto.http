@@ -85,3 +85,13 @@ Content-Type: application/json
 ###
 GET http://localhost:8080/api/proyecto/verInfoProyecto/200 HTTP/1.1
 Content-Type: application/json
+
+###
+PUT http://localhost:8080/api/proyecto/actualizarDatos HTTP/1.1
+Content-Type: application/json
+
+{
+  "idProyecto": 244,
+  "fechaInicio": "2023-12-01",
+  "fechaFin": "2023-12-15"
+}

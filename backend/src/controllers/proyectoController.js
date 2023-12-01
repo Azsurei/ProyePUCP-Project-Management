@@ -1,4 +1,5 @@
 const connection = require("../config/db");
+const moment = require('moment');
 const { verifyToken } = require("../middleware/middlewares");
 const backlogController = require("../controllers/backlog/backlogController");
 const EDTController = require("../controllers/EDT/EDTController");
@@ -1124,6 +1125,68 @@ async function agregarHerramientaAProyecto(req, res, next) {
     }
 }
 
+async function actualizarDatos(req,res,next){
+    const{idProyecto, nombre, fechaInicio, fechaFin} = req.body;
+    const query = `CALL OBTENER_HERRAMIENTAS_X_IDPROYECTO(?);`;
+    const query1 = `CALL OBTENER_DIFDIAS_PRODUCTBACKLOG(?);`;
+    const query2 = `CALL OBTENER_DIFDIAS_EDT(?);`;
+    const query3 = `CALL OBTENER_DIFDIAS_TAREA(?);`;
+    //Convertimos a fecha
+    const fechaInicial = moment(fechaInicio);
+    const fechaFinal = moment(fechaFin);
+    // Convierte la diferencia de milisegundos a días
+    const diferenciaEnDias = fechaFinal.diff(fechaInicial, 'days');
+    console.log(`La diferencia en días es: ${diferenciaEnDias}`);
+    try {
+        let flag = 1;
+        //Obtenemos las herramientas del proyecto
+        const [results] = await connection.query(query,[idProyecto]);
+        const herramientas = results[0];
+        //Verificamos que las herramientas pueden caber en la nueva fecha
+        for(let herramienta of herramientas){
+            //Product Backlog
+            if(herramienta.idHerramienta == 1){
+                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Sprint)
+                const [results] = await connection.query(query1,[idProyecto]);
+                let diffDiasBacklog = results[0][0].DiferenciaEnDias;
+                console.log(`Diferencia de dias Backlog ${diffDiasBacklog}!`);
+            }
+            //EDT
+            if(herramienta.idHerramienta == 2){
+                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla ComponenteEDT)
+                const [results] = await connection.query(query2,[idProyecto]);
+                let diffDiasEDT = results[0][0].DiferenciaEnDias;
+                console.log(`Diferencia de dias EDT ${diffDiasEDT}!`);
+            }
+            //Acta de Constistucion no hay fechaInicio 3
+            //Cronograma 
+            if(herramienta.idHerramienta == 4){
+                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Cronograma y Tarea)
+                const [results] = await connection.query(query3,[idProyecto]);
+                let diffDiasTarea = results[0][0].DiferenciaEnDias;
+                console.log(`Diferencia de dias Tareas ${diffDiasTarea}!`);
+            }
+            //Catalogo de riesgo no hay fechaInicio 5
+            //Catalogo de riesgo no hay fechas 6
+            //Matriz de Responsabilidad 7
+            //Matriz de Comunicacion 8
+            //Autoevaluacion 9 ¿Duda fechaLimite?
+            //Retrospectiva 10
+            //Acta de Reunion 11
+            //Registro de Equipos 12
+            //Presupeusto 13
+            //Repositorio de Documentos 14
+            //Plan de Calidad 15        
+        }
+        console.log(`Termino`);
+        res.status(200).json({
+            message: "Comunicacion insertada exitosamente",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     crear,
     insertarUsuarioXRolXProyecto,
@@ -1138,4 +1201,5 @@ module.exports = {
     eliminarUsuarioDeProyecto,
     eliminarHerramientaDeProyecto,
     agregarHerramientaAProyecto,
+    actualizarDatos
 };

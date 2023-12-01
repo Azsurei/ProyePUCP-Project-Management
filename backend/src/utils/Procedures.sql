@@ -5663,3 +5663,56 @@ BEGIN
 END$
 DELIMITER ;
 
+--Actualizar fecha proyecto
+DROP PROCEDURE IF EXISTS OBTENER_HERRAMIENTAS_X_IDPROYECTO;
+DELIMITER $
+CREATE PROCEDURE OBTENER_HERRAMIENTAS_X_IDPROYECTO(
+    IN _idProyecto INT
+)
+BEGIN
+    SELECT *
+    FROM HerramientaXProyecto
+    WHERE idProyecto = _idProyecto
+    AND activo = 1;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS OBTENER_DIFDIAS_PRODUCTBACKLOG;
+DELIMITER $
+CREATE PROCEDURE OBTENER_DIFDIAS_PRODUCTBACKLOG(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idProductBacklog = (SELECT idProductBacklog FROM ProductBacklog WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT COALESCE(DATEDIFF(MAX(fechaFin), MIN(fechaInicio)),-1) AS DiferenciaEnDias
+    FROM Sprint
+    WHERE idProductBacklog = @_idProductBacklog AND activo = 1;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS OBTENER_DIFDIAS_EDT;
+DELIMITER $
+CREATE PROCEDURE OBTENER_DIFDIAS_EDT(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idEDT = (SELECT idEDT FROM EDT WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT COALESCE(DATEDIFF(MAX(fechaFin), MIN(fechaInicio)),-1) AS DiferenciaEnDias
+    FROM ComponenteEDT
+    WHERE idEDT = @_idEDT AND activo = 1;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS OBTENER_DIFDIAS_TAREA;
+DELIMITER $
+CREATE PROCEDURE OBTENER_DIFDIAS_TAREA(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idCronograma = (SELECT idCronograma FROM Cronograma WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT COALESCE(DATEDIFF(MAX(fechaFin), MIN(fechaInicio)),-1) AS DiferenciaEnDias
+    FROM Tarea
+    WHERE idCronograma = @_idCronograma AND activo = 1;
+END$
+DELIMITER ;
+
