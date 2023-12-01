@@ -28,6 +28,7 @@ import {
     User,
     Pagination,
     Tooltip,
+    Switch,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import CardSelectedUser from "@/components/CardSelectedUser";
@@ -225,17 +226,27 @@ export default function Dashboard() {
                     );
                 case "permiso":
                     return (
-                        <Chip
-                            color={
-                                statusColorMap[user.Privilegios_idPrivilegios]
-                            }
-                            size="sm"
-                            variant="flat"
-                        >
-                            {user.Privilegios_idPrivilegios === 2
-                                ? "Sí cuenta"
-                                : "No cuenta"}
-                        </Chip>
+                        <div className="flex items-center gap-4 justify-center">
+                            <Switch
+                                defaultSelected
+                                aria-label="Permisos"
+                                color="success"
+                                isSelected={user.Privilegios_idPrivilegios === 2? true:false}
+                            />
+                            <Chip
+                                color={
+                                    statusColorMap[
+                                        user.Privilegios_idPrivilegios
+                                    ]
+                                }
+                                size="sm"
+                                variant="flat"
+                            >
+                                {user.Privilegios_idPrivilegios === 2
+                                    ? "Sí cuenta"
+                                    : "No cuenta"}
+                            </Chip>
+                        </div>
                     );
                 default:
                     return cellValue;
@@ -284,7 +295,7 @@ export default function Dashboard() {
                             >
                                 Lista de usuarios:
                             </p>
-{/*                             <Button
+                            {/*                             <Button
                                 className="h-[35px] bg-172B4D text-white font-semibold"
                                 onPress={() => {
                                     setModalSearchUser(true);
@@ -336,7 +347,7 @@ export default function Dashboard() {
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (
-                                    <TableColumn key={column.uid}>
+                                    <TableColumn key={column.uid} className={column.uid === 'permiso' ? 'text-center' : ''}>
                                         {column.name}
                                     </TableColumn>
                                 )}
