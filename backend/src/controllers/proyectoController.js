@@ -1131,6 +1131,10 @@ async function actualizarDatos(req,res,next){
     const query1 = `CALL OBTENER_DIFDIAS_PRODUCTBACKLOG(?);`;
     const query2 = `CALL OBTENER_DIFDIAS_EDT(?);`;
     const query3 = `CALL OBTENER_DIFDIAS_TAREA(?);`;
+    const query4 = `CALL ACTUALIZAR_PROYECTO(?,?,?,?);`;
+    const query5 = `CALL AÑADIR_DIAS_PRODUCTBACKLOG(?,?);`;
+    const query6 = `CALL AÑADIR_DIAS_EDT(?,?);`;
+    const query7 = `CALL AÑADIR_DIAS_TAREA(?,?);`;
     //Convertimos a fecha
     const fechaInicial = moment(fechaInicio);
     const fechaFinal = moment(fechaFin);
@@ -1147,24 +1151,33 @@ async function actualizarDatos(req,res,next){
             //Product Backlog
             if(herramienta.idHerramienta == 1){
                 //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Sprint)
-                const [results] = await connection.query(query1,[idProyecto]);
-                let diffDiasBacklog = results[0][0].DiferenciaEnDias;
+                const [results1] = await connection.query(query1,[idProyecto]);
+                let diffDiasBacklog = results1[0][0].DiferenciaEnDias;
                 console.log(`Diferencia de dias Backlog ${diffDiasBacklog}!`);
+                if(diffDiasBacklog>diferenciaEnDias){
+                    flag = 0;
+                }
             }
             //EDT
             if(herramienta.idHerramienta == 2){
                 //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla ComponenteEDT)
-                const [results] = await connection.query(query2,[idProyecto]);
-                let diffDiasEDT = results[0][0].DiferenciaEnDias;
+                const [results2] = await connection.query(query2,[idProyecto]);
+                let diffDiasEDT = results2[0][0].DiferenciaEnDias;
                 console.log(`Diferencia de dias EDT ${diffDiasEDT}!`);
+                if(diffDiasEDT>diferenciaEnDias){
+                    flag = 0;
+                }
             }
             //Acta de Constistucion no hay fechaInicio 3
             //Cronograma 
             if(herramienta.idHerramienta == 4){
                 //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Cronograma y Tarea)
-                const [results] = await connection.query(query3,[idProyecto]);
-                let diffDiasTarea = results[0][0].DiferenciaEnDias;
+                const [results3] = await connection.query(query3,[idProyecto]);
+                let diffDiasTarea = results3[0][0].DiferenciaEnDias;
                 console.log(`Diferencia de dias Tareas ${diffDiasTarea}!`);
+                if(diffDiasTarea>diferenciaEnDias){
+                    flag = 0;
+                }
             }
             //Catalogo de riesgo no hay fechaInicio 5
             //Catalogo de riesgo no hay fechas 6
@@ -1179,9 +1192,37 @@ async function actualizarDatos(req,res,next){
             //Plan de Calidad 15        
         }
         console.log(`Termino`);
-        res.status(200).json({
-            message: "Comunicacion insertada exitosamente",
-        });
+        if(flag==0){
+            console.log(`La diferencia de dias es menor a lo que se necesita en las herramientas`);
+            res.status(200).json({
+                message: "La diferencia de dias es menor a lo que se necesita en las herramientas",
+            });
+        }
+        else{
+            console.log(`Actualizando proyecto`);
+            //Actualizamos el proyecto
+            const [results4] = await connection.query(query4,[idProyecto, nombre, fechaInicio, fechaFin]);
+            let difDias = results4[0][0].difDias;
+            console.log(difDias);
+            //Actualizamos dentro de la herramienta
+            for(let herramienta of herramientas){
+                //Product Backlog
+                if(herramienta.idHerramienta == 1){
+                    await connection.query(query5,[idProyecto, difDias]);
+                }
+                //EDT
+                if(herramienta.idHerramienta == 2){
+                    await connection.query(query6,[idProyecto, difDias]);
+                }
+                //Cronograma 
+                if(herramienta.idHerramienta == 4){
+                    await connection.query(query7,[idProyecto, difDias]);
+                }
+            }
+            res.status(200).json({
+                message: "Proyecto actualizado",
+            });
+        }
     } catch (error) {
         next(error);
     }

@@ -5716,3 +5716,67 @@ BEGIN
 END$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS ACTUALIZAR_PROYECTO;
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_PROYECTO(
+    IN _idProyecto INT,
+    IN _nombre VARCHAR(200),
+    IN _fechaInicio DATE,
+    IN _fechaFin DATE
+)
+BEGIN
+    SET @_difDias = (SELECT DATEDIFF(_fechaInicio, fechaInicio) FROM Proyecto WHERE idProyecto = _idProyecto AND activo = 1);
+    UPDATE Proyecto 
+    SET nombre = _nombre,
+        fechaInicio = _fechaInicio,
+        fechaFin = _fechaFin
+    WHERE idProyecto = _idProyecto;
+    SELECT @_difDias AS difDias;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS AÑADIR_DIAS_PRODUCTBACKLOG;
+DELIMITER $
+CREATE PROCEDURE AÑADIR_DIAS_PRODUCTBACKLOG(
+    IN _idProyecto INT,
+    IN _dias INT
+)
+BEGIN
+    SET @_idProductBacklog = (SELECT idProductBacklog FROM ProductBacklog WHERE idProyecto = _idProyecto AND activo = 1);
+    UPDATE Sprint 
+    SET fechaInicio = DATE_ADD(fechaInicio, INTERVAL _dias DAY),
+        fechaFin = DATE_ADD(fechaFin, INTERVAL _dias DAY)
+    WHERE idProductBacklog = @_idProductBacklog;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS AÑADIR_DIAS_EDT;
+DELIMITER $
+CREATE PROCEDURE AÑADIR_DIAS_EDT(
+    IN _idProyecto INT,
+    IN _dias INT
+)
+BEGIN
+    SET @_idEDT = (SELECT idEDT FROM EDT WHERE idProyecto = _idProyecto AND activo = 1);
+    UPDATE ComponenteEDT 
+    SET fechaInicio = DATE_ADD(fechaInicio, INTERVAL _dias DAY),
+        fechaFin = DATE_ADD(fechaFin, INTERVAL _dias DAY)
+    WHERE idEDT = @_idEDT;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS AÑADIR_DIAS_TAREA;
+DELIMITER $
+CREATE PROCEDURE AÑADIR_DIAS_TAREA(
+    IN _idProyecto INT,
+    IN _dias INT
+)
+BEGIN
+    SET @_idCronograma = (SELECT idCronograma FROM Cronograma WHERE idProyecto = _idProyecto AND activo = 1);
+    UPDATE Tarea 
+    SET fechaInicio = DATE_ADD(fechaInicio, INTERVAL _dias DAY),
+        fechaFin = DATE_ADD(fechaFin, INTERVAL _dias DAY)
+    WHERE idCronograma = @_idCronograma;
+END$
+DELIMITER ;
+
