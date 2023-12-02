@@ -690,6 +690,7 @@ export default function Egresos(props) {
                                 isSelected={true}
                                 onCardSelect={handleCardSelect}
                                 valueMoneda={isSelected}
+                                dataSelected = {dataLineaEstimacion}
                             ></EstimacionCostoList>
                         </UserCardsContextOne.Provider>
                     </div>
