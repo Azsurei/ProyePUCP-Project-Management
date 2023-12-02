@@ -264,7 +264,7 @@ export default function PlanDeCalidad(props) {
                                 <>
                                     <Tooltip content="Editar" color="warning">
                                         <button
-                                            className=""
+                                            className="min-w-[24px] min-h-[24px]"
                                             type="button"
                                             onClick={() => editModal(data)}
                                         >
@@ -273,7 +273,7 @@ export default function PlanDeCalidad(props) {
                                     </Tooltip>
                                     <Tooltip content="Eliminar" color="danger">
                                         <button
-                                            className=""
+                                            className="min-w-[24px] min-h-[24px]"
                                             type="button"
                                             onClick={() => toggleModal(data)}
                                         >

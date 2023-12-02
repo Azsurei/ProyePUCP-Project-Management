@@ -8,6 +8,9 @@
     padding-left: 2rem;
     padding-right: 2rem;
     min-width: 100%;
+    overflow: auto;
+    scrollbar-color: #888 transparent;
+    scrollbar-width: thin;
 }
 
 .header{

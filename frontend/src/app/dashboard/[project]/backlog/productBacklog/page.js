@@ -2,7 +2,7 @@
 import "@/styles/dashboardStyles/projectStyles/productBacklog/productBacklog.css";
 
 //import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/iconLabel";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import PopUpEliminateHU from "@/components/PopUpEliminateHU";
 import Link from "next/link";
 import BacklogRow from "@/components/dashboardComps/projectComps/productBacklog/BacklogRow";
@@ -33,6 +33,7 @@ import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "../../layout";
 import { SessionContext } from "@/app/dashboard/layout";
+import { is } from "date-fns/locale";
 export default function ProductBacklog(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
@@ -47,11 +48,12 @@ export default function ProductBacklog(props) {
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-
+    const [isButtonLoading, setIsButtonLoading] = useState(false);
     const [data, setData] = useState([]);
     const [objectID, setObjectID] = useState(null);
     const [navegate, setNavegate] = useState(false);
     const [edit, setEdit] = useState(null);
+    const [statusForm, setStatusForm] = useState("initial");
     function DataTable() {
         setIsLoadingSmall(true);
         const fetchData = async () => {
@@ -81,6 +83,7 @@ export default function ProductBacklog(props) {
 
     useEffect(() => {
         DataTable();
+        setIsButtonLoading(false);
     }, []);
 
     const toggleModal = (task) => {
@@ -106,6 +109,13 @@ export default function ProductBacklog(props) {
             document.body.style.overflow = "auto";
         }
     }, [modal1, modal2]);
+    useEffect(() => {
+        if (statusForm === "submitting") {
+            setIsButtonLoading(true);
+        } else {
+            setIsButtonLoading(false);
+        }
+    }, [statusForm]);
 
     const columns = [
         {
@@ -255,7 +265,7 @@ export default function ProductBacklog(props) {
                         <div className="flex items-center">
                             <Tooltip content="Visualizar" color="primary">
                                 <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8 min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data, false);
@@ -270,7 +280,7 @@ export default function ProductBacklog(props) {
                                     <>
                                                                     <Tooltip content="Editar" color="warning">
                                 <button
-                                    className=""
+                                    className="min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => {
                                         setRoutering(data, true);
@@ -281,7 +291,7 @@ export default function ProductBacklog(props) {
                             </Tooltip>
                             <Tooltip content="Eliminar" color="danger">
                                 <button
-                                    className=""
+                                    className="min-w-[24px] min-h-[24px]"
                                     type="button"
                                     onClick={() => toggleModal(data)}
                                 >
@@ -343,7 +353,9 @@ export default function ProductBacklog(props) {
                                 color="primary"
                                 endContent={<PlusIcon />}
                                 className="btnBacklogPrimary sm:w-1 sm:h-1"
+                                isLoading={isButtonLoading}
                                 onPress={() => {
+                                    setStatusForm("submitting");
                                     router.push(
                                         "/dashboard/" +
                                             projectName +
@@ -351,6 +363,7 @@ export default function ProductBacklog(props) {
                                             projectId +
                                             "/backlog/productBacklog/registerPB"
                                     );
+                                    
                                 }}
                             >
                                 Agregar
