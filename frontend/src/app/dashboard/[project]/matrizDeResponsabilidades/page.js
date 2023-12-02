@@ -360,46 +360,56 @@ export default function MatrizDeResponsabilidades(props) {
                 default:
                     return (
                         <>
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button
-                                        variant="bordered"
-                                        style={{ backgroundColor: color }}
-                                        className={`transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
-                                    >
-                                        {cellValue}
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    aria-label="Dynamic Actions"
-                                    items={responsabilidades}
-                                    variant="flat"
-                                    disabledKeys={cellValue}
-                                >
-                                    {(item) => (
-                                        <DropdownItem
-                                            key={item.letra}
-                                            textValue={item.nombre}
-                                            onPress={() =>
-                                                changeCell(
-                                                    idRol,
-                                                    idEntregable,
-                                                    item
-                                                )
-                                            }
+                            {rolSessionData !== 2 ? (
+                                <Dropdown>
+                                    <DropdownTrigger>
+                                        <Button
+                                            variant="bordered"
+                                            style={{ backgroundColor: color }}
+                                            className={`transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
                                         >
-                                            <div className="flex">
-                                                <div className="inline w-1/4">
-                                                    {item.letra}
+                                            {cellValue}
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Dynamic Actions"
+                                        items={responsabilidades}
+                                        variant="flat"
+                                        disabledKeys={cellValue}
+                                    >
+                                        {(item) => (
+                                            <DropdownItem
+                                                key={item.letra}
+                                                textValue={item.nombre}
+                                                onPress={() =>
+                                                    changeCell(
+                                                        idRol,
+                                                        idEntregable,
+                                                        item
+                                                    )
+                                                }
+                                            >
+                                                <div className="flex">
+                                                    <div className="inline w-1/4">
+                                                        {item.letra}
+                                                    </div>
+                                                    <div className="inline w-3/4">
+                                                        {item.nombre}
+                                                    </div>
                                                 </div>
-                                                <div className="inline w-3/4">
-                                                    {item.nombre}
-                                                </div>
-                                            </div>
-                                        </DropdownItem>
-                                    )}
-                                </DropdownMenu>
-                            </Dropdown>
+                                            </DropdownItem>
+                                        )}
+                                    </DropdownMenu>
+                                </Dropdown>
+                            ) : (
+                                <div
+                                    style={{ backgroundColor: color }}
+                                    //col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px] py-1
+                                    className={`group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap overflow-hidden tap-highlight-transparent outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 border-medium px-unit-4 min-w-unit-20 h-unit-10 text-small gap-unit-2 rounded-medium [&>svg]:max-w-[theme(spacing.unit-8)] data-[pressed=true]:scale-[0.97] transition-transform-colors motion-reduce:transition-none bg-transparent border-default z-10 aria-expanded:scale-[0.97] aria-expanded:opacity-70 subpixel-antialiased transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
+                                >
+                                    {cellValue}
+                                </div>
+                            )}
                         </>
                     );
             }

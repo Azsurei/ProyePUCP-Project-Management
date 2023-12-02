@@ -1257,7 +1257,7 @@ export default function Cronograma(props) {
                                             size="lg"
                                             onPress={handlerGoToNew}
                                         >
-                                            Empieza ya!
+                                            Empieza ahora
                                         </Button>
                                     </div>
                                 )}
@@ -1583,26 +1583,28 @@ export default function Cronograma(props) {
                             <div className="containerPosteriores mt-3">
                                 <div className="posterioresHeader">
                                     <p className={twStyle1}>Dependencias</p>
-                                    {stateSecond !== 2 && tareaEstado === 1 && listTareasHijas.length === 0 && (
-                                        <div
-                                            className="btnToPopUp bg-mainSidebar"
-                                            onClick={() => {
-                                                if (
-                                                    listTareasHijas.length >
-                                                        0 &&
-                                                    stateSecond === 3
-                                                ) {
-                                                    toast.warning(
-                                                        "No puede agregar dependencias a una tarea con subtareas"
-                                                    );
-                                                    return;
-                                                }
-                                                onModalPosteriorOpen();
-                                            }}
-                                        >
-                                            <p>Añadir</p>
-                                        </div>
-                                    )}
+                                    {stateSecond !== 2 &&
+                                        tareaEstado === 1 &&
+                                        listTareasHijas.length === 0 && (
+                                            <div
+                                                className="btnToPopUp bg-mainSidebar"
+                                                onClick={() => {
+                                                    if (
+                                                        listTareasHijas.length >
+                                                            0 &&
+                                                        stateSecond === 3
+                                                    ) {
+                                                        toast.warning(
+                                                            "No puede agregar dependencias a una tarea con subtareas"
+                                                        );
+                                                        return;
+                                                    }
+                                                    onModalPosteriorOpen();
+                                                }}
+                                            >
+                                                <p>Añadir</p>
+                                            </div>
+                                        )}
                                 </div>
                                 <p className="text-sm">
                                     Esta tarea no iniciara hasta que las
@@ -1612,17 +1614,19 @@ export default function Cronograma(props) {
                                     {tareaEstado === 1 &&
                                         listTareasHijas.length > 0 && (
                                             <p className="noUsersMsg">
-                                                Una tarea con subtareas no puede tener dependencias
+                                                Una tarea con subtareas no puede
+                                                tener dependencias
                                             </p>
                                         )}
-                                    {tareaEstado !== 1 &&  (
+                                    {tareaEstado !== 1 && (
                                         <p className="noUsersMsg">
                                             Esta tarea ya inicio, no tiene
                                             dependencias
                                         </p>
                                     )}
                                     {dependencies.length === 0 &&
-                                        (tareaEstado === 1 && listTareasHijas.length === 0 ? (
+                                        (tareaEstado === 1 &&
+                                        listTareasHijas.length === 0 ? (
                                             <p className="noUsersMsg">
                                                 No ha agregado dependencias
                                             </p>
@@ -1956,16 +1960,21 @@ export default function Cronograma(props) {
                                 )}
                             </div>
 
-                            <p className="font-semibold text-xl">
-                                Campos adicionales
-                            </p>
+                            <div className="containerTabPlantilla">
+                                <p className="font-semibold text-xl">
+                                    Campos adicionales
+                                </p>
+
+                                <TemplatesAdditionalFields
+                                    editState={stateSecond !== 2}
+                                    baseFields={taskAdditionalFields}
+                                    setBaseFields={setTaskAdditionalFields}
+                                />
+                            </div>
+
                             <ListAdditionalFields
                                 editState={stateSecond !== 2}
                                 baseFields={taskAdditionalFields}
-                                setBaseFields={setTaskAdditionalFields}
-                            />
-
-                            <TemplatesAdditionalFields
                                 setBaseFields={setTaskAdditionalFields}
                             />
 

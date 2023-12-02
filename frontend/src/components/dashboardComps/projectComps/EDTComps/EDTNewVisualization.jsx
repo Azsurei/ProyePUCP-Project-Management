@@ -541,6 +541,11 @@ export default function EDTNewVisualization({
                     </div>
                 </div>
             </div>
+
+            <div>
+                xd
+            </div>
+            
             <div className="twoButtons">
                 <Modal
                     nameButton="Descartar"
@@ -589,6 +594,8 @@ export default function EDTNewVisualization({
                     }}
                 />
             </div>
+
+            
         </div>
     );
 
