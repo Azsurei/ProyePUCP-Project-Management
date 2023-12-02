@@ -1,5 +1,4 @@
 "use client";
-import "@/styles/dashboardStyles/projectStyles/cronogramaStyles/cronogramaPage.css";
 
 import React, { useState, useEffect, useCallback, useMemo, useContext } from "react";
 import {

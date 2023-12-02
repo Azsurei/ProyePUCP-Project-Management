@@ -1,4 +1,6 @@
 import { v4 } from "uuid";
+import "@/styles/TemplatesExtras.css";
+
 import {
     Button,
     Dropdown,
@@ -36,7 +38,7 @@ function TemplatesAdditionalFields({ setBaseFields }) {
 
 
     return <div>
-                <Dropdown>
+        <Dropdown>
             <DropdownTrigger>
                 <Button className="btnPlantilla" color="secondary">Plantillas</Button>
             </DropdownTrigger>

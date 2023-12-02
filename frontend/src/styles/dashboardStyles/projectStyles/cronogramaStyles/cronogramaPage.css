@@ -244,11 +244,6 @@
     margin-top: 20px;
 }
 
-.btnPlantilla{
-
-    height: 35px;
-}
-
 .btnToPopUp{
     display: flex;
     flex-direction: row;
