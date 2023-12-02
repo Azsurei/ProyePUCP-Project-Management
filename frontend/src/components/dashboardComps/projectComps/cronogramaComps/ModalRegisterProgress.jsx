@@ -171,11 +171,13 @@ function ModalRegisterProgress({
                                     color="danger"
                                     variant="light"
                                     onPress={onClose}
+                                    isDisabled={isLoading}
                                 >
                                     Cancelar
                                 </Button>
                                 <Button
                                     color="primary"
+                                    className="bg-generalBlue"
                                     onPress={finalizarModal}
                                     isDisabled={newProgressVal === 0}
                                     isLoading={isLoading}

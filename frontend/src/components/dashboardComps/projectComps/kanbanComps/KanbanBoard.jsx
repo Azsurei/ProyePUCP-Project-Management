@@ -16,7 +16,7 @@ import TaskCard from "./TaskCard";
 
 import axios from "axios";
 import ModalTaskView from "./ModalTaskView";
-import { useDisclosure } from "@nextui-org/react";
+import { Spinner, useDisclosure } from "@nextui-org/react";
 import { Toaster, toast } from "sonner";
 import ModalNewTask from "./ModalNewTask";
 import { useRouter } from "next/navigation";
@@ -239,32 +239,20 @@ export default function KanbanBoard({ projectName, projectId }) {
             });
     }, []);
 
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const twStyle1 =
+        "generalKanbanCompCont flex w-full flex-1 min-h-[500px] relative items-center overflow-y-hidden py-[20px]  px-1 " +
+        (isRefreshing ? "overflow-x-hidden" : "overflow-x-auto");
+
     return (
-        <>
-            <button
-                className="border max-h-[30px] cursor-pointer hover:bg-gray-500"
-                onClick={() => {
-                    console.log("Tareas en Kanban =>");
-                    console.log(tasks);
-                }}
-            >
-                Estadode tareas
-            </button>
-            <div
-                className="
-                generalKanbanCompCont
-                m-auto
-                flex
-                w-full
-                flex-1
-                min-h-[500px]
-                relative
-                items-center
-                overflow-x-auto
-                overflow-y-hidden
-                py-[20px]
-                "
-            >
+        <div className=" flex-1 flex relative  overflow-y-hidden ">
+            {isRefreshing ? (
+                <div className="absolute text-lg text-white z-50 top-0 bottom-0 left-0 right-0 flex justify-center  items-center bg-white opacity-60">
+                    <Spinner size="lg" />
+                </div>
+            ) : null}
+            <div className={twStyle1}>
                 <DndContext
                     sensors={sensors}
                     onDragStart={onDragStart}
@@ -307,19 +295,19 @@ export default function KanbanBoard({ projectName, projectId }) {
                                 createNewColumn();
                             }}
                             className="
-                            h-[60px]
-                            w-[350px]
-                            min-w-[350px]
-                            cursor-pointer
-                            rounded-lg
-                            bg-columnBackgroundColor
-                            border-2
-                            border-taskBackgroundColor
-                            p-4
-                            ring-rose-500
-                            hover:ring-2
-                            flex
-                            gap-2"
+                                h-[60px]
+                                w-[350px]
+                                min-w-[350px]
+                                cursor-pointer
+                                rounded-lg
+                                bg-columnBackgroundColor
+                                border-2
+                                border-taskBackgroundColor
+                                p-4
+                                ring-rose-500
+                                hover:ring-2
+                                flex
+                                gap-2"
                         >
                             <PlusIcon /> Agregar columna
                         </button>
@@ -386,7 +374,7 @@ export default function KanbanBoard({ projectName, projectId }) {
                     }}
                 />
             </div>
-        </>
+        </div>
     );
 
     function openModalViewTask(taskId) {
@@ -734,6 +722,10 @@ export default function KanbanBoard({ projectName, projectId }) {
             //realmente solo deberiamos reordenar la colummna original y la final (del active)
             const tareaNueva = tasks.find((task) => task.idTarea === active.id);
 
+            let flagMustRelist = false;
+            if (tareaNueva.idColumnaKanban === 4) {
+                flagMustRelist = true;
+            }
             console.log(
                 "Columna antigua es " +
                     oldColumn +
@@ -768,6 +760,7 @@ export default function KanbanBoard({ projectName, projectId }) {
                             " de idColumnaKanban = " +
                             task.idColumnaKanban
                     );
+
                     registerTaskPositionChange(
                         task.idTarea,
                         newPosition,
@@ -780,6 +773,90 @@ export default function KanbanBoard({ projectName, projectId }) {
             }
 
             setTasks(newTasksArray);
+
+            if (flagMustRelist) {
+                setIsRefreshing(true);
+                console.log(
+                    "relistando todas lass tareas, aqui persentar load state"
+                );
+                const stringURL =
+                    process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/kanban/listarColumnasYTareas/" +
+                    projectId +
+                    "/" +
+                    herramientasInfo.find(
+                        (herramienta) => herramienta.idHerramienta === 4
+                    ).idHerramientaCreada;
+                axios
+                    .get(stringURL)
+                    .then(function (response) {
+                        console.log(response.data.data);
+
+                        //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
+                        const columnTareas = {
+                            idColumnaKanban: 1,
+                            idProyecto: parseInt(projectId),
+                            nombre: `No iniciadas`,
+                            posicion: 0,
+                            activo: 1,
+                        };
+
+                        const columnInProgress = {
+                            idColumnaKanban: 2,
+                            idProyecto: parseInt(projectId),
+                            nombre: "En proceso",
+                            posicion: 1,
+                            activo: 1,
+                        };
+
+                        const columnFinished = {
+                            idColumnaKanban: 4,
+                            idProyecto: parseInt(projectId),
+                            nombre: "Finalizadas",
+                            posicion: response.data.data.columnas.length + 2,
+                            activo: 1,
+                        };
+
+                        //siempre va a recibir columnas y tareas por orden de posicion
+                        //setColumns([columnTareas, ...response.data.data.columnas]);
+                        setColumns([
+                            columnTareas,
+                            columnInProgress,
+                            ...response.data.data.columnas,
+                            columnFinished,
+                        ]);
+
+                        function compareKanbanElements(a, b) {
+                            if (a.idColumnaKanban < b.idColumnaKanban) {
+                                return -1;
+                            }
+                            if (a.idColumnaKanban > b.idColumnaKanban) {
+                                return 1;
+                            }
+                            // If idColumnaKanban is equal, compare by posicionKanban
+                            if (a.posicionKanban < b.posicionKanban) {
+                                return -1;
+                            }
+                            if (a.posicionKanban > b.posicionKanban) {
+                                return 1;
+                            }
+                            return 0;
+                        }
+
+                        // Sort the array using the custom comparison function
+                        const sortedArray = response.data.data.tareas.sort(
+                            compareKanbanElements
+                        );
+
+                        setTasks(sortedArray);
+                        console.log("termino la carga");
+                        setIsRefreshing(false);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        toast.error("Error en carga. Recarge la pagina");
+                    });
+            }
         }
 
         //verificar el caso cuando se termina el movimiento de tarea

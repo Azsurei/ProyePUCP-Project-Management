@@ -222,6 +222,7 @@ export default function Cronograma(props) {
     const [taskAdditionalFields, setTaskAdditionalFields] = useState([]);
 
     const [dependencies, setDependencies] = useState([]);
+    const [listTareasHijas, setListTareasHijas] = useState([]);
 
     const twStyle1 = "font-medium text-lg text-mainHeaders";
 
@@ -229,8 +230,9 @@ export default function Cronograma(props) {
         //limpiamos data por si acaso
         setTareaPadre(null);
         setTareaName("");
+        setTareaHorasAsignadas(0);
         setTareaDescripcion("");
-        setTareaEstado(["1"]);
+        setTareaEstado(1);
 
         setFechaInicio("");
         setFechaFin("");
@@ -244,6 +246,8 @@ export default function Cronograma(props) {
         setTabSelected("users");
 
         setDependencies([]);
+        setTaskAdditionalFields([]);
+        setListTareasHijas([]);
 
         setValidName(true);
         setValidDescripcion(true);
@@ -261,18 +265,11 @@ export default function Cronograma(props) {
         //toma una tarea, deberemos setear el estado de la pantalla en todo no editable y con los nuevos valores
         setTareaPadre(tarea.idPadre);
         setTareaName(tarea.sumillaTarea);
+        setTareaHorasAsignadas(tarea.horasPlaneadas);
         setTareaDescripcion(tarea.descripcion);
 
-        setTareaEstado([String(tarea.idTareaEstado)]);
-        console.log(
-            "seteando al idTareaEstado = " +
-                tarea.idTareaEstado +
-                " / " +
-                String(tarea.idTareaEstado)
-        );
-
-        console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
-        console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
+        setTareaEstado(tarea.idTareaEstado);
+        console.log("El estado de la tarea es " + tarea.idTareaEstado);
 
         setFechaInicio(dbDateToInputDate(tarea.fechaInicio));
         setFechaFin(dbDateToInputDate(tarea.fechaFin));
@@ -311,7 +308,7 @@ export default function Cronograma(props) {
         }
 
         setDependencies(tarea.dependencias);
-
+        setListTareasHijas(tarea.tareasHijas);
         setTaskAdditionalFields(tarea.camposAdicionales);
 
         setValidName(true);
@@ -334,8 +331,9 @@ export default function Cronograma(props) {
 
         setTareaPadre(tareaPadre);
         setTareaName("");
+        setTareaHorasAsignadas(0);
         setTareaDescripcion("");
-        setTareaEstado(["1"]);
+        setTareaEstado(1);
 
         setFechaInicio("");
         setFechaFin("");
@@ -349,7 +347,7 @@ export default function Cronograma(props) {
         setTabSelected("users");
 
         setDependencies([]);
-
+        setListTareasHijas([]);
         setTaskAdditionalFields([]);
 
         setValidName(true);
@@ -434,11 +432,12 @@ export default function Cronograma(props) {
 
     const handleEdit = (tarea) => {
         accessEdition(tarea.idTarea, 4, sessionData, () => {
-            console.log(JSON.stringify(tarea.idT))
+            console.log(JSON.stringify(tarea.idTareaEstado));
             console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
             setIdTareaToEdit(tarea.idTarea);
             setTareaPadre(tarea.idPadre);
             setTareaName(tarea.sumillaTarea);
+            setTareaHorasAsignadas(tarea.horasPlaneadas);
             setTareaDescripcion(tarea.descripcion);
 
             // setTareaEstado([String(tarea.idTareaEstado)]);
@@ -448,7 +447,7 @@ export default function Cronograma(props) {
             //         " / " +
             //         String(tarea.idTareaEstado)
             // );
-            setTareaEstado(new Set([tarea.idTareaEstado.toString()]));
+            setTareaEstado(tarea.idTareaEstado);
 
             console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
             console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
@@ -490,6 +489,8 @@ export default function Cronograma(props) {
                 setTabSelected("subteams");
             }
 
+            setDependencies(tarea.dependencias);
+            setListTareasHijas(tarea.tareasHijas);
             setTaskAdditionalFields(tarea.camposAdicionales);
 
             setValidName(true);
@@ -649,78 +650,6 @@ export default function Cronograma(props) {
 
     const volverMainDashboard = () => {
         router.push("/dashboard/" + projectName + "=" + projectId);
-    };
-
-    const crearCronogramaYContinuar = () => {
-        console.log(projectId);
-        console.log(firstFechaInicio);
-        console.log(firstFechaFin);
-
-        const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/cronograma/actualizarCronograma";
-        axios
-            .put(updateURL, {
-                idProyecto: projectId,
-                fechaInicio: firstFechaInicio,
-                fechaFin: firstFechaFin,
-            })
-            .then(function (response) {
-                console.log(response.data.message);
-
-                const tareasURL =
-                    process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/cronograma/listarTareasXidProyecto/" +
-                    projectId;
-                axios
-                    .get(tareasURL)
-                    .then(function (response) {
-                        setListTareas(response.data.tareasOrdenadas);
-                        console.log(response.data.tareasOrdenadas);
-
-                        const entregablesURL =
-                            process.env.NEXT_PUBLIC_BACKEND_URL +
-                            "/api/proyecto/cronograma/listarEntregablesXidProyecto/" +
-                            projectId; //PENDIENTE REVISAR SI FUNCIONA
-                        axios
-                            .get(entregablesURL)
-                            .then(function (response) {
-                                console.log(response);
-                                console.log("Respuesta conseguida");
-                                const entregablesArray =
-                                    response.data.entregables.map(
-                                        (entregable) => {
-                                            return {
-                                                ...entregable,
-                                                idEntregableString:
-                                                    entregable.idEntregable.toString(),
-                                            };
-                                        }
-                                    );
-                                const sinEntregable = {
-                                    idEntregable: 0,
-                                    nombre: "Sin entregable asociado",
-                                    idComponente: 0,
-                                    activo: 1,
-                                };
-                                setListEntregables([
-                                    sinEntregable,
-                                    ...entregablesArray,
-                                ]);
-
-                                setIsLoadingSmall(false);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
     };
 
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
@@ -978,7 +907,8 @@ export default function Cronograma(props) {
                 idTarea: idTareaToEdit,
                 sumillaTarea: tareaName,
                 descripcion: tareaDescripcion,
-                idTareaEstado: parseInt(tareaEstado[0], 10),
+                //idTareaEstado: parseInt(tareaEstado[0], 10),
+                idTareaEstado: tareaEstado,
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
                 idEquipo:
@@ -989,6 +919,7 @@ export default function Cronograma(props) {
                 usuariosEliminados: deletedUsers,
                 idEntregable: idEntregable,
                 dependencias: dependencies,
+                horasAsignadas: tareaHorasAsignadas,
             };
 
             console.log(
@@ -1239,23 +1170,6 @@ export default function Cronograma(props) {
         }
     }
 
-    useEffect(() => {
-        if (fechaInicio !== "") {
-            if (dependencies.length !== 0) {
-                toast.info("Se eliminaron las dependencias", {
-                    position: "top-center",
-                });
-            }
-            setDependencies([]);
-        }
-    }, [fechaInicio]);
-
-    useEffect(() => {
-        if (dependencies.length !== 0) {
-            setFechaInicio("");
-        }
-    }, [dependencies]);
-
     return (
         <div className="cronogramaDiv bg-mainBackground">
             {true && (
@@ -1285,6 +1199,8 @@ export default function Cronograma(props) {
                         projectId={projectId}
                         dependencies={dependencies}
                         setDependencies={setDependencies}
+                        setFechaInicio={setFechaInicio}
+                        idTarea={idTareaToEdit === null ? 0 : idTareaToEdit}
                     ></ModalPosterior>
 
                     <ModalRegisterProgress
@@ -1667,10 +1583,20 @@ export default function Cronograma(props) {
                             <div className="containerPosteriores mt-3">
                                 <div className="posterioresHeader">
                                     <p className={twStyle1}>Dependencias</p>
-                                    {stateSecond !== 2 && (
+                                    {stateSecond !== 2 && tareaEstado === 1 && listTareasHijas.length === 0 && (
                                         <div
                                             className="btnToPopUp bg-mainSidebar"
                                             onClick={() => {
+                                                if (
+                                                    listTareasHijas.length >
+                                                        0 &&
+                                                    stateSecond === 3
+                                                ) {
+                                                    toast.warning(
+                                                        "No puede agregar dependencias a una tarea con subtareas"
+                                                    );
+                                                    return;
+                                                }
                                                 onModalPosteriorOpen();
                                             }}
                                         >
@@ -1683,81 +1609,97 @@ export default function Cronograma(props) {
                                     dependencias finalicen
                                 </p>
                                 <div className="posterioresViewContainer bg-mainSidebar">
-                                    {dependencies.length === 0 && (stateSecond===3 ? tareaEstado[0]===1 : true) && (
+                                    {tareaEstado === 1 &&
+                                        listTareasHijas.length > 0 && (
+                                            <p className="noUsersMsg">
+                                                Una tarea con subtareas no puede tener dependencias
+                                            </p>
+                                        )}
+                                    {tareaEstado !== 1 &&  (
                                         <p className="noUsersMsg">
-                                            No ha agregado dependencias
+                                            Esta tarea ya inicio, no tiene
+                                            dependencias
                                         </p>
                                     )}
-                                    {tareaEstado[0]===1 && dependencies.map((task) => {
-                                        return (
-                                            <div
-                                                className={
-                                                    "border-2 dark:border-gray-500 bg-white dark:bg-black rounded-md flex flex-row p-3 items-center gap-1 w-full"
-                                                }
-                                                key={task.idTarea}
-                                            >
-                                                <div className="flex flex-col gap-1 w-1/2 overflow-hidden">
-                                                    <div className="flex flex-row gap-1">
-                                                        <p className="truncate text-lg">
-                                                            {task.sumillaTarea}
-                                                        </p>
-                                                        <Chip
-                                                            variant="flat"
-                                                            color={
-                                                                task.colorTareaEstado
-                                                            }
-                                                        >
-                                                            {
-                                                                task.nombreTareaEstado
-                                                            }
-                                                        </Chip>
-                                                    </div>
-                                                    <p className="pl-2">
-                                                        <span className="font-medium">
-                                                            Descripcion:{" "}
-                                                        </span>
-                                                        {task.descripcion}
-                                                    </p>
-                                                </div>
-
-                                                <div className="flex flex-col items-start flex-1">
-                                                    <div className="flex flex-col items-center">
-                                                        <p className="font-medium">
-                                                            Fecha de fin
-                                                        </p>
-                                                        <p className="text-lg">
-                                                            {dbDateToDisplayDate(
-                                                                task.fechaFin
-                                                            )}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
+                                    {dependencies.length === 0 &&
+                                        (tareaEstado === 1 && listTareasHijas.length === 0 ? (
+                                            <p className="noUsersMsg">
+                                                No ha agregado dependencias
+                                            </p>
+                                        ) : null)}
+                                    {tareaEstado === 1 &&
+                                        dependencies.map((task) => {
+                                            return (
                                                 <div
-                                                    className="stroke-gray-400 hover:stroke-white rounded-lg hover:bg-red-500 p-1 cursor-pointer mr-2"
-                                                    onClick={() => {
-                                                        console.log(
-                                                            "eliminando tarea con id: " +
-                                                                task.idTarea
-                                                        );
-                                                        setDependencies(
-                                                            dependencies.filter(
-                                                                (tarea) =>
-                                                                    tarea.idTarea !==
-                                                                    task.idTarea
-                                                            )
-                                                        );
-                                                    }}
+                                                    className={
+                                                        "border-2 dark:border-gray-500 bg-white dark:bg-black rounded-md flex flex-row p-3 items-center gap-1 w-full"
+                                                    }
+                                                    key={task.idTarea}
                                                 >
-                                                    <TrashIcon />
+                                                    <div className="flex flex-col gap-1 w-1/2 overflow-hidden">
+                                                        <div className="flex flex-row gap-1">
+                                                            <p className="truncate text-lg">
+                                                                {
+                                                                    task.sumillaTarea
+                                                                }
+                                                            </p>
+                                                            <Chip
+                                                                variant="flat"
+                                                                color={
+                                                                    task.colorTareaEstado
+                                                                }
+                                                            >
+                                                                {
+                                                                    task.nombreTareaEstado
+                                                                }
+                                                            </Chip>
+                                                        </div>
+                                                        <p className="pl-2">
+                                                            <span className="font-medium">
+                                                                Descripcion:{" "}
+                                                            </span>
+                                                            {task.descripcion}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="flex flex-col items-start flex-1">
+                                                        <div className="flex flex-col items-center">
+                                                            <p className="font-medium">
+                                                                Fecha de fin
+                                                            </p>
+                                                            <p className="text-lg">
+                                                                {dbDateToDisplayDate(
+                                                                    task.fechaFin
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        className="stroke-gray-400 hover:stroke-white rounded-lg hover:bg-red-500 p-1 cursor-pointer mr-2"
+                                                        onClick={() => {
+                                                            console.log(
+                                                                "eliminando tarea con id: " +
+                                                                    task.idTarea
+                                                            );
+                                                            setDependencies(
+                                                                dependencies.filter(
+                                                                    (tarea) =>
+                                                                        tarea.idTarea !==
+                                                                        task.idTarea
+                                                                )
+                                                            );
+                                                        }}
+                                                    >
+                                                        <TrashIcon />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })}
                                 </div>
                             </div>
 
-                            {dependencies.length !== 0 ? (
+                            {tareaEstado === 1 && dependencies.length !== 0 ? (
                                 <div className=" flex justify-center gap-1 mt-2 text-warning">
                                     <InfoIcon />
                                     <p>
@@ -2026,7 +1968,6 @@ export default function Cronograma(props) {
                             <TemplatesAdditionalFields
                                 setBaseFields={setTaskAdditionalFields}
                             />
-                        
 
                             {stateSecond !== 2 && (
                                 <div className="twoButtonsEnd pb-8">
