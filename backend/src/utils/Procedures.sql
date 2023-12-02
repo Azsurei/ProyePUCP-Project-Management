@@ -118,8 +118,12 @@ DROP PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO(IN _idUsuario INT)
 BEGIN
-	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion ,r.nombre as "nombrerol"
-    FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol WHERE p.idProyecto = urp.idProyecto AND urp.idUsuario = _idUsuario;
+	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, r.idRol ,r.nombre as "nombrerol"
+    FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol 
+    WHERE p.idProyecto = urp.idProyecto 
+    AND urp.idUsuario = _idUsuario 
+    AND p.activo=1
+    ORDER BY p.fechaUltimaModificacion DESC, p.idProyecto DESC;
 END$
 DELIMITER $
 
