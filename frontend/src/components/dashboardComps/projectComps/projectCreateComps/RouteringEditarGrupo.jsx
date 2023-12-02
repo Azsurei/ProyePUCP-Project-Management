@@ -13,4 +13,4 @@ function RouteringEditarGrupo({idGrupoProyecto}) {
 
     router.push(route);
 };
-export default RouteringReporteGrupo;
+export default RouteringEditarGrupo;

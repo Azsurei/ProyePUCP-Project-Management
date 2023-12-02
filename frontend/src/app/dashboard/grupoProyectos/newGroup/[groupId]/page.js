@@ -128,6 +128,9 @@ export default function newGroup(props) {
     const [page, setPage] = React.useState(1);
     const [ListComps, setListComps] = useState([]);
     const [validValue, setValidValue] = useState(true);
+    const [proyectosIniciales, setProyectosIniciales] = React.useState(new Set([]));
+    const [proyectosEliminar, setProyectosEliminar] = React.useState(new Set([]));
+    const [proyectosNuevos, setProyectosNuevos] = React.useState(new Set([]));
     const isSetEmpty = selectedKeys.size === 0;
     const columns = [
         {
@@ -155,6 +158,29 @@ export default function newGroup(props) {
     ];
 
     useEffect(() => {
+        if(!isNaN(groupID)){
+            axios
+            .get(
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                    "/api/proyecto/grupoProyectos/listarGrupoYProyectosRelacionados/" +
+                    groupID
+            )
+            .then(function (response) {
+                console.log(response);
+                const proyectsArray = response.data.proyectos;
+                const Keys = new Set(proyectsArray.map((proyect) => String(proyect.idProyecto)));
+                
+                console.log("Keys: ", Keys); 
+                setSelectedKeys(Keys);
+                setProyectosIniciales(Keys);   
+                setNombreGrupo(response.data.nombreGrupo);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+            console.log("El grupo es: ", groupID);
+            setIsEdit(true);
+        }
         let proyectsArray;
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -185,28 +211,28 @@ export default function newGroup(props) {
             .catch(function (error) {
                 console.log(error);
             });
-            if(!isNaN(groupID)){
-                // axios
-                // .get(
-                //     process.env.NEXT_PUBLIC_BACKEND_URL +
-                //         "/api/proyecto/grupoProyectos/listarProyectosXGrupo/" +
-                //         groupID
-                // )
-                // .then(function (response) {
-                //     console.log(response);
-                //     const proyectsArray = response.data.proyectos;
-                //     const selectedKeys = new Set(proyectsArray.map((proyect) => proyect.idProyecto));
-                //     setSelectedKeys(selectedKeys);
-                //     setNombreGrupo(response.data.nombreGrupo);
-                // })
-                // .catch(function (error) {
-                //     console.log(error);
-                // });
-                console.log("El grupo es: ", groupID);
-                setIsEdit(true);
-            }
+           
     }, []);
-
+    useEffect(() => {
+        const proyectosEliminar = Array.from(proyectosIniciales).filter((dato) => !selectedKeys.has(dato));
+        
+        let proyectosNuevos;
+        if (proyectosIniciales.size > 0) {
+            proyectosNuevos = Array.from(selectedKeys).filter((dato) => !proyectosIniciales.has(dato));
+        } else {
+            proyectosNuevos = Array.from(selectedKeys);
+        }
+    
+        setProyectosEliminar(proyectosEliminar);
+        setProyectosNuevos(proyectosNuevos);
+    }, [selectedKeys, proyectosIniciales]);
+    
+    useEffect(() => {
+        console.log("Selected keys: ", selectedKeys);
+        console.log("Proyectos iniciales: ", Array.from(proyectosIniciales));
+        console.log("Proyectos a eliminar: ", Array.from(proyectosEliminar));
+        console.log("Proyectos a agregar: ", Array.from(proyectosNuevos));
+    }, [proyectosEliminar, proyectosNuevos]);
     // Variables adicionales
     const pages = Math.ceil(ListComps.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
@@ -351,7 +377,8 @@ export default function newGroup(props) {
                 const putData = {
                     idGrupoDeProyecto: groupID,
                     nombre: nombreGrupo,
-                    proyectosAgregados: [...selectedKeys],
+                    proyectosAgregados: [...proyectosNuevos],
+                    proyectosEliminados: [...proyectosEliminar],
                 };
                 console.log("El putData es :", putData);
                 axios
@@ -432,6 +459,8 @@ export default function newGroup(props) {
         hasSearchFilter,
         selectedKeys,
         nombreGrupo,
+        proyectosNuevos,
+        proyectosEliminar,
     ]);
 
     const bottomContent = React.useMemo(() => {

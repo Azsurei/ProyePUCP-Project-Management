@@ -108,6 +108,15 @@ function GroupCard(props) {
                         
                       </DropdownItem>
                       <DropdownItem
+                        key="new"
+                        description="Editar Grupos de Proyectos"
+                        onPress={() => setRoutering2(idGrupoProyecto)}
+                        startContent={<PlusIcon size={24} />}
+                      >
+                        Editar grupo de proyectos
+                        
+                      </DropdownItem>
+                      <DropdownItem
                         key="reporte"
                         description="Crea un reporte de grupo de proyectos"
                         onPress={() => {
