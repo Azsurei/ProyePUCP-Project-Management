@@ -399,6 +399,21 @@ async function modificarPreferenciaNotificacionPresupuesto(req,res,next){
 }
 
 
+async function modificarPrivilegios(req,res,next){
+    const {idUsuario, Privilegios_idPrivilegios} = req.body;
+    const query = `CALL MODIFICAR_PRIVILEGIOS_USUARIO(?,?);`;
+    try {
+        await connection.query(query,[idUsuario, Privilegios_idPrivilegios]);
+        res.status(200).json({
+            message: "Privilegio Actualizado"
+        });
+    } catch (error) {
+        console.log("Error al Modificar privilegio de Usuario",error);
+        next(error);
+    }
+}
+
+
 
 module.exports = {
     loginXCorreo,
@@ -416,5 +431,6 @@ module.exports = {
     modificaEstadoNotificacionXIdUsuario,
     verificarNotificacionesPresupuesto,
     modificarDatos,
-    modificarPreferenciaNotificacionPresupuesto
+    modificarPreferenciaNotificacionPresupuesto,
+    modificarPrivilegios
 };

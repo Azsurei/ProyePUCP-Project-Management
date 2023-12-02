@@ -20,4 +20,6 @@ routerUsuario.post("/modificarPreferenciaNotificacionPresupuesto", verifyToken, 
 
 routerUsuario.post("/verificarNotificacionesPresupuesto",verifyToken,usuarioController.verificarNotificacionesPresupuesto);
 
+routerUsuario.put("/modificarPrivilegios",verifyToken,usuarioController.modificarPrivilegios);
+
 module.exports.routerUsuario = routerUsuario;

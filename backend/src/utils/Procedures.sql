@@ -5896,3 +5896,16 @@ BEGIN
 END$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS MODIFICAR_PRIVILEGIOS_USUARIO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PRIVILEGIOS_USUARIO(
+    IN _idUsuario INT,
+    IN _Privilegios_idPrivilegios INT
+)
+BEGIN
+    UPDATE Usuario 
+    SET Privilegios_idPrivilegios = _Privilegios_idPrivilegios
+    WHERE idUsuario = _idUsuario;
+END$
+DELIMITER ;
+
