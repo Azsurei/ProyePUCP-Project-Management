@@ -1955,17 +1955,20 @@ export default function Cronograma(props) {
                                     </div>
                                 )}
                             </div>
+                    
+                            <div className="containerTabPlantilla">
+                                <p className="font-semibold text-xl">
+                                    Campos adicionales
+                                </p>
 
-                            <p className="font-semibold text-xl">
-                                Campos adicionales
-                            </p>
+                                <TemplatesAdditionalFields
+                                setBaseFields={setTaskAdditionalFields}
+                                />   
+                            </div>
+
                             <ListAdditionalFields
                                 editState={stateSecond !== 2}
                                 baseFields={taskAdditionalFields}
-                                setBaseFields={setTaskAdditionalFields}
-                            />
-
-                            <TemplatesAdditionalFields
                                 setBaseFields={setTaskAdditionalFields}
                             />
 

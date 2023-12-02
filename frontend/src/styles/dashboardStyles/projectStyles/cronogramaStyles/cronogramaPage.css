@@ -235,6 +235,20 @@
     gap: 1.2rem;
 }
 
+
+.containerTabPlantilla{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 20px;
+}
+
+.btnPlantilla{
+
+    height: 35px;
+}
+
 .btnToPopUp{
     display: flex;
     flex-direction: row;
