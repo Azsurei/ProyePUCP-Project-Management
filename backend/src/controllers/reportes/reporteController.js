@@ -11,6 +11,19 @@ async function listarReportesXIdProyecto(req,res,next){
     }
 }   
 
+async function modificar(req,res,next){
+    const {idReporteXProyecto, nombre} = req.body;
+    try {
+        const query = `CALL MODIFICAR_REPORTE_X_ID_REPORTE(?,?);`;
+        await connection.query(query,[idReporteXProyecto, nombre]);
+        console.log(`Reporte ${idReporteXProyecto} modificado`);
+        res.status(200).json({message: "Reporte modificado"});
+    } catch (error) {
+        console.log("Error al Modificar Reporte",error);
+        next(error);
+    }
+}
+
 async function eliminar(req, res, next) {
     const { idReporteXProyecto } = req.body;
     try {
@@ -29,5 +42,6 @@ async function eliminar(req, res, next) {
 
 module.exports = {
     listarReportesXIdProyecto,
+    modificar,
     eliminar
 }

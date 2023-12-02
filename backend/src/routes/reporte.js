@@ -9,6 +9,7 @@ const reporteTareasController = require("../controllers/reportes/reporteTareasCo
 const reporteListaParcipiantesController = require("../controllers/reportes/reporteListaParticipantesController");
 //Reportes
 routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.listarReportesXIdProyecto);
+routerReporte.put("/editarReporte", reporteController.modificar);
 routerReporte.delete("/eliminarReporte", verifyToken, reporteController.eliminar);
 
 //Reporte presupuesto
