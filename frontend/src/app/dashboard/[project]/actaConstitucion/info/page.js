@@ -630,7 +630,7 @@ export default function Info(props) {
                                 
                                 </NextUIButton>
                                 <NextUIButton
-                                color="primary"
+                                className="bg-generalBlue text-white font-medium"
                                 
                                 onClick={finalizarModal}
                                 >
