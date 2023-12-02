@@ -32,14 +32,15 @@ import { m } from "framer-motion";
 import PopUpEliminateAll from "@/components/PopUpEliminateAll";
 import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "../../layout";
-
+import { SessionContext } from "@/app/dashboard/layout";
 export default function ProductBacklog(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     console.log(projectId);
     console.log(projectName);
 
@@ -264,7 +265,10 @@ export default function ProductBacklog(props) {
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Editar" color="warning">
+                            {
+                                rol !== 2 && (
+                                    <>
+                                                                    <Tooltip content="Editar" color="warning">
                                 <button
                                     className=""
                                     type="button"
@@ -284,6 +288,10 @@ export default function ProductBacklog(props) {
                                     <img src="/icons/eliminar.svg" />
                                 </button>
                             </Tooltip>
+                                    </>
+                                )
+                            }
+
                         </div>
                     </div>
                 );
@@ -329,22 +337,27 @@ export default function ProductBacklog(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Button
-                            color="primary"
-                            endContent={<PlusIcon />}
-                            className="btnBacklogPrimary sm:w-1 sm:h-1"
-                            onPress={() => {
-                                router.push(
-                                    "/dashboard/" +
-                                        projectName +
-                                        "=" +
-                                        projectId +
-                                        "/backlog/productBacklog/registerPB"
-                                );
-                            }}
-                        >
-                            Agregar
-                        </Button>
+                        {
+                            rol !== 2 && (
+                                <Button
+                                color="primary"
+                                endContent={<PlusIcon />}
+                                className="btnBacklogPrimary sm:w-1 sm:h-1"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/backlog/productBacklog/registerPB"
+                                    );
+                                }}
+                            >
+                                Agregar
+                            </Button>
+                            )
+                        }
+
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -372,6 +385,7 @@ export default function ProductBacklog(props) {
         data.length,
         onSearchChange,
         hasSearchFilter,
+        rol,
     ]);
 
     const bottomContent = React.useMemo(() => {

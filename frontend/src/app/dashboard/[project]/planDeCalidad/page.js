@@ -29,11 +29,13 @@ import { set } from "date-fns";
 import ModalEliminateMetrica from "@/components/dashboardComps/projectComps/planDeCalidadComps/ModalEliminateMetrica";
 import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
-
+import { SessionContext } from "@/app/dashboard/layout";
 export default function PlanDeCalidad(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     const { herramientasInfo } = useContext(HerramientasInfo);
     const idPlanCalidad = herramientasInfo.find(
         (herramienta) => herramienta.idHerramienta === 15
@@ -866,7 +868,7 @@ export default function PlanDeCalidad(props) {
                     Plan de calidad
                 </div>
                 <div>
-                    {!editMode && (
+                    {(!editMode && rol !== 2) && (
                         <Button
                             color="primary"
                             onPress={() => {

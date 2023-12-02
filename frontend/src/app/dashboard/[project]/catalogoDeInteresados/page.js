@@ -26,11 +26,13 @@ import { useRouter } from "next/navigation";
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
 import RouteringInteresados from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/RouteringInteresados";
 import ModalEliminateInteresado from "@/components/dashboardComps/projectComps/catalogoDeInteresadosComps/ModalEliminateInteresado";
-
+import { SessionContext } from "@/app/dashboard/layout";
 export default function CatalogoDeInteresados(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const stringPrueba =
@@ -243,7 +245,10 @@ export default function CatalogoDeInteresados(props) {
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Editar" color="warning">
+                            {
+                                rol !== 2 && (
+                                    <>
+                                    <Tooltip content="Editar" color="warning">
                                 <button
                                     className="min-w-[24px] min-h-[24]"
                                     type="button"
@@ -263,13 +268,17 @@ export default function CatalogoDeInteresados(props) {
                                     <img src="/icons/eliminar.svg" />
                                 </button>
                             </Tooltip>
+                                    </>
+                                )
+                            }
+
                         </div>
                     </div>
                 );
             default:
                 return cellValue;
         }
-    }, []);
+    }, [rol]);
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-10">
@@ -285,22 +294,27 @@ export default function CatalogoDeInteresados(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Button
-                            color="primary"
-                            endContent={<PlusIcon />}
-                            className="btnAddRiesgo"
-                            onPress={() => {
-                                router.push(
-                                    "/dashboard/" +
-                                        projectName +
-                                        "=" +
-                                        projectId +
-                                        "/catalogoDeInteresados/registerCI"
-                                );
-                            }}
-                        >
-                            Agregar
-                        </Button>
+                        {
+                            rol !== 2 && (
+                                <Button
+                                color="primary"
+                                endContent={<PlusIcon />}
+                                className="btnAddRiesgo"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/catalogoDeInteresados/registerCI"
+                                    );
+                                }}
+                            >
+                                Agregar
+                            </Button>
+                            )
+                        }
+
                         {/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
@@ -342,6 +356,7 @@ export default function CatalogoDeInteresados(props) {
         data.length,
         onSearchChange,
         hasSearchFilter,
+        rol,
     ]);
     const bottomContent = React.useMemo(() => {
         return (

@@ -29,12 +29,15 @@ import { set } from "date-fns";
 import RouteringMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringMC";
 import RouteringRegisterMC from "@/components/dashboardComps/projectComps/matrizComunicacionesComps/RouteringRegisterMC";
 import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
+import { SessionContext } from "@/app/dashboard/layout";
 export default function MatrizDeComunicaciones(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     const stringURL =
         process.env.NEXT_PUBLIC_BACKEND_URL +
         `/api/proyecto/matrizDeComunicaciones/listarMatrizComunicacion/59`;
@@ -295,26 +298,33 @@ export default function MatrizDeComunicaciones(props) {
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Editar" color="warning">
-                                <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
-                                    type="button"
-                                    onClick={() => {
-                                        setRoutering(data, true);
-                                    }}
-                                >
-                                    <img src="/icons/editar.svg" />
-                                </button>
-                            </Tooltip>
-                            <Tooltip content="Eliminar" color="danger">
-                                <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
-                                    type="button"
-                                    onClick={() => toggleModal(data)}
-                                >
-                                    <img src="/icons/eliminar.svg" />
-                                </button>
-                            </Tooltip>
+                            {
+                                rol !==2 && (
+                                    <>
+                                    <Tooltip content="Editar" color="warning">
+                                    <button
+                                        className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                        type="button"
+                                        onClick={() => {
+                                            setRoutering(data, true);
+                                        }}
+                                    >
+                                        <img src="/icons/editar.svg" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip content="Eliminar" color="danger">
+                                    <button
+                                        className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8"
+                                        type="button"
+                                        onClick={() => toggleModal(data)}
+                                    >
+                                        <img src="/icons/eliminar.svg" />
+                                    </button>
+                                </Tooltip>
+                                </>
+                                )
+                            }
+
                         </div>
                     </div>
                 );
@@ -338,22 +348,27 @@ export default function MatrizDeComunicaciones(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Button
-                            color="primary"
-                            endContent={<PlusIcon />}
-                            className="btnAddComunicacion"
-                            onPress={() => {
-                                router.push(
-                                    "/dashboard/" +
-                                        projectName +
-                                        "=" +
-                                        projectId +
-                                        "/matrizDeComunicaciones/registerMC"
-                                );
-                            }}
-                        >
-                            Agregar
-                        </Button>
+                        {
+                            rol !==2 && (
+                                <Button
+                                color="primary"
+                                endContent={<PlusIcon />}
+                                className="btnAddComunicacion"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/matrizDeComunicaciones/registerMC"
+                                    );
+                                }}
+                            >
+                                Agregar
+                            </Button>
+                            )
+                        }
+
                         {/* <Button
                             color="primary"
                             endContent={<PlusIcon />}
@@ -395,6 +410,7 @@ export default function MatrizDeComunicaciones(props) {
         data.length,
         onSearchChange,
         hasSearchFilter,
+        rol,
     ]);
 
     const bottomContent = React.useMemo(() => {

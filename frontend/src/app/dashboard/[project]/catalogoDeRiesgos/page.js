@@ -24,10 +24,13 @@ import { useRouter } from "next/navigation";
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/catalogoRiesgos.css";
 import RouteringRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/RouteringCR";
 import ModalEliminateRC from "@/components/dashboardComps/projectComps/catalogoDeRiesgosComps/ModalEliminateRC";
+import { SessionContext } from "@/app/dashboard/layout";
 export default function catalogoDeRiesgos(props) {
     const router = useRouter();
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -259,7 +262,33 @@ export default function catalogoDeRiesgos(props) {
                                     {/* <EyeFilledIcon /> */}
                                 </button>
                             </Tooltip>
-                            <Tooltip content="Editar" color="warning">
+                            {
+                                rol !==2 && (
+                                    <>
+                                    <Tooltip content="Editar" color="warning">
+                                    <button
+                                        className=""
+                                        type="button"
+                                        onClick={() => {
+                                            setRoutering(data, true);
+                                        }}
+                                    >
+                                        <img src="/icons/editar.svg" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip content="Eliminar" color="danger">
+                                    <button
+                                        className=""
+                                        type="button"
+                                        onClick={() => toggleModal(data)}
+                                    >
+                                        <img src="/icons/eliminar.svg" />
+                                    </button>
+                                </Tooltip>
+                                </>
+                                )
+                            }
+                            {/* <Tooltip content="Editar" color="warning">
                                 <button
                                     className=""
                                     type="button"
@@ -278,14 +307,14 @@ export default function catalogoDeRiesgos(props) {
                                 >
                                     <img src="/icons/eliminar.svg" />
                                 </button>
-                            </Tooltip>
+                            </Tooltip> */}
                         </div>
                     </div>
                 );
             default:
                 return cellValue;
         }
-    }, []);
+    }, [rol]);
 
     const topContent = React.useMemo(() => {
         return (
@@ -302,7 +331,27 @@ export default function catalogoDeRiesgos(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        <Button
+                        {
+                            rol !==2 && (
+                                <Button
+                                color="primary"
+                                endContent={<PlusIcon />}
+                                className="btnAddRiesgo"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/catalogoDeRiesgos/registerCR"
+                                    );
+                                }}
+                            >
+                                Agregar
+                            </Button>
+                            )
+                        }
+                        {/* <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnAddRiesgo"
@@ -317,7 +366,7 @@ export default function catalogoDeRiesgos(props) {
                             }}
                         >
                             Agregar
-                        </Button>
+                        </Button> */}
 {/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
@@ -359,6 +408,7 @@ export default function catalogoDeRiesgos(props) {
         data.length,
         onSearchChange,
         hasSearchFilter,
+        rol,
     ]);
 
     const bottomContent = React.useMemo(() => {
