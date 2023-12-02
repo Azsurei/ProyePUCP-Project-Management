@@ -9,7 +9,7 @@ routerCronograma.post("/insertarCronograma",verifyToken, cronogramaController.cr
 routerCronograma.put("/actualizarCronograma",verifyToken, cronogramaController.actualizar);
 routerCronograma.delete("/eliminarCronograma", cronogramaController.eliminar);
 routerCronograma.delete("/eliminarCronogramaXProyecto", cronogramaController.eliminarXProyecto);
-routerCronograma.post("/insertarTarea", tareaController.crear);
+//routerCronograma.post("/insertarTarea", tareaController.crear);
 
 routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);
 routerCronograma.post("/listarCronograma", cronogramaController.listar);
@@ -18,7 +18,7 @@ routerCronograma.post("/listarCronograma", cronogramaController.listar);
 
 //Tarea
 routerCronograma.post("/insertarTarea", tareaController.crear); //modificado para soportar dependencias bien
-routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);    //! pendiente
+//routerCronograma.put("/actualizarTarea", verifyToken,tareaController.modificar);    //! pendiente
 
 
 routerCronograma.put("/actualizarIdSprintXTarea",tareaController.modificarIdSprintDeTareas);

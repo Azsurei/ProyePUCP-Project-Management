@@ -100,7 +100,20 @@ function DashboardNav({
         useContext(NotificationsContext);
 
     const router = useRouter();
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState(null);
+
+    useEffect(() => {
+        console.log(JSON.stringify(notifications, null, 2));
+        const selectedTheme = localStorage.getItem("selectedTheme");
+        if (selectedTheme === "dark") {
+            setTheme("dark");
+            document.querySelector("html").classList.add("dark");
+            localStorage.setItem("selectedTheme", "dark");
+        }
+        else{
+            setTheme("light");
+        }
+    }, []);
 
     const setLightMode = () => {
         document.querySelector("html").classList.remove("dark");
@@ -117,13 +130,11 @@ function DashboardNav({
         else setDarkMode();
     };
 
-    //useEffect(() => {
-    const selectedTheme = localStorage.getItem("selectedTheme");
-    if (selectedTheme === "dark") {
-        document.querySelector("html").classList.add("dark");
-        localStorage.setItem("selectedTheme", "dark");
-    }
-    //},[]);
+    // const selectedTheme = localStorage.getItem("selectedTheme");
+    // if (selectedTheme === "dark") {
+    //     document.querySelector("html").classList.add("dark");
+    //     localStorage.setItem("selectedTheme", "dark");
+    // }
 
     const handleSignOut = () => {
         // Eliminar cookie del backend
@@ -138,9 +149,7 @@ function DashboardNav({
             });
     };
 
-    useEffect(()=>{
-        console.log(JSON.stringify(notifications,null,2));
-    },[]);
+    
 
     return (
         <nav className="DashboardNav bg-mainBackground">
@@ -166,14 +175,14 @@ function DashboardNav({
 
             <ul className="NavIconList">
                 <li>
-                    <Switch
-                        defaultSelected={selectedTheme === "light"}
+                    {theme!==null && <Switch
+                        defaultSelected={theme === "light"}
                         size="lg"
                         color="primary"
                         startContent={<SunIcon />}
                         endContent={<MoonIcon />}
                         onChange={toggleTheme}
-                    ></Switch>
+                    ></Switch>}
                 </li>
                 <li>
                     <img src="/icons/icon-help.svg" alt="" className="icon" />
@@ -318,9 +327,14 @@ function DashboardNav({
                             aria-label="Profile Actions"
                             variant="flat"
                         >
-                            <DropdownItem key="settings" onPress={()=>{
-                                router.push("/dashboard/configuracion/perfil");
-                            }}>
+                            <DropdownItem
+                                key="settings"
+                                onPress={() => {
+                                    router.push(
+                                        "/dashboard/configuracion/perfil"
+                                    );
+                                }}
+                            >
                                 Mi perfil
                             </DropdownItem>
                             <DropdownItem

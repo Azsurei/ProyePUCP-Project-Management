@@ -51,6 +51,8 @@ import ListAdditionalFields, {
     registerAdditionalFields,
 } from "@/components/ListAdditionalFields";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import EmptyBoxIcon from "@/components/EmptyBoxIcon";
+import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
 axios.defaults.withCredentials = true;
 
 function TrashIcon() {
@@ -432,19 +434,21 @@ export default function Cronograma(props) {
 
     const handleEdit = (tarea) => {
         accessEdition(tarea.idTarea, 4, sessionData, () => {
+            console.log(JSON.stringify(tarea.idT))
             console.log("ASIGNANDO ID A EDITAR COMO " + tarea.idTarea);
             setIdTareaToEdit(tarea.idTarea);
             setTareaPadre(tarea.idPadre);
             setTareaName(tarea.sumillaTarea);
             setTareaDescripcion(tarea.descripcion);
 
-            setTareaEstado([String(tarea.idTareaEstado)]);
-            console.log(
-                "seteando al idTareaEstado = " +
-                    tarea.idTareaEstado +
-                    " / " +
-                    String(tarea.idTareaEstado)
-            );
+            // setTareaEstado([String(tarea.idTareaEstado)]);
+            // console.log(
+            //     "seteando al idTareaEstado = " +
+            //         tarea.idTareaEstado +
+            //         " / " +
+            //         String(tarea.idTareaEstado)
+            // );
+            setTareaEstado(new Set([tarea.idTareaEstado.toString()]));
 
             console.log("ESTA ES LA FECHA INICIO : " + tarea.fechaInicio);
             console.log("ESTA ES LA FECHA FIN : " + tarea.fechaFin);
@@ -730,11 +734,10 @@ export default function Cronograma(props) {
             console.log(arrayEntregable);
 
             let idEntregable = 0;
-            if(arrayEntregable.length === 0){
+            if (arrayEntregable.length === 0) {
                 console.log("No se mando entregable, asignando sin entregable");
                 idEntregable = 0;
-            }
-            else{
+            } else {
                 console.log("Asignando entregable " + arrayEntregable[0]);
                 idEntregable = parseInt(arrayEntregable[0]);
             }
@@ -957,18 +960,15 @@ export default function Cronograma(props) {
                     JSON.stringify(listPosteriores, null, 2)
             );
 
-
-
             console.log("SOBRE ENTREGABLE");
             const arrayEntregable = Array.from(tareaEntregable);
             console.log(arrayEntregable);
 
             let idEntregable = 0;
-            if(arrayEntregable.length === 0){
+            if (arrayEntregable.length === 0) {
                 console.log("No se mando entregable, asignando sin entregable");
                 idEntregable = 0;
-            }
-            else{
+            } else {
                 console.log("Asignando entregable " + arrayEntregable[0]);
                 idEntregable = parseInt(arrayEntregable[0]);
             }
@@ -988,6 +988,7 @@ export default function Cronograma(props) {
                 usuariosAgregados: selectedUsers, //al final se barren todos los antiguos xde, se deben agregar todos dnv
                 usuariosEliminados: deletedUsers,
                 idEntregable: idEntregable,
+                dependencias: dependencies,
             };
 
             console.log(
@@ -1111,7 +1112,7 @@ export default function Cronograma(props) {
                         );
                         const sinEntregable = {
                             idEntregable: 0,
-                            idEntregableString: '0',
+                            idEntregableString: "0",
                             nombre: "Sin entregable asociado",
                             idComponente: 0,
                             activo: 1,
@@ -1319,22 +1320,29 @@ export default function Cronograma(props) {
                             </HeaderWithButtonsSamePage>
 
                             {isListLoading === true && (
-                                <div className="border flex-1 flex justify-center items-center">
+                                <div className="flex-1 flex justify-center items-center">
                                     <Spinner size="lg" />
                                 </div>
                             )}
 
                             {listTareas.length === 0 &&
                                 isListLoading === false && (
-                                    <div className="w-[100%] h-[70vh] flex justify-center items-center flex-col gap-3">
-                                        <p className="m-0 font-medium">
+                                    <div className="w-[100%] flex-1 flex justify-center items-center flex-col gap-3">
+                                        <p className="m-0 font-medium text-xl">
                                             Tu calendario no cuenta con tareas
                                             por el momento
                                         </p>
-                                        <img
-                                            src="/images/empty-calendar.png"
-                                            className="h-[20%]  m-0"
+                                        <EmptyBoxIcon
+                                            width={300}
+                                            height={300}
                                         />
+                                        <Button
+                                            className="bg-F0AE19 text-white font-medium"
+                                            size="lg"
+                                            onPress={handlerGoToNew}
+                                        >
+                                            Empieza ya!
+                                        </Button>
                                     </div>
                                 )}
                             {listTareas.length !== 0 &&
@@ -1447,9 +1455,13 @@ export default function Cronograma(props) {
 
                             <div className="contFirstRow">
                                 <div className="contNombre">
-                                    <p onClick={()=>{
-                                        console.log(tareaEntregable);
-                                    }}>Ver entregable</p>
+                                    <p
+                                        onClick={() => {
+                                            console.log(tareaEntregable);
+                                        }}
+                                    >
+                                        Ver entregable
+                                    </p>
                                     <p className={twStyle1}>Nombre de tarea</p>
 
                                     <Textarea
@@ -1671,12 +1683,12 @@ export default function Cronograma(props) {
                                     dependencias finalicen
                                 </p>
                                 <div className="posterioresViewContainer bg-mainSidebar">
-                                    {dependencies.length === 0 && (
+                                    {dependencies.length === 0 && (stateSecond===3 ? tareaEstado[0]===1 : true) && (
                                         <p className="noUsersMsg">
                                             No ha agregado dependencias
                                         </p>
                                     )}
-                                    {dependencies.map((task) => {
+                                    {tareaEstado[0]===1 && dependencies.map((task) => {
                                         return (
                                             <div
                                                 className={
@@ -2010,6 +2022,11 @@ export default function Cronograma(props) {
                                 baseFields={taskAdditionalFields}
                                 setBaseFields={setTaskAdditionalFields}
                             />
+
+                            <TemplatesAdditionalFields
+                                setBaseFields={setTaskAdditionalFields}
+                            />
+                        
 
                             {stateSecond !== 2 && (
                                 <div className="twoButtonsEnd pb-8">
