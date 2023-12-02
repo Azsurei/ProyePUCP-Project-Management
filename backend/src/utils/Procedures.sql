@@ -5925,3 +5925,31 @@ BEGIN
 END$
 DELIMITER ;
 
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ENTREGABLES_COMPONENTES(
+    IN _idEntregable INT
+)
+BEGIN
+    UPDATE Entregable SET activo = 0 WHERE idEntregable = _idEntregable;
+    UPDATE Tarea SET idEntregable = 0 WHERE idEntregable = _idEntregable;    
+END$$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ENTREGABLES_COMPONENTES(
+    IN _nombre VARCHAR(200),
+    IN _idComponente INT
+)
+BEGIN
+    INSERT INTO Entregable(nombre,idComponente,activo) 
+    VALUES(_nombre, _idComponente, 1);
+END$
+
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ENTREGABLES_COMPONENTES(
+    IN _idEntregable INT,
+    IN _nombre VARCHAR(200)
+)
+BEGIN
+    UPDATE Entregable
+    SET nombre = _nombre WHERE idEntregable = _idEntregable;
+END$
