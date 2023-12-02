@@ -249,22 +249,34 @@ export default function Dashboard() {
                                             user.Privilegios_idPrivilegios === 2
                                                 ? 1
                                                 : 2;
-                                        const newList = listPrivUsers.map(
-                                            (item) => {
-                                                if (
-                                                    item.idUsuario ===
-                                                    user.idUsuario
-                                                ) {
-                                                    return {
-                                                        ...item,
-                                                        Privilegios_idPrivilegios:
-                                                            newPriv,
-                                                    };
-                                                }
-                                                return item;
-                                            }
+                                        // const newList = listPrivUsers.map(
+                                        //     (item) => {
+                                        //         if (
+                                        //             item.idUsuario ===
+                                        //             user.idUsuario
+                                        //         ) {
+                                        //             return {
+                                        //                 ...item,
+                                        //                 Privilegios_idPrivilegios:
+                                        //                     newPriv,
+                                        //             };
+                                        //         }
+                                        //         return item;
+                                        //     }
+                                        // );
+                                        // setListPrivUsers(newList);
+                                        setListPrivUsers((prevList) =>
+                                            prevList.map(
+                                                (item) =>
+                                                    item.idUsuario === user.idUsuario
+                                                        ? {
+                                                            ...item,
+                                                            Privilegios_idPrivilegios: newPriv,
+                                                        }
+                                                : item
+                                            )
                                         );
-                                        setListPrivUsers(newList);
+    
                                         const stringURL =
                                             process.env
                                                 .NEXT_PUBLIC_BACKEND_URL +
