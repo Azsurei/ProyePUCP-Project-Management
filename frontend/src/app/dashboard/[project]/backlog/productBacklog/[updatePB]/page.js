@@ -14,6 +14,7 @@ import ContainerScenario2 from "@/components/dashboardComps/projectComps/product
 import PopUpEpica from "@/components/dashboardComps/projectComps/productBacklog/PopUpEpica";
 import { useContext } from "react";
 import { SmallLoadingScreen, HerramientasInfo } from "../../../layout";
+import { SessionContext } from "@/app/dashboard/layout";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
 
@@ -54,6 +55,8 @@ export default function ProductBacklogUpdate(props) {
     const [scenarioFieldsOriginales, setScenarioFieldsOriginales] = useState(
         []
     );
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     const [requirementFields, setRequirementFields] = useState([]);
     const [requirementFieldsOriginales, setRequirementFieldsOriginales] =
         useState([]);
@@ -494,7 +497,7 @@ export default function ProductBacklogUpdate(props) {
                             Agregar Epica
                         </Button>
                     )}
-                    {!editMode && (
+                    {(!editMode && rol !== 2) && (
                         <Button
                             color="primary"
                             onPress={() => {

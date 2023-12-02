@@ -22,13 +22,14 @@ function CardEstimacionCosto({
     canSelect,
     onSelect,
     initialMoneda,
+    isSelected,
 }) {
     //const [isSelected, setIsSelected] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedLinea, setSelectedLinea] = useState(null);
-    const [isSelected, setIsSelected] = useState(false);
+    // const [isSelected, setIsSelected] = useState(false);
     const [tarifaAdapt, setTarifaAdapt] = useState(tarifaEstimacion);
     const [subtotalAdapt, setSubtotalAdapt] = useState("");
 
@@ -51,8 +52,21 @@ function CardEstimacionCosto({
 
     const handleCardSelect = () => {
         if (onSelect && canSelect) {
-            setIsSelected(!isSelected); // Cambiar el estado isSelected
-            onSelect(EstimacionObject, !isSelected); // Pasar el elemento y el estado de selección
+             // Cambiar el estado isSelected
+            const isSelectedNow = selectedTask && selectedTask.idLineaEstimacion === EstimacionObject.idLineaEstimacion;
+
+            if (!isSelectedNow) {
+                // Si no está seleccionada, selecciona la actual y deselecciona la anterior (si hay alguna)
+                setSelectedTask(EstimacionObject);
+                // setIsSelected(true);
+                onSelect(EstimacionObject, true);
+                
+            } else {
+                // Si ya está seleccionada, deselecciona
+                setSelectedTask(null);
+                // setIsSelected(false);
+                onSelect(EstimacionObject, false);
+            }
         }
     };
     
@@ -84,7 +98,7 @@ function CardEstimacionCosto({
       }, [initialMoneda]);
     return (
         <li
-            className={isSelected ? "IngresoCard active" : "IngresoCard"}
+            className={isSelected? "IngresoCard active" : "IngresoCard"}
             onClick={handleCardSelect}
         >
             <img
@@ -147,7 +161,7 @@ function CardEstimacionCosto({
 export default function EstimacionCostoList(props) {
     const router = useRouter();
 
-    const { lista, refresh , isEdit , isSelected, changeMoneda, valueMoneda} = props;
+    const { lista, refresh , isEdit , isSelected, changeMoneda, valueMoneda, dataSelected} = props;
     if (props.lista.length === 0) {
         return (
             <p className="noResultsMessage">No se encontraron resultados.</p>
@@ -210,6 +224,7 @@ export default function EstimacionCostoList(props) {
                                     canSelect={isSelected}
                                     onSelect={(selectedData, isSelected) => handleCardSelect(selectedData, isSelected)}
                                     initialMoneda = {valueMoneda}
+                                    isSelected={component.idLineaEstimacion === dataSelected.idLineaEstimacion}
                                 />
                             ))}
                         </ul>

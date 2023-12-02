@@ -78,6 +78,7 @@
 .btnHistorial {
     background-color: #4369CC;
     border: 1px solid #4369CC;
+    
 }
 
 .btnIngreso {
@@ -377,7 +378,7 @@
 }
 
 .divHistorial {
-    height: 50vh; /* Establece la altura al 100% de la altura de la ventana */
+    height: 80%; /* Establece la altura al 100% de la altura de la ventana */
     overflow-y: auto;
 }
 
