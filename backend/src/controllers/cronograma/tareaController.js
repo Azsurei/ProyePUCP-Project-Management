@@ -82,6 +82,7 @@ async function modificar(req, res, next) {
         usuariosAgregados,
         usuariosEliminados,
         idEntregable, //====================
+        dependencias
     } = req.body;
     try {
         await funcModificar(
@@ -95,15 +96,21 @@ async function modificar(req, res, next) {
             idEntregable //====================
         );
 
-        await funcEliminarTareasPosteriores(tareasPosterioresEliminadas);
-        await funcAgregarTareasPosteriores(
-            tareasPosterioresAgregadas,
-            usuariosAgregados,
-            idTarea,
-            idCronograma,
-            fechaFin,
-            idEntregable
-        );
+        const query = "CALL INSERTAR_TAREA_DEPENDENCIA(?,?);"
+        for(const dependencia of dependencias){
+            const [results] = await connection.query(query, [idTarea, dependencia.idTarea]);
+            console.log(`Depdendencia de tarea ${idTarea} en tarea ${dependencia.idTarea} creada`);
+        }
+
+        //await funcEliminarTareasPosteriores(tareasPosterioresEliminadas);
+        // await funcAgregarTareasPosteriores(
+        //     tareasPosterioresAgregadas,
+        //     usuariosAgregados,
+        //     idTarea,
+        //     idCronograma,
+        //     fechaFin,
+        //     idEntregable
+        // );
 
         await usuarioXTareaController.funcEliminarUsuariosXTarea(
             //barre todos los usuarios de la tarea

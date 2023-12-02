@@ -240,142 +240,153 @@ export default function KanbanBoard({ projectName, projectId }) {
     }, []);
 
     return (
-        <div
-            className="
-            generalKanbanCompCont
-            m-auto
-            flex
-            w-full
-            flex-1
-            min-h-[500px]
-            relative
-            items-center
-            overflow-x-auto
-            overflow-y-hidden
-            py-[20px]
-            "
-        >
-            <DndContext
-                sensors={sensors}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                onDragOver={onDragOver}
+        <>
+            <button
+                className="border max-h-[30px] cursor-pointer hover:bg-gray-500"
+                onClick={() => {
+                    console.log("Tareas en Kanban =>");
+                    console.log(tasks);
+                }}
             >
-                <div
-                    className={
-                        columns.length !== 0
-                            ? "flex gap-4 flex-1 absolute top-[20px] bottom-[10px]"
-                            : "flex gap-1 flex-1 absolute top-[20px] bottom-[10px]"
-                    }
+                Estadode tareas
+            </button>
+            <div
+                className="
+                generalKanbanCompCont
+                m-auto
+                flex
+                w-full
+                flex-1
+                min-h-[500px]
+                relative
+                items-center
+                overflow-x-auto
+                overflow-y-hidden
+                py-[20px]
+                "
+            >
+                <DndContext
+                    sensors={sensors}
+                    onDragStart={onDragStart}
+                    onDragEnd={onDragEnd}
+                    onDragOver={onDragOver}
                 >
-                    <div className="flex gap-8 h-full min-h-full">
-                        {/*La primera columna, debe ser una llamada TAREAS, que contenga toda la lista de tareas con idColumnaKanban y posicionKanban = null*/}
+                    <div
+                        className={
+                            columns.length !== 0
+                                ? "flex gap-4 flex-1 absolute top-[20px] bottom-[10px]"
+                                : "flex gap-1 flex-1 absolute top-[20px] bottom-[10px]"
+                        }
+                    >
+                        <div className="flex gap-8 h-full min-h-full">
+                            {/*La primera columna, debe ser una llamada TAREAS, que contenga toda la lista de tareas con idColumnaKanban y posicionKanban = null*/}
 
-                        <SortableContext items={columnsId}>
-                            {columns.map((column) => (
+                            <SortableContext items={columnsId}>
+                                {columns.map((column) => (
+                                    <ColumnContainer
+                                        key={column.idColumnaKanban}
+                                        column={column}
+                                        deleteColumn={deleteColumn}
+                                        updateColumn={updateColumn}
+                                        createTask={createTask}
+                                        deleteTask={deleteTask}
+                                        updateTask={updateTask}
+                                        updateColumnNameDB={updateColumnNameDB}
+                                        openViewTask={openModalViewTask}
+                                        tasks={tasks.filter(
+                                            (task) =>
+                                                task.idColumnaKanban ===
+                                                column.idColumnaKanban
+                                        )}
+                                    />
+                                ))}
+                            </SortableContext>
+                        </div>
+                        <button
+                            onClick={() => {
+                                createNewColumn();
+                            }}
+                            className="
+                            h-[60px]
+                            w-[350px]
+                            min-w-[350px]
+                            cursor-pointer
+                            rounded-lg
+                            bg-columnBackgroundColor
+                            border-2
+                            border-taskBackgroundColor
+                            p-4
+                            ring-rose-500
+                            hover:ring-2
+                            flex
+                            gap-2"
+                        >
+                            <PlusIcon /> Agregar columna
+                        </button>
+                    </div>
+                    {createPortal(
+                        <DragOverlay>
+                            {activeColumn && (
                                 <ColumnContainer
-                                    key={column.idColumnaKanban}
-                                    column={column}
+                                    column={activeColumn}
                                     deleteColumn={deleteColumn}
                                     updateColumn={updateColumn}
                                     createTask={createTask}
                                     deleteTask={deleteTask}
                                     updateTask={updateTask}
                                     updateColumnNameDB={updateColumnNameDB}
-                                    openViewTask={openModalViewTask}
                                     tasks={tasks.filter(
                                         (task) =>
                                             task.idColumnaKanban ===
-                                            column.idColumnaKanban
+                                            activeColumn.idColumnaKanban
                                     )}
+                                ></ColumnContainer>
+                            )}
+                            {activeTask && (
+                                <TaskCard
+                                    task={activeTask}
+                                    deleteTask={deleteTask}
+                                    updateTask={updateTask}
                                 />
-                            ))}
-                        </SortableContext>
-                    </div>
-                    <button
-                        onClick={() => {
-                            createNewColumn();
-                        }}
-                        className="
-                        h-[60px]
-                        w-[350px]
-                        min-w-[350px]
-                        cursor-pointer
-                        rounded-lg
-                        bg-columnBackgroundColor
-                        border-2
-                        border-taskBackgroundColor
-                        p-4
-                        ring-rose-500
-                        hover:ring-2
-                        flex
-                        gap-2"
-                    >
-                        <PlusIcon /> Agregar columna
-                    </button>
-                </div>
-                {createPortal(
-                    <DragOverlay>
-                        {activeColumn && (
-                            <ColumnContainer
-                                column={activeColumn}
-                                deleteColumn={deleteColumn}
-                                updateColumn={updateColumn}
-                                createTask={createTask}
-                                deleteTask={deleteTask}
-                                updateTask={updateTask}
-                                updateColumnNameDB={updateColumnNameDB}
-                                tasks={tasks.filter(
-                                    (task) =>
-                                        task.idColumnaKanban ===
-                                        activeColumn.idColumnaKanban
-                                )}
-                            ></ColumnContainer>
-                        )}
-                        {activeTask && (
-                            <TaskCard
-                                task={activeTask}
-                                deleteTask={deleteTask}
-                                updateTask={updateTask}
-                            />
-                        )}
-                    </DragOverlay>,
-                    document.body
-                )}
-            </DndContext>
+                            )}
+                        </DragOverlay>,
+                        document.body
+                    )}
+                </DndContext>
 
-            <ModalTaskView
-                isOpen={isOpenViewTask}
-                onOpenChange={onOpenChangeViewTask}
-                currentTask={currentTaskViewing}
-                goToTaskDetail={(idTarea, nombreTarea) => {
-                    console.log("redireccionando a tarea");
-                    router.push(
-                        "/dashboard/" +
-                            projectName +
-                            "=" +
-                            projectId +
-                            "/cronograma?search=" +
-                            nombreTarea
-                    );
-                }}
-            />
+                <ModalTaskView
+                    isOpen={isOpenViewTask}
+                    onOpenChange={onOpenChangeViewTask}
+                    currentTask={currentTaskViewing}
+                    goToTaskDetail={(idTarea, nombreTarea) => {
+                        console.log("redireccionando a tarea");
+                        router.push(
+                            "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/cronograma?search=" +
+                                nombreTarea
+                        );
+                    }}
+                />
 
-            <ModalNewTask
-                isOpen={isOpenNewTask}
-                onOpenChange={onOpenChangeNewTask}
-                currentColumn={columnToAddTask}
-                currentSprint={0}
-                flagOpeningModal={flagOpeningModal}
-                resetFlagOpeningModal={() => {
-                    setFlagOpeningModal(0);
-                }}
-                idProyecto={projectId}
-                insertTask={(task) => {
-                    insertTask(task);
-                }}
-            />
-        </div>
+                <ModalNewTask
+                    isOpen={isOpenNewTask}
+                    onOpenChange={onOpenChangeNewTask}
+                    currentColumn={columnToAddTask}
+                    currentSprint={0}
+                    flagOpeningModal={flagOpeningModal}
+                    resetFlagOpeningModal={() => {
+                        setFlagOpeningModal(0);
+                    }}
+                    idProyecto={projectId}
+                    insertTask={(task) => {
+                        insertTask(task);
+                    }}
+                />
+            </div>
+        </>
     );
 
     function openModalViewTask(taskId) {
