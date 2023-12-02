@@ -1966,6 +1966,7 @@ export default function Cronograma(props) {
                                 </p>
 
                                 <TemplatesAdditionalFields
+                                    editState={stateSecond !== 2}
                                     baseFields={taskAdditionalFields}
                                     setBaseFields={setTaskAdditionalFields}
                                 />
