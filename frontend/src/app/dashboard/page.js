@@ -269,6 +269,19 @@ export default function Dashboard() {
                                             .put(stringURL, putData)
                                             .then((response) => {
                                                 console.log(response);
+                                                setListPrivUsersOriginales(
+                                                    (prevList) =>
+                                                        prevList.map((item) =>
+                                                            item.idUsuario ===
+                                                            user.idUsuario
+                                                                ? {
+                                                                      ...item,
+                                                                      Privilegios_idPrivilegios:
+                                                                          newPriv,
+                                                                  }
+                                                                : item
+                                                        )
+                                                );
                                                 setListPrivUsers((prevList) =>
                                                     prevList.map((item) =>
                                                         item.idUsuario ===
