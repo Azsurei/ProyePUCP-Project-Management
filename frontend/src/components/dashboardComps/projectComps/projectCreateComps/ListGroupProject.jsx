@@ -15,8 +15,10 @@ import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { DeleteDocumentIcon } from "public/icons/deleteDocument";
 import ModalEliminateGroup from "./ModalEliminateGroup";
+import RouteringEditarGrupo from "./RouteringEditarGrupo";
 axios.defaults.withCredentials = true;
 function GroupCard(props) {
+    const router = useRouter();
     const fechaTransaccion = new Date(props.fechaCreacion);
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     const fechaFormateada = fechaTransaccion.toLocaleDateString('es-ES', options);
@@ -28,10 +30,15 @@ function GroupCard(props) {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [idGrupo, setIdGrupo] = useState("");
     const [navegate, setNavegate] = useState(false);
+    const [edit, setEdit] = useState(false);
     const [modal, setModal] = useState(false);
     const setRoutering = (objectID) => {
         setIdGrupo(objectID);
         setNavegate(!navegate);
+    };
+    const setRoutering2 = (objectID) => {
+        setIdGrupo(objectID);
+        setEdit(!edit);
     };
     const toggleModal = () => {
 
@@ -205,6 +212,12 @@ function GroupCard(props) {
                     refresh={props.refresh}
                 />
             )}
+            {edit && idGrupo && (
+                <RouteringEditarGrupo
+                idGrupoProyecto={idGrupo}
+                />
+            )}
+
         </>
         
     );

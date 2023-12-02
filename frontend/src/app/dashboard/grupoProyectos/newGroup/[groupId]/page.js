@@ -25,7 +25,7 @@ import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Typography from '@mui/material/Typography';
 import { useContext, useCallback } from "react";
-import { SessionContext } from "../../layout";
+import { SessionContext } from "../../../layout";
 import { 
     Card, 
     CardBody, 
@@ -105,10 +105,10 @@ const items3 = [
 
 export const ToolCardsContext = createContext();
 
-export default function newProject() {
+export default function newGroup(props) {
     const router = useRouter();
     const {sessionData} = useContext(SessionContext);
-
+    const groupID = props.params.groupId;
     const [isLoading, setIsLoading] = useState(true);
     const [nombreGrupo, setNombreGrupo] = React.useState("");
 
@@ -116,6 +116,7 @@ export default function newProject() {
         setNombreGrupo(value);
         setValidValue(true);
     }
+    const [isEdit, setIsEdit] = useState(false);
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
@@ -184,6 +185,26 @@ export default function newProject() {
             .catch(function (error) {
                 console.log(error);
             });
+            if(!isNaN(groupID)){
+                // axios
+                // .get(
+                //     process.env.NEXT_PUBLIC_BACKEND_URL +
+                //         "/api/proyecto/grupoProyectos/listarProyectosXGrupo/" +
+                //         groupID
+                // )
+                // .then(function (response) {
+                //     console.log(response);
+                //     const proyectsArray = response.data.proyectos;
+                //     const selectedKeys = new Set(proyectsArray.map((proyect) => proyect.idProyecto));
+                //     setSelectedKeys(selectedKeys);
+                //     setNombreGrupo(response.data.nombreGrupo);
+                // })
+                // .catch(function (error) {
+                //     console.log(error);
+                // });
+                console.log("El grupo es: ", groupID);
+                setIsEdit(true);
+            }
     }, []);
 
     // Variables adicionales
@@ -321,6 +342,38 @@ export default function newProject() {
 
     
         };
+        const editarGrupo = () => {
+            console.log("Tamano: ", selectedKeys.size);
+            console.log("Select: ", selectedKeys);
+            if (nombreGrupo === "") {
+                setValidValue(false);
+            } else {
+                const putData = {
+                    idGrupoDeProyecto: groupID,
+                    nombre: nombreGrupo,
+                    proyectosAgregados: [...selectedKeys],
+                };
+                console.log("El putData es :", putData);
+                axios
+                    .put(
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                            "/api/proyecto/grupoProyectos/modificarGrupoProyectos",
+                            putData
+                    )
+                    .then((response) => {
+                        // Manejar la respuesta de la solicitud POST
+                        console.log("Respuesta del servidor:", response.data);
+                        console.log("Editado correcto");
+                        // Realizar acciones adicionales si es necesario
+                    })
+                    .catch((error) => {
+                        // Manejar errores si la solicitud POST falla
+                        console.error("Error al realizar la solicitud POST:", error);
+                    });
+            }
+
+    
+        };
         return (
             <div className="flex flex-col gap-10">
                 <div className="flex justify-between gap-3 items-end">
@@ -335,9 +388,21 @@ export default function newProject() {
                         variant='faded'
                     />
                     <div className="flex gap-3">
-                        <Button isDisabled={nombreGrupo === ""} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onPress={() => {agregarGrupo(); router.back();}}>
-                            Agregar
-                        </Button>
+                        {
+                            !isEdit && (
+                                <Button isDisabled={nombreGrupo === ""} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onPress={() => {agregarGrupo(); router.back();}}>
+                                Agregar
+                            </Button>
+                            )
+                        }
+                                                {
+                            isEdit && (
+                            <Button isDisabled={nombreGrupo === ""} color="primary" endContent={<PlusIcon />} className="createProjectButtonEnd"  onPress={() => {editarGrupo(); router.back();}}>
+                                Editar
+                            </Button>
+                            )
+                        }
+
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
