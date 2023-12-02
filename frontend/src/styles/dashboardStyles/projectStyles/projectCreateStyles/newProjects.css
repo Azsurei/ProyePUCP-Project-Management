@@ -64,10 +64,9 @@ a:-webkit-any-link{
     display: flex;
     flex-direction: column;
     background-color: #F5F5F5;
-    width: 100%;
 
-
-    height: auto;
+    flex: 1;
+    min-height: 100%;
 
     padding: 2.5rem 2.5rem;
 

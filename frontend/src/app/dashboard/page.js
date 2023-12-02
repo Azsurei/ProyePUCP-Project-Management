@@ -181,6 +181,7 @@ export default function Dashboard() {
                     console.log(response);
                     setListPrivUsers(response.data.usuariosPriv);
                     setListPrivUsersOriginales(response.data.usuariosPriv);
+                    setPages(Math.ceil(response.data.usuariosPriv.length / rowsPerPage));
                 })
 
                 .catch(function (error) {
@@ -194,7 +195,9 @@ export default function Dashboard() {
         const [page, setPage] = React.useState(1);
         const rowsPerPage = 5;
 
-        const pages = Math.ceil(listPrivUsers.length / rowsPerPage);
+        const [pages, setPages] = useState(1);
+
+        //const pages = Math.ceil(listPrivUsers.length / rowsPerPage);
 
         const items = React.useMemo(() => {
             const start = (page - 1) * rowsPerPage;
@@ -453,14 +456,6 @@ export default function Dashboard() {
                         //idProyecto={projectId}
                     ></ModalUser>
                 )}
-
-                <Toaster
-                    closeButton={true}
-                    richColors
-                    toastOptions={{
-                        style: { fontSize: "1.05rem" },
-                    }}
-                />
             </div>
         );
     }

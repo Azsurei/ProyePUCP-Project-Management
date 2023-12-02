@@ -325,7 +325,7 @@ export default function newProject() {
     const [isCreatingProject, setIsCreatingProject] = useState(false);
 
     return (
-        <div className="mainDivNewProject">
+        <div className="flex-1 p-[2.5rem]">
             <div className="headerDiv">
                 <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
