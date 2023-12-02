@@ -181,7 +181,11 @@ export default function Dashboard() {
                     console.log(response);
                     setListPrivUsers(response.data.usuariosPriv);
                     setListPrivUsersOriginales(response.data.usuariosPriv);
-                    setPages(Math.ceil(response.data.usuariosPriv.length / rowsPerPage));
+                    setPages(
+                        Math.ceil(
+                            response.data.usuariosPriv.length / rowsPerPage
+                        )
+                    );
                 })
 
                 .catch(function (error) {
@@ -249,71 +253,42 @@ export default function Dashboard() {
                                             user.Privilegios_idPrivilegios === 2
                                                 ? 1
                                                 : 2;
-                                        // const newList = listPrivUsers.map(
-                                        //     (item) => {
-                                        //         if (
-                                        //             item.idUsuario ===
-                                        //             user.idUsuario
-                                        //         ) {
-                                        //             return {
-                                        //                 ...item,
-                                        //                 Privilegios_idPrivilegios:
-                                        //                     newPriv,
-                                        //             };
-                                        //         }
-                                        //         return item;
-                                        //     }
-                                        // );
-                                        // setListPrivUsers(newList);
-                                        setListPrivUsers((prevList) =>
-                                            prevList.map(
-                                                (item) =>
-                                                    item.idUsuario === user.idUsuario
-                                                        ? {
-                                                            ...item,
-                                                            Privilegios_idPrivilegios: newPriv,
-                                                        }
-                                                : item
-                                            )
-                                        );
-    
                                         const stringURL =
                                             process.env
                                                 .NEXT_PUBLIC_BACKEND_URL +
-                                            "/api/admin/cambiarPrivilegioUsuario";
+                                            "/api/usuario/modificarPrivilegios";
                                         const putData = {
                                             idUsuario: user.idUsuario,
-                                            idPrivilegio: newPriv,
+                                            Privilegios_idPrivilegios: newPriv,
                                         };
                                         console.log(
                                             "El put data es: ",
                                             putData
                                         );
-                                        /* axios
-                                        .put(stringURL, putData)
-                                        .then((response) => {
-                                            console.log(response);
-                                            const newList = listPrivUsers.map(
-                                                (item) => {
-                                                    if (
+                                        axios
+                                            .put(stringURL, putData)
+                                            .then((response) => {
+                                                console.log(response);
+                                                setListPrivUsers((prevList) =>
+                                                    prevList.map((item) =>
                                                         item.idUsuario ===
                                                         user.idUsuario
-                                                    ) {
-                                                        item.Privilegios_idPrivilegios =
-                                                            newPriv;
-                                                    }
-                                                    return item;
-                                                }
-                                            );
-                                            setListPrivUsers(newList);
-                                        })
+                                                            ? {
+                                                                  ...item,
+                                                                  Privilegios_idPrivilegios:
+                                                                      newPriv,
+                                                              }
+                                                            : item
+                                                    )
+                                                );
+                                            })
 
-                                        .catch(function (error) {
-                                            console.log(
-                                                "Error al eliminar usuario",
-                                                error
-                                            );
-                                        }); */
+                                            .catch(function (error) {
+                                                console.log(
+                                                    "Error al eliminar usuario",
+                                                    error
+                                                );
+                                            });
                                     }}
                                 />
                                 <Chip
