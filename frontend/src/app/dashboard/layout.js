@@ -347,12 +347,7 @@ export default function RootLayout({ children }) {
                 >
                     <>
                         <div
-                            className="dashboardLayout"
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "100vh",
-                            }}
+                            className="dashboardLayout overflow-x-hidden h-[100vh] flex flex-col flex-1"
                         >
                             <DashboardNav
                                 userName={sessionData.nombres}
@@ -370,11 +365,8 @@ export default function RootLayout({ children }) {
                             <div
                                 style={{
                                     marginTop: "123px",
-                                    flex: "1",
-                                    overflow: "auto",
-                                    display: "flex",
                                 }}
-                                className="bg-mainContent"
+                                className="bg-mainContent flex-1 overflow-y-auto"
                             >
                                 {sessionData !== null && children}
                             </div>

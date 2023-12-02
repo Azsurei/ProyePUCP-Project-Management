@@ -5077,6 +5077,82 @@ BEGIN
     END IF;
 END$
 
+
+DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_CA;
+DELIMITER $
+CREATE PROCEDURE GUARDAR_PLANTILLA_CA(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    DECLARE _idPlantillaCampoAdicional INT;
+    -- Primero creamos los datos iniciales de la plantilla
+	INSERT INTO PlantillaCampoAdicional(idUsuario,activo,nombrePlantilla,fechaCreacion) 
+    VALUES(_idUsuario,1,_nombrePlantilla,NOW());
+    SET _idPlantillaCampoAdicional = @@last_insert_id;
+    -- Ahora con el idPlantillaAC copiamos los registros de la bd
+    SELECT _idPlantillaCampoAdicional AS idPlantillaCampoAdicional;
+END$
+
+DROP PROCEDURE IF EXISTS INSERTAR_CAMPOS_PLANTILLA_CA;
+DELIMITER $
+CREATE PROCEDURE INSERTAR_CAMPOS_PLANTILLA_CA(
+    IN _idPlantillaCampoAdicional INT,
+    IN _nombre VARCHAR(255)
+)
+BEGIN
+    INSERT INTO PlantillaNombreCampos(idPlantillaCampoAdicional, nombre, activo)
+    VALUES(_idPlantillaCampoAdicional, _nombre, 1);
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_CA;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_CA(
+    IN _idUsuario INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaCampoAdicional
+    WHERE idUsuario = _idUsuario
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_PLANTILLA_CA_X_NOMBRE;
+DELIMITER $
+CREATE PROCEDURE LISTAR_PLANTILLA_CA_X_NOMBRE(
+    IN _idUsuario INT,
+    IN _nombrePlantilla VARCHAR(200)
+)
+BEGIN
+    SELECT *
+    FROM PlantillaCampoAdicional
+    WHERE idUsuario = _idUsuario
+    AND nombrePlantilla LIKE CONCAT('%',_nombrePlantilla, '%')
+    AND activo = 1;
+END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_PLANTILLA_CA;
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_PLANTILLA_CA(
+    IN _idPlantillaCampoAdicional INT
+)
+BEGIN
+    UPDATE PlantillaCampoAdicional SET activo = 0 WHERE idPlantillaCampoAdicional = _idPlantillaCampoAdicional;
+    UPDATE PlantillaNombreCampos SET activo = 0 WHERE idPlantillaCampoAdicional = _idPlantillaCampoAdicional;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_CA_X_ID;
+DELIMITER $
+CREATE PROCEDURE LISTAR_CA_X_ID(
+    IN _idPlantillaCampoAdicional INT
+)
+BEGIN
+    SELECT *
+    FROM PlantillaNombreCampos
+    WHERE idPlantillaCampoAdicional = _idPlantillaCampoAdicional
+    AND activo = 1;
+END$
+
 ########################################
 ## REPORTES
 ########################################
@@ -5817,6 +5893,19 @@ BEGIN
     SET fechaInicio = DATE_ADD(fechaInicio, INTERVAL _dias DAY),
         fechaFin = DATE_ADD(fechaFin, INTERVAL _dias DAY)
     WHERE idCronograma = @_idCronograma;
+END$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS MODIFICAR_PRIVILEGIOS_USUARIO;
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_PRIVILEGIOS_USUARIO(
+    IN _idUsuario INT,
+    IN _Privilegios_idPrivilegios INT
+)
+BEGIN
+    UPDATE Usuario 
+    SET Privilegios_idPrivilegios = _Privilegios_idPrivilegios
+    WHERE idUsuario = _idUsuario;
 END$
 DELIMITER ;
 
