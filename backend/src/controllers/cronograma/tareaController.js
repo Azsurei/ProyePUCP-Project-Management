@@ -82,7 +82,8 @@ async function modificar(req, res, next) {
         usuariosAgregados,
         usuariosEliminados,
         idEntregable, //====================
-        dependencias
+        dependencias,
+        horasAsignadas
     } = req.body;
     try {
         await funcModificar(
@@ -93,7 +94,8 @@ async function modificar(req, res, next) {
             fechaInicio,
             fechaFin,
             idEquipo,
-            idEntregable //====================
+            idEntregable, //====================
+            horasAsignadas,
         );
 
         const query = "CALL INSERTAR_TAREA_DEPENDENCIA(?,?);"
@@ -136,10 +138,11 @@ async function funcModificar(
     fechaInicio,
     fechaFin,
     idEquipo,
-    idEntregable
+    idEntregable,
+    horasAsignadas
 ) {
     try {
-        const query = `CALL MODIFICAR_TAREA(?,?,?,?,?,?,?,?);`;
+        const query = `CALL MODIFICAR_TAREA(?,?,?,?,?,?,?,?,?);`;
         await connection.query(query, [
             idTarea,
             sumillaTarea,
@@ -149,6 +152,7 @@ async function funcModificar(
             fechaFin,
             idEquipo,
             idEntregable,
+            horasAsignadas
         ]);
     } catch (error) {
         console.log(error);

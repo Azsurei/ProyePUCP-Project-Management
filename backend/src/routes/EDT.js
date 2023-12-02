@@ -3,6 +3,7 @@ const connection = require("../config/db");
 const routerEDT = express.Router();
 const {verifyToken} = require('../middleware/middlewares');
 const EDTController = require('../controllers/EDT/EDTController');
+const entregableController = require('../controllers/EDT/entregableController');
 
 //Hay modificar, eliminar que son post. No lo modifique por miedo XD
 
@@ -17,6 +18,9 @@ routerEDT.post("/verInfoComponenteEDT", verifyToken, EDTController.verInfoCompon
 routerEDT.delete("/eliminarEDT",verifyToken, EDTController.eliminar);
 routerEDT.delete("/eliminarEDTXProyecto",verifyToken, EDTController.eliminarXProyecto);
 
+routerEDT.post("/insertarEntregables",verifyToken, entregableController.insertarEntregables);
+routerEDT.put("/modificarEntregables",verifyToken, entregableController.modificarEntregables);
+routerEDT.delete("/eliminarEntregables",verifyToken, entregableController.eliminarEntregables);
 
 routerEDT.post("/descargarExcelEDT", EDTController.descargarExcel);
 module.exports.routerEDT = routerEDT;

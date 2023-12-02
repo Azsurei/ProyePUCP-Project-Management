@@ -480,6 +480,8 @@ async function agregarCriterios(filaActual,WSComponentes,criterios){
     return filaActual;
 }
 
+
+
 module.exports = {
     listarComponentesEDT,
     listarEDT_X_IdProyecto,

@@ -116,7 +116,7 @@ function ModalNewTask({
     flagOpeningModal,
     resetFlagOpeningModal,
     idProyecto,
-    insertTask
+    insertTask,
 }) {
     const { herramientasInfo } = useContext(HerramientasInfo);
 
@@ -179,7 +179,14 @@ function ModalNewTask({
                     }
                 );
 
-                setListEntregables(entregablesArray);
+                const sinEntregable = {
+                    idEntregable: 0,
+                    idEntregableString: "0",
+                    nombre: "Sin entregable asociado",
+                    idComponente: 0,
+                    activo: 1,
+                };
+                setListEntregables([sinEntregable, ...entregablesArray]);
             })
             .catch(function (error) {
                 console.log(error);
@@ -205,10 +212,21 @@ function ModalNewTask({
                 {(onClose) => {
                     const finalizarModal = () => {
                         const result = onSubmit();
-                        
+
+                        let idEntregable = 0;
+                        if (taskEntregable.size === 0) {
+                            console.log("no se ha registrado entregable");
+                            idEntregable = 0;
+                        } else {
+                            idEntregable = parseInt(taskEntregable[0], 10);
+                        }
+
                         if (result === 1) {
                             const objTareaNueva = {
-                                idCronograma: herramientasInfo.find(herramienta => herramienta.idHerramienta === 4).idHerramientaCreada, 
+                                idCronograma: herramientasInfo.find(
+                                    (herramienta) =>
+                                        herramienta.idHerramienta === 4
+                                ).idHerramientaCreada,
                                 idTareaEstado: 1, //No iniciado
                                 idSubGrupo: null,
                                 idPadre: null,
@@ -223,16 +241,14 @@ function ModalNewTask({
                                 horasPlaneadas: taskHorasAsignadas,
                                 usuarios: taskUsers, //veriifcar posible error
                                 tareasPosteriores: [],
-                                idEntregable: parseInt(taskEntregable[0], 10),
+                                idEntregable: idEntregable,
                                 idColumnaKanban: currentColumn,
-                                dependencias: []
+                                dependencias: [],
                             };
 
                             insertTask(objTareaNueva);
                             setIsUsrSearchOpen(false);
                             onClose();
-                        } else {
-                            toast.error("Debe completar todos los campos");
                         }
                     };
                     return (
@@ -254,7 +270,10 @@ function ModalNewTask({
                                             <div className="flex flex-row w-full items-center gap-4">
                                                 <div className="flex flex-col w-full">
                                                     <p className={twStyle1}>
-                                                        Nombre de tarea
+                                                        Nombre de tarea{" "}
+                                                        <span className="font-semibold text-red-500">
+                                                            *
+                                                        </span>
                                                     </p>
 
                                                     <Textarea
@@ -348,7 +367,10 @@ function ModalNewTask({
                                             <div className="flex flex-row gap-5">
                                                 <div className="flex flex-col w-full">
                                                     <p className={twStyle1}>
-                                                        Fecha inicio
+                                                        Fecha inicio{" "}
+                                                        <span className="font-semibold text-red-500">
+                                                            *
+                                                        </span>
                                                     </p>
                                                     <DateInput
                                                         isEditable={
@@ -369,8 +391,10 @@ function ModalNewTask({
                                                 </div>
                                                 <div className="flex flex-col w-full">
                                                     <p className={twStyle1}>
-                                                        {" "}
-                                                        Fecha fin
+                                                        Fecha fin{" "}
+                                                        <span className="font-semibold text-red-500">
+                                                            *
+                                                        </span>
                                                     </p>
                                                     <DateInput
                                                         isEditable={
@@ -396,9 +420,14 @@ function ModalNewTask({
                                                     Entregable asociado
                                                 </p>
                                                 <Select
-                                                    onClick={()=>{
-                                                        if(listEntregables.length === 0){
-                                                            toast.warning("No cuenta con entregables en el proyecto");
+                                                    onClick={() => {
+                                                        if (
+                                                            listEntregables.length ===
+                                                            0
+                                                        ) {
+                                                            toast.warning(
+                                                                "No cuenta con entregables en el proyecto"
+                                                            );
                                                         }
                                                     }}
                                                     items={listEntregables}
@@ -618,23 +647,20 @@ function ModalNewTask({
     );
 
     function onSubmit() {
-        if (
-            taskName === "" ||
-            taskHorasAsignadas === 0 ||
-            taskDescription === "" ||
-            taskFechaInicio === "" ||
-            taskFechaFin === "" ||
-            taskEntregable.size === 0 ||
-            taskUsers.length === 0
-        ) {
-            console.log(taskEntregable);
-            console.log("hola");
+        if (taskName === "" || taskFechaInicio === "" || taskFechaFin === "") {
+            toast.error("Debe llenar los campos obligatorios");
             return 0;
         } else {
-            return 1;
+            if (taskFechaInicio >= taskFechaFin) {
+                toast.error(
+                    "La fecha de inicio debe ser menor a la fecha de fin"
+                );
+                return 0;
+            } else {
+                return 1;
+            }
         }
     }
-
 
     function refreshList() {
         const stringURL =

@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 import { SessionContext } from "@/app/dashboard/layout";
+import EmptyBoxIcon from "@/components/EmptyBoxIcon";
 axios.defaults.withCredentials = true;
 
 const mockUsers = [
@@ -117,6 +118,8 @@ function ReporteEntregables(props) {
         onOpenChange: onModalSaveOpenChange,
     } = useDisclosure();
 
+    const [isReportEmpty, setIsReportEmpty] = useState(true);
+
     useEffect(() => {
         const reportId = decodeURIComponent(props.params.reportId);
         console.log(reportId);
@@ -130,28 +133,36 @@ function ReporteEntregables(props) {
             axios
                 .get(tareasURL)
                 .then(function (response) {
-                    setListEntregables(response.data.entregables);
-                    setSelectedEntregable(
-                        response.data.entregables[0].idEntregable
-                    );
+                    if (response.data.entregables.length === 0) {
+                        //handleamos caso de entregables vacios
+                        console.log("no tiene entregables");
+                        setIsReportEmpty(true);
+                    } else {
+                        console.log("tiene entregables");
+                        setIsReportEmpty(false);
+                        setListEntregables(response.data.entregables);
+                        setSelectedEntregable(
+                            response.data.entregables[0].idEntregable
+                        );
 
-                    setListTareas(
-                        response.data.entregables[0].tareasEntregable
-                    );
-                    getEntregableStatistics(response.data.entregables[0]);
-                    setEntregableName(response.data.entregables[0].nombre);
-                    setEntregableComponentName(
-                        response.data.entregables[0].ComponenteEDTNombre
-                    );
-                    setEntregableDescripcion(
-                        response.data.entregables[0].descripcion
-                    );
-                    setEntregableFechaInicio(
-                        response.data.entregables[0].fechaInicio
-                    );
-                    setEntregableFechaFin(
-                        response.data.entregables[0].fechaFin
-                    );
+                        setListTareas(
+                            response.data.entregables[0].tareasEntregable
+                        );
+                        getEntregableStatistics(response.data.entregables[0]);
+                        setEntregableName(response.data.entregables[0].nombre);
+                        setEntregableComponentName(
+                            response.data.entregables[0].ComponenteEDTNombre
+                        );
+                        setEntregableDescripcion(
+                            response.data.entregables[0].descripcion
+                        );
+                        setEntregableFechaInicio(
+                            response.data.entregables[0].fechaInicio
+                        );
+                        setEntregableFechaFin(
+                            response.data.entregables[0].fechaFin
+                        );
+                    }
 
                     setIsLoadingSmall(false);
                 })
@@ -159,10 +170,7 @@ function ReporteEntregables(props) {
                     console.log(error);
                     toast.error("Error de conexion al generar reporte");
                 });
-        } else if (
-            //!isNaN(reportId)
-            true
-        ) {
+        } else if (!isNaN(parseFloat(reportId)) && isFinite(reportId)) {
             setIsNewReport(false);
             setIsLoadingSmall(true);
 
@@ -558,19 +566,29 @@ function ReporteEntregables(props) {
                 .then(function (response) {
                     console.log(" ====== json esta aqui ======");
                     console.log(response);
-                    if(response.data.entregables){
+                    if (response.data.entregables) {
                         setListEntregables(response.data.entregables);
                         setSelectedEntregable(
                             response.data.entregables[0].idEntregable
                         );
-                        setListTareas(response.data.entregables[0].tareasEntregable);
+                        setListTareas(
+                            response.data.entregables[0].tareasEntregable
+                        );
                         getEntregableStatistics(response.data.entregables[0]);
 
                         setEntregableName(response.data.entregables[0].nombre);
-                        setEntregableComponentName(response.data.entregables[0].ComponenteEDTNombre);
-                        setEntregableDescripcion(response.data.entregables[0].descripcion);
-                        setEntregableFechaInicio(response.data.entregables[0].fechaInicio);
-                        setEntregableFechaFin(response.data.entregables[0].fechaFin);
+                        setEntregableComponentName(
+                            response.data.entregables[0].ComponenteEDTNombre
+                        );
+                        setEntregableDescripcion(
+                            response.data.entregables[0].descripcion
+                        );
+                        setEntregableFechaInicio(
+                            response.data.entregables[0].fechaInicio
+                        );
+                        setEntregableFechaFin(
+                            response.data.entregables[0].fechaFin
+                        );
                     }
                 })
                 .catch(function (error) {
@@ -600,6 +618,36 @@ function ReporteEntregables(props) {
     const btnStyleActive =
         "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] dark:bg-[#414141] cursor-pointer";
 
+    if (isReportEmpty === true) {
+        return (
+            <div className="flex flex-col p-[2.5rem] flex-1 h-full border border-red-500">
+                <HeaderWithButtonsSamePage
+                    haveReturn={true}
+                    haveAddNew={false}
+                    handlerReturn={() => {
+                        router.push(
+                            "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/reportes"
+                        );
+                    }}
+                    breadcrump={
+                        "Inicio / Proyectos / " + projectName + " / Reportes"
+                    }
+                >
+                    Reporte de entregables
+                </HeaderWithButtonsSamePage>
+                <div className="flex flex-col flex-1 justify-center items-center gap-3">
+                    <p className="m-0 font-medium text-xl">
+                        Este proyecto no cuenta con entregables, no hay nada que mostrar
+                    </p>
+                    <EmptyBoxIcon width={200} height={200} />
+                </div>
+            </div>
+        );
+    }
     return (
         <div className="flex h-full flex-col p-[2.5rem] font-[Montserrat] gap-y-6 min-h-[800px]">
             <ModalSave
