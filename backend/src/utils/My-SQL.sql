@@ -955,6 +955,25 @@ CREATE TABLE PlantillaCampoAutoevaluacion(
 )
 ENGINE = InnoDB;
 
+CREATE TABLE PlantillaCampoAdicional(
+	idPlantillaCampoAdicional INT AUTO_INCREMENT PRIMARY KEY,
+    idUsuario INT,
+    activo TINYINT,
+    nombrePlantilla VARCHAR(200),
+    fechaCreacion DATE,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE PlantillaNombreCampos(
+	idPlantillaNombreCampos INT AUTO_INCREMENT PRIMARY KEY,
+    idPlantillaCampoAdicional INT,
+    nombre VARCHAR(255),
+    activo TINYINT,
+    FOREIGN KEY (idPlantillaCampoAdicional) REFERENCES PlantillaCampoAdicional(idPlantillaCampoAdicional)
+)
+ENGINE = InnoDB;
+
 -- -----------------------------------------------------
 -- ENTREGABLE
 -- -----------------------------------------------------

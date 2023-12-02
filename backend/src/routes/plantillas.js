@@ -5,6 +5,7 @@ const { verifyToken } = require("../middleware/middlewares");
 const plantillaActaConstitucionController = require("../controllers/plantillas/plantillaActaConstitucionController");
 const plantillaKanbanController = require("../controllers/plantillas/plantillaKanbanController");
 const plantillaMRController = require("../controllers/plantillas/plantillaMRController");
+const plantillaCampoAdicionalController = require("../controllers/plantillas/plantillaCampoAdicionalController");
 
 //Acta Constitucion
 routerPlantillas.post("/guardarPlantillaAC",plantillaActaConstitucionController.guardarPlantillaAC);
@@ -26,5 +27,12 @@ routerPlantillas.get("/listarPlantillasMR/:idUsuario",plantillaMRController.list
 routerPlantillas.get("/listarPlantillasMRXNombre/:idUsuario/:nombre",plantillaMRController.listarPlantillasMRXNombre);
 routerPlantillas.delete("/eliminarPlantillaMR",plantillaMRController.eliminarPlantillaMR);
 routerPlantillas.put("/seleccionarPlantillaMR",plantillaMRController.seleccionarPlantillaMR);
+
+//Campos Adicionales
+routerPlantillas.post("/guardarPlantillaCA",plantillaCampoAdicionalController.guardarPlantillaCA);
+routerPlantillas.get("/listarPlantillasCA/:idUsuario",plantillaCampoAdicionalController.listarPlantillasCA);
+routerPlantillas.get("/listarPlantillasCAXNombre/:idUsuario/:nombre",plantillaCampoAdicionalController.listarPlantillasCAXNombre);
+routerPlantillas.delete("/eliminarPlantillaCA",plantillaCampoAdicionalController.eliminarPlantillaCA);
+routerPlantillas.put("/seleccionarPlantillaCA",plantillaCampoAdicionalController.seleccionarPlantillaCA);
 
 module.exports.routerPlantillas = routerPlantillas;
