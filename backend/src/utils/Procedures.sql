@@ -5964,3 +5964,13 @@ BEGIN
     UPDATE Entregable
     SET nombre = _nombre WHERE idEntregable = _idEntregable;
 END$
+
+DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_TODOS
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_TODOS(
+)
+BEGIN
+	SELECT idUsuario, nombres, apellidos, correoElectronico, Privilegios_idPrivilegios, imgLink, activo
+    FROM Usuario
+    ORDER BY idUsuario DESC;
+END$
