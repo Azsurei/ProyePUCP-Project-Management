@@ -150,23 +150,43 @@ export default function Reportes(props) {
 
     const [listReportes, setListReportes] = useState([]);
 
+    const fetchData = async () => {
+        try {
+            setIsLoadingSmall(true);
+
+            const listURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/listarReportesXIdProyecto/" +
+                projectId;
+
+            const response = await axios.get(listURL);
+            console.log(response);
+            setListReportes(response.data);
+            setIsLoadingSmall(false);
+        } catch (error) {
+            console.error(error);
+            // Aquí puedes manejar el error según tus necesidades
+        }
+    };
+
     useEffect(() => {
         setIsLoadingSmall(true);
 
-        const listURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-            "/api/proyecto/reporte/listarReportesXIdProyecto/" +
-            projectId;
-        axios
-            .get(listURL)
-            .then(function (response) {
-                console.log(response);
-                setListReportes(response.data);
-                setIsLoadingSmall(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        // const listURL =
+        //     process.env.NEXT_PUBLIC_BACKEND_URL +
+        //     "/api/proyecto/reporte/listarReportesXIdProyecto/" +
+        //     projectId;
+        // axios
+        //     .get(listURL)
+        //     .then(function (response) {
+        //         console.log(response);
+        //         setListReportes(response.data);
+        //         setIsLoadingSmall(false);
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
+        fetchData();
     }, []);
 
     //esta sera la pantalla de vista de reportes generados y la pantalla para crear uno nuevo (seleccionar cual)
@@ -268,7 +288,9 @@ export default function Reportes(props) {
                                     } else{
                                         toast.error("Error al cargar reporte");
                                     }
+                                    
                                 }}
+                                refresh={()=>{fetchData()}}
                             ></ListReport>
                         </div>
                     </div>

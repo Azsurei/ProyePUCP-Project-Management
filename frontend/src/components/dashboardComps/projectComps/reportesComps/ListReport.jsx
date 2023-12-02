@@ -6,7 +6,22 @@ import React, { Component } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { SessionContext } from "@/app/dashboard/layout";
-import { Avatar, Chip, Tooltip } from "@nextui-org/react";
+import { 
+    Avatar, 
+    Chip, 
+    Tooltip,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Button,
+    useDisclosure,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    ModalContent, 
+} from "@nextui-org/react";
 axios.defaults.withCredentials = true;
 import { BudgetIcon } from "@/../public/icons/BudgetIcon";
 import { TaskIcon } from "@/../public/icons/TaskIcon";
@@ -15,8 +30,11 @@ import { Cronograma } from "@/../public/icons/Cronograma";
 import { Risks } from "@/../public/icons/Risks";
 import { AdvanceProject } from "@/../public/icons/AdvanceProject";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
-
-function ReporteCard({ report, onClick }) {
+import { MenuIcon } from "@/../public/icons/MenuIcon";
+import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
+import { PlusIcon } from "@/../public/icons/PlusIcon";
+import { DeleteDocumentIcon } from "public/icons/deleteDocument";
+function ReporteCard({ report, onClick, refresh }) {
     console.log("Herramienta reporte", report.idHerramienta);
     const colorOptions = {
         Presupuesto: "success",
@@ -27,6 +45,31 @@ function ReporteCard({ report, onClick }) {
         "Grupos de proyectos": "primary",
         // Agrega más opciones según sea necesario
     };
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const handleModal = (list) => {
+        onOpen(); 
+    };
+    const Eliminate = (idReporte, onClose) => {
+        console.log(idReporte);
+        
+        const data = {
+            idReporteXProyecto: idReporte // Ajusta el nombre del campo según la estructura esperada por el servidor
+        };
+    
+        axios.delete(process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/reporte/eliminarReporte", { data })
+            .then((response) => {
+                // Manejar la respuesta de la solicitud POST
+                console.log("Respuesta del servidor:", response.data);
+                console.log("Eliminado correcto");
+                // Llamar a refresh() aquí después de la solicitud HTTP exitosa
+                refresh();
+                onClose();
+            })
+            .catch((error) => {
+                // Manejar errores si la solicitud POST falla
+                console.error("Error al realizar la solicitud:", error);
+            });
+        };
     return (
         <li
             className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10"
@@ -50,6 +93,43 @@ function ReporteCard({ report, onClick }) {
                     <p className="font-medium">
                         {dbDateToDisplayDate(report.fechaCreacion)}
                     </p>
+                    <Dropdown>
+                    <DropdownTrigger>
+                    <Button 
+                        variant="light" 
+                        endContent={<MenuIcon size={24} />}
+                    >
+                         Menu
+                    </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description" disabledKeys="reporte">
+                      <DropdownItem
+                        key="new"
+                        description="Visualiza el reporte creado"
+                        startContent={<EyeFilledIcon size={24} />}
+                      >
+                        Ver Reporte
+                        
+                      </DropdownItem>
+                      <DropdownItem
+                        key="reporte"
+                        description="Cambia el nombre del reporte"
+                        startContent={<PlusIcon size={24} />}
+                      >
+                        Cambiar nombre
+                      </DropdownItem>
+                      <DropdownItem
+                        key="eliminar"
+                        className="text-danger"
+                        color="danger"
+                        description="Elimina el reporte "
+                        startContent={<DeleteDocumentIcon/>}
+                        onPress={() => handleModal()}
+                        >
+                            Eliminar Reporte
+                        </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
                 </div>
 
                 <div className="flex flex-row justify-between flex-1">
@@ -88,13 +168,36 @@ function ReporteCard({ report, onClick }) {
                         )} */}
                 </div>
             </div>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">¿Estás seguro que desea eliminar el reporte?</ModalHeader>
+                  <ModalBody>
+                    
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="flat" onPress={()=> {
+                        onClose();
+                        
+                    }}>
+                      Cancelar
+                    </Button>
+                    <Button color="primary" onPress={() => Eliminate(report.idReporteXProyecto, onClose)}>
+                      Aceptar
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+            </Modal>
         </li>
     );
 }
 
 //Aqui es la lista de Proyectos
 
-export default function ListReport({ listReportes, handleViewReport }) {
+export default function ListReport({ listReportes, handleViewReport, refresh }) {
     //const {sessionData, setSession} = useContext(SessionContext);
 
     function handleClick(proy_id, proy_name) {
@@ -155,6 +258,9 @@ export default function ListReport({ listReportes, handleViewReport }) {
                         report={report}
                         onClick={() => {
                             handleViewReport(report.idReporteXProyecto, report.fileId, report.idHerramienta);
+                        }}
+                        refresh={() => {
+                            refresh();
                         }}
                     ></ReporteCard>
                 );

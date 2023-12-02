@@ -110,7 +110,7 @@ function GroupCard(props) {
                         startContent={<PlusIcon size={24} />}
                         isDisabled={proyectos.length === 0}
                       >
-                        Crear Reporte
+                        Ver Reporte
                       </DropdownItem>
                       <DropdownItem
                         key="eliminar"
@@ -209,7 +209,8 @@ function GroupCard(props) {
         
     );
 }
-export default function ListGroupProject(props) {
+export default function 
+ListGroupProject(props) {
     const router = useRouter();
     const {sessionData} = useContext(SessionContext);
     const { filterValue, onSearchChange } = props;

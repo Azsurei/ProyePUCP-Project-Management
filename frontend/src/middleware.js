@@ -34,6 +34,11 @@ export async function middleware(req){
 
     try{
         const {payload} = await jwtVerify(jwt.value,new TextEncoder().encode(secret));
+        const userRole = payload.user.rol;
+        console.log("Tu rol es: ",userRole);
+        if(userRole === 2){
+            console.log("Eres un supervisor");
+        }
         console.log("Eres un usuario valido, puedes continuar!");
         return NextResponse.next();
     }catch(e){

@@ -36,6 +36,7 @@ import ListGroupProject from "@/components/dashboardComps/projectComps/projectCr
 export default function Dashboard() {
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
+    const [userSearchValue, setUserSearchValue] = useState("");
 
     const {sessionData} = useContext(SessionContext);
     
@@ -44,106 +45,106 @@ export default function Dashboard() {
         setFilterValue(value);
     };
 
-    if (sessionData.Privilegios_idPrivilegios === 3) {
+    // if (sessionData.Privilegios_idPrivilegios === 3) {
        
     
 
-        return (
-            <div className="border border-red-500 w-[100%] flex justify-center">
-                <div className="w-[90%] p-[2.5rem] flex flex-col space-y-[1rem]">
-                    <div>
-                        <p
-                            style={{
-                                fontFamily: "Montserrat",
-                                fontSize: "3rem",
-                                fontWeight: 600,
-                                lineHeight: "40px",
-                            }}
-                        >
-                            Bienvenido Superadmin!
-                        </p>
-                        <p
-                            style={{
-                                fontFamily: "Montserrat",
-                                fontSize: "1.5rem",
-                                fontWeight: 400,
-                            }}
-                        >
-                            Aqui podras configurar y habilitar privilegios para
-                            ciertas cuentas. Adelante!
-                        </p>
-                    </div>
+    //     return (
+    //         <div className="border border-red-500 w-[100%] flex justify-center">
+    //             <div className="w-[90%] p-[2.5rem] flex flex-col space-y-[1rem]">
+    //                 <div>
+    //                     <p
+    //                         style={{
+    //                             fontFamily: "Montserrat",
+    //                             fontSize: "3rem",
+    //                             fontWeight: 600,
+    //                             lineHeight: "40px",
+    //                         }}
+    //                     >
+    //                         Bienvenido Superadmin!
+    //                     </p>
+    //                     <p
+    //                         style={{
+    //                             fontFamily: "Montserrat",
+    //                             fontSize: "1.5rem",
+    //                             fontWeight: 400,
+    //                         }}
+    //                     >
+    //                         Aqui podras configurar y habilitar privilegios para
+    //                         ciertas cuentas. Adelante!
+    //                     </p>
+    //                 </div>
 
-                    <div>
-                        <div
-                            className="flex flex-row justify-between items-center mb-2"
-                            style={{ fontFamily: "Montserrat" }}
-                        >
-                            <p
-                                style={{
-                                    fontFamily: "Montserrat",
-                                    fontSize: "1.2rem",
-                                    fontWeight: 400,
-                                    lineHeight: "40px",
-                                }}
-                            >
-                                Lista de usuarios con permisos de Creacion de
-                                Proyecto:{" "}
-                            </p>
-                            <Button
-                                className="h-[35px] bg-172B4D text-white font-semibold"
-                                onPress={() => {
-                                    setModalSearchUser(true);
-                                }}
-                            >
-                                Añadir usuario
-                            </Button>
-                        </div>
+    //                 <div>
+    //                     <div
+    //                         className="flex flex-row justify-between items-center mb-2"
+    //                         style={{ fontFamily: "Montserrat" }}
+    //                     >
+    //                         <p
+    //                             style={{
+    //                                 fontFamily: "Montserrat",
+    //                                 fontSize: "1.2rem",
+    //                                 fontWeight: 400,
+    //                                 lineHeight: "40px",
+    //                             }}
+    //                         >
+    //                             Lista de usuarios con permisos de Creacion de
+    //                             Proyecto:{" "}
+    //                         </p>
+    //                         <Button
+    //                             className="h-[35px] bg-172B4D text-white font-semibold"
+    //                             onPress={() => {
+    //                                 setModalSearchUser(true);
+    //                             }}
+    //                         >
+    //                             Añadir usuario
+    //                         </Button>
+    //                     </div>
 
-                        <Input
-                            isClearable
-                            className="w-full sm:max-w-[100%] mb-[1rem]"
-                            placeholder="Buscar Usuario..."
-                            startContent={<SearchIcon />}
-                            value={userSearchValue}
-                            onValueChange={setUserSearchValue}
-                            variant="faded"
-                            color="white"
-                        />
+    //                     <Input
+    //                         isClearable
+    //                         className="w-full sm:max-w-[100%] mb-[1rem]"
+    //                         placeholder="Buscar Usuario..."
+    //                         startContent={<SearchIcon />}
+    //                         value={userSearchValue}
+    //                         onValueChange={setUserSearchValue}
+    //                         variant="faded"
+    //                         color="white"
+    //                     />
 
-                        <div className="flex flex-col space-y-[.5rem] pb-[4.5rem]">
-                            {listPrivUsers.map((usuario) => (
-                                <CardSelectedUser
-                                    key={usuario.idUsuario}
-                                    isEditable={true}
-                                    usuarioObject={usuario}
-                                    removeHandler={removeHandler}
-                                ></CardSelectedUser>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+    //                     <div className="flex flex-col space-y-[.5rem] pb-[4.5rem]">
+    //                         {listPrivUsers.map((usuario) => (
+    //                             <CardSelectedUser
+    //                                 key={usuario.idUsuario}
+    //                                 isEditable={true}
+    //                                 usuarioObject={usuario}
+    //                                 removeHandler={removeHandler}
+    //                             ></CardSelectedUser>
+    //                         ))}
+    //                     </div>
+    //                 </div>
+    //             </div>
 
-                {modalSearchUser && (
-                    <ModalUser
-                        listAllUsers={true}
-                        handlerModalClose={toggleModal}
-                        handlerModalFinished={returnListSelected}
-                        excludedUsers={listPrivUsers}
-                        //idProyecto={projectId}
-                    ></ModalUser>
-                )}
+    //             {modalSearchUser && (
+    //                 <ModalUser
+    //                     listAllUsers={true}
+    //                     handlerModalClose={toggleModal}
+    //                     handlerModalFinished={returnListSelected}
+    //                     excludedUsers={listPrivUsers}
+    //                     //idProyecto={projectId}
+    //                 ></ModalUser>
+    //             )}
 
-                <Toaster
-                    closeButton={true}
-                    richColors
-                    toastOptions={{
-                        style: { fontSize: "1.05rem" },
-                    }}
-                />
-            </div>
-        );
-    }
+    //             <Toaster
+    //                 closeButton={true}
+    //                 richColors
+    //                 toastOptions={{
+    //                     style: { fontSize: "1.05rem" },
+    //                 }}
+    //             />
+    //         </div>
+    //     );
+    // }
 
     useEffect(() => {
         console.log(sessionData);
