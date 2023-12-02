@@ -34,6 +34,7 @@ import { MenuIcon } from "@/../public/icons/MenuIcon";
 import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { DeleteDocumentIcon } from "public/icons/deleteDocument";
+import ModalCambiarNombre from "./ModalCambiarNombre";
 function ReporteCard({ report, onClick, refresh }) {
     console.log("Herramienta reporte", report.idHerramienta);
     const colorOptions = {
@@ -46,6 +47,11 @@ function ReporteCard({ report, onClick, refresh }) {
         // Agrega más opciones según sea necesario
     };
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [modal, setModal] = useState(false);
+    const toggleModal = () => {
+
+        setModal(!modal);
+    };
     const handleModal = (list) => {
         onOpen(); 
     };
@@ -73,11 +79,11 @@ function ReporteCard({ report, onClick, refresh }) {
     return (
         <li
             className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10"
-            onClick={onClick}
+            // onClick={onClick}
         >
             <div className="flex flex-col justify-between">
                 <div className="flex flex-row items-center justify-between">
-                    <div className="flex flex-row items-center gap-2">
+                    {/* <div className="flex flex-row items-center gap-2">
                         <Tooltip content={report.nombre}>
                         <p className="font-semibold text-lg" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100px' }}>{report.nombre}</p>
                         </Tooltip>
@@ -107,6 +113,7 @@ function ReporteCard({ report, onClick, refresh }) {
                         key="new"
                         description="Visualiza el reporte creado"
                         startContent={<EyeFilledIcon size={24} />}
+                        onClick={onClick}
                       >
                         Ver Reporte
                         
@@ -115,6 +122,49 @@ function ReporteCard({ report, onClick, refresh }) {
                         key="reporte"
                         description="Cambia el nombre del reporte"
                         startContent={<PlusIcon size={24} />}
+                        onPress={() => toggleModal()}
+                      >
+                        Cambiar nombre
+                      </DropdownItem>
+                      <DropdownItem
+                        key="eliminar"
+                        className="text-danger"
+                        color="danger"
+                        description="Elimina el reporte "
+                        startContent={<DeleteDocumentIcon/>}
+                        onPress={() => handleModal()}
+                        >
+                            Eliminar Reporte
+                        </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown> */}
+                  <Tooltip content={report.nombre}>
+                        <p className="font-semibold text-lg" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100px' }}>{report.nombre}</p>
+                    </Tooltip>
+                    <Dropdown>
+                    <DropdownTrigger>
+                    <Button 
+                        variant="light" 
+                        endContent={<MenuIcon size={24} />}
+                    >
+                         Menu
+                    </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description" disabledKeys="reporte">
+                      <DropdownItem
+                        key="new"
+                        description="Visualiza el reporte creado"
+                        startContent={<EyeFilledIcon size={24} />}
+                        onClick={onClick}
+                      >
+                        Ver Reporte
+                        
+                      </DropdownItem>
+                      <DropdownItem
+                        key="reporte"
+                        description="Cambia el nombre del reporte"
+                        startContent={<PlusIcon size={24} />}
+                        onPress={() => toggleModal()}
                       >
                         Cambiar nombre
                       </DropdownItem>
@@ -130,6 +180,19 @@ function ReporteCard({ report, onClick, refresh }) {
                         </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
+                </div>
+                <div className="flex flex-row items-center justify-between gap-24">
+                <Chip
+                            className="capitalize mt-1 mb-1"
+                            size="md"
+                            variant="flat"
+                            color={colorOptions[report.nombreHerramienta]}
+                        >
+                            {report.nombreHerramienta}
+                        </Chip>
+                        <p className="font-medium">
+                        {dbDateToDisplayDate(report.fechaCreacion)}
+                    </p>
                 </div>
 
                 <div className="flex flex-row justify-between flex-1">
@@ -191,6 +254,15 @@ function ReporteCard({ report, onClick, refresh }) {
               )}
             </ModalContent>
             </Modal>
+            {modal && (
+                <ModalCambiarNombre
+                    modal={modal}
+                    toggle={() => toggleModal()} // Pasa la función como una función de flecha
+                    idReporte={report.idReporteXProyecto}
+                    refresh={refresh}
+                    nombreActual={report.nombre}
+                />
+            )}
         </li>
     );
 }
