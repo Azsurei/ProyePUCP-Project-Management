@@ -1257,7 +1257,7 @@ export default function Cronograma(props) {
                                             size="lg"
                                             onPress={handlerGoToNew}
                                         >
-                                            Empieza ya!
+                                            Empieza ahora
                                         </Button>
                                     </div>
                                 )}

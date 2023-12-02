@@ -620,7 +620,7 @@ function ReporteEntregables(props) {
 
     if (isReportEmpty === true) {
         return (
-            <div className="flex flex-col p-[2.5rem] flex-1 h-full border border-red-500">
+            <div className="flex flex-col p-[2.5rem] flex-1 h-full">
                 <HeaderWithButtonsSamePage
                     haveReturn={true}
                     haveAddNew={false}
@@ -844,6 +844,9 @@ function ReporteEntregables(props) {
                                         />
                                     );
                                 })}
+                                <div>
+                                    test
+                                </div>
                             </div>
                         </div>
                         <div
