@@ -210,48 +210,118 @@ export default function Dashboard() {
 
         const statusColorMap = ["warning", "danger", "success"];
 
-        const renderCell = React.useCallback((user, columnKey) => {
-            const cellValue = user[columnKey];
+        const renderCell = React.useCallback(
+            (user, columnKey) => {
+                const cellValue = user[columnKey];
 
-            switch (columnKey) {
-                case "nombres":
-                    return (
-                        <User
-                            avatarProps={{ radius: "lg", src: user.imgLink }}
-                            description={user.correoElectronico}
-                            name={cellValue + " " + user.apellidos}
-                        >
-                            {user.email}
-                        </User>
-                    );
-                case "permiso":
-                    return (
-                        <div className="flex items-center gap-4 justify-center">
-                            <Switch
-                                defaultSelected
-                                aria-label="Permisos"
-                                color="success"
-                                isSelected={user.Privilegios_idPrivilegios === 2? true:false}
-                            />
-                            <Chip
-                                color={
-                                    statusColorMap[
-                                        user.Privilegios_idPrivilegios
-                                    ]
-                                }
-                                size="sm"
-                                variant="flat"
+                switch (columnKey) {
+                    case "nombres":
+                        return (
+                            <User
+                                avatarProps={{
+                                    radius: "lg",
+                                    src: user.imgLink,
+                                }}
+                                description={user.correoElectronico}
+                                name={cellValue + " " + user.apellidos}
                             >
-                                {user.Privilegios_idPrivilegios === 2
-                                    ? "Sí cuenta"
-                                    : "No cuenta"}
-                            </Chip>
-                        </div>
-                    );
-                default:
-                    return cellValue;
-            }
-        }, []);
+                                {user.email}
+                            </User>
+                        );
+                    case "permiso":
+                        return (
+                            <div className="flex items-center gap-4 justify-center">
+                                <Switch
+                                    defaultSelected
+                                    aria-label="Permisos"
+                                    color="success"
+                                    isSelected={
+                                        user.Privilegios_idPrivilegios === 2
+                                            ? true
+                                            : false
+                                    }
+                                    onValueChange={() => {
+                                        console.log("cambio");
+                                        const newPriv =
+                                            user.Privilegios_idPrivilegios === 2
+                                                ? 1
+                                                : 2;
+                                        const newList = listPrivUsers.map(
+                                            (item) => {
+                                                if (
+                                                    item.idUsuario ===
+                                                    user.idUsuario
+                                                ) {
+                                                    return {
+                                                        ...item,
+                                                        Privilegios_idPrivilegios:
+                                                            newPriv,
+                                                    };
+                                                }
+                                                return item;
+                                            }
+                                        );
+                                        setListPrivUsers(newList);
+                                        const stringURL =
+                                            process.env
+                                                .NEXT_PUBLIC_BACKEND_URL +
+                                            "/api/admin/cambiarPrivilegioUsuario";
+                                        const putData = {
+                                            idUsuario: user.idUsuario,
+                                            idPrivilegio: newPriv,
+                                        };
+                                        console.log(
+                                            "El put data es: ",
+                                            putData
+                                        );
+                                        /* axios
+                                        .put(stringURL, putData)
+                                        .then((response) => {
+                                            console.log(response);
+                                            const newList = listPrivUsers.map(
+                                                (item) => {
+                                                    if (
+                                                        item.idUsuario ===
+                                                        user.idUsuario
+                                                    ) {
+                                                        item.Privilegios_idPrivilegios =
+                                                            newPriv;
+                                                    }
+                                                    return item;
+                                                }
+                                            );
+                                            setListPrivUsers(newList);
+                                        })
+
+                                        .catch(function (error) {
+                                            console.log(
+                                                "Error al eliminar usuario",
+                                                error
+                                            );
+                                        }); */
+                                    }}
+                                />
+                                <Chip
+                                    color={
+                                        statusColorMap[
+                                            user.Privilegios_idPrivilegios
+                                        ]
+                                    }
+                                    size="sm"
+                                    variant="flat"
+                                >
+                                    {user.Privilegios_idPrivilegios === 2
+                                        ? "Sí cuenta"
+                                        : "No cuenta"}
+                                </Chip>
+                            </div>
+                        );
+                    default:
+                        return cellValue;
+                }
+            },
+            [listPrivUsers]
+        );
 
         return (
             <div className="w-[100%] flex justify-center">
@@ -347,7 +417,14 @@ export default function Dashboard() {
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (
-                                    <TableColumn key={column.uid} className={column.uid === 'permiso' ? 'text-center' : ''}>
+                                    <TableColumn
+                                        key={column.uid}
+                                        className={
+                                            column.uid === "permiso"
+                                                ? "text-center"
+                                                : ""
+                                        }
+                                    >
                                         {column.name}
                                     </TableColumn>
                                 )}
