@@ -1464,6 +1464,7 @@ function reporteTareas(props) {
                 guardarReporte={async (name) => {
                     return await handleSaveReport(name);
                 }}
+                tipo = "Tareas"
             />
         </div>
     );

@@ -333,7 +333,6 @@ export default function crearActaReunion(props) {
         idUsuarioRolProyecto: 0,
     });
 
-
     // *********************************************************************************************
     // About Convenor and Metting Members
     // *********************************************************************************************
@@ -540,9 +539,12 @@ export default function crearActaReunion(props) {
 
     const twTitle = "text-lg font-semibold text-mainHeaders  mb-1";
 
-    useEffect(()=>{
+    const [isPlantillaDownloadLoading, setIsPlantillaDownloadLoading] =
+        useState(false);
+
+    useEffect(() => {
         setIsLoadingSmall(false);
-    },[]);
+    }, []);
 
     // *********************************************************************************************
     // Page
@@ -1007,6 +1009,10 @@ export default function crearActaReunion(props) {
                             className="text-white font-medium"
                             color="primary"
                             startContent={<DownloadIcon />}
+                            onPress={() => {
+                                downloadPlantillaAC();
+                            }}
+                            isLoading={isPlantillaDownloadLoading}
                         >
                             Descarga plantilla aqui
                         </Button>
@@ -1056,14 +1062,54 @@ export default function crearActaReunion(props) {
         </div>
     );
 
+    function downloadPlantillaAC() {
+        setIsPlantillaDownloadLoading(true);
+        const downloadURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            `/api/files/getArchivoActaReunion`;
+
+        axios
+            .get(downloadURL)
+            .then((response) => {
+                console.log(response);
+
+                if (response.data.url) {
+                    const link = document.createElement("a");
+                    link.href = response.data.url;
+                    link.download = "Acta_de_Reunion.doc";
+                    document.body.appendChild(link);
+                    link.click();
+                    toast.success("Se descargo la plantilla con exito");
+
+                    setIsPlantillaDownloadLoading(false);
+                }
+            })
+            .catch((error) => {
+                console.error("Error al descargar documento: ", error);
+                toast.error("Error al descargar plantilla");
+                setIsPlantillaDownloadLoading(false);
+            });
+    }
+
     async function registerMeeting() {
         try {
             setIsLoading(true);
             const file = new FormData();
             file.append("file", meetingFile);
-            file.append("idActaReunion", herramientasInfo.find(herramienta => herramienta.idHerramienta === 11).idHerramientaCreada);
-            file.append("nombreReunion", meetingName === "" ? "Reunion sin nombre" : meetingName);
-            file.append("fechaReunion", meetingDate === "" ? null : meetingDate);
+            file.append(
+                "idActaReunion",
+                herramientasInfo.find(
+                    (herramienta) => herramienta.idHerramienta === 11
+                ).idHerramientaCreada
+            );
+            file.append(
+                "nombreReunion",
+                meetingName === "" ? "Reunion sin nombre" : meetingName
+            );
+            file.append(
+                "fechaReunion",
+                meetingDate === "" ? null : meetingDate
+            );
             file.append("horaReunion", meetingTime === "" ? null : meetingTime);
             file.append(
                 "idConvocante",
@@ -1071,7 +1117,10 @@ export default function crearActaReunion(props) {
                     ? meetingConvocante[0].idUsuario
                     : 0
             );
-            file.append("motivo", meetingMotive === "" ? "Sin motivo" : meetingMotive);
+            file.append(
+                "motivo",
+                meetingMotive === "" ? "Sin motivo" : meetingMotive
+            );
             file.append("temas", []);
             file.append("participantes", []);
             file.append("comentarios", []);
@@ -1088,7 +1137,9 @@ export default function crearActaReunion(props) {
             console.log("se subio el archivo con exito");
             toast.success("Se registró la reunión exitosamente");
             setIsLoading(false);
-            router.push("/dashboard/" + projectName + "=" + projectId + "/actaReunion");
+            router.push(
+                "/dashboard/" + projectName + "=" + projectId + "/actaReunion"
+            );
         } catch (e) {
             console.log(e);
             toast.error("Error al registrar reunión");

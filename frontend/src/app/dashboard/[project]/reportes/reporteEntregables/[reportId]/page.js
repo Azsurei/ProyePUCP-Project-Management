@@ -682,6 +682,7 @@ function ReporteEntregables(props) {
                 guardarReporte={async (name) => {
                     return await handleSaveReport(name);
                 }}
+                tipo = "Entregables"
             />
 
             <div className="flex flex-row justify-between items-end">

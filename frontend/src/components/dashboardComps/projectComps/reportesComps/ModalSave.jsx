@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-function ModalSave({ isOpen, onOpenChange, guardarReporte }) {
+function ModalSave({ isOpen, onOpenChange, guardarReporte, tipo }) {
     const [reportName, setReportName] = useState("");
     const [validName, setValidName] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
