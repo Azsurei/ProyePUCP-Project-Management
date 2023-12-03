@@ -4,6 +4,7 @@ async function guardarPlantillaCA(req, res, next) {
     const {idUsuario, nombrePlantilla, titulos} = req.body;
     const query = `CALL GUARDAR_PLANTILLA_CA(?,?);`;
     const query1 = `CALL INSERTAR_CAMPOS_PLANTILLA_CA(?,?);`;
+    console.log(`idUsuario: ${idUsuario}, nombrePlantilla: ${nombrePlantilla}`);
     try {
         //Creamos primero la plantilla en general
         console.log(`idUsuario: ${idUsuario}, nombrePlantilla: ${nombrePlantilla}`);
