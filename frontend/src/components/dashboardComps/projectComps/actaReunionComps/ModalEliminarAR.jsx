@@ -10,8 +10,10 @@ import {
 export default function ModalEliminarAR({
     isOpen,
     onOpenChange,
-    //eliminarTarea,
+    idLineaToDelete,
+    setIdLineaToDelete
 }) {
+    const [isLoading, setIsLoading] = useState(false);  
     return (
         <Modal
             isOpen={isOpen}
@@ -26,9 +28,17 @@ export default function ModalEliminarAR({
         >
             <ModalContent>
                 {(onClose) => {
-                    const finalizarModal = () => {
-                        //eliminarTarea();
-                        onClose();
+                    const finalizarModal = async () => {
+                        const response = await deleteActaReunion(idLineaToDelete);
+
+                        if(response === 1){
+                            setIdLineaToDelete(null);
+                            onClose();
+                            return;
+                        }
+                        else{
+                            onClose();
+                        }
                     };
                     return (
                         <>
@@ -44,7 +54,10 @@ export default function ModalEliminarAR({
                                 <Button
                                     color="danger"
                                     variant="light"
-                                    onPress={onClose}
+                                    onPress={()=>{
+                                        setIdLineaToDelete(null);
+                                        onClose();
+                                    }}
                                 >
                                     Cancelar
                                 </Button>
@@ -62,4 +75,32 @@ export default function ModalEliminarAR({
             </ModalContent>
         </Modal>
     );
+
+    async function deleteActaReunion(idLinea) {
+        setIsLoading(true);
+        try {
+            const url =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion";
+
+            const response = await axios.delete(url, {
+                data: {
+                    idLineaActaReunion: idLinea,
+                },
+            });
+
+            if (response.status === 200) {
+                toast.success("Acta de reunion eliminada con exito");
+                const nuevasReuniones = reuniones.filter(
+                    (reunion) => reunion.idLineaActaReunion !== id
+                );
+                setReuniones(nuevasReuniones);
+            }
+
+            setIsLoading(false);
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al eliminar acta de reunion");
+        }
+    }
 }

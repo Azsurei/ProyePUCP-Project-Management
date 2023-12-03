@@ -17,6 +17,7 @@ import {
     Divider,
     useDisclosure,
 } from "@nextui-org/react";
+import { toast } from "sonner";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css"
 import BarGraphic from "@/components/BarGraphic";
 import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
