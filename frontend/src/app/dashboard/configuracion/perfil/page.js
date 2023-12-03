@@ -1,9 +1,18 @@
 "use client";
-import { Avatar, Button, Divider, Image, Input, Textarea } from "@nextui-org/react";
+import {
+    Avatar,
+    Button,
+    Divider,
+    Image,
+    Input,
+    Textarea,
+} from "@nextui-org/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext, useState } from "react";
 import { SessionContext } from "../../layout";
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 function EditIcon() {
     return (
@@ -49,7 +58,8 @@ function ProfilePage({ children, params }) {
     const [name, setName] = useState(sessionData.nombres);
     const [lastName, setLastName] = useState(sessionData.apellidos);
     const [mail, setMail] = useState(sessionData.correoElectronico);
-    const [birthdate, setBirthdate] = useState("");
+    const [birthdate, setBirthdate] = useState(new Date(sessionData.fechaNacimiento).toISOString().split("T")[0]);
+    const [phoneNumber, setPhoneNumber] = useState(sessionData.telefono);
 
     return (
         <div className="flex flex-row w-full gap-7">
@@ -78,9 +88,10 @@ function ProfilePage({ children, params }) {
                             />
                         </div>
                     </div>
-                    <p>Correo electronico</p>
+                    <p>Correo electrónico</p>
                     <Textarea
-                        variant="bordered"
+                        variant="flat"
+                        readOnly
                         minRows={1}
                         placeholder="Escribe aqui"
                         value={mail}
@@ -98,19 +109,55 @@ function ProfilePage({ children, params }) {
                             variant="bordered"
                             minRows={1}
                             placeholder="Escribe aqui"
+                            value={birthdate}
+                            onValueChange={setBirthdate}
                         />
                     </div>
                     <div className="flex flex-col flex-1">
                         <p>Telefono</p>
                         <Input
-                                variant="bordered"
-                                minRows={1}
-                                placeholder="Escribe aqui"
+                            variant="bordered"
+                            minRows={1}
+                            placeholder="Escribe aqui"
+                            value={phoneNumber}
+                            onValueChange={setPhoneNumber}
                         />
                     </div>
                 </div>
 
-                <div className="px-4 mt-5 flex w-full justify-end"><Button color="success" className="rounded-md text-white font-medium">Actualizar perfil</Button></div>
+                <div className="px-4 mt-5 flex w-full justify-end">
+                    <Button
+                        color="success"
+                        className="rounded-md text-white font-medium"
+                        onPress={() => {
+                            console.log("actualizar perfil");
+                            const putData = {
+                                idUsuario: sessionData.idUsuario,
+                                nombres: name,
+                                apellidos: lastName,
+                                correoElectronico: mail,
+                                fechaNacimiento: birthdate,
+                                telefono: phoneNumber,
+                                usuario: "",
+                            };
+                            console.log("Put data", putData);
+                            const stringURL =
+                                process.env.NEXT_PUBLIC_BACKEND_URL +
+                                "/api/auth/modificarUsuario";
+                                axios
+                                .put(stringURL, putData)
+                                .then((response) => {
+                                    console.log("Respuesta", response);
+                                })
+                                .catch(function (error) {
+                                    console.log("Error al cargar la lista de equipos", error);
+                                });
+
+                        }}
+                    >
+                        Actualizar perfil
+                    </Button>
+                </div>
             </div>
             <div className="flex flex-col gap-2 items-center">
                 <Image
@@ -118,12 +165,6 @@ function ProfilePage({ children, params }) {
                     width={200}
                     className="border-2 rounded-full border-slate-400 dark:border-slate-100 shadow-lg"
                 />
-                <Button
-                    startContent={<EditIcon />}
-                    className="bg-transparent border dark:border-slate-700"
-                >
-                    Editar
-                </Button>
             </div>
         </div>
     );

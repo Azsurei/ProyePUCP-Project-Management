@@ -71,7 +71,7 @@ export default function CronogramaActa(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(listHito.length / rowsPerPage);
+    const [pages, setPages] = useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)

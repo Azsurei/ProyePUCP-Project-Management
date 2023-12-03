@@ -281,5 +281,89 @@ function UpdateActaR(props) {
             )}
         </div>
     );
+
+    function downloadPlantillaAC() {
+        setIsPlantillaDownloadLoading(true);
+        const downloadURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            `/api/files/getArchivoActaReunion`;
+
+        axios
+            .get(downloadURL)
+            .then((response) => {
+                console.log(response);
+
+                if (response.data.url) {
+                    const link = document.createElement("a");
+                    link.href = response.data.url;
+                    link.download = "Acta_de_Reunion.doc";
+                    document.body.appendChild(link);
+                    link.click();
+                    toast.success("Se descargo la plantilla con exito");
+
+                    setIsPlantillaDownloadLoading(false);
+                }
+            })
+            .catch((error) => {
+                console.error("Error al descargar documento: ", error);
+                toast.error("Error al descargar plantilla");
+                setIsPlantillaDownloadLoading(false);
+            });
+    }
+
+    async function registerMeeting() {
+        try {
+            setIsLoading(true);
+            const file = new FormData();
+            file.append("file", meetingFile);
+            file.append(
+                "idActaReunion",
+                herramientasInfo.find(
+                    (herramienta) => herramienta.idHerramienta === 11
+                ).idHerramientaCreada
+            );
+            file.append(
+                "nombreReunion",
+                meetingName === "" ? "Reunion sin nombre" : meetingName
+            );
+            file.append(
+                "fechaReunion",
+                meetingDate === "" ? null : meetingDate
+            );
+            file.append("horaReunion", meetingTime === "" ? null : meetingTime);
+            file.append(
+                "idConvocante",
+                meetingConvocante.length !== 0
+                    ? meetingConvocante[0].idUsuario
+                    : 0
+            );
+            file.append(
+                "motivo",
+                meetingMotive === "" ? "Sin motivo" : meetingMotive
+            );
+            file.append("temas", []);
+            file.append("participantes", []);
+            file.append("comentarios", []);
+            const newURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                `/api/proyecto/actaReunion/crearLineaActaReunion`;
+
+            await axios.post(newURL, file, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            console.log("se subio el archivo con exito");
+            toast.success("Se registró la reunión exitosamente");
+            setIsLoading(false);
+            router.push(
+                "/dashboard/" + projectName + "=" + projectId + "/actaReunion"
+            );
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al registrar reunión");
+        }
+    }
 }
 export default UpdateActaR;
