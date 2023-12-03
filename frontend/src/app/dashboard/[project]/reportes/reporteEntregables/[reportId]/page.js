@@ -171,6 +171,7 @@ function ReporteEntregables(props) {
                     toast.error("Error de conexion al generar reporte");
                 });
         } else if (!isNaN(parseFloat(reportId)) && isFinite(reportId)) {
+            setIsReportEmpty(false);
             setIsNewReport(false);
             setIsLoadingSmall(true);
 
@@ -567,14 +568,22 @@ function ReporteEntregables(props) {
                     console.log(" ====== json esta aqui ======");
                     console.log(response);
                     if (response.data.entregables) {
+                        console.log("SETEANDO LA DATA");
                         setListEntregables(response.data.entregables);
+                        console.log(response.data.entregables);
+
                         setSelectedEntregable(
                             response.data.entregables[0].idEntregable
                         );
+                        console.log(response.data.entregables[0].tareasEntregable);
+
                         setListTareas(
                             response.data.entregables[0].tareasEntregable
                         );
+                        console.log(response.data.entregables[0].tareasEntregable);
+
                         getEntregableStatistics(response.data.entregables[0]);
+                        console.log(response.data.entregables[0]);
 
                         setEntregableName(response.data.entregables[0].nombre);
                         setEntregableComponentName(
@@ -590,24 +599,13 @@ function ReporteEntregables(props) {
                             response.data.entregables[0].fechaFin
                         );
                     }
+                    console.log("DATA SETTEADA, APAGANDO LOADING SCREEN");
+                    setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
                     console.log(error);
                     toast.error("Error de conexion al generar reporte");
                 });
-
-            // setListEntregables(mockObj);
-            // setSelectedEntregable(mockObj[0].idEntregable);
-
-            // setListTareas(mockObj[0].tareasEntregable);
-            // getEntregableStatistics(mockObj[0]);
-            // setEntregableName(mockObj[0].nombre);
-            // setEntregableComponentName(mockObj[0].ComponenteEDTNombre);
-            // setEntregableDescripcion(mockObj[0].descripcion);
-            // setEntregableFechaInicio(mockObj[0].fechaInicio);
-            // setEntregableFechaFin(mockObj[0].fechaFin);
-
-            setIsLoadingSmall(false);
         } else {
             router.push("/404");
         }
