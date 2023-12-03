@@ -265,6 +265,7 @@ export default function EstimacionCosto(props) {
     
     
     const DataTable = async () => {
+        return new Promise(async (resolve) => {
         const fetchData = async () => {
 
             if(presupuestoId!==""){
@@ -280,6 +281,7 @@ export default function EstimacionCosto(props) {
             }
         };
         fetchData();
+    });
     };
     const [presupuesto, setPresupuesto] = useState([]);
     const ObtenerPresupuesto = async () => {
@@ -307,8 +309,9 @@ export default function EstimacionCosto(props) {
     };    
         
     useEffect(() => {
-        ObtenerPresupuesto();
         DataTable();
+        ObtenerPresupuesto();
+        
       }, [presupuestoId]);
     const hasSearchFilter = Boolean(filterValue);
     const filteredItems = React.useMemo(() => {
