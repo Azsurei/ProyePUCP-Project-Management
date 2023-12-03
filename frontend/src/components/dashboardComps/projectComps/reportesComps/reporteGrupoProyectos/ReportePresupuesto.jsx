@@ -302,7 +302,7 @@ export default function ReportePresupuesto(props) {
    
       const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(8);
+    const [rowsPerPage, setRowsPerPage] = React.useState(4);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "descripcion",
         direction: "ascending",
@@ -310,7 +310,7 @@ export default function ReportePresupuesto(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const pages = Math.ceil(proyectos.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
@@ -605,7 +605,7 @@ console.log('Fechas únicas:', uniqueDatesArray);
 
                                 
                                     <div className="GraficoBarras">
-                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={500} width={1500}/>
+                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={500} width={1750}/>
                                     </div>
                                     <div className=" GraficoDeLineas flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
                                     {/* <Tabs key="uniqueKeyForTabs" color="success" aria-label="Tabs colors" radius="full" selectedKey={activeTab} onSelectionChange={handleTabChange}>    
@@ -635,7 +635,7 @@ console.log('Fechas únicas:', uniqueDatesArray);
                                             ))}
                                         </DropdownMenu>
                                       </Dropdown>
-                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={500} width={1500}/>
+                                        <AreaChart options={optionsArea} series={seriesArea} client={isClient} height={500} width={1750}/>
                                     </div>
                                 
 

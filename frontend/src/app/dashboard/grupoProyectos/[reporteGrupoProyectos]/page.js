@@ -85,7 +85,7 @@ export default function ReporteGrupoProyectos(props) {
               const proyectosConTotales = calcularTotales(data);
               console.log("Paso1: ");
               setProyectosPresupuesto(proyectosConTotales);
-              console.log(`Estos son los proyectos:`, data);
+              console.log(`Estos son los proyectos Presupuesto:`, data);
               setIsClient(true);
             } catch (error) {
               console.error('Error al obtener los proyectos 2:', error);

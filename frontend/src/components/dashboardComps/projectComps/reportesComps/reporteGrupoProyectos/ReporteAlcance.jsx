@@ -128,7 +128,7 @@ export default function ReporteAlcance(props) {
       
       const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [toolsFilter, setToolsFilter] = React.useState("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(8);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "descripcion",
         direction: "ascending",
@@ -136,7 +136,7 @@ export default function ReporteAlcance(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const pages = Math.ceil(proyectos.length / rowsPerPage);
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
@@ -306,6 +306,7 @@ export default function ReporteAlcance(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+
     const conteoEntregables = proyectos.map(proyecto => (proyecto.EDT && proyecto.EDT.entregables) ? proyecto.EDT.entregables.length : 0);
     console.log("cantidad de entregables", conteoEntregables);
 
@@ -354,11 +355,11 @@ export default function ReporteAlcance(props) {
             {isClient ? (  <div className="ReporteGrupoPresupuesto">
                                 
                                     <div className="flex">
-                                        <div className="GraficoCircular flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                        <div className="GraficoCircular flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-96 transform transition-transform duration-100 ease-in  m-4">
                                             <DonutChart options={optionsPie} series={seriesPie} title="Cantidad de Entregables por Proyecto" height={1500} width={580} client={isClient}/>
                                             
                                         </div>
-                                        <div className="Progreso flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                        <div className="Progreso flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-96 transform transition-transform duration-100 ease-in m-4 overflow-auto">
                                         <div className="titleBalanceData">Progreso de entregables</div>
                                             {proyectos.map((proyecto, index) => (
                                                 <>

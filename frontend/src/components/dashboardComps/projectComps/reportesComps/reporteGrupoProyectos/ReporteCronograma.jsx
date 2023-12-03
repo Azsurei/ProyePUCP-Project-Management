@@ -200,9 +200,9 @@ export default function ReporteCronograma(props) {
                                     <div className="flex">
                                         <div className="Grafico Barras">
                                            
-                                        <BarGraphic options={optionsBar} series={seriesBar} client={isClient} height={300} width={750}/>
+                                        <BarGraphic title="Cantidad de tareas" options={optionsBar} series={seriesBar} client={isClient} height={300} width={750}/>
                                         </div>
-                                        <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                        <div className="Progreso flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-96 transform transition-transform duration-100 ease-in m-4 overflow-auto">
                                             <div className="titleBalanceData">Progreso de tareas</div>
                                             {proyectos.map((proyecto, index) => (
                                                 <>
@@ -228,6 +228,8 @@ export default function ReporteCronograma(props) {
                                     
 
                                     <div className="flex-1 shadow-md p-4 rounded border border-solid border-gray-300 max-h-750 transform transition-transform duration-100 ease-in  m-4">
+                                      <div className="flex gap-8">
+                                      <p className="flex text-3xl font-bold font-montserrat">Duracion de las tareas</p>
                                       <Dropdown>
                                         <DropdownTrigger>
                                           <Button 
@@ -250,7 +252,9 @@ export default function ReporteCronograma(props) {
                                             ))}
                                         </DropdownMenu>
                                       </Dropdown>
-                                        <RangeBar options={optionsTime} series={seriesTime} client={isClient} height={500} width={1450}/>
+                                      </div>
+                                    
+                                        <RangeBar options={optionsTime} series={seriesTime} client={isClient} height={500} width={1650}/>
                                     </div>
                                     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                                         <ModalContent>

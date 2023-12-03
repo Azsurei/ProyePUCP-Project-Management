@@ -7,6 +7,7 @@ export default function BarGraphic(props) {
         <>
            {props.client && ( // Renderiza el gráfico solo en el lado del cliente
                 <div className="GraficoReportePresupuesto">
+                    <p className="flex text-3xl font-bold font-montserrat">{props.title}</p>
                     <ReactApexChart
                         options={props.options}
                         series={props.series}
