@@ -1276,10 +1276,7 @@ function reporteTareas(props) {
                     const response = await axios.get(stringURL);
     
                     const {
-                        tareas: {
-                            mockObj,
-                        
-                      },
+                        tareas: mockObj,
                     } = response.data;
                     setListTareas(mockObj);
                     const notStartedTasksG = countTasksWithStatus(mockObj, 1);
