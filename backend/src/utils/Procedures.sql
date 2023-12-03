@@ -5974,3 +5974,20 @@ BEGIN
     FROM Usuario
     ORDER BY idUsuario DESC;
 END$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_COLORES_NIVELES_ARBOLEDT(
+    IN _idEDT INT
+)
+BEGIN
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 1", "#FF0000", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 2", "#00FF00", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 3", "#0000FF", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 4", "#FFD700", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 5", "#FF69B4", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 6", "#4169E1", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 7", "#006400", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 8", "#FFA500", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 9", "#9400D3", 1);
+    INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 10", "#00FFFF", 1);
+END$

@@ -1485,3 +1485,13 @@ CREATE TABLE MetricaCalidad(
     FOREIGN KEY (idPlanCalidad) REFERENCES PlanCalidad(idPlanCalidad)
 )
 ENGINE = InnoDB;
+
+CREATE TABLE ColorNivelArbolEDT(
+	idNivel INT AUTO_INCREMENT PRIMARY KEY,
+    idEDT INT,
+    nombreNivel VARCHAR(100),
+    color VARCHAR(100),
+    activo TINYINT,
+    FOREIGN KEY (idEDT) REFERENCES EDT(idEDT)
+)
+ENGINE = InnoDB;
