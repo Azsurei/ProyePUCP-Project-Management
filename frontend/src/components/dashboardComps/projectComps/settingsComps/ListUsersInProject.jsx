@@ -8,7 +8,7 @@ import { Toaster, toast } from "sonner";
 import ModalDeleteUser from "./ModalDeleteUser";
 axios.defaults.withCredentials = true;
 
-function ListUsersInProject({ projectId, refreshPage }) {
+function ListUsersInProject({ projectId, refreshPage, loadDelete }) {
     const [isModalSupervOpen, setIsModalSupervOpen] = useState(false);
     const [isModalMiembros, setIsModalMiembrosOpen] = useState(false);
 
@@ -114,26 +114,29 @@ function ListUsersInProject({ projectId, refreshPage }) {
             </div>
 
             <div className={twStyle2}>
-                <div className="flex flex-row gap-2 items-center">
-                    <p className="text-xl font-medium">Supervisores</p>
-                    <Button
-                        color="primary"
-                        onClick={() => {
-                            setIsModalSupervOpen(true);
-                            console.log(currentUserList);
-                        }}
-                        className="px-unit-3 text-sm"
-                        size="sm"
-                    >
-                        <p>Buscar usuario</p>
-                        <img
-                            src="/icons/icon-searchBar.svg"
-                            alt=""
-                            className="icnSearch"
-                            style={{ width: "20px" }}
-                        />
-                    </Button>
-                </div>
+
+                    <div className="flex flex-row gap-2 items-center">
+                        <p className="text-xl font-medium">Supervisores</p>
+                        {loadDelete && (
+                        <Button
+                            color="primary"
+                            onClick={() => {
+                                setIsModalSupervOpen(true);
+                                console.log(currentUserList);
+                            }}
+                            className="px-unit-3 text-sm"
+                            size="sm"
+                        >
+                            <p>Buscar usuario</p>
+                            <img
+                                src="/icons/icon-searchBar.svg"
+                                alt=""
+                                className="icnSearch"
+                                style={{ width: "20px" }}
+                            />
+                        </Button>)}
+                    </div>
+
                 <div className={twStyle1}>
                     {currentUserList.filter((user) => user.idRol === 2)
                         .length !== 0 &&
@@ -143,7 +146,7 @@ function ListUsersInProject({ projectId, refreshPage }) {
                                 return (
                                     <CardSelectedUser
                                         key={supervisor.idUsuario}
-                                        isEditable={true}
+                                        isEditable={loadDelete}
                                         usuarioObject={supervisor}
                                         removeHandler={(user) => {
                                             setUserToDelete(user);
@@ -158,6 +161,7 @@ function ListUsersInProject({ projectId, refreshPage }) {
             <div className={twStyle2}>
                 <div className="flex flex-row gap-2 items-center">
                     <p className="text-xl font-medium">Miembros de equipo</p>
+                    {loadDelete && (
                     <Button
                         color="primary"
                         onClick={() => {
@@ -173,7 +177,7 @@ function ListUsersInProject({ projectId, refreshPage }) {
                             className="icnSearch"
                             style={{ width: "20px" }}
                         />
-                    </Button>
+                    </Button>)}
                 </div>
                 <div className={twStyle1}>
                     {currentUserList.filter((user) => user.idRol === 3)
@@ -184,7 +188,7 @@ function ListUsersInProject({ projectId, refreshPage }) {
                                 return (
                                     <CardSelectedUser
                                         key={miembro.idUsuario}
-                                        isEditable={true}
+                                        isEditable={loadDelete}
                                         usuarioObject={miembro}
                                         removeHandler={(user) => {
                                             setUserToDelete(user);

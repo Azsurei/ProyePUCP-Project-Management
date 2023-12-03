@@ -3,7 +3,8 @@ import ModalDeleteConfirmation from "@/components/dashboardComps/projectComps/se
 import { Divider } from "@nextui-org/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import {useContext, useState} from "react";
+import {SessionContext} from "@/app/dashboard/layout";
 
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
@@ -11,6 +12,7 @@ export default function RootLayout({ children, params }) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
     const pathname = usePathname();
+    const {sessionData} = useContext(SessionContext);
 
     const btnStyle =
         " hover:underline  font-medium px-4 py-2 rounded-md cursor-pointer";
@@ -101,6 +103,7 @@ export default function RootLayout({ children, params }) {
                                 Herramientas
                             </p>
                         </Link>
+                        {sessionData.rolNameInProject !== "Supervisor" && (
                         <Link
                             className={
                                 pathname === baseUrlString + "/eliminar"
@@ -119,6 +122,7 @@ export default function RootLayout({ children, params }) {
                                 Eliminar
                             </p>
                         </Link>
+                        )}
                     </div>
 
                     {children}
