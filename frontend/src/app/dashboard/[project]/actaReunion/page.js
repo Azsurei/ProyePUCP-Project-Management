@@ -16,6 +16,9 @@ import {
     CardHeader,
     Divider,
     Spacer,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
 } from "@nextui-org/react";
 import { Tabs, Tab } from "@nextui-org/react";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -23,6 +26,7 @@ import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
@@ -306,14 +310,24 @@ export default function ActaReunion(props) {
                                             src={meeting.imgLink}
                                             size="sm"
                                         />
-                                        <p>{meeting.nombres === null ? "Sin convocante" : meeting.nombres}</p>
+                                        <p>
+                                            {meeting.nombres === null
+                                                ? "Sin convocante"
+                                                : meeting.nombres}
+                                        </p>
                                     </div>
                                 </div>
                                 <p className="truncate font-medium">
                                     Archivo:{" "}
-                                    <span className="underline font-medium text-primary cursor-pointer" onClick={()=>{
-                                        downloadFile(meeting.idArchivo, meeting.nombreArchivo);
-                                    }}>
+                                    <span
+                                        className="underline font-medium text-primary cursor-pointer"
+                                        onClick={() => {
+                                            downloadFile(
+                                                meeting.idArchivo,
+                                                meeting.nombreArchivo
+                                            );
+                                        }}
+                                    >
                                         {meeting.nombreArchivo}
                                     </span>
                                 </p>
@@ -343,6 +357,75 @@ export default function ActaReunion(props) {
                                 </div>
                             </div>
                             <Button>Ver opciones</Button>
+                            <Dropdown aria-label="droMenTareasMain">
+                                <DropdownTrigger aria-label="droMenTareasTrigger">
+                                    <Button
+                                        size="md"
+                                        radius="sm"
+                                        variant="flat"
+                                        color="default"
+                                        className="ButtonMore"
+                                    >
+                                        <p className="lblVerOpciones">
+                                            Ver opciones
+                                        </p>
+                                        <VerticalDotsIcon className="icnVerOpciones text-black-300" />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="droMenTareas">
+                                    {handleAddNewSon && (
+                                        <DropdownItem
+                                            aria-label="addSon"
+                                            onClick={() =>
+                                                handleAddNewSon(tarea)
+                                            }
+                                        >
+                                            Agregar subtarea
+                                        </DropdownItem>
+                                    )}
+                                    {tarea.tareasHijas.length === 0 &&
+                                        handleRegisterProgress && (
+                                            <DropdownItem
+                                                aria-label="regProg"
+                                                onClick={() =>
+                                                    handleRegisterProgress(
+                                                        tarea
+                                                    )
+                                                }
+                                            >
+                                                Registrar progreso
+                                            </DropdownItem>
+                                        )}
+                                    {handleVerDetalle && (
+                                        <DropdownItem
+                                            aria-label="seeDetail"
+                                            onClick={() =>
+                                                handleVerDetalle(tarea)
+                                            }
+                                        >
+                                            Ver detalle
+                                        </DropdownItem>
+                                    )}
+                                    {handleEdit && (
+                                        <DropdownItem
+                                            aria-label="edit"
+                                            onClick={() => handleEdit(tarea)}
+                                        >
+                                            Editar
+                                        </DropdownItem>
+                                    )}
+                                    {handleDelete && (
+                                        <DropdownItem
+                                            aria-label="delete"
+                                            className="text-danger"
+                                            color="danger"
+                                            onClick={() => handleDelete(tarea)}
+                                        >
+                                            Eliminar
+                                        </DropdownItem>
+                                    )}
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
                     );
                 })}

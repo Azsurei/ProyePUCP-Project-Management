@@ -982,8 +982,7 @@ function ReporteEntregables(props) {
                     projectName +
                     "=" +
                     projectId +
-                    "/reportes/reporteEntregables/" +
-                    response.data.idReporte
+                    "/reportes"
             );
             return 1;
         } catch (error) {
