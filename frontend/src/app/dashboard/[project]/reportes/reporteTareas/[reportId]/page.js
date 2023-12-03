@@ -1404,7 +1404,7 @@ function reporteTareas(props) {
 
     function handleSaveReport() {
         const jsonToPrint = {
-            listTareas: listTareas,
+            tareas: listTareas,
         };
 
         console.log(JSON.stringify(jsonToPrint, null, 2));
