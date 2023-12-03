@@ -124,7 +124,7 @@ function RetrospectivaView(props) {
 
     return (
         <>
-            <div className="flex-1 min-h-full p-[2.5rem] flex flex-col gap-4 border border-red-500">
+            <div className="flex-1 min-h-full p-[2.5rem] flex flex-col gap-4">
                 <div className="flex flex-col">
                     <div className="flex flex-row items-end">
                         <HeaderWithButtonsSamePage
