@@ -204,26 +204,29 @@ export default function Info(props) {
         setEditActive(false);
     };
 
+    const [nombreProyecto, setNombreProyecto] = useState('');
+    const [empresa, setEmpresa] = useState('');
+    const [cliente, setCliente] = useState('');
+    const [patrocinador, setPatrocinador] = useState('');
+    const [gerente, setGerente] = useState('');
+
     const handleSave = () => {
-        //no olvides actualizar el details original con lo ya editado para no recargar toda la pagina
         setIsLoadingSmall(true);
-        const updateURL =
-            process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/modificarCampos";
-        axios
-            .put(updateURL, {
-                idProyecto: projectId,
-                nombreProyecto: "test",
-                empresa: "test",
-                cliente: "test",
-                patrocinador: "test",
-                gerente: "test",
-                actaData: detailEdited,
-            })
+        const updateURL = process.env.NEXT_PUBLIC_BACKEND_URL+"/api/proyecto/ActaConstitucion/modificarCampos";
+
+        axios.put(updateURL, {
+            idProyecto: projectId,
+            nombreProyecto: nombreProyecto,
+            empresa: empresa,
+            cliente: cliente,
+            patrocinador: patrocinador,
+            gerente: gerente,
+            actaData: detailEdited,
+        })
             .then((response) => {
                 console.log(response.data.message);
                 setDetails([...detailEdited]);
                 setEditActive(false);
-
                 setIsLoadingSmall(false);
             })
             .catch(function (error) {
