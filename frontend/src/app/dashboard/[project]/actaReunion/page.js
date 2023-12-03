@@ -374,57 +374,20 @@ export default function ActaReunion(props) {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="droMenTareas">
-                                    {handleAddNewSon && (
-                                        <DropdownItem
-                                            aria-label="addSon"
-                                            onClick={() =>
-                                                handleAddNewSon(tarea)
-                                            }
-                                        >
-                                            Agregar subtarea
-                                        </DropdownItem>
-                                    )}
-                                    {tarea.tareasHijas.length === 0 &&
-                                        handleRegisterProgress && (
-                                            <DropdownItem
-                                                aria-label="regProg"
-                                                onClick={() =>
-                                                    handleRegisterProgress(
-                                                        tarea
-                                                    )
-                                                }
-                                            >
-                                                Registrar progreso
-                                            </DropdownItem>
-                                        )}
-                                    {handleVerDetalle && (
-                                        <DropdownItem
-                                            aria-label="seeDetail"
-                                            onClick={() =>
-                                                handleVerDetalle(tarea)
-                                            }
-                                        >
-                                            Ver detalle
-                                        </DropdownItem>
-                                    )}
-                                    {handleEdit && (
-                                        <DropdownItem
-                                            aria-label="edit"
-                                            onClick={() => handleEdit(tarea)}
-                                        >
-                                            Editar
-                                        </DropdownItem>
-                                    )}
-                                    {handleDelete && (
-                                        <DropdownItem
-                                            aria-label="delete"
-                                            className="text-danger"
-                                            color="danger"
-                                            onClick={() => handleDelete(tarea)}
-                                        >
-                                            Eliminar
-                                        </DropdownItem>
-                                    )}
+                                    <DropdownItem
+                                        aria-label="edit"
+                                        onClick={() => handleEdit(tarea)}
+                                    >
+                                        Editar
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        aria-label="delete"
+                                        className="text-danger"
+                                        color="danger"
+                                        onClick={() => handleDelete(tarea)}
+                                    >
+                                        Eliminar
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>

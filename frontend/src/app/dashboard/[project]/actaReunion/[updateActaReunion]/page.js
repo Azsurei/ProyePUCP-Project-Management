@@ -1,8 +1,10 @@
+"use client"
 import CardSelectedUser from "@/components/CardSelectedUser";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
 import { Button, Input } from "@nextui-org/react";
 import { SearchIcon } from "public/icons/SearchIcon";
+import { useState } from "react";
 
 function DownloadIcon() {
     return (
@@ -28,7 +30,7 @@ function UpdateActaR() {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
-    
+
     const [meetingName, setMeetingName] = useState("");
     const [meetingDate, setMeetingDate] = useState("");
     const [meetingTime, setMeetingTime] = useState("");
