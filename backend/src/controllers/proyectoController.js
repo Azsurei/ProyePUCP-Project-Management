@@ -1144,7 +1144,7 @@ async function actualizarDatos(req,res,next){
     const query1 = `CALL OBTENER_DIFDIAS_PRODUCTBACKLOG(?);`;
     const query2 = `CALL OBTENER_DIFDIAS_EDT(?);`;
     const query3 = `CALL OBTENER_DIFDIAS_TAREA(?);`;
-    const query4 = `CALL ACTUALIZAR_PROYECTO(?,?,?,?);`;
+    const query4 = `CALL ACTUALIZAR_PROYECTO(?,?,?,?,?);`;
     const query5 = `CALL AÑADIR_DIAS_PRODUCTBACKLOG(?,?);`;
     const query6 = `CALL AÑADIR_DIAS_EDT(?,?);`;
     const query7 = `CALL AÑADIR_DIAS_TAREA(?,?);`;
@@ -1179,7 +1179,7 @@ async function actualizarDatos(req,res,next){
         else{
             console.log(`Actualizando proyecto`);
             //Actualizamos el proyecto
-            const [results4] = await connection.query(query4,[idProyecto, nombre, fechaInicio, fechaFin]);
+            const [results4] = await connection.query(query4,[idProyecto, nombre, fechaInicio, fechaFin, results1[0][0].FechaInicioMinima]);
             let difDias = results4[0][0].difDias;
             console.log(difDias);
             //Actualizamos dentro de la herramienta
