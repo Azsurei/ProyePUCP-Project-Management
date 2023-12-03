@@ -137,6 +137,7 @@ function ReporteEntregables(props) {
                         //handleamos caso de entregables vacios
                         console.log("no tiene entregables");
                         setIsReportEmpty(true);
+                        setListEntregables([]);
                     } else {
                         console.log("tiene entregables");
                         setIsReportEmpty(false);
@@ -616,37 +617,38 @@ function ReporteEntregables(props) {
     const btnStyleActive =
         "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] dark:bg-[#414141] cursor-pointer";
 
-    if (isReportEmpty === true) {
-        return (
-            <div className="flex flex-col p-[2.5rem] flex-1 h-full">
-                <HeaderWithButtonsSamePage
-                    haveReturn={true}
-                    haveAddNew={false}
-                    handlerReturn={() => {
-                        router.push(
-                            "/dashboard/" +
-                                projectName +
-                                "=" +
-                                projectId +
-                                "/reportes"
-                        );
-                    }}
-                    breadcrump={
-                        "Inicio / Proyectos / " + projectName + " / Reportes"
-                    }
-                >
-                    Reporte de entregables
-                </HeaderWithButtonsSamePage>
-                <div className="flex flex-col flex-1 justify-center items-center gap-3">
-                    <p className="m-0 font-medium text-xl">
-                        Este proyecto no cuenta con entregables, no hay nada que
-                        mostrar
-                    </p>
-                    <EmptyBoxIcon width={200} height={200} />
-                </div>
-            </div>
-        );
-    }
+    // if (isReportEmpty === true) {
+    //     return (
+    //         <div className="flex flex-col p-[2.5rem] flex-1 h-full">
+    //             <HeaderWithButtonsSamePage
+    //                 haveReturn={true}
+    //                 haveAddNew={false}
+    //                 handlerReturn={() => {
+    //                     router.push(
+    //                         "/dashboard/" +
+    //                             projectName +
+    //                             "=" +
+    //                             projectId +
+    //                             "/reportes"
+    //                     );
+    //                 }}
+    //                 breadcrump={
+    //                     "Inicio / Proyectos / " + projectName + " / Reportes"
+    //                 }
+    //             >
+    //                 Reporte de entregables
+    //             </HeaderWithButtonsSamePage>
+    //             <div className="flex flex-col flex-1 justify-center items-center gap-3">
+    //                 <p className="m-0 font-medium text-xl">
+    //                     Este proyecto no cuenta con entregables, no hay nada que
+    //                     mostrar
+    //                 </p>
+    //                 <EmptyBoxIcon width={200} height={200} />
+    //             </div>
+    //         </div>
+    //     );
+    // }
+    
     async function handlerExport() {
         const reportId = decodeURIComponent(props.params.reportId);
         try {
