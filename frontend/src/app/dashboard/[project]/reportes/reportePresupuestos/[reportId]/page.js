@@ -340,7 +340,9 @@ export default function ReportePresupuestos(props) {
                                     </Button>
                                 )}
                                 {!isNewReport && (
-                                    <Button color="success" className="text-white" onClick={()=>handlerExport()}>
+                                    <Button color="success" className="text-white" onClick={async () => {
+                                      await handlerExport();
+                                  }}>
                                       Exportar
                                 </Button>
                                 )

@@ -1400,7 +1400,9 @@ function reporteTareas(props) {
                         color="success"
                         className="text-white font-semibold"
                         startContent={<ExportIcon />}
-                        onClick={() => handlerExport()}
+                        onClick={async () => {
+                            await handlerExport();
+                        }}
                     >
                         Exportar
                     </Button>

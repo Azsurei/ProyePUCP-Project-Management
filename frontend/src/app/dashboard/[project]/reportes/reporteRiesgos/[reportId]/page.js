@@ -788,7 +788,9 @@ export default function ReporteRiesgos(props) {
                                     </Button>
                                 )}
                                 {!isNewReport && (
-                                    <Button color="success" className="text-white" onClick={()=>guardarReporte()}>
+                                    <Button color="success" className="text-white" onClick={async () => {
+                                        await handlerExport();
+                                    }}>
                                       Exportar
                                 </Button>
                                 )
