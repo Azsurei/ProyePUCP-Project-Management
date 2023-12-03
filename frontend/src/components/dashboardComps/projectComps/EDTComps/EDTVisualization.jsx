@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState } from "react";
+import {createContext, useContext, useState} from "react";
 import HeaderWithButtonsSamePage from "./HeaderWithButtonsSamePage";
 import ListElementsEDT from "./ListElementsEDT";
 import TreeGraphComponent from "@/app/dashboard/[project]/EDT/TreeGraphComponent";
@@ -9,6 +9,7 @@ import axios from "axios";
 import { saveAs } from "file-saver";
 import EmptyBoxIcon from "@/components/EmptyBoxIcon";
 axios.defaults.withCredentials = true;
+import {SessionContext} from "@/app/dashboard/layout";
 
 export const OpenMenuContext = createContext();
 
@@ -22,6 +23,7 @@ export default function EDTVisualization({
     isListLoading,
 }) {
     const [openMenuId, setOpenMenuId] = useState(null);
+    const { sessionData } = useContext(SessionContext);
 
     const toggleMenu = (id) => {
         if (openMenuId === id) {
@@ -89,7 +91,7 @@ export default function EDTVisualization({
             <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={true}
-                handlerAddNew={handlerGoToNew}
+                handlerAddNew={sessionData.rolNameInProject === "Supervisor" ? null : handlerGoToNew}
                 newPrimarySon={ListComps.length + 1}
                 breadcrump={"Inicio / Proyectos / " + projectName}
                 btnText={"Nuevo componente"}
