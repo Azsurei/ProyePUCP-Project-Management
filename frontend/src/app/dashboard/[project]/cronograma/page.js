@@ -1298,7 +1298,7 @@ export default function Cronograma(props) {
                         <div className="containerGeneralLeft">
                             <HeaderWithButtonsSamePage
                                 haveReturn={false}
-                                haveAddNew={true}
+                                haveAddNew={!(sessionData.rolNameInProject === "Supervisor")}
                                 handlerAddNew={handlerGoToNew}
                                 //newPrimarySon={ListComps.length + 1}
                                 breadcrump={
@@ -1375,21 +1375,13 @@ export default function Cronograma(props) {
                                             <p className="w-[27%]">FECHAS</p>
                                         </div>
                                         <ListTareas
-                                            listTareas={listTareas.filter(
-                                                (tarea) =>
-                                                    filterTasks(
-                                                        tarea,
-                                                        searchValue
-                                                    )
-                                            )}
+                                            listTareas={listTareas.filter(tarea => filterTasks(tarea, searchValue))}
                                             leftMargin={"0px"}
                                             handleVerDetalle={handleVerDetalle}
-                                            handleAddNewSon={handleAddNewSon}
-                                            handleRegisterProgress={
-                                                handleRegisterProgress
-                                            }
-                                            handleEdit={handleEdit}
-                                            handleDelete={handleDelete}
+                                            handleAddNewSon={sessionData.rolNameInProject === "Supervisor" ? undefined : handleAddNewSon}
+                                            handleRegisterProgress={sessionData.rolNameInProject === "Supervisor" ? undefined : handleRegisterProgress}
+                                            handleEdit={sessionData.rolNameInProject === "Supervisor" ? undefined : handleEdit}
+                                            handleDelete={sessionData.rolNameInProject === "Supervisor" ? undefined : handleDelete}
                                         ></ListTareas>
                                     </div>
                                 )}
