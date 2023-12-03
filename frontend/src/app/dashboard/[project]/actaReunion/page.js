@@ -19,6 +19,7 @@ import {
     Dropdown,
     DropdownTrigger,
     DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { Tabs, Tab } from "@nextui-org/react";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
