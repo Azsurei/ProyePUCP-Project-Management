@@ -5,6 +5,7 @@ async function guardarPlantillaAC(req, res, next) {
     const query = `CALL GUARDAR_PLANTILLA_ACTACONSTITUCION(?,?);`;
     const query1 = `CALL LISTAR_NOMBRES_CAMPOS_AC(?);`;
     const query2 = `CALL INSERTAR_PLANTILLA_AC_TIPODATO(?,?);`;
+    console.log(`idUsuario: ${idUsuario}, nombrePlantilla: ${nombrePlantilla}`);
     try {
         //Creamos primero la plantilla en general
         const [results] = await connection.query(query, [idUsuario, nombrePlantilla]);
