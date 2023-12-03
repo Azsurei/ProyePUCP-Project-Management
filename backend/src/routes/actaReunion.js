@@ -21,7 +21,7 @@ routerActaReunion.delete("/eliminarActaReunionXProyecto",verifyToken,actaReunion
 // Linea Acta Reunion
 routerActaReunion.post("/crearLineaActaReunion",upload.single('file'),verifyToken,lineaActaReunionController.crear);
 routerActaReunion.get("/listarLineaActaReunionXIdActaReunion/:idActaReunion",verifyToken,lineaActaReunionController.listarXIdActaReunion);
-routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion",lineaActaReunionController.listarXIdLineaActaReunion);
+routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion",verifyToken,lineaActaReunionController.listarXIdLineaActaReunion);
 
 routerActaReunion.put("/modificarLineaActaReunion",upload.single('file'),verifyToken,lineaActaReunionController.modificar);
 
