@@ -786,83 +786,86 @@ export default function KanbanBoard({ projectName, projectId }) {
                 console.log(
                     "relistando todas lass tareas, aqui persentar load state"
                 );
-                const stringURL =
-                    process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/kanban/listarColumnasYTareas/" +
-                    projectId +
-                    "/" +
-                    herramientasInfo.find(
-                        (herramienta) => herramienta.idHerramienta === 4
-                    ).idHerramientaCreada;
-                axios
-                    .get(stringURL)
-                    .then(function (response) {
-                        console.log(response.data.data);
+                setTimeout(() => {
+                    const stringURL =
+                        process.env.NEXT_PUBLIC_BACKEND_URL +
+                        "/api/proyecto/kanban/listarColumnasYTareas/" +
+                        projectId +
+                        "/" +
+                        herramientasInfo.find(
+                            (herramienta) => herramienta.idHerramienta === 4
+                        ).idHerramientaCreada;
+                    axios
+                        .get(stringURL)
+                        .then(function (response) {
+                            console.log(response.data.data);
 
-                        //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
-                        const columnTareas = {
-                            idColumnaKanban: 1,
-                            idProyecto: parseInt(projectId),
-                            nombre: `No iniciadas`,
-                            posicion: 0,
-                            activo: 1,
-                        };
+                            //añadimos columna Tareas, en la cual deben estar SOLO las tareas con idColumnaKanban = NULL
+                            const columnTareas = {
+                                idColumnaKanban: 1,
+                                idProyecto: parseInt(projectId),
+                                nombre: `No iniciadas`,
+                                posicion: 0,
+                                activo: 1,
+                            };
 
-                        const columnInProgress = {
-                            idColumnaKanban: 2,
-                            idProyecto: parseInt(projectId),
-                            nombre: "En proceso",
-                            posicion: 1,
-                            activo: 1,
-                        };
+                            const columnInProgress = {
+                                idColumnaKanban: 2,
+                                idProyecto: parseInt(projectId),
+                                nombre: "En proceso",
+                                posicion: 1,
+                                activo: 1,
+                            };
 
-                        const columnFinished = {
-                            idColumnaKanban: 4,
-                            idProyecto: parseInt(projectId),
-                            nombre: "Finalizadas",
-                            posicion: response.data.data.columnas.length + 2,
-                            activo: 1,
-                        };
+                            const columnFinished = {
+                                idColumnaKanban: 4,
+                                idProyecto: parseInt(projectId),
+                                nombre: "Finalizadas",
+                                posicion:
+                                    response.data.data.columnas.length + 2,
+                                activo: 1,
+                            };
 
-                        //siempre va a recibir columnas y tareas por orden de posicion
-                        //setColumns([columnTareas, ...response.data.data.columnas]);
-                        setColumns([
-                            columnTareas,
-                            columnInProgress,
-                            ...response.data.data.columnas,
-                            columnFinished,
-                        ]);
+                            //siempre va a recibir columnas y tareas por orden de posicion
+                            //setColumns([columnTareas, ...response.data.data.columnas]);
+                            setColumns([
+                                columnTareas,
+                                columnInProgress,
+                                ...response.data.data.columnas,
+                                columnFinished,
+                            ]);
 
-                        function compareKanbanElements(a, b) {
-                            if (a.idColumnaKanban < b.idColumnaKanban) {
-                                return -1;
+                            function compareKanbanElements(a, b) {
+                                if (a.idColumnaKanban < b.idColumnaKanban) {
+                                    return -1;
+                                }
+                                if (a.idColumnaKanban > b.idColumnaKanban) {
+                                    return 1;
+                                }
+                                // If idColumnaKanban is equal, compare by posicionKanban
+                                if (a.posicionKanban < b.posicionKanban) {
+                                    return -1;
+                                }
+                                if (a.posicionKanban > b.posicionKanban) {
+                                    return 1;
+                                }
+                                return 0;
                             }
-                            if (a.idColumnaKanban > b.idColumnaKanban) {
-                                return 1;
-                            }
-                            // If idColumnaKanban is equal, compare by posicionKanban
-                            if (a.posicionKanban < b.posicionKanban) {
-                                return -1;
-                            }
-                            if (a.posicionKanban > b.posicionKanban) {
-                                return 1;
-                            }
-                            return 0;
-                        }
 
-                        // Sort the array using the custom comparison function
-                        const sortedArray = response.data.data.tareas.sort(
-                            compareKanbanElements
-                        );
+                            // Sort the array using the custom comparison function
+                            const sortedArray = response.data.data.tareas.sort(
+                                compareKanbanElements
+                            );
 
-                        setTasks(sortedArray);
-                        console.log("termino la carga");
-                        setIsRefreshing(false);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        toast.error("Error en carga. Recarge la pagina");
-                    });
+                            setTasks(sortedArray);
+                            console.log("termino la carga");
+                            setIsRefreshing(false);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            toast.error("Error en carga. Recarge la pagina");
+                        });
+                }, 1000);
             }
         }
 

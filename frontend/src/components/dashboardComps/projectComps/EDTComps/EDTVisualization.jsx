@@ -21,9 +21,14 @@ export default function EDTVisualization({
     handleVerDetalle,
     refreshComponentsEDT,
     isListLoading,
+     selectedTab,
+     setSelectedTab
 }) {
     const [openMenuId, setOpenMenuId] = useState(null);
     const { sessionData } = useContext(SessionContext);
+
+    console.log("Selected tab: ")
+    console.log(selectedTab);
 
     const toggleMenu = (id) => {
         if (openMenuId === id) {
@@ -90,8 +95,8 @@ export default function EDTVisualization({
         <div className="EDT">
             <HeaderWithButtonsSamePage
                 haveReturn={false}
-                haveAddNew={true}
-                handlerAddNew={sessionData.rolNameInProject === "Supervisor" ? null : handlerGoToNew}
+                haveAddNew={sessionData.rolNameInProject !== "Supervisor"}
+                handlerAddNew={handlerGoToNew}
                 newPrimarySon={ListComps.length + 1}
                 breadcrump={"Inicio / Proyectos / " + projectName}
                 btnText={"Nuevo componente"}
@@ -112,7 +117,12 @@ export default function EDTVisualization({
             ) : null}
 
             {isListLoading === false ? (
-                <Tabs aria-label="Options" radius="full" color="warning">
+                <Tabs
+                    aria-label="Options"
+                    selectedKey={selectedTab}
+                    onSelectionChange={setSelectedTab}
+                    radius="full"
+                    color="warning">
                     <Tab
                         key="dropdown"
                         title="Vista lista"
