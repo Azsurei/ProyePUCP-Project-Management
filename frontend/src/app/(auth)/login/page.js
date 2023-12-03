@@ -80,7 +80,7 @@ function Login() {
     const handleSubmit = async () => {
         setStatusForm("submitting");
         try {
-            console.log("El usuario y contraseña es", email," ", password);
+            console.log("El usuario y contraseña es", email, " ", password);
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
                 {
@@ -88,7 +88,26 @@ function Login() {
                     password: password,
                 }
             );
-            router.push("/dashboard");
+            if (response.data.habilitado === 0) {
+                axios
+                    .get(
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/logout`
+                    )
+                    .then((response) => {
+                        setLoginError(
+                            "Su cuenta se encuentra inhabilitada. Contáctese con el adminstrador."
+                        );
+                        setStatusForm("valid");
+                    })
+                    .catch(function (error) {
+                        console.log(
+                            "Error al realizar el procedimiento de verificación de usuario.",
+                            error
+                        );
+                    });
+            } else if (response.data.habilitado === 1) {
+                router.push("/dashboard");
+            }
         } catch (error) {
             setLoginError(error.response.data);
             setStatusForm("valid");
@@ -108,8 +127,15 @@ function Login() {
                 }
             )
             .then((response) => {
-                //usuario ya existe en bd, lo logeamos
-                router.push("/dashboard");
+                console.log(response.data);
+                if (response.data.habilitado === 0) {
+                    setLoginError(
+                        "Su cuenta se encuentra inhabilitada. Contáctese con el adminstrador."
+                    );
+                    setStatusForm("valid");
+                } else if (response.data.habilitado === 1) {
+                    router.push("/dashboard");
+                }
             })
             .catch(function (error) {
                 //aqui ya tenemos correoElectronico y contra (sub). tambien given_name y family_name
