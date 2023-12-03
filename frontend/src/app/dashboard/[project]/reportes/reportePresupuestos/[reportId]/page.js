@@ -217,6 +217,18 @@ export default function ReportePresupuestos(props) {
 
         setIsClient(true);
     }, [idPresupuesto]);
+    function convertirMoneda(monto, moneda) {
+    
+      // Si la moneda de la línea es diferente a la moneda general, realiza la conversión
+      if (moneda !== nombreMoneda) {
+        // Aquí deberías implementar la lógica de conversión entre monedas
+        // En este ejemplo, simplemente se asume que el valor es el mismo, pero puedes utilizar tasas de cambio reales o lógica más compleja.
+        monto = (monto * 3.9);
+        console.warn("Necesitas implementar la lógica de conversión entre monedas");
+      }
+    
+      return monto;
+    }
     const series = [
         {
           name: "Ingresos",
@@ -231,13 +243,13 @@ export default function ReportePresupuestos(props) {
         //     3343777,
         //     3845718,
         //   ],
-        data: lineasIngreso.map(linea => linea.monto),
+        data: lineasIngreso.map(linea => convertirMoneda(linea.monto, linea.nombreMoneda)),
           color: '#29C85F'
         },
         {
           name: "Egresos",
         //   data: [-2800000, -2840000, -9394000, -427100, -760260, -191853, -501538, -1029651, -1255481],
-        data: lineasEgreso.map(linea => -linea.costoReal), 
+        data: lineasEgreso.map(linea => convertirMoneda(-linea.costoReal, linea.nombreMoneda)), 
           color: '#CE3B3B'
         },
 
@@ -288,11 +300,15 @@ export default function ReportePresupuestos(props) {
       // Calcular la suma total de cada serie
       const sumaIngresos = calcularSumaSerie(series[0]);
       const sumaEgresos = calcularSumaSerie(series[1]);
-      const sumaTotalEstimacion = lineasEstimacion.reduce((total, linea) => total + linea.subtotal, 0);
+      // const sumaTotalEstimacion = lineasEstimacion.reduce((total, linea) => total + linea.subtotal, 0);
+      const sumaTotalEstimacion = lineasEstimacion.reduce((total, linea) => {
+        const monto = convertirMoneda(linea.subtotal, linea.nombreMoneda);
+        return total + monto;
+      }, 0);
       const total = (sumaIngresos + sumaEgresos);
       const egresosConvertidos = -1.00*sumaEgresos;
       const performance = (sumaIngresos + sumaEgresos) / sumaIngresos * 100;
-      const monedaSymbol = isSelected ? "S/ " : "$ "
+      const monedaSymbol = isSelected ? "S/ " : "$ ";
       const [isExportLoading, setIsExportLoading] = useState(false);
       async function handlerExport() {
         try {

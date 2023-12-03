@@ -42,6 +42,7 @@ const s3 = new S3Client({
         return idArchivo;
     } catch (error) {
         console.log(error);
+        return -1;
     }
 }
 
@@ -95,6 +96,7 @@ async function descargarArchivo(req, res, next) {
         });
     } catch (error) {
         console.error("Error generating signed URL:", error);
+        next(error);
     }
 }
 

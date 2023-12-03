@@ -649,7 +649,7 @@ function ReporteEntregables(props) {
     //         </div>
     //     );
     // }
-    
+    const [isExportLoading, setIsExportLoading] = useState(false);
     async function handlerExport() {
         const reportId = decodeURIComponent(props.params.reportId);
         try {
@@ -667,18 +667,28 @@ function ReporteEntregables(props) {
                     responseType: "blob", // Important for binary data
                 }
             );
+            const today = new Date();
+
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
+            let year = today.getFullYear();
+
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+
+            // Create the formatted date string
             let formattedDate = `${day}_${month}_${year}`;
 
-                const fileName =
-                    projectName.split(" ").join("") +
-                    "_" +
-                    formattedDate +
-                    ".xlsx";
-                console.log(fileName);
-                saveAs(response.data, fileName);
+            const fileName =
+                projectName.split(" ").join("") +
+                "_" +
+                formattedDate +
+                ".xlsx";
+            console.log(fileName);
+            saveAs(response.data, fileName);
 
-                setIsExportLoading(false);
-                toast.success("Se exporto el cronograma con exito");
+            setIsExportLoading(false);
+            toast.success("Se exporto el cronograma con exito");
             
         } catch (error) {
             setIsExportLoading(false);

@@ -8,6 +8,7 @@ import ColumnRetro from "@/components/dashboardComps/projectComps/retrospectivas
 import axios from "axios";
 import { Toaster, toast } from "sonner";
 axios.defaults.withCredentials = true;
+import {SessionContext} from "@/app/dashboard/layout";
 
 function RetrospectivaView(props) {
     const router = useRouter();
@@ -21,6 +22,8 @@ function RetrospectivaView(props) {
     const [editMode, setEditMode] = useState(false);
     const [idLineaRetrospectiva, setIdLineaRetrospectiva] = useState(null);
     const [mainItemsList, setMainItemsList] = useState([]);
+
+    const { sessionData } = useContext(SessionContext);
 
     // ---------------
     // Conteo de items
@@ -141,7 +144,7 @@ function RetrospectivaView(props) {
                             {"Retrospectiva "}
                         </HeaderWithButtonsSamePage>
 
-                        {editMode === false && (
+                        {sessionData.rolNameInProject !== "Supervisor" && editMode === false && (
                             <Button
                                 onPress={handleEdit}
                                 color="primary"
