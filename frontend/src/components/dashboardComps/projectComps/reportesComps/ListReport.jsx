@@ -213,7 +213,7 @@ function ReporteCard({ report, onClick, refresh }) {
                     {/* {props.tipo === "Presupuesto" && (
                             <BudgetIcon />
                         )} */}
-                    {report.idHerramienta === 1 && <Cronograma />}
+                    {report.idHerramienta === 4 && <Cronograma />}
                     {report.idHerramienta === 2 && <TaskIcon />}
                     {report.idHerramienta === 13 && <BudgetIcon />}
                     {report.idHerramienta === 5 && <Risks />}
