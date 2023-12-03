@@ -1408,6 +1408,23 @@ function reporteTareas(props) {
         };
 
         console.log(JSON.stringify(jsonToPrint, null, 2));
+        axios
+        .post(
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/subirReporteTareasJSON",
+                jsonToPrint
+        )
+        .then((response) => {
+            // Manejar la respuesta de la solicitud POST
+            console.log("Respuesta del servidor:", response.data);
+            console.log("Guardado del reporte correcto");
+            router.back();
+            // Realizar acciones adicionales si es necesario
+        })
+        .catch((error) => {
+            // Manejar errores si la solicitud POST falla
+            console.error("Error al realizar la solicitud POST:", error);
+        });
     }
 
     function handleSetSelectedTask(task) {
