@@ -5,6 +5,7 @@ import Link from "next/link";
 import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
 import axios from "axios";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 import {
     Input,
@@ -457,8 +458,30 @@ export default function MatrizDeComunicaciones(props) {
     return (
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto /
-                MatrizDeComunicaciones
+            <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/MatrizDeComunicaciones"
+                        }
+                        text={"Matriz de Comunicaciones"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="matrizComunicaciones">
                 <div className="titleComunicaciones h-auto my-4 text-center dark:text-white">
