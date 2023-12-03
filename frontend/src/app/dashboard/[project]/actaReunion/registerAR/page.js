@@ -148,7 +148,6 @@ export default function crearActaReunion(props) {
     const { sessionData } = useContext(SessionContext);
     const { sendNotification } = useContext(NotificationsContext);
 
-
     // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -576,8 +575,6 @@ export default function crearActaReunion(props) {
                 Crear Acta de Reunion
             </HeaderWithButtons>
 
-            
-
             <div className="flex flex-col gap-4">
                 <p className="text-md text-slate-500 ">
                     Con esta opcion podras usar nuestra plantilla (o la tuya)
@@ -660,7 +657,11 @@ export default function crearActaReunion(props) {
                         <Button
                             className="text-white font-medium"
                             color="primary"
-                            startContent={isPlantillaDownloadLoading ? null : <DownloadIcon />}
+                            startContent={
+                                isPlantillaDownloadLoading ? null : (
+                                    <DownloadIcon />
+                                )
+                            }
                             onPress={() => {
                                 downloadPlantillaAC();
                             }}
@@ -670,7 +671,29 @@ export default function crearActaReunion(props) {
                         </Button>
                     </div>
                     <FileDrop setFile={setMeetingFile} />
-                    <div className="flex justify-end mt-2">
+                    <div className="flex justify-end mt-2 gap-2">
+                        <Modal
+                            nameButton="Descartar"
+                            textHeader="Descartar Acta de Reunión"
+                            textBody="¿Seguro que quiere descartar esta acta de reunión?"
+                            colorButton="w-36 bg-slate-100 text-black"
+                            oneButton={false}
+                            isLoading={isLoading}
+                            secondAction={async () => {
+                                setIsLoading(true);
+                                router.push(
+                                    "/dashboard/" +
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/actaReunion"
+                                );
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                return true;
+                            }}
+                        />
                         <Modal
                             nameButton="Guardar"
                             textHeader="Registrar Acta de Reunión"

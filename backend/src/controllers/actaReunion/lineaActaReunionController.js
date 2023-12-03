@@ -102,11 +102,22 @@ async function listarXIdLineaActaReunion(req,res,next){
 
 async function modificar(req,res,next){
     console.log(req.file);
-    const {idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo} = req.body;
+    const {idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo,idArchivo,hasFileBeenChanged} = req.body;
     try {
-        const idArchivo = await fileController.subirArchivo(req.file);
+        let nuevoIdArchivo = idArchivo;
+        console.log(req.body);
+        if(parseInt(hasFileBeenChanged)===1){
+            console.log("subiendo nuevo archivo");
+            nuevoIdArchivo = await fileController.subirArchivo(req.file);
+            if(nuevoIdArchivo === -1){
+                return res.status(400).json({ message: "Error al subir archivo" });
+            }
+        }else{
+            nuevoIdArchivo = idArchivo;
+        }
+        
         const query = `CALL MODIFICAR_LINEA_ACTA_REUNION(?,?,?,?,?,?,?);`;
-        const [result] = await connection.query(query,[idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo,idArchivo]);
+        const [result] = await connection.query(query,[idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo,nuevoIdArchivo]);
 
         res.status(200).json({
             message: "Linea acta reunion modificada"});

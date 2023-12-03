@@ -21,7 +21,7 @@ function SettingsLayout({children, params}) {
         "/dashboard/configuracion";
 
     return (
-        <div className="w-[100%] min-h-full flex justify-center bg-mainBackground max-h-full h-full overflow-hidden">
+        <div className="w-[100%] min-h-full flex justify-center bg-mainBackground overflow-y-auto">
             <div className="flex flex-col w-[100%] max-w-[1200px] h-[100%] p-[2.5rem] space-y-7 font-[Montserrat] ">
                 <div className="flex flex-col">
                     <p className="text-4xl font-semibold text-mainHeaders">
