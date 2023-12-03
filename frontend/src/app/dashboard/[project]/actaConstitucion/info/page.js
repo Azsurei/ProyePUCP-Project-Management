@@ -761,7 +761,9 @@ export default function Info(props) {
                                     <NextUIButton color="secondary">Plantillas</NextUIButton>
                                 </DropdownTrigger>
                                 <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
-                                    <DropdownItem key="verPlantillasAC" startContent={<ContentPasteGoIcon />} onPress={onModalPlantillas} color="secondary">
+                                    <DropdownItem key="verPlantillasAC" startContent={<ContentPasteGoIcon />} onPress={() => { DataTable();
+                                     onModalPlantillas(); }}
+                                    color="secondary">
                                         Ver Plantillas
                                     </DropdownItem>
                                     <DropdownItem key="guardarPlantillasAC" startContent={<SaveAsIcon />} onPress={onSaveModalPlantilla} color="secondary">
