@@ -4808,7 +4808,7 @@ CREATE PROCEDURE LIMPIAR_DETALLEAC_PLANTILLA_ACTACONSTITUCION(
 )
 BEGIN
     UPDATE DetalleAC SET activo = 0 WHERE idActaConstitucion = _idActaConstitucion;
-    UPDATE DetalleAC SET detalle = null WHERE idActaConstitucion = _idActaConstitucion;
+    UPDATE DetalleAC SET detalle = '' WHERE idActaConstitucion = _idActaConstitucion;
 END$
 
 DROP PROCEDURE IF EXISTS GUARDAR_PLANTILLA_KANBAN;
