@@ -34,6 +34,7 @@ import { MenuIcon } from "@/../public/icons/MenuIcon";
 import { EyeFilledIcon } from "@/../public/icons/EyeFilledIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { DeleteDocumentIcon } from "public/icons/deleteDocument";
+import {EditMode } from "@/../public/icons/EditMode";
 import ModalCambiarNombre from "./ModalCambiarNombre";
 function ReporteCard({ report, onClick, refresh }) {
     console.log("Herramienta reporte", report.idHerramienta);
@@ -78,7 +79,7 @@ function ReporteCard({ report, onClick, refresh }) {
         };
     return (
         <li
-            className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10 max-w-400"
+            className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10 min-w-500"
             // onClick={onClick}
         >
             <div className="flex flex-col justify-between">
@@ -163,7 +164,7 @@ function ReporteCard({ report, onClick, refresh }) {
                       <DropdownItem
                         key="reporte"
                         description="Cambia el nombre del reporte"
-                        startContent={<PlusIcon size={24} />}
+                        startContent={<EditMode size={24} />}
                         onPress={() => toggleModal()}
                       >
                         Cambiar nombre
