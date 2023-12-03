@@ -31,6 +31,7 @@ import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ModalEliminarAR from "@/components/dashboardComps/projectComps/actaReunionComps/ModalEliminarAR";
+import EmptyBoxIcon from "@/components/EmptyBoxIcon";
 
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
@@ -43,7 +44,7 @@ export default function ActaReunion(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [idActa, setIdActa] = useState(null); // Use camelCase for consistency
 
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -235,6 +236,9 @@ export default function ActaReunion(props) {
             archivo: "archivo 1",
         },
     ];
+
+    const [idLineaToDelete, setIdLineaToDelete] = useState(null);
+
     const newHref =
         "/dashboard/" +
         projectName +
@@ -244,16 +248,19 @@ export default function ActaReunion(props) {
     const actualHref =
         "/dashboard/" + projectName + "=" + projectId + "/actaReunion";
     return (
-        <div className="min-h-full p-[2.5rem]">
+        <div className="min-h-full flex  flex-col p-[2.5rem]">
             <ModalEliminarAR
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
+                idLineaToDelete={idLineaToDelete}
+                setIdLineaToDelete={setIdLineaToDelete}
+                deleteActaReunion={deleteActaReunion}
             />
 
             <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={true}
-                handlerAddNew={()=>{
+                handlerAddNew={() => {
                     router.push(newHref);
                 }}
                 breadcrump={`Inicio / Proyectos / ${projectName} / Acta de Reunión`}
@@ -261,120 +268,147 @@ export default function ActaReunion(props) {
             >
                 Acta de Reunión
             </HeaderWithButtonsSamePage>
-            
-            <div className="flex flex-col gap-2 mt-3">
-                {reuniones.map((meeting) => {
-                    return (
-                        <div
-                            key={meeting.idLineaActaReunion}
-                            className="border border-gray-300 p-4 pr-8 rounded-md shadow-sm flex flex-row items-center"
-                        >
-                            <div className="flex flex-col w-[50%] max-w-[50%] gap-0">
-                                <p className="font-semibold text-xl truncate">
-                                    {meeting.nombreReunion}
-                                </p>
-                                <p className="truncate">
-                                    <span className="font-medium">Motivo:</span>{" "}
-                                    {meeting.motivo}
-                                </p>
-                                <div className="flex flex-row items-center gap-2">
-                                    <p className="truncate font-medium">
-                                        Convocada por:{" "}
+
+            <div className="flex flex-col gap-2 mt-3 flex-1">
+                {reuniones.length !== 0 ? (
+                    reuniones.map((meeting) => {
+                        return (
+                            <div
+                                key={meeting.idLineaActaReunion}
+                                className="border border-gray-300 p-4 pr-8 rounded-md shadow-sm flex flex-row items-center"
+                            >
+                                <div className="flex flex-col w-[50%] max-w-[50%] gap-0">
+                                    <p className="font-semibold text-xl truncate">
+                                        {meeting.nombreReunion}
                                     </p>
-                                    <div className="flex flex-row items-center gap-2 truncate">
-                                        <Avatar
-                                            src={meeting.imgLink}
-                                            size="sm"
-                                        />
+                                    <p className="truncate">
+                                        <span className="font-medium">
+                                            Motivo:
+                                        </span>{" "}
+                                        {meeting.motivo}
+                                    </p>
+                                    <div className="flex flex-row items-center gap-2">
+                                        <p className="truncate font-medium">
+                                            Convocada por:{" "}
+                                        </p>
+                                        <div className="flex flex-row items-center gap-2 truncate">
+                                            <Avatar
+                                                src={meeting.imgLink}
+                                                size="sm"
+                                            />
+                                            <p>
+                                                {meeting.nombres === null
+                                                    ? "Sin convocante"
+                                                    : meeting.nombres}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p className="truncate font-medium">
+                                        Archivo:{" "}
+                                        <span
+                                            className="underline font-medium text-primary cursor-pointer"
+                                            onClick={() => {
+                                                downloadFile(
+                                                    meeting.idArchivo,
+                                                    meeting.nombreArchivo
+                                                );
+                                            }}
+                                        >
+                                            {meeting.nombreArchivo}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div className="flex flex-row  gap-4 flex-1 justify-start">
+                                    <div className="flex flex-col items-center">
+                                        <p className="font-semibold text-md">
+                                            Fecha de reunion:
+                                        </p>
                                         <p>
-                                            {meeting.nombres === null
-                                                ? "Sin convocante"
-                                                : meeting.nombres}
+                                            {meeting.fechaReunion ===
+                                            "0000-00-00"
+                                                ? "Sin fecha registrada "
+                                                : dbDateToDisplayDate(
+                                                      meeting.fechaReunion
+                                                  )}
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <p className="font-semibold text-md">
+                                            Hora registrada:
+                                        </p>
+                                        <p>
+                                            {meeting.horaReunion === "00:00:00"
+                                                ? "Sin hora registrada "
+                                                : meeting.horaReunion}
                                         </p>
                                     </div>
                                 </div>
-                                <p className="truncate font-medium">
-                                    Archivo:{" "}
-                                    <span
-                                        className="underline font-medium text-primary cursor-pointer"
-                                        onClick={() => {
-                                            downloadFile(
-                                                meeting.idArchivo,
-                                                meeting.nombreArchivo
-                                            );
-                                        }}
-                                    >
-                                        {meeting.nombreArchivo}
-                                    </span>
-                                </p>
+                                <Dropdown aria-label="droMenTareasMain">
+                                    <DropdownTrigger aria-label="droMenTareasTrigger">
+                                        <Button
+                                            size="md"
+                                            radius="sm"
+                                            variant="flat"
+                                            color="default"
+                                            className="ButtonMore"
+                                        >
+                                            <p className="lblVerOpciones">
+                                                Ver opciones
+                                            </p>
+                                            {/* <VerticalDotsIcon className="icnVerOpciones text-black-300" /> */}
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu aria-label="droMenTareas">
+                                        <DropdownItem
+                                            aria-label="edit"
+                                            onClick={() => {
+                                                router.push(
+                                                    "/dashboard/" +
+                                                        projectName +
+                                                        "=" +
+                                                        projectId +
+                                                        "/actaReunion/" +
+                                                        meeting.idLineaActaReunion
+                                                );
+                                            }}
+                                        >
+                                            Editar
+                                        </DropdownItem>
+                                        <DropdownItem
+                                            aria-label="delete"
+                                            className="text-danger"
+                                            color="danger"
+                                            onClick={() => {
+                                                setIdLineaToDelete(
+                                                    meeting.idLineaActaReunion
+                                                );
+                                                onOpen();
+                                            }}
+                                        >
+                                            Eliminar
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
                             </div>
-                            <div className="flex flex-row  gap-4 flex-1 justify-start">
-                                <div className="flex flex-col items-center">
-                                    <p className="font-semibold text-md">
-                                        Fecha de reunion:
-                                    </p>
-                                    <p>
-                                        {meeting.fechaReunion === "0000-00-00"
-                                            ? "Sin fecha registrada "
-                                            : dbDateToDisplayDate(
-                                                  meeting.fechaReunion
-                                              )}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    <p className="font-semibold text-md">
-                                        Hora registrada:
-                                    </p>
-                                    <p>
-                                        {meeting.horaReunion === "00:00:00"
-                                            ? "Sin hora registrada "
-                                            : meeting.horaReunion}
-                                    </p>
-                                </div>
-                            </div>
-                            <Dropdown aria-label="droMenTareasMain">
-                                <DropdownTrigger aria-label="droMenTareasTrigger">
-                                    <Button
-                                        size="md"
-                                        radius="sm"
-                                        variant="flat"
-                                        color="default"
-                                        className="ButtonMore"
-                                    >
-                                        <p className="lblVerOpciones">
-                                            Ver opciones
-                                        </p>
-                                        {/* <VerticalDotsIcon className="icnVerOpciones text-black-300" /> */}
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu aria-label="droMenTareas">
-                                    <DropdownItem
-                                        aria-label="edit"
-                                        onClick={() => {
-                                            router.push("/dashboard/" +
-                                            projectName +
-                                            "=" +
-                                            projectId +
-                                            "/actaReunion/"+meeting.idLineaActaReunion);
-                                        }}
-                                    >
-                                        Editar
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        aria-label="delete"
-                                        className="text-danger"
-                                        color="danger"
-                                        onClick={() => {
-                                            onOpen();
-                                        }}
-                                    >
-                                        Eliminar
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
-                    );
-                })}
+                        );
+                    })
+                ) : (
+                    <div className="flex-1 flex justify-center items-center flex-col gap-3">
+                        <p className="m-0 font-medium text-xl">
+                            No hay actas de reunión registradas
+                        </p>
+                        <EmptyBoxIcon width={200} height={200} />
+                        <Button
+                            className="bg-F0AE19 text-white font-medium"
+                            size="lg"
+                            onPress={() => {
+                                router.push(newHref);
+                            }}
+                        >
+                            Empieza ahora
+                        </Button>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -416,5 +450,30 @@ export default function ActaReunion(props) {
             error: "Error al descargar archivo",
             position: "bottom-right",
         });
+    }
+
+    async function deleteActaReunion(idLinea) {
+        try {
+            const url =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion";
+
+            const response = await axios.delete(url, {
+                data: {
+                    idLineaActaReunion: idLinea,
+                },
+            });
+
+            if (response.status === 200) {
+                const nuevasReuniones = reuniones.filter(
+                    (reunion) => reunion.idLineaActaReunion !== idLinea
+                );
+                setReuniones(nuevasReuniones);
+            }
+            return 1;
+        } catch (e) {
+            console.log(e);
+            return 0;
+        }
     }
 }

@@ -44,9 +44,17 @@ async function listarXIdActaReunion(req,res,next){
 async function eliminarXIdLineaActaReunion(req,res,next){
     const {idLineaActaReunion} = req.body;
     try {
-        await funcEliminarXIdLineaActaReunion(idLineaActaReunion);
-        res.status(200).json({
-            message: "Linea acta reunion eliminada"});
+        const response = await funcEliminarXIdLineaActaReunion(idLineaActaReunion);
+
+        if(response === 1){
+            res.status(200).json({
+                message: "Linea acta reunion eliminada"});
+        }
+        else{
+            res.status(400).json({
+                message: "Error al eliminar linea acta reunion"});
+        }
+        
     } catch (error) {
         next(error);
     }
@@ -59,6 +67,7 @@ async function funcEliminarXIdLineaActaReunion(idLineaActaReunion){
         return 1;
     } catch (error) {
         console.log(error);
+        return 0;
     }
 }
 
@@ -72,6 +81,8 @@ async function listarXIdLineaActaReunion(req,res,next){
         if (!lineaActaReunion) {
             return res.status(400).json({ message: "El ID de la línea del acta de reunión debe ser valido y debe estar activo" });
         }
+        const extension = lineaActaReunion.nombreReal.slice(lineaActaReunion.nombreReal.lastIndexOf('.'));
+        lineaActaReunion.extension = extension;
         //lineaActaReunion.comentarios = await comentarioReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
         //lineaActaReunion.participantesXReunion = await participanteXReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
         //lineaActaReunion.temasReunion = await temaReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);

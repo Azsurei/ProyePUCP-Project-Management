@@ -1,3 +1,8 @@
+"use client"
+
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 import {
     Button,
     Modal,
@@ -6,12 +11,17 @@ import {
     ModalFooter,
     ModalHeader,
 } from "@nextui-org/react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ModalEliminarAR({
     isOpen,
     onOpenChange,
-    //eliminarTarea,
+    idLineaToDelete,
+    setIdLineaToDelete,
+    deleteActaReunion
 }) {
+    const [isLoading, setIsLoading] = useState(false);  
     return (
         <Modal
             isOpen={isOpen}
@@ -26,9 +36,24 @@ export default function ModalEliminarAR({
         >
             <ModalContent>
                 {(onClose) => {
-                    const finalizarModal = () => {
-                        //eliminarTarea();
-                        onClose();
+                    const finalizarModal = async () => {
+                        setIsLoading(true);
+                        const response = await deleteActaReunion(idLineaToDelete);
+
+                        if(response === 1){
+                            toast.success("Acta de reunion eliminada con exito");
+                            setIdLineaToDelete(null);
+                            setIsLoading(false);
+                            onClose();
+                            return;
+                        }
+                        else{
+                            toast.error("Error al eliminar acta de reunion");
+                            setIdLineaToDelete(null);
+                            setIsLoading(false);
+                            onClose();
+                            return;
+                        }
                     };
                     return (
                         <>
@@ -44,7 +69,11 @@ export default function ModalEliminarAR({
                                 <Button
                                     color="danger"
                                     variant="light"
-                                    onPress={onClose}
+                                    onPress={()=>{
+                                        setIdLineaToDelete(null);
+                                        onClose();
+                                    }}
+                                    isDisabled={isLoading}
                                 >
                                     Cancelar
                                 </Button>
@@ -52,6 +81,7 @@ export default function ModalEliminarAR({
                                     color="primary"
                                     onPress={finalizarModal}
                                     className="bg-generalBlue "
+                                    isLoading={isLoading}
                                 >
                                     Aceptar
                                 </Button>
@@ -62,4 +92,6 @@ export default function ModalEliminarAR({
             </ModalContent>
         </Modal>
     );
+
+    
 }

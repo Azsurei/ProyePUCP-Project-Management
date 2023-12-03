@@ -24,6 +24,7 @@ import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/
 import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 import { SessionContext } from "@/app/dashboard/layout";
 import EmptyBoxIcon from "@/components/EmptyBoxIcon";
+import { saveAs } from "file-saver";
 axios.defaults.withCredentials = true;
 
 const mockUsers = [
@@ -666,7 +667,18 @@ function ReporteEntregables(props) {
                     responseType: "blob", // Important for binary data
                 }
             );
+            let formattedDate = `${day}_${month}_${year}`;
 
+                const fileName =
+                    projectName.split(" ").join("") +
+                    "_" +
+                    formattedDate +
+                    ".xlsx";
+                console.log(fileName);
+                saveAs(response.data, fileName);
+
+                setIsExportLoading(false);
+                toast.success("Se exporto el cronograma con exito");
             
         } catch (error) {
             setIsExportLoading(false);

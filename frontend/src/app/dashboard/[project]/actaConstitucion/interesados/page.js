@@ -271,7 +271,7 @@ export default function Interesados(props) {
     };
 
     // Variables adicionales
-    const pages = Math.ceil(interesados.length / rowsPerPage);
+    const [pages, setPages] = useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)

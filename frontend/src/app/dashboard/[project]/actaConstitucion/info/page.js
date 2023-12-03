@@ -133,6 +133,7 @@ export default function Info(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+
     // Manejando la carga de la lista de detalles de acta de constitucion
     const [details, setDetails] = useState([]);
     const [detailEdited, setDetailsEdited] = useState([]);
@@ -844,9 +845,10 @@ export default function Info(props) {
                         <div className="project-card__title dark:text-white">Proyecto</div>
                         <Textarea
                             variant={isEditActive ? "bordered" : "flat"}
-                            value={nombreProyecto}
-                            onValueChange={setNombreProyecto}
-                            disabled={!isEditActive} // Disable when not in edit mode
+                            value={projectName}
+                            isDisabled
+                            minRows={1}
+                            size="sm"
                         ></Textarea>
                     </div>
                     <div className="flex flex-col flex-1 mx-3">
@@ -856,6 +858,8 @@ export default function Info(props) {
                             value={empresa}
                             onValueChange={setEmpresa}
                             disabled={!isEditActive} // Disable when not in edit mode
+                            minRows={1}
+                            size="sm"
                         ></Textarea>
                     </div>
                     <div className="flex flex-col flex-1 ml-3">
@@ -876,6 +880,8 @@ export default function Info(props) {
                             value={cliente}
                             onValueChange={setCliente}
                             disabled={!isEditActive}
+                            minRows={1}
+                            size="sm"
                         ></Textarea>
                     </div>
                     <div className="flex flex-col flex-1 mx-3">
@@ -885,6 +891,8 @@ export default function Info(props) {
                             value={patrocinador}
                             onValueChange={setPatrocinador}
                             disabled={!isEditActive}
+                            minRows={1}
+                            size="sm"
                         ></Textarea>
                     </div>
                     <div className="flex flex-col flex-1 ml-3">
@@ -894,6 +902,8 @@ export default function Info(props) {
                             value={gerente}
                             onValueChange={setGerente}
                             disabled={!isEditActive}
+                            minRows={1}
+                            size="sm"
                         ></Textarea>
                     </div>
                 </div>
