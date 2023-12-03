@@ -641,7 +641,8 @@ function ReporteEntregables(props) {
                 </HeaderWithButtonsSamePage>
                 <div className="flex flex-col flex-1 justify-center items-center gap-3">
                     <p className="m-0 font-medium text-xl">
-                        Este proyecto no cuenta con entregables, no hay nada que mostrar
+                        Este proyecto no cuenta con entregables, no hay nada que
+                        mostrar
                     </p>
                     <EmptyBoxIcon width={200} height={200} />
                 </div>
@@ -757,7 +758,7 @@ function ReporteEntregables(props) {
 
                 <div className="w-[85%] flex flex-col">
                     <div className="flex flex-row h-full gap-5">
-                        <div className="w-[70%] text-lg">
+                        <div className="w-[70%] text-lg flex flex-col">
                             <div className="flex flex-row items-center gap-x-4 mb-3">
                                 <p className="text-3xl text-mainHeaders font-semibold">
                                     {entregableName}
@@ -769,11 +770,11 @@ function ReporteEntregables(props) {
                                     radius="lg"
                                     className=" min-h-[40px] text-lg"
                                 >
-                                    {entregableProgress < 1 && "No iniciado"}
-                                    {entregableProgress > 1 &&
-                                        entregableProgress < 100 &&
+                                    {parseInt(entregableProgress) < 1 && "No iniciado"}
+                                    {parseInt(entregableProgress) > 1 &&
+                                        parseInt(entregableProgress) < 100 &&
                                         "En progreso"}
-                                    {entregableProgress === 100 && "Finalizado"}
+                                    {parseInt(entregableProgress) === 100 && "Finalizado"}
                                 </Chip>
                             </div>
 
@@ -795,7 +796,7 @@ function ReporteEntregables(props) {
                             </p>
 
                             <p className="text-gray-400">
-                                {"Descripcion: " + entregableDescripcion}
+                                {"Descripcion: " + (entregableDescripcion==="" ? "Sin descripcion" : entregableDescripcion)}
                             </p>
                             <div className="flex flex-row item-center gap-3 ">
                                 <p className="font-medium flex items-center">
@@ -835,18 +836,23 @@ function ReporteEntregables(props) {
                                 <p className="w-[20%]">FECHAS</p>
                             </div>
 
-                            <div className="flex flex-col space-y-1">
-                                {listTareas.map((tarea) => {
-                                    return (
-                                        <CardTareaDisplay
-                                            key={tarea.idTarea}
-                                            tarea={tarea}
-                                        />
-                                    );
-                                })}
-                                <div>
-                                    test
-                                </div>
+                            <div className="flex flex-col flex-1 space-y-1">
+                                {listTareas !== null &&
+                                listTareas.length !== 0 ? (
+                                    listTareas.map((tarea) => {
+                                        return (
+                                            <CardTareaDisplay
+                                                key={tarea.idTarea}
+                                                tarea={tarea}
+                                            />
+                                        );
+                                    })
+                                ) : (
+                                    <div className=" flex-1 text-slate-400 flex justify-center items-center">
+                                        No hay tareas asignadas a este
+                                        entregable
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div
@@ -864,8 +870,14 @@ function ReporteEntregables(props) {
                                 mb-3
                             "
                             >
-                                {chartData !== null && (
+                                {chartData !== null &&
+                                listTareas.length !== 0 ? (
                                     <PieChart data={chartData} />
+                                ) : (
+                                    <div className="flex justify-center items-center flex-1 text-slate-400">
+                                        {" "}
+                                        No hay datos
+                                    </div>
                                 )}
                             </div>
 
@@ -874,21 +886,32 @@ function ReporteEntregables(props) {
                                 pr-2 flex flex-col gap-y-2 pb-1
                             "
                             >
-                                {listContribuyentes.map((contribuyente) => {
-                                    return (
-                                        <CardContribuyente
-                                            key={contribuyente.idContribuyente}
-                                            contribuyente={contribuyente}
-                                            user={contribuyente.usuario}
-                                            equipo={contribuyente.equipo}
-                                            isEquipo={
-                                                contribuyente.usuario === null
-                                                    ? true
-                                                    : false
-                                            }
-                                        />
-                                    );
-                                })}
+                                {listContribuyentes !== null &&
+                                listContribuyentes.length !== 0 ? (
+                                    listContribuyentes.map((contribuyente) => {
+                                        return (
+                                            <CardContribuyente
+                                                key={
+                                                    contribuyente.idContribuyente
+                                                }
+                                                contribuyente={contribuyente}
+                                                user={contribuyente.usuario}
+                                                equipo={contribuyente.equipo}
+                                                isEquipo={
+                                                    contribuyente.usuario ===
+                                                    null
+                                                        ? true
+                                                        : false
+                                                }
+                                            />
+                                        );
+                                    })
+                                ) : (
+                                    <div className="flex-1 text-slate-400 flex justify-center items-center text-center">
+                                        No hay contribuyentes asignados a este
+                                        entregable
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -1116,20 +1139,27 @@ function ReporteEntregables(props) {
             }
             totalTasks++;
         });
-        const finalProgress = (finishedTasks / totalTasks) * 100;
-        const formattedProgress =
-            typeof finalProgress === "number"
-                ? finalProgress.toFixed(2)
-                : finalProgress;
-        setEntregableProgress(formattedProgress);
+        if (totalTasks !== 0) {
+            const finalProgress = (finishedTasks / totalTasks) * 100;
+            const formattedProgress =
+                typeof finalProgress === "number"
+                    ? finalProgress.toFixed(2)
+                    : finalProgress;
+            console.log("el progreso es " + formattedProgress);
+            setEntregableProgress(formattedProgress);
 
-        //assign colors
-        if (formattedProgress <= 10) setEntregableChipColor("danger");
-        if (formattedProgress > 10 && formattedProgress <= 50)
-            setEntregableChipColor("warning");
-        if (formattedProgress > 50 && formattedProgress < 100)
-            setEntregableChipColor("primary");
-        if (formattedProgress === 100) setEntregableChipColor("success");
+            //assign colors
+            if (parseInt(formattedProgress) <= 10) setEntregableChipColor("danger");
+            if (parseInt(formattedProgress) > 10 && parseInt(formattedProgress) <= 50)
+                setEntregableChipColor("warning");
+            if (parseInt(formattedProgress) > 50 && parseInt(formattedProgress) < 100)
+                setEntregableChipColor("primary");
+            if (parseInt(formattedProgress) === 100) setEntregableChipColor("success");
+            if (parseInt(formattedProgress) === 100) console.log("se asigno success");
+        } else {
+            setEntregableProgress(0);
+            setEntregableChipColor("default");
+        }
 
         setListContribuyentes(listaContribuyentes);
     }

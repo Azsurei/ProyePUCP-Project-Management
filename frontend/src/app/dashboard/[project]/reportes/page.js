@@ -197,7 +197,7 @@ export default function Reportes(props) {
     //esta sera la pantalla de vista de reportes generados y la pantalla para crear uno nuevo (seleccionar cual)
 
     return (
-        <div className="divHistorialReportes border">
+        <div className="divHistorialReportes ">
             {screenState === 0 && (
                 <div className="flex flex-col flex-1">
                     {/* <Breadcrumbs>

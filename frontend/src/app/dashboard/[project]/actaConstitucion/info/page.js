@@ -870,6 +870,15 @@ export default function Info(props) {
             )}
 
             <div className="fieldsBigContainer">
+                <div className="flex flex-row w-full border shadow-sm rounded-md p-3">
+                    <div className="flex flex-col flex-1">
+                        <p>Patrocinador</p>
+                        <Textarea variant={isEditActive ? "bordered" : "flat"}></Textarea>
+                    </div>
+                    <div className="flex flex-col flex-1">
+                    <p>Nombre proyecto</p>
+                    </div>
+                </div>
                 {detailEdited.map((detail) => (
                     <DetailCard
                         key={detail.idDetalle}
