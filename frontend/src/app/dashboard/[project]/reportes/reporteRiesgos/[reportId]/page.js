@@ -741,6 +741,7 @@ export default function ReporteRiesgos(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    const [isExportLoading, setIsExportLoading] = useState(false);
     async function handlerExport() {
         try {
             setIsExportLoading(true);
@@ -788,7 +789,7 @@ export default function ReporteRiesgos(props) {
                                     </Button>
                                 )}
                                 {!isNewReport && (
-                                    <Button color="success" className="text-white" onClick={async () => {
+                                    <Button color="success" className="text-white" onPress={async () => {
                                         await handlerExport();
                                     }}>
                                       Exportar

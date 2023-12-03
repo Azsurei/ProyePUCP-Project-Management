@@ -308,7 +308,7 @@ export default function ReportePresupuestos(props) {
                     responseType: "blob", // Important for binary data
                 }
             );
-
+            console.log("Respuesta del servidor:", response);
             
         } catch (error) {
             setIsExportLoading(false);
@@ -340,7 +340,7 @@ export default function ReportePresupuestos(props) {
                                     </Button>
                                 )}
                                 {!isNewReport && (
-                                    <Button color="success" className="text-white" onClick={async () => {
+                                    <Button color="success" className="text-white" onPress={async () => {
                                       await handlerExport();
                                   }}>
                                       Exportar

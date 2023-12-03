@@ -649,6 +649,7 @@ function ReporteEntregables(props) {
             </div>
         );
     }
+    const [isExportLoading, setIsExportLoading] = useState(false);
     async function handlerExport() {
         const reportId = decodeURIComponent(props.params.reportId);
         try {
@@ -728,7 +729,7 @@ function ReporteEntregables(props) {
                     <Button
                         color="success"
                         className="text-white font-semibold"
-                        onClick={async () => {
+                        onPress={async () => {
                             await handlerExport();
                         }}
                         startContent={<ExportIcon />}
