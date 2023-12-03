@@ -502,7 +502,7 @@ export default function RootLayout({ children, params }) {
                 </Modal>
             )}
 
-            {/* <HeaderWithButtonsSamePage
+             {/* <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={false}
                 //handlerAddNew={handlerGoToNew}
@@ -513,7 +513,7 @@ export default function RootLayout({ children, params }) {
                 //btnText={"Nueva tarea"}
             >
                 Backlog
-            </HeaderWithButtonsSamePage> */}
+            </HeaderWithButtonsSamePage>  */}
             <Breadcrumbs>
                 <BreadcrumbsItem href="/" text="Inicio" />
                 <BreadcrumbsItem href="/dashboard" text="Proyectos" />
