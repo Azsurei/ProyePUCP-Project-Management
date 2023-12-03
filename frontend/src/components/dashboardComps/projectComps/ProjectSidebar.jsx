@@ -492,14 +492,14 @@ function ProjectSidebar(props) {
                         })}
                     </ul>
 
-                    {props.projectIdRole === 1 && (
+                    {(props.projectIdRole === 1 || props.projectIdRole === 2) && (
                         <Link href={stringBase + "/settings/general"}>
                             <div
                                 className="text-medium font-medium
-                    bg-slate-300 dark:bg-slate-600
-                    flex justify-center
-                    rounded-md py-[.3rem]
-                    cursor-pointer"
+                bg-slate-300 dark:bg-slate-600
+                flex justify-center
+                rounded-md py-[.3rem]
+                cursor-pointer"
                             >
                                 Configuracion de proyecto
                             </div>
