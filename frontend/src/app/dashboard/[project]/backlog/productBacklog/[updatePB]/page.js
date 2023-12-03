@@ -803,7 +803,17 @@ export default function ProductBacklogUpdate(props) {
                                 />
                             </div>
                         </div>
+                        
                     )}
+                    {
+                        !editMode && (
+                            <>
+                                <Button className="w-36 bg-blue-950 text-white" onClick={() => router.back()}>
+                                    Aceptar
+                                </Button>
+                            </>
+                        )
+                    }
                 </div>
                 {modal && (
                     <PopUpEpica
