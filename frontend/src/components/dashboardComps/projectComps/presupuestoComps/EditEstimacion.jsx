@@ -25,6 +25,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
     const onSearchChange = (value) => {
         setFilterValue(value);
     };
+    
 
     const [filterValue, setFilterValue] = React.useState("");
 
@@ -83,6 +84,9 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
     const [validFecha, setValidFecha] = useState(true);
     const msgEmptyField = "Este campo no puede estar vacio";
     
+    useEffect(() => {
+        refresh();
+    }, [activeRefresh]);
 
     useEffect(() => {
         setMonto(tarifaEstimacion);
@@ -129,11 +133,14 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
             // Resolve the promise with the response data
             console.log("Respuesta del servidor:", response.data);
             console.log("Actualización correcta");
-            const handleRefresh = async () => {
-              refresh();
-              console.log("refreshed");
-            };
-            handleRefresh();
+            // refresh();
+            // const handleRefresh = async () => {
+            //   refresh();
+            //   console.log("refreshed");
+            // };
+            // handleRefresh();
+            
+            setactiveRefresh(true);
             resolve(response.data);
           })
           .catch((error) => {
@@ -144,14 +151,18 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
         });
       };
       
-
+    // useEffect(() => {
+    //     refresh();
+    // }, [activeRefresh]);  
 
     const editarLineaEstimacion = async () => {
+        
         try {
             toast.promise(onSubmit, {
                 loading: "Editando Estimación...",
                 success: (data) => {
                     //DataTable();
+                    
                     return "La estimación se edutó con éxito!";
                     
                 },
@@ -531,6 +542,7 @@ export default function EditEstimacion({modal, idLineaEstimacion, descripcionEst
                                                         color="primary"
                                                         onPress={() => {
                                                             editarLineaEstimacion();
+                                                            
                                                             onClose();
                                                         }}
                                                         

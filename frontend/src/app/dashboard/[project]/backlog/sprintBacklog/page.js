@@ -6,7 +6,12 @@ import { SessionContext } from "../../../layout";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
+import {
+    dbDateToDisplayDate,
+    dbDateToInputDate,
+    inputDateToDisplayDate,
+    displayDateToInputDate,
+} from "@/common/dateFunctions";
 import { toast, Toaster } from "sonner";
 
 import {
@@ -385,12 +390,13 @@ export default function SprintBacklog(props) {
     useEffect(() => {
         if (sessionData) {
             setEditingAccess(
-                sessionData.rolInProject === 3 // 3 === Miembro
-                || sessionData.rolInProject === 1 // 1 === Jefe de proyecto
+                sessionData.rolInProject === 3 || // 3 === Miembro
+                    sessionData.rolInProject === 1 // 1 === Jefe de proyecto
             );
         }
     }, [sessionData]);
 
+    console.log(sprints);
     // Componente
     return (
         <>
@@ -403,7 +409,7 @@ export default function SprintBacklog(props) {
                         1 && (
                         <Button
                             radius="sm"
-                            className="bg-[#172B4D] text-white text-md"
+                            className="roboto bg-[#172B4D] text-white text-md"
                             onPress={() => {
                                 const selectedSprint = sprints.find(
                                     (sprint) => sprint.estado === 2
@@ -440,10 +446,14 @@ export default function SprintBacklog(props) {
                                 >
                                     <div className="px-10">
                                         <div className="flex flex-row items-center justify-between">
-                                            <p>
-                                                Descripción:{" "}
-                                                {sprint.descripcion}
-                                            </p>
+                                            {sprint.descripcion !== "" ? (
+                                                <p>
+                                                    Descripción:{" "}
+                                                    {sprint.descripcion}
+                                                </p>
+                                            ) : (
+                                                <p>No hay descripción</p>
+                                            )}
                                             <div className="flex flex-row gap-4">
                                                 <Button
                                                     radius="sm"
@@ -521,7 +531,7 @@ export default function SprintBacklog(props) {
                     <h3 className="montserrat text-[#172B4D] dark:text-white text-2xl font-semibold">
                         Sprints del proyecto
                     </h3>
-                    <div className="flex flex-row gap-4">
+                    <div className="roboto flex flex-row gap-4">
                         <Button
                             radius="sm"
                             className="text-md"
@@ -564,10 +574,14 @@ export default function SprintBacklog(props) {
                                 >
                                     <div className="px-10">
                                         <div className="flex flex-row items-center justify-between">
-                                            <p>
-                                                Descripción:{" "}
-                                                {sprint.descripcion}
-                                            </p>
+                                            {sprint.descripcion !== "" ? (
+                                                <p>
+                                                    Descripción:{" "}
+                                                    {sprint.descripcion}
+                                                </p>
+                                            ) : (
+                                                <p>No hay descripción</p>
+                                            )}
                                             <div className="flex flex-row gap-4">
                                                 <Button
                                                     radius="sm"
@@ -589,7 +603,9 @@ export default function SprintBacklog(props) {
                                                         }
                                                         onModalEditOpen();
                                                     }}
-                                                    isDisabled={editingAccess === false}
+                                                    isDisabled={
+                                                        editingAccess === false
+                                                    }
                                                 >
                                                     Editar Sprint
                                                 </Button>
@@ -602,7 +618,10 @@ export default function SprintBacklog(props) {
                                                         );
                                                         onModalInitOpen();
                                                     }}
-                                                    isDisabled={editingAccess === false}
+                                                    isDisabled={
+                                                        editingAccess === false ||
+                                                        sprint.tareas.length === 0
+                                                    }
                                                 >
                                                     Iniciar Sprint
                                                 </Button>
@@ -720,10 +739,14 @@ export default function SprintBacklog(props) {
                                 >
                                     <div className="px-10">
                                         <div className="flex flex-row items-center justify-between">
-                                            <p>
-                                                Descripción:{" "}
-                                                {sprint.descripcion}
-                                            </p>
+                                            {sprint.descripcion !== "" ? (
+                                                <p>
+                                                    Descripción:{" "}
+                                                    {sprint.descripcion}
+                                                </p>
+                                            ) : (
+                                                <p>No hay descripción</p>
+                                            )}
                                             <div className="flex flex-row gap-4">
                                                 <Button
                                                     radius="sm"
@@ -745,7 +768,9 @@ export default function SprintBacklog(props) {
                                                         }
                                                         onModalEditOpen();
                                                     }}
-                                                    isDisabled={editingAccess === false}
+                                                    isDisabled={
+                                                        editingAccess === false
+                                                    }
                                                 >
                                                     Editar Sprint
                                                 </Button>
@@ -799,6 +824,7 @@ export default function SprintBacklog(props) {
                 isOpen={isModalCreateOpen}
                 onOpenChange={onModalCreateChange}
                 handleCreate={handleCreate}
+                sprints={sprints}
             />
             <ModalEditarSprint
                 isOpen={isModalEditOpen}
@@ -806,6 +832,7 @@ export default function SprintBacklog(props) {
                 selectedSprint={selectedSprint}
                 handleUpdate={handleUpdate}
                 handleDelete={handleDelete}
+                sprints={sprints}
             />
             <ModalIniciarSprint
                 isOpen={isModalInitOpen}
@@ -863,9 +890,11 @@ function CardTask(props) {
     return (
         <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
             <p className="flex-1 grow-[6]">{tarea.sumillaTarea}</p>
-            <p className="flex-1 grow-[4]">{`Inicio: ${(tarea.fechaInicio !== "0000-00-00") ? dbDateToDisplayDate(
-                tarea.fechaInicio
-            ) : 'Dependiente'} - Fin: ${dbDateToDisplayDate(tarea.fechaFin)}`}</p>
+            <p className="flex-1 grow-[4]">{`Inicio: ${
+                tarea.fechaInicio !== "0000-00-00"
+                    ? dbDateToDisplayDate(tarea.fechaInicio)
+                    : "Dependiente"
+            } - Fin: ${dbDateToDisplayDate(tarea.fechaFin)}`}</p>
             <div className="flex flex-1 grow-[2] justify-center items-center">
                 <Chip
                     className="capitalize roboto"
@@ -909,12 +938,12 @@ function DropdownTask(props) {
     useEffect(() => {
         if (sessionData) {
             setEditingAccess(
-                sessionData.rolInProject === 3 // 3 === Miembro
-                || sessionData.rolInProject === 1 // 1 === Jefe de proyecto
+                sessionData.rolInProject === 3 || // 3 === Miembro
+                    sessionData.rolInProject === 1 // 1 === Jefe de proyecto
             );
         }
     }, [sessionData]);
-    
+
     return (
         <div className="relative flex justify-end items-center gap-2">
             <Dropdown
@@ -922,8 +951,8 @@ function DropdownTask(props) {
                 className="bg-background border-1 border-default-200"
             >
                 <DropdownTrigger>
-                    <Button 
-                        isIconOnly 
+                    <Button
+                        isIconOnly
                         variant="light"
                         isDisabled={editingAccess === false}
                     >
@@ -951,7 +980,7 @@ function DropdownTask(props) {
 }
 
 // Funciones de modales
-function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
+function ModalCrearSprint({ isOpen, onOpenChange, handleCreate, sprints }) {
     // Variables de formulario
     const [newSprint, setNewSprint] = useState({
         nombre: "",
@@ -984,16 +1013,42 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
             const fechaInicio = new Date(newSprint.fechaInicio);
             const fechaFin = new Date(newSprint.fechaFin);
             if (fechaInicio >= fechaFin) {
-                setErrorForm(
-                    "La fecha de inicio debe ser menor a la fecha de fin."
-                );
                 return true;
             } else {
-                setErrorForm(null);
                 return false;
             }
         }
     }, [newSprint.fechaInicio, newSprint.fechaFin]);
+
+    const errorSprintsFechas = useMemo(() => {
+        if (newSprint.fechaInicio !== "" && newSprint.fechaFin !== "") {
+            const fechaInicio = newSprint.fechaInicio;
+            const fechaFin = newSprint.fechaFin;
+            console.log(fechaInicio, fechaFin);
+
+            const sprintsFechas = sprints.filter((sprint) => {
+                if (sprint.idSprint === 0) return false;
+                const sprintFechaInicio = dbDateToInputDate(sprint.fechaInicio);
+                const sprintFechaFin = dbDateToInputDate(sprint.fechaFin);
+
+                console.log(sprintFechaInicio, sprintFechaFin);
+                return (
+                    (sprintFechaInicio >= fechaInicio &&
+                        sprintFechaInicio <= fechaFin) ||
+                    (sprintFechaFin >= fechaInicio &&
+                        sprintFechaFin <= fechaFin) ||
+                    (sprintFechaInicio <= fechaInicio &&
+                        sprintFechaFin >= fechaFin)
+                );
+            });
+
+            if (sprintsFechas.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }, [newSprint.fechaInicio, newSprint.fechaFin, sprints]);
 
     const disabledButtons = useMemo(() => {
         if (statusForm === "valid" && errorForm === null) {
@@ -1012,13 +1067,26 @@ function ModalCrearSprint({ isOpen, onOpenChange, handleCreate }) {
             newSprint.nombre === "" ||
             newSprint.fechaInicio === "" ||
             newSprint.fechaFin === "" ||
-            errorFechas
+            errorFechas ||
+            errorSprintsFechas
         ) {
             setStatusForm("init");
         } else {
             setStatusForm("valid");
         }
     }, [newSprint]);
+
+    useEffect(() => {
+        if (errorFechas) {
+            setErrorForm(
+                "La fecha de inicio debe ser menor a la fecha de fin."
+            );
+        } else if (errorSprintsFechas) {
+            setErrorForm("El rango de fechas se cruza con otro sprint.");
+        } else {
+            setErrorForm(null);
+        }
+    }, [errorFechas, errorSprintsFechas]);
 
     return (
         <Modal
@@ -1165,6 +1233,7 @@ function ModalEditarSprint({
     selectedSprint,
     handleUpdate,
     handleDelete,
+    sprints,
 }) {
     // Variables de formulario
     const [sprint, setSprint] = useState({
@@ -1212,6 +1281,39 @@ function ModalEditarSprint({
         }
     }, [sprint.fechaInicio, sprint.fechaFin]);
 
+    const errorSprintsFechas = useMemo(() => {
+        if (sprint.fechaInicio !== "" && sprint.fechaFin !== "") {
+            const fechaInicio = sprint.fechaInicio;
+            const fechaFin = sprint.fechaFin;
+            console.log(fechaInicio, fechaFin);
+
+            const sprintsFechas = sprints.filter((searchSprint) => {
+                if (searchSprint.idSprint === 0) return false;
+                if (searchSprint.idSprint === sprint.idSprint) return false;
+                const sprintFechaInicio = dbDateToInputDate(
+                    searchSprint.fechaInicio
+                );
+                const sprintFechaFin = dbDateToInputDate(searchSprint.fechaFin);
+
+                console.log(sprintFechaInicio, sprintFechaFin);
+                return (
+                    (sprintFechaInicio >= fechaInicio &&
+                        sprintFechaInicio <= fechaFin) ||
+                    (sprintFechaFin >= fechaInicio &&
+                        sprintFechaFin <= fechaFin) ||
+                    (sprintFechaInicio <= fechaInicio &&
+                        sprintFechaFin >= fechaFin)
+                );
+            });
+
+            if (sprintsFechas.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }, [sprint.fechaInicio, sprint.fechaFin, sprints]);
+
     const disabledButtons = useMemo(() => {
         if (
             statusForm === "valid" &&
@@ -1255,6 +1357,17 @@ function ModalEditarSprint({
             setStatusForm("valid");
         }
     }, [sprint]);
+    useEffect(() => {
+        if (errorFechas) {
+            setErrorForm(
+                "La fecha de inicio debe ser menor a la fecha de fin."
+            );
+        } else if (errorSprintsFechas) {
+            setErrorForm("El rango de fechas se cruza con otro sprint.");
+        } else {
+            setErrorForm(null);
+        }
+    }, [errorFechas, errorSprintsFechas]);
 
     return (
         <Modal
@@ -1447,7 +1560,7 @@ function ModalIniciarSprint({ isOpen, onOpenChange, handleStart }) {
                     return (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                Guardar cambios
+                                Iniciar Sprint
                             </ModalHeader>
                             <ModalBody>
                                 <p>
@@ -1501,7 +1614,7 @@ function ModalFinalizarSprint({ isOpen, onOpenChange, handleFinish }) {
                     return (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                Guardar cambios
+                                Finalizar Sprint
                             </ModalHeader>
                             <ModalBody>
                                 <p>¿Seguro que desea finalizar este sprint?</p>
@@ -1520,7 +1633,7 @@ function ModalFinalizarSprint({ isOpen, onOpenChange, handleFinish }) {
                                     isLoading={isSending}
                                     isDisabled={isSending}
                                 >
-                                    Iniciar
+                                    Finalizar
                                 </Button>
                             </ModalFooter>
                         </>

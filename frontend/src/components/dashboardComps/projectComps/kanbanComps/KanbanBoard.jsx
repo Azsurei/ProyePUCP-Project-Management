@@ -96,7 +96,7 @@ export default function KanbanBoard({ projectName, projectId }) {
                     const columnTareas = {
                         idColumnaKanban: 1,
                         idProyecto: parseInt(projectId),
-                        nombre: `Tareas`,
+                        nombre: `No iniciadas`,
                         posicion: 0,
                         activo: 1,
                     };
