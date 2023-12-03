@@ -82,7 +82,7 @@ function DetailCard({
                             input: "text-lg font-bold",
                         }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
                         readOnly={!isEditable}
-                        value={detail.detalle === null ? "" : detail.detalle}
+                        value={detail.nombre === null ? "" : detail.nombre}
                         //onValueChange={setTareaDescripcion}
                         minRows={1}
                         size="sm"
