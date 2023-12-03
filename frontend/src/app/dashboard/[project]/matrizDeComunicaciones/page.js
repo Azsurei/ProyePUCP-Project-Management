@@ -65,6 +65,11 @@ export default function MatrizDeComunicaciones(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.matrizComunicacion);
+                setPages(
+                    Math.ceil(
+                        response.data.matrizComunicacion.length / rowsPerPage
+                    )
+                );
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,

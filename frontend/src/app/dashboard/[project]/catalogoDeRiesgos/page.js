@@ -61,6 +61,11 @@ export default function catalogoDeRiesgos(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.riesgos);
+                setPages(
+                    Math.ceil(
+                        response.data.riesgos.length / rowsPerPage
+                    )
+                );
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,
@@ -161,7 +166,7 @@ export default function catalogoDeRiesgos(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const [pages, setPages] = useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {

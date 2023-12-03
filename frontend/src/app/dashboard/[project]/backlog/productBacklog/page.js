@@ -68,6 +68,11 @@ export default function ProductBacklog(props) {
 
                 // Actualiza el estado 'data' con los datos recibidos
                 setData(response.data.historias);
+                setPages(
+                    Math.ceil(
+                        response.data.historias.length / rowsPerPage
+                    )
+                );
                 console.log(
                     `Datos obtenidos exitosamente:`,
                     response.data.historias
@@ -180,7 +185,7 @@ export default function ProductBacklog(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const [pages, setPages] = useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
