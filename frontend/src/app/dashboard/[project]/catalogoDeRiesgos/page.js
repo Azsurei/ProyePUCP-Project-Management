@@ -16,6 +16,7 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/../public/icons/ChevronDownIcon";
 import { VerticalDotsIcon } from "@/../public/icons/VerticalDotsIcon";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { m } from "framer-motion";
@@ -61,11 +62,7 @@ export default function catalogoDeRiesgos(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.riesgos);
-                setPages(
-                    Math.ceil(
-                        response.data.riesgos.length / rowsPerPage
-                    )
-                );
+                setPages(Math.ceil(response.data.riesgos.length / rowsPerPage));
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,
@@ -239,61 +236,71 @@ export default function catalogoDeRiesgos(props) {
         setPage(1);
     }, []);
 
-    const renderCell = React.useCallback((data, columnKey) => {
-        const cellValue = data[columnKey];
+    const renderCell = React.useCallback(
+        (data, columnKey) => {
+            const cellValue = data[columnKey];
 
-        switch (columnKey) {
-            case "fechaIdentificacion":
-                const date = new Date(cellValue);
-                if (!isNaN(date)) {
-                    const day = String(date.getDate()).padStart(2, "0");
-                    const month = String(date.getMonth() + 1).padStart(2, "0");
-                    const year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
-                }
-            case "actions":
-                return (
-                    <div className="relative flex justify-center items-center gap-2">
-                        <div className="flex">
-                            <Tooltip content="Visualizar" color="primary">
-                                <button
-                                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8 min-w-[24px] min-h-[24px]"
-                                    type="button"
-                                    onClick={() => {
-                                        setRoutering(data, false);
-                                    }}
-                                >
-                                    <img src="/icons/view.svg" />
-                                    {/* <EyeFilledIcon /> */}
-                                </button>
-                            </Tooltip>
-                            {
-                                rol !==2 && (
-                                    <>
-                                    <Tooltip content="Editar" color="warning">
+            switch (columnKey) {
+                case "fechaIdentificacion":
+                    const date = new Date(cellValue);
+                    if (!isNaN(date)) {
+                        const day = String(date.getDate()).padStart(2, "0");
+                        const month = String(date.getMonth() + 1).padStart(
+                            2,
+                            "0"
+                        );
+                        const year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                    }
+                case "actions":
+                    return (
+                        <div className="relative flex justify-center items-center gap-2">
+                            <div className="flex">
+                                <Tooltip content="Visualizar" color="primary">
                                     <button
-                                        className="min-w-[24px] min-h-[24px]"
+                                        className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-8 md:h-8 min-w-[24px] min-h-[24px]"
                                         type="button"
                                         onClick={() => {
-                                            setRoutering(data, true);
+                                            setRoutering(data, false);
                                         }}
                                     >
-                                        <img src="/icons/editar.svg" />
+                                        <img src="/icons/view.svg" />
+                                        {/* <EyeFilledIcon /> */}
                                     </button>
                                 </Tooltip>
-                                <Tooltip content="Eliminar" color="danger">
-                                    <button
-                                        className="min-w-[24px] min-h-[24px]"
-                                        type="button"
-                                        onClick={() => toggleModal(data)}
-                                    >
-                                        <img src="/icons/eliminar.svg" />
-                                    </button>
-                                </Tooltip>
-                                </>
-                                )
-                            }
-                            {/* <Tooltip content="Editar" color="warning">
+                                {rol !== 2 && (
+                                    <>
+                                        <Tooltip
+                                            content="Editar"
+                                            color="warning"
+                                        >
+                                            <button
+                                                className="min-w-[24px] min-h-[24px]"
+                                                type="button"
+                                                onClick={() => {
+                                                    setRoutering(data, true);
+                                                }}
+                                            >
+                                                <img src="/icons/editar.svg" />
+                                            </button>
+                                        </Tooltip>
+                                        <Tooltip
+                                            content="Eliminar"
+                                            color="danger"
+                                        >
+                                            <button
+                                                className="min-w-[24px] min-h-[24px]"
+                                                type="button"
+                                                onClick={() =>
+                                                    toggleModal(data)
+                                                }
+                                            >
+                                                <img src="/icons/eliminar.svg" />
+                                            </button>
+                                        </Tooltip>
+                                    </>
+                                )}
+                                {/* <Tooltip content="Editar" color="warning">
                                 <button
                                     className=""
                                     type="button"
@@ -313,13 +320,15 @@ export default function catalogoDeRiesgos(props) {
                                     <img src="/icons/eliminar.svg" />
                                 </button>
                             </Tooltip> */}
+                            </div>
                         </div>
-                    </div>
-                );
-            default:
-                return cellValue;
-        }
-    }, [rol]);
+                    );
+                default:
+                    return cellValue;
+            }
+        },
+        [rol]
+    );
 
     const topContent = React.useMemo(() => {
         return (
@@ -336,9 +345,8 @@ export default function catalogoDeRiesgos(props) {
                         variant="faded"
                     />
                     <div className="flex gap-3">
-                        {
-                            rol !==2 && (
-                                <Button
+                        {rol !== 2 && (
+                            <Button
                                 color="primary"
                                 endContent={<PlusIcon />}
                                 className="btnAddRiesgo"
@@ -354,8 +362,7 @@ export default function catalogoDeRiesgos(props) {
                             >
                                 Agregar
                             </Button>
-                            )
-                        }
+                        )}
                         {/* <Button
                             color="primary"
                             endContent={<PlusIcon />}
@@ -372,7 +379,7 @@ export default function catalogoDeRiesgos(props) {
                         >
                             Agregar
                         </Button> */}
-{/*                         <Button
+                        {/*                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
                             className="btnRiesgosExport"
@@ -419,8 +426,7 @@ export default function catalogoDeRiesgos(props) {
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
-                <span className="w-[30%] text-small text-default-400">
-                </span>
+                <span className="w-[30%] text-small text-default-400"></span>
                 <Pagination
                     isCompact
                     showControls
@@ -454,7 +460,30 @@ export default function catalogoDeRiesgos(props) {
     return (
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de Riesgos
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/catalogoDeRiesgos"
+                        }
+                        text={"Catálogo de Riesgos"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="catalogoRiesgos">
                 <div className="titleRiesgos dark:text-white">
