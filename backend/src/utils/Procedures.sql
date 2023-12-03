@@ -5991,3 +5991,23 @@ BEGIN
     INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 9", "#9400D3", 1);
     INSERT INTO ColorNivelArbolEDT(idEDT,nombreNivel,color,activo) VALUES(_idEDT, "nivel 10", "#00FFFF", 1);
 END$
+
+DELIMITER $
+CREATE PROCEDURE LISTAR_COLORES_NIVELES_ARBOLEDT(
+    IN _idProyecto INT
+)
+BEGIN
+    SET @_idEDT = (SELECT idEDT FROM EDT WHERE idProyecto = _idProyecto AND activo = 1);
+    SELECT *
+    FROM ColorNivelArbolEDT
+    WHERE idEDT = @_idEDT;
+END$
+
+DELIMITER $
+CREATE PROCEDURE ACTUALIZAR_COLOR_NIVEL_ARBOLEDT(
+    IN _idNivel INT,
+    IN _color INT
+)
+BEGIN
+    UPDATE ColorNivelArbolEDT SET color = _color WHERE idNivel = _idNivel;
+END$
