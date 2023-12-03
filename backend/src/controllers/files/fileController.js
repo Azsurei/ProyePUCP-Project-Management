@@ -170,8 +170,6 @@ async function getArchivo(idArchivo){
             { expiresIn: 3600 } // URL expiration time in seconds
         );
         const url = await command;
-        const nombreOriginal = file.nombreReal;
-        res.setHeader('Content-Disposition', `attachment; filename="${nombreOriginal}"`);
         return url;
     } catch (error) {
         console.error("Error generating signed URL:", error);
