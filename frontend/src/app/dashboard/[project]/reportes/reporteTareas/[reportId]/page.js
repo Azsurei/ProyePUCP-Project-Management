@@ -7,6 +7,7 @@ import {
     SelectItem,
     Tab,
     Tabs,
+    useDisclosure,
 } from "@nextui-org/react";
 import axios from "axios";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reporteTareasStyles/repTareas.css";
@@ -16,7 +17,9 @@ import TasksGraphicView from "@/components/dashboardComps/projectComps/reportesC
 import { HerramientasInfo, SmallLoadingScreen } from "../../../layout";
 import { useRouter } from "next/navigation";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 import { set } from "date-fns";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 export const TaskSelector = createContext();
@@ -46,6 +49,7 @@ function reporteTareas(props) {
     const router = useRouter();
     const { herramientasInfo } = useContext(HerramientasInfo);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const { sessionData } = useContext(SessionContext);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -56,6 +60,11 @@ function reporteTareas(props) {
 
     const [listTableGenData, setListTableGenData] = useState(null);
     const [listSprintData, setListSprintData] = useState(null);
+    const {
+        isOpen: isModalSaveOpen,
+        onOpen: onModalSaveOpen,
+        onOpenChange: onModalSaveOpenChange,
+    } = useDisclosure();
 
     function countTasksWithStatus(tasks, idVal) {
         let count = 0;
@@ -73,6 +82,33 @@ function reporteTareas(props) {
         tasks.forEach((task) => traverse(task));
 
         return count;
+    }
+    function handleSaveReport(name) {
+        const jsonToPrint = {
+            idProyecto: projectId,
+            nombre: name,
+            tareas: listTareas,
+            idUsuarioCreador: sessionData.idUsuario,
+        };
+
+        console.log(JSON.stringify(jsonToPrint, null, 2));
+        axios
+        .post(
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/subirReporteTareasJSON",
+                jsonToPrint
+        )
+        .then((response) => {
+            // Manejar la respuesta de la solicitud POST
+            console.log("Respuesta del servidor:", response.data);
+            console.log("Guardado del reporte correcto");
+            router.back();
+            // Realizar acciones adicionales si es necesario
+        })
+        .catch((error) => {
+            // Manejar errores si la solicitud POST falla
+            console.error("Error al realizar la solicitud POST:", error);
+        });
     }
 
     //state para guardar/exportar
@@ -1330,9 +1366,7 @@ function reporteTareas(props) {
                     <Button
                         color="warning"
                         className="text-white font-semibold"
-                        onPress={() => {
-                            handleSaveReport();
-                        }}
+                        onClick={()=>onModalSaveOpen()}
                     >
                         Guardar reporte
                     </Button>
@@ -1399,33 +1433,18 @@ function reporteTareas(props) {
                     )}
                 </div>
             </div>
+            <ModalSave
+                isOpen={isModalSaveOpen}
+                onOpenChange={onModalSaveOpenChange}
+                guardarReporte={async (name) => {
+                    return await handleSaveReport(name);
+                }}
+            />
         </div>
     );
 
-    function handleSaveReport() {
-        const jsonToPrint = {
-            listTareas: listTareas,
-        };
+    
 
-        console.log(JSON.stringify(jsonToPrint, null, 2));
-        axios
-        .post(
-            process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/reporte/subirReporteTareasJSON",
-                jsonToPrint
-        )
-        .then((response) => {
-            // Manejar la respuesta de la solicitud POST
-            console.log("Respuesta del servidor:", response.data);
-            console.log("Guardado del reporte correcto");
-            router.back();
-            // Realizar acciones adicionales si es necesario
-        })
-        .catch((error) => {
-            // Manejar errores si la solicitud POST falla
-            console.error("Error al realizar la solicitud POST:", error);
-        });
-    }
 
     function handleSetSelectedTask(task) {
         console.log(" SELECCIONAD LA TAREA " + JSON.stringify(task, null, 2));

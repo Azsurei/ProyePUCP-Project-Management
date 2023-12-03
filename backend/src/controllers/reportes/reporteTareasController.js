@@ -56,7 +56,7 @@ async function subirJSON(req,res,next){
         const idArchivo = await fileController.postArchivo(file2Upload);
 
         const query = `CALL INSERTAR_REPORTE_X_PROYECTO(?,?,?,?,?);`;
-        const [results] = await connection.query(query, [idProyecto,5,nombre,idArchivo,idUsuarioCreador]);
+        const [results] = await connection.query(query, [idProyecto,4,nombre,idArchivo,idUsuarioCreador]);
         const idReporte = results[0][0].idReporte;
         
         fs.unlinkSync(tmpFilePath);
