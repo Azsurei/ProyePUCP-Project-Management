@@ -721,6 +721,16 @@ async function funcEliminar(idProyecto, herramientas) {
                     );
                 }
             }
+            if (herramienta.idHerramienta == 14) {
+                if (
+                    herramienta.idHerramientaCreada == null ||
+                    herramienta.idHerramientaCreada == undefined
+                ) {
+                    await repositorioDocumentoController.eliminarXProyecto(idProyecto);
+                } else {
+                    await repositorioDocumentoController.eliminar(herramienta.idHerramientaCreada);
+                }
+            }
             if (herramienta.idHerramienta == 15) {
                 if (
                     herramienta.idHerramientaCreada == null ||
