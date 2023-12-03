@@ -222,6 +222,7 @@ async function modificarComponenteEDT(req,res,next) {
     const {idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables, 
         fechaInicio, fechaFin, recursos, hito, criterioAceptacion} = req.body;
     const query = `CALL MODIFICAR_COMPONENTE_EDT(?,?,?,?,?,?,?,?,?,?);`;
+    const query1 = `CALL LIMPIAR_CRITERIOS_ACEPTACION(?);`;
     try {
         const [results] = await connection.query(query,[idComponenteEDT, descripcion, codigo, observaciones, 
             nombre, responsables, fechaInicio, fechaFin, recursos, hito]);
@@ -229,6 +230,7 @@ async function modificarComponenteEDT(req,res,next) {
         console.log(`Se modifico el componente EDT ${idComponente}!`);
         // Pendiente (Falta preguntar)
         // Iteracion
+        await connection.query(query1,[idComponenteEDT]);
         for (const criterio of criterioAceptacion) {
             const [criterioAceptacionRows] = await connection.query(`
             CALL INSERTAR_CRITERIOS_ACEPTACION(
