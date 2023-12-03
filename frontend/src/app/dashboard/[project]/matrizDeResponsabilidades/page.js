@@ -1024,6 +1024,41 @@ export default function MatrizDeResponsabilidades(props) {
         console.log("Plantilla seleccionada:", plantilla.nombrePlantilla);
     };
 
+    const [teams,setTeams] = useState([]);
+    
+    useEffect(() => {
+        const stringURLInitialDataFromApi =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/listarParticipantes/" +
+            projectId;
+
+        axios
+            .get(stringURLInitialDataFromApi)
+            .then(function (response) {
+                const initialTeams = response.data.equipos;
+                console.log("Equipos", initialTeams);
+                setTeams(initialTeams);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
+    const validarEliminacionRol = (rolNombre) => {
+        //teams es un arreglo de equipos que contiene un arreglo de participantes, cada participantes tiene un rol
+        //si el rolId que se quiere eliminar es igual al rolId de algun participante, no se puede eliminar
+        let rolEnUso = false;
+        teams.forEach((team) => {
+            team.participantes.forEach((participante) => {
+                if (participante.nombreRol === rolNombre) {
+                    rolEnUso = true;
+                }
+            });
+        }
+        );
+        return rolEnUso;
+    }
+
     return (
         <div className="px-[2rem] py-[1rem]">
             <div className="px-[1rem] mt-[1rem]">
@@ -1704,10 +1739,16 @@ export default function MatrizDeResponsabilidades(props) {
                                                             alt="delete"
                                                             className="cursor-pointer"
                                                             onClick={() => {
-                                                                setRolEliminar(
-                                                                    rol
-                                                                );
-                                                                onOpenEliminarRol();
+                                                                if(!validarEliminacionRol(rol.nombre)){
+                                                                    setRolEliminar(
+                                                                        rol
+                                                                    );
+                                                                    onOpenEliminarRol();
+                                                                }else{
+                                                                    toast.error("No se puede eliminar el rol, ya que está siendo utilizado.", {
+                                                                        position: "bottom-left",
+                                                                    });
+                                                                }
                                                             }}
                                                         />
                                                     </Tooltip>
