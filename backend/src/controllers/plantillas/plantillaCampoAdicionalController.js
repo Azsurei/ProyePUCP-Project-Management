@@ -68,7 +68,7 @@ async function eliminarPlantillaCA(req, res, next) {
 }
 
 async function seleccionarPlantillaCA(req, res, next) {
-    const {idPlantillaCampoAdicional} = req.body;
+    const {idPlantillaCampoAdicional} = req.params;
     const query = `CALL LISTAR_CA_X_ID(?);`;
     try {
         //Traemos todas las plantillas MR del usuario
