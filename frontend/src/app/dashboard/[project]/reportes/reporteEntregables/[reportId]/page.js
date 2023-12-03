@@ -171,6 +171,7 @@ function ReporteEntregables(props) {
                     toast.error("Error de conexion al generar reporte");
                 });
         } else if (!isNaN(parseFloat(reportId)) && isFinite(reportId)) {
+            setIsReportEmpty(false);
             setIsNewReport(false);
             setIsLoadingSmall(true);
 
