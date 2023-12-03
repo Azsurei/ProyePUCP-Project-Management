@@ -143,15 +143,20 @@ export default function EDTVisualization({
                                     </p>
                                     <EmptyBoxIcon width={200} height={200} />
                                 </div>
-                                <Button
-                                    className="bg-F0AE19 text-white font-medium"
-                                    size="md"
-                                    onPress={() => {
-                                        handlerGoToNew(ListComps.length + 1, 1);
-                                    }}
-                                >
-                                    Empieza ahora
-                                </Button>
+                                {
+                                    sessionData.rolNameInProject !== "Supervisor" && (
+                                        <Button
+                                            className="bg-F0AE19 text-white font-medium"
+                                            size="md"
+                                            onPress={() => {
+                                                handlerGoToNew(ListComps.length + 1, 1);
+                                            }}
+                                        >
+                                            Empieza ahora
+                                        </Button>
+                                    )
+                                }
+
                             </div>
                         ) : (
                             <div className="flex flex-col">
