@@ -858,12 +858,14 @@ function CardTask(props) {
         onModalTaskViewOpen,
     } = props;
 
+    console.log(tarea);
+
     return (
         <div className="flex sm:flex-row flex-col items-center justify-center gap-4 p-2 px-4 bg-[#F5F5F5] dark:bg-mainSidebar rounded-md">
             <p className="flex-1 grow-[6]">{tarea.sumillaTarea}</p>
-            <p className="flex-1 grow-[4]">{`Inicio: ${dbDateToDisplayDate(
+            <p className="flex-1 grow-[4]">{`Inicio: ${(tarea.fechaInicio !== "0000-00-00") ? dbDateToDisplayDate(
                 tarea.fechaInicio
-            )} - Fin: ${dbDateToDisplayDate(tarea.fechaFin)}`}</p>
+            ) : 'Dependiente'} - Fin: ${dbDateToDisplayDate(tarea.fechaFin)}`}</p>
             <div className="flex flex-1 grow-[2] justify-center items-center">
                 <Chip
                     className="capitalize roboto"

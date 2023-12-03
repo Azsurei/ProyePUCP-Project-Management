@@ -24,6 +24,7 @@ import MissingEDTComponents from "../../../../../public/images/missing_EDTCompon
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ModalNewRetro from "@/components/dashboardComps/projectComps/retrospectivasComps/ModalNewRetro";
 import { Toaster, toast } from "sonner";
+import {SessionContext} from "@/app/dashboard/layout";
 
 export default function Retrospectiva(props) {
     const router = useRouter();
@@ -32,6 +33,7 @@ export default function Retrospectiva(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
+    const { sessionData } = useContext(SessionContext);
 
     const [lretrospectivas, setLRetrospectivas] = useState([]);
     const [listSprints, setListSprints] = useState([]);
@@ -175,7 +177,7 @@ export default function Retrospectiva(props) {
 
             <HeaderWithButtonsSamePage
                 haveReturn={false}
-                haveAddNew={true}
+                haveAddNew={sessionData.rolNameInProject !== "Supervisor"}
                 handlerAddNew={() => {
                     onModalNewOpen();
                 }}
