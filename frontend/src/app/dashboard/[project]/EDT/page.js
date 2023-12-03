@@ -14,6 +14,7 @@ import EDTCompVisualization from "@/components/dashboardComps/projectComps/EDTCo
 import { SmallLoadingScreen } from "../layout";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 axios.defaults.withCredentials = true;
 
 export default function EDT(props) {
