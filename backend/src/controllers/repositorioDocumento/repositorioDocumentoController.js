@@ -105,7 +105,30 @@ async function getArchivo(req, res, next) {
     }
 }
 
+async function eliminar(idRepositorioDocumentos) {
+    //const { idActaReunion } = req.body;
+    console.log(`Procediendo: Eliminar/RepositorioDocumentos ${idRepositorioDocumentos}...`);
+    try {
+        const result = await funcEliminar(idRepositorioDocumentos);
+        // res.status(200).json({
+        //     idActaReunion,
+        //     message: "ActaReunion eliminado"});
+        console.log(`RepositorioDocumentos ${idRepositorioDocumentos} eliminado.`);
+    } catch (error) {
+        console.log("ERROR 1 en Eliminar/RepositorioDocumentos", error);
+    }
+}
 
+async function funcEliminar(idRepositorioDocumentos) {
+    try {
+        const query = `CALL ELIMINAR_REPOSITORIODOCUMENTO_X_ID_REPOSITORIO(?);`;
+        [results] = await connection.query(query, [idRepositorioDocumentos]);
+    } catch (error) {
+        console.log("ERROR 2 en Eliminar/RepositorioDocumentos", error);
+        return 0;
+    }
+    return 1;
+}
 
 async function eliminarXProyecto(idProyecto){
     console.log(`Procediendo: Eliminar repositorio de documento del Proyecto ${idProyecto}...`);
@@ -133,5 +156,6 @@ module.exports = {
     listarArchivos,
     eliminarArchivo,
     getArchivo,
+    eliminar,
     eliminarXProyecto
 };
