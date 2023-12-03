@@ -33,6 +33,8 @@ export default function EDT(props) {
 
     const [isListLoading, setIsListLoading] = useState(true);
 
+    const [selectedTab, setSelectedTab] = useState("dropdown");
+
     function refreshComponentsEDT() {
         setIsLoadingSmall(false);
         setIsListLoading(true);
@@ -111,6 +113,8 @@ export default function EDT(props) {
                     handleVerDetalle={handleVerDetalle}
                     refreshComponentsEDT={refreshComponentsEDT}
                     isListLoading={isListLoading}
+                    selectedTab={selectedTab}
+                    setSelectedTab={setSelectedTab}
                 ></EDTVisualization>
             )}
             {screenState === 2 && (
