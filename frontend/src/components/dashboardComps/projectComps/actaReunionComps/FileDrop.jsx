@@ -115,6 +115,7 @@ function FileDrop({setFile}) {
                                         "Tipo de archivo invalido"
                                     );
                                     setFileName("");
+                                    setFileType(null);
                                     setIsFileUploaded(false);
                                     setFile(null);
                                     document.querySelector(
@@ -149,6 +150,7 @@ function FileDrop({setFile}) {
                             setFileName("");
                             setFileType(null);
                             setIsFileUploaded(false);
+                            setFile(null);
                         }}>
                         <TrashIcon />
                     </div>
