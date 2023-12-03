@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, use, useContext, useEffect, useState } from "react";
 import {
     Button,
     Divider,
@@ -1279,6 +1279,7 @@ function reporteTareas(props) {
                         tareas: mockObj,
                     } = response.data;
                     setListTareas(mockObj);
+                    
                     const notStartedTasksG = countTasksWithStatus(mockObj, 1);
             const inProgressTasksG = countTasksWithStatus(mockObj, 2);
             const delayedTasksG = countTasksWithStatus(mockObj, 3);
@@ -1331,7 +1332,9 @@ function reporteTareas(props) {
             router.push("/404");
         }
     }, []);
-
+    useEffect(() => {
+        console.log("listTareas: ", listTareas);
+    }, [listTareas]);
     const twStyle1 = "font-semibold text-2xl text-mainHeaders";
 
     return (
