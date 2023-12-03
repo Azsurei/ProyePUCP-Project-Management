@@ -1166,6 +1166,8 @@ async function actualizarDatos(req,res,next){
         let fechaMax = moment(results1[0][0].FechaFinMaxima);
         const diferenciaDiasHerramientas = fechaMax.diff(fechaMin, 'days');
         console.log(`La diferencia de fecha Inicio y Fecha Fin de todas las herramientas: ${diferenciaDiasHerramientas}`);
+        console.log(`Fecha a cambiar: ${fechaInicio}`);
+        console.log(`Fecha minima: ${results1[0][0].FechaInicioMinima}`);
         if(diferenciaDiasHerramientas>diferenciaEnDias){
             flag = 0;
         }
