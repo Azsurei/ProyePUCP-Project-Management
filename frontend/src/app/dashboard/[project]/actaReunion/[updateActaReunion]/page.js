@@ -1,10 +1,19 @@
-"use client"
+"use client";
 import CardSelectedUser from "@/components/CardSelectedUser";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
+import FileDrop from "@/components/dashboardComps/projectComps/actaReunionComps/FileDrop";
 import { Button, Input } from "@nextui-org/react";
 import { SearchIcon } from "public/icons/SearchIcon";
 import { useState } from "react";
+import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
+import { useEffect } from "react";
+import { useContext } from "react";
+import { SmallLoadingScreen } from "../../layout";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import axios from "axios";
+import { dbDateToInputDate } from "@/common/dateFunctions";
 
 function DownloadIcon() {
     return (
@@ -25,11 +34,14 @@ function DownloadIcon() {
     );
 }
 
-function UpdateActaR() {
+function UpdateActaR(props) {
+    const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const decodedUrl = decodeURIComponent(props.params.project);
+    const idLineaActaReunion = decodeURIComponent(props.params.updateActaReunion);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
 
+    const router = useRouter();
 
     const [meetingName, setMeetingName] = useState("");
     const [meetingDate, setMeetingDate] = useState("");
@@ -43,10 +55,42 @@ function UpdateActaR() {
 
     const [isPlantillaDownloadLoading, setIsPlantillaDownloadLoading] =
         useState(false);
-    
 
-  return (
-    <div className="p-[2.5rem] min-h-full">
+    const twTitle = "text-lg font-semibold text-mainHeaders  mb-1";
+
+    useEffect(() => {
+        setIsLoadingSmall(true);
+        const url =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            `/api/proyecto/actaReunion/listarLineaActaReunionXIdLineaActaReunion/` + idLineaActaReunion;
+
+        axios.get(url).then(function(response){
+            console.log(response);
+            const {lineaActaReunion} = response.data;
+
+            setMeetingName(lineaActaReunion.nombreReunion);
+            setMeetingDate(dbDateToInputDate(lineaActaReunion.fechaReunion));
+            setMeetingTime(lineaActaReunion.horaReunion);
+            setMeetingMotive(lineaActaReunion.motivo);
+            console.log(lineaActaReunion.nombres);
+            setMeetingConvocante([{
+                idUsuario: lineaActaReunion.idConvocante,
+                nombres: lineaActaReunion.nombreConvocante,
+                apellidos: lineaActaReunion.apellidosConvocante,
+                correoElectronico: lineaActaReunion.correoElectronico,  
+                imgLink: lineaActaReunion.imgLink
+            }]);
+            //setMeetingFile(lineaActaReunion.idArchivo)
+
+            setIsLoadingSmall(false);
+        }).catch(function(error){
+            console.log(error);
+            toast.error("Error al cargar la acta de reunión");
+        })
+    }, []);
+
+    return (
+        <div className="p-[2.5rem] min-h-full">
             <HeaderWithButtons
                 haveReturn={true}
                 haveAddNew={false}
@@ -73,7 +117,6 @@ function UpdateActaR() {
             >
                 Editar Acta de Reunion
             </HeaderWithButtons>
-
 
             <div className="flex flex-col gap-4">
                 <p className="text-md text-slate-500 ">
@@ -157,7 +200,11 @@ function UpdateActaR() {
                         <Button
                             className="text-white font-medium"
                             color="primary"
-                            startContent={isPlantillaDownloadLoading ? null : <DownloadIcon />}
+                            startContent={
+                                isPlantillaDownloadLoading ? null : (
+                                    <DownloadIcon />
+                                )
+                            }
                             onPress={() => {
                                 downloadPlantillaAC();
                             }}
@@ -167,7 +214,30 @@ function UpdateActaR() {
                         </Button>
                     </div>
                     <FileDrop setFile={setMeetingFile} />
-                    <div className="flex justify-end mt-2">
+                    <div className="flex justify-end mt-2 gap-2">
+                        <Modal
+                            nameButton="Cancelar"
+                            textHeader="Cancelar Acta de Reunión"
+                            textBody="¿Seguro que quiere cancelar la edicion del Acta de Reunión?"
+                            colorButton="w-36 bg-slate-100 text-black"
+                            oneButton={false}
+                            isLoading={isLoading}
+                            secondAction={async () => {
+                                setIsLoading(true);
+                                router.push(
+                                    "/dashboard/" +
+                                        projectName +
+                                        "=" +
+                                        projectId +
+                                        "/actaReunion"
+                                );
+                            }}
+                            textColor="blue"
+                            verifyFunction={() => {
+                                return true;
+                            }}
+                        />
+
                         <Modal
                             nameButton="Guardar"
                             textHeader="Registrar Acta de Reunión"
@@ -200,6 +270,7 @@ function UpdateActaR() {
                         setIsModalConvocanteOpen(false);
                     }}
                     handlerModalFinished={(user) => {
+                        console.log(user);
                         setMeetingConvocante(user);
                         setIsModalConvocanteOpen(false);
                     }}
@@ -209,6 +280,6 @@ function UpdateActaR() {
                 />
             )}
         </div>
-  );
+    );
 }
-export default UpdateActaR
+export default UpdateActaR;

@@ -20,6 +20,7 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
+    useDisclosure,
 } from "@nextui-org/react";
 import { Tabs, Tab } from "@nextui-org/react";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -28,6 +29,8 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
+import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
+import ModalEliminarAR from "@/components/dashboardComps/projectComps/actaReunionComps/ModalEliminarAR";
 
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
@@ -39,6 +42,8 @@ export default function ActaReunion(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [idActa, setIdActa] = useState(null); // Use camelCase for consistency
+
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -239,60 +244,30 @@ export default function ActaReunion(props) {
     const actualHref =
         "/dashboard/" + projectName + "=" + projectId + "/actaReunion";
     return (
-        <div className="border min-h-full p-[2.5rem]">
-            <HeaderWithButtons
+        <div className="min-h-full p-[2.5rem]">
+            <ModalEliminarAR
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+            />
+
+            <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={true}
-                hrefToReturn={actualHref}
-                hrefForButton={newHref}
+                handlerAddNew={()=>{
+                    router.push(newHref);
+                }}
                 breadcrump={`Inicio / Proyectos / ${projectName} / Acta de Reunión`}
-                btnText={"+ Agregar reunión"}
+                btnText={"Agregar reunión"}
             >
                 Acta de Reunión
-            </HeaderWithButtons>
-
-            {/* {
-                reuniones && reuniones.pendientes && reuniones.finalizadas ? (
-                    <div>
-                        <Tabs aria-label="Options" radius="full" color="warning">
-                            <Tab key="pending" title="Pendientes" className="montserrat text-blue-900">
-                                {reuniones.pendientes.length > 0 ? (
-                                    reuniones.pendientes.map(renderCard)
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center">
-                                        <Spacer y={1} />
-                                        <MissingEDTComponents />
-                                        <p className="montserrat text-blue-900">No hay reuniones pendientes</p>
-                                    </div>
-                                )}
-                            </Tab>
-                            <Tab key="finished" title="Finalizados" className="montserrat text-blue-900">
-                                {reuniones.finalizadas.length > 0 ? (
-                                    reuniones.finalizadas.map(renderCard)
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center">
-                                        <Spacer y={1} />
-                                        <MissingEDTComponents />
-                                        <p>No hay reuniones finalizadas</p>
-                                    </div>
-                                )}
-                            </Tab>
-                        </Tabs>
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center">
-                        <Spacer y={1} />
-                        <MissingEDTComponents />
-                        <p>No hay reuniones programadas</p>
-                    </div>
-                )
-            } */}
+            </HeaderWithButtonsSamePage>
+            
             <div className="flex flex-col gap-2 mt-3">
                 {reuniones.map((meeting) => {
                     return (
                         <div
                             key={meeting.idLineaActaReunion}
-                            className="border border-gray-300 p-4 rounded-md shadow-sm flex flex-row items-center"
+                            className="border border-gray-300 p-4 pr-8 rounded-md shadow-sm flex flex-row items-center"
                         >
                             <div className="flex flex-col w-[50%] max-w-[50%] gap-0">
                                 <p className="font-semibold text-xl truncate">
@@ -357,7 +332,6 @@ export default function ActaReunion(props) {
                                     </p>
                                 </div>
                             </div>
-                            <Button>Ver opciones</Button>
                             <Dropdown aria-label="droMenTareasMain">
                                 <DropdownTrigger aria-label="droMenTareasTrigger">
                                     <Button
@@ -370,13 +344,19 @@ export default function ActaReunion(props) {
                                         <p className="lblVerOpciones">
                                             Ver opciones
                                         </p>
-                                        <VerticalDotsIcon className="icnVerOpciones text-black-300" />
+                                        {/* <VerticalDotsIcon className="icnVerOpciones text-black-300" /> */}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="droMenTareas">
                                     <DropdownItem
                                         aria-label="edit"
-                                        onClick={() => handleEdit(tarea)}
+                                        onClick={() => {
+                                            router.push("/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/actaReunion/"+meeting.idLineaActaReunion);
+                                        }}
                                     >
                                         Editar
                                     </DropdownItem>
@@ -384,7 +364,9 @@ export default function ActaReunion(props) {
                                         aria-label="delete"
                                         className="text-danger"
                                         color="danger"
-                                        onClick={() => handleDelete(tarea)}
+                                        onClick={() => {
+                                            onOpen();
+                                        }}
                                     >
                                         Eliminar
                                     </DropdownItem>
