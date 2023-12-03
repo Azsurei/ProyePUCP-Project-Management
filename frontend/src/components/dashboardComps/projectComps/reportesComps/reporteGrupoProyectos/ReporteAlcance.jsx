@@ -44,11 +44,13 @@ export default function ReporteAlcance(props) {
     const promedioProgresoPorProyecto = proyectos.map((proyecto) => {
         const numeroTareas = proyecto.EDT.entregables.length;
         const progresoTotal = proyecto.EDT.entregables.reduce((total, tarea) => {
-            const progreso = tarea.porcentajeProgreso || 0; // Manejo de undefined
+            const progreso = tarea.porcentajeProgreso ? parseFloat(tarea.porcentajeProgreso) / 100 : 0; // Convertir a número y dividir por 100
             return total + progreso;
         }, 0);
+        console.log("Progreso total: ", progresoTotal);
         const promedio = numeroTareas > 0 ? progresoTotal / numeroTareas : 0;
-        return promedio;
+        console.log("Promedio: ", promedio)
+        return promedio*100;
     });
     const activeModal = () => {onOpen();};
     const handleModal = (list) => {
