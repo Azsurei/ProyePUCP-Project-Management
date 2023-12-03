@@ -6,8 +6,8 @@ async function guardarPlantillaCA(req, res, next) {
     const query1 = `CALL INSERTAR_CAMPOS_PLANTILLA_CA(?,?);`;
     try {
         //Creamos primero la plantilla en general
-        const [results] = await connection.query(query, [idUsuario, nombrePlantilla]);
         console.log(`idUsuario: ${idUsuario}, nombrePlantilla: ${nombrePlantilla}`);
+        const [results] = await connection.query(query, [idUsuario, nombrePlantilla]);
 
         const idPlantillaCampoAdicional = results[0][0].idPlantillaCampoAdicional;
         console.log(`Se creo la plantilla Campo Adicional ${idPlantillaCampoAdicional}!`);
