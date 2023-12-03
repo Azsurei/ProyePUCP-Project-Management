@@ -567,6 +567,7 @@ function ReporteEntregables(props) {
                     console.log(" ====== json esta aqui ======");
                     console.log(response);
                     if (response.data.entregables) {
+                        console.log("SETEANDO LA DATA");
                         setListEntregables(response.data.entregables);
                         setSelectedEntregable(
                             response.data.entregables[0].idEntregable
@@ -590,24 +591,13 @@ function ReporteEntregables(props) {
                             response.data.entregables[0].fechaFin
                         );
                     }
+                    console.log("DATA SETTEADA, APAGANDO LOADING SCREEN");
+                    setIsLoadingSmall(true);
                 })
                 .catch(function (error) {
                     console.log(error);
                     toast.error("Error de conexion al generar reporte");
                 });
-
-            // setListEntregables(mockObj);
-            // setSelectedEntregable(mockObj[0].idEntregable);
-
-            // setListTareas(mockObj[0].tareasEntregable);
-            // getEntregableStatistics(mockObj[0]);
-            // setEntregableName(mockObj[0].nombre);
-            // setEntregableComponentName(mockObj[0].ComponenteEDTNombre);
-            // setEntregableDescripcion(mockObj[0].descripcion);
-            // setEntregableFechaInicio(mockObj[0].fechaInicio);
-            // setEntregableFechaFin(mockObj[0].fechaFin);
-
-            setIsLoadingSmall(false);
         } else {
             router.push("/404");
         }
