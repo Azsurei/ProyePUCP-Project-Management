@@ -440,6 +440,20 @@ function ProjectSidebar(props) {
         },
     ];
 
+    function getDaysDifference(dateString1, dateString2) {
+        // Convert date strings to Date objects
+        const date1 = new Date(dateString1);
+        const date2 = new Date(dateString2);
+      
+        // Calculate the difference in milliseconds
+        const timeDifference = date2.getTime() - date1.getTime();
+      
+        // Convert the time difference to days
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      
+        return daysDifference;
+      }
+
     return (
         <nav
             className={`ProjectSidebar ${
@@ -463,7 +477,7 @@ function ProjectSidebar(props) {
                             {props.projectFechaInicio === "" ? "" : dbDateToDisplayDate(props.projectFechaInicio)}{" "}
                             -{" "}
                             {props.projectFechaFin === "" ? "" : dbDateToDisplayDate(props.projectFechaFin)}{" "}
-                            (50 dias)
+                            ({props.projectFechaInicio !== "" && props.projectFechaInicio !== "" ? getDaysDifference(props.projectFechaInicio,props.projectFechaFin): ""} dias)
                         </p>
                         <div className="teamContainer">
                             <p className="teamHeader">Tu rol:</p>
