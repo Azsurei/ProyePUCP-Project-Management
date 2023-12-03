@@ -649,6 +649,31 @@ function ReporteEntregables(props) {
             </div>
         );
     }
+    async function handlerExport() {
+        const reportId = decodeURIComponent(props.params.reportId);
+        try {
+            setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/descargarExcelReporteEntregableXIdArchivo";
+
+            const response = await axios.post(
+                exportURL,
+                {
+                  idArchivo: reportId,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+
+            
+        } catch (error) {
+            setIsExportLoading(false);
+            toast.error("Error al exportar reporte entregable");
+            console.log(error);
+        }
+    }
     return (
         <div className="flex h-full flex-col p-[2.5rem] font-[Montserrat] gap-y-6 min-h-[800px]">
             <ModalSave
@@ -657,6 +682,7 @@ function ReporteEntregables(props) {
                 guardarReporte={async (name) => {
                     return await handleSaveReport(name);
                 }}
+                tipo = "Entregables"
             />
 
             <div className="flex flex-row justify-between items-end">
@@ -702,11 +728,8 @@ function ReporteEntregables(props) {
                     <Button
                         color="success"
                         className="text-white font-semibold"
-                        onPress={() => {
-                            // console.log(
-                            //     JSON.stringify(listEntregables, null, 2)
-                            // );
-                            //handleSaveReport(listEntregables);
+                        onClick={async () => {
+                            await handlerExport();
                         }}
                         startContent={<ExportIcon />}
                     >
@@ -961,8 +984,7 @@ function ReporteEntregables(props) {
                     projectName +
                     "=" +
                     projectId +
-                    "/reportes/reporteEntregables/" +
-                    response.data.idReporte
+                    "/reportes"
             );
             return 1;
         } catch (error) {

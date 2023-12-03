@@ -45,6 +45,31 @@ const s3 = new S3Client({
     }
 }
 
+async function subirArchivoTest(req, res, next){
+    console.log(req.file);
+    const fileName = randomName();
+    const params={
+        Bucket: bucketName,
+        Key: fileName,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+        ContentDisposition: `attachment; filename="${req.file.originalname}"`
+    }
+    const query = `CALL INSERTAR_ARCHIVOS(?,?);`;
+    try {
+        const command = new PutObjectCommand(params);
+        await s3.send(command);
+        const [results] = await connection.query(query, [fileName, req.file.originalname]);
+        const idArchivo = results[0][0].idArchivo;
+        console.log(`Archivo ${idArchivo} insertado`);
+        res.status(200).json({
+            message: `Archivo ${idArchivo} insertado`
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 async function descargarArchivo(req, res, next) {
     const { idArchivo } = req.params;
     const query = `CALL OBTENER_ARCHIVO(?);`;
@@ -135,9 +160,7 @@ async function getArchivo(idArchivo){
     try {
         const [results] = await connection.query(query, [idArchivo]);
         const file = results[0][0];
-        console.log(results[0][0]);
         console.log(file.nombreGenerado);
-        // Create a presigned URL for the file
         const command = getSignedUrl(
             s3,
             new GetObjectCommand({
@@ -148,6 +171,34 @@ async function getArchivo(idArchivo){
         );
         const url = await command;
         return url;
+    } catch (error) {
+        console.error("Error generating signed URL:", error);
+    }
+}
+
+async function getArchivoActaReunion(req, res, next) {
+    const idArchivo = 89;
+    const query = `CALL OBTENER_ARCHIVO(?);`;
+    try {
+        const [results] = await connection.query(query, [idArchivo]);
+        const file = results[0][0];
+        console.log(file.nombreGenerado);
+        const command = getSignedUrl(
+            s3,
+            new GetObjectCommand({
+                Bucket: bucketName,
+                Key: file.nombreGenerado,
+            }),
+            { expiresIn: 3600 } // URL expiration time in seconds
+        );
+        const url = await command;
+        const nombreOriginal = file.nombreReal;
+        res.setHeader('Content-Disposition', `attachment; filename="${nombreOriginal}"`);
+        
+        res.status(200).json({
+            url,
+            message: "Archivo obtenido"
+        });
     } catch (error) {
         console.error("Error generating signed URL:", error);
     }
@@ -227,5 +278,7 @@ module.exports = {
     postArchivo,
     getArchivo,
     funcGetJSONFile,
-    descargarDesdeURL
+    descargarDesdeURL,
+    subirArchivoTest,
+    getArchivoActaReunion
 }

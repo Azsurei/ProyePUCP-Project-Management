@@ -1336,7 +1336,31 @@ function reporteTareas(props) {
         console.log("listTareas: ", listTareas);
     }, [listTareas]);
     const twStyle1 = "font-semibold text-2xl text-mainHeaders";
+    async function handlerExport() {
+        const reportId = decodeURIComponent(props.params.reportId);
+        try {
+            setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/descargarExcelReporteTareasXIdArchivo";
 
+            const response = await axios.post(
+                exportURL,
+                {
+                  idArchivo: reportId,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+
+            
+        } catch (error) {
+            setIsExportLoading(false);
+            toast.error("Error al exportar reporte cronograma");
+            console.log(error);
+        }
+    }
     return (
         <div className="flex min-h-[1300px] flex-col p-[2.5rem] font-[Montserrat] gap-y-6 flex-1 ">
             <div className="flex flex-row justify-between items-end">
@@ -1376,6 +1400,9 @@ function reporteTareas(props) {
                         color="success"
                         className="text-white font-semibold"
                         startContent={<ExportIcon />}
+                        onClick={async () => {
+                            await handlerExport();
+                        }}
                     >
                         Exportar
                     </Button>
@@ -1439,6 +1466,7 @@ function reporteTareas(props) {
                 guardarReporte={async (name) => {
                     return await handleSaveReport(name);
                 }}
+                tipo = "Tareas"
             />
         </div>
     );

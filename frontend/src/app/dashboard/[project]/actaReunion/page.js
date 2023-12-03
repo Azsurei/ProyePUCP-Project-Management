@@ -16,6 +16,10 @@ import {
     CardHeader,
     Divider,
     Spacer,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { Tabs, Tab } from "@nextui-org/react";
 import HeaderWithButtons from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtons";
@@ -23,6 +27,7 @@ import { useRouter } from "next/navigation";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 import MissingEDTComponents from "../../../../../public/images/missing_EDTComponents.svg";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
+import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 
 export default function ActaReunion(props) {
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
@@ -290,7 +295,7 @@ export default function ActaReunion(props) {
                             className="border border-gray-300 p-4 rounded-md shadow-sm flex flex-row items-center"
                         >
                             <div className="flex flex-col w-[50%] max-w-[50%] gap-0">
-                                <p className="font-semibold text-lg truncate">
+                                <p className="font-semibold text-xl truncate">
                                     {meeting.nombreReunion}
                                 </p>
                                 <p className="truncate">
@@ -306,14 +311,24 @@ export default function ActaReunion(props) {
                                             src={meeting.imgLink}
                                             size="sm"
                                         />
-                                        <p>{meeting.nombres}</p>
+                                        <p>
+                                            {meeting.nombres === null
+                                                ? "Sin convocante"
+                                                : meeting.nombres}
+                                        </p>
                                     </div>
                                 </div>
                                 <p className="truncate font-medium">
                                     Archivo:{" "}
-                                    <span className="underline font-medium text-primary cursor-pointer" onClick={()=>{
-                                        downloadFile(meeting.idArchivo, meeting.nombreArchivo);
-                                    }}>
+                                    <span
+                                        className="underline font-medium text-primary cursor-pointer"
+                                        onClick={() => {
+                                            downloadFile(
+                                                meeting.idArchivo,
+                                                meeting.nombreArchivo
+                                            );
+                                        }}
+                                    >
                                         {meeting.nombreArchivo}
                                     </span>
                                 </p>
@@ -343,6 +358,38 @@ export default function ActaReunion(props) {
                                 </div>
                             </div>
                             <Button>Ver opciones</Button>
+                            <Dropdown aria-label="droMenTareasMain">
+                                <DropdownTrigger aria-label="droMenTareasTrigger">
+                                    <Button
+                                        size="md"
+                                        radius="sm"
+                                        variant="flat"
+                                        color="default"
+                                        className="ButtonMore"
+                                    >
+                                        <p className="lblVerOpciones">
+                                            Ver opciones
+                                        </p>
+                                        <VerticalDotsIcon className="icnVerOpciones text-black-300" />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="droMenTareas">
+                                    <DropdownItem
+                                        aria-label="edit"
+                                        onClick={() => handleEdit(tarea)}
+                                    >
+                                        Editar
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        aria-label="delete"
+                                        className="text-danger"
+                                        color="danger"
+                                        onClick={() => handleDelete(tarea)}
+                                    >
+                                        Eliminar
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
                     );
                 })}

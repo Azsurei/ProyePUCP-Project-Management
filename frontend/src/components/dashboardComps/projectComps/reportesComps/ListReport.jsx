@@ -78,7 +78,7 @@ function ReporteCard({ report, onClick, refresh }) {
         };
     return (
         <li
-            className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10"
+            className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10 max-w-400"
             // onClick={onClick}
         >
             <div className="flex flex-col justify-between">
@@ -181,7 +181,7 @@ function ReporteCard({ report, onClick, refresh }) {
                     </DropdownMenu>
                   </Dropdown>
                 </div>
-                <div className="flex flex-row items-center justify-between gap-24">
+                <div className="flex flex-row items-center justify-between gap-32">
                 <Chip
                             className="capitalize mt-1 mb-1"
                             size="md"
@@ -198,12 +198,12 @@ function ReporteCard({ report, onClick, refresh }) {
                 <div className="flex flex-row justify-between flex-1">
                     <div className="flex flex-col justify-center flex-1">
                         <p className="font-medium">Creado por: </p>
-                            <div className="flex flex-row items-center gap-1">
+                            <div className="flex flex-row items-center gap-2">
                                 <Avatar
                                     className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem] bg-mainUserIcon"
                                     src={report.imgLink}
                                 />
-                                <p className="">{report.nombresUsuario}</p>
+                                <p className="text-sm">{report.nombresUsuario}</p>
                             </div>
                     </div>
                     {/* <img

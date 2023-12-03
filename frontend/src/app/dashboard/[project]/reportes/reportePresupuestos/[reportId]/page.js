@@ -209,6 +209,7 @@ export default function ReportePresupuestos(props) {
           setIsNewReport(true);
         } else if (!isNaN(reportID)) {
           sacarInformacionReporte();
+          ObtenerPresupuesto();
           setIsNewReport(false);
         }
 
@@ -290,6 +291,31 @@ export default function ReportePresupuestos(props) {
       const egresosConvertidos = -1.00*sumaEgresos;
       const performance = (sumaIngresos + sumaEgresos) / sumaIngresos * 100;
       const monedaSymbol = isSelected ? "S/ " : "$ "
+      const [isExportLoading, setIsExportLoading] = useState(false);
+      async function handlerExport() {
+        try {
+            setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/descargarExcelPresupuestoXIdArchivo";
+
+            const response = await axios.post(
+                exportURL,
+                {
+                  idArchivo: reportID,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+
+            
+        } catch (error) {
+            setIsExportLoading(false);
+            toast.error("Error al exportar tu reporte prespuesto");
+            console.log(error);
+        }
+    }
     return (
         <>
         {vistaReporte && (
@@ -314,7 +340,9 @@ export default function ReportePresupuestos(props) {
                                     </Button>
                                 )}
                                 {!isNewReport && (
-                                    <Button color="success" className="text-white" onClick={()=>guardarReporte()}>
+                                    <Button color="success" className="text-white" onClick={async () => {
+                                      await handlerExport();
+                                  }}>
                                       Exportar
                                 </Button>
                                 )
@@ -427,6 +455,7 @@ export default function ReportePresupuestos(props) {
                 guardarReporte={async (name) => {
                     return await guardarReporte(name);
                 }}
+                tipo = "Presupuesto"
             />
         {!vistaReporte && (
           <div>No hay reporte</div>

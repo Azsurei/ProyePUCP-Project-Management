@@ -741,6 +741,30 @@ export default function ReporteRiesgos(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    async function handlerExport() {
+        try {
+            setIsExportLoading(true);
+            const exportURL =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/reporte/descargarExcelReporteRiesgosXIdArchivo";
+
+            const response = await axios.post(
+                exportURL,
+                {
+                  idArchivo: reportID,
+                },
+                {
+                    responseType: "blob", // Important for binary data
+                }
+            );
+
+            
+        } catch (error) {
+            setIsExportLoading(false);
+            toast.error("Error al exportar reporte riesgos");
+            console.log(error);
+        }
+    }
     return (
         <>
         {vistaReporte && (
@@ -764,7 +788,9 @@ export default function ReporteRiesgos(props) {
                                     </Button>
                                 )}
                                 {!isNewReport && (
-                                    <Button color="success" className="text-white" onClick={()=>guardarReporte()}>
+                                    <Button color="success" className="text-white" onClick={async () => {
+                                        await handlerExport();
+                                    }}>
                                       Exportar
                                 </Button>
                                 )
@@ -823,6 +849,7 @@ export default function ReporteRiesgos(props) {
                 guardarReporte={async (name) => {
                     return await guardarReporte(name);
                 }}
+                tipo = "Riesgos"
             />
                 {!vistaReporte && (
           <div>No hay reporte</div>
