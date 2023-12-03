@@ -15,7 +15,7 @@ async function funcCrear(idComponenteEDT, data){
 //Eliminar Entregables
 async function eliminarEntregables(req,res,next){
     const {entregablesEliminar} = req.body;
-    const query = `CALL ELIMINAR_ENTREGABLES_COMPONENTES(?,?);`;
+    const query = `CALL ELIMINAR_ENTREGABLES_COMPONENTES(?);`;
     try {
         // Iteracion Eliminar Entregables
         for(const entregableEliminar of entregablesEliminar){

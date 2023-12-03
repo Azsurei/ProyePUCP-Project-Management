@@ -96,6 +96,9 @@ async function crear(req, res, next) {
                 ]);
                 const idEDT = results2[0][0].idEDT;
 
+                query = `CALL INSERTAR_COLORES_NIVELES_ARBOLEDT(?);`;
+                await connection.query(query, [idEDT]);
+
                 query = `CALL INSERTAR_CRONOGRAMA(?);`;
                 const [results3] = await connection.query(query, [idProyecto]);
                 const idCronograma = results3[0][0].idCronograma;
