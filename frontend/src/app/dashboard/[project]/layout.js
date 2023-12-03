@@ -65,7 +65,6 @@ export default function RootLayout({ children, params }) {
                 console.log(error);
             });
 
-
         const stringURL2 =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/herramientas/" +
@@ -84,7 +83,6 @@ export default function RootLayout({ children, params }) {
                 console.log(error);
             });
 
-
         const stringURL3 =
             process.env.NEXT_PUBLIC_BACKEND_URL +
             "/api/proyecto/verInfoProyecto/" +
@@ -93,6 +91,7 @@ export default function RootLayout({ children, params }) {
             .get(stringURL3)
             .then(function (response) {
                 setProjectInfo(response.data.infoProyecto);
+                console.log(response.data.infoProyecto );
                 console.log(
                     "============= LAYOUT PROYECT INFO TERMINO DE CARGAR"
                 );
@@ -106,19 +105,29 @@ export default function RootLayout({ children, params }) {
         //AQUI CAMBIE BODY POR DIV, YA QUE AL TENER BODY QUITA EL LAYOUT DEL DASHBOARD
         <div className="DashboardProjectContainer" style={{ width: "100%" }}>
             <SmallLoadingScreen.Provider value={{ setIsLoadingSmall }}>
-                <ProjectSidebar
-                    projectName={projectName}
-                    projectId={projectId}
-                    projectIdRole={projectRolData.rolInProject}
-                    projectNameRole={projectRolData.rolNameInProject}
-                    currentUrl={params.project}
-                    handlerImDone={() => {
-                        setIsSidebarDone(true);
-                        console.log("============ SIDEBAR TERMINO DE CARGAR");
-                    }}
-                ></ProjectSidebar>
+                {true ? (
+                    <ProjectSidebar
+                        projectName={projectName}
+                        projectId={projectId}
+                        projectIdRole={projectRolData.rolInProject}
+                        projectNameRole={projectRolData.rolNameInProject}
+                        projectFechaInicio={
+                            projectInfo === null ? "" : projectInfo.fechaInicio
+                        }
+                        projectFechaFin={
+                            projectInfo === null ? "" : projectInfo.fechaFin
+                        }
+                        currentUrl={params.project}
+                        handlerImDone={() => {
+                            setIsSidebarDone(true);
+                            console.log(
+                                "============ SIDEBAR TERMINO DE CARGAR"
+                            );
+                        }}
+                    ></ProjectSidebar>
+                ) : null}
 
-                <ProjectInfo.Provider value={{projectInfo, setProjectInfo}}>
+                <ProjectInfo.Provider value={{ projectInfo, setProjectInfo }}>
                     <HerramientasInfo.Provider value={{ herramientasInfo }}>
                         <div
                             style={{
@@ -153,14 +162,18 @@ export default function RootLayout({ children, params }) {
                                         ProyePUCP
                                     </p>
                                     <Box
-                                        sx={{ width: "170px", color: "lightgray" }}
+                                        sx={{
+                                            width: "170px",
+                                            color: "lightgray",
+                                        }}
                                     >
                                         <LinearProgress color="inherit" />
                                     </Box>
                                 </div>
                             )}
                             <div className="h-[100%] overflow-auto bg-mainBackground">
-                                {herramientasInfo !== null && projectInfo !== null &&
+                                {herramientasInfo !== null &&
+                                    projectInfo !== null &&
                                     rolHasBeenAsigned &&
                                     isSidebarDone &&
                                     children}

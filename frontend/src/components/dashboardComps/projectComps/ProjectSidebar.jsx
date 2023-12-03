@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { SessionContext } from "@/app/dashboard/layout";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 
 const memberData = [
@@ -390,7 +391,7 @@ function ProjectSidebar(props) {
             optIcon: "/icons/sideBarDropDown_icons/sbdd15.svg",
             optName: "Repositorio de documentos",
             goTo: `${stringBase}/repositorioDocumentos`,
-        }
+        },
     ];
 
     const sidebar2Data = {
@@ -459,7 +460,10 @@ function ProjectSidebar(props) {
                             {props.projectName}
                         </p>
                         <p className="dates">
-                            13/09/2023 - 20/10/2023 (50 dias)
+                            {props.projectFechaInicio === "" ? "" : dbDateToDisplayDate(props.projectFechaInicio)}{" "}
+                            -{" "}
+                            {props.projectFechaFin === "" ? "" : dbDateToDisplayDate(props.projectFechaFin)}{" "}
+                            (50 dias)
                         </p>
                         <div className="teamContainer">
                             <p className="teamHeader">Tu rol:</p>
@@ -492,7 +496,8 @@ function ProjectSidebar(props) {
                         })}
                     </ul>
 
-                    {(props.projectIdRole === 1 || props.projectIdRole === 2) && (
+                    {(props.projectIdRole === 1 ||
+                        props.projectIdRole === 2) && (
                         <Link href={stringBase + "/settings/general"}>
                             <div
                                 className="text-medium font-medium
