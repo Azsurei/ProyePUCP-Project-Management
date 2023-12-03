@@ -72,15 +72,15 @@ async function listarXIdLineaActaReunion(req,res,next){
         if (!lineaActaReunion) {
             return res.status(400).json({ message: "El ID de la línea del acta de reunión debe ser valido y debe estar activo" });
         }
-        lineaActaReunion.comentarios = await comentarioReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
-        lineaActaReunion.participantesXReunion = await participanteXReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
-        lineaActaReunion.temasReunion = await temaReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
-        for(temaReunion of lineaActaReunion.temasReunion){
-            temaReunion.acuerdos = await acuerdoController.funcListarXIdTemaReunion(temaReunion.idTemaReunion);
-            for(acuerdo of temaReunion.acuerdos){
-                acuerdo.responsables = await responsableAcuerdoController.funcListarXIdAcuerdo(acuerdo.idAcuerdo);
-            }
-        }
+        //lineaActaReunion.comentarios = await comentarioReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
+        //lineaActaReunion.participantesXReunion = await participanteXReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
+        //lineaActaReunion.temasReunion = await temaReunionController.funcListarXIdLineaActaReunion(idLineaActaReunion);
+        // for(temaReunion of lineaActaReunion.temasReunion){
+        //     temaReunion.acuerdos = await acuerdoController.funcListarXIdTemaReunion(temaReunion.idTemaReunion);
+        //     for(acuerdo of temaReunion.acuerdos){
+        //         acuerdo.responsables = await responsableAcuerdoController.funcListarXIdAcuerdo(acuerdo.idAcuerdo);
+        //     }
+        // }
         res.status(200).json({
             lineaActaReunion,
             message: "Lineas acta reunion listadas"});
