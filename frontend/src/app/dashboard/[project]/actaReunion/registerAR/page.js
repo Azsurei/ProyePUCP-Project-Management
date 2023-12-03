@@ -148,8 +148,6 @@ export default function crearActaReunion(props) {
     const { sessionData } = useContext(SessionContext);
     const { sendNotification } = useContext(NotificationsContext);
 
-    console.log("This is my session data");
-    console.log(sessionData);
 
     // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
@@ -1008,7 +1006,7 @@ export default function crearActaReunion(props) {
                         <Button
                             className="text-white font-medium"
                             color="primary"
-                            startContent={<DownloadIcon />}
+                            startContent={isPlantillaDownloadLoading ? null : <DownloadIcon />}
                             onPress={() => {
                                 downloadPlantillaAC();
                             }}

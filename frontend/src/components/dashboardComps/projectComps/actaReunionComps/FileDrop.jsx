@@ -129,7 +129,7 @@ function FileDrop({setFile}) {
                         <CloudIcon className="stroke-slate-400" />
                     </div>
                     <p className="text-slate-400 font-medium text-lg">
-                        Sube tu archivo aquí
+                        Presiona aquí para subir tu archivo
                     </p>
                 </form>
             )}
