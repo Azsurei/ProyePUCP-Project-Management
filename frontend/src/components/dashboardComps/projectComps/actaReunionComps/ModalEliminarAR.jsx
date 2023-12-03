@@ -1,3 +1,8 @@
+"use client"
+
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 import {
     Button,
     Modal,
@@ -6,12 +11,15 @@ import {
     ModalFooter,
     ModalHeader,
 } from "@nextui-org/react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ModalEliminarAR({
     isOpen,
     onOpenChange,
     idLineaToDelete,
-    setIdLineaToDelete
+    setIdLineaToDelete,
+    deleteActaReunion
 }) {
     const [isLoading, setIsLoading] = useState(false);  
     return (
@@ -29,15 +37,22 @@ export default function ModalEliminarAR({
             <ModalContent>
                 {(onClose) => {
                     const finalizarModal = async () => {
+                        setIsLoading(true);
                         const response = await deleteActaReunion(idLineaToDelete);
 
                         if(response === 1){
+                            toast.success("Acta de reunion eliminada con exito");
                             setIdLineaToDelete(null);
+                            setIsLoading(false);
                             onClose();
                             return;
                         }
                         else{
+                            toast.error("Error al eliminar acta de reunion");
+                            setIdLineaToDelete(null);
+                            setIsLoading(false);
                             onClose();
+                            return;
                         }
                     };
                     return (
@@ -58,6 +73,7 @@ export default function ModalEliminarAR({
                                         setIdLineaToDelete(null);
                                         onClose();
                                     }}
+                                    isDisabled={isLoading}
                                 >
                                     Cancelar
                                 </Button>
@@ -65,6 +81,7 @@ export default function ModalEliminarAR({
                                     color="primary"
                                     onPress={finalizarModal}
                                     className="bg-generalBlue "
+                                    isLoading={isLoading}
                                 >
                                     Aceptar
                                 </Button>
@@ -76,31 +93,5 @@ export default function ModalEliminarAR({
         </Modal>
     );
 
-    async function deleteActaReunion(idLinea) {
-        setIsLoading(true);
-        try {
-            const url =
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                "/api/proyecto/actaReunion/eliminarLineaActaReunionXIdLineaActaReunion";
-
-            const response = await axios.delete(url, {
-                data: {
-                    idLineaActaReunion: idLinea,
-                },
-            });
-
-            if (response.status === 200) {
-                toast.success("Acta de reunion eliminada con exito");
-                const nuevasReuniones = reuniones.filter(
-                    (reunion) => reunion.idLineaActaReunion !== id
-                );
-                setReuniones(nuevasReuniones);
-            }
-
-            setIsLoading(false);
-        } catch (e) {
-            console.log(e);
-            toast.error("Error al eliminar acta de reunion");
-        }
-    }
+    
 }
