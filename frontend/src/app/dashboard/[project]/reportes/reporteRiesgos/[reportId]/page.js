@@ -35,6 +35,7 @@ import { useRouter } from "next/navigation";
 import { SessionContext } from "@/app/dashboard/layout";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
+import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 axios.defaults.withCredentials = true;
 export default function ReporteRiesgos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
@@ -793,7 +794,7 @@ export default function ReporteRiesgos(props) {
         <>
         {vistaReporte && (
             <div className="divHistorialReportes">
-                <Breadcrumbs>
+                {/* <Breadcrumbs>
                     <BreadcrumbsItem href="/" text="Inicio" />
                     <BreadcrumbsItem href="/dashboard" text="Proyectos" />
                     <BreadcrumbsItem
@@ -801,11 +802,30 @@ export default function ReporteRiesgos(props) {
                                     text={projectName}
                     />
                     <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/reportes"} text="Historial de Reportes" />
-                </Breadcrumbs>
+                </Breadcrumbs> */}
                 <div className="flex flex-row justify-between items-center">
-                    <div className="titleHistorialReporte text-mainHeaders">
+                    {/* <div className="titleHistorialReporte text-mainHeaders">
                             Reporte de Riesgos
-                    </div>
+                    </div> */}
+                    <HeaderWithButtonsSamePage
+                    haveReturn={true}
+                    haveAddNew={false}
+                    handlerReturn={() => {
+                        router.push(
+                            "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/reportes"
+                        );
+                    }}
+                    //newPrimarySon={ListComps.length + 1}
+                    breadcrump={
+                        "Inicio / Proyectos / " + projectName + " / Reportes"
+                    }
+                >
+                    Reporte de Riesgos
+                </HeaderWithButtonsSamePage>
                         {isNewReport && (
                                     <Button color="warning" className="text-white" onClick={()=>onModalSaveOpen()}>
                                         Guardar reporte

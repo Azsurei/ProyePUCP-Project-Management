@@ -15,6 +15,7 @@ dotenv.config();
 const storage = multer.memoryStorage();
 const upload = multer({storage:storage});
 
+routerRepositorioDocumentos.delete("/eliminarRepositorioDocumentos", repositorioDocumentoController.eliminar);
 
 routerRepositorioDocumentos.post("/subirArchivo",upload.single('file'), repositorioDocumentoController.subirArchivo);
 routerRepositorioDocumentos.get("/listarArchivos/:idRepositorioDocumentos", repositorioDocumentoController.listarArchivos);

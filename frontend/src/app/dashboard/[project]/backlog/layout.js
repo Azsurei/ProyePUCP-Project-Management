@@ -36,7 +36,7 @@ import { set } from "date-fns";
 export const FlagRefreshContext = createContext();
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
-
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 export default function RootLayout({ children, params }) {
     const decodedUrl = decodeURIComponent(params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
@@ -501,7 +501,7 @@ export default function RootLayout({ children, params }) {
                 </Modal>
             )}
 
-            <HeaderWithButtonsSamePage
+            {/* <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={false}
                 //handlerAddNew={handlerGoToNew}
@@ -512,7 +512,16 @@ export default function RootLayout({ children, params }) {
                 //btnText={"Nueva tarea"}
             >
                 Backlog
-            </HeaderWithButtonsSamePage>
+            </HeaderWithButtonsSamePage> */}
+            <Breadcrumbs>
+                    <BreadcrumbsItem href="/" text="Inicio" />
+                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                    <BreadcrumbsItem
+                                href={"/dashboard/" + projectName + "=" + projectId}
+                                    text={projectName}
+                    />
+                    <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/backlog/kanban"} text="Backlog" />
+                </Breadcrumbs>
 
             <div style={{ display: "flex", flexDirection: "row" }}>
                 <Tabs

@@ -6011,3 +6011,17 @@ CREATE PROCEDURE ACTUALIZAR_COLOR_NIVEL_ARBOLEDT(
 BEGIN
     UPDATE ColorNivelArbolEDT SET color = _color WHERE idNivel = _idNivel;
 END$
+
+DROP PROCEDURE IF EXISTS ELIMINAR_REPOSITORIODOCUMENTO_X_ID_REPOSITORIO;
+DELIMITER //
+CREATE DEFINER=`admin`@`%`PROCEDURE `ELIMINAR_REPOSITORIODOCUMENTO_X_ID_REPOSITORIO`(
+	IN _idRepositorioDocumentos INT
+)
+BEGIN
+	UPDATE ArchivoXRepositorioDocumento SET activo = 0 
+    WHERE idRepositorioDocumentos = _idRepositorioDocumentos;
+    UPDATE RepositorioDocumento SET activo = 0 
+    WHERE idRepositorioDocumentos = _idRepositorioDocumentos;
+	
+END; //
+DELIMITER ;
