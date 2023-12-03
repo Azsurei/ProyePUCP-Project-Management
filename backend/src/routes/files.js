@@ -28,6 +28,7 @@ routerFiles.get("/descargarArchivo/:idArchivo", fileController.descargarArchivo)
 routerFiles.post("/postFile",upload.single('file'), fileController.postFile);
 
 routerFiles.get("/getFile/:idArchivo", fileController.getFile);
+routerFiles.get("/getArchivoActaReunion", fileController.getArchivoActaReunion);
 
 routerFiles.post("/postArchivo",upload.single('file'), fileController.postFile);
 
