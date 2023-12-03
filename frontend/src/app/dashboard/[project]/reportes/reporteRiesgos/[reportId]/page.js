@@ -847,6 +847,7 @@ export default function ReporteRiesgos(props) {
                 guardarReporte={async (name) => {
                     return await guardarReporte(name);
                 }}
+                tipo = "Riesgos"
             />
                 {!vistaReporte && (
           <div>No hay reporte</div>
