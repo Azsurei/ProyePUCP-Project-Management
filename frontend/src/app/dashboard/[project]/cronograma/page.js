@@ -1331,7 +1331,7 @@ export default function Cronograma(props) {
                                     {stateSecond === 4 && "Agregar tarea hija"}
                                 </HeaderWithButtonsSamePage>
 
-                                {stateSecond === 2 && (
+                                {sessionData.rolNameInProject !== "Supervisor" && stateSecond === 2 && (
                                     <Button
                                         color="primary"
                                         size="md"

@@ -12,6 +12,9 @@ export default function UsersScreen(props) {
 
     const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
+    const loadDelete = sessionData.rolNameInProject !== "Supervisor";
+
+
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -35,6 +38,7 @@ export default function UsersScreen(props) {
                 refreshPage={() => {
                     window.location.reload();
                 }}
+                loadDelete={loadDelete}
             />
         </div>
     );
