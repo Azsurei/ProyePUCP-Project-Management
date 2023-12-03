@@ -33,6 +33,6 @@ routerPlantillas.post("/guardarPlantillaCA",plantillaCampoAdicionalController.gu
 routerPlantillas.get("/listarPlantillasCA/:idUsuario",plantillaCampoAdicionalController.listarPlantillasCA);
 routerPlantillas.get("/listarPlantillasCAXNombre/:idUsuario/:nombre",plantillaCampoAdicionalController.listarPlantillasCAXNombre);
 routerPlantillas.delete("/eliminarPlantillaCA",plantillaCampoAdicionalController.eliminarPlantillaCA);
-routerPlantillas.get("/seleccionarPlantillaCA/idPlantillaCampoAdicional",plantillaCampoAdicionalController.seleccionarPlantillaCA);
+routerPlantillas.post("/seleccionarPlantillaCA",plantillaCampoAdicionalController.seleccionarPlantillaCA);
 
 module.exports.routerPlantillas = routerPlantillas;
