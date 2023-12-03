@@ -12,7 +12,9 @@ import DateInput from "@/components/DateInput";
 import { v4 } from "uuid";
 import ListEditableInputV4 from "./ListEditableInputV4";
 import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
-import ListAdditionalFields from "@/components/ListAdditionalFields";
+import ListAdditionalFields, { AsyncRegisterAdditionalFields, getAdditionalFields } from "@/components/ListAdditionalFields";
+import ListEditableInputV4Crit from "./ListEditableInputV4Crit";
+import { dbDateToInputDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 
 export default function EDTCompVisualization({
@@ -40,12 +42,8 @@ export default function EDTCompVisualization({
     const [inObservaciones, setInObservaciones] = useState("");
 
     const [listEntregablesOld, setListEntregablesOld] = useState([]);
-    const [listEntregables, setListEntregables] = useState([
-        { index: 1, data: "" },
-    ]);
-    const [listCriterios, setListCriterios] = useState([
-        { index: 1, data: "" },
-    ]);
+    const [listEntregables, setListEntregables] = useState([]);
+    const [listCriterios, setListCriterios] = useState([]);
 
     const [datosComponente, setDatosComponente] = useState(null);
 
@@ -82,8 +80,12 @@ export default function EDTCompVisualization({
         const newLista = [
             ...listCriterios,
             {
-                index: listCriterios.length + 1,
-                data: "",
+                //index: listCriterios.length + 1,
+                //data: "",
+                idComponenteEDT: idComponentToSee,
+                idComponenteCriterioDeAceptacion: v4(),
+                descripcion: "",
+                activo: 1,
             },
         ];
         setListCriterios(newLista);
@@ -98,7 +100,6 @@ export default function EDTCompVisualization({
     };
 
     const handleRemoveEntregable = (id) => {
-        console.log("vamos a eliminar el de id = " + id);
         const updatedEntregables = [...listEntregables];
         const newUpdated = updatedEntregables.filter(
             (item) => item.idEntregable.toString() !== id.toString()
@@ -107,26 +108,71 @@ export default function EDTCompVisualization({
         setListEntregables(newUpdated);
     };
 
-    const handleChangeCriterio = (e, index) => {
+    const handleChangeCriterio = (e, id) => {
         const updatedCriterios = [...listCriterios];
-        updatedCriterios[index - 1].data = e.target.value;
+        updatedCriterios.find(
+            (item) => item.idComponenteCriterioDeAceptacion === id
+        ).descripcion = e.target.value;
         console.log(updatedCriterios);
         setListCriterios(updatedCriterios);
     };
 
-    const handleRemoveCriterio = (index) => {
+    const handleRemoveCriterio = (id) => {
         const updatedCriterios = [...listCriterios];
-        updatedCriterios.splice(index - 1, 1); // Remove the element at the given index
-        for (let i = index - 1; i < updatedCriterios.length; i++) {
-            updatedCriterios[i].index = updatedCriterios[i].index - 1;
-        }
-        console.log(updatedCriterios);
+        const newUpdated = updatedCriterios.filter(
+            (item) =>
+                item.idComponenteCriterioDeAceptacion.toString() !==
+                id.toString()
+        );
+        console.log(newUpdated);
         setListCriterios(updatedCriterios);
     };
 
     const handleCancelEdit = () => {
         setEstadoEditar(!estadoEditar);
         handlerReturn();
+    };
+
+    const findModifiedDeletedAdded = (
+        originalArray,
+        newArray,
+        comparisonField
+    ) => {
+        const modifiedArray = [];
+        const deletedArray = [];
+        const addedArray = [];
+
+        // Encuentra elementos modificados y eliminados
+        originalArray.forEach((originalItem) => {
+            const newItem = newArray.find(
+                (newItem) =>
+                    newItem[comparisonField] === originalItem[comparisonField]
+            );
+
+            if (newItem) {
+                modifiedArray.push(newItem);
+                /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                    modifiedArray.push(newItem);
+                } */
+            } else {
+                deletedArray.push(originalItem);
+            }
+        });
+
+        // Encuentra elementos añadidos
+        newArray.forEach((newItem) => {
+            if (
+                !originalArray.some(
+                    (originalItem) =>
+                        originalItem[comparisonField] ===
+                        newItem[comparisonField]
+                )
+            ) {
+                addedArray.push(newItem);
+            }
+        });
+
+        return { modifiedArray, deletedArray, addedArray };
     };
 
     const handleUpdateComp = () => {
@@ -146,51 +192,18 @@ export default function EDTCompVisualization({
         //idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables,
         //fechaInicio, fechaFin, recursos, hito
 
-        const findModifiedDeletedAdded = (
-            originalArray,
-            newArray,
-            comparisonField
-        ) => {
-            const modifiedArray = [];
-            const deletedArray = [];
-            const addedArray = [];
-
-            // Encuentra elementos modificados y eliminados
-            originalArray.forEach((originalItem) => {
-                const newItem = newArray.find(
-                    (newItem) =>
-                        newItem[comparisonField] ===
-                        originalItem[comparisonField]
-                );
-
-                if (newItem) {
-                    modifiedArray.push(newItem);
-                    /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
-                        modifiedArray.push(newItem);
-                    } */
-                } else {
-                    deletedArray.push(originalItem);
-                }
-            });
-
-            // Encuentra elementos añadidos
-            newArray.forEach((newItem) => {
-                if (
-                    !originalArray.some(
-                        (originalItem) =>
-                            originalItem[comparisonField] ===
-                            newItem[comparisonField]
-                    )
-                ) {
-                    addedArray.push(newItem);
-                }
-            });
-
-            return { modifiedArray, deletedArray, addedArray };
-        };
-
-        const { modifiedArray, deletedArray, addedArray } = findModifiedDeletedAdded(listEntregablesOld,listEntregables);
-
+        const { modifiedArray, deletedArray, addedArray } =
+            findModifiedDeletedAdded(
+                listEntregablesOld,
+                listEntregables,
+                "idEntregable"
+            );
+        console.log("MODIFIED  ");
+        console.log(modifiedArray);
+        console.log(" DELETED ");
+        console.log(deletedArray);
+        console.log(" ADDED");
+        console.log(addedArray);
         console.log(
             "Procediendo a actualizar datos del componenteEDT de id = " +
                 idComponentToSee
@@ -222,6 +235,83 @@ export default function EDTCompVisualization({
         //     });
     };
 
+    const [isRegistering, setIsRegistering] = useState(false);
+    async function testAsync() {
+        try {
+            setIsRegistering(true);
+
+            const url =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/EDT/modificarComponenteEDT";
+
+            const objToSend = {
+                idComponenteEDT: idComponentToSee,
+                descripcion: inDescripcion,
+                codigo: inCodigoComponente,
+                observaciones: inObservaciones,
+                nombre: inComponentName,
+                responsables: inResponsables,
+                fechaInicio: inFechaInicio,
+                fechaFin: inFechaFin,
+                recursos: inRecursos,
+                hito: inHito,
+                criterioAceptacion: listCriterios,
+            };
+
+            const response = await axios.post(url, objToSend);
+
+            console.log(response);
+
+            const urlInsert =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/EDT/insertarEntregables";
+
+            const urlModify =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/EDT/modificarEntregables";
+
+            const urlDelete =
+                process.env.NEXT_PUBLIC_BACKEND_URL +
+                "/api/proyecto/EDT/eliminarEntregables";
+
+            const { modifiedArray, deletedArray, addedArray } =
+                findModifiedDeletedAdded(
+                    listEntregablesOld,
+                    listEntregables,
+                    "idEntregable"
+                );
+
+            const responseI = await axios.post(urlInsert, {
+                entregablesInsertar: addedArray,
+                idComponente: idComponentToSee,
+            });
+            console.log(responseI);
+
+            const responseM = await axios.put(urlModify, {
+                entregablesModificar: modifiedArray
+            });
+            console.log(responseM);
+
+            const responseD = await axios.delete(urlDelete, {
+                data: {
+                    entregablesEliminar: deletedArray
+                },
+            });
+            console.log(responseD);
+
+            const finalResponse = await AsyncRegisterAdditionalFields(taskAdditionalFields,idComponentToSee,2,1,(response)=>{
+                console.log("Respuesta de registro de fields");
+                console.log(response);
+            })
+
+            handlerReturn();
+            setIsRegistering(false);
+        } catch (e) {
+            console.log(e);
+            setIsRegistering(false);
+        }
+    }
+
     useEffect(() => {
         setIsLoadingSmall(true);
         console.log("Procediendo sacar informacion del componente");
@@ -242,32 +332,34 @@ export default function EDTCompVisualization({
                 setInComponentName(component.nombre);
                 setInCodigoComponente(component.codigo);
 
-                if (component.fechaInicio !== null) {
-                    const dateObject = new Date(component.fechaInicio);
-                    const dateString = dateObject.toLocaleDateString();
-                    const parts = dateString.split("/");
-                    if (parts[0].length === 1) {
-                        parts[0] = "0" + parts[0];
-                    }
-                    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                    console.log("NUEVA FECHA INICIO:" + formattedDate);
-                    setInFechaInicio(formattedDate);
-                } else {
-                    setInFechaInicio("");
-                }
-                if (component.fechaFin !== null) {
-                    const dateObject1 = new Date(component.fechaFin);
-                    const dateString1 = dateObject1.toLocaleDateString();
-                    const parts1 = dateString1.split("/");
-                    if (parts1[0].length === 1) {
-                        parts1[0] = "0" + parts1[0];
-                    }
-                    const formattedDate1 = `${parts1[2]}-${parts1[1]}-${parts1[0]}`;
-                    console.log("NUEVA FECHA FIN:" + formattedDate1);
-                    setInFechaFin(formattedDate1);
-                } else {
-                    setInFechaFin("");
-                }
+                // if (component.fechaInicio !== null) {
+                //     const dateObject = new Date(component.fechaInicio);
+                //     const dateString = dateObject.toLocaleDateString();
+                //     const parts = dateString.split("/");
+                //     if (parts[0].length === 1) {
+                //         parts[0] = "0" + parts[0];
+                //     }
+                //     const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                //     console.log("NUEVA FECHA INICIO:" + formattedDate);
+                //     setInFechaInicio(formattedDate);
+                // } else {
+                //     setInFechaInicio("");
+                // }
+                // if (component.fechaFin !== null) {
+                //     const dateObject1 = new Date(component.fechaFin);
+                //     const dateString1 = dateObject1.toLocaleDateString();
+                //     const parts1 = dateString1.split("/");
+                //     if (parts1[0].length === 1) {
+                //         parts1[0] = "0" + parts1[0];
+                //     }
+                //     const formattedDate1 = `${parts1[2]}-${parts1[1]}-${parts1[0]}`;
+                //     console.log("NUEVA FECHA FIN:" + formattedDate1);
+                //     setInFechaFin(formattedDate1);
+                // } else {
+                //     setInFechaFin("");
+                // }
+                setInFechaInicio(dbDateToInputDate(component.fechaInicio));
+                setInFechaFin(dbDateToInputDate(component.fechaFin));   
 
                 setInResponsables(component.responsables);
                 setInDescripcion(component.descripcion);
@@ -277,23 +369,21 @@ export default function EDTCompVisualization({
 
                 setBaseComponentData(component);
 
+                console.log(entregables);
                 setListEntregables(entregables);
                 setListEntregablesOld(entregables);
 
-                setListCriterios(
-                    criteriosAceptacion.map((component, index) => {
-                        return {
-                            index: index + 1,
-                            data: component.descripcion,
-                        };
-                    })
-                );
+                console.log(criteriosAceptacion);
+                setListCriterios(criteriosAceptacion);
 
                 console.log(
                     "haz conseguido la informacion de dicho componente con exito"
                 );
 
-                setIsLoadingSmall(false);
+                getAdditionalFields(idComponentToSee,2,setTaskAdditionalFields,(response)=>{
+                    console.log("Respueste de campos adicionales listada con exito");
+                    setIsLoadingSmall(false);
+                });
             })
             .catch(function (error) {
                 console.log(error);
@@ -535,41 +625,38 @@ export default function EDTCompVisualization({
                                 onClick={handleAddCriterio}
                                 size="sm"
                             >
-                                Anadir entregable
+                                Anadir criterio
                             </Button>
                         ) : null}
                     </div>
 
                     <div className="px-4 py-2">
-                        <ListEditableInputV4
+                        <ListEditableInputV4Crit
                             ListInputs={listCriterios}
                             typeName="Criterio"
                             typeFault="criterios"
                             handleChanges={handleChangeCriterio}
                             handleRemove={handleRemoveCriterio}
                             beEditable={estadoEditar}
-                        ></ListEditableInputV4>
+                        ></ListEditableInputV4Crit>
                     </div>
                     <div className="flex flex-row items-center gap-6 mt-5">
-                <p className="font-semibold text-xl">
-                    Campos adicionales
-                </p>
-                    {
-                        estadoEditar && (
+                        <p className={twTitle}>
+                            Campos adicionales
+                        </p>
+                        {estadoEditar && (
                             <TemplatesAdditionalFields
-                            editState={stateSecond !== 2}
-                            baseFields={taskAdditionalFields}
-                            setBaseFields={setTaskAdditionalFields}
-                        />
-                        )
-                    }
- 
-            </div>
-            <ListAdditionalFields
-                                editState={stateSecond !== 2}
+                                editState={estadoEditar}
                                 baseFields={taskAdditionalFields}
                                 setBaseFields={setTaskAdditionalFields}
                             />
+                        )}
+                    </div>
+                    <ListAdditionalFields
+                        editState={estadoEditar}
+                        baseFields={taskAdditionalFields}
+                        setBaseFields={setTaskAdditionalFields}
+                    />
                 </div>
             </div>
 
@@ -592,10 +679,12 @@ export default function EDTCompVisualization({
                         textBody="¿Seguro que quiere desea actualizar este componente?"
                         colorButton="w-36 bg-blue-950 text-white"
                         oneButton={false}
-                        secondAction={() => {
-                            handleUpdateComp();
+                        secondAction={async () => {
+                            await testAsync();
                         }}
                         textColor="blue"
+                        isLoading={isRegistering}
+                        closeSecondActionState={true}
                     />
                 </div>
             )}
