@@ -11,6 +11,8 @@ import { Button, Textarea } from "@nextui-org/react";
 import { HerramientasInfo } from "@/app/dashboard/[project]/layout";
 import { Toaster, toast } from "sonner";
 import DateInput from "@/components/DateInput";
+import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
+import ListAdditionalFields from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
 export default function EDTNewVisualization({
@@ -27,7 +29,8 @@ export default function EDTNewVisualization({
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
     const [validName, setValidName] = useState(true);
-
+    const [stateSecond, setStateSecond] = useState(0);
+    const [taskAdditionalFields, setTaskAdditionalFields] = useState([]);
     const [inTipoComponente, setInTipoComponente] = useState("");
     const [inCodigoComponente, setInCodigoComponente] =
         useState(codeNewComponent);
@@ -542,9 +545,22 @@ export default function EDTNewVisualization({
                 </div>
             </div>
 
-            <div>
-                xd
+            <div className="flex flex-row items-center gap-6 mt-5">
+                <p className="font-semibold text-xl">
+                    Campos adicionales
+                </p>
+
+                    <TemplatesAdditionalFields
+                        editState={stateSecond !== 2}
+                        baseFields={taskAdditionalFields}
+                        setBaseFields={setTaskAdditionalFields}
+                    />
             </div>
+            <ListAdditionalFields
+                                editState={stateSecond !== 2}
+                                baseFields={taskAdditionalFields}
+                                setBaseFields={setTaskAdditionalFields}
+                            />
             
             <div className="twoButtons">
                 <Modal

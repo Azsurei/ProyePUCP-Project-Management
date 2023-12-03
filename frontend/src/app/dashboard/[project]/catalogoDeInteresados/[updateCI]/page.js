@@ -17,6 +17,7 @@ import ListAdditionalFields, {
 } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 import { SessionContext } from "@/app/dashboard/layout";
+import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
 axios.defaults.withCredentials = true;
 export default function CatalogoDeInteresadosRegister(props) {
     const keyParamURL = decodeURIComponent(props.params.updateCI);
@@ -752,9 +753,21 @@ export default function CatalogoDeInteresadosRegister(props) {
                     )}
                 </div>
                 <div>
-                    <div className="flex items-center text-[16px] font-semibold mb-1">
-                        Campos Adicionales
-                    </div>
+                <div className="flex flex-row items-center gap-6 mt-5">
+                <p className="font-semibold text-xl">
+                    Campos adicionales
+                </p>
+                    {
+                        editMode && (
+                            <TemplatesAdditionalFields
+                            editState={editMode}
+                            baseFields={listAdditionalFields}
+                            setBaseFields={setListAdditionalFields}
+                        />
+                        )
+                    }
+ 
+            </div>
                     <ListAdditionalFields
                         editState={editMode}
                         baseFields={listAdditionalFields}

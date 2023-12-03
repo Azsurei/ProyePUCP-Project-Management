@@ -11,6 +11,8 @@ import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import DateInput from "@/components/DateInput";
 import { v4 } from "uuid";
 import ListEditableInputV4 from "./ListEditableInputV4";
+import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
+import ListAdditionalFields from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 
 export default function EDTCompVisualization({
@@ -23,6 +25,8 @@ export default function EDTCompVisualization({
 
     const [estadoEditar, setEstadoEditar] = useState(false);
     const [baseComponentDate, setBaseComponentData] = useState(null);
+    const [stateSecond, setStateSecond] = useState(0);
+    const [taskAdditionalFields, setTaskAdditionalFields] = useState([]);
     //Variables para input
     const [inComponentName, setInComponentName] = useState("");
     const [inTipoComponente, setInTipoComponente] = useState("");
@@ -504,6 +508,26 @@ export default function EDTCompVisualization({
                             beEditable={estadoEditar}
                         ></ListEditableInputV4>
                     </div>
+                    <div className="flex flex-row items-center gap-6 mt-5">
+                <p className="font-semibold text-xl">
+                    Campos adicionales
+                </p>
+                    {
+                        estadoEditar && (
+                            <TemplatesAdditionalFields
+                            editState={stateSecond !== 2}
+                            baseFields={taskAdditionalFields}
+                            setBaseFields={setTaskAdditionalFields}
+                        />
+                        )
+                    }
+ 
+            </div>
+            <ListAdditionalFields
+                                editState={stateSecond !== 2}
+                                baseFields={taskAdditionalFields}
+                                setBaseFields={setTaskAdditionalFields}
+                            />
                 </div>
             </div>
 

@@ -30,6 +30,7 @@ import ModalEliminateMetrica from "@/components/dashboardComps/projectComps/plan
 import ListAdditionalFields, { getAdditionalFields, registerAdditionalFields } from "@/components/ListAdditionalFields";
 axios.defaults.withCredentials = true;
 import { SessionContext } from "@/app/dashboard/layout";
+import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
 export default function PlanDeCalidad(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -1036,8 +1037,20 @@ export default function PlanDeCalidad(props) {
                 />
                 
             </div>
-            <div className="flex items-center text-[24px] font-semibold mt-8 mb-4">
-                    Campos Adicionales
+            <div className="flex flex-row items-center gap-6 mt-5">
+                <p className="font-semibold text-xl">
+                    Campos adicionales
+                </p>
+                    {
+                        editMode && (
+                            <TemplatesAdditionalFields
+                            editState={editMode}
+                            baseFields={listAdditionalFields}
+                            setBaseFields={setListAdditionalFields}
+                        />
+                        )
+                    }
+ 
             </div>
             <ListAdditionalFields 
                 editState={editMode}

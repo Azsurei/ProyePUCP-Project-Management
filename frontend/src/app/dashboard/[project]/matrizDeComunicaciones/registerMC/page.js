@@ -15,6 +15,7 @@ import ListAdditionalFields, {
     registerAdditionalFields,
 } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
+import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
 axios.defaults.withCredentials = true;
 
 function capitalizeWords(str) {
@@ -323,9 +324,19 @@ export default function MatrizComunicacionesRegister(props) {
                 </div>
                 {/*6*/}
                 <div>
-                    <div className="flex items-center text-[16px] font-semibold mb-1">
-                        Campos Adicionales
-                    </div>
+                    <div className="flex flex-row items-center gap-6 mt-5">
+                <p className="font-semibold text-xl">
+                    Campos adicionales
+                </p>
+                   
+                            <TemplatesAdditionalFields
+                            editState={true}
+                            baseFields={listAdditionalFields}
+                            setBaseFields={setListAdditionalFields}
+                        />
+      
+ 
+            </div>
                     <ListAdditionalFields
                         editState={true}
                         baseFields={listAdditionalFields}
