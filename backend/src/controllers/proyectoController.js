@@ -1148,61 +1148,26 @@ async function actualizarDatos(req,res,next){
     const query5 = `CALL AÑADIR_DIAS_PRODUCTBACKLOG(?,?);`;
     const query6 = `CALL AÑADIR_DIAS_EDT(?,?);`;
     const query7 = `CALL AÑADIR_DIAS_TAREA(?,?);`;
+    const query8 = `CALL ObtenerFechasExtremas(?);`;
     //Convertimos a fecha
     const fechaInicial = moment(fechaInicio);
     const fechaFinal = moment(fechaFin);
     // Convierte la diferencia de milisegundos a días
     const diferenciaEnDias = fechaFinal.diff(fechaInicial, 'days');
-    console.log(`La diferencia en días es: ${diferenciaEnDias}`);
+    console.log(`La diferencia en días de las fechas ingresadas: ${diferenciaEnDias}`);
     try {
         let flag = 1;
         //Obtenemos las herramientas del proyecto
         const [results] = await connection.query(query,[idProyecto]);
         const herramientas = results[0];
         //Verificamos que las herramientas pueden caber en la nueva fecha
-        for(let herramienta of herramientas){
-            //Product Backlog
-            if(herramienta.idHerramienta == 1){
-                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Sprint)
-                const [results1] = await connection.query(query1,[idProyecto]);
-                let diffDiasBacklog = results1[0][0].DiferenciaEnDias;
-                console.log(`Diferencia de dias Backlog ${diffDiasBacklog}!`);
-                if(diffDiasBacklog>diferenciaEnDias){
-                    flag = 0;
-                }
-            }
-            //EDT
-            if(herramienta.idHerramienta == 2){
-                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla ComponenteEDT)
-                const [results2] = await connection.query(query2,[idProyecto]);
-                let diffDiasEDT = results2[0][0].DiferenciaEnDias;
-                console.log(`Diferencia de dias EDT ${diffDiasEDT}!`);
-                if(diffDiasEDT>diferenciaEnDias){
-                    flag = 0;
-                }
-            }
-            //Acta de Constistucion no hay fechaInicio 3
-            //Cronograma 
-            if(herramienta.idHerramienta == 4){
-                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Cronograma y Tarea)
-                const [results3] = await connection.query(query3,[idProyecto]);
-                let diffDiasTarea = results3[0][0].DiferenciaEnDias;
-                console.log(`Diferencia de dias Tareas ${diffDiasTarea}!`);
-                if(diffDiasTarea>diferenciaEnDias){
-                    flag = 0;
-                }
-            }
-            //Catalogo de riesgo no hay fechaInicio 5
-            //Catalogo de riesgo no hay fechas 6
-            //Matriz de Responsabilidad 7
-            //Matriz de Comunicacion 8
-            //Autoevaluacion 9 ¿Duda fechaLimite?
-            //Retrospectiva 10
-            //Acta de Reunion 11
-            //Registro de Equipos 12
-            //Presupeusto 13
-            //Repositorio de Documentos 14
-            //Plan de Calidad 15        
+        const [results1] = await connection.query(query8,[idProyecto]);
+        let fechaMin = moment(results1[0][0].FechaInicioMinima);
+        let fechaMax = moment(results1[0][0].FechaFinMaxima);
+        const diferenciaDiasHerramientas = fechaMax.diff(fechaMin, 'days');
+        console.log(`La diferencia de fecha Inicio y Fecha Fin de todas las herramientas: ${diferenciaDiasHerramientas}`);
+        if(diferenciaDiasHerramientas>diferenciaEnDias){
+            flag = 0;
         }
         console.log(`Termino`);
         if(flag==0){
