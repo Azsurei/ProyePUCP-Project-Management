@@ -224,7 +224,7 @@ export default function EstimacionCostoList(props) {
                                     canSelect={isSelected}
                                     onSelect={(selectedData, isSelected) => handleCardSelect(selectedData, isSelected)}
                                     initialMoneda = {valueMoneda}
-                                    isSelected={component.idLineaEstimacion === dataSelected.idLineaEstimacion}
+                                    isSelected={component.idLineaEstimacion === (dataSelected?.idLineaEstimacion ?? null)}
                                 />
                             ))}
                         </ul>
