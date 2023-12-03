@@ -82,7 +82,7 @@ function DetailCard({
                             input: "text-lg font-bold",
                         }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
                         readOnly={!isEditable}
-                        value={detail.detalle === null ? "" : detail.detalle}
+                        value={detail.nombre === null ? "" : detail.nombre}
                         //onValueChange={setTareaDescripcion}
                         minRows={1}
                         size="sm"
@@ -263,7 +263,7 @@ export default function Info(props) {
         axios
             .post(updateURL, {
                 nombrePlantilla: nombrePlantilla,
-                idUsuario: IdUsuario,
+                idUsuario: sessionData.idUsuario,
                 idActaConstitucion: IdActa,
             })
             .then((response) => {
@@ -463,32 +463,26 @@ export default function Info(props) {
 
       const DataTable = async () => {
         const fetchPlantillas = async () => {
-            if (IdUsuario !== "") {
-                try {
-                    const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + IdUsuario;
-                    if(IdUsuario !== ""){
-                        console.log("IdUsuario: "+IdUsuario);
-                    }
-                    const response = await axios.get(url);
-    
-                    const plantillasInvertidas = response.data.plantillasAC.reverse();
-    
-                    setPlantillas(plantillasInvertidas);
-                } catch (error) {
-                    console.error("Error al obtener las plantillas:", error);
-                }
+          
+            try {
+                const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasAC/' + sessionData.idUsuario;
+
+                const response = await axios.get(url);
+
+                const plantillasInvertidas = response.data.plantillasAC.reverse();
+
+                setPlantillas(plantillasInvertidas);
+            } catch (error) {
+                console.error("Error al obtener las plantillas:", error);
             }
+        
         };
     
         fetchPlantillas();
     };
     
     
-      useEffect(() => {
-        if (IdUsuario !== "") {
-            DataTable();
-        }
-      }, [IdUsuario]);
+
 
       const [error, setError] = useState(null);
       //Buscar PLantilla
@@ -506,12 +500,10 @@ export default function Info(props) {
       //lamado a la api de listar PLantillas por Nombre
 
       const refreshList = async () => {
-        if (IdUsuario !== "" && filterValue !== "") {
+        if (filterValue !== "") {
             try {
-                const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasACXNombre/' + IdUsuario+'/'+filterValue;
+                const url = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/proyecto/plantillas/listarPlantillasACXNombre/' + sessionData.idUsuario+'/'+filterValue;
 
-                console.log(IdUsuario+" "+filterValue);
-                console.log(url);
                 const response = await axios.get(url);
 
                 const plantillasInvertidas = response.data.plantillasAC;
@@ -542,12 +534,10 @@ export default function Info(props) {
                             }
 
                             if(Isvalid === true){
-                                console.log("IdUsuario: "+ sessionData.idUsuario);
                                 try {
                                     await guardarPlantillaNueva();
                                     setNombrePlantilla("");
                                     setValidNombrePlantilla(true);
-                                    console.log("xd");
                                     
                                 } catch (error) {
                                     console.error('Error al Guardar Plantilla:', error);
@@ -771,7 +761,9 @@ export default function Info(props) {
                                     <NextUIButton color="secondary">Plantillas</NextUIButton>
                                 </DropdownTrigger>
                                 <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
-                                    <DropdownItem key="verPlantillasAC" startContent={<ContentPasteGoIcon />} onPress={onModalPlantillas} color="secondary">
+                                    <DropdownItem key="verPlantillasAC" startContent={<ContentPasteGoIcon />} onPress={() => { DataTable();
+                                     onModalPlantillas(); }}
+                                    color="secondary">
                                         Ver Plantillas
                                     </DropdownItem>
                                     <DropdownItem key="guardarPlantillasAC" startContent={<SaveAsIcon />} onPress={onSaveModalPlantilla} color="secondary">
@@ -969,7 +961,7 @@ export default function Info(props) {
                                     <ModalBody>
                                         <p>
                                             ¿Seguro que desea eliminar este
-                                            campo?
+                                           campo?
                                         </p>
                                     </ModalBody>
                                     <ModalFooter>

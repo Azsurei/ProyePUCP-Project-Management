@@ -39,7 +39,6 @@ export default function EDTCompVisualization({
     const [inHito, setInHito] = useState("");
     const [inObservaciones, setInObservaciones] = useState("");
 
-
     const [listEntregablesOld, setListEntregablesOld] = useState([]);
     const [listEntregables, setListEntregables] = useState([
         { index: 1, data: "" },
@@ -92,16 +91,20 @@ export default function EDTCompVisualization({
 
     const handleChangeEntregable = (e, id) => {
         const updatedEntregables = [...listEntregables];
-        updatedEntregables.find((item) => item.index === id).nombre = e.target.value;
+        updatedEntregables.find((item) => item.idEntregable === id).nombre =
+            e.target.value;
         console.log(updatedEntregables);
         setListEntregables(updatedEntregables);
     };
 
-    const handleRemoveEntregable = (index) => {
+    const handleRemoveEntregable = (id) => {
+        console.log("vamos a eliminar el de id = " + id);
         const updatedEntregables = [...listEntregables];
-        updatedEntregables.filter((item) => item.index !== index);
-        console.log(updatedEntregables);
-        setListEntregables(updatedEntregables);
+        const newUpdated = updatedEntregables.filter(
+            (item) => item.idEntregable.toString() !== id.toString()
+        );
+        console.log(newUpdated);
+        setListEntregables(newUpdated);
     };
 
     const handleChangeCriterio = (e, index) => {
@@ -143,35 +146,80 @@ export default function EDTCompVisualization({
         //idComponenteEDT, descripcion, codigo, observaciones, nombre, responsables,
         //fechaInicio, fechaFin, recursos, hito
 
+        const findModifiedDeletedAdded = (
+            originalArray,
+            newArray,
+            comparisonField
+        ) => {
+            const modifiedArray = [];
+            const deletedArray = [];
+            const addedArray = [];
+
+            // Encuentra elementos modificados y eliminados
+            originalArray.forEach((originalItem) => {
+                const newItem = newArray.find(
+                    (newItem) =>
+                        newItem[comparisonField] ===
+                        originalItem[comparisonField]
+                );
+
+                if (newItem) {
+                    modifiedArray.push(newItem);
+                    /*                 if (JSON.stringify(originalItem) !== JSON.stringify(newItem)) {
+                        modifiedArray.push(newItem);
+                    } */
+                } else {
+                    deletedArray.push(originalItem);
+                }
+            });
+
+            // Encuentra elementos añadidos
+            newArray.forEach((newItem) => {
+                if (
+                    !originalArray.some(
+                        (originalItem) =>
+                            originalItem[comparisonField] ===
+                            newItem[comparisonField]
+                    )
+                ) {
+                    addedArray.push(newItem);
+                }
+            });
+
+            return { modifiedArray, deletedArray, addedArray };
+        };
+
+        const { modifiedArray, deletedArray, addedArray } = findModifiedDeletedAdded(listEntregablesOld,listEntregables);
+
         console.log(
             "Procediendo a actualizar datos del componenteEDT de id = " +
                 idComponentToSee
         );
-        axios
-            .post(
-                process.env.NEXT_PUBLIC_BACKEND_URL +
-                    "/api/proyecto/EDT/modificarComponenteEDT",
-                {
-                    idComponenteEDT: idComponentToSee,
-                    descripcion: inDescripcion,
-                    codigo: inCodigoComponente,
-                    observaciones: inObservaciones,
-                    nombre: inComponentName,
-                    responsables: inResponsables,
-                    fechaInicio: inFechaInicio,
-                    fechaFin: inFechaFin,
-                    recursos: inRecursos,
-                    hito: inHito,
-                }
-            )
-            .then(function (response) {
-                console.log(response);
+        // axios
+        //     .post(
+        //         process.env.NEXT_PUBLIC_BACKEND_URL +
+        //             "/api/proyecto/EDT/modificarComponenteEDT",
+        //         {
+        //             idComponenteEDT: idComponentToSee,
+        //             descripcion: inDescripcion,
+        //             codigo: inCodigoComponente,
+        //             observaciones: inObservaciones,
+        //             nombre: inComponentName,
+        //             responsables: inResponsables,
+        //             fechaInicio: inFechaInicio,
+        //             fechaFin: inFechaFin,
+        //             recursos: inRecursos,
+        //             hito: inHito,
+        //         }
+        //     )
+        //     .then(function (response) {
+        //         console.log(response);
 
-                handlerReturn();
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        //         handlerReturn();
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
     };
 
     useEffect(() => {
@@ -229,14 +277,8 @@ export default function EDTCompVisualization({
 
                 setBaseComponentData(component);
 
-                setListEntregables(
-                    entregables.map((component, index) => {
-                        return {
-                            index: index + 1,
-                            data: component.nombre,
-                        };
-                    })
-                );
+                setListEntregables(entregables);
+                setListEntregablesOld(entregables);
 
                 setListCriterios(
                     criteriosAceptacion.map((component, index) => {

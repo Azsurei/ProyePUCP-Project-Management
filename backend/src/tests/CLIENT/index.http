@@ -507,7 +507,7 @@ Content-Type:  application/json
 ////////////////////////////
 
 ###LISTAR ACTA DE CONSTITUCION
-GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/50 HTTP/1.1
+GET http://localhost:8080/api/proyecto/ActaConstitucion/listarActaConstitucion/262 HTTP/1.1
 Content-Type:  application/json
 
 ###MODIFICAR CAMPOS ACTA DE CONSTITUCION

@@ -21,7 +21,7 @@ function EditableInputV4(props) {
                     className="col-span-12 md:col-span-6 mb-6 md:mb-0"
                     value={props.data}
                     onChange={(e) => {
-                        props.handleChanges(e, props.number);
+                        props.handleChanges(e, props.id);
                     }}
                     minRows={1}
                     size="sm"
@@ -33,7 +33,7 @@ function EditableInputV4(props) {
                         alt="Eliminar"
                         className="iconDeleteInput"
                         onClick={() => {
-                            props.handleRemove(props.number);
+                            props.handleRemove(props.id);
                         }}
                     />
                 )}
@@ -50,13 +50,14 @@ export default function ListEditableInputV4(props) {
     }
     return (
         <ul className="ListEditableInput">
-            {props.ListInputs.map((item) => {
+            {props.ListInputs.map((item, index) => {
                 return (
                     <EditableInputV4
-                        key={item.index}
+                        key={item.idEntregable}
+                        id={item.idEntregable}
                         typeName={props.typeName}
-                        number={item.index}
-                        data={item.data}
+                        number={index + 1}
+                        data={item.nombre}
                         handleChanges={props.handleChanges}
                         handleRemove={props.handleRemove}
                         beEditable={props.beEditable}
