@@ -43,7 +43,7 @@ export default function ActaReunion(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const [idActa, setIdActa] = useState(null); // Use camelCase for consistency
 
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -235,6 +235,9 @@ export default function ActaReunion(props) {
             archivo: "archivo 1",
         },
     ];
+
+    const [idLineaToDelete, setIdLineaToDelete] = useState(null);
+
     const newHref =
         "/dashboard/" +
         projectName +
@@ -248,12 +251,14 @@ export default function ActaReunion(props) {
             <ModalEliminarAR
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
+                idLineaToDelete={idLineaToDelete}
+                setIdLineaToDelete={setIdLineaToDelete}
             />
 
             <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={true}
-                handlerAddNew={()=>{
+                handlerAddNew={() => {
                     router.push(newHref);
                 }}
                 breadcrump={`Inicio / Proyectos / ${projectName} / Acta de Reunión`}
@@ -261,7 +266,7 @@ export default function ActaReunion(props) {
             >
                 Acta de Reunión
             </HeaderWithButtonsSamePage>
-            
+
             <div className="flex flex-col gap-2 mt-3">
                 {reuniones.map((meeting) => {
                     return (
@@ -351,11 +356,14 @@ export default function ActaReunion(props) {
                                     <DropdownItem
                                         aria-label="edit"
                                         onClick={() => {
-                                            router.push("/dashboard/" +
-                                            projectName +
-                                            "=" +
-                                            projectId +
-                                            "/actaReunion/"+meeting.idLineaActaReunion);
+                                            router.push(
+                                                "/dashboard/" +
+                                                    projectName +
+                                                    "=" +
+                                                    projectId +
+                                                    "/actaReunion/" +
+                                                    meeting.idLineaActaReunion
+                                            );
                                         }}
                                     >
                                         Editar
@@ -365,6 +373,9 @@ export default function ActaReunion(props) {
                                         className="text-danger"
                                         color="danger"
                                         onClick={() => {
+                                            setIdLineaToDelete(
+                                                meeting.idLineaActaReunion
+                                            );
                                             onOpen();
                                         }}
                                     >
@@ -417,4 +428,6 @@ export default function ActaReunion(props) {
             position: "bottom-right",
         });
     }
+
+    
 }
