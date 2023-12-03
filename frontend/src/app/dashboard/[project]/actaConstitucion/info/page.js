@@ -44,7 +44,7 @@ import { SearchIcon } from "@/../public/icons/SearchIcon";
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 import ModalPlantilla from "@/components/dashboardComps/projectComps/appConstComps/ModalPlantilla";
-
+import DateInput from "@/components/DateInput";
 function DetailCard({
     detail,
     handleModifyTitle,
@@ -167,6 +167,38 @@ export default function Info(props) {
     
     } = useDisclosure();
 
+    const [nombreProyecto, setNombreProyecto] = useState('');
+    const [empresa, setEmpresa] = useState('');
+    const [cliente, setCliente] = useState('');
+    const [patrocinador, setPatrocinador] = useState('');
+    const [gerente, setGerente] = useState('');
+    const [fechaCreacion, setFechaCreacion] = useState('');
+
+    const formatDateForInput = (dateString) => {
+        // Check if dateString is not null, undefined, or an empty string
+        if (!dateString) {
+            return '';
+        }
+
+        // Parse the date using the Date constructor
+        const date = new Date(dateString);
+
+        // Check if date is valid
+        if (isNaN(date)) {
+            // Handle invalid date, perhaps set a default or return an empty string
+            console.error('Invalid date string provided: ' + dateString);
+            return '';
+        }
+
+        // Ensure the date is converted to UTC
+        const year = date.getUTCFullYear();
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = date.getUTCDate().toString().padStart(2, '0');
+
+        // Format the date to YYYY-MM-DD
+        return `${year}-${month}-${day}`;
+    };
+
 
     const actualizarListado = () => {
         setIsLoadingSmall(true);
@@ -176,7 +208,17 @@ export default function Info(props) {
         axios
             .get(listURL)
             .then((response) => {
-                setIdActa(response.data.detalleAC.general[0].idActaConstitucion);
+
+                const data = response.data.detalleAC.general[0];
+
+                setIdActa(data.idActaConstitucion);
+                setNombreProyecto(data.nombreProyecto);
+                setEmpresa(data.empresa);
+                setCliente(data.cliente);
+                setPatrocinador(data.patrocinador);
+                setGerente(data.gerente);
+                setFechaCreacion(formatDateForInput(data.fechaCreacion));
+
                 setDetails(response.data.detalleAC.actaData);
                 setDetailsEdited(response.data.detalleAC.actaData);
                 setIsLoadingSmall(false);
@@ -204,11 +246,7 @@ export default function Info(props) {
         setEditActive(false);
     };
 
-    const [nombreProyecto, setNombreProyecto] = useState('');
-    const [empresa, setEmpresa] = useState('');
-    const [cliente, setCliente] = useState('');
-    const [patrocinador, setPatrocinador] = useState('');
-    const [gerente, setGerente] = useState('');
+
 
     const handleSave = () => {
         setIsLoadingSmall(true);
@@ -396,6 +434,8 @@ export default function Info(props) {
                 console.log(error);
             });
     };
+
+
 
     const handleDeleteField = (detail) => {
         setFieldToDelete(detail);
@@ -800,12 +840,61 @@ export default function Info(props) {
 
             <div className="fieldsBigContainer">
                 <div className="flex flex-row w-full border shadow-sm rounded-md p-3">
-                    <div className="flex flex-col flex-1">
-                        <p>Patrocinador</p>
-                        <Textarea variant={isEditActive ? "bordered" : "flat"}></Textarea>
+                    <div className="flex flex-col flex-1 mr-3">
+                        <div className="project-card__title dark:text-white">Proyecto</div>
+                        <Textarea
+                            variant={isEditActive ? "bordered" : "flat"}
+                            value={nombreProyecto}
+                            onValueChange={setNombreProyecto}
+                            disabled={!isEditActive} // Disable when not in edit mode
+                        ></Textarea>
                     </div>
-                    <div className="flex flex-col flex-1">
-                    <p>Nombre proyecto</p>
+                    <div className="flex flex-col flex-1 mx-3">
+                        <div className="project-card__title dark:text-white">Empresa/Organización</div>
+                        <Textarea
+                            variant={isEditActive ? "bordered" : "flat"}
+                            value={empresa}
+                            onValueChange={setEmpresa}
+                            disabled={!isEditActive} // Disable when not in edit mode
+                        ></Textarea>
+                    </div>
+                    <div className="flex flex-col flex-1 ml-3">
+                        <div className="project-card__title dark:text-white">Fecha de preparación</div>
+                        <Input
+                            type="date"
+                            value={formatDateForInput(fechaCreacion)}
+                            onChange={(e) => setFechaCreacion(e.target.value)}
+                            disabled={!isEditActive} // Disable when not in edit mode
+                        />
+                    </div>
+                </div>
+                <div className="flex flex-row w-full border shadow-sm rounded-md p-3 mt-3">
+                    <div className="flex flex-col flex-1 mr-3">
+                        <div className="project-card__title dark:text-white">Cliente</div>
+                        <Textarea
+                            variant={isEditActive ? "bordered" : "flat"}
+                            value={cliente}
+                            onValueChange={setCliente}
+                            disabled={!isEditActive}
+                        ></Textarea>
+                    </div>
+                    <div className="flex flex-col flex-1 mx-3">
+                        <div className="project-card__title dark:text-white">Patrocinador</div>
+                        <Textarea
+                            variant={isEditActive ? "bordered" : "flat"}
+                            value={patrocinador}
+                            onValueChange={setPatrocinador}
+                            disabled={!isEditActive}
+                        ></Textarea>
+                    </div>
+                    <div className="flex flex-col flex-1 ml-3">
+                        <div className="project-card__title dark:text-white">Gerente</div>
+                        <Textarea
+                            variant={isEditActive ? "bordered" : "flat"}
+                            value={gerente}
+                            onValueChange={setGerente}
+                            disabled={!isEditActive}
+                        ></Textarea>
                     </div>
                 </div>
                 {detailEdited.map((detail) => (
