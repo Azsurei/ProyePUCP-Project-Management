@@ -40,10 +40,11 @@ axios.defaults.withCredentials = true;
 export default function ReporteCronograma(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const [isClient, setIsClient] = useState(false);
+    const isClient = props.isClient;
     const idGrupoProyecto = props.groupProject;
     const urlPrueba = "http://localhost:8080/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/6";
-    const [proyectos, setProyectos] = useState([]);
+    // const [proyectos, setProyectos] = useState([]);
+    const proyectos = props.proyectos;
     const [cantidadTarea, setCantidadTarea] = useState(0);
     const [primerNombreProyecto, setPrimerNombreProyecto] = useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set(["0"]));
@@ -51,23 +52,23 @@ export default function ReporteCronograma(props) {
     //   () => Array.from(selectedKeys)
     //   [selectedKeys]
     // );
-    useEffect(() => {
-      setIsClient(false);
-        const fetchData = async () => {
-            try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
-              console.log("Id Grupo: ", idGrupoProyecto);
-              const data = response.data.proyectos;
-              console.log(`Estos son los proyectos:`, data);
-              setProyectos(data);
-              setIsClient(true);
-            } catch (error) {
-              console.error('Error al obtener los proyectos:', error);
-            }
-          };
-            fetchData();
+    // useEffect(() => {
+    //   setIsClient(false);
+    //     const fetchData = async () => {
+    //         try {
+    //           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+    //           console.log("Id Grupo: ", idGrupoProyecto);
+    //           const data = response.data.proyectos;
+    //           console.log(`Estos son los proyectos:`, data);
+    //           setProyectos(data);
+    //           setIsClient(true);
+    //         } catch (error) {
+    //           console.error('Error al obtener los proyectos:', error);
+    //         }
+    //       };
+    //         fetchData();
         
-    }, []);
+    // }, []);
     const selectedValue = React.useMemo(() => {
       const selectedIndex = Array.from(selectedKeys)[0]; // Obtiene el índice del Set
       return proyectos[selectedIndex]?.nombre || '';

@@ -32,8 +32,9 @@ import { dbDateToDisplayDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 export default function ReportePresupuesto(props) {
     const [filterValue, setFilterValue] = React.useState("");
-    const [isClient, setIsClient] = useState(false);
+    const isClient = props.isClient;
     const idGrupoProyecto = props.groupProject;
+    const proyectos = props.proyectos;
     const urlPrueba = "http://localhost:8080/api/proyecto/grupoProyectos/listarProyectosXGrupo/4"
     const [selectedKeysDrop, setSelectedKeysDrop] = React.useState(new Set(["0"]));
     const columns = [
@@ -94,26 +95,26 @@ export default function ReportePresupuesto(props) {
         };
       });
     };
-    const [proyectos, setProyectos] = useState([]);
-    const DataProyectos = async () => {
-      const fetchData = async () => {
-          try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarProyectosXGrupo/${idGrupoProyecto}`);
-            console.log("Id Grupo: ", idGrupoProyecto);
-            const data = response.data.proyectos;
+  //   const [proyectos, setProyectos] = useState([]);
+  //   const DataProyectos = async () => {
+  //     const fetchData = async () => {
+  //         try {
+  //           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarProyectosXGrupo/${idGrupoProyecto}`);
+  //           console.log("Id Grupo: ", idGrupoProyecto);
+  //           const data = response.data.proyectos;
            
-            // setProyectos(response.data.proyectos);
-            const proyectosConTotales = calcularTotales(data);
-            console.log("Paso1: ");
-            setProyectos(proyectosConTotales);
-            console.log(`Estos son los proyectos:`, data);
-            setIsClient(true);
-          } catch (error) {
-            console.error('Error al obtener los proyectos:', error);
-          }
-        };
-          fetchData();
-  };
+  //           // setProyectos(response.data.proyectos);
+  //           const proyectosConTotales = calcularTotales(data);
+  //           console.log("Paso1: ");
+  //           setProyectos(proyectosConTotales);
+  //           console.log(`Estos son los proyectos:`, data);
+  //           setIsClient(true);
+  //         } catch (error) {
+  //           console.error('Error al obtener los proyectos:', error);
+  //         }
+  //       };
+  //         fetchData();
+  // };
   const selectedValue = React.useMemo(() => {
     const selectedIndex = Array.from(selectedKeysDrop)[0]; // Obtiene el índice del Set
     return proyectos[selectedIndex]?.nombreProyecto || '';
@@ -450,14 +451,14 @@ export default function ReportePresupuesto(props) {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-    useEffect(() => {
-        console.log("Grupo proyecto: ", props.groupProject);
-        setIsClient(false);
-        // DataTable(idPresupuestoPrimerDato);
-        DataProyectos();
-        console.log("Proyectos Final", proyectos);
+    // useEffect(() => {
+    //     console.log("Grupo proyecto: ", props.groupProject);
+    //     setIsClient(false);
+    //     // DataTable(idPresupuestoPrimerDato);
+    //     DataProyectos();
+    //     console.log("Proyectos Final", proyectos);
         
-      }, [idPresupuestoPrimerDato, idGrupoProyecto]);
+    //   }, [idPresupuestoPrimerDato, idGrupoProyecto]);
 //       const lineasIngreso = proyectos.length > 0 ? proyectos[0].ingresos : [];
 // const lineasEgreso = proyectos.length > 0 ? proyectos[0].egresos : [];
 const [activeTab, setActiveTab] = useState(0);

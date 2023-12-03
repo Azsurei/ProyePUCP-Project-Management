@@ -35,9 +35,10 @@ axios.defaults.withCredentials = true;
 export default function ReporteAlcance(props) {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const [isClient, setIsClient] = useState(false);
+    const isClient = props.isClient;
     const idGrupoProyecto = props.groupProject;
-    const [proyectos, setProyectos] = useState([]);
+    // const [proyectos, setProyectos] = useState([]);
+    const proyectos = props.proyectos;
     const [entregables, setEntregables] = useState([]);
     const [value, setValue] = React.useState(0);
     const promedioProgresoPorProyecto = proyectos.map((proyecto) => {
@@ -57,24 +58,24 @@ export default function ReporteAlcance(props) {
         
     };
 
-    useEffect(() => {
-        setIsClient(false);
-        // setIsLoadingSmall(true);
-        const fetchData = async () => {
-            try {
-              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
-              console.log("Id Grupo: ", idGrupoProyecto);
-              const data = response.data.proyectos;
-              console.log(`Estos son los proyectos:`, data);
-              setProyectos(data);
-              setIsClient(true);
-            //   setIsLoadingSmall(false);
-            } catch (error) {
-              console.error('Error al obtener los proyectos:', error);
-            }
-          };
-            fetchData();
-    }, []);
+    // useEffect(() => {
+    //     setIsClient(false);
+    //     // setIsLoadingSmall(true);
+    //     const fetchData = async () => {
+    //         try {
+    //           const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${idGrupoProyecto}`);
+    //           console.log("Id Grupo: ", idGrupoProyecto);
+    //           const data = response.data.proyectos;
+    //           console.log(`Estos son los proyectos:`, data);
+    //           setProyectos(data);
+    //           setIsClient(true);
+    //         //   setIsLoadingSmall(false);
+    //         } catch (error) {
+    //           console.error('Error al obtener los proyectos:', error);
+    //         }
+    //       };
+    //         fetchData();
+    // }, []);
     const columns = [
         {
             name: 'Nombre',

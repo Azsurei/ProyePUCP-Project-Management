@@ -21,11 +21,13 @@ import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
 import { setId } from "@material-tailwind/react/components/Tabs/TabsContext";
 import { SessionContext } from "@/app/dashboard/layout";
+import { is } from "date-fns/locale";
 axios.defaults.withCredentials = true;
 
 export default function ReporteGrupoProyectos(props) {
     const [isClient, setIsClient] = useState(false);
-    const [proyecto1, setProyecto1] = useState([]);
+    const [proyectos, setProyectos] = useState([]);
+    const [proyectosPresupuesto, setProyectosPresupuesto] = useState([]);
     const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
     // const [selectedGrupoProyecto, setSelectedGrupoProyecto,] = useState("");
     const [selectedGrupoProyectoId, setSelectedGrupoProyectoId,] = useState("");
@@ -37,11 +39,68 @@ export default function ReporteGrupoProyectos(props) {
             setIsId(true);
         }
         setIsClient(true);
+        console.log("Grupo proyecto: ", selectedGrupoProyecto)
     }, [selectedGrupoProyecto]);
-
+    const calcularTotales = (proyectos) => {
+        return proyectos.map((proyecto) => {
+          const totalIngresos = proyecto.ingresos.reduce((total, ingreso) => total + ingreso.monto, 0);
+          const totalEgresos = proyecto.egresos.reduce((total, egreso) => total + egreso.costoReal, 0);
+          const disponible = totalIngresos - totalEgresos;
     
-
-   
+          return {
+            ...proyecto,
+            totalIngresos,
+            totalEgresos,
+            disponible
+          };
+        });
+      };
+    
+    useEffect(() => {
+        setIsClient(false);
+        // setIsLoadingSmall(true);
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarDatosProyectosXGrupo/${selectedGrupoProyecto}`);
+              console.log("Id Grupo: ", selectedGrupoProyecto);
+              const data = response.data.proyectos;
+              console.log(`Estos son los proyectos:`, data);
+              setProyectos(data);
+              setIsClient(true);
+            //   setIsLoadingSmall(false);
+            } catch (error) {
+              console.error('Error al obtener los proyectos 1:', error);
+            }
+          };
+            fetchData();
+    }, [isId]);
+    const DataProyectos = async () => {
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL+`/api/proyecto/grupoProyectos/listarProyectosXGrupo/${selectedGrupoProyecto}`);
+              console.log("Id Grupo: ", selectedGrupoProyecto);
+              const data = response.data.proyectos;
+             
+              // setProyectos(response.data.proyectos);
+              const proyectosConTotales = calcularTotales(data);
+              console.log("Paso1: ");
+              setProyectosPresupuesto(proyectosConTotales);
+              console.log(`Estos son los proyectos:`, data);
+              setIsClient(true);
+            } catch (error) {
+              console.error('Error al obtener los proyectos 2:', error);
+            }
+          };
+            fetchData();
+    };
+    useEffect(() => {
+        console.log("Grupo proyecto: ", props.groupProject);
+        setIsClient(false);
+        // DataTable(idPresupuestoPrimerDato);
+        DataProyectos();
+        console.log("Proyectos Final", proyectos);
+        
+      }, [ isId]);
     // useEffect(() => {
     //     setIsClient(true);
     // }, []);
@@ -60,13 +119,13 @@ export default function ReporteGrupoProyectos(props) {
                     </div>
                     <Tabs aria-label="Options" color="warning">
                         <Tab key="photos" title="Alcance">
-                            <ReporteAlcance isClient={isClient} groupProject={selectedGrupoProyecto}/>
+                            <ReporteAlcance isClient={isClient} groupProject={selectedGrupoProyecto} proyectos={proyectos}/>
                         </Tab>
                         <Tab key="music" title="Cronograma">
-                            <ReporteCronograma isClient={isClient} groupProject={selectedGrupoProyecto}/>
+                            <ReporteCronograma isClient={isClient} groupProject={selectedGrupoProyecto} proyectos={proyectos}/>
                         </Tab>
                         <Tab key="presupuesto" title="Presupuesto">
-                            <ReportePresupuesto isClient={isClient} groupProject={selectedGrupoProyecto}/>
+                            <ReportePresupuesto isClient={isClient} groupProject={selectedGrupoProyecto} proyectos={proyectosPresupuesto}/>
                         </Tab>
                     </Tabs>
                 </div>
