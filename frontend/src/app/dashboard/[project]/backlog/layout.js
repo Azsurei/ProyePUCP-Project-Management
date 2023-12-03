@@ -97,8 +97,6 @@ export default function RootLayout({ children, params }) {
                 .then((response) => {
                     console.log(response.data.message);
                     resolve(response);
-
-                    setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
                     console.log(error);
