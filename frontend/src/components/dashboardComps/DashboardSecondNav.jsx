@@ -15,14 +15,14 @@ function DashboardSecondNav() {
                     <p>Grupo de Proyectos</p>
                 </Link>
             </li>
-            <li>
+            {/* <li>
                 <img src="/icons/sidebarIcon3.svg" className='sideIcon'></img>
                 <p>Grupos</p>
             </li>
             <li>
                 <img src="/icons/sidebarIcon4.svg" className='sideIcon'></img>
                 <p>Equipos</p>
-            </li>
+            </li> */}
         </ul>
     );
 }

@@ -728,7 +728,7 @@ function ReporteEntregables(props) {
                     <Button
                         color="success"
                         className="text-white font-semibold"
-                        onClick={async () => {
+                        onPress={async () => {
                             await handlerExport();
                         }}
                         startContent={<ExportIcon />}

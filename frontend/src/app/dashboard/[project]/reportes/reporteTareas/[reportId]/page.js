@@ -1336,6 +1336,7 @@ function reporteTareas(props) {
         console.log("listTareas: ", listTareas);
     }, [listTareas]);
     const twStyle1 = "font-semibold text-2xl text-mainHeaders";
+    const [isExportLoading, setIsExportLoading] = useState(false);
     async function handlerExport() {
         const reportId = decodeURIComponent(props.params.reportId);
         try {
@@ -1400,7 +1401,7 @@ function reporteTareas(props) {
                         color="success"
                         className="text-white font-semibold"
                         startContent={<ExportIcon />}
-                        onClick={async () => {
+                        onPress={async () => {
                             await handlerExport();
                         }}
                     >
