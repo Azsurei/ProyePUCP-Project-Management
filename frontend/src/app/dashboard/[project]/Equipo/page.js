@@ -675,6 +675,16 @@ export default function Equipo(props) {
                                 //startContent={<SaveIcon />}
                                 //onPress={() => setUpdateState(false)}
                                 className="text-white h-9"
+                                onPress={() => {
+                                    //se pushea a la pagian de cronograma
+                                    router.push(
+                                        "/dashboard/" +
+                                            projectName +
+                                            "=" +
+                                            projectId +
+                                            "/cronograma"
+                                    );
+                                }}
                             >
                                 Añadir tarea
                             </Button>
