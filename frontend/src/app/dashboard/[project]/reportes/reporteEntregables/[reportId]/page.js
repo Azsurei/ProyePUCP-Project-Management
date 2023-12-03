@@ -137,6 +137,7 @@ function ReporteEntregables(props) {
                         //handleamos caso de entregables vacios
                         console.log("no tiene entregables");
                         setIsReportEmpty(true);
+                        setListEntregables([]);
                     } else {
                         console.log("tiene entregables");
                         setIsReportEmpty(false);
@@ -171,6 +172,7 @@ function ReporteEntregables(props) {
                     toast.error("Error de conexion al generar reporte");
                 });
         } else if (!isNaN(parseFloat(reportId)) && isFinite(reportId)) {
+            setIsReportEmpty(false);
             setIsNewReport(false);
             setIsLoadingSmall(true);
 
@@ -569,13 +571,20 @@ function ReporteEntregables(props) {
                     if (response.data.entregables) {
                         console.log("SETEANDO LA DATA");
                         setListEntregables(response.data.entregables);
+                        console.log(response.data.entregables);
+
                         setSelectedEntregable(
                             response.data.entregables[0].idEntregable
                         );
+                        console.log(response.data.entregables[0].tareasEntregable);
+
                         setListTareas(
                             response.data.entregables[0].tareasEntregable
                         );
+                        console.log(response.data.entregables[0].tareasEntregable);
+
                         getEntregableStatistics(response.data.entregables[0]);
+                        console.log(response.data.entregables[0]);
 
                         setEntregableName(response.data.entregables[0].nombre);
                         setEntregableComponentName(
@@ -592,7 +601,7 @@ function ReporteEntregables(props) {
                         );
                     }
                     console.log("DATA SETTEADA, APAGANDO LOADING SCREEN");
-                    setIsLoadingSmall(true);
+                    setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -608,37 +617,38 @@ function ReporteEntregables(props) {
     const btnStyleActive =
         "font-medium px-4 py-2 rounded-md bg-[#F4F4F5] dark:bg-[#414141] cursor-pointer";
 
-    if (isReportEmpty === true) {
-        return (
-            <div className="flex flex-col p-[2.5rem] flex-1 h-full">
-                <HeaderWithButtonsSamePage
-                    haveReturn={true}
-                    haveAddNew={false}
-                    handlerReturn={() => {
-                        router.push(
-                            "/dashboard/" +
-                                projectName +
-                                "=" +
-                                projectId +
-                                "/reportes"
-                        );
-                    }}
-                    breadcrump={
-                        "Inicio / Proyectos / " + projectName + " / Reportes"
-                    }
-                >
-                    Reporte de entregables
-                </HeaderWithButtonsSamePage>
-                <div className="flex flex-col flex-1 justify-center items-center gap-3">
-                    <p className="m-0 font-medium text-xl">
-                        Este proyecto no cuenta con entregables, no hay nada que
-                        mostrar
-                    </p>
-                    <EmptyBoxIcon width={200} height={200} />
-                </div>
-            </div>
-        );
-    }
+    // if (isReportEmpty === true) {
+    //     return (
+    //         <div className="flex flex-col p-[2.5rem] flex-1 h-full">
+    //             <HeaderWithButtonsSamePage
+    //                 haveReturn={true}
+    //                 haveAddNew={false}
+    //                 handlerReturn={() => {
+    //                     router.push(
+    //                         "/dashboard/" +
+    //                             projectName +
+    //                             "=" +
+    //                             projectId +
+    //                             "/reportes"
+    //                     );
+    //                 }}
+    //                 breadcrump={
+    //                     "Inicio / Proyectos / " + projectName + " / Reportes"
+    //                 }
+    //             >
+    //                 Reporte de entregables
+    //             </HeaderWithButtonsSamePage>
+    //             <div className="flex flex-col flex-1 justify-center items-center gap-3">
+    //                 <p className="m-0 font-medium text-xl">
+    //                     Este proyecto no cuenta con entregables, no hay nada que
+    //                     mostrar
+    //                 </p>
+    //                 <EmptyBoxIcon width={200} height={200} />
+    //             </div>
+    //         </div>
+    //     );
+    // }
+    
     async function handlerExport() {
         const reportId = decodeURIComponent(props.params.reportId);
         try {
@@ -718,7 +728,7 @@ function ReporteEntregables(props) {
                     <Button
                         color="success"
                         className="text-white font-semibold"
-                        onClick={async () => {
+                        onPress={async () => {
                             await handlerExport();
                         }}
                         startContent={<ExportIcon />}
