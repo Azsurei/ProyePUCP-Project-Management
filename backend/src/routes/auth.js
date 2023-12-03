@@ -28,11 +28,13 @@ routerAuth.post("/login", async (req, res) => {
         const [results] = await connection.query(query);
         const idUsuario = results[0][0].idUsuario;
         const idRol = results[0][0].idRol;    
+        const habilitado = results[0][0].habilitado;
         if (idUsuario != 0) {
             const user = {
                 id: idUsuario,
                 mail: username,
                 rol: idRol,
+                habilitado: habilitado
             };
 
             //procesamos token
@@ -84,6 +86,7 @@ routerAuth.post("/loginImg", async (req, res) => {
         const [results] = await connection.query(query);
         const idUsuario = results[0][0].idUsuario;
         const idRol = results[0][0].idRol;    
+        const habilitado = results[0][0].habilitado;
         if (idUsuario != 0) {
             const updQuery = `UPDATE Usuario SET imgLink = '${imgLink}' WHERE idUsuario = ${idUsuario};`;
             const [results2] = await connection.query(updQuery);
@@ -92,6 +95,7 @@ routerAuth.post("/loginImg", async (req, res) => {
                 id: idUsuario,
                 mail: username,
                 rol: idRol,
+                habilitado: habilitado
             };
 
             //procesamos token
