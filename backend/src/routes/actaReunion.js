@@ -22,7 +22,11 @@ routerActaReunion.delete("/eliminarActaReunionXProyecto",verifyToken,actaReunion
 routerActaReunion.post("/crearLineaActaReunion",upload.single('file'),verifyToken,lineaActaReunionController.crear);
 routerActaReunion.get("/listarLineaActaReunionXIdActaReunion/:idActaReunion",verifyToken,lineaActaReunionController.listarXIdActaReunion);
 routerActaReunion.get("/listarLineaActaReunionXIdLineaActaReunion/:idLineaActaReunion", verifyToken,lineaActaReunionController.listarXIdLineaActaReunion);
-routerActaReunion.put("/modificarLineaActaReunion",verifyToken,lineaActaReunionController.modificar);
+
+routerActaReunion.put("/modificarLineaActaReunion",upload.single('file'),verifyToken,lineaActaReunionController.modificar);
+
+
+
 routerActaReunion.delete("/eliminarLineaActaReunionXIdLineaActaReunion",verifyToken,lineaActaReunionController.eliminarXIdLineaActaReunion);
 
 // Comentario reunion

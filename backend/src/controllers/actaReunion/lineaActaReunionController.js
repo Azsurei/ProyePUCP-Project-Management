@@ -90,9 +90,13 @@ async function listarXIdLineaActaReunion(req,res,next){
 }
 
 async function modificar(req,res,next){
-    const {idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios} = req.body;
+    console.log(req.file);
+    const {idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo} = req.body;
     try {
-        const result = await funcModificar(idActaReunion,nombreReunion,fechaReunion,horaReunion,nombreConvocante,motivo,temas,participantes,comentarios);
+        const idArchivo = await fileController.subirArchivo(req.file);
+        const query = `CALL MODIFICAR_LINEA_ACTA_REUNION(?,?,?,?,?,?,?);`;
+        const [result] = await connection.query(query,[idLineaActaReunion,nombreReunion,fechaReunion,horaReunion,idConvocante,motivo,idArchivo]);
+
         res.status(200).json({
             message: "Linea acta reunion modificada"});
     } catch (error) {
@@ -111,21 +115,21 @@ async function funcCrear(idActaReunion,nombreReunion,fechaReunion,horaReunion,id
         console.log(idLineaActaReunion,results[0][0]);
         
         //console.log(idLineaActaReunion,results[0][0]);
-        console.log("Temas:==========================================");
-        console.log(temas);
-        console.log("Comentarios:==========================================");
-        console.log(comentarios);
-        for(const tema of temas){
-            await temaReunionController.funcCrear(idLineaActaReunion,tema.descripcion,tema.acuerdos);
-        }
+        // console.log("Temas:==========================================");
+        // console.log(temas);
+        // console.log("Comentarios:==========================================");
+        // console.log(comentarios);
+        // for(const tema of temas){
+        //     await temaReunionController.funcCrear(idLineaActaReunion,tema.descripcion,tema.acuerdos);
+        // }
 
-        for(const participante of participantes){
-            await participanteXReunionController.funcCrear(idLineaActaReunion, participante.idUsuarioXRolXProyecto, participante.asistio);
-        }
+        // for(const participante of participantes){
+        //     await participanteXReunionController.funcCrear(idLineaActaReunion, participante.idUsuarioXRolXProyecto, participante.asistio);
+        // }
 
-        for(comentario of comentarios){
-            await comentarioReunionController.funcCrear(idLineaActaReunion, comentario.descripcion);
-        }
+        // for(comentario of comentarios){
+        //     await comentarioReunionController.funcCrear(idLineaActaReunion, comentario.descripcion);
+        // }
         return idLineaActaReunion;
     } catch (error) {
         console.log(error);
