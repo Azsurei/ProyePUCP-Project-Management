@@ -3,7 +3,7 @@ const connection = require("../../config/db");
 async function guardarPlantillaAC(req, res, next) {
     const {idActaConstitucion, idUsuario, nombrePlantilla} = req.body;
     const query = `CALL GUARDAR_PLANTILLA_ACTACONSTITUCION(?,?);`;
-    const query1 = `CALL LISTAR_CAMPOS_MR(?);`;
+    const query1 = `CALL LISTAR_DETALLEAC_X_IDACTA(?);`;
     const query2 = `CALL INSERTAR_PLANTILLA_AC_TIPODATO(?,?);`;
     try {
         //Creamos primero la plantilla en general

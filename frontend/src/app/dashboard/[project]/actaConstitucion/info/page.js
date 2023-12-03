@@ -541,13 +541,6 @@ export default function Info(props) {
 
     return (
         <div className="ACInfoContainer">
-            <Toaster 
-                richColors 
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-                />
             
             {<Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModaSavePlantillaChange}>
                     <ModalContent>
@@ -630,9 +623,8 @@ export default function Info(props) {
                                 
                                 </NextUIButton>
                                 <NextUIButton
-                                className="bg-generalBlue text-white font-medium"
-                                
-                                onClick={finalizarModal}
+                                    className="bg-generalBlue text-white font-medium"
+                                    onClick={finalizarModal}
                                 >
                                 Guardar Plantilla
                                 </NextUIButton>
@@ -717,8 +709,7 @@ export default function Info(props) {
                         />
                     </div>
                     <NextUIButton
-                        className="text-slate-50"
-                        color="primary"
+                        className="bg-generalBlue text-white font-medium"
                         onClick={refreshList}
                     >
                         Buscar
@@ -765,8 +756,8 @@ export default function Info(props) {
                     
                     </NextUIButton>
                     <NextUIButton
-                    color="primary"
-                    onClick={finalizarModalP}
+                        className="bg-generalBlue text-white font-medium"
+                        onClick={finalizarModalP}
                     >
                     Usar
                     </NextUIButton>

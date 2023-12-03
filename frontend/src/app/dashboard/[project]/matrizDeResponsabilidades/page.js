@@ -1442,7 +1442,7 @@ export default function MatrizDeResponsabilidades(props) {
                                             Cancelar
                                         </Button>
                                         <Button
-                                            color="primary"
+                                            className="bg-generalBlue text-white font-medium"
                                             onClick={finalizarModal}
                                         >
                                             Guardar Plantilla
@@ -1542,8 +1542,7 @@ export default function MatrizDeResponsabilidades(props) {
                                                     />
                                                 </div>
                                                 <Button
-                                                    className="text-slate-50"
-                                                    color="primary"
+                                                    className="bg-generalBlue text-white font-medium"
                                                     onClick={refreshList}
                                                 >
                                                     Buscar
@@ -1613,7 +1612,7 @@ export default function MatrizDeResponsabilidades(props) {
                                             Cancelar
                                         </Button>
                                         <Button
-                                            color="primary"
+                                            className="bg-generalBlue text-white font-medium"
                                             onClick={finalizarModalP}
                                         >
                                             Usar
