@@ -290,7 +290,7 @@ export default function ActaReunion(props) {
                             className="border border-gray-300 p-4 rounded-md shadow-sm flex flex-row items-center"
                         >
                             <div className="flex flex-col w-[50%] max-w-[50%] gap-0">
-                                <p className="font-semibold text-lg truncate">
+                                <p className="font-semibold text-xl truncate">
                                     {meeting.nombreReunion}
                                 </p>
                                 <p className="truncate">
@@ -306,7 +306,7 @@ export default function ActaReunion(props) {
                                             src={meeting.imgLink}
                                             size="sm"
                                         />
-                                        <p>{meeting.nombres}</p>
+                                        <p>{meeting.nombres === null ? "Sin convocante" : meeting.nombres}</p>
                                     </div>
                                 </div>
                                 <p className="truncate font-medium">
