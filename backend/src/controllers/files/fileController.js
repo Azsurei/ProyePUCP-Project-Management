@@ -62,7 +62,6 @@ async function subirArchivoTest(req, res, next){
         const [results] = await connection.query(query, [fileName, req.file.originalname]);
         const idArchivo = results[0][0].idArchivo;
         console.log(`Archivo ${idArchivo} insertado`);
-        return idArchivo;
     } catch (error) {
         console.log(error);
     }
