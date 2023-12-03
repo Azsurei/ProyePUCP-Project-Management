@@ -27,6 +27,7 @@ import { id } from "date-fns/esm/locale";
 import { useRouter } from "next/navigation";
 import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 import { SessionContext } from "@/app/dashboard/layout";
+import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import { saveAs } from "file-saver";
 axios.defaults.withCredentials = true;
 export default function ReportePresupuestos(props) {
@@ -362,7 +363,7 @@ export default function ReportePresupuestos(props) {
         {vistaReporte && (
                     <div className="divHistorialReportes">
                     <div className="flex-1">
-                            <Breadcrumbs>
+                            {/* <Breadcrumbs>
                                 <BreadcrumbsItem href="/" text="Inicio" />
                                 <BreadcrumbsItem href="/dashboard" text="Proyectos" />
                                 <BreadcrumbsItem
@@ -370,11 +371,30 @@ export default function ReportePresupuestos(props) {
                                     text={projectName}
                                 />
                                 <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/reportes"} text="Historial de Reportes" />
-                            </Breadcrumbs>
+                            </Breadcrumbs> */}
                             <div className="flex flex-row justify-between items-center">
-                                <div className="titleHistorialReporte text-mainHeaders">
+                                {/* <div className="titleHistorialReporte text-mainHeaders">
                                     Reporte de Presupuesto
-                                </div>
+                                </div> */}
+                                <HeaderWithButtonsSamePage
+                    haveReturn={true}
+                    haveAddNew={false}
+                    handlerReturn={() => {
+                        router.push(
+                            "/dashboard/" +
+                                projectName +
+                                "=" +
+                                projectId +
+                                "/reportes"
+                        );
+                    }}
+                    //newPrimarySon={ListComps.length + 1}
+                    breadcrump={
+                        "Inicio / Proyectos / " + projectName + " / Reportes"
+                    }
+                >
+                    Reporte de Presupuesto
+                </HeaderWithButtonsSamePage>
                                 {isNewReport && (
                                     <Button color="warning" className="text-white" onClick={()=>onModalSaveOpen()}>
                                         Guardar reporte
