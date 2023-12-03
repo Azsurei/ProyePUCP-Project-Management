@@ -569,13 +569,20 @@ function ReporteEntregables(props) {
                     if (response.data.entregables) {
                         console.log("SETEANDO LA DATA");
                         setListEntregables(response.data.entregables);
+                        console.log(response.data.entregables);
+
                         setSelectedEntregable(
                             response.data.entregables[0].idEntregable
                         );
+                        console.log(response.data.entregables[0].tareasEntregable);
+
                         setListTareas(
                             response.data.entregables[0].tareasEntregable
                         );
+                        console.log(response.data.entregables[0].tareasEntregable);
+
                         getEntregableStatistics(response.data.entregables[0]);
+                        console.log(response.data.entregables[0]);
 
                         setEntregableName(response.data.entregables[0].nombre);
                         setEntregableComponentName(
@@ -592,7 +599,7 @@ function ReporteEntregables(props) {
                         );
                     }
                     console.log("DATA SETTEADA, APAGANDO LOADING SCREEN");
-                    setIsLoadingSmall(true);
+                    setIsLoadingSmall(false);
                 })
                 .catch(function (error) {
                     console.log(error);
