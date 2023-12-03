@@ -649,7 +649,7 @@ function ReporteEntregables(props) {
     //         </div>
     //     );
     // }
-    
+    const [isExportLoading, setIsExportLoading] = useState(false);
     async function handlerExport() {
         const reportId = decodeURIComponent(props.params.reportId);
         try {
