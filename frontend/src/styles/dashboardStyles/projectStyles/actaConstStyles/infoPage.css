@@ -90,6 +90,11 @@
 
 }
 
+.cardPlantillaACSelected {
+    background-color: #3498db; /* Cambia el color de fondo cuando está seleccionado */
+    color: #ffffff; /* Cambia el color del texto cuando está seleccionado */
+}
+
 .selected {
     background-color: #3498db; /* Cambia el color de fondo cuando está seleccionado */
     color: #ffffff; /* Cambia el color del texto cuando está seleccionado */

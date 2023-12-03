@@ -16,13 +16,15 @@ import ListAdditionalFields, {
     registerAdditionalFields,
 } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
-
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 export default function CatalogoDeInteresadosRegister(props) {
     const keyParamURL = decodeURIComponent(props.params.updateCI);
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
@@ -457,7 +459,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                         Actualizar interesado
                     </div>
                     <div>
-                        {!editMode && (
+                        {(!editMode && rol !== 2) && (
                             <Button
                                 color="primary"
                                 onPress={() => {

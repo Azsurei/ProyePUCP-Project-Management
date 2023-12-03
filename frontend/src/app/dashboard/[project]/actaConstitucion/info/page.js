@@ -529,13 +529,6 @@ export default function Info(props) {
 
     return (
         <div className="ACInfoContainer">
-            <Toaster 
-                richColors 
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-                />
             
             {<Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModaSavePlantillaChange}>
                     <ModalContent>
@@ -618,9 +611,8 @@ export default function Info(props) {
                                 
                                 </NextUIButton>
                                 <NextUIButton
-                                color="primary"
-                                
-                                onClick={finalizarModal}
+                                    className="bg-generalBlue text-white font-medium"
+                                    onClick={finalizarModal}
                                 >
                                 Guardar Plantilla
                                 </NextUIButton>
@@ -705,8 +697,7 @@ export default function Info(props) {
                         />
                     </div>
                     <NextUIButton
-                        className="text-slate-50"
-                        color="primary"
+                        className="bg-generalBlue text-white font-medium"
                         onClick={refreshList}
                     >
                         Buscar
@@ -753,8 +744,8 @@ export default function Info(props) {
                     
                     </NextUIButton>
                     <NextUIButton
-                    color="primary"
-                    onClick={finalizarModalP}
+                        className="bg-generalBlue text-white font-medium"
+                        onClick={finalizarModalP}
                     >
                     Usar
                     </NextUIButton>
@@ -813,6 +804,15 @@ export default function Info(props) {
 
 
             <div className="fieldsBigContainer">
+                <div className="flex flex-row w-full border shadow-sm rounded-md p-3">
+                    <div className="flex flex-col flex-1">
+                        <p>Patrocinador</p>
+                        <Textarea variant={isEditActive ? "bordered" : "flat"}></Textarea>
+                    </div>
+                    <div className="flex flex-col flex-1">
+                    <p>Nombre proyecto</p>
+                    </div>
+                </div>
                 {detailEdited.map((detail) => (
                     <DetailCard
                         key={detail.idDetalle}

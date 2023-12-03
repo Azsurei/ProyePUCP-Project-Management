@@ -360,46 +360,56 @@ export default function MatrizDeResponsabilidades(props) {
                 default:
                     return (
                         <>
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button
-                                        variant="bordered"
-                                        style={{ backgroundColor: color }}
-                                        className={`transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
-                                    >
-                                        {cellValue}
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    aria-label="Dynamic Actions"
-                                    items={responsabilidades}
-                                    variant="flat"
-                                    disabledKeys={cellValue}
-                                >
-                                    {(item) => (
-                                        <DropdownItem
-                                            key={item.letra}
-                                            textValue={item.nombre}
-                                            onPress={() =>
-                                                changeCell(
-                                                    idRol,
-                                                    idEntregable,
-                                                    item
-                                                )
-                                            }
+                            {rolSessionData !== 2 ? (
+                                <Dropdown>
+                                    <DropdownTrigger>
+                                        <Button
+                                            variant="bordered"
+                                            style={{ backgroundColor: color }}
+                                            className={`transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
                                         >
-                                            <div className="flex">
-                                                <div className="inline w-1/4">
-                                                    {item.letra}
+                                            {cellValue}
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Dynamic Actions"
+                                        items={responsabilidades}
+                                        variant="flat"
+                                        disabledKeys={cellValue}
+                                    >
+                                        {(item) => (
+                                            <DropdownItem
+                                                key={item.letra}
+                                                textValue={item.nombre}
+                                                onPress={() =>
+                                                    changeCell(
+                                                        idRol,
+                                                        idEntregable,
+                                                        item
+                                                    )
+                                                }
+                                            >
+                                                <div className="flex">
+                                                    <div className="inline w-1/4">
+                                                        {item.letra}
+                                                    </div>
+                                                    <div className="inline w-3/4">
+                                                        {item.nombre}
+                                                    </div>
                                                 </div>
-                                                <div className="inline w-3/4">
-                                                    {item.nombre}
-                                                </div>
-                                            </div>
-                                        </DropdownItem>
-                                    )}
-                                </DropdownMenu>
-                            </Dropdown>
+                                            </DropdownItem>
+                                        )}
+                                    </DropdownMenu>
+                                </Dropdown>
+                            ) : (
+                                <div
+                                    style={{ backgroundColor: color }}
+                                    //col-span-1 border-default border-medium rounded-medium flex justify-center text-white max-w-[80px] min-w-[25px] py-1
+                                    className={`group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap overflow-hidden tap-highlight-transparent outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 border-medium px-unit-4 min-w-unit-20 h-unit-10 text-small gap-unit-2 rounded-medium [&>svg]:max-w-[theme(spacing.unit-8)] data-[pressed=true]:scale-[0.97] transition-transform-colors motion-reduce:transition-none bg-transparent border-default z-10 aria-expanded:scale-[0.97] aria-expanded:opacity-70 subpixel-antialiased transition-transform hover:shadow-md hover:scale-105 font-bold text-white`}
+                                >
+                                    {cellValue}
+                                </div>
+                            )}
                         </>
                     );
             }
@@ -801,6 +811,8 @@ export default function MatrizDeResponsabilidades(props) {
 
     //obtener idUsuario
     const { sessionData } = useContext(SessionContext);
+    const rolSessionData = sessionData.rolInProject;
+
     useEffect(() => {
         setIdUsuario(sessionData.idUsuario);
         console.log("avr" + IdUsuario);
@@ -1012,6 +1024,41 @@ export default function MatrizDeResponsabilidades(props) {
         console.log("Plantilla seleccionada:", plantilla.nombrePlantilla);
     };
 
+    const [teams,setTeams] = useState([]);
+    
+    useEffect(() => {
+        const stringURLInitialDataFromApi =
+            process.env.NEXT_PUBLIC_BACKEND_URL +
+            "/api/proyecto/matrizResponsabilidad/listarParticipantes/" +
+            projectId;
+
+        axios
+            .get(stringURLInitialDataFromApi)
+            .then(function (response) {
+                const initialTeams = response.data.equipos;
+                console.log("Equipos", initialTeams);
+                setTeams(initialTeams);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
+
+    const validarEliminacionRol = (rolNombre) => {
+        //teams es un arreglo de equipos que contiene un arreglo de participantes, cada participantes tiene un rol
+        //si el rolId que se quiere eliminar es igual al rolId de algun participante, no se puede eliminar
+        let rolEnUso = false;
+        teams.forEach((team) => {
+            team.participantes.forEach((participante) => {
+                if (participante.nombreRol === rolNombre) {
+                    rolEnUso = true;
+                }
+            });
+        }
+        );
+        return rolEnUso;
+    }
+
     return (
         <div className="px-[2rem] py-[1rem]">
             <div className="px-[1rem] mt-[1rem]">
@@ -1045,72 +1092,81 @@ export default function MatrizDeResponsabilidades(props) {
                     Matriz de responsabilidades
                 </div>
                 <div className="flex gap-4 flex-wrap">
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button color="secondary">Plantillas</Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            variant="faded"
-                            aria-label="Dropdown menu with icons"
-                        >
-                            <DropdownItem
-                                key="verPlantillasMR"
-                                startContent={<ContentPasteGoIcon />}
-                                onPress={onModalPlantillas}
-                                color="secondary"
+                    {rolSessionData !== 2 && (
+                        <>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button color="secondary">
+                                        Plantillas
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    variant="faded"
+                                    aria-label="Dropdown menu with icons"
+                                >
+                                    <DropdownItem
+                                        key="verPlantillasMR"
+                                        startContent={<ContentPasteGoIcon />}
+                                        onPress={onModalPlantillas}
+                                        color="secondary"
+                                    >
+                                        Ver Plantillas
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        key="guardarPlantillasMR"
+                                        startContent={<SaveAsIcon />}
+                                        onPress={onSaveModalPlantilla}
+                                        color="secondary"
+                                    >
+                                        Guardar Plantilla
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button
+                                        color="warning"
+                                        className="text-white"
+                                    >
+                                        Roles
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    variant="faded"
+                                    aria-label="Dropdown menu with icons"
+                                >
+                                    <DropdownItem
+                                        key="agregarRolMR"
+                                        startContent={<AddIconBlack />}
+                                        onPress={onOpenRol}
+                                    >
+                                        Agregar rol
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        key="verRolesMR"
+                                        startContent={<AddIconBlack />}
+                                        onPress={onOpenListadoRol}
+                                    >
+                                        Eliminar rol
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Button
+                                color="primary"
+                                startContent={<SaveIcon />}
+                                onPress={saveFunction}
                             >
-                                Ver Plantillas
-                            </DropdownItem>
-                            <DropdownItem
-                                key="guardarPlantillasMR"
-                                startContent={<SaveAsIcon />}
-                                onPress={onSaveModalPlantilla}
-                                color="secondary"
-                            >
-                                Guardar Plantilla
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button color="warning" className="text-white">
-                                Roles
+                                Guardar
                             </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            variant="faded"
-                            aria-label="Dropdown menu with icons"
-                        >
-                            <DropdownItem
-                                key="agregarRolMR"
-                                startContent={<AddIconBlack/>}
-                                onPress={onOpenRol}
+                            <Button
+                                color="danger"
+                                startContent={<CrossWhite />}
+                                onPress={onOpenDelete}
                             >
-                                Agregar rol
-                            </DropdownItem>
-                            <DropdownItem
-                                key="verRolesMR"
-                                startContent={<AddIconBlack/>}
-                                onPress={onOpenListadoRol}
-                            >
-                                Eliminar rol
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                    <Button
-                        color="primary"
-                        startContent={<SaveIcon />}
-                        onPress={saveFunction}
-                    >
-                        Guardar
-                    </Button>
-                    <Button
-                        color="danger"
-                        startContent={<CrossWhite />}
-                        onPress={onOpenDelete}
-                    >
-                        Limpiar
-                    </Button>
+                                Limpiar
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
             <div className="mx-[1rem] ">
@@ -1153,6 +1209,7 @@ export default function MatrizDeResponsabilidades(props) {
                                 }
                                 color="warning"
                                 underline="hover"
+                                isDisabled={rolSessionData === 2}
                             >
                                 Presione para agregar entregables
                             </Link>
@@ -1186,60 +1243,73 @@ export default function MatrizDeResponsabilidades(props) {
                                     {responsabilidad.descripcion}
                                 </div>
                                 <div className="col-span-1 flex gap-2">
-                                    <Tooltip showArrow={true} content="Editar">
-                                        <img
-                                            src="/icons/updateIconYellow.svg"
-                                            alt="update"
-                                            className="mb-4 cursor-pointer"
-                                            onClick={() => {
-                                                setLetraUpdate(
-                                                    responsabilidad.letra
-                                                );
-                                                setNombreUpdate(
-                                                    responsabilidad.nombre
-                                                );
-                                                setDescripcionUpdate(
-                                                    responsabilidad.descripcion
-                                                );
-                                                setColorUpdate(
-                                                    responsabilidad.color
-                                                );
-                                                setIdUpdate(responsabilidad.id);
-                                                onOpenUpdate();
-                                            }}
-                                        />
-                                    </Tooltip>
-                                    <Tooltip
-                                        showArrow={true}
-                                        content="Eliminar"
-                                    >
-                                        <img
-                                            src="/icons/icon-trash.svg"
-                                            alt="delete"
-                                            className="mb-4 cursor-pointer"
-                                            onClick={() => {
-                                                setResponsabilidadEliminar(
-                                                    responsabilidad
-                                                );
-                                                onOpenDeleteRes();
-                                            }}
-                                        />
-                                    </Tooltip>
+                                    {rolSessionData !== 2 && (
+                                        <>
+                                            <Tooltip
+                                                showArrow={true}
+                                                content="Editar"
+                                            >
+                                                <img
+                                                    src="/icons/updateIconYellow.svg"
+                                                    alt="update"
+                                                    className="mb-4 cursor-pointer"
+                                                    onClick={() => {
+                                                        setLetraUpdate(
+                                                            responsabilidad.letra
+                                                        );
+                                                        setNombreUpdate(
+                                                            responsabilidad.nombre
+                                                        );
+                                                        setDescripcionUpdate(
+                                                            responsabilidad.descripcion
+                                                        );
+                                                        setColorUpdate(
+                                                            responsabilidad.color
+                                                        );
+                                                        setIdUpdate(
+                                                            responsabilidad.id
+                                                        );
+                                                        onOpenUpdate();
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                            <Tooltip
+                                                showArrow={true}
+                                                content="Eliminar"
+                                            >
+                                                <img
+                                                    src="/icons/icon-trash.svg"
+                                                    alt="delete"
+                                                    className="mb-4 cursor-pointer"
+                                                    onClick={() => {
+                                                        setResponsabilidadEliminar(
+                                                            responsabilidad
+                                                        );
+                                                        onOpenDeleteRes();
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        </>
+                                    )}
                                 </div>
                             </React.Fragment>
                         ))}
                     </div>
-                    <div className="flex items-center justify-center my-2">
-                        <Button
-                            color="warning"
-                            auto
-                            className="flex items-center justify-center gap-2 text-white text-[1.1rem]"
-                            startContent={<AddIcon />}
-                            onPress={onOpenAdd}
-                        >
-                            Agregar responsabilidad
-                        </Button>
-                    </div>
+                    {rolSessionData !== 2 && (
+                        <>
+                            <div className="flex items-center justify-center my-2">
+                                <Button
+                                    color="warning"
+                                    auto
+                                    className="flex items-center justify-center gap-2 text-white text-[1.1rem]"
+                                    startContent={<AddIcon />}
+                                    onPress={onOpenAdd}
+                                >
+                                    Agregar responsabilidad
+                                </Button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             <Modal
@@ -1372,7 +1442,7 @@ export default function MatrizDeResponsabilidades(props) {
                                             Cancelar
                                         </Button>
                                         <Button
-                                            color="primary"
+                                            className="bg-generalBlue text-white font-medium"
                                             onClick={finalizarModal}
                                         >
                                             Guardar Plantilla
@@ -1472,8 +1542,7 @@ export default function MatrizDeResponsabilidades(props) {
                                                     />
                                                 </div>
                                                 <Button
-                                                    className="text-slate-50"
-                                                    color="primary"
+                                                    className="bg-generalBlue text-white font-medium"
                                                     onClick={refreshList}
                                                 >
                                                     Buscar
@@ -1543,7 +1612,7 @@ export default function MatrizDeResponsabilidades(props) {
                                             Cancelar
                                         </Button>
                                         <Button
-                                            color="primary"
+                                            className="bg-generalBlue text-white font-medium"
                                             onClick={finalizarModalP}
                                         >
                                             Usar
@@ -1669,10 +1738,16 @@ export default function MatrizDeResponsabilidades(props) {
                                                             alt="delete"
                                                             className="cursor-pointer"
                                                             onClick={() => {
-                                                                setRolEliminar(
-                                                                    rol
-                                                                );
-                                                                onOpenEliminarRol();
+                                                                if(!validarEliminacionRol(rol.nombre)){
+                                                                    setRolEliminar(
+                                                                        rol
+                                                                    );
+                                                                    onOpenEliminarRol();
+                                                                }else{
+                                                                    toast.error("No se puede eliminar el rol, ya que está siendo utilizado.", {
+                                                                        position: "bottom-left",
+                                                                    });
+                                                                }
                                                             }}
                                                         />
                                                     </Tooltip>

@@ -326,7 +326,8 @@ export default function RootLayout({ children, params }) {
                                             Cancelar
                                         </Button>
                                         <Button
-                                            color="primary"
+                                            className="bg-generalBlue text-white font-medium"
+
                                             onClick={finalizarModal}
                                         >
                                             Guardar Plantilla
@@ -418,7 +419,7 @@ export default function RootLayout({ children, params }) {
                                                     />
                                                 </div>
                                                 <Button
-                                                    className="text-slate-50"
+                                                    className="bg-generalBlue text-white font-medium"
                                                     color="primary"
                                                     onClick={refreshList}
                                                 >
@@ -489,7 +490,7 @@ export default function RootLayout({ children, params }) {
                                             Cancelar
                                         </Button>
                                         <Button
-                                            color="primary"
+                                            className="bg-generalBlue text-white font-medium"
                                             onPress={finalizarModalP}
                                         >
                                             Continuar

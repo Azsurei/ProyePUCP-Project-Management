@@ -252,11 +252,32 @@ async function eliminar(req, res, next) {
     }
 }
 
+async function listarGrupoYProyectosRelacionados(req, res, next) {
+    const { idGrupoProyecto } = req.params;
+    const query = `CALL LISTAR_GRUPO_PROYECTOS_X_ID_GRUPO(?);`;
+    const query1 = `CALL LISTAR_PROYECTOS_X_GRUPO_PROYECTOS(?);`;
+
+    try {
+        let [grupoResults] = await connection.query(query, [idGrupoProyecto]);
+        const nombreGrupo = grupoResults[0][0].nombre;
+        let [results] = await connection.query(query1, [idGrupoProyecto]);
+        const proyectos = results[0];
+        res.status(200).json({
+            nombreGrupo,
+            proyectos,
+            message: "Se listó exitosamente el grupo de proyectos",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     insertarGrupoProyectos,
     listarGruposProyecto,
     listarProyectosXGrupo,
     listarDatosProyectosXGrupo,
     modificar,
-    eliminar
+    eliminar,
+    listarGrupoYProyectosRelacionados
 };

@@ -118,8 +118,12 @@ DROP PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO;
 DELIMITER $
 CREATE PROCEDURE LISTAR_PROYECTOS_X_ID_USUARIO(IN _idUsuario INT)
 BEGIN
-	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion ,r.nombre as "nombrerol"
-    FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol WHERE p.idProyecto = urp.idProyecto AND urp.idUsuario = _idUsuario;
+	SELECT p.idProyecto, p.nombre, p.maxCantParticipantes, p.fechaInicio, p.fechaFin, p.fechaUltimaModificacion, r.idRol ,r.nombre as "nombrerol"
+    FROM Proyecto p,UsuarioXRolXProyecto urp INNER JOIN Rol r ON r.idRol=urp.idRol 
+    WHERE p.idProyecto = urp.idProyecto 
+    AND urp.idUsuario = _idUsuario 
+    AND p.activo=1
+    ORDER BY p.fechaUltimaModificacion DESC, p.idProyecto DESC;
 END$
 DELIMITER $
 
@@ -5242,6 +5246,18 @@ BEGIN
 END$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS LISTAR_GRUPO_PROYECTOS_X_ID_GRUPO;
+DELIMITER $
+CREATE PROCEDURE LISTAR_GRUPO_PROYECTOS_X_ID_GRUPO(
+    IN _idGrupoDeProyecto INT
+)
+BEGIN
+    SELECT *
+    FROM GrupoDeProyecto
+    WHERE idGrupoDeProyecto = _idGrupoDeProyecto
+    AND activo = 1;
+END$
+
 DROP PROCEDURE IF EXISTS ELIMINAR_GRUPO_PROYECTOS_X_ID_GRUPO_PROYECTOS;
 DELIMITER $
 CREATE PROCEDURE ELIMINAR_GRUPO_PROYECTOS_X_ID_GRUPO_PROYECTOS(
@@ -5909,3 +5925,52 @@ BEGIN
 END$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS CAMBIAR_ESTADO_USUARIO;
+DELIMITER $
+CREATE PROCEDURE CAMBIAR_ESTADO_USUARIO(
+	IN _idUsuario INT
+)
+BEGIN
+	UPDATE Usuario 
+    SET activo = NOT activo
+    WHERE idUsuario = _idUsuario;
+END$
+
+DELIMITER $
+CREATE PROCEDURE ELIMINAR_ENTREGABLES_COMPONENTES(
+    IN _idEntregable INT
+)
+BEGIN
+    UPDATE Entregable SET activo = 0 WHERE idEntregable = _idEntregable;
+    UPDATE Tarea SET idEntregable = 0 WHERE idEntregable = _idEntregable;    
+END$$
+
+DELIMITER $
+CREATE PROCEDURE INSERTAR_ENTREGABLES_COMPONENTES(
+    IN _nombre VARCHAR(200),
+    IN _idComponente INT
+)
+BEGIN
+    INSERT INTO Entregable(nombre,idComponente,activo) 
+    VALUES(_nombre, _idComponente, 1);
+END$
+
+DELIMITER $
+CREATE PROCEDURE MODIFICAR_ENTREGABLES_COMPONENTES(
+    IN _idEntregable INT,
+    IN _nombre VARCHAR(200)
+)
+BEGIN
+    UPDATE Entregable
+    SET nombre = _nombre WHERE idEntregable = _idEntregable;
+END$
+
+DROP PROCEDURE IF EXISTS LISTAR_USUARIOS_TODOS
+DELIMITER $
+CREATE PROCEDURE LISTAR_USUARIOS_TODOS(
+)
+BEGIN
+	SELECT idUsuario, nombres, apellidos, correoElectronico, Privilegios_idPrivilegios, imgLink, activo
+    FROM Usuario
+    ORDER BY idUsuario DESC;
+END$

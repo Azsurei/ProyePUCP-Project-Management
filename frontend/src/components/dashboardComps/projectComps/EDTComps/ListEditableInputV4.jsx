@@ -1,7 +1,7 @@
 import "@/styles/dashboardStyles/projectStyles/EDTStyles/ListEditableInput.css";
 import { Textarea } from "@nextui-org/react";
 
-function EditableInput(props) {
+function EditableInputV4(props) {
     //recibe props 'name', 'number' (?) y 'data'
     //if data === '' entonces poner un placeholder
 
@@ -42,7 +42,7 @@ function EditableInput(props) {
     );
 }
 
-export default function ListEditableInput(props) {
+export default function ListEditableInputV4(props) {
     //recibe un array con los entregables
     // 'number' y 'data'
     if (props.ListInputs.length === 0) {
@@ -52,7 +52,7 @@ export default function ListEditableInput(props) {
         <ul className="ListEditableInput">
             {props.ListInputs.map((item) => {
                 return (
-                    <EditableInput
+                    <EditableInputV4
                         key={item.index}
                         typeName={props.typeName}
                         number={item.index}
@@ -60,7 +60,7 @@ export default function ListEditableInput(props) {
                         handleChanges={props.handleChanges}
                         handleRemove={props.handleRemove}
                         beEditable={props.beEditable}
-                    ></EditableInput>
+                    ></EditableInputV4>
                 );
             })}
         </ul>

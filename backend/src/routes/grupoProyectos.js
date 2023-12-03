@@ -10,4 +10,5 @@ routerGrupoProyectos.get("/listarProyectosXGrupo/:idGrupoProyecto", verifyToken,
 routerGrupoProyectos.put("/modificarGrupoProyectos", grupoProyectosController.modificar);
 routerGrupoProyectos.delete("/eliminarGrupoProyectos", verifyToken, grupoProyectosController.eliminar);
 routerGrupoProyectos.get("/listarDatosProyectosXGrupo/:idGrupoProyecto", grupoProyectosController.listarDatosProyectosXGrupo);
+routerGrupoProyectos.get("/listarGrupoYProyectosRelacionados/:idGrupoProyecto", grupoProyectosController.listarGrupoYProyectosRelacionados);
 module.exports.routerGrupoProyectos = routerGrupoProyectos;

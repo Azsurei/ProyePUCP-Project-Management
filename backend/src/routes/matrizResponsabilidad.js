@@ -20,5 +20,5 @@ routerMatrizResponsabilidad.post("/insertarEntregableXResponsabilidadXRol",matri
 routerMatrizResponsabilidad.get("/listarEntregablesXProyecto/:idProyecto",matrizResponsabilidadController.listarEntregablesXProyecto);
 
 
-routerMatrizResponsabilidad.get("/listarParticipantes/:idEquipo",matrizResponsabilidadController.listarParticipantes);
+routerMatrizResponsabilidad.get("/listarParticipantes/:idProyecto",matrizResponsabilidadController.listarParticipantes);
 module.exports.routerMatrizResponsabilidad = routerMatrizResponsabilidad;

@@ -20,6 +20,7 @@ import ListAdditionalFields, {
     registerAdditionalFields,
 } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 export default function CatalogoDeRiesgosUpdate(props) {
@@ -31,6 +32,8 @@ export default function CatalogoDeRiesgosUpdate(props) {
     const idCatalogoDeRiesgos = herramientasInfo.find(
         (herramienta) => herramienta.idHerramienta === 5
     ).idHerramientaCreada;
+    const { sessionData } = useContext(SessionContext);
+    const rol = sessionData.rolInProject;
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const router = useRouter();
@@ -557,7 +560,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         Actualizar nuevo riesgo
                     </div>
                     <div>
-                        {!editMode && (
+                        {(!editMode && rol !== 2) && (
                             <Button
                                 color="primary"
                                 onPress={() => {

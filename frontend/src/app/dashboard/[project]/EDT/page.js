@@ -30,7 +30,11 @@ export default function EDT(props) {
     //Variables for EDTCompVisualization
     const [idComponentToSee, setIdComponentToSee] = useState(null);
 
+    const [isListLoading, setIsListLoading] = useState(true);
+
     function refreshComponentsEDT() {
+        setIsLoadingSmall(false);
+        setIsListLoading(true);
         console.log("rerendering ListComps");
         const stringURL =
             process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -45,7 +49,7 @@ export default function EDT(props) {
                 console.log(JSON.stringify(componentsArray, null, 2));
                 setListComps(componentsArray);
 
-                setIsLoadingSmall(false);
+                setIsListLoading(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -55,7 +59,7 @@ export default function EDT(props) {
     }
 
     useEffect(()=>{
-        setIsLoadingSmall(true);
+        setIsLoadingSmall(false);
         refreshComponentsEDT();
     }, []);
 
@@ -105,6 +109,7 @@ export default function EDT(props) {
                     handlerGoToNew={handleSetCompCode}
                     handleVerDetalle={handleVerDetalle}
                     refreshComponentsEDT={refreshComponentsEDT}
+                    isListLoading={isListLoading}
                 ></EDTVisualization>
             )}
             {screenState === 2 && (

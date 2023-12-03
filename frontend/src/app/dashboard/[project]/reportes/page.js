@@ -10,6 +10,7 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
+    Spinner,
 } from "@nextui-org/react";
 import "@/styles/dashboardStyles/projectStyles/reportesStyles/reportes.css";
 import { SearchIcon } from "@/../public/icons/SearchIcon";
@@ -33,6 +34,7 @@ import DateInput from "@/components/DateInput";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import EmptyBoxIcon from "@/components/EmptyBoxIcon";
 axios.defaults.withCredentials = true;
 
 export default function Reportes(props) {
@@ -41,7 +43,8 @@ export default function Reportes(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
-    const urlPrueba = "http://localhost:8080/api/proyecto/reporte/listarReportesXIdProyecto/156"
+    const urlPrueba =
+        "http://localhost:8080/api/proyecto/reporte/listarReportesXIdProyecto/156";
     const [filterValue, setFilterValue] = React.useState("");
     const [toolsFilter, setToolsFilter] = React.useState("all");
     const onSearchChange = (value) => {
@@ -73,6 +76,9 @@ export default function Reportes(props) {
     //1 para la vista de seleccion de tipo de nuevo reporte
 
     const [cardActive, setCardActive] = useState(null);
+
+    const [isLoading, setIsLoading] = useState(true);
+
     const cardsContentArray = [
         {
             id: "rep1",
@@ -152,8 +158,7 @@ export default function Reportes(props) {
 
     const fetchData = async () => {
         try {
-            setIsLoadingSmall(true);
-
+            setIsLoading(true);
             const listURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/reporte/listarReportesXIdProyecto/" +
@@ -162,7 +167,7 @@ export default function Reportes(props) {
             const response = await axios.get(listURL);
             console.log(response);
             setListReportes(response.data);
-            setIsLoadingSmall(false);
+            setIsLoading(false);
         } catch (error) {
             console.error(error);
             // Aquí puedes manejar el error según tus necesidades
@@ -170,7 +175,7 @@ export default function Reportes(props) {
     };
 
     useEffect(() => {
-        setIsLoadingSmall(true);
+        setIsLoadingSmall(false);
 
         // const listURL =
         //     process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -194,8 +199,8 @@ export default function Reportes(props) {
     return (
         <div className="divHistorialReportes ">
             {screenState === 0 && (
-                <div className="flex-1">
-                    <Breadcrumbs>
+                <div className="flex flex-col flex-1">
+                    {/* <Breadcrumbs>
                         <BreadcrumbsItem href="/" text="Inicio" />
                         <BreadcrumbsItem href="/dashboard" text="Proyectos" />
                         <BreadcrumbsItem
@@ -204,95 +209,169 @@ export default function Reportes(props) {
                         />
                         <BreadcrumbsItem href="" text="Historial de Reportes" />
                     </Breadcrumbs>
-                    <div className="historialReportes">
-                        <div className="headHistorialReportes">
-                            <div className="titleHistorialReporte text-mainHeaders">
-                                Historial de Reportes
-                            </div>
+                    <div className="headHistorialReportes">
+                        <div className="titleHistorialReporte text-mainHeaders">
+                            Historial de Reportes
+                        </div>
+                        <Button
+                            color="primary"
+                            startContent={<PlusIcon />}
+                            className="btnCreateReporte"
+                            onClick={() => {
+                                setScreenState(1);
+                            }}
+                        >
+                            Nuevo
+                        </Button>
+                    </div> */}
+                    <HeaderWithButtonsSamePage
+                        breadcrump={
+                            "Inicio / Proyectos / " +
+                            projectName +
+                            " / Historial de Reportes"
+                        }
+                        haveReturn={false}
+                        haveAddNew={true}
+                        handlerAddNew={() => {
+                            setScreenState(1);
+                        }}
+                        btnText={"Nuevo"}
+                        haveExport={false}
+                        isAddNewDisabled={false}
+                    >
+                        Historial de Reportes
+                    </HeaderWithButtonsSamePage>
+                    <div className="divFiltrosReporte mt-3">
+                        <Input
+                            isClearable
+                            className="w-2/4 sm:max-w-[50%]"
+                            placeholder="Buscar reporte..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onClear={() => onClear("")}
+                            onValueChange={onSearchChange}
+                            variant="faded"
+                        />
+                        <div className="buttonReporteContainer">
                             <Button
+                                onPress={onModalFecha}
                                 color="primary"
-                                startContent={<PlusIcon />}
-                                className="btnCreateReporte"
-                                onClick={() => {
-                                    setScreenState(1);
-                                }}
+                                startContent={<TuneIcon />}
+                                className="btnFiltro"
                             >
-                                Nuevo
+                                Filtrar
                             </Button>
-                        </div>
-                        <div className="divFiltrosReporte">
-                            <Input
-                                isClearable
-                                className="w-2/4 sm:max-w-[50%]"
-                                placeholder="Buscar reporte..."
-                                startContent={<SearchIcon />}
-                                value={filterValue}
-                                onClear={() => onClear("")}
-                                onValueChange={onSearchChange}
-                                variant="faded"
-                            />
-                            <div className="buttonReporteContainer">
-                                <Button
-                                    onPress={onModalFecha}
-                                    color="primary"
-                                    startContent={<TuneIcon />}
-                                    className="btnFiltro"
-                                >
-                                    Filtrar
-                                </Button>
-                                <Dropdown>
-                                    <DropdownTrigger className="btnFiltro">
-                                        <Button
-                                            endContent={
-                                                <ChevronDownIcon className="text-small" />
-                                            }
-                                            variant="flat"
-                                            className="font-['Roboto']"
-                                        >
-                                            Proyectos
-                                        </Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu
-                                        disallowEmptySelection
-                                        aria-label="Table Columns"
-                                        closeOnSelect={false}
-                                        selectedKeys={toolsFilter}
-                                        selectionMode="multiple"
-                                        onSelectionChange={setToolsFilter}
+                            <Dropdown>
+                                <DropdownTrigger className="btnFiltro">
+                                    <Button
+                                        endContent={
+                                            <ChevronDownIcon className="text-small" />
+                                        }
+                                        variant="flat"
+                                        className="font-['Roboto']"
                                     >
-                                        {toolsOptions.map((status) => (
-                                            <DropdownItem key={status.uid}>
-                                                {status.name}
-                                            </DropdownItem>
-                                        ))}
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </div>
+                                        Proyectos
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={toolsFilter}
+                                    selectionMode="multiple"
+                                    onSelectionChange={setToolsFilter}
+                                >
+                                    {toolsOptions.map((status) => (
+                                        <DropdownItem key={status.uid}>
+                                            {status.name}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
-                        <div className="mt-5 ">
+                    </div>
+                    <div className="mt-5 flex-1">
+                        {isLoading && (
+                            <div className="w-full h-full flex justify-center items-center">
+                                <Spinner size="lg" />
+                            </div>
+                        )}
+                        {isLoading === false && listReportes.length === 0 && (
+                            <div className="w-full h-full flex justify-center items-center flex-col gap-7">
+                                <div className="flex flex-col gap-3">
+                                    <p className="m-0 font-medium text-xl">
+                                        Este proyecto no cuenta con reportes
+                                    </p>
+                                    <EmptyBoxIcon width={200} height={200} />
+                                </div>
+                                <Button
+                                    className="bg-F0AE19 text-white font-medium"
+                                    size="md"
+                                    onPress={() => {
+                                        setScreenState(1);
+                                    }}
+                                >
+                                    Crea un reporte
+                                </Button>
+                            </div>
+                        )}
+                        {isLoading === false && listReportes.length > 0 && (
                             <ListReport
                                 listReportes={listReportes}
-                                handleViewReport={(idReporte, fileId, idHerramienta) => {
-                                    if(fileId !== null){
+                                handleViewReport={(
+                                    idReporte,
+                                    fileId,
+                                    idHerramienta
+                                ) => {
+                                    if (fileId !== null) {
                                         console.log("abriendo de file id");
-                                        if(idHerramienta === 2){
-                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
-                                        } else if (idHerramienta === 4){
-                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteTareas/" + fileId);
-                                        } else if (idHerramienta === 13){
-                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reportePresupuestos/" + fileId);
-                                        } else if (idHerramienta === 5){
-                                            router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteRiesgos/" + fileId);
+                                        if (idHerramienta === 2) {
+                                            router.push(
+                                                "/dashboard/" +
+                                                    projectName +
+                                                    "=" +
+                                                    projectId +
+                                                    "/reportes/reporteEntregables/" +
+                                                    fileId
+                                            );
+                                        } else if (idHerramienta === 4) {
+                                            router.push(
+                                                "/dashboard/" +
+                                                    projectName +
+                                                    "=" +
+                                                    projectId +
+                                                    "/reportes/reporteTareas/" +
+                                                    fileId
+                                            );
+                                        } else if (idHerramienta === 13) {
+                                            router.push(
+                                                "/dashboard/" +
+                                                    projectName +
+                                                    "=" +
+                                                    projectId +
+                                                    "/reportes/reportePresupuestos/" +
+                                                    fileId
+                                            );
+                                        } else if (idHerramienta === 5) {
+                                            router.push(
+                                                "/dashboard/" +
+                                                    projectName +
+                                                    "=" +
+                                                    projectId +
+                                                    "/reportes/reporteRiesgos/" +
+                                                    fileId
+                                            );
                                         }
                                         // router.push("/dashboard/" + projectName + "=" + projectId + "/reportes/reporteEntregables/" + fileId);
-                                    } else{
+                                    } else {
                                         toast.error("Error al cargar reporte");
                                     }
-                                    
                                 }}
-                                refresh={()=>{fetchData()}}
+                                refresh={() => {
+                                    fetchData();
+                                }}
                             ></ListReport>
-                        </div>
+                        )}
                     </div>
                 </div>
             )}

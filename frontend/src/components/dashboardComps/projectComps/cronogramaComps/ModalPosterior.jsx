@@ -169,7 +169,9 @@ export default function ModalPosterior({
     startDate,
     projectId,
     dependencies,
-    setDependencies
+    setDependencies,
+    setFechaInicio,
+    idTarea
 }) {
     const [searchValue, setSearchValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -219,6 +221,7 @@ export default function ModalPosterior({
                 {(onClose) => {
                     const finalizarModal = () => {
                         setDependencies(selectedTasks);
+                        setFechaInicio("");
                         onClose();
                     };
                     return (
@@ -248,6 +251,7 @@ export default function ModalPosterior({
                                         ) : (
                                             <TaskSelectorContext.Provider
                                                 value={{
+                                                    idTarea,
                                                     selectedTasks,
                                                     setSelectedTasks,
                                                 }}
