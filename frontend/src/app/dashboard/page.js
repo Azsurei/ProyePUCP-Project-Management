@@ -214,7 +214,7 @@ export default function Dashboard() {
         const columns = [
             { name: "Nombre", uid: "nombres" },
             { name: "Permisos para creación de proyecto", uid: "permiso" },
-            { name: "Habilitacion de usuario", uid: "activo" },
+            { name: "Habilitacion de usuario", uid: "habilitado" },
         ];
 
         const statusColorMap = ["warning", "danger", "success"];
@@ -237,7 +237,7 @@ export default function Dashboard() {
                                 {user.email}
                             </User>
                         );
-                    case "activo":
+                    case "habilitado":
                         return (
                             <div className="flex items-center gap-4 justify-center">
                                 <Switch
@@ -245,7 +245,7 @@ export default function Dashboard() {
                                     aria-label="Permisos"
                                     color="success"
                                     isSelected={
-                                        user.activo === 1 ? true : false
+                                        user.habilitado === 1 ? true : false
                                     }
                                     onValueChange={() => {
                                         const stringURL =
@@ -266,8 +266,8 @@ export default function Dashboard() {
                                                             user.idUsuario
                                                                 ? {
                                                                       ...item,
-                                                                      activo:
-                                                                          item.activo ===
+                                                                      habilitado:
+                                                                          item.habilitado ===
                                                                           1
                                                                               ? 0
                                                                               : 1,
@@ -281,8 +281,8 @@ export default function Dashboard() {
                                                         user.idUsuario
                                                             ? {
                                                                   ...item,
-                                                                  activo:
-                                                                      item.activo ===
+                                                                  habilitado:
+                                                                      item.habilitado ===
                                                                       1
                                                                           ? 0
                                                                           : 1,
@@ -300,11 +300,11 @@ export default function Dashboard() {
                                     }}
                                 />
                                 <Chip
-                                    color={statusColorMap[user.activo + 1]}
+                                    color={statusColorMap[user.habilitado + 1]}
                                     size="sm"
                                     variant="flat"
                                 >
-                                    {user.activo === 1
+                                    {user.habilitado === 1
                                         ? "Habilitado"
                                         : "Inhabilitado"}
                                 </Chip>
@@ -497,7 +497,7 @@ export default function Dashboard() {
                                         key={column.uid}
                                         className={
                                             column.uid === "permiso" ||
-                                            column.uid === "activo"
+                                            column.uid === "habilitado"
                                                 ? "text-center"
                                                 : ""
                                         }

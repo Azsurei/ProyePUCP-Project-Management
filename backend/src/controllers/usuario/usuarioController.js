@@ -18,11 +18,13 @@ async function loginXCorreo(req, res, next) {
         const [results] = await connection.query(query, [correoElectronico]);
         const idUsuario = results[0][0].idUsuario;
         const idRol = results[0][0].idRol;
+        const habilitado = results[0][0].habilitado;
         if (idUsuario != 0) {
             const user = {
                 id: idUsuario,
                 mail: correoElectronico,
                 rol: idRol,
+                habilitado: habilitado
             };
 
             //procesamos token
