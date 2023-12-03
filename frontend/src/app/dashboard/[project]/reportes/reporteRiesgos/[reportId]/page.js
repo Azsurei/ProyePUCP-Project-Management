@@ -33,6 +33,8 @@ import BarGraphic from "@/components/BarGraphic";
 import ModalSave from "@/components/dashboardComps/projectComps/reportesComps/ModalSave";
 import { useRouter } from "next/navigation";
 import { SessionContext } from "@/app/dashboard/layout";
+import { saveAs } from "file-saver";
+import { toast } from "sonner";
 axios.defaults.withCredentials = true;
 export default function ReporteRiesgos(props) {
     const {setIsLoadingSmall} = useContext(SmallLoadingScreen);
@@ -758,7 +760,18 @@ export default function ReporteRiesgos(props) {
                     responseType: "blob", // Important for binary data
                 }
             );
+            let formattedDate = `${day}_${month}_${year}`;
 
+                const fileName =
+                    projectName.split(" ").join("") +
+                    "_" +
+                    formattedDate +
+                    ".xlsx";
+                console.log(fileName);
+                saveAs(response.data, fileName);
+
+                setIsExportLoading(false);
+                toast.success("Se exporto el cronograma con exito");
             
         } catch (error) {
             setIsExportLoading(false);
