@@ -6,9 +6,11 @@ import "@/styles/dashboardStyles/projectStyles/EDTStyles/EDTCompVisualization.cs
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
 
 import axios from "axios";
-import { Textarea } from "@nextui-org/react";
+import { Button, Textarea } from "@nextui-org/react";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import DateInput from "@/components/DateInput";
+import { v4 } from "uuid";
+import ListEditableInputV4 from "./ListEditableInputV4";
 axios.defaults.withCredentials = true;
 
 export default function EDTCompVisualization({
@@ -33,6 +35,8 @@ export default function EDTCompVisualization({
     const [inHito, setInHito] = useState("");
     const [inObservaciones, setInObservaciones] = useState("");
 
+
+    const [listEntregablesOld, setListEntregablesOld] = useState([]);
     const [listEntregables, setListEntregables] = useState([
         { index: 1, data: "" },
     ]);
@@ -60,8 +64,12 @@ export default function EDTCompVisualization({
         const newList = [
             ...listEntregables,
             {
-                index: listEntregables.length + 1,
-                data: "",
+                idComponente: idComponentToSee,
+                idEntregable: v4(),
+                //index: listEntregables.length + 1,
+                //: "",
+                nombre: "",
+                activo: 1,
             },
         ];
         setListEntregables(newList);
@@ -78,19 +86,16 @@ export default function EDTCompVisualization({
         setListCriterios(newLista);
     };
 
-    const handleChangeEntregable = (e, index) => {
+    const handleChangeEntregable = (e, id) => {
         const updatedEntregables = [...listEntregables];
-        updatedEntregables[index - 1].data = e.target.value;
+        updatedEntregables.find((item) => item.index === id).nombre = e.target.value;
         console.log(updatedEntregables);
         setListEntregables(updatedEntregables);
     };
 
     const handleRemoveEntregable = (index) => {
         const updatedEntregables = [...listEntregables];
-        updatedEntregables.splice(index - 1, 1); // Remove the element at the given index
-        for (let i = index - 1; i < updatedEntregables.length; i++) {
-            updatedEntregables[i].index = updatedEntregables[i].index - 1;
-        }
+        updatedEntregables.filter((item) => item.index !== index);
         console.log(updatedEntregables);
         setListEntregables(updatedEntregables);
     };
@@ -166,7 +171,7 @@ export default function EDTCompVisualization({
     };
 
     useEffect(() => {
-        //setIsLoadingSmall(true);
+        setIsLoadingSmall(true);
         console.log("Procediendo sacar informacion del componente");
         axios
             .post(
@@ -242,7 +247,7 @@ export default function EDTCompVisualization({
                     "haz conseguido la informacion de dicho componente con exito"
                 );
 
-                //setIsLoadingSmall(false);
+                setIsLoadingSmall(false);
             })
             .catch(function (error) {
                 console.log(error);
@@ -452,34 +457,52 @@ export default function EDTCompVisualization({
                 <div className="flex flex-col">
                     <div className="flex flex-row gap-2 items-center">
                         <p className={twTitle}>Entregables</p>
+                        {estadoEditar === true ? (
+                            <Button
+                                className="bg-F0AE19 text-white font-semibold"
+                                onClick={handleAddEntregable}
+                                size="sm"
+                            >
+                                Anadir entregable
+                            </Button>
+                        ) : null}
                     </div>
 
                     <div className="px-4 py-2">
-                        <ListEditableInput
+                        <ListEditableInputV4
                             ListInputs={listEntregables}
                             typeName="Entregable"
                             typeFault="entregables"
                             handleChanges={handleChangeEntregable}
                             handleRemove={handleRemoveEntregable}
-                            beEditable={false}
-                        ></ListEditableInput>
+                            beEditable={estadoEditar}
+                        ></ListEditableInputV4>
                     </div>
                 </div>
 
                 <div className="flex flex-col">
                     <div className="flex flex-row gap-2 items-center">
                         <p className={twTitle}>Criterios de aceptacion</p>
+                        {estadoEditar === true ? (
+                            <Button
+                                className="bg-F0AE19 text-white font-semibold"
+                                onClick={handleAddCriterio}
+                                size="sm"
+                            >
+                                Anadir entregable
+                            </Button>
+                        ) : null}
                     </div>
 
                     <div className="px-4 py-2">
-                        <ListEditableInput
+                        <ListEditableInputV4
                             ListInputs={listCriterios}
                             typeName="Criterio"
                             typeFault="criterios"
                             handleChanges={handleChangeCriterio}
                             handleRemove={handleRemoveCriterio}
-                            beEditable={false}
-                        ></ListEditableInput>
+                            beEditable={estadoEditar}
+                        ></ListEditableInputV4>
                     </div>
                 </div>
             </div>

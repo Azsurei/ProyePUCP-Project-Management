@@ -32,6 +32,7 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import axios from "axios";
 import DateInput from "@/components/DateInput";
 import { SmallLoadingScreen } from "../../layout";
+import {SessionContext} from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 const columns = [
@@ -43,57 +44,14 @@ const columns = [
 
 const toolsOptions = [{ name: "Sebastian Chira", uid: "paused" }];
 
-const templates = [
-    {
-        id: 1,
-        name: "Descripcion Hito 1",
-        dateCreated: "2021-10-01",
-        dateModified: "2021-10-01",
-        state: "No iniciado",
-    },
-    {
-        id: 2,
-        name: "Descripcion Hito 2",
-        dateCreated: "2021-10-02",
-        dateModified: "2021-10-01",
-        state: "No iniciado",
-    },
-    {
-        id: 3,
-        name: "Descripcion Hito 3",
-        dateCreated: "2021-10-03",
-        dateModified: "2021-10-01",
-        state: "No iniciado",
-    },
-    {
-        id: 4,
-        name: "Descripcion Hito 4",
-        dateCreated: "2021-10-01",
-        dateModified: "2021-10-01",
-        state: "No iniciado",
-    },
-    {
-        id: 5,
-        name: "Descripcion Hito 5",
-        dateCreated: "2021-10-02",
-        dateModified: "2021-10-01",
-        state: "No iniciado",
-    },
-    {
-        id: 6,
-        name: "Descripcion Hito 6",
-        dateCreated: "2021-10-03",
-        dateModified: "2021-10-01",
-        state: "No iniciado",
-    },
-];
-
 export default function CronogramaActa(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    //obtener idUsuario
+    const { sessionData } = useContext(SessionContext);
 
     const [listHito, setListHito] = useState([]);
     const [modalContentState, setModalContentState] = useState(0);
@@ -326,21 +284,23 @@ export default function CronogramaActa(props) {
                         <Button color="secondary" endContent={<PlusIcon />}>
                             Exportar
                         </Button>
-                        <Button
-                            color="primary"
-                            endContent={<PlusIcon />}
-                            onPress={() => {
-                                setModalContentState(1);
-                                onOpen();
-                            }}
-                        >
-                            Añadir Interesado
-                        </Button>
+                        {sessionData.rolNameInProject !== "Supervisor" && (
+                            <Button
+                                color="primary"
+                                endContent={<PlusIcon />}
+                                onPress={() => {
+                                    setModalContentState(1);
+                                    onOpen();
+                                }}
+                            >
+                                Añadir Hito
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total: {listHito.length} interesados
+                        Total: {listHito.length} hito(s)
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -500,6 +460,10 @@ export default function CronogramaActa(props) {
             });
     };
 
+    const filteredColumns = sessionData.rolNameInProject === "Supervisor"
+        ? columns.filter(column => column.uid !== "actions")
+        : columns;
+
     return (
         <>
             <div className="flex flex-row space-x-4 mb-4 mt-4">
@@ -524,13 +488,11 @@ export default function CronogramaActa(props) {
                 onSelectionChange={setSelectedKeys}
                 onSortChange={setSortDescriptor}
             >
-                <TableHeader columns={columns}>
+                <TableHeader columns={filteredColumns}>
                     {(column) => (
                         <TableColumn
                             key={column.uid}
-                            align={
-                                column.uid === "actions" ? "center" : "start"
-                            }
+                            align={column.uid === "actions" ? "center" : "start"}
                             allowsSorting={column.sortable}
                         >
                             {column.name}

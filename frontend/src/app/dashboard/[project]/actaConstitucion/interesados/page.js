@@ -39,6 +39,8 @@ import { PlusIcon } from "@/../public/icons/PlusIcon";
 import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import axios from "axios";
 import { SmallLoadingScreen } from "../../layout";
+import {SessionContext} from "@/app/dashboard/layout";
+
 axios.defaults.withCredentials = true;
 const columns = [
     { name: "Nombre", uid: "name", sortable: true },
@@ -110,6 +112,8 @@ export default function Interesados(props) {
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const { sessionData } = useContext(SessionContext);
 
     // Estados generales
     const [filterValue, setFilterValue] = useState("");
@@ -406,6 +410,10 @@ export default function Interesados(props) {
         }
     }, []);
 
+    const filteredColumns = sessionData.rolNameInProject === "Supervisor"
+        ? columns.filter(column => column.uid !== "actions")
+        : columns;
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
@@ -424,6 +432,7 @@ export default function Interesados(props) {
                         <Button color="secondary" endContent={<PlusIcon />}>
                             Exportar
                         </Button>
+                        {sessionData.rolNameInProject !== "Supervisor" && (
                         <Button
                             color="primary"
                             endContent={<PlusIcon />}
@@ -434,6 +443,7 @@ export default function Interesados(props) {
                         >
                             Añadir Interesado
                         </Button>
+                        )}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -526,7 +536,7 @@ export default function Interesados(props) {
                 onSelectionChange={setSelectedKeys}
                 onSortChange={setSortDescriptor}
             >
-                <TableHeader columns={columns}>
+                <TableHeader columns={filteredColumns}>
                     {(column) => (
                         <TableColumn
                             key={column.uid}

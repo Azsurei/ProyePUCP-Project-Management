@@ -740,6 +740,13 @@ export default function KanbanBoard({ projectName, projectId }) {
                     (col) => col.idColumnaKanban === task.idColumnaKanban
                 );
 
+                console.log("columns");
+                console.log(columns);
+                console.log("column");
+                console.log(column);
+                console.log("tarea buscada");
+                console.log(task);
+
                 const columnTasks = tasks.filter(
                     (t) => t.idColumnaKanban === column.idColumnaKanban
                 );

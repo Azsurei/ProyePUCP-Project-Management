@@ -36,9 +36,9 @@ import {Input} from "@nextui-org/react";
 import { flushSync } from "react-dom";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import { set } from "date-fns";
-import { SessionContext } from "../../../layout";
 import { HerramientasInfo } from "../../layout";
 import { useRouter } from "next/navigation";
+import { SessionContext } from "@/app/dashboard/layout";
 
 import { SearchIcon } from "@/../public/icons/SearchIcon";
 import SaveAsIcon from '@mui/icons-material/SaveAs';
@@ -82,7 +82,7 @@ function DetailCard({
                             input: "text-lg font-bold",
                         }} //falta setear un tamano al textbox para que no cambie de tamano al cambiar de no editable a editable
                         readOnly={!isEditable}
-                        value={detail.nombre}
+                        value={detail.detalle === null ? "" : detail.detalle}
                         //onValueChange={setTareaDescripcion}
                         minRows={1}
                         size="sm"
@@ -115,13 +115,13 @@ function DetailCard({
                     }}
                 />
             </div>
-            <img
-                src="/icons/whiteTrash.svg"
-                className={isEditable ? "cardDeleteIcn show" : "cardDeleteIcn"}
-                onClick={() => {
-                    handleDeleteField(detail);
-                }}
-            />
+            {isEditable && (
+                <img
+                    src="/icons/whiteTrash.svg"
+                    className="cardDeleteIcn show"
+                    onClick={() => handleDeleteField(detail)}
+                />
+            )}
         </div>
     );
 }
@@ -131,15 +131,6 @@ export default function Info(props) {
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
-    const router = useRouter();
-
-    const handleRecargarPagina = () => {
-        console.log("xd");
-        router.refresh();
-  
-    };
-
-
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     // Manejando la carga de la lista de detalles de acta de constitucion
@@ -260,10 +251,7 @@ export default function Info(props) {
 
     //obtener idUsuario
     const {sessionData} = useContext(SessionContext);
-    useEffect(() => {
-        console.log("avr");
-        setIdUsuario(sessionData.idUsuario);
-      }, [sessionData.idUsuario]);
+
 
     const savePlantilla = () => {
 
@@ -541,13 +529,6 @@ export default function Info(props) {
 
     return (
         <div className="ACInfoContainer">
-            <Toaster 
-                richColors 
-                closeButton={true}
-                toastOptions={{
-                    style: { fontSize: "1rem" },
-                }}
-                />
             
             {<Modal size="md" isOpen={isModalSavePlantilla} onOpenChange={onModaSavePlantillaChange}>
                     <ModalContent>
@@ -630,9 +611,8 @@ export default function Info(props) {
                                 
                                 </NextUIButton>
                                 <NextUIButton
-                                color="primary"
-                                
-                                onClick={finalizarModal}
+                                    className="bg-generalBlue text-white font-medium"
+                                    onClick={finalizarModal}
                                 >
                                 Guardar Plantilla
                                 </NextUIButton>
@@ -717,8 +697,7 @@ export default function Info(props) {
                         />
                     </div>
                     <NextUIButton
-                        className="text-slate-50"
-                        color="primary"
+                        className="bg-generalBlue text-white font-medium"
                         onClick={refreshList}
                     >
                         Buscar
@@ -765,8 +744,8 @@ export default function Info(props) {
                     
                     </NextUIButton>
                     <NextUIButton
-                    color="primary"
-                    onClick={finalizarModalP}
+                        className="bg-generalBlue text-white font-medium"
+                        onClick={finalizarModalP}
                     >
                     Usar
                     </NextUIButton>
@@ -785,100 +764,55 @@ export default function Info(props) {
 
             {!isEditActive ? (
                 <ButtonPanel margin="10px 0 15px" align="right">
-
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <NextUIButton color="secondary">Plantillas</NextUIButton>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            variant="faded"
-                            aria-label="Dropdown menu with icons"
-                        >
-                            <DropdownItem
-                                key="verPlantillasAC"
-                                startContent={<ContentPasteGoIcon />}
-                                onPress={onModalPlantillas}
-                                color="secondary"
-                            >
-                                Ver Plantillas
-                            </DropdownItem>
-                            <DropdownItem
-                                key="guardarPlantillasAC"
-                                startContent={<SaveAsIcon />}
-                                onPress={onSaveModalPlantilla}
-                                color="secondary"
-                            >
-                                Guardar Plantilla
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-
-
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={() => {
-                            setEditActive(true);
-                            handleCancelNewField();
-                        }}
-                    >
-                        <div>
-                            <EditIcon />
-                            <div>Editar</div>
-                        </div>
-                    </Button>
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={handleAddField}
-                    >
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                gap: ".4rem",
-                            }}
-                        >
-                            <div style={{ fontSize: "2rem" }}>+</div>
-                            <div>Agregar Campo</div>
-                        </div>
-                    </Button>
-
-
-                    
+                    {sessionData.rolNameInProject !== "Supervisor" && (
+                        <>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <NextUIButton color="secondary">Plantillas</NextUIButton>
+                                </DropdownTrigger>
+                                <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
+                                    <DropdownItem key="verPlantillasAC" startContent={<ContentPasteGoIcon />} onPress={onModalPlantillas} color="secondary">
+                                        Ver Plantillas
+                                    </DropdownItem>
+                                    <DropdownItem key="guardarPlantillasAC" startContent={<SaveAsIcon />} onPress={onSaveModalPlantilla} color="secondary">
+                                        Guardar Plantilla
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Button appearance="primary" state="default" spacing="compact" onClick={() => { setEditActive(true); handleCancelNewField(); }}>
+                                <div><EditIcon /><div>Editar</div></div>
+                            </Button>
+                            <Button appearance="primary" state="default" spacing="compact" onClick={handleAddField}>
+                                <div style={{ display: "flex", flexDirection: "row", gap: ".4rem", }}>
+                                    <div style={{ fontSize: "2rem" }}>+</div>
+                                    <div>Agregar Campo</div>
+                                </div>
+                            </Button>
+                        </>
+                    )}
                 </ButtonPanel>
             ) : (
                 <ButtonPanel margin="10px 0 15px" align="right">
-                    <Button
-                        appearance="primary"
-                        state="default"
-                        spacing="compact"
-                        onClick={handleSave}
-                    >
-                        <div>
-                            <DocumentFilledIcon />
-                            <div>Guardar</div>
-                        </div>
+                    <Button appearance="primary" state="default" spacing="compact" onClick={handleSave}>
+                        <div><DocumentFilledIcon /><div>Guardar</div></div>
                     </Button>
-                    <Button
-                        appearance="subtle"
-                        state="default"
-                        spacing="compact"
-                        onClick={handleCancelEdit}
-                    >
-                        <div>
-                            <CrossIcon />
-                            <div>Cancelar</div>
-                        </div>
+                    <Button appearance="subtle" state="default" spacing="compact" onClick={handleCancelEdit}>
+                        <div><CrossIcon /><div>Cancelar</div></div>
                     </Button>
-
-                    
                 </ButtonPanel>
             )}
 
+
             <div className="fieldsBigContainer">
+                <div className="flex flex-row w-full border shadow-sm rounded-md p-3">
+                    <div className="flex flex-col flex-1">
+                        <p>Patrocinador</p>
+                        <Textarea variant={isEditActive ? "bordered" : "flat"}></Textarea>
+                    </div>
+                    <div className="flex flex-col flex-1">
+                    <p>Nombre proyecto</p>
+                    </div>
+                </div>
                 {detailEdited.map((detail) => (
                     <DetailCard
                         key={detail.idDetalle}

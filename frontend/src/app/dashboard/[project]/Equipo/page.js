@@ -922,7 +922,7 @@ export default function Equipo(props) {
                                             className="icnSearch"
                                             style={{ width: "20px" }}
                                         />
-                                        <p>Buscar nuevo participante</p>
+                                        <p>Agregar participante</p>
                                     </Button>
                                 </>
                             ) : (

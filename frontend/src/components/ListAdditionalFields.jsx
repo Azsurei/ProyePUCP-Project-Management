@@ -59,6 +59,7 @@ function AdditionalField({
                             onTitleChange(e.target.value);
                         }}
                         classNames={{ input: "text-lg font-medium" }}
+                        placeholder="Título del campo"
                     />
                     <div
                         className="rounded-md bg-slate-200 stroke-slate-400 p-1 hover:stroke-white hover:bg-red-500 transition-colors duration-[500ms] ease-in cursor-pointer"
@@ -78,6 +79,7 @@ function AdditionalField({
                 onChange={(e) => {
                     onDescriptionChange(e.target.value);
                 }}
+                placeholder="Descripción detallada del campo"
             />
         </div>
     );
@@ -167,8 +169,8 @@ function ListAdditionalFields({ editState, baseFields, setBaseFields }) {
     function handleAddNewField() {
         const newField = {
             idCampoAdicional: v4(), //esto genera random ids que son basicamente imposibles de replicar
-            titulo: "Título del campo ",
-            descripcion: "Descripción detallada del campo ",
+            titulo: "",
+            descripcion: "",
         };
         const tempList = [...baseFields, newField];
 

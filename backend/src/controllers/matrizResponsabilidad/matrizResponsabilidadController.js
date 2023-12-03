@@ -190,7 +190,7 @@ async function actualizarEntregables(req, res, next) {
     } catch (error) {
         next(error);
     }
-}
+}   
 async function listarParticipantes(req, res, next) {
     const { idProyecto } = req.params;
     const query = `CALL LISTAR_EQUIPO_X_IDPROYECTO(?);`;

@@ -1214,7 +1214,7 @@ export default function Cronograma(props) {
                         <div className="containerGeneralLeft">
                             <HeaderWithButtonsSamePage
                                 haveReturn={false}
-                                haveAddNew={true}
+                                haveAddNew={!(sessionData.rolNameInProject === "Supervisor")}
                                 handlerAddNew={handlerGoToNew}
                                 //newPrimarySon={ListComps.length + 1}
                                 breadcrump={
@@ -1291,21 +1291,13 @@ export default function Cronograma(props) {
                                             <p className="w-[27%]">FECHAS</p>
                                         </div>
                                         <ListTareas
-                                            listTareas={listTareas.filter(
-                                                (tarea) =>
-                                                    filterTasks(
-                                                        tarea,
-                                                        searchValue
-                                                    )
-                                            )}
+                                            listTareas={listTareas.filter(tarea => filterTasks(tarea, searchValue))}
                                             leftMargin={"0px"}
                                             handleVerDetalle={handleVerDetalle}
-                                            handleAddNewSon={handleAddNewSon}
-                                            handleRegisterProgress={
-                                                handleRegisterProgress
-                                            }
-                                            handleEdit={handleEdit}
-                                            handleDelete={handleDelete}
+                                            handleAddNewSon={sessionData.rolNameInProject === "Supervisor" ? undefined : handleAddNewSon}
+                                            handleRegisterProgress={sessionData.rolNameInProject === "Supervisor" ? undefined : handleRegisterProgress}
+                                            handleEdit={sessionData.rolNameInProject === "Supervisor" ? undefined : handleEdit}
+                                            handleDelete={sessionData.rolNameInProject === "Supervisor" ? undefined : handleDelete}
                                         ></ListTareas>
                                     </div>
                                 )}
@@ -1371,14 +1363,12 @@ export default function Cronograma(props) {
 
                             <div className="contFirstRow">
                                 <div className="contNombre">
-                                    <p
-                                        onClick={() => {
-                                            console.log(tareaEntregable);
-                                        }}
-                                    >
-                                        Ver entregable
+                                    <p className={twStyle1}>
+                                        Nombre de tarea{" "}
+                                        <span className="font-semibold text-red-500">
+                                            *
+                                        </span>
                                     </p>
-                                    <p className={twStyle1}>Nombre de tarea</p>
 
                                     <Textarea
                                         variant={
@@ -1461,7 +1451,10 @@ export default function Cronograma(props) {
                                 <div className="horizontalFechas">
                                     <div className="contFechaInicio">
                                         <p className={twStyle1}>
-                                            Fecha de inicio
+                                            Fecha de inicio{" "}
+                                            <span className="font-semibold text-red-500">
+                                                *
+                                            </span>
                                         </p>
                                         <DateInput
                                             value={fechaInicio}
@@ -1476,13 +1469,24 @@ export default function Cronograma(props) {
                                             }
                                             onChangeHandler={(e) => {
                                                 setFechaInicio(e.target.value);
+                                                if (dependencies.length !== 0) {
+                                                    setDependencies([]);
+                                                    toast.warning(
+                                                        "Tarea con fecha de inicio no puede tener dependencias"
+                                                    );
+                                                }
                                                 setValidFechas(true);
                                             }}
                                         ></DateInput>
                                     </div>
 
                                     <div className="contFechaFin">
-                                        <p className={twStyle1}>Fecha de fin</p>
+                                        <p className={twStyle1}>
+                                            Fecha de fin{" "}
+                                            <span className="font-semibold text-red-500">
+                                                *
+                                            </span>
+                                        </p>
                                         <DateInput
                                             value={fechaFin}
                                             isEditable={
@@ -1679,24 +1683,28 @@ export default function Cronograma(props) {
                                                         </div>
                                                     </div>
 
-                                                    <div
-                                                        className="stroke-gray-400 hover:stroke-white rounded-lg hover:bg-red-500 p-1 cursor-pointer mr-2"
-                                                        onClick={() => {
-                                                            console.log(
-                                                                "eliminando tarea con id: " +
-                                                                    task.idTarea
-                                                            );
-                                                            setDependencies(
-                                                                dependencies.filter(
-                                                                    (tarea) =>
-                                                                        tarea.idTarea !==
+                                                    {stateSecond !== 2 && (
+                                                        <div
+                                                            className="stroke-gray-400 hover:stroke-white rounded-lg hover:bg-red-500 p-1 cursor-pointer mr-2"
+                                                            onClick={() => {
+                                                                console.log(
+                                                                    "eliminando tarea con id: " +
                                                                         task.idTarea
-                                                                )
-                                                            );
-                                                        }}
-                                                    >
-                                                        <TrashIcon />
-                                                    </div>
+                                                                );
+                                                                setDependencies(
+                                                                    dependencies.filter(
+                                                                        (
+                                                                            tarea
+                                                                        ) =>
+                                                                            tarea.idTarea !==
+                                                                            task.idTarea
+                                                                    )
+                                                                );
+                                                            }}
+                                                        >
+                                                            <TrashIcon />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             );
                                         })}

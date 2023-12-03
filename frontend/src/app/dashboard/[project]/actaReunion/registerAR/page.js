@@ -148,6 +148,9 @@ export default function crearActaReunion(props) {
     const { sessionData } = useContext(SessionContext);
     const { sendNotification } = useContext(NotificationsContext);
 
+    console.log("This is my session data");
+    console.log(sessionData);
+
     // Project Info
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
