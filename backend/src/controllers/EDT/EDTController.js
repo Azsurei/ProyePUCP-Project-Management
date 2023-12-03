@@ -480,6 +480,37 @@ async function agregarCriterios(filaActual,WSComponentes,criterios){
     return filaActual;
 }
 
+async function listarColoresArbolNiveles(req,res,next) {
+    const {idProyecto} = req.params;
+    const query = `CALL LISTAR_COLORES_NIVELES_ARBOLEDT(?);`;
+    try {
+        const [results] = await connection.query(query,[idProyecto]);
+        const colorNiveles= results[0];
+        res.status(200).json({
+            colorNiveles,
+            message: "Color de los niveles obtenidos exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en la obtecion:", error);
+        res.status(500).send("Error en la obtecion: " + error.message);
+    }
+}
+
+async function modificarColoresArbolNiveles(req,res,next) {
+    const {idNivel, color} = req.body;
+    const query = `CALL ACTUALIZAR_COLOR_NIVEL_ARBOLEDT(?,?);`;
+    try {
+        await connection.query(query,[idNivel, color]);
+        res.status(200).json({
+            message: "El color se ha modificado exitosamente",
+            
+        });
+    } catch (error) {
+        console.error("Error en la modificacion:", error);
+        res.status(500).send("Error en la modificacion: " + error.message);
+    }
+}
 
 
 module.exports = {
@@ -492,5 +523,7 @@ module.exports = {
     verInfoComponenteEDT,
     eliminar,
     eliminarXProyecto,
-    descargarExcel
+    descargarExcel,
+    listarColoresArbolNiveles,
+    modificarColoresArbolNiveles
 }

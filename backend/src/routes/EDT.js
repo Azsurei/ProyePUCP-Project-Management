@@ -23,4 +23,9 @@ routerEDT.put("/modificarEntregables",verifyToken, entregableController.modifica
 routerEDT.delete("/eliminarEntregables",verifyToken, entregableController.eliminarEntregables);
 
 routerEDT.post("/descargarExcelEDT", EDTController.descargarExcel);
+
+//Arbol EDT
+routerEDT.get("/listarColoresArbolNiveles/:idProyecto",verifyToken, EDTController.listarColoresArbolNiveles);
+routerEDT.put("/modificarColoresArbolNiveles",verifyToken, EDTController.modificarColoresArbolNiveles);
+
 module.exports.routerEDT = routerEDT;
