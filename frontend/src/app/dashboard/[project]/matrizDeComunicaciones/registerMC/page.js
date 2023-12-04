@@ -16,6 +16,7 @@ import ListAdditionalFields, {
 } from "@/components/ListAdditionalFields";
 import { Toaster, toast } from "sonner";
 import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 
 function capitalizeWords(str) {
@@ -35,6 +36,7 @@ function capitalizeWords(str) {
 export default function MatrizComunicacionesRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
@@ -153,8 +155,33 @@ export default function MatrizComunicacionesRegister(props) {
     return (
         <div className="containerRegisterMC">
             <div className="headerRegisterMC">
-                Inicio / Proyectos / Nombre del proyecto / Matriz de
-                Comunicaciones/ Registrar elemento
+            <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/matrizDeComunicaciones"
+                        }
+                        text={"Matriz de Comunicaciones"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"Registrar elemento"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="backlogRegisterMC">
                 {/*1*/}

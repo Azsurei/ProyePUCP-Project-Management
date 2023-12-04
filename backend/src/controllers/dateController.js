@@ -1,4 +1,4 @@
-function formatearFecha2D_MM_YYYY(fecha) {
+async function formatearFecha2D_MM_YYYY(fecha) {
     const d = new Date(fecha);
     let dia = d.getDate().toString();
     let mes = (d.getMonth() + 1).toString(); // Los meses en JavaScript comienzan en 0

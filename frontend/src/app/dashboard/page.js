@@ -202,6 +202,7 @@ export default function Dashboard() {
         const [pages, setPages] = useState(1);
 
         //const pages = Math.ceil(listPrivUsers.length / rowsPerPage);
+        console.log(listPrivUsers);
 
         const items = React.useMemo(() => {
             const start = (page - 1) * rowsPerPage;
@@ -213,6 +214,7 @@ export default function Dashboard() {
         const columns = [
             { name: "Nombre", uid: "nombres" },
             { name: "Permisos para creación de proyecto", uid: "permiso" },
+            { name: "Habilitacion de usuario", uid: "habilitado" },
         ];
 
         const statusColorMap = ["warning", "danger", "success"];
@@ -235,6 +237,79 @@ export default function Dashboard() {
                                 {user.email}
                             </User>
                         );
+                    case "habilitado":
+                        return (
+                            <div className="flex items-center gap-4 justify-center">
+                                <Switch
+                                    defaultSelected
+                                    aria-label="Permisos"
+                                    color="success"
+                                    isSelected={
+                                        user.habilitado === 1 ? true : false
+                                    }
+                                    onValueChange={() => {
+                                        const stringURL =
+                                            process.env
+                                                .NEXT_PUBLIC_BACKEND_URL +
+                                            "/api/admin/cambiarEstadoUsuario";
+                                        const putData = { 
+                                            idUsuario: user.idUsuario,
+                                        };
+                                        axios
+                                            .put(stringURL, putData)
+                                            .then((response) => {
+                                                console.log(response);
+                                                setListPrivUsersOriginales(
+                                                    (prevList) =>
+                                                        prevList.map((item) =>
+                                                            item.idUsuario ===
+                                                            user.idUsuario
+                                                                ? {
+                                                                      ...item,
+                                                                      habilitado:
+                                                                          item.habilitado ===
+                                                                          1
+                                                                              ? 0
+                                                                              : 1,
+                                                                  }
+                                                                : item
+                                                        )
+                                                );
+                                                setListPrivUsers((prevList) =>
+                                                    prevList.map((item) =>
+                                                        item.idUsuario ===
+                                                        user.idUsuario
+                                                            ? {
+                                                                  ...item,
+                                                                  habilitado:
+                                                                      item.habilitado ===
+                                                                      1
+                                                                          ? 0
+                                                                          : 1,
+                                                              }
+                                                            : item
+                                                    )
+                                                );
+                                            })
+                                            .catch(function (error) {
+                                                console.log(
+                                                    "Error al cambiar la habilitacion de usuario.",
+                                                    error
+                                                );
+                                            });
+                                    }}
+                                />
+                                <Chip
+                                    color={statusColorMap[user.habilitado + 1]}
+                                    size="sm"
+                                    variant="flat"
+                                >
+                                    {user.habilitado === 1
+                                        ? "Habilitado"
+                                        : "Inhabilitado"}
+                                </Chip>
+                            </div>
+                        );
                     case "permiso":
                         return (
                             <div className="flex items-center gap-4 justify-center">
@@ -243,9 +318,7 @@ export default function Dashboard() {
                                     aria-label="Permisos"
                                     color="success"
                                     isSelected={
-                                        user.Privilegios_idPrivilegios === 2
-                                            ? true
-                                            : false
+                                        user.Privilegios_idPrivilegios === 2 ? true : false
                                     }
                                     onValueChange={() => {
                                         console.log("cambio");
@@ -423,7 +496,8 @@ export default function Dashboard() {
                                     <TableColumn
                                         key={column.uid}
                                         className={
-                                            column.uid === "permiso"
+                                            column.uid === "permiso" ||
+                                            column.uid === "habilitado"
                                                 ? "text-center"
                                                 : ""
                                         }

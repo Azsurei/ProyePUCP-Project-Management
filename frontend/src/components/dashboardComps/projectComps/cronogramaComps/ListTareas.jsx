@@ -114,12 +114,12 @@ function CardTarea({
                             </Button>
                         </DropdownTrigger>
                         <DropdownMenu aria-label="droMenTareas">
-                            {handleAddNewSon && (
+                            {handleAddNewSon && dbDateToDisplayDate(tarea.fechaInicio)!=="" && (
                                 <DropdownItem aria-label="addSon" onClick={() => handleAddNewSon(tarea)}>
                                     Agregar subtarea
                                 </DropdownItem>
                             )}
-                            {tarea.tareasHijas.length === 0 && handleRegisterProgress && (
+                            {tarea.tareasHijas.length === 0 && handleRegisterProgress && dbDateToDisplayDate(tarea.fechaInicio)!=="" && (
                                 <DropdownItem aria-label="regProg" onClick={() => handleRegisterProgress(tarea)}>
                                     Registrar progreso
                                 </DropdownItem>

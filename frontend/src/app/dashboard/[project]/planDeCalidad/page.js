@@ -865,7 +865,7 @@ export default function PlanDeCalidad(props) {
                             projectName +
                             "=" +
                             projectId +
-                            "/matrizDeResponsabilidades"
+                            "/planDeCalidad"
                         }
                         text={"Plan de calidad"}
                     ></BreadcrumbsItem>

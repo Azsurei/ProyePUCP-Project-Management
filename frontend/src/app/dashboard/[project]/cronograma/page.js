@@ -1098,6 +1098,7 @@ export default function Cronograma(props) {
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/cronograma/descargarExcelCronogramaTareas";
 
+                console.log(listTareas);
             const response = await axios.post(
                 exportURL,
                 {
@@ -1195,6 +1196,7 @@ export default function Cronograma(props) {
                         isOpen={isModalPosteriorOpen}
                         onOpenChange={onModalPosteriorChange}
                         addTareaPosterior={addTareaPosterior}
+                        idTareaQueLoAbre={stateSecond === 1 ? 1 : idTareaToEdit}
                         startDate={fechaFin}
                         projectId={projectId}
                         dependencies={dependencies}
@@ -1257,9 +1259,7 @@ export default function Cronograma(props) {
                                                 <Button
                                                     className="bg-F0AE19 text-white font-medium"
                                                     size="md"
-                                                    onPress={() => {
-                                                        handlerGoToNew(ListComps.length + 1, 1);
-                                                    }}
+                                                    onPress={handlerGoToNew}
                                                 >
                                                     Empieza ahora
                                                 </Button>

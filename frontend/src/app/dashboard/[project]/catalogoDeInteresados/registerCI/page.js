@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Input, Button } from "@nextui-org/react";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import MyCombobox from "@/components/ComboBox";
 import { useRouter } from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
@@ -21,6 +22,7 @@ axios.defaults.withCredentials = true;
 export default function CatalogoDeInteresadosRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
@@ -218,8 +220,33 @@ export default function CatalogoDeInteresadosRegister(props) {
     return (
         <div className="containerRegisterCI">
             <div className="headerRegisterCI">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de
-                Interesados/ Registrar interesado
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/catalogoDeInteresados"
+                        }
+                        text={"Catálogo de Interesados"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"Registrar interesado"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="interesedRegisterCI">
                 <div className="titleInteresedRegisterCI text-mainHeaders">
@@ -481,19 +508,17 @@ export default function CatalogoDeInteresadosRegister(props) {
                     </div>
                 </div>
                 <div>
-                <div className="flex flex-row items-center gap-6 mt-5">
-                <p className="font-semibold text-xl">
-                    Campos adicionales
-                </p>
-                   
-                            <TemplatesAdditionalFields
+                    <div className="flex flex-row items-center gap-6 mt-5">
+                        <p className="font-semibold text-xl">
+                            Campos adicionales
+                        </p>
+
+                        <TemplatesAdditionalFields
                             editState={true}
                             baseFields={listAdditionalFields}
                             setBaseFields={setListAdditionalFields}
                         />
-      
- 
-            </div>
+                    </div>
                     <ListAdditionalFields
                         editState={true}
                         baseFields={listAdditionalFields}

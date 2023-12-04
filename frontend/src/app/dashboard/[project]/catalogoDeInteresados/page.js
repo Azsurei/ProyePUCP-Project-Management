@@ -2,6 +2,7 @@
 import InConstruction from "@/common/InConstruction";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { SmallLoadingScreen } from "../layout";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import Link from "next/link";
 import MyDynamicTable from "@/components/DynamicTable";
 import React from "react";
@@ -401,8 +402,30 @@ export default function CatalogoDeInteresados(props) {
     return (
         <div className="container">
             <div className="header">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de
-                Interesados
+            <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/catalogoDeInteresados"
+                        }
+                        text={"Catálogo de Interesados"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="catalogoRiesgos">
                 <div className="titleRiesgos dark:text-white">

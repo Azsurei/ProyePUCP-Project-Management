@@ -8,6 +8,8 @@ const { error } = require("console");
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require("../files/fileController");
 const https = require('https');
+const dateController = require("../dateController");
+
 const headerTitulo = {
     fill: {
         type: 'pattern',
@@ -120,7 +122,8 @@ async function descargarExcel(req,res,next){
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
         
-        excelFilePath   =  path.join(destinationFolder,`Tareas.xlsx`);
+        // BORRAR EN PRODUCCION
+        excelFilePath   =  path.join(destinationFolder,`ReporteActaRiesgos.xlsx`);
         await workbook.xlsx.writeFile(excelFilePath);
 
         // Enviar el archivo
@@ -168,19 +171,19 @@ async function agregarDatosGeneralesAExcel(riesgo,WSRiesgos,filaActual){
         const header0 = ["Nombre del riesgo","Fecha de identificacion"];
         const header1 = ["","Dueño del riesgo",""];
         const header2 = ["Nombres","Apellidos","Correo"];
-        filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header0,headerTitulo);
-        const formattedDate = await excelJSController.convertISOToDate(riesgo.fechaIdentificacion);
+        filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header0,headerTitulo,borderStyle);
+        const formattedDate = await dateController.formatearFecha2D_MM_YYYY(riesgo.fechaIdentificacion);
         WSRiesgos.getRow(filaActual).values = [riesgo.nombreRiesgo,formattedDate];
         filaActual +=2;
 
-        filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header1,headerTitulo);
-        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header2,headerSubtitulo);
+        filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header1,headerTitulo,borderStyle);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header2,headerSubtitulo,borderStyle);
 
         WSRiesgos.getRow(filaActual).values = [riesgo.nombres,riesgo.apellidos,riesgo.correoElectronico];
         filaActual+=2;
 
         const header3 = ["Detalle","Causa","Impacto","Estado del riesgo"];
-        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header3,headerTitulo);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header3,headerTitulo,borderStyle);
         WSRiesgos.getRow(filaActual).values = [riesgo.nombreRiesgo,riesgo.causaRiesgo,riesgo.impactoRiesgo,riesgo.estado];
         filaActual++;
         filaActual+=2;
@@ -201,12 +204,12 @@ async function agregarDatosGeneralesAExcel(riesgo,WSRiesgos,filaActual){
         };
         filaActual++;
 
-        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header5,headerTitulo);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header5,headerTitulo,borderStyle);
         WSRiesgos.getRow(filaActual).values = [riesgo.nombreProbabilidad,riesgo.valorProbabilidad];
         filaActual+=2;
 
         const header6 = ["Impacto","Valor asociado"];
-        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header6,headerTitulo);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header6,headerTitulo,borderStyle);
         WSRiesgos.getRow(filaActual).values = [riesgo.nombreImpacto,riesgo.valorImpacto];
         filaActual+=2;
 
@@ -222,8 +225,8 @@ async function agregarResponsablesAExcel(responsables,WSRiesgos,filaActual){
     try{
         const header1 = ["","Responsables",""];
         const header2 = ["Nombres","Apellidos","Correo Electronico"];
-        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header1,headerTitulo);
-        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header2,headerTitulo);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header1,headerTitulo,borderStyle);
+        filaActual =await excelJSController.agregaHeader(WSRiesgos,filaActual,header2,headerTitulo,borderStyle);
 
         for (const responsable of responsables) {
             console.log(`Fila actual: ${filaActual}, nombres: ${responsable.nombres}, apellidos: ${responsable.apellidos}, correo: ${responsable.correoElectronico}`);

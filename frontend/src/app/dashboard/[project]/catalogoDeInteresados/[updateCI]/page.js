@@ -5,6 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Input, Button } from "@nextui-org/react";
 import MyCombobox from "@/components/ComboBox";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import IconLabel from "@/components/dashboardComps/projectComps/productBacklog/IconLabel";
 import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal";
@@ -451,8 +452,33 @@ export default function CatalogoDeInteresadosRegister(props) {
     return (
         <div className="containerRegisterCI">
             <div className="headerRegisterCI">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de
-                Interesados/ Actualizar interesado
+            <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/catalogoDeInteresados"
+                        }
+                        text={"Catálogo de Interesados"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"Actualizar interesado"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="interesedRegisterCI">
                 <div className="flex justify-between items-center">

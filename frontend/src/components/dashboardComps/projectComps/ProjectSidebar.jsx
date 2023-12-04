@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { SmallLoadingScreen } from "@/app/dashboard/[project]/layout";
 import ModalUsersOne from "@/components/ModalUsersOne";
 import { SessionContext } from "@/app/dashboard/layout";
+import { dbDateToDisplayDate } from "@/common/dateFunctions";
 axios.defaults.withCredentials = true;
 
 const memberData = [
@@ -390,7 +391,7 @@ function ProjectSidebar(props) {
             optIcon: "/icons/sideBarDropDown_icons/sbdd15.svg",
             optName: "Repositorio de documentos",
             goTo: `${stringBase}/repositorioDocumentos`,
-        }
+        },
     ];
 
     const sidebar2Data = {
@@ -439,6 +440,20 @@ function ProjectSidebar(props) {
         },
     ];
 
+    function getDaysDifference(dateString1, dateString2) {
+        // Convert date strings to Date objects
+        const date1 = new Date(dateString1);
+        const date2 = new Date(dateString2);
+      
+        // Calculate the difference in milliseconds
+        const timeDifference = date2.getTime() - date1.getTime();
+      
+        // Convert the time difference to days
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      
+        return daysDifference;
+      }
+
     return (
         <nav
             className={`ProjectSidebar ${
@@ -459,7 +474,10 @@ function ProjectSidebar(props) {
                             {props.projectName}
                         </p>
                         <p className="dates">
-                            13/09/2023 - 20/10/2023 (50 dias)
+                            {props.projectFechaInicio === "" ? "" : dbDateToDisplayDate(props.projectFechaInicio) === "" ? "Sin inicio" : dbDateToDisplayDate(props.projectFechaInicio)}{" "}
+                            -{" "}
+                            {props.projectFechaFin === "" ? "" : dbDateToDisplayDate(props.projectFechaFin) === "" ? "Sin fin" : dbDateToDisplayDate(props.projectFechaFin)}{" "}
+                            {props.projectFechaInicio === "0000-00-00" && props.projectFechaInicio === "0000-00-00" ? "" : ("(" + getDaysDifference(props.projectFechaInicio,props.projectFechaFin) + " días)")}
                         </p>
                         <div className="teamContainer">
                             <p className="teamHeader">Tu rol:</p>
@@ -492,7 +510,8 @@ function ProjectSidebar(props) {
                         })}
                     </ul>
 
-                    {(props.projectIdRole === 1 || props.projectIdRole === 2) && (
+                    {(props.projectIdRole === 1 ||
+                        props.projectIdRole === 2) && (
                         <Link href={stringBase + "/settings/general"}>
                             <div
                                 className="text-medium font-medium

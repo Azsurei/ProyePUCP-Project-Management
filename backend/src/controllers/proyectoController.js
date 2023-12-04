@@ -760,12 +760,12 @@ async function verInfoProyecto(req, res, next) {
         const [results2] = await connection.query(query2, [3, idProyecto]);
         const miembrosInfo = results2[0];
 
-        console.log(JSON.stringify(miembrosInfo,null,2));
-        console.log("============================= FIN DE MIEMBROS ===================");
+        //console.log(JSON.stringify(miembrosInfo,null,2));
+        //console.log("============================= FIN DE MIEMBROS ===================");
 
         infoProyecto.miembros = miembrosInfo;
 
-        console.log(JSON.stringify(infoProyecto,null,2));
+        //console.log(JSON.stringify(infoProyecto,null,2));
 
         res.status(200).json({
             infoProyecto,
@@ -1148,12 +1148,16 @@ async function actualizarDatos(req,res,next){
     const query5 = `CALL AÑADIR_DIAS_PRODUCTBACKLOG(?,?);`;
     const query6 = `CALL AÑADIR_DIAS_EDT(?,?);`;
     const query7 = `CALL AÑADIR_DIAS_TAREA(?,?);`;
+    const query8 = `CALL OBTENER_TAREAS(?);`;
+    const query9 = `CALL AÑADIR_DIAS_TAREA_X_IDTAREA(?,?);`;
+    const query10 = `CALL OBTENER_COMPONENTES(?);`;
+    const query11 = `CALL AÑADIR_DIAS_COMPONENTE_X_IDCOMPONENTE(?,?);`;
     //Convertimos a fecha
     const fechaInicial = moment(fechaInicio);
     const fechaFinal = moment(fechaFin);
     // Convierte la diferencia de milisegundos a días
     const diferenciaEnDias = fechaFinal.diff(fechaInicial, 'days');
-    console.log(`La diferencia en días es: ${diferenciaEnDias}`);
+    console.log(`La diferencia en días de las fechas ingresadas: ${diferenciaEnDias}`);
     try {
         let flag = 1;
         //Obtenemos las herramientas del proyecto
@@ -1202,7 +1206,7 @@ async function actualizarDatos(req,res,next){
             //Registro de Equipos 12
             //Presupeusto 13
             //Repositorio de Documentos 14
-            //Plan de Calidad 15        
+            //Plan de Calidad 15  
         }
         console.log(`Termino`);
         if(flag==0){
@@ -1230,6 +1234,94 @@ async function actualizarDatos(req,res,next){
                 //Cronograma 
                 if(herramienta.idHerramienta == 4){
                     await connection.query(query7,[idProyecto, difDias]);
+                }
+            }
+            //Segunda validacion de desborde
+            for(let herramienta of herramientas){
+                //Product Backlog
+                //if(herramienta.idHerramienta == 1){
+                //    await connection.query(query5,[idProyecto, difDias]);
+                //}
+                //EDT
+                if(herramienta.idHerramienta == 2){
+                    const [results7] = await connection.query(query10,[idProyecto]);
+                    let componentesEDT = results7[0];
+                    for(const componenteEDT of componentesEDT){
+                        console.log(`fechaFin: ${fechaFin}!`);
+                        const fechaFinComponente = new Date(componenteEDT.fechaFin);
+                        const formattedfechaFinComponente = fechaFinComponente.toISOString().split('T')[0];
+                        console.log(`Componente fechafin: ${formattedfechaFinComponente}!`);
+                        if(fechaFin<formattedfechaFinComponente){
+                            const fechaFinM = moment(fechaFin);
+                            const formattedfechaFinComponenteM = moment(formattedfechaFinComponente);
+                            const diferenciaM = fechaFinM.diff(formattedfechaFinComponenteM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query11,[componenteEDT.idComponente, diferenciaM]);
+                        }
+                    }
+                }
+                //Cronograma 
+                if(herramienta.idHerramienta == 4){
+                    const [results6] = await connection.query(query8,[idProyecto]);
+                    let tareas = results6[0];
+                    for(const tarea of tareas){
+                        console.log(`fechaFin: ${fechaFin}!`);
+                        const fechaTareaFin = new Date(tarea.fechaFin);
+                        const formattedFechaTareaFin = fechaTareaFin.toISOString().split('T')[0];
+                        console.log(`Tarea fechafin: ${formattedFechaTareaFin}!`);
+                        if(fechaFin<formattedFechaTareaFin){
+                            const fechaFinM = moment(fechaFin);
+                            const formattedFechaTareaFinM = moment(formattedFechaTareaFin);
+                            const diferenciaM = fechaFinM.diff(formattedFechaTareaFinM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query9,[tarea.idTarea, diferenciaM]);
+                        }
+                    }
+                }
+            }
+            //Tercera validacion de desborde
+            for(let herramienta of herramientas){
+                //Product Backlog
+                //if(herramienta.idHerramienta == 1){
+                //    await connection.query(query5,[idProyecto, difDias]);
+                //}
+                //EDT
+                if(herramienta.idHerramienta == 2){
+                    const [results7] = await connection.query(query10,[idProyecto]);
+                    let componentesEDT = results7[0];
+                    for(const componenteEDT of componentesEDT){
+                        console.log(`fechaInicio: ${fechaInicio}!`);
+                        const fechaInicioComponente = new Date(componenteEDT.fechaInicio);
+                        const formattedfechaInicioComponente = fechaInicioComponente.toISOString().split('T')[0];
+                        console.log(`Componente fechaInicio: ${formattedfechaInicioComponente}!`);
+                        if(formattedfechaInicioComponente<fechaInicio){
+                            const fechaInicioM = moment(fechaInicio);
+                            const formattedfechaInicioComponenteM = moment(formattedfechaInicioComponente);
+                            const diferenciaM = fechaInicioM.diff(formattedfechaInicioComponenteM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query11,[componenteEDT.idComponente, diferenciaM]);
+                        }
+                    }
+                }
+                //Cronograma 
+                if(herramienta.idHerramienta == 4){
+                    const [results6] = await connection.query(query8,[idProyecto]);
+                    let tareas = results6[0];
+                    console.log(tareas);
+                    for(const tarea of tareas){
+                        console.log(`fechaInicio: ${fechaInicio}!`);
+                        const fechaTareaInicio = new Date(tarea.fechaInicio);
+                        const formattedFechaTareaInicio = fechaTareaInicio.toISOString().split('T')[0];
+                        console.log(`Tarea fechaInicio: ${formattedFechaTareaInicio}!`);
+                        if(formattedFechaTareaInicio<fechaInicio){
+                            console.log(`Entre`);
+                            const fechaInicioM = moment(fechaInicio);
+                            const formattedFechaTareaInicioM = moment(formattedFechaTareaInicio);
+                            const diferenciaM = fechaInicioM.diff(formattedFechaTareaInicioM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query9,[tarea.idTarea, diferenciaM]);
+                        }
+                    }
                 }
             }
             res.status(200).json({

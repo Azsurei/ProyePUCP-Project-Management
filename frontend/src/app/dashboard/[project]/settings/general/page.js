@@ -7,9 +7,17 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
 import { toast } from "sonner";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
-export default function GeneralScreen() {
+export default function GeneralScreen(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectNameOld = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const projectIdOld = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+
+
+    const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { projectInfo } = useContext(ProjectInfo);
     const twStyle1 = "text-lg font-medium";
@@ -24,6 +32,8 @@ export default function GeneralScreen() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [canSave, setCanSave] = useState(false);
+
+    const router = useRouter();
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -62,7 +72,8 @@ export default function GeneralScreen() {
 
                 <p className={twStyle1}>Nombre de proyecto</p>
                 <Textarea
-                    variant={"bordered"}
+                    variant={sessionData.rolInProject !== 2 ? "bordered" : "flat"}
+                    readOnly={sessionData.rolInProject !== 2 ? false : true}
                     aria-label="name-lbl"
                     isInvalid={!validName}
                     errorMessage={!validName ? msgEmptyField : ""}
@@ -83,7 +94,7 @@ export default function GeneralScreen() {
                     <div className="flex flex-col flex-1">
                         <p className={twStyle1}>Fechas inicio:</p>
                         <DateInput
-                            isEditable={true}
+                            isEditable={sessionData.rolInProject !== 2 ? true : false}
                             className={""}
                             isInvalid={!validFechas}
                             onChangeHandler={(e) => {
@@ -96,7 +107,7 @@ export default function GeneralScreen() {
                     <div className="flex flex-col flex-1">
                         <p className={twStyle1}>Fecha fin</p>
                         <DateInput
-                            isEditable={true}
+                            isEditable={sessionData.rolInProject !== 2 ? true : false}
                             className={""}
                             isInvalid={!validFechas}
                             onChangeHandler={(e) => {
@@ -154,7 +165,13 @@ export default function GeneralScreen() {
             else{
                 toast.success("Informacion de proyecto actualizada con exito");
                 setIsLoading(false);
-                //window.location.reload();
+                if(projectNameOld !== projectName){
+                    router.push("/dashboard/" + projectName + "=" + projectIdOld + "/settings/general");
+                }else{
+                    window.location.reload();
+                }
+                
+
             }
         } catch (error) {
             console.log(error);

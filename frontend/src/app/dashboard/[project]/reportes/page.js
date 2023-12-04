@@ -85,7 +85,7 @@ export default function Reportes(props) {
             title: "Vista de estados de entregables",
             description:
                 "Este tipo de reporte de entregables proporciona una visión detallada del estado actual de los entregables y " +
-                "las tareas asociadas en tu proyecto. Te permite supervisar el progreso, identificar obstáculos y tomar decisiones informadas para mantener tu proyecto en el camino correcto",
+                "las tareas asociadas en tu proyecto.",
             imgLink: "/images/report_1.webp",
             hrefGoTo:
                 "/dashboard/" +
@@ -99,8 +99,7 @@ export default function Reportes(props) {
             title: "Reporte tareas y progreso",
             description:
                 "El reporte de visualización de Tareas te brinda una perspectiva detallada y organizada de las tareas asignadas en tu" +
-                " proyecto. Este informe se centra en la disposición de las tareas por sprint, permitiéndote gestionar eficazmente la ejecución " +
-                "y el seguimiento de tus actividades.",
+                " proyecto.",
             imgLink: "/images/report_2.webp",
             hrefGoTo:
                 "/dashboard/" +
@@ -114,8 +113,7 @@ export default function Reportes(props) {
             title: "Informe de flujo de gastos",
             description:
                 "Este informe proporciona un detallado flujo de ingresos, egresos y estimaciones, " +
-                "permitiéndote evaluar de manera precisa la rentabilidad y la ejecución de tus proyectos. Además, te ofrece una panorámica completa de los aspectos " +
-                "financieros y operativos.",
+                "permitiéndote evaluar de manera precisa la rentabilidad y la ejecución de tus proyectos.",
             imgLink: "/images/report_3.webp",
             hrefGoTo:
                 "/dashboard/" +
@@ -128,8 +126,7 @@ export default function Reportes(props) {
             id: "rep4",
             title: "Resumen de riesgos",
             description:
-                "El reporte de Resumen de Riesgos te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. " +
-                "Este informe proporciona una evaluación detallada de los riesgos potenciales, identificando sus causas, impacto y probabilidad de ocurrencia.",
+                "El reporte de Resumen de Riesgos te ayuda a anticipar y mitigar posibles obstáculos y desafíos que puedan surgir durante la ejecución de tu proyecto. ",
             imgLink: "/images/report_4.webp",
             hrefGoTo:
                 "/dashboard/" +
@@ -405,7 +402,7 @@ export default function Reportes(props) {
                         Crea un nuevo reporte
                     </HeaderWithButtonsSamePage>
 
-                    <div className="flex flex-row gap-3 flex-1 mt-3  overflow-x-auto">
+                    <div className="flex flex-col gap-3 flex-1 mt-3  overflow-x-auto">
                         {cardsContentArray.map((card) => {
                             return (
                                 <ReportTypeCard

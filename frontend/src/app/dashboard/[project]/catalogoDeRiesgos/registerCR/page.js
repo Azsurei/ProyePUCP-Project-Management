@@ -1,6 +1,7 @@
 "use client";
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerCR.css";
 import axios from "axios";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { useEffect, useState, useContext } from "react";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar } from "@nextui-org/react";
@@ -26,6 +27,7 @@ axios.defaults.withCredentials = true;
 export default function CatalogoDeRiesgosRegister(props) {
     const decodedUrl = decodeURIComponent(props.params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+    const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     console.log("El id del proyecto es:", projectId);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { herramientasInfo } = useContext(HerramientasInfo);
@@ -295,8 +297,33 @@ export default function CatalogoDeRiesgosRegister(props) {
     return (
         <div className="containerRegisterCR">
             <div className="headerRegisterCR">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de Riesgos/
-                Registrar riesgo
+                <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/catalogoDeRiesgos"
+                        }
+                        text={"Catálogo de Riesgos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"Registrar riesgo"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="riskRegisterCR">
                 <div className="titleRiskRegisterCR dark:text-white">
@@ -653,19 +680,17 @@ export default function CatalogoDeRiesgosRegister(props) {
                     </div>
                 </div>
                 <div>
-                <div className="flex flex-row items-center gap-6 mt-5">
-                <p className="font-semibold text-xl">
-                    Campos adicionales
-                </p>
-                   
-                            <TemplatesAdditionalFields
+                    <div className="flex flex-row items-center gap-6 mt-5">
+                        <p className="font-semibold text-xl">
+                            Campos adicionales
+                        </p>
+
+                        <TemplatesAdditionalFields
                             editState={true}
                             baseFields={listAdditionalFields}
                             setBaseFields={setListAdditionalFields}
                         />
-      
- 
-            </div>
+                    </div>
                     <ListAdditionalFields
                         editState={true}
                         baseFields={listAdditionalFields}

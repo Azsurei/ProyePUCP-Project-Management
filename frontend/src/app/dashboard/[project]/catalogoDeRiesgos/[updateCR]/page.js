@@ -1,6 +1,7 @@
 "use client";
 import "@/styles/dashboardStyles/projectStyles/catalogoDeRiesgosStyles/registerCR.css";
 import axios from "axios";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 import { useEffect, useState, useContext } from "react";
 import { HerramientasInfo, SmallLoadingScreen } from "../../layout";
 import { Textarea, Avatar, Button } from "@nextui-org/react";
@@ -552,8 +553,33 @@ export default function CatalogoDeRiesgosUpdate(props) {
     return (
         <div className="containerRegisterCR">
             <div className="headerRegisterCR">
-                Inicio / Proyectos / Nombre del proyecto / Catálogo de Riesgos/
-                Registrar riesgo
+            <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/catalogoDeRiesgos"
+                        }
+                        text={"Catálogo de Riesgos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"Actualizar riesgo"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="riskRegisterCR">
                 <div className="flex justify-between items-center">

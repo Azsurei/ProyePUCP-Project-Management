@@ -177,388 +177,6 @@ function ReporteEntregables(props) {
             setIsNewReport(false);
             setIsLoadingSmall(true);
 
-            const mockObj = [
-                {
-                    idEntregable: 61,
-                    nombre: "entregable",
-                    idComponente: 94,
-                    activo: 1,
-                    ComponenteEDTNombre: "mock",
-                    descripcion: "",
-                    hito: "",
-                    fechaInicio: "2023-11-16T05:00:00.000Z",
-                    fechaFin: "2023-11-22T05:00:00.000Z",
-                    tareasEntregable: [
-                        {
-                            idTarea: 342,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "mi tareaaa",
-                            descripcion: "ascas",
-                            fechaInicio: "2023-11-03T05:00:00.000Z",
-                            fechaFin: "2023-11-21T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 2,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-17T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 61,
-                            usuarios: [
-                                {
-                                    idUsuario: 112,
-                                    nombres: "rgpq25",
-                                    apellidos: "pinto",
-                                    correoElectronico: "renzopinto25@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                        {
-                            idTarea: 350,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "dfvdf",
-                            descripcion: "dfvdfv",
-                            fechaInicio: "2023-11-08T05:00:00.000Z",
-                            fechaFin: "2023-11-23T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 0,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-17T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 61,
-                            usuarios: [
-                                {
-                                    idUsuario: 112,
-                                    nombres: "rgpq25",
-                                    apellidos: "pinto",
-                                    correoElectronico: "renzopinto25@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c",
-                                },
-                                {
-                                    idUsuario: 124,
-                                    nombres: "GABRIEL OMAR",
-                                    apellidos: "DURAN RUIZ",
-                                    correoElectronico: "a20203371@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocITUYDksM0tCrocZRIRPugJ4Fbaob9nn4e7FuDcSlD4=s96-c",
-                                },
-                                {
-                                    idUsuario: 134,
-                                    nombres: "Diego",
-                                    apellidos: "Veramendi Malpartida",
-                                    correoElectronico: "v.dvm.dvm@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocLDgSU5Bn-uSVGv5CrZtZZHcAVS-F05WlJ_Y5ZS_leGfH0=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                        {
-                            idTarea: 340,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "23",
-                            descripcion: "123",
-                            fechaInicio: "2023-11-09T05:00:00.000Z",
-                            fechaFin: "2023-11-16T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 1,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-15T05:00:00.000Z",
-                            idTareaEstado: 3,
-                            nombreTareaEstado: "Atrasado",
-                            colorTareaEstado: "warning",
-                            esPosterior: 0,
-                            idEntregable: 61,
-                            usuarios: [
-                                {
-                                    idUsuario: 77,
-                                    nombres: "Renzo Gabriel",
-                                    apellidos: "Pinto Quiroz",
-                                    correoElectronico: "admin.com",
-                                    imgLink: null,
-                                },
-                                {
-                                    idUsuario: 95,
-                                    nombres: "RENZO GABRIEL",
-                                    apellidos: "PINTO QUIROZ",
-                                    correoElectronico: "a20201491@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                    ],
-                },
-                {
-                    idEntregable: 62,
-                    nombre: "otro entregable",
-                    idComponente: 94,
-                    activo: 1,
-                    ComponenteEDTNombre: "mock",
-                    descripcion: "",
-                    hito: "",
-                    fechaInicio: "2023-11-16T05:00:00.000Z",
-                    fechaFin: "2023-11-22T05:00:00.000Z",
-                    tareasEntregable: [
-                        {
-                            idTarea: 335,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "tyron",
-                            descripcion: "me gusta yuniqua",
-                            fechaInicio: "2023-11-15T05:00:00.000Z",
-                            fechaFin: "2023-11-30T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 3,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-15T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 62,
-                            usuarios: [
-                                {
-                                    idUsuario: 102,
-                                    nombres: "DIEGO JAVIER KITAROU",
-                                    apellidos: "IWASAKI MOREYRA",
-                                    correoElectronico: "a20201540@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocLYSPcY7AgM2lE2tTdbHWQaD0gMitigp0VlNDaw7sZ4lA=s96-c",
-                                },
-                                {
-                                    idUsuario: 101,
-                                    nombres: "BRANDO LEONARDO",
-                                    apellidos: "ROJAS ROMERO",
-                                    correoElectronico: "a20191088@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJuYBGK6dYubtirEeG47L0vkWKWqNj0I4kiP3gBJRP5CjY=s96-c",
-                                },
-                                {
-                                    idUsuario: 97,
-                                    nombres: "BRUCE ANTHONY",
-                                    apellidos: "ESTRADA MELGAREJO",
-                                    correoElectronico: "a20203298@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJfDJJnt4CClfOWItoYOykKhkSPpobVB82pkxKw7MAIOQ=s96-c",
-                                },
-                                {
-                                    idUsuario: 96,
-                                    nombres: "JUAN ANGELO",
-                                    apellidos: "FLORES RUBIO",
-                                    correoElectronico:
-                                        "angelo.flores@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocLWS53LV_YEk7R075wQoeLMJZ7shVi5xzY7MXVFIMu5V5k=s96-c",
-                                },
-                                {
-                                    idUsuario: 93,
-                                    nombres: "Diego Gustavo",
-                                    apellidos: "Veramendi Malpartida",
-                                    correoElectronico:
-                                        "veramendi.diego@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJPVGYJZsx94AqeoVQXBVraWBlIpH3CHnmPRQ7nIooe9PA=s96-c",
-                                },
-                                {
-                                    idUsuario: 132,
-                                    nombres: "CHRISTIAN SEBASTIAN",
-                                    apellidos: "CHIRA MALLQUI",
-                                    correoElectronico: "s.chira@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJIe497b9iwVshhqsRLw5wG-D38RwfgS8xx0gyn0siNoE8=s96-c",
-                                },
-                                {
-                                    idUsuario: 134,
-                                    nombres: "Diego",
-                                    apellidos: "Veramendi Malpartida",
-                                    correoElectronico: "v.dvm.dvm@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocLDgSU5Bn-uSVGv5CrZtZZHcAVS-F05WlJ_Y5ZS_leGfH0=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                        {
-                            idTarea: 341,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "para notis",
-                            descripcion: "asc",
-                            fechaInicio: "2023-11-10T05:00:00.000Z",
-                            fechaFin: "2023-11-18T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 1,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-16T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 62,
-                            usuarios: [
-                                {
-                                    idUsuario: 134,
-                                    nombres: "Diego",
-                                    apellidos: "Veramendi Malpartida",
-                                    correoElectronico: "v.dvm.dvm@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocLDgSU5Bn-uSVGv5CrZtZZHcAVS-F05WlJ_Y5ZS_leGfH0=s96-c",
-                                },
-                                {
-                                    idUsuario: 132,
-                                    nombres: "CHRISTIAN SEBASTIAN",
-                                    apellidos: "CHIRA MALLQUI",
-                                    correoElectronico: "s.chira@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJIe497b9iwVshhqsRLw5wG-D38RwfgS8xx0gyn0siNoE8=s96-c",
-                                },
-                                {
-                                    idUsuario: 112,
-                                    nombres: "rgpq25",
-                                    apellidos: "pinto",
-                                    correoElectronico: "renzopinto25@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                        {
-                            idTarea: 351,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "asc",
-                            descripcion: "asc",
-                            fechaInicio: "2023-11-09T05:00:00.000Z",
-                            fechaFin: "2023-11-23T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 0,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-17T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 62,
-                            usuarios: [
-                                {
-                                    idUsuario: 95,
-                                    nombres: "RENZO GABRIEL",
-                                    apellidos: "PINTO QUIROZ",
-                                    correoElectronico: "a20201491@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
-                                },
-                                {
-                                    idUsuario: 112,
-                                    nombres: "rgpq25",
-                                    apellidos: "pinto",
-                                    correoElectronico: "renzopinto25@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                        {
-                            idTarea: 352,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "asc",
-                            descripcion: "asc",
-                            fechaInicio: "2023-11-09T05:00:00.000Z",
-                            fechaFin: "2023-11-23T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 0,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-17T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 62,
-                            usuarios: [
-                                {
-                                    idUsuario: 95,
-                                    nombres: "RENZO GABRIEL",
-                                    apellidos: "PINTO QUIROZ",
-                                    correoElectronico: "a20201491@pucp.edu.pe",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocKIk0aM_XpYt59sxRi15OzPyWLHl5oozg8fwR8nzgRy7A=s96-c",
-                                },
-                                {
-                                    idUsuario: 112,
-                                    nombres: "rgpq25",
-                                    apellidos: "pinto",
-                                    correoElectronico: "renzopinto25@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                        {
-                            idTarea: 353,
-                            idEquipo: null,
-                            idPadre: null,
-                            idTareaAnterior: null,
-                            sumillaTarea: "Ser el mejor",
-                            descripcion: "asc",
-                            fechaInicio: "2023-11-03T05:00:00.000Z",
-                            fechaFin: "2023-11-22T05:00:00.000Z",
-                            cantSubTareas: 0,
-                            cantPosteriores: 0,
-                            horasPlaneadas: 0,
-                            fechaUltimaModificacionEstado:
-                                "2023-11-17T05:00:00.000Z",
-                            idTareaEstado: 2,
-                            nombreTareaEstado: "En progreso",
-                            colorTareaEstado: "primary",
-                            esPosterior: 0,
-                            idEntregable: 62,
-                            usuarios: [
-                                {
-                                    idUsuario: 112,
-                                    nombres: "rgpq25",
-                                    apellidos: "pinto",
-                                    correoElectronico: "renzopinto25@gmail.com",
-                                    imgLink:
-                                        "https://lh3.googleusercontent.com/a/ACg8ocJrt63rMLATn04gpvY9DXaY3w9Qs9fxJUPlKsOjnjMo=s96-c",
-                                },
-                            ],
-                            equipo: null,
-                        },
-                    ],
-                },
-            ];
-
             console.log("EL fileId del reporte es " + reportId);
             const listURL =
                 process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -577,12 +195,16 @@ function ReporteEntregables(props) {
                         setSelectedEntregable(
                             response.data.entregables[0].idEntregable
                         );
-                        console.log(response.data.entregables[0].tareasEntregable);
+                        console.log(
+                            response.data.entregables[0].tareasEntregable
+                        );
 
                         setListTareas(
                             response.data.entregables[0].tareasEntregable
                         );
-                        console.log(response.data.entregables[0].tareasEntregable);
+                        console.log(
+                            response.data.entregables[0].tareasEntregable
+                        );
 
                         getEntregableStatistics(response.data.entregables[0]);
                         console.log(response.data.entregables[0]);
@@ -661,7 +283,7 @@ function ReporteEntregables(props) {
             const response = await axios.post(
                 exportURL,
                 {
-                  idArchivo: reportId,
+                    idArchivo: reportId,
                 },
                 {
                     responseType: "blob", // Important for binary data
@@ -680,16 +302,12 @@ function ReporteEntregables(props) {
             let formattedDate = `${day}_${month}_${year}`;
 
             const fileName =
-                projectName.split(" ").join("") +
-                "_" +
-                formattedDate +
-                ".xlsx";
+                projectName.split(" ").join("") + "_Entregables" + ".xlsx";
             console.log(fileName);
             saveAs(response.data, fileName);
 
             setIsExportLoading(false);
-            toast.success("Se exporto el cronograma con exito");
-            
+            toast.success("Se exporto el reporte de entregables con exito");
         } catch (error) {
             setIsExportLoading(false);
             toast.error("Error al exportar reporte entregable");
@@ -704,7 +322,7 @@ function ReporteEntregables(props) {
                 guardarReporte={async (name) => {
                     return await handleSaveReport(name);
                 }}
-                tipo = "Entregables"
+                tipo="Entregables"
             />
 
             <div className="flex flex-row justify-between items-end">
@@ -754,6 +372,7 @@ function ReporteEntregables(props) {
                             await handlerExport();
                         }}
                         startContent={<ExportIcon />}
+                        isLoading={isExportLoading}
                     >
                         Exportar
                     </Button>
@@ -815,11 +434,13 @@ function ReporteEntregables(props) {
                                     radius="lg"
                                     className=" min-h-[40px] text-lg"
                                 >
-                                    {parseInt(entregableProgress) < 1 && "No iniciado"}
+                                    {parseInt(entregableProgress) < 1 &&
+                                        "No iniciado"}
                                     {parseInt(entregableProgress) > 1 &&
                                         parseInt(entregableProgress) < 100 &&
                                         "En progreso"}
-                                    {parseInt(entregableProgress) === 100 && "Finalizado"}
+                                    {parseInt(entregableProgress) === 100 &&
+                                        "Finalizado"}
                                 </Chip>
                             </div>
 
@@ -841,7 +462,10 @@ function ReporteEntregables(props) {
                             </p>
 
                             <p className="text-gray-400">
-                                {"Descripcion: " + (entregableDescripcion==="" ? "Sin descripcion" : entregableDescripcion)}
+                                {"Descripcion: " +
+                                    (entregableDescripcion === ""
+                                        ? "Sin descripcion"
+                                        : entregableDescripcion)}
                             </p>
                             <div className="flex flex-row item-center gap-3 ">
                                 <p className="font-medium flex items-center">
@@ -1002,11 +626,7 @@ function ReporteEntregables(props) {
             console.log(response);
             toast.success("Su reporte se guardo con exito");
             router.push(
-                "/dashboard/" +
-                    projectName +
-                    "=" +
-                    projectId +
-                    "/reportes"
+                "/dashboard/" + projectName + "=" + projectId + "/reportes"
             );
             return 1;
         } catch (error) {
@@ -1193,13 +813,22 @@ function ReporteEntregables(props) {
             setEntregableProgress(formattedProgress);
 
             //assign colors
-            if (parseInt(formattedProgress) <= 10) setEntregableChipColor("danger");
-            if (parseInt(formattedProgress) > 10 && parseInt(formattedProgress) <= 50)
+            if (parseInt(formattedProgress) <= 10)
+                setEntregableChipColor("default");
+            if (
+                parseInt(formattedProgress) > 10 &&
+                parseInt(formattedProgress) <= 50
+            )
                 setEntregableChipColor("warning");
-            if (parseInt(formattedProgress) > 50 && parseInt(formattedProgress) < 100)
+            if (
+                parseInt(formattedProgress) > 50 &&
+                parseInt(formattedProgress) < 100
+            )
                 setEntregableChipColor("primary");
-            if (parseInt(formattedProgress) === 100) setEntregableChipColor("success");
-            if (parseInt(formattedProgress) === 100) console.log("se asigno success");
+            if (parseInt(formattedProgress) === 100)
+                setEntregableChipColor("success");
+            if (parseInt(formattedProgress) === 100)
+                console.log("se asigno success");
         } else {
             setEntregableProgress(0);
             setEntregableChipColor("default");
@@ -1369,28 +998,42 @@ function ReporteEntregables(props) {
         //get finished tasks / total tasks
         let finishedTasks = 0;
         let totalTasks = 0;
+
         entregable.tareasEntregable.forEach((tarea) => {
             if (tarea.idTareaEstado === 4) {
                 finishedTasks++;
             }
             totalTasks++;
         });
-        const finalProgress = (finishedTasks / totalTasks) * 100;
-        const formattedProgress =
-            typeof finalProgress === "number"
-                ? finalProgress.toFixed(2)
-                : finalProgress;
 
-        const entBarProgress = formattedProgress;
-
-        //assign colors
+        let entBarProgress = 0;
         let entColorState;
-        if (formattedProgress <= 10) entColorState = "danger";
-        if (formattedProgress > 10 && formattedProgress <= 50)
-            entColorState = "warning";
-        if (formattedProgress > 50 && formattedProgress < 100)
-            entColorState = "primary";
-        if (formattedProgress === 100) entColorState = "success";
+        if (totalTasks !== 0) {
+            const finalProgress = (finishedTasks / totalTasks) * 100;
+            const formattedProgress =
+                typeof finalProgress === "number"
+                    ? finalProgress.toFixed(2)
+                    : finalProgress;
+
+            entBarProgress = formattedProgress;
+
+            //assign colors
+            if (parseInt(formattedProgress) <= 10) entColorState = "default";
+            if (
+                parseInt(formattedProgress) > 10 &&
+                parseInt(formattedProgress) <= 50
+            )
+                entColorState = "warning";
+            if (
+                parseInt(formattedProgress) > 50 &&
+                parseInt(formattedProgress) < 100
+            )
+                entColorState = "primary";
+            if (parseInt(formattedProgress) === 100) entColorState = "success";
+        } else {
+            entBarProgress = 0;
+            entColorState = "default";
+        }
 
         const entContribuyentes = listaContribuyentes;
 

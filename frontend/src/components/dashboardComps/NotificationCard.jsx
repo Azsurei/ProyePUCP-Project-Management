@@ -129,6 +129,11 @@ function NotificationCard({ type, campoAdicional, notifObj, handleDelete }) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
+    useEffect(()=>{
+        console.log("NOTIFICACION");
+        console.log(notifObj);
+    },[]);
+
     return (
         <div className="border dark:border-slate-600 flex flex-row items-center px-2 py-3 rounded-md gap-2 shadow-sm">
             {type === 1 && <TaskIcon />}

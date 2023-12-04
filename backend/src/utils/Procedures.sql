@@ -5871,12 +5871,13 @@ DROP PROCEDURE IF EXISTS AÑADIR_DIAS_PRODUCTBACKLOG;
 DELIMITER $
 CREATE PROCEDURE AÑADIR_DIAS_PRODUCTBACKLOG(
     IN _idProyecto INT,
+    IN _fechaInicio DATE,
     IN _dias INT
 )
 BEGIN
     SET @_idProductBacklog = (SELECT idProductBacklog FROM ProductBacklog WHERE idProyecto = _idProyecto AND activo = 1);
     UPDATE Sprint 
-    SET fechaInicio = DATE_ADD(fechaInicio, INTERVAL _dias DAY),
+    SET fechaInicio = DATE_ADD(_fechaInicio, INTERVAL _dias DAY),
         fechaFin = DATE_ADD(fechaFin, INTERVAL _dias DAY)
     WHERE idProductBacklog = @_idProductBacklog;
 END$

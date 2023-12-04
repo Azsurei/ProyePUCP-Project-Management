@@ -17,6 +17,7 @@ import ListAdditionalFields, {
 import { Toaster, toast } from "sonner";
 import { SessionContext } from "@/app/dashboard/layout";
 import TemplatesAdditionalFields from "@/components/TemplatesAdditionalFields";
+import { Breadcrumbs, BreadcrumbsItem } from "@/components/Breadcrumb";
 axios.defaults.withCredentials = true;
 
 function capitalizeWords(str) {
@@ -227,8 +228,33 @@ export default function MatrizComunicacionesUpdate(props) {
     return (
         <div className="containerRegisterMC">
             <div className="headerRegisterMC">
-                Inicio / Proyectos / Nombre del proyecto / Matriz de
-                Comunicaciones/ Actualizar elemento
+            <Breadcrumbs>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Inicio"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href="/dashboard"
+                        text={"Proyectos"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={"/dashboard/" + projectName + "=" + projectId}
+                        text={projectName}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        href={
+                            "/dashboard/" +
+                            projectName +
+                            "=" +
+                            projectId +
+                            "/matrizDeComunicaciones"
+                        }
+                        text={"Matriz de Comunicaciones"}
+                    ></BreadcrumbsItem>
+                    <BreadcrumbsItem
+                        text={"Actualizar elemento"}
+                    ></BreadcrumbsItem>
+                </Breadcrumbs>
             </div>
             <div className="backlogRegisterMC">
                 <div className="flex justify-between items-center">

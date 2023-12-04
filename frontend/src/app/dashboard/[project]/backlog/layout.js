@@ -46,12 +46,14 @@ export default function RootLayout({ children, params }) {
     const pathname = usePathname();
     const router = useRouter();
 
-    const [selectedTab, setSelectedTab] = useState(pathname.split("/")[pathname.split("/").length - 1]);
-    useEffect(()=>{
+    const [selectedTab, setSelectedTab] = useState(
+        pathname.split("/")[pathname.split("/").length - 1]
+    );
+    useEffect(() => {
         console.log(pathname);
         console.log("===============================");
-        console.log(pathname.split("/")[pathname.split("/").length - 1])
-    },[]);
+        console.log(pathname.split("/")[pathname.split("/").length - 1]);
+    }, []);
 
     const decodedProjectName = decodeURIComponent(projectName);
     const constructedUrl = new URL(
@@ -325,7 +327,6 @@ export default function RootLayout({ children, params }) {
                                         </Button>
                                         <Button
                                             className="bg-generalBlue text-white font-medium"
-
                                             onClick={finalizarModal}
                                         >
                                             Guardar Plantilla
@@ -501,7 +502,7 @@ export default function RootLayout({ children, params }) {
                 </Modal>
             )}
 
-            {/* <HeaderWithButtonsSamePage
+             {/* <HeaderWithButtonsSamePage
                 haveReturn={false}
                 haveAddNew={false}
                 //handlerAddNew={handlerGoToNew}
@@ -512,17 +513,26 @@ export default function RootLayout({ children, params }) {
                 //btnText={"Nueva tarea"}
             >
                 Backlog
-            </HeaderWithButtonsSamePage> */}
+            </HeaderWithButtonsSamePage>  */}
             <Breadcrumbs>
-                    <BreadcrumbsItem href="/" text="Inicio" />
-                    <BreadcrumbsItem href="/dashboard" text="Proyectos" />
-                    <BreadcrumbsItem
-                                href={"/dashboard/" + projectName + "=" + projectId}
-                                    text={projectName}
-                    />
-                    <BreadcrumbsItem href={"/dashboard/" + projectName + "=" + projectId + "/backlog/kanban"} text="Backlog" />
-                </Breadcrumbs>
-
+                <BreadcrumbsItem href="/" text="Inicio" />
+                <BreadcrumbsItem href="/dashboard" text="Proyectos" />
+                <BreadcrumbsItem
+                    href={"/dashboard/" + projectName + "=" + projectId}
+                    text={projectName}
+                />
+                <BreadcrumbsItem
+                    href={
+                        "/dashboard/" +
+                        projectName +
+                        "=" +
+                        projectId +
+                        "/backlog/kanban"
+                    }
+                    text="Backlog"
+                />
+            </Breadcrumbs>
+            <div className="font-bold text-2xl break-words">Backlog</div>
             <div style={{ display: "flex", flexDirection: "row" }}>
                 <Tabs
                     radius="sm"
@@ -533,9 +543,9 @@ export default function RootLayout({ children, params }) {
                     }}
                     size="lg"
                     selectedKey={selectedTab}
-                    onSelectionChange={(e)=>{
+                    onSelectionChange={(e) => {
                         setSelectedTab(e);
-                        if(e === "kanban"){
+                        if (e === "kanban") {
                             router.push(
                                 "/dashboard/" +
                                     projectName +
@@ -544,7 +554,7 @@ export default function RootLayout({ children, params }) {
                                     "/backlog/kanban"
                             );
                         }
-                        if(e === "sprintBacklog"){
+                        if (e === "sprintBacklog") {
                             router.push(
                                 "/dashboard/" +
                                     projectName +
@@ -553,7 +563,7 @@ export default function RootLayout({ children, params }) {
                                     "/backlog/sprintBacklog"
                             );
                         }
-                        if(e === "productBacklog"){
+                        if (e === "productBacklog") {
                             router.push(
                                 "/dashboard/" +
                                     projectName +
@@ -564,18 +574,9 @@ export default function RootLayout({ children, params }) {
                         }
                     }}
                 >
-                    <Tab
-                        key={"kanban"}
-                        title="Kanban"
-                    />
-                    <Tab
-                        key={"sprintBacklog"}
-                        title="Sprint Backlog"
-                    />
-                    <Tab
-                        key={"productBacklog"}
-                        title="Product Backlog"
-                    />
+                    <Tab key={"kanban"} title="Kanban" />
+                    <Tab key={"sprintBacklog"} title="Sprint Backlog" />
+                    <Tab key={"productBacklog"} title="Product Backlog" />
                 </Tabs>
 
                 {isKanbanPage && (
