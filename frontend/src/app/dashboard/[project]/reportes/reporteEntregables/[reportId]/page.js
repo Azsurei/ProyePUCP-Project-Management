@@ -814,7 +814,7 @@ function ReporteEntregables(props) {
 
             //assign colors
             if (parseInt(formattedProgress) <= 10)
-                setEntregableChipColor("danger");
+                setEntregableChipColor("default");
             if (
                 parseInt(formattedProgress) > 10 &&
                 parseInt(formattedProgress) <= 50
@@ -1018,7 +1018,7 @@ function ReporteEntregables(props) {
             entBarProgress = formattedProgress;
 
             //assign colors
-            if (parseInt(formattedProgress) <= 10) entColorState = "danger";
+            if (parseInt(formattedProgress) <= 10) entColorState = "default";
             if (
                 parseInt(formattedProgress) > 10 &&
                 parseInt(formattedProgress) <= 50
