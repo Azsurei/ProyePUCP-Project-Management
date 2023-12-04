@@ -155,6 +155,18 @@ export default function Reportes(props) {
     ];
 
     const [listReportes, setListReportes] = useState([]);
+    const hasSearchFilter = Boolean(filterValue);
+    const filteredItems = React.useMemo(() => {
+        let filteredTemplates = [...listReportes]
+
+        if (hasSearchFilter) {
+            filteredTemplates = filteredTemplates.filter((item) =>
+            item.nombre.toLowerCase().includes(filterValue.toLowerCase())
+            );
+        }
+
+        return filteredTemplates;
+    }, [listReportes, filterValue]);
 
     const fetchData = async () => {
         try {
@@ -252,7 +264,7 @@ export default function Reportes(props) {
                             onValueChange={onSearchChange}
                             variant="faded"
                         />
-                        <div className="buttonReporteContainer">
+                        {/* <div className="buttonReporteContainer">
                             <Button
                                 onPress={onModalFecha}
                                 color="primary"
@@ -288,7 +300,7 @@ export default function Reportes(props) {
                                     ))}
                                 </DropdownMenu>
                             </Dropdown>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="mt-5 flex-1">
                         {isLoading && (
@@ -317,7 +329,7 @@ export default function Reportes(props) {
                         )}
                         {isLoading === false && listReportes.length > 0 && (
                             <ListReport
-                                listReportes={listReportes}
+                                listReportes={filteredItems}
                                 handleViewReport={(
                                     idReporte,
                                     fileId,
