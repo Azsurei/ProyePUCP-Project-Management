@@ -15,10 +15,7 @@ import GroupUserIconsReporte from "./GroupUserIconsReporte";
 import { dbDateToDisplayDate } from "@/common/dateFunctions";
 import { TaskSelector } from "@/app/dashboard/[project]/reportes/reporteTareas/[reportId]/page";
 
-function CardTarea({
-    tarea,
-    leftMargin
-}) {
+function CardTarea({ tarea, leftMargin }) {
     const { selectedTask, handleSetSelectedTask } = useContext(TaskSelector);
 
     const tieneHijos = true;
@@ -38,7 +35,17 @@ function CardTarea({
 
     return (
         <div className="containerCardYHijo">
-            <div className={"tareaCard " + (selectedTask?.idTarea === tarea.idTarea ? " bg-slate-200 dark:bg-slate-700" : "bg-white dark:bg-mainBackground")} onClick={()=>{handleSetSelectedTask(tarea)}}>
+            <div
+                className={
+                    "tareaCard " +
+                    (selectedTask?.idTarea === tarea.idTarea
+                        ? " bg-slate-200 dark:bg-slate-700"
+                        : "bg-white dark:bg-mainBackground")
+                }
+                onClick={() => {
+                    handleSetSelectedTask(tarea);
+                }}
+            >
                 <div className="containerGeneralData">
                     <div className="containerNombreTarea">
                         {tarea.tareasHijas.length !== 0 && (
@@ -93,12 +100,14 @@ function CardTarea({
                         <p>{tarea.porcentajeProgreso}%</p>
                     </div>
                     <div className="containerTareaDuracion ">
-                        <p>{dbDateToDisplayDate(tarea.fechaInicio)}</p>
+                        <p>
+                            {dbDateToDisplayDate(tarea.fechaInicio) === ""
+                                ? "Dependiente"
+                                : dbDateToDisplayDate(tarea.fechaInicio)}
+                        </p>
                         <p>{dbDateToDisplayDate(tarea.fechaFin)}</p>
                     </div>
                 </div>
-
-                
             </div>
 
             <Collapse isOpened={hijosIsOpen}>
@@ -113,10 +122,7 @@ function CardTarea({
     );
 }
 
-export default function ListTareasReporte({
-    listTareas,
-    leftMargin,
-}) {
+export default function ListTareasReporte({ listTareas, leftMargin }) {
     return (
         <div className="tareasListContainer" style={{ marginLeft: leftMargin }}>
             {listTareas.map((tarea) => {
