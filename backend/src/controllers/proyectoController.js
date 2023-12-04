@@ -760,12 +760,12 @@ async function verInfoProyecto(req, res, next) {
         const [results2] = await connection.query(query2, [3, idProyecto]);
         const miembrosInfo = results2[0];
 
-        console.log(JSON.stringify(miembrosInfo,null,2));
-        console.log("============================= FIN DE MIEMBROS ===================");
+        //console.log(JSON.stringify(miembrosInfo,null,2));
+        //console.log("============================= FIN DE MIEMBROS ===================");
 
         infoProyecto.miembros = miembrosInfo;
 
-        console.log(JSON.stringify(infoProyecto,null,2));
+        //console.log(JSON.stringify(infoProyecto,null,2));
 
         res.status(200).json({
             infoProyecto,

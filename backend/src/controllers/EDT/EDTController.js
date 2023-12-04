@@ -417,8 +417,8 @@ async function agregarComponenteAExcel(filaActual, WSComponentes, componente, ca
 
     try {
         let nroComponente = 1;
-        componente.fechaInicio = dateController.formatearFecha2D_MM_YYYY(componente.fechaInicio);
-        componente.fechaFin = dateController.formatearFecha2D_MM_YYYY(componente.fechaFin);
+        componente.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(componente.fechaInicio);
+        componente.fechaFin = await dateController.formatearFecha2D_MM_YYYY(componente.fechaFin);
         
         WSComponentes.getRow(filaActual).values = [cadenaNroComponente,componente.nombre,componente.descripcion,componente.fechaInicio,componente.fechaFin,componente.recursos,componente.hito,componente.observaciones];
         filaActual+=2;
