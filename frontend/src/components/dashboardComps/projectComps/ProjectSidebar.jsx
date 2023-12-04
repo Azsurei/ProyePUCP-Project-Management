@@ -474,10 +474,10 @@ function ProjectSidebar(props) {
                             {props.projectName}
                         </p>
                         <p className="dates">
-                            {props.projectFechaInicio === "" ? "" : dbDateToDisplayDate(props.projectFechaInicio)}{" "}
+                            {props.projectFechaInicio === "" ? "" : dbDateToDisplayDate(props.projectFechaInicio) === "" ? "Sin inicio" : dbDateToDisplayDate(props.projectFechaInicio)}{" "}
                             -{" "}
-                            {props.projectFechaFin === "" ? "" : dbDateToDisplayDate(props.projectFechaFin)}{" "}
-                            ({props.projectFechaInicio !== "" && props.projectFechaInicio !== "" ? getDaysDifference(props.projectFechaInicio,props.projectFechaFin): ""} dias)
+                            {props.projectFechaFin === "" ? "" : dbDateToDisplayDate(props.projectFechaFin) === "" ? "Sin fin" : dbDateToDisplayDate(props.projectFechaFin)}{" "}
+                            {props.projectFechaInicio === "0000-00-00" && props.projectFechaInicio === "0000-00-00" ? "" : ("(" + getDaysDifference(props.projectFechaInicio,props.projectFechaFin) + " días)")}
                         </p>
                         <div className="teamContainer">
                             <p className="teamHeader">Tu rol:</p>
