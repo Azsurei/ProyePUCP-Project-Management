@@ -1315,9 +1315,9 @@ async function actualizarDatos(req,res,next){
                         console.log(`Tarea fechaInicio: ${formattedFechaTareaInicio}!`);
                         if(formattedFechaTareaInicio<fechaInicio){
                             console.log(`Entre`);
-                            const fechaTareaInicioM = moment(fechaTareaInicio);
+                            const fechaInicioM = moment(fechaInicio);
                             const formattedFechaTareaInicioM = moment(formattedFechaTareaInicio);
-                            const diferenciaM = fechaTareaInicioM.diff(formattedFechaTareaInicioM, 'days');
+                            const diferenciaM = fechaInicioM.diff(formattedFechaTareaInicioM, 'days');
                             console.log(`diferenciaM: ${diferenciaM}!`);
                             await connection.query(query9,[tarea.idTarea, diferenciaM]);
                         }
