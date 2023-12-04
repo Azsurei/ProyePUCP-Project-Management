@@ -380,7 +380,7 @@ export default function Cronograma(props) {
             let flagUserBelongsToTeam = 0;
             for (const usuarios of tarea.equipo.participantes) {
                 if (usuarios.idUsuario === sessionData.idUsuario) {
-                    flagUserBelongsToTask = 1;
+                    flagUserBelongsToTeam = 1;
                 }
             }
             if (flagUserBelongsToTeam === 1) {
@@ -1252,13 +1252,19 @@ export default function Cronograma(props) {
                                             width={300}
                                             height={300}
                                         />
-                                        <Button
-                                            className="bg-F0AE19 text-white font-medium"
-                                            size="lg"
-                                            onPress={handlerGoToNew}
-                                        >
-                                            Empieza ahora
-                                        </Button>
+                                        {
+                                            sessionData.rolNameInProject !== "Supervisor" && (
+                                                <Button
+                                                    className="bg-F0AE19 text-white font-medium"
+                                                    size="md"
+                                                    onPress={() => {
+                                                        handlerGoToNew(ListComps.length + 1, 1);
+                                                    }}
+                                                >
+                                                    Empieza ahora
+                                                </Button>
+                                            )
+                                        }
                                     </div>
                                 )}
                             {listTareas.length !== 0 &&
