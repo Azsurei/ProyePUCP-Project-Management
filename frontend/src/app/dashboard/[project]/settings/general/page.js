@@ -8,6 +8,7 @@ import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
 import { toast } from "sonner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { SessionContext } from "@/app/dashboard/layout";
 axios.defaults.withCredentials = true;
 
 export default function GeneralScreen(props) {
@@ -15,6 +16,8 @@ export default function GeneralScreen(props) {
     const projectNameOld = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
     const projectIdOld = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
 
+
+    const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { projectInfo } = useContext(ProjectInfo);
     const twStyle1 = "text-lg font-medium";
@@ -69,7 +72,8 @@ export default function GeneralScreen(props) {
 
                 <p className={twStyle1}>Nombre de proyecto</p>
                 <Textarea
-                    variant={"bordered"}
+                    variant={sessionData.rolInProject !== 2 ? "bordered" : "flat"}
+                    readOnly={sessionData.rolInProject !== 2 ? false : true}
                     aria-label="name-lbl"
                     isInvalid={!validName}
                     errorMessage={!validName ? msgEmptyField : ""}
@@ -90,7 +94,7 @@ export default function GeneralScreen(props) {
                     <div className="flex flex-col flex-1">
                         <p className={twStyle1}>Fechas inicio:</p>
                         <DateInput
-                            isEditable={true}
+                            isEditable={sessionData.rolInProject !== 2 ? true : false}
                             className={""}
                             isInvalid={!validFechas}
                             onChangeHandler={(e) => {
@@ -103,7 +107,7 @@ export default function GeneralScreen(props) {
                     <div className="flex flex-col flex-1">
                         <p className={twStyle1}>Fecha fin</p>
                         <DateInput
-                            isEditable={true}
+                            isEditable={sessionData.rolInProject !== 2 ? true : false}
                             className={""}
                             isInvalid={!validFechas}
                             onChangeHandler={(e) => {
