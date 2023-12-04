@@ -180,7 +180,7 @@ export default function PlanDeCalidad(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const [pages, setPages] = useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
@@ -334,6 +334,8 @@ export default function PlanDeCalidad(props) {
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center gap-4">
+                <span className="w-[30%] text-small text-default-400">
+                </span>
                 <Pagination
                     isCompact
                     showControls
@@ -542,6 +544,11 @@ export default function PlanDeCalidad(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.metricasCalidad);
+                setPages(
+                    Math.ceil(
+                        response.data.metricasCalidad.length / rowsPerPage
+                    )
+                );
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,

@@ -63,7 +63,11 @@ export default function CatalogoDeInteresados(props) {
                 // Actualiza el estado 'data' con los datos recibidos
                 // setIdMatriz(response.data.matrizComunicacion.idMatrizComunicacion);
                 setData(response.data.interesados);
-
+                setPages(
+                    Math.ceil(
+                        response.data.interesados.length / rowsPerPage
+                    )
+                );
                 console.log(`Esta es la data:`, data);
                 console.log(
                     `Datos obtenidos exitosamente:`,
@@ -153,7 +157,7 @@ export default function CatalogoDeInteresados(props) {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const [pages, setPages] = useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
