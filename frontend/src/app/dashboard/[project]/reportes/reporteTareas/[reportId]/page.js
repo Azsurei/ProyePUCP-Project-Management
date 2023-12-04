@@ -274,7 +274,6 @@ function reporteTareas(props) {
                         `Datos obtenidos exitosamente:`,
                         response.data.jsonData
                     );
-                    setVistaReporte(true);
                     setIsLoadingSmall(false);
                 } catch (error) {
                     console.error("Error al obtener datos:", error);
