@@ -12,6 +12,8 @@ import { usePathname } from "next/navigation";
 import { useContext, useState } from "react";
 import { SessionContext } from "../../layout";
 import axios from "axios";
+import { dbDateToInputDate } from "@/common/dateFunctions";
+import { toast } from "sonner";
 axios.defaults.withCredentials = true;
 
 function EditIcon() {
@@ -34,7 +36,7 @@ function EditIcon() {
 }
 
 function ProfilePage({ children, params }) {
-    const { sessionData } = useContext(SessionContext);
+    const { sessionData, setSession } = useContext(SessionContext);
     const decodedUrl = decodeURIComponent(params.project);
     const projectId = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
     const projectName = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
@@ -58,8 +60,12 @@ function ProfilePage({ children, params }) {
     const [name, setName] = useState(sessionData.nombres);
     const [lastName, setLastName] = useState(sessionData.apellidos);
     const [mail, setMail] = useState(sessionData.correoElectronico);
-    const [birthdate, setBirthdate] = useState(new Date(sessionData.fechaNacimiento).toISOString().split("T")[0]);
+    const [birthdate, setBirthdate] = useState(
+        dbDateToInputDate(sessionData.fechaNacimiento)
+    );
     const [phoneNumber, setPhoneNumber] = useState(sessionData.telefono);
+
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <div className="flex flex-row w-full gap-7">
@@ -126,37 +132,24 @@ function ProfilePage({ children, params }) {
                 </div>
 
                 <div className="px-4 mt-5 flex w-full justify-end">
-                    <Button
-                        color="success"
-                        className="rounded-md text-white font-medium"
-                        onPress={() => {
-                            console.log("actualizar perfil");
-                            const putData = {
-                                idUsuario: sessionData.idUsuario,
-                                nombres: name,
-                                apellidos: lastName,
-                                correoElectronico: mail,
-                                fechaNacimiento: birthdate,
-                                telefono: phoneNumber,
-                                usuario: "",
-                            };
-                            console.log("Put data", putData);
-                            const stringURL =
-                                process.env.NEXT_PUBLIC_BACKEND_URL +
-                                "/api/auth/modificarUsuario";
-                                axios
-                                .put(stringURL, putData)
-                                .then((response) => {
-                                    console.log("Respuesta", response);
-                                })
-                                .catch(function (error) {
-                                    console.log("Error al cargar la lista de equipos", error);
-                                });
-
-                        }}
-                    >
-                        Actualizar perfil
-                    </Button>
+                    {(name !== sessionData.nombres ||
+                        lastName !== sessionData.apellidos ||
+                        mail !== sessionData.correoElectronico ||
+                        birthdate !==
+                            dbDateToInputDate(sessionData.fechaNacimiento) ||
+                        phoneNumber !== sessionData.telefono) && (
+                        <Button
+                            color="success"
+                            isLoading={isLoading}
+                            className=" bg-generalBlue text-white font-medium"
+                            onPress={async () => {
+                                setIsLoading(true);
+                                await updateUserData();
+                            }}
+                        >
+                            Actualizar perfil
+                        </Button>
+                    )}
                 </div>
             </div>
             <div className="flex flex-col gap-2 items-center">
@@ -168,5 +161,43 @@ function ProfilePage({ children, params }) {
             </div>
         </div>
     );
+
+    async function updateUserData() {
+        console.log("actualizar perfil");
+        const putData = {
+            idUsuario: sessionData.idUsuario,
+            nombres: name,
+            apellidos: lastName,
+            correoElectronico: mail,
+            fechaNacimiento: birthdate,
+            telefono: phoneNumber,
+            usuario: "",
+        };
+
+        console.log("Put data", putData);
+
+        const stringURL =
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/auth/modificarUsuario";
+
+        try {
+            const response = await axios.put(stringURL, putData);
+            console.log(response);
+            toast.success("Perfil actualizado con exito");
+            // setSession({
+            //     ...sessionData,
+            //     nombres: name,
+            //     apellidos: lastName,
+            //     correoElectronico: mail,
+            //     fechaNacimiento: birthdate,
+            //     telefono: phoneNumber,
+            // });
+            setIsLoading(false);
+            window.location.reload();
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al actualizar el perfil");
+            setIsLoading(false);
+        }
+    }
 }
 export default ProfilePage;
