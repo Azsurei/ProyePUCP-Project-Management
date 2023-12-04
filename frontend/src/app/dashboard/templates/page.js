@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback, useContext, use } from "react";
 import {
     Table,
     TableHeader,
@@ -46,62 +46,14 @@ const columns = [
 ];
 
 const toolsOptions = [
-    { name: "Kanban", uid: "kanban" },
-    { name: "Acta de constitucion", uid: "actaconst" },
-    { name: "Matriz Responsabilidades", uid: "matrizresp" },
-];
-
-const extensionOptions = [
-    { name: ".docx", uid: "word" },
-    { name: ".xlsx", uid: "excel" },
-    { name: ".pptx", uid: "powerpoint" },
-];
-
-const templates = [
-    {
-        id: 1,
-        name: "Backlog estandar 2023",
-        tool: "Gestion del Product Backlog",
-        dateCreated: "2021-10-01",
-    },
-    {
-        id: 2,
-        name: "Registro de equipos",
-        tool: "Cronograma",
-        dateCreated: "2021-10-02",
-    },
-    {
-        id: 3,
-        name: "Presupuesto",
-        tool: "Backlog",
-        dateCreated: "2021-10-03",
-    },
-    {
-        id: 4,
-        name: "Catalogo",
-        tool: "Gestion del Product Backlog",
-        dateCreated: "2021-10-01",
-    },
-    {
-        id: 5,
-        name: "Acta de constitucion",
-        tool: "Cronograma",
-        dateCreated: "2021-10-02",
-    },
-    {
-        id: 6,
-        name: "Matriz de retrospectivas",
-        tool: "Backlog",
-        dateCreated: "2021-10-03",
-    },
+    { name: "Kanban", uid: "Kanban" },
+    { name: "Acta de constitucion", uid: "Acta Constitución"},
+    { name: "Matriz Responsabilidades", uid: "Matriz Responsabilidades" },
 ];
 
 export default function MyTemplates() {
     
     // Variables de plantillas
-    const [plantillasAC, setPlantillasAC] = useState([]);
-    const [plantillasMR, setPlantillasMR] = useState([]);
-    const [plantillasKB, setPlantillasKB] = useState([]);
     const [plantillasUnidas, setPlantillasUnidas] = useState([]);
 
     // Obtencion de idUsuario
@@ -172,10 +124,6 @@ export default function MyTemplates() {
             const pAC = await DataTable();
             const pMR = await DataTable1();
 
-            setPlantillasKB(pKB);
-            setPlantillasAC(pAC);
-            setPlantillasMR(pMR);
-
             const pKBNombre = pKB.map(item => ({ ...item, nombreHerramienta: 'Kanban' }));
             const pAcNombre = pAC.map(item => ({ ...item, nombreHerramienta: 'Acta Constitución' }));
             const pMRNombre = pMR.map(item => ({ ...item, nombreHerramienta: 'Matriz Responsabilidades' }));
@@ -215,7 +163,7 @@ export default function MyTemplates() {
     const [page, setPage] = React.useState(1);
 
     // Variables adicionales
-    const pages = Math.ceil(plantillasUnidas.length / rowsPerPage);
+    const [pages, setPages] = React.useState(1);
     const hasSearchFilter = Boolean(filterValue);
 
     // Items de tabla filtrados (busqueda, tipo de herramienta)
@@ -289,6 +237,10 @@ export default function MyTemplates() {
         setFilterValue("");
         setPage(1);
     }, []);
+
+    useEffect(() => {
+        setPages(Math.ceil(filteredItems.length / rowsPerPage));
+    }, [filteredItems, rowsPerPage]);
 
     // Renderizado de contenidos de tabla (celdas, parte superior, y parte inferior)
     const renderCell = React.useCallback((template, columnKey) => {
@@ -536,6 +488,8 @@ export default function MyTemplates() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [plantillaSeleccionada, setPlantillaSeleccionada] = useState({});
+
+    console.log(plantillasUnidas);
 
     return (
 
