@@ -1,31 +1,19 @@
-const express = require("express");
 const connection = require("../config/db");
-const routerAuth = express.Router();
 const cookie = require("cookie");
 require('dotenv').config({ path: './../../.env' });
-
 //de jsonwebtokens
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET; 
-const usuarioController = require("../controllers/usuario/usuarioController");
-const { verifyToken } = require("../middleware/middlewares");
 
-routerAuth.get("/", (req, res) => {
-    console.log("Llegue a autenticacion");
-    res.send(JSON.stringify("LLEGUE A LOGGIN"));
-});
 
-routerAuth.post("/login", async (req, res) => {
+async function login(req, res, next) {
     const { username, password } = req.body;
     console.log("Realizando verificación de usuario...");
     //Verificamos si usuario se encuentra en la base de datos
-
-    const query = `
-        CALL VERIFICAR_CUENTA_USUARIO('${username}', '${password}');
-    `;
+    const query = `CALL VERIFICAR_CUENTA_USUARIO(?,?);`;
 
     try {
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query, [username, password]);
         const idUsuario = results[0][0].idUsuario;
         const idRol = results[0][0].idRol;    
         const habilitado = results[0][0].habilitado;
@@ -67,23 +55,78 @@ routerAuth.post("/login", async (req, res) => {
         console.error("Error en la autenticación:", error);
         res.status(500).send("Error en la autenticación: " + error.message);
     }
-});
+}
 
-// Esta opcion es para cuando uno se registra por el sistema y
-// luego quiere entrar con Google
-routerAuth.post("/loginXCorreo", usuarioController.loginXCorreo);
+// Esta opcion es para cuando uno se registra por el sistema 
+// y luego quiere entrar con Google
+async function loginXCorreo(req, res, next) {
+    const { correoElectronico } = req.body;
+    console.log("Realizando verificación de si el usuario está en el sistema...");
+    const query = `CALL VERIFICAR_CUENTA_USUARIO_X_CORREO(?);`;
+    // Este procedure verifica si el usuario ha registrado una cuenta de Google
+    // mediante el sistema NO por Google.
+    // Si el usuario tiene una cuenta en el sistema con un correo que coincide con la 
+    // cuentaGoogle que intenta acceder tieneCuentaGoogle se actualiza a 1
+    try {
+        const [results] = await connection.query(query, [correoElectronico]);
+        const idUsuario = results[0][0].idUsuario;
+        const idRol = results[0][0].idRol;
+        const habilitado = results[0][0].habilitado;
+        if (idUsuario != 0) {
+            const user = {
+                id: idUsuario,
+                mail: correoElectronico,
+                rol: idRol,
+                habilitado: habilitado
+            };
 
-routerAuth.post("/loginImg", async (req, res) => {
+            //procesamos token
+            const token = jwt.sign(
+                {
+                    user,
+                },
+                secret,
+                { expiresIn: "3h" }
+            );
+
+            const serialized = cookie.serialize("tokenProyePUCP", token, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                path: "/",
+            });
+
+            res.setHeader("Set-Cookie", serialized);
+
+            user.token = token;
+            console.log(`El usuario ${idUsuario} se ha autenticado.`);
+            res.status(200).json(user);
+        } else {
+            console.log(`No se ha autenticado al usuario.`);
+            res.status(417).send("Nombre de usuario o contraseña incorrectos. O el correo no está en el sistema");
+        }
+        /*
+        res.status(200).json({
+            usuarios: results[0],
+            message: "Usuarios obtenidos exitosamente",
+        });
+        */
+    } catch (error) {
+        console.error("Error en la autenticación:", error);
+        res.status(500).send("Error en la autenticación: " + error.message);
+        next(error);
+    }
+}
+
+async function loginImg(req, res, next) {
     const { username, password, imgLink } = req.body;
     console.log("Realizando verificación de usuario...");
     //Verificamos si usuario se encuentra en la base de datos
-
-    const query = `
-        CALL VERIFICAR_CUENTA_USUARIO('${username}', '${password}');
-    `;
+    const query = `CALL VERIFICAR_CUENTA_USUARIO(?,?);`;
 
     try {
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query, [username, password]);
         const idUsuario = results[0][0].idUsuario;
         const idRol = results[0][0].idRol;    
         const habilitado = results[0][0].habilitado;
@@ -128,18 +171,9 @@ routerAuth.post("/loginImg", async (req, res) => {
         console.error("Error en la autenticación:", error);
         res.status(500).send("Error en la autenticación: " + error.message);
     }
-});
+}
 
-
-
-
-
-//ENDPOINT: Registro de usuario
-routerAuth.post("/register", usuarioController.registrar);
-routerAuth.post("/verificarSiCorreoEsDeGoogle", usuarioController.verificarSiCorreoEsDeGoogle);
-
-//ENDPOINT: Registro de usuario
-routerAuth.get("/logout", async (req, res) => {
+async function logout(req, res, next) {
     console.log("Realizando logout...");
     try {
         const serialized = cookie.serialize("tokenProyePUCP", null, {
@@ -157,11 +191,9 @@ routerAuth.get("/logout", async (req, res) => {
         console.error("Error en el logout:", error);
         res.status(500).send("Error en el logout: " + error.message);
     }
-});
+}
 
-
-//endpoint de prueba para verificar que el acceso solo se podra con el token
-routerAuth.get("/private", (req, res) => {
+async function private(req, res, next) {
     //Se encierra todo en un try catch debido a que se puede dar el caso en que token ya no sea valido
     try {
         //Bearer aoisnioawnfoiwnfio (token)
@@ -180,10 +212,13 @@ routerAuth.get("/private", (req, res) => {
     } catch (error) {
         res.status(401).send({ error: error.message });
     }
-});
-
-// Modificar. Este modificar no modifica ni el correo ni la contraseña
-routerAuth.put("/modificarUsuario", usuarioController.modificarDatos);
+}
 
 
-module.exports.routerAuth = routerAuth;
+module.exports = {
+    login,
+    loginXCorreo,
+    loginImg,
+    logout,
+    private
+};
