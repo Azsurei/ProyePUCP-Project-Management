@@ -1150,6 +1150,8 @@ async function actualizarDatos(req,res,next){
     const query7 = `CALL AÑADIR_DIAS_TAREA(?,?);`;
     const query8 = `CALL OBTENER_TAREAS(?);`;
     const query9 = `CALL AÑADIR_DIAS_TAREA_X_IDTAREA(?,?);`;
+    const query10 = `CALL OBTENER_COMPONENTES(?);`;
+    const query11 = `CALL AÑADIR_DIAS_COMPONENTE_X_IDCOMPONENTE(?,?);`;
     //Convertimos a fecha
     const fechaInicial = moment(fechaInicio);
     const fechaFinal = moment(fechaFin);
@@ -1241,9 +1243,23 @@ async function actualizarDatos(req,res,next){
                 //    await connection.query(query5,[idProyecto, difDias]);
                 //}
                 //EDT
-                //if(herramienta.idHerramienta == 2){
-                //    await connection.query(query6,[idProyecto, difDias]);
-                //}
+                if(herramienta.idHerramienta == 2){
+                    const [results7] = await connection.query(query10,[idProyecto]);
+                    let componentesEDT = results7[0];
+                    for(const componenteEDT of componentesEDT){
+                        console.log(`fechaFin: ${fechaFin}!`);
+                        const fechaFinComponente = new Date(componenteEDT.fechaFin);
+                        const formattedfechaFinComponente = fechaFinComponente.toISOString().split('T')[0];
+                        console.log(`Componente fechafin: ${formattedfechaFinComponente}!`);
+                        if(fechaFin<formattedfechaFinComponente){
+                            const fechaFinM = moment(fechaFin);
+                            const formattedfechaFinComponenteM = moment(formattedfechaFinComponente);
+                            const diferenciaM = fechaFinM.diff(formattedfechaFinComponenteM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query11,[componenteEDT.idComponente, diferenciaM]);
+                        }
+                    }
+                }
                 //Cronograma 
                 if(herramienta.idHerramienta == 4){
                     const [results6] = await connection.query(query8,[idProyecto]);
@@ -1256,7 +1272,6 @@ async function actualizarDatos(req,res,next){
                         if(fechaFin<formattedFechaTareaFin){
                             const fechaFinM = moment(fechaFin);
                             const formattedFechaTareaFinM = moment(formattedFechaTareaFin);
-                            // Convierte la diferencia de milisegundos a días
                             const diferenciaM = fechaFinM.diff(formattedFechaTareaFinM, 'days');
                             console.log(`diferenciaM: ${diferenciaM}!`);
                             await connection.query(query9,[tarea.idTarea, diferenciaM]);
