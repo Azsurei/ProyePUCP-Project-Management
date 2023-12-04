@@ -32,8 +32,10 @@ import { VerticalDotsIcon } from "public/icons/VerticalDotsIcon";
 import HeaderWithButtonsSamePage from "@/components/dashboardComps/projectComps/EDTComps/HeaderWithButtonsSamePage";
 import ModalEliminarAR from "@/components/dashboardComps/projectComps/actaReunionComps/ModalEliminarAR";
 import EmptyBoxIcon from "@/components/EmptyBoxIcon";
+import { SessionContext } from "../../layout";
 
 export default function ActaReunion(props) {
+    const { sessionData } = useContext(SessionContext);
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen); // Assuming SmallLoadingScreen is the context you're using
     const { herramientasInfo } = useContext(HerramientasInfo);
     const [reuniones, setReuniones] = useState([]);
@@ -48,6 +50,8 @@ export default function ActaReunion(props) {
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log("AAAAAAAAAAAAAAA");
+            console.log(sessionData);
             setIsLoadingSmall(true);
             try {
                 const idActa = herramientasInfo.find(
@@ -259,7 +263,7 @@ export default function ActaReunion(props) {
 
             <HeaderWithButtonsSamePage
                 haveReturn={false}
-                haveAddNew={true}
+                haveAddNew={sessionData.rolInProject !== 2 ? true : false}
                 handlerAddNew={() => {
                     router.push(newHref);
                 }}
@@ -343,52 +347,54 @@ export default function ActaReunion(props) {
                                         </p>
                                     </div>
                                 </div>
-                                <Dropdown aria-label="droMenTareasMain">
-                                    <DropdownTrigger aria-label="droMenTareasTrigger">
-                                        <Button
-                                            size="md"
-                                            radius="sm"
-                                            variant="flat"
-                                            color="default"
-                                            className="ButtonMore"
-                                        >
-                                            <p className="lblVerOpciones">
-                                                Ver opciones
-                                            </p>
-                                            {/* <VerticalDotsIcon className="icnVerOpciones text-black-300" /> */}
-                                        </Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu aria-label="droMenTareas">
-                                        <DropdownItem
-                                            aria-label="edit"
-                                            onClick={() => {
-                                                router.push(
-                                                    "/dashboard/" +
-                                                        projectName +
-                                                        "=" +
-                                                        projectId +
-                                                        "/actaReunion/" +
+                                {sessionData.rolInProject !== 2 ? (
+                                    <Dropdown aria-label="droMenTareasMain">
+                                        <DropdownTrigger aria-label="droMenTareasTrigger">
+                                            <Button
+                                                size="md"
+                                                radius="sm"
+                                                variant="flat"
+                                                color="default"
+                                                className="ButtonMore"
+                                            >
+                                                <p className="lblVerOpciones">
+                                                    Ver opciones
+                                                </p>
+                                                {/* <VerticalDotsIcon className="icnVerOpciones text-black-300" /> */}
+                                            </Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu aria-label="droMenTareas">
+                                            <DropdownItem
+                                                aria-label="edit"
+                                                onClick={() => {
+                                                    router.push(
+                                                        "/dashboard/" +
+                                                            projectName +
+                                                            "=" +
+                                                            projectId +
+                                                            "/actaReunion/" +
+                                                            meeting.idLineaActaReunion
+                                                    );
+                                                }}
+                                            >
+                                                Editar
+                                            </DropdownItem>
+                                            <DropdownItem
+                                                aria-label="delete"
+                                                className="text-danger"
+                                                color="danger"
+                                                onClick={() => {
+                                                    setIdLineaToDelete(
                                                         meeting.idLineaActaReunion
-                                                );
-                                            }}
-                                        >
-                                            Editar
-                                        </DropdownItem>
-                                        <DropdownItem
-                                            aria-label="delete"
-                                            className="text-danger"
-                                            color="danger"
-                                            onClick={() => {
-                                                setIdLineaToDelete(
-                                                    meeting.idLineaActaReunion
-                                                );
-                                                onOpen();
-                                            }}
-                                        >
-                                            Eliminar
-                                        </DropdownItem>
-                                    </DropdownMenu>
-                                </Dropdown>
+                                                    );
+                                                    onOpen();
+                                                }}
+                                            >
+                                                Eliminar
+                                            </DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                ) : null}
                             </div>
                         );
                     })
@@ -398,15 +404,17 @@ export default function ActaReunion(props) {
                             No hay actas de reunión registradas
                         </p>
                         <EmptyBoxIcon width={200} height={200} />
-                        <Button
-                            className="bg-F0AE19 text-white font-medium"
-                            size="lg"
-                            onPress={() => {
-                                router.push(newHref);
-                            }}
-                        >
-                            Empieza ahora
-                        </Button>
+                        {sessionData.rolInProject !== 2 ? (
+                            <Button
+                                className="bg-F0AE19 text-white font-medium"
+                                size="lg"
+                                onPress={() => {
+                                    router.push(newHref);
+                                }}
+                            >
+                                Empieza ahora
+                            </Button>
+                        ) : null}
                     </div>
                 )}
             </div>
