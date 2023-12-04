@@ -1197,7 +1197,7 @@ async function actualizarDatos(req,res,next){
         console.log(`Termino`);
         if(flag==0){
             console.log(`La diferencia de dias es menor a lo que se necesita en las herramientas`);
-            res.status(200).json({
+            res.status(209).json({
                 message: "La diferencia de dias es menor a lo que se necesita en las herramientas",
             });
         }

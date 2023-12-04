@@ -380,7 +380,7 @@ function ProjectSidebar(props) {
         {
             id: 15,
             position: 11,
-            optIcon: "/icons/sideBarDropDown_icons/sbdd14.svg",
+            optIcon: "/icons/sideBarDropDown_icons/sbdd16.svg",
             optName: "Plan de calidad",
             goTo: `${stringBase}/planDeCalidad`,
         },
