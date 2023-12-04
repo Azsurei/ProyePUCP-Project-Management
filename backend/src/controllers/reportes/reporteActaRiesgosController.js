@@ -8,6 +8,8 @@ const { error } = require("console");
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require("../files/fileController");
 const https = require('https');
+const dateController = require("../dateController");
+
 const headerTitulo = {
     fill: {
         type: 'pattern',
@@ -169,7 +171,7 @@ async function agregarDatosGeneralesAExcel(riesgo,WSRiesgos,filaActual){
         const header1 = ["","Dueño del riesgo",""];
         const header2 = ["Nombres","Apellidos","Correo"];
         filaActual = await excelJSController.agregaHeader(WSRiesgos,filaActual,header0,headerTitulo,borderStyle);
-        const formattedDate = await excelJSController.convertISOToDate(riesgo.fechaIdentificacion);
+        const formattedDate = await dateController.formatearFecha2D_MM_YYYY(riesgo.fechaIdentificacion);
         WSRiesgos.getRow(filaActual).values = [riesgo.nombreRiesgo,formattedDate];
         filaActual +=2;
 
