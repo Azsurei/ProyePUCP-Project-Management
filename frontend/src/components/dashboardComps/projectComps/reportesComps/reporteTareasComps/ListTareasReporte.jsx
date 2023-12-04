@@ -34,7 +34,7 @@ function CardTarea({ tarea, leftMargin }) {
     };
 
     return (
-        <div className="containerCardYHijo">
+        <div className="containerCardYHijo cursor-pointer">
             <div
                 className={
                     "tareaCard " +
