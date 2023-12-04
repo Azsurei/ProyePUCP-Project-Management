@@ -8,7 +8,7 @@ const https = require('https');
 const excelJSController = require("../xlxs/excelJSController");
 const fileController = require('../files/fileController');
 const Exceljs = require('exceljs');
-
+const dateController = require('../dateController');
 const headerTitulo = {
     fill: {
         type: 'pattern',
@@ -260,6 +260,9 @@ async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActu
         const header2 = ["Nombre","Fecha Inicio","Fecha Fin"];
         filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
         filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
+        entregable.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(entregable.fechaInicio);
+        entregable.fechaFin = await dateController.formatearFecha2D_MM_YYYY(entregable.fechaFin);
+
         WSEntregable.getRow(filaActual).values = [ entregable.nombre,entregable.fechaInicio,entregable.fechaFin];
         filaActual +=2;
     
@@ -328,11 +331,12 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
     
             const header2 = ["Sumilla","Descripcion","Fecha Inicio","Fecha Fin","Estado"];
             filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
-    
+            tarea.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
+            tarea.fechaFin = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
             WSEntregable.getRow(filaActual).values = [ tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado];
             filaActual+=2;
     
-            if(tarea.equipo != null){
+            if(tarea.equipo != null && tarea.equipo.length>0){
                 hayEquipo = true;
                 if(hayEquipo){
                     const header3 = ["Equipo"];
@@ -343,7 +347,7 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
                 filaActual = await agregarEquipoAExcel(tarea.equipo,WSEntregable,filaActual);
             }
             
-            if(tarea.usuarios!=null){
+            if(tarea.usuarios!=null && tarea.usuarios.length>0){
                 filaActual = await agregarUsuariosAExcel(tarea.usuarios,WSEntregable,filaActual);
             }
             

@@ -179,8 +179,8 @@ async function generarExcel(tareas,nombreArchivo){
 async function agregarTareaAExcel(tarea,WSTareas,filaActual,cadenaTarea){
     try {
         let nroTarea = 1;
-        tarea.fechaInicio = dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
-        tarea.fechaFin = dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
+        tarea.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
+        tarea.fechaFin = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
         WSTareas.getRow(filaActual).values = [cadenaTarea,tarea.sumillaTarea,tarea.descripcion,tarea.horasPlaneadas,tarea.nombreEntregable,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado,`${tarea.porcentajeProgreso}%`];
         filaActual++;
         
