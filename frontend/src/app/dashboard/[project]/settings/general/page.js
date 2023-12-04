@@ -161,7 +161,13 @@ export default function GeneralScreen(props) {
             else{
                 toast.success("Informacion de proyecto actualizada con exito");
                 setIsLoading(false);
-                router.push("/dashboard/" + projectName + "=" + projectIdOld + "/settings/general");
+                if(projectNameOld !== projectName){
+                    router.push("/dashboard/" + projectName + "=" + projectIdOld + "/settings/general");
+                }else{
+                    window.location.reload();
+                }
+                
+
             }
         } catch (error) {
             console.log(error);
