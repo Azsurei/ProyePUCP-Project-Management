@@ -71,11 +71,14 @@ async function generarExcel(listaParcipantes,nombreEquipo, nombreArchivo) {
         for(const participante of listaParcipantes){
             filaActual = await agregarParticipanteAExcel(participante, WSParticipantes, filaActual);
         }
+
+        // BORRAR EN PRODUCCION
         const destinationFolder = path.join(__dirname, '../../tmp');
-        const excelFilePath = path.join(destinationFolder, `${nombreArchivo}.xlsx`);
+        const excelFilePath = path.join(destinationFolder, `ListaParticipantes.xlsx`);
+        await workbook.xlsx.writeFile(excelFilePath);
 
         excelJSController.ajustarAnchoColumnas(WSParticipantes);
-        await workbook.xlsx.writeFile(excelFilePath);
+        
         return workbook;
     }catch(error){
         console.log(error);
