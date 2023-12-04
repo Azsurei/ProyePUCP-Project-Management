@@ -1098,6 +1098,7 @@ export default function Cronograma(props) {
                 process.env.NEXT_PUBLIC_BACKEND_URL +
                 "/api/proyecto/cronograma/descargarExcelCronogramaTareas";
 
+                console.log(listTareas);
             const response = await axios.post(
                 exportURL,
                 {
