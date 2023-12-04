@@ -17,11 +17,19 @@ const headerTitulo = {
     }
 };
 
-const headerSubtitulo = {
+const headerNaranja = {
     fill: {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FFD8D8D8' } // Usa un color en formato ARGB
+        fgColor: { argb: 'FFFABF8F' } // Usa un color en formato ARGB
+    }
+};
+
+const headerVerde = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD6E3BC' } // Usa un color en formato ARGB
     }
 };
 
@@ -128,7 +136,7 @@ async function descargarExcel(req, res, next) {
         res.setHeader('Content-Disposition', 'attachment; filename=' + `Tareas.xlsx`);
         
         //BORRAR EN PRODUCCION
-        excelFilePath = path.join(destinationFolder, `Tareas.xlsx`);
+        excelFilePath = path.join(destinationFolder, `Entregables.xlsx`);
         await workbook.xlsx.writeFile(excelFilePath);
 
         await workbook.xlsx.write(res);
@@ -258,7 +266,13 @@ async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActu
     try {
         const header1 = [`Entregable ${nroEntregable}`];
         const header2 = ["Nombre","Fecha Inicio","Fecha Fin"];
-        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerNaranja,borderStyle);
+        WSEntregable.mergeCells(filaActual-1, 1, filaActual-1, 5);
+        const mergedCell = WSEntregable.getCell(filaActual-1, 1);
+        mergedCell.style = {
+            ...mergedCell.style, // Mantén los estilos previos
+            alignment: alignmentCenterStyle
+        };
         filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
         entregable.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(entregable.fechaInicio);
         entregable.fechaFin = await dateController.formatearFecha2D_MM_YYYY(entregable.fechaFin);
@@ -274,7 +288,7 @@ async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActu
         const header4 = ["Progreso",`${entregable.barProgress} %`];
         WSEntregable.getRow(filaActual).values = header4;
         let celdaProgreso = WSEntregable.getCell(filaActual,1);
-        celdaProgreso.style = {...headerTitulo, border: borderStyle};
+        celdaProgreso.style = {...headerVerde, border: borderStyle};
         filaActual +=2;
     
         return filaActual;
@@ -286,14 +300,14 @@ async function agregarCabecerasAExcelEntregable(entregable,WSEntregable,filaActu
 async function agregarContribuyentesAExcel(contribuyentes,WSEntregable,filaActual){
     try {
         const header1 = ["Contribuyentes"];
-        const header2 = ["Nombre","Apellidos","Correo","Cantidad de tareas asignadas","Porcentaje realizado"];
+        const header2 = ["Nombre","Apellidos","Correo","Porcentaje estimado"];
         let hayEquipo = false;
-        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerVerde,borderStyle);
         filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
         
         for(const contribuyente of contribuyentes){
             if(contribuyente.usuario!=null){
-                WSEntregable.getRow(filaActual).values = [ contribuyente.usuario.nombres,contribuyente.usuario.apellidos,contribuyente.usuario.correoElectronico,contribuyente.cantidadTareas,contribuyente.porcentajeTotal];
+                WSEntregable.getRow(filaActual).values = [ contribuyente.usuario.nombres,contribuyente.usuario.apellidos,contribuyente.usuario.correoElectronico,contribuyente.porcentajeTotal];
                 filaActual++;
             }
 
@@ -324,13 +338,12 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
         let nroTarea = 1;
         let hayEquipo = false;
         
-    
+        const header1 = [`Tarea`];
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerVerde,borderStyle);
+        const header2 = ["Sumilla","Descripcion","Fecha Inicio","Fecha Fin","Estado"];
+        filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
+
         for(const tarea of tareasEntregable){
-            const header1 = [`Tarea ${nroTarea}`];
-            filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerTitulo,borderStyle);
-    
-            const header2 = ["Sumilla","Descripcion","Fecha Inicio","Fecha Fin","Estado"];
-            filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
             tarea.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
             tarea.fechaFin = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
             WSEntregable.getRow(filaActual).values = [ tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado];
@@ -347,9 +360,11 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
                 filaActual = await agregarEquipoAExcel(tarea.equipo,WSEntregable,filaActual);
             }
             
+            /*
             if(tarea.usuarios!=null && tarea.usuarios.length>0){
                 filaActual = await agregarUsuariosAExcel(tarea.usuarios,WSEntregable,filaActual);
             }
+            x*/
             
             nroTarea++;
         }
