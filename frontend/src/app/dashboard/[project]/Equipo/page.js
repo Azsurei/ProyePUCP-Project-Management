@@ -141,6 +141,14 @@ export default function Equipo(props) {
         setSelectedTeam({ ...selectedTeamTemporal });
     };
 
+    useEffect(() => {
+        console.log("No Apague el loading");
+        if (signal) {
+            console.log("Apague el loading");
+            //setIsLoadingSmall(false);
+        }
+    }, [signal]);
+
     const fetchTeamsData = () => {
         setIsLoadingSmall(true);
         let teamsArray;
@@ -178,19 +186,13 @@ export default function Equipo(props) {
 
                 setListComps(teamsArray);
                 setSignal(true);
-
+                setIsLoadingSmall(false);
                 console.log("ya pase");
             })
             .catch(function (error) {
                 console.log("Error al cargar la lista de equipos", error);
             });
     };
-
-    useEffect(() => {
-        if (signal) {
-            setIsLoadingSmall(false);
-        }
-    }, [signal]);
 
     useEffect(() => {
         fetchTeamsData();
