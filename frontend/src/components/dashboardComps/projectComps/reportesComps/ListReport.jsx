@@ -79,7 +79,7 @@ function ReporteCard({ report, onClick, refresh }) {
         };
     return (
         <li
-            className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10 min-w-500"
+            className="ReportCard bg-mainBackground hover:bg-[#eeeeee] dark:hover:bg-opacity-10 w-full"
             // onClick={onClick}
         >
             <div className="flex flex-col justify-between">
@@ -140,7 +140,7 @@ function ReporteCard({ report, onClick, refresh }) {
                     </DropdownMenu>
                   </Dropdown> */}
                   <Tooltip content={report.nombre}>
-                        <p className="font-semibold text-lg" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100px' }}>{report.nombre}</p>
+                        <p className="font-semibold text-3xl" >{report.nombre}</p>
                     </Tooltip>
                     <Dropdown>
                     <DropdownTrigger>
@@ -204,7 +204,7 @@ function ReporteCard({ report, onClick, refresh }) {
                                     className="transition-transform w-[2.5rem] min-w-[2.5rem] h-[2.5rem] min-h-[2.5rem] bg-mainUserIcon"
                                     src={report.imgLink}
                                 />
-                                <p className="text-sm">{report.nombresUsuario}</p>
+                                <p className="text-xl">{report.nombresUsuario}</p>
                             </div>
                     </div>
                     {/* <img
