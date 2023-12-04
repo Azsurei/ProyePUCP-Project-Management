@@ -100,25 +100,16 @@ async function insertarPlanCalidad(req, res, next) {
     } = req.body;
     try {
         for (const estandar of estandares) {
-            await connection.query(`
-                CALL INSERTAR_ESTANDAR_CALIDAD(
-                ${idPlanCalidad},
-                '${estandar.standars}');
-            `);
+            const query = `CALL INSERTAR_ESTANDAR_CALIDAD(?,?);`
+            await connection.query(query,[idPlanCalidad, estandar.standars]);
         }
         for (const actividadPrevencion of actividadesPrevencion) {
-            await connection.query(`
-                CALL INSERTAR_ACTIVIDAD_PREVENCION(
-                ${idPlanCalidad},
-                '${actividadPrevencion.activities}');
-            `);
+            const query = `CALL INSERTAR_ACTIVIDAD_PREVENCION(?,?);`
+            await connection.query(query,[idPlanCalidad, actividadPrevencion.activities]);
         }
         for (const actividadControl of actividadesControl) {
-            await connection.query(`
-                CALL INSERTAR_ACTIVIDAD_CONTROL_CALIDAD(
-                ${idPlanCalidad},
-                '${actividadControl.activitiesControl}');
-            `);
+            const query = `CALL INSERTAR_ACTIVIDAD_CONTROL_CALIDAD(?,?);`
+            await connection.query(query,[idPlanCalidad, actividadControl.activitiesControl]);
         }
         res.status(200).json({
             message: "Se ha insertado exitosamente",

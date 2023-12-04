@@ -58,7 +58,7 @@ routerProyecto.post("/agregarHerramientaAProyecto", verifyToken, proyectoControl
 
 routerProyecto.get("/verInfoProyecto/:idProyecto", verifyToken, proyectoController.verInfoProyecto);
 
-routerProyecto.put("/actualizarDatos", proyectoController.actualizarDatos);
+routerProyecto.put("/actualizarDatos",verifyToken, proyectoController.actualizarDatos);
 
 // Sobre Usuarios del Proyecto
 routerProyecto.post("/listarUsuariosXidRolXidProyecto", verifyToken, proyectoController.listarUsuariosXRolXProyecto);

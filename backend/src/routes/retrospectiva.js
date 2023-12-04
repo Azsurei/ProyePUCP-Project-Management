@@ -1,23 +1,24 @@
 const express = require("express");
 const routerRetrospectiva = express.Router();
+const { verifyToken } = require("../middleware/middlewares");
 const retrospectivaController = require("../controllers/retrospectiva/retrospectivaController");
 const lineaRetrospectivaController = require("../controllers/retrospectiva/lineaRetrospectivaController");
 const itemLineaRetrospectivaController = require("../controllers/retrospectiva/itemLineaRetrospectivaController");
 
-routerRetrospectiva.delete("/eliminarRetrospectiva",retrospectivaController.eliminar);
-routerRetrospectiva.delete("/eliminarRetrospectivaXProyecto",retrospectivaController.eliminarXProyecto);
+routerRetrospectiva.delete("/eliminarRetrospectiva",verifyToken, retrospectivaController.eliminar);
+routerRetrospectiva.delete("/eliminarRetrospectivaXProyecto",verifyToken, retrospectivaController.eliminarXProyecto);
 //Lineas retrospectiva
-routerRetrospectiva.post("/insertarLineaRetrospectiva", lineaRetrospectivaController.crear);
-routerRetrospectiva.get("/listarLineasRetrospectivaXIdRetrospectiva/:idRetrospectiva", lineaRetrospectivaController.listarXIdRetrospectiva);
-routerRetrospectiva.put("/modificarLineaRetrospectiva", lineaRetrospectivaController.modificar);
-routerRetrospectiva.delete("/eliminarLineaRetrospectiva", lineaRetrospectivaController.eliminar);
+routerRetrospectiva.post("/insertarLineaRetrospectiva",verifyToken, lineaRetrospectivaController.crear);
+routerRetrospectiva.get("/listarLineasRetrospectivaXIdRetrospectiva/:idRetrospectiva",verifyToken, lineaRetrospectivaController.listarXIdRetrospectiva);
+routerRetrospectiva.put("/modificarLineaRetrospectiva",verifyToken, lineaRetrospectivaController.modificar);
+routerRetrospectiva.delete("/eliminarLineaRetrospectiva",verifyToken, lineaRetrospectivaController.eliminar);
 
 // Criterios retrospectiva
-routerRetrospectiva.get("/listarItemLineasRetrospectivaTodasXIdLineaRetrospectiva/:idLineaRetrospectiva", retrospectivaController.crear);
+routerRetrospectiva.get("/listarItemLineasRetrospectivaTodasXIdLineaRetrospectiva/:idLineaRetrospectiva",verifyToken, retrospectivaController.crear);
 // Item Linea Retrospectiva
-routerRetrospectiva.post("/insertarItemLineaRetrospectiva", itemLineaRetrospectivaController.crear);
-routerRetrospectiva.get("/listarItemLineasRetrospectivaXIdLineaRetrospectiva/:idLineaRetrospectiva", itemLineaRetrospectivaController.listarXIdLineaRetrospectiva);
-routerRetrospectiva.put("/modificarItemLineaRetrospectiva", itemLineaRetrospectivaController.modificar);
-routerRetrospectiva.delete("/eliminarItemLineaRetrospectiva", itemLineaRetrospectivaController.eliminar);
+routerRetrospectiva.post("/insertarItemLineaRetrospectiva",verifyToken, itemLineaRetrospectivaController.crear);
+routerRetrospectiva.get("/listarItemLineasRetrospectivaXIdLineaRetrospectiva/:idLineaRetrospectiva",verifyToken, itemLineaRetrospectivaController.listarXIdLineaRetrospectiva);
+routerRetrospectiva.put("/modificarItemLineaRetrospectiva",verifyToken, itemLineaRetrospectivaController.modificar);
+routerRetrospectiva.delete("/eliminarItemLineaRetrospectiva",verifyToken, itemLineaRetrospectivaController.eliminar);
 
 module.exports.routerRetrospectiva = routerRetrospectiva;   

@@ -22,4 +22,7 @@ routerUsuario.post("/verificarNotificacionesPresupuesto",verifyToken,usuarioCont
 
 routerUsuario.put("/modificarPrivilegios",verifyToken,usuarioController.modificarPrivilegios);
 
+// Modificar. Este modificar no modifica ni el correo ni la contraseña
+routerUsuario.put("/modificarUsuario",verifyToken, usuarioController.modificarDatos);
+
 module.exports.routerUsuario = routerUsuario;

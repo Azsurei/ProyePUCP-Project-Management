@@ -8,38 +8,38 @@ const reporteActaRiesgosController = require("../controllers/reportes/reporteAct
 const reporteTareasController = require("../controllers/reportes/reporteTareasController");
 const reporteListaParcipiantesController = require("../controllers/reportes/reporteListaParticipantesController");
 //Reportes
-routerReporte.get("/listarReportesXIdProyecto/:idProyecto", reporteController.listarReportesXIdProyecto);
-routerReporte.put("/editarReporte", reporteController.modificar);
+routerReporte.get("/listarReportesXIdProyecto/:idProyecto",verifyToken, reporteController.listarReportesXIdProyecto);
+routerReporte.put("/editarReporte",verifyToken, reporteController.modificar);
 routerReporte.delete("/eliminarReporte", verifyToken, reporteController.eliminar);
 
 //Reporte presupuesto
-routerReporte.post("/subirReportePresupuestoJSON", reportePresupuestoController.subirJSON);
-routerReporte.post("/descargarExcelPresupuestoXIdArchivo",reportePresupuestoController.descargarExcel);
-routerReporte.get("/obtenerJSONReportePresupuestoXIdArchivo/:idArchivo",reportePresupuestoController.obtenerJSON);
-routerReporte.post("/crearExcelCajaEgresos",reportePresupuestoController.crearExcelCajaEgresos);
-routerReporte.post("/crearExcelCajaEstimacion",reportePresupuestoController.crearExcelCajaEstimacion);
-routerReporte.post("/crearExcelFlujoEstimacionCosto",reportePresupuestoController.crearExcelEstimacionCosto);
+routerReporte.post("/subirReportePresupuestoJSON",verifyToken, reportePresupuestoController.subirJSON);
+routerReporte.post("/descargarExcelPresupuestoXIdArchivo",verifyToken, reportePresupuestoController.descargarExcel);
+routerReporte.get("/obtenerJSONReportePresupuestoXIdArchivo/:idArchivo",verifyToken, reportePresupuestoController.obtenerJSON);
+routerReporte.post("/crearExcelCajaEgresos",verifyToken, reportePresupuestoController.crearExcelCajaEgresos);
+routerReporte.post("/crearExcelCajaEstimacion",verifyToken, reportePresupuestoController.crearExcelCajaEstimacion);
+routerReporte.post("/crearExcelFlujoEstimacionCosto",verifyToken, reportePresupuestoController.crearExcelEstimacionCosto);
 
 //Reporte entregables
-routerReporte.post("/subirReporteEntregableJSON",reporteEntregablesController.subirJSON);
-routerReporte.post("/descargarExcelReporteEntregableXIdArchivo",reporteEntregablesController.descargarExcel);
-routerReporte.get("/obtenerJSONReporteEntregableXIdArchivo/:idArchivo",reporteEntregablesController.obtenerJSON);
-routerReporte.get("/traerInformacionReporteEntregable/:idProyecto",reporteEntregablesController.traerInfoReporteEntregables);
+routerReporte.post("/subirReporteEntregableJSON",verifyToken, reporteEntregablesController.subirJSON);
+routerReporte.post("/descargarExcelReporteEntregableXIdArchivo",verifyToken, reporteEntregablesController.descargarExcel);
+routerReporte.get("/obtenerJSONReporteEntregableXIdArchivo/:idArchivo",verifyToken, reporteEntregablesController.obtenerJSON);
+routerReporte.get("/traerInformacionReporteEntregable/:idProyecto",verifyToken, reporteEntregablesController.traerInfoReporteEntregables);
 
 //Reporte de riesgos
-routerReporte.post("/subirReporteRiesgosJSON",reporteActaRiesgosController.subirJSON);
-routerReporte.post("/descargarExcelReporteRiesgosXIdArchivo",reporteActaRiesgosController.descargarExcel);
-routerReporte.get("/obtenerJSONReporteRiesgoXIdArchivo/:idArchivo",reporteActaRiesgosController.obtenerJSON);
+routerReporte.post("/subirReporteRiesgosJSON",verifyToken, reporteActaRiesgosController.subirJSON);
+routerReporte.post("/descargarExcelReporteRiesgosXIdArchivo",verifyToken, reporteActaRiesgosController.descargarExcel);
+routerReporte.get("/obtenerJSONReporteRiesgoXIdArchivo/:idArchivo",verifyToken, reporteActaRiesgosController.obtenerJSON);
 
 //Reporte de tareas
-routerReporte.post("/subirReporteTareasJSON",reporteTareasController.subirJSON);
-routerReporte.post("/descargarExcelReporteTareasXIdArchivo",reporteTareasController.descargarExcel);
-routerReporte.get("/obtenerJSONReporteTareasXIdArchivo/:idArchivo",reporteTareasController.obtenerJSON);
-routerReporte.post("/probarExcelTareas",reporteTareasController.probarExcelTareas);
+routerReporte.post("/subirReporteTareasJSON",verifyToken, reporteTareasController.subirJSON);
+routerReporte.post("/descargarExcelReporteTareasXIdArchivo",verifyToken, reporteTareasController.descargarExcel);
+routerReporte.get("/obtenerJSONReporteTareasXIdArchivo/:idArchivo",verifyToken, reporteTareasController.obtenerJSON);
+routerReporte.post("/probarExcelTareas",verifyToken, reporteTareasController.probarExcelTareas);
 
 
 //Lista de participantes
-routerReporte.post("/crearExcelListaParticipantes",reporteListaParcipiantesController.crearExcel);
+routerReporte.post("/crearExcelListaParticipantes",verifyToken, reporteListaParcipiantesController.crearExcel);
 
 
 module.exports.routerReporte = routerReporte;

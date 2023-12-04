@@ -22,7 +22,7 @@ routerEDT.post("/insertarEntregables",verifyToken, entregableController.insertar
 routerEDT.put("/modificarEntregables",verifyToken, entregableController.modificarEntregables);
 routerEDT.delete("/eliminarEntregables",verifyToken, entregableController.eliminarEntregables);
 
-routerEDT.post("/descargarExcelEDT", EDTController.descargarExcel);
+routerEDT.post("/descargarExcelEDT",verifyToken, EDTController.descargarExcel);
 
 //Arbol EDT
 routerEDT.get("/listarColoresArbolNiveles/:idProyecto",verifyToken, EDTController.listarColoresArbolNiveles);

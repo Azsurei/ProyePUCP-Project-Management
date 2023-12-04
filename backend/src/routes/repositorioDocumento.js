@@ -15,11 +15,11 @@ dotenv.config();
 const storage = multer.memoryStorage();
 const upload = multer({storage:storage});
 
-routerRepositorioDocumentos.delete("/eliminarRepositorioDocumentos", repositorioDocumentoController.eliminar);
+routerRepositorioDocumentos.delete("/eliminarRepositorioDocumentos",verifyToken, repositorioDocumentoController.eliminar);
 
 routerRepositorioDocumentos.post("/subirArchivo",upload.single('file'), repositorioDocumentoController.subirArchivo);
-routerRepositorioDocumentos.get("/listarArchivos/:idRepositorioDocumentos", repositorioDocumentoController.listarArchivos);
-routerRepositorioDocumentos.get("/getArchivo/:idArchivo", repositorioDocumentoController.getArchivo);
-routerRepositorioDocumentos.delete("/eliminarArchivo", repositorioDocumentoController.eliminarArchivo);
+routerRepositorioDocumentos.get("/listarArchivos/:idRepositorioDocumentos",verifyToken, repositorioDocumentoController.listarArchivos);
+routerRepositorioDocumentos.get("/getArchivo/:idArchivo",verifyToken, repositorioDocumentoController.getArchivo);
+routerRepositorioDocumentos.delete("/eliminarArchivo",verifyToken, repositorioDocumentoController.eliminarArchivo);
 
 module.exports.routerRepositorioDocumentos = routerRepositorioDocumentos;

@@ -3,8 +3,8 @@ const routerMatrizComunicaciones = express.Router();
 const { verifyToken } = require("../middleware/middlewares");
 const matrizComunicacionesController = require("../controllers/matrizComunicaciones/matrizComunicacionesController");
 
-routerMatrizComunicaciones.delete("/eliminarMatrizComunicaciones", matrizComunicacionesController.eliminar);
-routerMatrizComunicaciones.delete("/eliminarMatrizComunicacionesXProyecto", matrizComunicacionesController.eliminarXProyecto);
+routerMatrizComunicaciones.delete("/eliminarMatrizComunicaciones",verifyToken, matrizComunicacionesController.eliminar);
+routerMatrizComunicaciones.delete("/eliminarMatrizComunicacionesXProyecto",verifyToken, matrizComunicacionesController.eliminarXProyecto);
 routerMatrizComunicaciones.get("/listarCanales",verifyToken, matrizComunicacionesController.listarCanales);
 routerMatrizComunicaciones.get("/listarFrecuencia",verifyToken, matrizComunicacionesController.listarFrecuencia);
 routerMatrizComunicaciones.get("/listarFormato",verifyToken, matrizComunicacionesController.listarFormato);

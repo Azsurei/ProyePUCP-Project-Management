@@ -232,12 +232,9 @@ async function modificarComponenteEDT(req,res,next) {
         // Iteracion
         await connection.query(query1,[idComponenteEDT]);
         for (const criterio of criterioAceptacion) {
-            const [criterioAceptacionRows] = await connection.query(`
-            CALL INSERTAR_CRITERIOS_ACEPTACION(
-                ${idComponenteEDT},
-                '${criterio.descripcion}'
-            );
-            `);
+            const query2 = `CALL INSERTAR_CRITERIOS_ACEPTACION(?,?);`;
+            const [criterioAceptacionRows] = await connection.query(
+                query2,[idComponenteEDT, criterio.descripcion]);
             const idComponenteCriterioDeAceptacion = criterioAceptacionRows[0][0].idComponenteCriterioDeAceptacion;
             console.log(`Se insertó el criterio de aceptacion: ${idComponenteCriterioDeAceptacion}`);
         }
