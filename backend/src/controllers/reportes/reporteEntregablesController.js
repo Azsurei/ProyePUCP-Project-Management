@@ -301,7 +301,7 @@ async function agregarContribuyentesAExcel(contribuyentes,WSEntregable,filaActua
     try {
         const header1 = ["Contribuyentes"];
         const header2 = ["Nombre","Apellidos","Correo","Porcentaje estimado"];
-        let hayEquipo = false;
+        let hayEquipo = true;
         filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header1,headerVerde,borderStyle);
         filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header2,headerTitulo,borderStyle);
         
@@ -312,13 +312,14 @@ async function agregarContribuyentesAExcel(contribuyentes,WSEntregable,filaActua
             }
 
             if(contribuyente.equipo!=null){
-                hayEquipo = true;
+                
                 if(hayEquipo){
                     filaActual++;
                     const header3 = ["Equipo"];
                     const header4 = ["Nombre"];
                     filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header3,headerTitulo,borderStyle);
                     filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header4,headerTitulo,borderStyle);
+                    hayEquipo = false;
                 }
                 filaActual = await agregarEquipoAExcel(contribuyente.equipo,WSEntregable,filaActual);
             }
@@ -347,9 +348,9 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
             tarea.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
             tarea.fechaFin = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
             WSEntregable.getRow(filaActual).values = [ tarea.sumillaTarea,tarea.descripcion,tarea.fechaInicio,tarea.fechaFin,tarea.nombreTareaEstado];
-            filaActual+=2;
+            filaActual++;
     
-            if(tarea.equipo != null && tarea.equipo.length>0){
+            /*if(tarea.equipo != null && tarea.equipo.length>0){
                 hayEquipo = true;
                 if(hayEquipo){
                     const header3 = ["Equipo"];
@@ -358,7 +359,7 @@ async function agregarTareasAExcel(tareasEntregable,WSEntregable,filaActual){
                     filaActual = await excelJSController.agregaHeader(WSEntregable,filaActual,header4,headerTitulo,borderStyle);
                 }
                 filaActual = await agregarEquipoAExcel(tarea.equipo,WSEntregable,filaActual);
-            }
+            }*/
             
             /*
             if(tarea.usuarios!=null && tarea.usuarios.length>0){
