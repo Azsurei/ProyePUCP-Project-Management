@@ -1257,9 +1257,7 @@ export default function Cronograma(props) {
                                                 <Button
                                                     className="bg-F0AE19 text-white font-medium"
                                                     size="md"
-                                                    onPress={() => {
-                                                        handlerGoToNew(ListComps.length + 1, 1);
-                                                    }}
+                                                    onPress={handlerGoToNew}
                                                 >
                                                     Empieza ahora
                                                 </Button>

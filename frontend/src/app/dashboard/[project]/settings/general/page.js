@@ -7,9 +7,14 @@ import Modal from "@/components/dashboardComps/projectComps/productBacklog/Modal
 import { dbDateToDisplayDate, dbDateToInputDate } from "@/common/dateFunctions";
 import { toast } from "sonner";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 axios.defaults.withCredentials = true;
 
-export default function GeneralScreen() {
+export default function GeneralScreen(props) {
+    const decodedUrl = decodeURIComponent(props.params.project);
+    const projectNameOld = decodedUrl.substring(0, decodedUrl.lastIndexOf("="));
+    const projectIdOld = decodedUrl.substring(decodedUrl.lastIndexOf("=") + 1);
+
     const { setIsLoadingSmall } = useContext(SmallLoadingScreen);
     const { projectInfo } = useContext(ProjectInfo);
     const twStyle1 = "text-lg font-medium";
@@ -24,6 +29,8 @@ export default function GeneralScreen() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [canSave, setCanSave] = useState(false);
+
+    const router = useRouter();
 
     useEffect(() => {
         setIsLoadingSmall(false);
@@ -154,7 +161,7 @@ export default function GeneralScreen() {
             else{
                 toast.success("Informacion de proyecto actualizada con exito");
                 setIsLoading(false);
-                //window.location.reload();
+                router.push("/dashboard/" + projectName + "=" + projectIdOld + "/settings/general");
             }
         } catch (error) {
             console.log(error);
