@@ -1144,7 +1144,7 @@ async function actualizarDatos(req,res,next){
     const query1 = `CALL OBTENER_DIFDIAS_PRODUCTBACKLOG(?);`;
     const query2 = `CALL OBTENER_DIFDIAS_EDT(?);`;
     const query3 = `CALL OBTENER_DIFDIAS_TAREA(?);`;
-    const query4 = `CALL ACTUALIZAR_PROYECTO(?,?,?,?,?);`;
+    const query4 = `CALL ACTUALIZAR_PROYECTO(?,?,?,?);`;
     const query5 = `CALL AÑADIR_DIAS_PRODUCTBACKLOG(?,?);`;
     const query6 = `CALL AÑADIR_DIAS_EDT(?,?);`;
     const query7 = `CALL AÑADIR_DIAS_TAREA(?,?);`;
@@ -1161,15 +1161,49 @@ async function actualizarDatos(req,res,next){
         const [results] = await connection.query(query,[idProyecto]);
         const herramientas = results[0];
         //Verificamos que las herramientas pueden caber en la nueva fecha
-        const [results1] = await connection.query(query8,[idProyecto]);
-        let fechaMin = moment(results1[0][0].FechaInicioMinima);
-        let fechaMax = moment(results1[0][0].FechaFinMaxima);
-        const diferenciaDiasHerramientas = fechaMax.diff(fechaMin, 'days');
-        console.log(`La diferencia de fecha Inicio y Fecha Fin de todas las herramientas: ${diferenciaDiasHerramientas}`);
-        console.log(`Fecha a cambiar: ${fechaInicio}`);
-        console.log(`Fecha minima: ${results1[0][0].FechaInicioMinima}`);
-        if(diferenciaDiasHerramientas>diferenciaEnDias){
-            flag = 0;
+        for(let herramienta of herramientas){
+            //Product Backlog
+            if(herramienta.idHerramienta == 1){
+                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Sprint)
+                const [results1] = await connection.query(query1,[idProyecto]);
+                let diffDiasBacklog = results1[0][0].DiferenciaEnDias;
+                console.log(`Diferencia de dias Backlog ${diffDiasBacklog}!`);
+                if(diffDiasBacklog>diferenciaEnDias){
+                    flag = 0;
+                }
+            }
+            //EDT
+            if(herramienta.idHerramienta == 2){
+                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla ComponenteEDT)
+                const [results2] = await connection.query(query2,[idProyecto]);
+                let diffDiasEDT = results2[0][0].DiferenciaEnDias;
+                console.log(`Diferencia de dias EDT ${diffDiasEDT}!`);
+                if(diffDiasEDT>diferenciaEnDias){
+                    flag = 0;
+                }
+            }
+            //Acta de Constistucion no hay fechaInicio 3
+            //Cronograma 
+            if(herramienta.idHerramienta == 4){
+                //Obtenemos la fechaInicial mas antigua y la fechaFin mas reciente (Tabla Cronograma y Tarea)
+                const [results3] = await connection.query(query3,[idProyecto]);
+                let diffDiasTarea = results3[0][0].DiferenciaEnDias;
+                console.log(`Diferencia de dias Tareas ${diffDiasTarea}!`);
+                if(diffDiasTarea>diferenciaEnDias){
+                    flag = 0;
+                }
+            }
+            //Catalogo de riesgo no hay fechaInicio 5
+            //Catalogo de riesgo no hay fechas 6
+            //Matriz de Responsabilidad 7
+            //Matriz de Comunicacion 8
+            //Autoevaluacion 9 ¿Duda fechaLimite?
+            //Retrospectiva 10
+            //Acta de Reunion 11
+            //Registro de Equipos 12
+            //Presupeusto 13
+            //Repositorio de Documentos 14
+            //Plan de Calidad 15  
         }
         console.log(`Termino`);
         if(flag==0){
@@ -1181,7 +1215,7 @@ async function actualizarDatos(req,res,next){
         else{
             console.log(`Actualizando proyecto`);
             //Actualizamos el proyecto
-            const [results4] = await connection.query(query4,[idProyecto, nombre, fechaInicio, fechaFin, results1[0][0].FechaInicioMinima]);
+            const [results4] = await connection.query(query4,[idProyecto, nombre, fechaInicio, fechaFin]);
             let difDias = results4[0][0].difDias;
             console.log(difDias);
             //Actualizamos dentro de la herramienta
