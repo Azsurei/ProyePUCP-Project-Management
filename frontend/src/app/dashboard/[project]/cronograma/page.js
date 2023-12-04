@@ -1196,6 +1196,7 @@ export default function Cronograma(props) {
                         isOpen={isModalPosteriorOpen}
                         onOpenChange={onModalPosteriorChange}
                         addTareaPosterior={addTareaPosterior}
+                        idTareaQueLoAbre={stateSecond === 1 ? 1 : idTareaToEdit}
                         startDate={fechaFin}
                         projectId={projectId}
                         dependencies={dependencies}

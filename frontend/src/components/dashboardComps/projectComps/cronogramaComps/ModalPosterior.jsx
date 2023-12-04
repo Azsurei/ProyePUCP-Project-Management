@@ -68,7 +68,8 @@ function ChevronIcon({ isOpen }) {
 }
 
 function TaskCard({ task, isSelected }) {
-    const { selectedTasks, setSelectedTasks } = useContext(TaskSelectorContext);
+    const { selectedTasks, setSelectedTasks, idTareaQueLoAbre } =
+        useContext(TaskSelectorContext);
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleOpen = () => {
@@ -81,7 +82,16 @@ function TaskCard({ task, isSelected }) {
                 selectedTasks.filter((tarea) => tarea.idTarea !== task.idTarea)
             );
         } else {
-            setSelectedTasks([...selectedTasks, task]);
+            if (task.idTarea === idTareaQueLoAbre) {
+                toast.warning(
+                    "No puedes hacer que una tarea dependa de si misma"
+                );
+                return;
+            } else if (task.idTareaEstado === 4) {
+                toast.warning("Esta tarea ya ha terminado");
+            } else {
+                setSelectedTasks([...selectedTasks, task]);
+            }
         }
     };
 
@@ -94,14 +104,14 @@ function TaskCard({ task, isSelected }) {
         <div className="flex flex-col ">
             <div
                 className={isSelected ? twStyle1 : twStyle2}
-                onClick={()=>{
+                onClick={() => {
                     toggleTaskSelection();
                 }}
             >
                 {task.tareasHijas.length !== 0 ? (
                     <div
                         className="flex items-center justify-center min-h-5 min-w-5 mr-1"
-                        onClick={(e)=>{
+                        onClick={(e) => {
                             e.stopPropagation();
                             toggleOpen();
                         }}
@@ -113,11 +123,17 @@ function TaskCard({ task, isSelected }) {
                 <div className="flex flex-col flex-1 overflow-hidden">
                     <div className="flex flex-row flex-1 overflow-hidden">
                         <p className="truncate">{task.sumillaTarea}</p>
-                        {isSelected ? <div className="stroke-primary ml-1"><CheckIcon/></div> : null}
+                        {isSelected ? (
+                            <div className="stroke-primary ml-1">
+                                <CheckIcon />
+                            </div>
+                        ) : null}
                     </div>
-                    <p><span className="font-medium">Fecha fin:</span> {dbDateToDisplayDate(task.fechaFin)}</p>
+                    <p>
+                        <span className="font-medium">Fecha fin:</span>{" "}
+                        {dbDateToDisplayDate(task.fechaFin)}
+                    </p>
                 </div>
-                
 
                 <Chip variant="flat" color={task.colorTareaEstado}>
                     {task.nombreTareaEstado}
@@ -165,21 +181,20 @@ export default function ModalPosterior({
     idCronograma,
     isOpen,
     onOpenChange,
+    idTareaQueLoAbre,
     addTareaPosterior,
     startDate,
     projectId,
     dependencies,
     setDependencies,
     setFechaInicio,
-    idTarea
+    idTarea,
 }) {
     const [searchValue, setSearchValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [listTasks, setListTasks] = useState([]);
 
-
     const [selectedTasks, setSelectedTasks] = useState([]);
-
 
     const msgEmptyField = "Este campo no puede estar vacio";
 
@@ -231,7 +246,7 @@ export default function ModalPosterior({
                             </ModalHeader>
                             <ModalBody>
                                 <div className="flex flex-col gap-2">
-                                    <Input
+                                    {/* <Input
                                         isClearable
                                         className="w-full"
                                         placeholder="Busca tarea por nombre..."
@@ -242,7 +257,7 @@ export default function ModalPosterior({
                                         }}
                                         onValueChange={setSearchValue}
                                         variant="faded"
-                                    />
+                                    /> */}
                                     <div className="flex flex-col h-[300px] overflow-auto">
                                         {isLoading ? (
                                             <div className="w-full h-full flex items-center justify-center">
@@ -254,6 +269,7 @@ export default function ModalPosterior({
                                                     idTarea,
                                                     selectedTasks,
                                                     setSelectedTasks,
+                                                    idTareaQueLoAbre,
                                                 }}
                                             >
                                                 <ListAllTasks
