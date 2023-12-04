@@ -110,12 +110,11 @@ export default function EditIngreso({modal, descripcionLineaIngreso, montoIngres
                 // Manejar la respuesta de la solicitud PUT
                 console.log("Respuesta del servidor:", response.data);
                 console.log("Actualización correcta");
-                // const handleRefresh = async () => {
-                //     refresh();
-                //     console.log("refreshed");
-                //   };
-                //   handleRefresh();
-                refresh();
+                const handleRefresh = async () => {
+                    refresh();
+                    console.log("refreshed");
+                  };
+                  handleRefresh();
                 // Realizar acciones adicionales si es necesario
             })
             .catch((error) => {

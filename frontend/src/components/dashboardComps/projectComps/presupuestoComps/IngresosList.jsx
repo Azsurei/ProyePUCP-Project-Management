@@ -71,7 +71,7 @@ function CardIngresos({
           setMontoAdapt(nuevoMonto);
           console.log("montoAdapt", nuevoMonto);
         }
-      }, [initialMoneda, IngresoObject.idMoneda]);
+      }, [initialMoneda, IngresoObject.idMoneda, refresh]);
       
     return (
         <li

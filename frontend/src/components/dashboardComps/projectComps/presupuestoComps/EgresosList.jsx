@@ -64,7 +64,7 @@ function CardEgreso({
           setCostoAdapt(nuevoMonto);
           console.log("montoAdapt", nuevoMonto);
         }
-      }, [initialMoneda]);
+      }, [initialMoneda, refresh]);
     return (
         <li
             className="IngresoCard"

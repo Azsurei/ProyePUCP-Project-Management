@@ -95,7 +95,7 @@ function CardEstimacionCosto({
             setSubtotalAdapt(nuevoSubtotal);
           console.log("montoAdapt", nuevoMonto);
         }
-      }, [initialMoneda]);
+      }, [initialMoneda, refresh]);
      
     return (
         <li
