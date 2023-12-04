@@ -1279,6 +1279,51 @@ async function actualizarDatos(req,res,next){
                     }
                 }
             }
+            //Tercera validacion de desborde
+            for(let herramienta of herramientas){
+                //Product Backlog
+                //if(herramienta.idHerramienta == 1){
+                //    await connection.query(query5,[idProyecto, difDias]);
+                //}
+                //EDT
+                if(herramienta.idHerramienta == 2){
+                    const [results7] = await connection.query(query10,[idProyecto]);
+                    let componentesEDT = results7[0];
+                    for(const componenteEDT of componentesEDT){
+                        console.log(`fechaInicio: ${fechaInicio}!`);
+                        const fechaInicioComponente = new Date(componenteEDT.fechaInicio);
+                        const formattedfechaInicioComponente = fechaInicioComponente.toISOString().split('T')[0];
+                        console.log(`Componente fechaInicio: ${formattedfechaInicioComponente}!`);
+                        if(formattedfechaInicioComponente<fechaInicio){
+                            const fechaInicioM = moment(fechaInicio);
+                            const formattedfechaInicioComponenteM = moment(formattedfechaInicioComponente);
+                            const diferenciaM = fechaInicioM.diff(formattedfechaInicioComponenteM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query11,[componenteEDT.idComponente, diferenciaM]);
+                        }
+                    }
+                }
+                //Cronograma 
+                if(herramienta.idHerramienta == 4){
+                    const [results6] = await connection.query(query8,[idProyecto]);
+                    let tareas = results6[0];
+                    console.log(tareas);
+                    for(const tarea of tareas){
+                        console.log(`fechaInicio: ${fechaInicio}!`);
+                        const fechaTareaInicio = new Date(tarea.fechaInicio);
+                        const formattedFechaTareaInicio = fechaTareaInicio.toISOString().split('T')[0];
+                        console.log(`Tarea fechaInicio: ${formattedFechaTareaInicio}!`);
+                        if(formattedFechaTareaInicio<fechaInicio){
+                            console.log(`Entre`);
+                            const fechaTareaInicioM = moment(fechaTareaInicio);
+                            const formattedFechaTareaInicioM = moment(formattedFechaTareaInicio);
+                            const diferenciaM = fechaTareaInicioM.diff(formattedFechaTareaInicioM, 'days');
+                            console.log(`diferenciaM: ${diferenciaM}!`);
+                            await connection.query(query9,[tarea.idTarea, diferenciaM]);
+                        }
+                    }
+                }
+            }
             res.status(200).json({
                 message: "Proyecto actualizado",
             });
