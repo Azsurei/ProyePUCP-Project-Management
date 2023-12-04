@@ -193,7 +193,7 @@ async function agregarTareaAExcel(tarea, WSTareas, filaActual,cadenaTarea,esPadr
         filaActual = await excelJSController.agregaHeader(WSTareas,filaActual,header,headerSubtitulo,borderStyle);
         tarea.fechaInicio = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaInicio);
         tarea.fechaFin = await dateController.formatearFecha2D_MM_YYYY(tarea.fechaFin);
-        WSTareas.getRow(filaActual).values = [tarea.nombre,tarea.descripcion,tarea.nombreTareaEstado,`${tarea.porcentajeProgreso}%`,tarea.fechaInicio,tarea.fechaFin];
+        WSTareas.getRow(filaActual).values = [tarea.sumillaTarea,tarea.descripcion,tarea.nombreTareaEstado,`${tarea.porcentajeProgreso}%`,tarea.fechaInicio,tarea.fechaFin];
         filaActual+=2;
 
         if(esPadre==0){

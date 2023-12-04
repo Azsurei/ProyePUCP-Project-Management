@@ -6,6 +6,7 @@ Content-Type: application/json
 {
   "idProyecto": 178,
   "nombre": "Probando Riesgos",
+  {
   "riesgos": [
     {
       "idRiesgo": 9,
@@ -45,6 +46,7 @@ Content-Type: application/json
       ]
     }
   ]
+}
 }
 
 ###
