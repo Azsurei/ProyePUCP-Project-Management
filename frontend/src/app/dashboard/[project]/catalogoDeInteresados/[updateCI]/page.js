@@ -452,7 +452,7 @@ export default function CatalogoDeInteresadosRegister(props) {
     return (
         <div className="containerRegisterCI">
             <div className="headerRegisterCI">
-            <Breadcrumbs>
+                <Breadcrumbs>
                     <BreadcrumbsItem
                         href="/dashboard"
                         text={"Inicio"}
@@ -486,7 +486,7 @@ export default function CatalogoDeInteresadosRegister(props) {
                         Actualizar interesado
                     </div>
                     <div>
-                        {(!editMode && rol !== 2) && (
+                        {!editMode && rol !== 2 && (
                             <Button
                                 color="primary"
                                 onPress={() => {
@@ -779,21 +779,18 @@ export default function CatalogoDeInteresadosRegister(props) {
                     )}
                 </div>
                 <div>
-                <div className="flex flex-row items-center gap-6 mt-5">
-                <p className="font-semibold text-xl">
-                    Campos adicionales
-                </p>
-                    {
-                        editMode && (
+                    <div className="flex flex-row items-center gap-6 mt-5">
+                        <p className="font-semibold text-xl">
+                            Campos adicionales
+                        </p>
+                        {editMode && (
                             <TemplatesAdditionalFields
-                            editState={editMode}
-                            baseFields={listAdditionalFields}
-                            setBaseFields={setListAdditionalFields}
-                        />
-                        )
-                    }
- 
-            </div>
+                                editState={editMode}
+                                baseFields={listAdditionalFields}
+                                setBaseFields={setListAdditionalFields}
+                            />
+                        )}
+                    </div>
                     <ListAdditionalFields
                         editState={editMode}
                         baseFields={listAdditionalFields}
@@ -876,15 +873,16 @@ export default function CatalogoDeInteresadosRegister(props) {
                             </div>
                         </div>
                     )}
-                    {
-                        !editMode && (
-                            <>
-                                <Button className="w-36 bg-blue-950 text-white" onClick={() => router.back()}>
-                                    Aceptar
-                                </Button>
-                            </>
-                        )
-                    }
+{/*                     {!editMode && (
+                        <>
+                            <Button
+                                className="w-36 bg-blue-950 text-white"
+                                onClick={() => router.back()}
+                            >
+                                Aceptar
+                            </Button>
+                        </>
+                    )} */}
                 </div>
             </div>
         </div>

@@ -553,7 +553,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
     return (
         <div className="containerRegisterCR">
             <div className="headerRegisterCR">
-            <Breadcrumbs>
+                <Breadcrumbs>
                     <BreadcrumbsItem
                         href="/dashboard"
                         text={"Inicio"}
@@ -587,7 +587,7 @@ export default function CatalogoDeRiesgosUpdate(props) {
                         Actualizar nuevo riesgo
                     </div>
                     <div>
-                        {(!editMode && rol !== 2) && (
+                        {!editMode && rol !== 2 && (
                             <Button
                                 color="primary"
                                 onPress={() => {
@@ -984,21 +984,18 @@ export default function CatalogoDeRiesgosUpdate(props) {
                     )}
                 </div>
                 <div>
-                <div className="flex flex-row items-center gap-6 mt-5">
-                <p className="font-semibold text-xl">
-                    Campos adicionales
-                </p>
-                    {
-                        editMode && (
+                    <div className="flex flex-row items-center gap-6 mt-5">
+                        <p className="font-semibold text-xl">
+                            Campos adicionales
+                        </p>
+                        {editMode && (
                             <TemplatesAdditionalFields
-                            editState={editMode}
-                            baseFields={listAdditionalFields}
-                            setBaseFields={setListAdditionalFields}
-                        />
-                        )
-                    }
- 
-            </div>
+                                editState={editMode}
+                                baseFields={listAdditionalFields}
+                                setBaseFields={setListAdditionalFields}
+                            />
+                        )}
+                    </div>
                     <ListAdditionalFields
                         editState={editMode}
                         baseFields={listAdditionalFields}
@@ -1081,15 +1078,16 @@ export default function CatalogoDeRiesgosUpdate(props) {
                             </div>
                         </div>
                     )}
-                    {
-                        !editMode && (
-                            <>
-                                <Button className="w-36 bg-blue-950 text-white" onClick={() => router.back()}>
-                                    Aceptar
-                                </Button>
-                            </>
-                        )
-                    }
+{/*                     {!editMode && (
+                        <>
+                            <Button
+                                className="w-36 bg-blue-950 text-white"
+                                onClick={() => router.back()}
+                            >
+                                Aceptar
+                            </Button>
+                        </>
+                    )} */}
                 </div>
             </div>
             {modal1 && (

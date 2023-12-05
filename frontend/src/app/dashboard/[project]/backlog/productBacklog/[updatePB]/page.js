@@ -497,7 +497,7 @@ export default function ProductBacklogUpdate(props) {
                             Agregar Epica
                         </Button>
                     )}
-                    {(!editMode && rol !== 2) && (
+                    {!editMode && rol !== 2 && (
                         <Button
                             color="primary"
                             onPress={() => {
@@ -803,17 +803,17 @@ export default function ProductBacklogUpdate(props) {
                                 />
                             </div>
                         </div>
-                        
                     )}
-                    {
-                        !editMode && (
-                            <>
-                                <Button className="w-36 bg-blue-950 text-white" onClick={() => router.back()}>
-                                    Aceptar
-                                </Button>
-                            </>
-                        )
-                    }
+{/*                     {!editMode && (
+                        <>
+                            <Button
+                                className="w-36 bg-blue-950 text-white"
+                                onClick={() => router.back()}
+                            >
+                                Aceptar
+                            </Button>
+                        </>
+                    )} */}
                 </div>
                 {modal && (
                     <PopUpEpica
