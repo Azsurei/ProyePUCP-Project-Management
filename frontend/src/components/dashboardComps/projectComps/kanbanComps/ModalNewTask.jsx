@@ -137,8 +137,23 @@ function ModalNewTask({
     //from 2nd modal
     const [filterValue, setFilterValue] = useState("");
     const [listUsers, setListUsers] = useState([]);
+    const [listUsersFiltered, setListUsersFiltered] = useState([]);
     const [listSelectedUsers, setListSelectedUsers] = useState([]);
     const [listEntregables, setListEntregables] = useState([]);
+
+    function setSearch(value){
+        console.log("El valor del filtro es: ", value);
+        setFilterValue(value);
+        const lowercasedValue = value.toLowerCase();
+        const filteredUsers = listUsers.filter(
+            (user) =>
+                user.nombres.toLowerCase().includes(lowercasedValue) ||
+                user.apellidos.toLowerCase().includes(lowercasedValue) ||
+                user.correoElectronico.toLowerCase().includes(lowercasedValue) ||
+                `${user.nombres} ${user.apellidos}`.toLowerCase().includes(lowercasedValue)
+        );
+        setListUsersFiltered(filteredUsers);
+    }
 
     useEffect(() => {
         if (flagOpeningModal === 1) {
@@ -157,6 +172,7 @@ function ModalNewTask({
             setListSelectedUsers([]);
 
             resetFlagOpeningModal();
+            refreshList();
         }
     }, [flagOpeningModal]);
 
@@ -591,26 +607,27 @@ function ModalNewTask({
                                         </p>
                                         <div className="flex flex-row justify-between gap-3">
                                             <Input
-                                                isClearable
+                                                isClearable={true}
                                                 className="w-full sm:max-w-[100%]"
                                                 placeholder="Ingresa un miembro..."
                                                 startContent={<SearchIcon />}
                                                 value={filterValue}
-                                                onValueChange={setFilterValue}
+                                                onValueChange={setSearch}
+                                                
                                                 variant="faded"
                                             />
-                                            <Button
+                                            {/* <Button
                                                 color="primary"
                                                 onPress={refreshList}
                                             >
                                                 Buscar
-                                            </Button>
+                                            </Button> */}
                                         </div>
                                     </div>
                                 </ModalHeader>
                                 <ModalBody className="overflow-y-auto">
                                     <ListUsers
-                                        lista={listUsers}
+                                        lista={listUsersFiltered}
                                         listaSelected={listSelectedUsers}
                                         addUserList={addUserList}
                                         removeUserInList={removeUserInList}
@@ -673,6 +690,7 @@ function ModalNewTask({
             })
             .then(function (response) {
                 setListUsers(response.data.usuarios);
+                setListUsersFiltered(response.data.usuarios);
             })
             .catch(function (error) {
                 console.log(error);
