@@ -303,18 +303,6 @@ function Login() {
 
             <div id="signInDiv"></div>
 
-            <Button
-                type="text"
-                text="Administrador"
-                href={"#"}
-                onClick={() => {
-                    setEmail("adminLosDibujitos@hotmail.com");
-                    setPassword("ContraSegura_3526890");
-                }}
-                isDisabled={statusForm === "submitting"}
-                className={"w-48"}
-            />
-
             <div className="flex flex-wrap justify-between items-center gap-2 w-full content-center">
                 <Link href="/recoverPassword">
                     <span className="font-['Roboto'] text-md font-bold leading-12 text-[#3F57A1] hover:text-[#2A3F80] active:text-[#1E2A32] no-underline">
